@@ -1,0 +1,33 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <ServerGarbageCollection>true</ServerGarbageCollection>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="Standalone\**" />
+    <EmbeddedResource Remove="Standalone\**" />
+    <None Remove="Standalone\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectCapability Include="AzureIoTEdgeModule" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Serilog.Sinks.File" Version="4.1.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="3.1.6" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.CommandLine" Version="3.1.6" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="3.1.6" />
+    <PackageReference Include="Mono.Options" Version="6.6.0.161" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\platform\common\Microsoft.Azure.IIoT.Platform.Api.Internal\src\Microsoft.Azure.IIoT.Platform.Api.Internal.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\azure\Microsoft.Azure.IIoT.Azure.Monitor\src\Microsoft.Azure.IIoT.Azure.Monitor.csproj" />
+    <ProjectReference Include="..\..\..\..\azure\Microsoft.Azure.IIoT.Azure.IoTEdge\src\Microsoft.Azure.IIoT.Azure.IoTEdge.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Microsoft.Azure.IIoT.Platform.Publisher.Edge\src\Microsoft.Azure.IIoT.Platform.Publisher.Edge.csproj" />
+  </ItemGroup>
+</Project>

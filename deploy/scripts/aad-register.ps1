@@ -189,12 +189,12 @@ Function New-ADApplications() {
                 -Credential $context.Account.Credential
         }
         catch {
-            # For some accounts $context.Account.Id may be first.last@something.com which might 
+            # For some accounts $context.Account.Id may be first.last@something.com which might
             # not be correct UserPrincipalName. In those cases we will prompt for another login.
             $creds = Connect-AzureAD `
                 -AzureEnvironmentName $context.Environment.Name `
                 -TenantId $context.Tenant.Id `
-        
+
         }
 
         if (!$creds) {
@@ -261,7 +261,7 @@ Function New-ADApplications() {
         $webDisplayName = $applicationName + "-web"
         $webAadApplication = Get-AzureADApplication -Filter "DisplayName eq '$webDisplayName'"
         if (!$webAadApplication) {
-            $webAadApplication = New-AzureADApplication -DisplayName $webDisplayName 
+            $webAadApplication = New-AzureADApplication -DisplayName $webDisplayName
             Write-Host "Created new AAD web app '$($webDisplayName)' in Tenant '$($tenantName)'."
             if ($user) {
                 Write-Host "Adding '$($user.UserPrincipalName)' as owner ..."
@@ -393,7 +393,7 @@ Function New-ADApplications() {
         $requiredPermissions = Get-RequiredPermissions -applicationDisplayName "Microsoft Graph" `
             -requiredDelegatedPermissions "User.Read"
         $requiredResourcesAccess.Add($requiredPermissions)
-        
+
         Set-AzureADApplication -ObjectId $clientAadApplication.ObjectId `
             -RequiredResourceAccess $requiredResourcesAccess -ReplyUrls $replyUrls `
             -Oauth2AllowImplicitFlow $False -Oauth2AllowUrlPathMatching $True | Out-Null
@@ -527,7 +527,7 @@ Function Add-PreauthorizedApplication() {
                 "Content-Type"  = "application/json"
             }
             $preAuthBody = "{`"api`": {`"preAuthorizedApplications`": [{`"appId`": `"" + $azurePreAuthAppId + "`","
-            $preAuthBody += "`"permissionIds`": [" 
+            $preAuthBody += "`"permissionIds`": ["
             foreach ($permission in $servicePrincipal.Oauth2Permissions) {
                 $preAuthBody += "`"" + $permission.Id + "`","
             }

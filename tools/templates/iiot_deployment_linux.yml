@@ -1,5 +1,5 @@
 #
-# Publish Microsoft.Azure.IIoT.Deployment Executables on Linux
+# Publish Microsoft.Azure.IIoT.Azure.Deployment Executables on Linux
 #
 parameters:
   runtime: linux-x64
@@ -29,14 +29,14 @@ jobs:
     inputs:
       command: publish
       publishWebProjects: false
-      projects: 'deploy/src/Microsoft.Azure.IIoT.Deployment/Microsoft.Azure.IIoT.Deployment.csproj'
+      projects: 'azure/Microsoft.Azure.IIoT.Azure.Deployment/src/Microsoft.Azure.IIoT.Azure.Deployment.csproj'
       arguments: '--runtime ${{ parameters.runtime }} --configuration Release -p:PublishSingleFile=true --self-contained --output $(Build.ArtifactStagingDirectory)/${{ parameters.runtime }}'
       zipAfterPublish: false
   - task: CmdLine@2
     displayName: 'Generate MD5 Checksum'
     inputs:
-      script:  md5sum Microsoft.Azure.IIoT.Deployment Microsoft.Azure.IIoT.Deployment.pdb > Microsoft.Azure.IIoT.Deployment.md5
-      workingDirectory: $(Build.ArtifactStagingDirectory)/${{ parameters.runtime }}/Microsoft.Azure.IIoT.Deployment
+      script:  md5sum Microsoft.Azure.IIoT.Azure.Deployment Microsoft.Azure.IIoT.Azure.Deployment.pdb > Microsoft.Azure.IIoT.Azure.Deployment.md5
+      workingDirectory: $(Build.ArtifactStagingDirectory)/${{ parameters.runtime }}/Microsoft.Azure.IIoT.Azure.Deployment
   - task: ComponentGovernanceComponentDetection@0
     displayName: 'Component Detection'
   - task: PublishPipelineArtifact@1
@@ -50,9 +50,9 @@ jobs:
     inputs:
       azureSubscription: azureiiot-storage
       scriptType: pscore
-      workingDirectory: $(Build.ArtifactStagingDirectory)/${{ parameters.runtime }}/Microsoft.Azure.IIoT.Deployment
+      workingDirectory: $(Build.ArtifactStagingDirectory)/${{ parameters.runtime }}/Microsoft.Azure.IIoT.Azure.Deployment
       scriptLocation: inlineScript
       inlineScript: |
-        az storage blob upload --account-name azureiiot --container-name binaries -f Microsoft.Azure.IIoT.Deployment --name ${{ replace(variables['Build.SourceBranch'], 'refs/heads/', '') }}/$(setVersionInfo.Version_Prefix)/${{ parameters.runtime }}/Microsoft.Azure.IIoT.Deployment
-        az storage blob upload --account-name azureiiot --container-name binaries -f Microsoft.Azure.IIoT.Deployment.pdb --name ${{ replace(variables['Build.SourceBranch'], 'refs/heads/', '') }}/$(setVersionInfo.Version_Prefix)/${{ parameters.runtime }}/Microsoft.Azure.IIoT.Deployment.pdb
-        az storage blob upload --account-name azureiiot --container-name binaries -f Microsoft.Azure.IIoT.Deployment.md5 --name ${{ replace(variables['Build.SourceBranch'], 'refs/heads/', '') }}/$(setVersionInfo.Version_Prefix)/${{ parameters.runtime }}/Microsoft.Azure.IIoT.Deployment.md5
+        az storage blob upload --account-name azureiiot --container-name binaries -f Microsoft.Azure.IIoT.Azure.Deployment --name ${{ replace(variables['Build.SourceBranch'], 'refs/heads/', '') }}/$(setVersionInfo.Version_Prefix)/${{ parameters.runtime }}/Microsoft.Azure.IIoT.Azure.Deployment
+        az storage blob upload --account-name azureiiot --container-name binaries -f Microsoft.Azure.IIoT.Azure.Deployment.pdb --name ${{ replace(variables['Build.SourceBranch'], 'refs/heads/', '') }}/$(setVersionInfo.Version_Prefix)/${{ parameters.runtime }}/Microsoft.Azure.IIoT.Azure.Deployment.pdb
+        az storage blob upload --account-name azureiiot --container-name binaries -f Microsoft.Azure.IIoT.Azure.Deployment.md5 --name ${{ replace(variables['Build.SourceBranch'], 'refs/heads/', '') }}/$(setVersionInfo.Version_Prefix)/${{ parameters.runtime }}/Microsoft.Azure.IIoT.Azure.Deployment.md5
