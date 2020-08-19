@@ -6,11 +6,14 @@
 namespace Microsoft.Azure.IIoT.Storage.Default {
     using Microsoft.Azure.IIoT.Exceptions;
     using Microsoft.Azure.IIoT.Serializers;
+    using Microsoft.Azure.IIoT.Storage;
     using Serilog;
     using System;
+    using System.Collections;
     using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Linq.Expressions;
     using System.Threading;
     using System.Threading.Tasks;
 
@@ -79,7 +82,7 @@ namespace Microsoft.Azure.IIoT.Storage.Default {
         /// In memory container
         /// </summary>
         private class ItemContainer : IItemContainer, IDocuments,
-            ISqlClient {
+            ISqlClient, IQuery {
 
             /// <inheritdoc/>
             public string Name { get; }
@@ -225,6 +228,38 @@ namespace Microsoft.Azure.IIoT.Storage.Default {
             }
 
             /// <inheritdoc/>
+            public IQuery Query() {
+                return this;
+            }
+
+            public IOrderedQueryable<T> CreateQuery<T>(int? pageSize, OperationOptions options) {
+                return new DocumentQuery<T>(_data.Values.AsQueryable(), pageSize);
+            }
+
+            /// <inheritdoc/>
+            public IResultFeed<IDocumentInfo<T>> RunQuery<T>(IOrderedQueryable<T> query) {
+                var documentQuery = query as DocumentQuery<T>;
+                var documents = documentQuery.Documents();
+                var results = documents
+                    .Select(d => new Document<T>(d.Id, d.Value, d.PartitionKey));
+                var feed = (documentQuery.PageSize == null) ?
+                    results.YieldReturn() : results.Batch(documentQuery.PageSize.Value);
+                return new MemoryFeed<IDocumentInfo<T>>(this,
+                    new Queue<IEnumerable<IDocumentInfo<T>>>(feed));
+            }
+
+            /// <inheritdoc/>
+            public Task DropAsync<T>(IOrderedQueryable<T> query,
+                CancellationToken ct) {
+                var documentQuery = query as DocumentQuery<T>;
+                var documents = documentQuery.Documents();
+                foreach (var item in documents) {
+                    _data.Remove(item.Id);
+                }
+                return Task.CompletedTask;
+            }
+
+            /// <inheritdoc/>
             public IResultFeed<IDocumentInfo<T>> Continue<T>(string continuationToken,
                 int? pageSize, string partitionKey) {
                 if (_queryStore.TryGetValue(continuationToken, out var feed)) {
@@ -238,21 +273,6 @@ namespace Microsoft.Azure.IIoT.Storage.Default {
                 _outer._logger.Error("Continuation {continuation} not found",
                     continuationToken);
                 return null;
-            }
-
-            /// <inheritdoc/>
-            public Task DropAsync<T>(string queryString,
-                IDictionary<string, object> parameters, string partitionKey,
-                CancellationToken ct) {
-                queryString = FormatQueryString(queryString, parameters);
-                var documents = _outer._queryEngine?.ExecuteSql(_data.Values, queryString);
-                if (documents == null) {
-                    throw new NotSupportedException("Query not supported");
-                }
-                foreach (var item in documents) {
-                    _data.Remove(item.Id);
-                }
-                return Task.CompletedTask;
             }
 
             /// <inheritdoc/>
@@ -273,13 +293,28 @@ namespace Microsoft.Azure.IIoT.Storage.Default {
             }
 
             /// <inheritdoc/>
+            public Task DropAsync<T>(string queryString,
+                IDictionary<string, object> parameters, string partitionKey,
+                CancellationToken ct) {
+                queryString = FormatQueryString(queryString, parameters);
+                var documents = _outer._queryEngine?.ExecuteSql(_data.Values, queryString);
+                if (documents == null) {
+                    throw new NotSupportedException("Query not supported");
+                }
+                foreach (var item in documents) {
+                    _data.Remove(item.Id);
+                }
+                return Task.CompletedTask;
+            }
+
+            /// <inheritdoc/>
             public void Dispose() {
             }
 
             /// <summary>
             /// Wraps a document value
             /// </summary>
-            private abstract class MemoryDocument : IDocumentInfo<VariantValue> {
+            internal abstract class MemoryDocument : IDocumentInfo<VariantValue> {
 
                 /// <summary>
                 /// Create memory document
@@ -343,6 +378,133 @@ namespace Microsoft.Azure.IIoT.Storage.Default {
                 /// <inheritdoc/>
                 public static bool operator !=(MemoryDocument o1, MemoryDocument o2) =>
                     !(o1 == o2);
+            }
+
+            /// <summary>
+            /// Rewrite expression to fit on top of memory document
+            /// </summary>
+            /// <typeparam name="T"></typeparam>
+            private class QueryTransform<T> : ExpressionVisitor {
+
+                internal QueryTransform(Type originalType, T replacementConstant) {
+                    _originalType = originalType;
+                    _replacementConstant = replacementConstant;
+                }
+
+                protected override Expression VisitConstant(ConstantExpression c) {
+                    return c.Type == _originalType ? Expression.Constant(_replacementConstant) : c;
+                }
+
+                private readonly Type _originalType;
+                private readonly T _replacementConstant;
+            }
+
+            /// <summary>
+            /// Expression modifier
+            /// </summary>
+            private class QueryTransform {
+                internal static Expression CopyAndReplace<T>(Expression expression, Type originalType, T replacementConstant) {
+                    var modifier = new QueryTransform<T>(originalType, replacementConstant);
+                    return modifier.Visit(expression);
+                }
+            }
+
+            public class DocumentQuery<T> : ExpressionVisitor, IOrderedQueryable<T>, IQueryProvider {
+
+                /// <inheritdoc/>
+                public Type ElementType => typeof(T);
+
+                /// <inheritdoc/>
+                public Expression Expression { get; }
+
+                /// <inheritdoc/>
+                public IQueryProvider Provider => this;
+
+                /// <summary>
+                /// Page size to paginate the query
+                /// </summary>
+                public int? PageSize { get; }
+
+                private DocumentQuery(IQueryable source, Expression e, int? pageSize) {
+                    Expression = e ?? throw new ArgumentNullException("e");
+                    _source = source;
+                    PageSize = pageSize;
+                }
+
+                public DocumentQuery(IQueryable source, int? pageSize) {
+                    Expression = Expression.Constant(this);
+                    _source = source;
+                    PageSize = pageSize;
+                }
+
+                /// <inheritdoc/>
+                public IEnumerator<T> GetEnumerator() {
+                    return ((IEnumerable<T>)ExecuteEnumerable()).GetEnumerator();
+                }
+
+                /// <inheritdoc/>
+                IEnumerator IEnumerable.GetEnumerator() {
+                    return ExecuteEnumerable().GetEnumerator();
+                }
+
+                /// <inheritdoc/>
+                public IQueryable<TElement> CreateQuery<TElement>(Expression expression) {
+                    return new DocumentQuery<TElement>(_source, expression, PageSize);
+                }
+
+                /// <inheritdoc/>
+                public IQueryable CreateQuery(Expression expression) {
+                    if (expression == null) {
+                        throw new ArgumentNullException("expression");
+                    }
+                    var elementType = expression.Type.GetGenericArguments().First();
+                    var result = (IQueryable)Activator.CreateInstance(
+                        typeof(DocumentQuery<>).MakeGenericType(elementType),
+                        new object[] { _source, expression, PageSize });
+                    return result;
+                }
+
+                /// <inheritdoc/>
+                public TResult Execute<TResult>(Expression expression) {
+                    if (expression == null) {
+                        throw new ArgumentNullException("expression");
+                    }
+
+                    var result = (this as IQueryProvider).Execute(expression);
+                    return (TResult)result;
+                }
+
+                /// <inheritdoc/>
+                public object Execute(Expression expression) {
+                    if (expression == null) {
+                        throw new ArgumentNullException("expression");
+                    }
+
+                    var translated = Visit(expression);
+                    return _source.Provider.Execute(translated);
+                }
+
+                /// <inheritdoc/>
+                protected override Expression VisitConstant(ConstantExpression c) {
+                    if (c.Type == typeof(DocumentQuery<T>)) {
+                        return _source.Expression;
+                    }
+                    else {
+                        return base.VisitConstant(c);
+                    }
+                }
+
+                internal IEnumerable ExecuteEnumerable() {
+                    var translated = Visit(Expression);
+                    return _source.Provider.CreateQuery(translated);
+                }
+
+                internal IEnumerable<MemoryDocument> Documents() {
+                    var translated = Visit(Expression);
+                    return (IEnumerable < MemoryDocument > )_source.Provider.CreateQuery(translated);
+                }
+
+                private readonly IQueryable _source;
             }
 
 

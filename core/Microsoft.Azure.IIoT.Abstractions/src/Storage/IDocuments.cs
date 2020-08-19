@@ -89,6 +89,13 @@ namespace Microsoft.Azure.IIoT.Storage {
             OperationOptions options = null, string etag = null);
 
         /// <summary>
+        /// Query documents. If not supported will throw.
+        /// </summary>
+        /// <exception cref="NotSupportedException"/>
+        /// <returns></returns>
+        IQuery Query();
+
+        /// <summary>
         /// Query using sql. If not supported will throw.
         /// </summary>
         /// <exception cref="NotSupportedException"/>

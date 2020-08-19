@@ -19,7 +19,7 @@ namespace Microsoft.Azure.IIoT.Azure.CosmosDb.Clients {
     /// <summary>
     /// Document query client
     /// </summary>
-    internal sealed class DocumentQuery : ISqlClient {
+    internal sealed class DocumentQuery : ISqlClient, IQuery {
 
         /// <summary>
         /// Create document query client
@@ -36,6 +36,31 @@ namespace Microsoft.Azure.IIoT.Azure.CosmosDb.Clients {
             _id = id ?? throw new ArgumentNullException(nameof(id));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _partitioned = partitioned;
+        }
+
+        /// <inheritdoc/>
+        public IOrderedQueryable<T> CreateQuery<T>(int? pageSize, OperationOptions options) {
+            var pk = _partitioned || string.IsNullOrEmpty(options?.PartitionKey) ? null :
+                new PartitionKey(options.PartitionKey);
+            return _client.CreateDocumentQuery<T>(UriFactory.CreateDocumentCollectionUri(_databaseId, _id),
+                new FeedOptions {
+                    MaxDegreeOfParallelism = 8,
+                    MaxItemCount = pageSize ?? -1,
+                    PartitionKey = pk,
+                    EnableCrossPartitionQuery = pk == null
+                });
+        }
+
+        /// <inheritdoc/>
+        public IResultFeed<IDocumentInfo<T>> RunQuery<T>(IOrderedQueryable<T> query) {
+            var result = query.Select(d => (IDocumentInfo<T>)new DocumentInfo<T>(d as Document));
+            return new DocumentResultFeed<IDocumentInfo<T>>(result.AsDocumentQuery(), _logger);
+        }
+
+        /// <inheritdoc/>
+        public Task DropAsync<T>(IOrderedQueryable<T> query, CancellationToken ct) {
+            // TODO
+            throw new NotImplementedException();
         }
 
         /// <inheritdoc/>

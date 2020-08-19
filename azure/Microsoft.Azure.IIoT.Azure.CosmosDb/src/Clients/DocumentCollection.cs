@@ -12,7 +12,6 @@ namespace Microsoft.Azure.IIoT.Azure.CosmosDb.Clients {
     using Microsoft.Azure.IIoT.Serializers;
     using Microsoft.Azure.Documents;
     using Microsoft.Azure.Documents.Client;
-    using Microsoft.Azure.Documents.Linq;
     using Serilog;
     using System;
     using System.Collections.Generic;
@@ -54,28 +53,14 @@ namespace Microsoft.Azure.IIoT.Azure.CosmosDb.Clients {
         }
 
         /// <inheritdoc/>
-        public IResultFeed<R> Query<T, R>(Func<IQueryable<IDocumentInfo<T>>,
-            IQueryable<R>> query, int? pageSize, OperationOptions options) {
-            if (query == null) {
-                throw new ArgumentNullException(nameof(query));
-            }
-            var pk = _partitioned || string.IsNullOrEmpty(options?.PartitionKey) ? null :
-                new PartitionKey(options.PartitionKey);
-            var result = query(_db.Client.CreateDocumentQuery<Document>(
-                UriFactory.CreateDocumentCollectionUri(_db.DatabaseId, Container.Id),
-                   new FeedOptions {
-                       MaxDegreeOfParallelism = 8,
-                       MaxItemCount = pageSize ?? -1,
-                       PartitionKey = pk,
-                       ConsistencyLevel = options?.Consistency.ToConsistencyLevel(),
-                       EnableCrossPartitionQuery = pk == null
-                   }).Select(d => (IDocumentInfo<T>)new DocumentInfo<T>(d)));
-            return new DocumentResultFeed<R>(result.AsDocumentQuery(), _logger);
+        public IDocuments AsDocuments() {
+            return this;
         }
 
         /// <inheritdoc/>
-        public IDocuments AsDocuments() {
-            return this;
+        public IQuery Query() {
+            return new DocumentQuery(
+                _db.Client, _db.DatabaseId, Container.Id, _partitioned, _logger);
         }
 
         /// <inheritdoc/>

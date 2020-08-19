@@ -382,6 +382,20 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Services {
                 _armed = false; // once sent we re-arm the interval timer
             }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
             /// <summary>
             /// Triggers updating diagnostics
             /// </summary>

@@ -12,11 +12,13 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service {
     using Microsoft.Azure.IIoT.Auth.Models;
     using Microsoft.Azure.IIoT.Auth;
     using Microsoft.Azure.IIoT.Http.SignalR;
+    using Microsoft.Azure.IIoT.Messaging.Default;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.Extensions.Configuration;
     using Autofac;
     using System.Collections.Generic;
     using System.Threading.Tasks;
+    using Microsoft.Azure.IIoT.Messaging;
 
     /// <summary>
     /// Startup class for tests
@@ -35,7 +37,9 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service {
         public override void ConfigureContainer(ContainerBuilder builder) {
 
             // Register test event bus
-            builder.RegisterType<TestEventBus>()
+            builder.RegisterType<DummyProcessingHost>()
+                .AsImplementedInterfaces().SingleInstance();
+            builder.RegisterType<SimpleEventBus>()
                 .AsImplementedInterfaces().SingleInstance();
 
             base.ConfigureContainer(builder);
@@ -58,6 +62,17 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service {
 
             builder.RegisterType<TestAuthConfig>()
                 .AsImplementedInterfaces();
+        }
+
+        public class DummyProcessingHost : IEventProcessingHost {
+
+            public Task StartAsync() {
+                return Task.CompletedTask;
+            }
+
+            public Task StopAsync() {
+                return Task.CompletedTask;
+            }
         }
 
         public class TestAuthConfig : IServerAuthConfig, ITokenProvider {
