@@ -125,7 +125,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Storage {
             CancellationToken ct) {
             var client = _groups.OpenSqlClient();
             var query = nextPageLink != null ?
-                client.Continue<GroupDocument>(nextPageLink, pageSize) :
+                client.ContinueQuery<GroupDocument>(nextPageLink, pageSize) :
                 client.Query<GroupDocument>(CreateQuery(
                     filter, out var queryParameters), queryParameters, pageSize);
 

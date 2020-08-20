@@ -290,6 +290,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Azure.IIoT.Platfo
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Azure.IIoT.Platform.Identity.Users", "platform\identity\Microsoft.Azure.IIoT.Platform.Identity.Users\src\Microsoft.Azure.IIoT.Platform.Identity.Users.csproj", "{C6075FB7-34BB-4D6A-AED5-4D687CF8811D}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Azure.IIoT.Azure.CosmosDb.Tests", "azure\Microsoft.Azure.IIoT.Azure.CosmosDb\tests\Microsoft.Azure.IIoT.Azure.CosmosDb.Tests.csproj", "{22E362BA-9694-40E9-8533-419380D87241}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -1082,6 +1084,14 @@ Global
 		{C6075FB7-34BB-4D6A-AED5-4D687CF8811D}.Release|Any CPU.Build.0 = Release|Any CPU
 		{C6075FB7-34BB-4D6A-AED5-4D687CF8811D}.Release|x64.ActiveCfg = Release|Any CPU
 		{C6075FB7-34BB-4D6A-AED5-4D687CF8811D}.Release|x64.Build.0 = Release|Any CPU
+		{22E362BA-9694-40E9-8533-419380D87241}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{22E362BA-9694-40E9-8533-419380D87241}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{22E362BA-9694-40E9-8533-419380D87241}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{22E362BA-9694-40E9-8533-419380D87241}.Debug|x64.Build.0 = Debug|Any CPU
+		{22E362BA-9694-40E9-8533-419380D87241}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{22E362BA-9694-40E9-8533-419380D87241}.Release|Any CPU.Build.0 = Release|Any CPU
+		{22E362BA-9694-40E9-8533-419380D87241}.Release|x64.ActiveCfg = Release|Any CPU
+		{22E362BA-9694-40E9-8533-419380D87241}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -1219,6 +1229,7 @@ Global
 		{CC6DA663-F2B2-43A5-B9F8-7DAE72AC2F8B} = {1B8B7C37-A167-4476-85DC-FEC204C0888F}
 		{862A45A1-05A8-4925-B2DB-419226F67A51} = {1B8B7C37-A167-4476-85DC-FEC204C0888F}
 		{C6075FB7-34BB-4D6A-AED5-4D687CF8811D} = {1B8B7C37-A167-4476-85DC-FEC204C0888F}
+		{22E362BA-9694-40E9-8533-419380D87241} = {0CA8F8B9-566E-47F2-B821-8DF4F28F044A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {F09EFCEA-59F6-4A16-9CB6-7E865A3F62D8}

@@ -23,14 +23,6 @@ namespace Microsoft.Azure.IIoT.Storage {
             OperationOptions options = null);
 
         /// <summary>
-        /// Run query items
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="query"></param>
-        /// <returns></returns>
-        IResultFeed<IDocumentInfo<T>> RunQuery<T>(IOrderedQueryable<T> query);
-
-        /// <summary>
         /// Continue a previously run query using continuation token
         /// </summary>
         /// <typeparam name="T"></typeparam>
@@ -38,8 +30,18 @@ namespace Microsoft.Azure.IIoT.Storage {
         /// <param name="pageSize"></param>
         /// <param name="partitionKey"></param>
         /// <returns></returns>
-        IResultFeed<IDocumentInfo<T>> Continue<T>(string continuationToken,
+        IResultFeed<IDocumentInfo<T>> ContinueQuery<T>(
+            string continuationToken,
             int? pageSize = null, string partitionKey = null);
+
+        /// <summary>
+        /// Run query items
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="query"></param>
+        /// <returns></returns>
+        IResultFeed<IDocumentInfo<T>> GetResults<T>(
+            IQueryable<T> query);
 
         /// <summary>
         /// Drop all items that match the query
@@ -48,7 +50,7 @@ namespace Microsoft.Azure.IIoT.Storage {
         /// <param name="query"></param>
         /// <param name="ct"></param>
         /// <returns></returns>
-        Task DropAsync<T>(IOrderedQueryable<T> query,
+        Task DropAsync<T>(IQueryable<T> query,
             CancellationToken ct = default);
     }
 }

@@ -372,7 +372,7 @@ $"r.{nameof(DataSetEntityDocument.ClassType)} = '{DataSetEntityDocument.ClassTyp
             string continuationToken, int? maxResults, CancellationToken ct) {
             var client = _documents.OpenSqlClient();
             var results = continuationToken != null ?
-                client.Continue<DataSetEntityDocument>(continuationToken, maxResults) :
+                client.ContinueQuery<DataSetEntityDocument>(continuationToken, maxResults) :
                 client.Query<DataSetEntityDocument>(CreateQuery(dataSetWriterId,
                     query, out var queryParameters), queryParameters, maxResults);
             if (!results.HasMore()) {

@@ -72,7 +72,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Storage {
             }
             var client = _relationships.OpenSqlClient();
             var query = nextPageLink != null ?
-                client.Continue<TrustDocument>(nextPageLink, pageSize) :
+                client.ContinueQuery<TrustDocument>(nextPageLink, pageSize) :
                 client.Query<TrustDocument>(CreateQuery(entityId, false, direction,
                     null, out var queryParameters), queryParameters, pageSize);
 

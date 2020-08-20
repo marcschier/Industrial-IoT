@@ -34,7 +34,7 @@ namespace Microsoft.Azure.IIoT.Storage {
         /// <param name="pageSize"></param>
         /// <param name="partitionKey"></param>
         /// <returns></returns>
-        IResultFeed<IDocumentInfo<T>> Continue<T>(
+        IResultFeed<IDocumentInfo<T>> ContinueQuery<T>(
             string continuationToken, int? pageSize = null,
             string partitionKey = null);
 

@@ -52,13 +52,13 @@ namespace Microsoft.Azure.IIoT.Azure.CosmosDb.Clients {
         }
 
         /// <inheritdoc/>
-        public IResultFeed<IDocumentInfo<T>> RunQuery<T>(IOrderedQueryable<T> query) {
+        public IResultFeed<IDocumentInfo<T>> GetResults<T>(IQueryable<T> query) {
             var result = query.Select(d => (IDocumentInfo<T>)new DocumentInfo<T>(d as Document));
             return new DocumentResultFeed<IDocumentInfo<T>>(result.AsDocumentQuery(), _logger);
         }
 
         /// <inheritdoc/>
-        public Task DropAsync<T>(IOrderedQueryable<T> query, CancellationToken ct) {
+        public Task DropAsync<T>(IQueryable<T> query, CancellationToken ct) {
             // TODO
             throw new NotImplementedException();
         }
@@ -90,7 +90,7 @@ namespace Microsoft.Azure.IIoT.Azure.CosmosDb.Clients {
         }
 
         /// <inheritdoc/>
-        public IResultFeed<IDocumentInfo<T>> Continue<T>(string continuationToken,
+        public IResultFeed<IDocumentInfo<T>> ContinueQuery<T>(string continuationToken,
             int? pageSize, string partitionKey) {
             if (string.IsNullOrEmpty(continuationToken)) {
                 throw new ArgumentNullException(nameof(continuationToken));

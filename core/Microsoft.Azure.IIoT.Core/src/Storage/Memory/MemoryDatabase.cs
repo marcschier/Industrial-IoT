@@ -237,7 +237,7 @@ namespace Microsoft.Azure.IIoT.Storage.Default {
             }
 
             /// <inheritdoc/>
-            public IResultFeed<IDocumentInfo<T>> RunQuery<T>(IOrderedQueryable<T> query) {
+            public IResultFeed<IDocumentInfo<T>> GetResults<T>(IQueryable<T> query) {
                 var documentQuery = query as DocumentQuery<T>;
                 var documents = documentQuery.Documents();
                 var results = documents
@@ -249,8 +249,7 @@ namespace Microsoft.Azure.IIoT.Storage.Default {
             }
 
             /// <inheritdoc/>
-            public Task DropAsync<T>(IOrderedQueryable<T> query,
-                CancellationToken ct) {
+            public Task DropAsync<T>(IQueryable<T> query, CancellationToken ct) {
                 var documentQuery = query as DocumentQuery<T>;
                 var documents = documentQuery.Documents();
                 foreach (var item in documents) {
@@ -260,7 +259,7 @@ namespace Microsoft.Azure.IIoT.Storage.Default {
             }
 
             /// <inheritdoc/>
-            public IResultFeed<IDocumentInfo<T>> Continue<T>(string continuationToken,
+            public IResultFeed<IDocumentInfo<T>> ContinueQuery<T>(string continuationToken,
                 int? pageSize, string partitionKey) {
                 if (_queryStore.TryGetValue(continuationToken, out var feed)) {
                     var result = feed as IResultFeed<IDocumentInfo<T>>;

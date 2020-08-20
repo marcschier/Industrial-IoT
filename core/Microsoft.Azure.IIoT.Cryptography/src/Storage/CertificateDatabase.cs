@@ -221,7 +221,7 @@ namespace Microsoft.Azure.IIoT.Cryptography.Storage {
             var client = _certificates.OpenSqlClient();
             IResultFeed<IDocumentInfo<CertificateDocument>> result;
             if (!string.IsNullOrEmpty(continuationToken)) {
-                result = client.Continue<CertificateDocument>(continuationToken, pageSize);
+                result = client.ContinueQuery<CertificateDocument>(continuationToken, pageSize);
             }
             else {
                 var query = "SELECT * FROM Certificates c WHERE";

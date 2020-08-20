@@ -147,7 +147,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Storage.Default {
             string continuationToken, int? maxResults, CancellationToken ct) {
             var client = _documents.OpenSqlClient();
             var results = continuationToken != null ?
-                client.Continue<WriterGroupDocument>(continuationToken, maxResults) :
+                client.ContinueQuery<WriterGroupDocument>(continuationToken, maxResults) :
                 client.Query<WriterGroupDocument>(CreateQuery(query, out var queryParameters),
                     queryParameters, maxResults);
             if (!results.HasMore()) {

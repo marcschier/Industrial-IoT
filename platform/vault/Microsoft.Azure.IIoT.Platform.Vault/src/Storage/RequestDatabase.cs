@@ -134,7 +134,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Storage {
             int? maxResults, CancellationToken ct) {
             var client = _requests.OpenSqlClient();
             var results = nextPageLink != null ?
-                client.Continue<RequestDocument>(nextPageLink, maxResults) :
+                client.ContinueQuery<RequestDocument>(nextPageLink, maxResults) :
                 client.Query<RequestDocument>(
                     CreateQuery(query, out var queryParameters),
                     queryParameters, maxResults);
