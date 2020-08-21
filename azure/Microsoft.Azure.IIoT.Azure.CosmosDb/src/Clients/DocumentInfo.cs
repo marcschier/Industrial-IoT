@@ -5,7 +5,6 @@
 
 namespace Microsoft.Azure.IIoT.Azure.CosmosDb.Clients {
     using Microsoft.Azure.IIoT.Storage;
-    using Microsoft.Azure.Documents;
     using System;
 
     /// <summary>
@@ -18,15 +17,19 @@ namespace Microsoft.Azure.IIoT.Azure.CosmosDb.Clients {
         /// Create document
         /// </summary>
         /// <param name="doc"></param>
-        internal DocumentInfo(Document doc) {
+        internal DocumentInfo(object doc) {
             _doc = doc ?? throw new ArgumentNullException(nameof(doc));
+        }
+
+        internal static DocumentInfo<S> Create<S>(dynamic doc) {
+            return new DocumentInfo<S>(doc);
         }
 
         /// <inheritdoc/>
         public string Id => _doc.Id;
 
         /// <inheritdoc/>
-        public T Value => (T)(dynamic)_doc;
+        public T Value => (T)_doc;
 
         /// <inheritdoc/>
         public string PartitionKey => _doc.GetPropertyValue<string>(
@@ -35,6 +38,6 @@ namespace Microsoft.Azure.IIoT.Azure.CosmosDb.Clients {
         /// <inheritdoc/>
         public string Etag => _doc.ETag;
 
-        private readonly Document _doc;
+        private readonly dynamic _doc;
     }
 }

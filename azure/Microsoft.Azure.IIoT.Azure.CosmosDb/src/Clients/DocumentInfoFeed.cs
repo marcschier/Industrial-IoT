@@ -18,7 +18,7 @@ namespace Microsoft.Azure.IIoT.Azure.CosmosDb.Clients {
     /// <summary>
     /// Wraps a document query to return document infos
     /// </summary>
-    internal sealed class DocumentInfoFeed<T> : IResultFeed<IDocumentInfo<T>> {
+    internal sealed class DocumentInfoFeed<R, T> : IResultFeed<IDocumentInfo<T>> {
 
         /// <inheritdoc/>
         public string ContinuationToken { get; private set; }
@@ -26,7 +26,7 @@ namespace Microsoft.Azure.IIoT.Azure.CosmosDb.Clients {
         /// <summary>
         /// Create feed
         /// </summary>
-        internal DocumentInfoFeed(IDocumentQuery<Document> query, ILogger logger) {
+        internal DocumentInfoFeed(IDocumentQuery<R> query, ILogger logger) {
             _query = query ?? throw new ArgumentNullException(nameof(query));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
@@ -36,9 +36,10 @@ namespace Microsoft.Azure.IIoT.Azure.CosmosDb.Clients {
             return await Retry.WithExponentialBackoff(_logger, ct, async () => {
                 if (_query.HasMoreResults) {
                     try {
-                        var result = await _query.ExecuteNextAsync<Document>(ct);
+                        var result = await _query.ExecuteNextAsync<object>(ct);
                         ContinuationToken = result.ResponseContinuation;
-                        return result.Select(r => (IDocumentInfo<T>)new DocumentInfo<T>(r));
+                        return result
+                            .Select(r => (IDocumentInfo<T>)new DocumentInfo<T>(r));
                     }
                     catch (Exception ex) {
                         DocumentCollection.FilterException(ex);
@@ -60,7 +61,7 @@ namespace Microsoft.Azure.IIoT.Azure.CosmosDb.Clients {
             _query.Dispose();
         }
 
-        private readonly IDocumentQuery<Document> _query;
+        private readonly IDocumentQuery<R> _query;
         private readonly ILogger _logger;
     }
 }

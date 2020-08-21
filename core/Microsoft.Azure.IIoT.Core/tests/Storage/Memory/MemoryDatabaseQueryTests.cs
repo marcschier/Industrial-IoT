@@ -3,7 +3,7 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Storage.Memory.Tests{
+namespace Microsoft.Azure.IIoT.Storage.Memory {
     using Microsoft.Azure.IIoT.Storage;
     using System;
     using System.Threading.Tasks;
@@ -12,7 +12,7 @@ namespace Microsoft.Azure.IIoT.Storage.Memory.Tests{
     using Xunit;
     using Autofac;
 
-    public class MemoryDatabaseQueryTests {
+    public class MemoryDatabaseQueryTests : IClassFixture<MemoryDatabaseFixture> {
         public MemoryDatabaseQueryTests(MemoryDatabaseFixture fixture) {
             _fixture = fixture;
         }
@@ -43,14 +43,13 @@ namespace Microsoft.Azure.IIoT.Storage.Memory.Tests{
         public async Task QueryWithAndFilterAndProjectionAsync() {
             var documents = await _fixture.GetDocumentsAsync();
 
-
             var query =
                 from f in documents.CreateQuery<Family>()
                 where f.Id == "AndersenFamily" || f.Address.City == "NY"
                 select new { Name = f.LastName, f.Address.City };
 
             var results1 = await RunAsync(documents, query);
-            Assert.Single(results1);
+            Assert.Equal(2, results1.Count);
 
             var query2 = documents.CreateQuery<Family>(1)
                 .Where(d => d.LastName == "Andersen")
@@ -64,13 +63,12 @@ namespace Microsoft.Azure.IIoT.Storage.Memory.Tests{
                        .Select(f => new { Name = f.LastName, f.Address.City });
 
             results1 = await RunAsync(documents, query);
-            Assert.Single(results1);
+            Assert.Equal(2, results1.Count);
         }
 
         [Fact]
         public async Task QueryWithAndFilterAsync() {
             var documents = await _fixture.GetDocumentsAsync();
-
 
             var families = from f in documents.CreateQuery<Family>()
                            where f.Id == "AndersenFamily" && f.Address.City == "Seattle"
@@ -120,7 +118,6 @@ namespace Microsoft.Azure.IIoT.Storage.Memory.Tests{
             results = await RunAsync(documents, query);
             Assert.Single(results);
 
-            //combine equality and inequality
             query =
                 from f in documents.CreateQuery<Family>()
                 where f.Id == "Wakefield" && f.Address.City != "NY"
@@ -141,7 +138,6 @@ namespace Microsoft.Azure.IIoT.Storage.Memory.Tests{
             var results = await RunAsync(documents, families);
             Assert.Single(results);
 
-            // LINQ Lambda
             families = documents.CreateQuery<Family>()
                        .Where(f => f.Children[0].Grade > 5);
 
@@ -164,7 +160,6 @@ namespace Microsoft.Azure.IIoT.Storage.Memory.Tests{
         [Fact]
         public async Task QueryWithRangeOperatorsDateTimesAsync() {
             var documents = await _fixture.GetDocumentsAsync();
-
 
             var families = documents.CreateQuery<Family>()
                 .Where(f => f.RegistrationDate >= DateTime.UtcNow.AddDays(-3));
@@ -219,7 +214,6 @@ namespace Microsoft.Azure.IIoT.Storage.Memory.Tests{
         public async Task QueryWithAggregatesAsync() {
             var documents = await _fixture.GetDocumentsAsync();
 
-
             var count = documents.CreateQuery<Family>()
                 .Where(f => f.LastName == "Andersen")
                 .Count();
@@ -243,19 +237,17 @@ namespace Microsoft.Azure.IIoT.Storage.Memory.Tests{
         public async Task QueryWithSubdocumentsAsync() {
             var documents = await _fixture.GetDocumentsAsync();
 
-
             var children = documents.CreateQuery<Family>()
                      .SelectMany(family => family.Children
                      .Select(c => c));
 
             var results = await RunAsync(documents, children);
-            Assert.Single(results);
+            Assert.Equal(3, results.Count);
         }
 
         [Fact]
         public async Task QueryWithTwoJoinsAndFilterAsync() {
             var documents = await _fixture.GetDocumentsAsync();
-
 
             var query = documents.CreateQuery<Family>()
                     .SelectMany(family => family.Children
@@ -276,7 +268,6 @@ namespace Microsoft.Azure.IIoT.Storage.Memory.Tests{
         public async Task QueryWithTwoJoinsAsync() {
             var documents = await _fixture.GetDocumentsAsync();
 
-
             var query = documents.CreateQuery<Family>()
                     .SelectMany(family => family.Children
                     .SelectMany(child => child.Pets
@@ -288,7 +279,7 @@ namespace Microsoft.Azure.IIoT.Storage.Memory.Tests{
                     )));
 
             var results = await RunAsync(documents, query);
-            Assert.Single(results);
+            Assert.Equal(3, results.Count);
         }
 
         [Fact]
@@ -296,14 +287,12 @@ namespace Microsoft.Azure.IIoT.Storage.Memory.Tests{
 
             var documents = await _fixture.GetDocumentsAsync();
 
-
-            // LINQ
             var query = documents.CreateQuery<Family>()
                     .SelectMany(family => family.Children
                     .Select(c => family.Id));
 
             var results = await RunAsync(documents, query);
-            Assert.Single(results);
+            Assert.Equal(3, results.Count);
         }
 
         [Fact]
@@ -316,17 +305,16 @@ namespace Microsoft.Azure.IIoT.Storage.Memory.Tests{
             var results1 = await RunAsync(documents, query1);
             Assert.Single(results1);
 
-            // Same query in LINQ. You can also use other Math operators
             var query2 = documents.CreateQuery<Family>()
                 .Select(family => (int)Math.Round((double)family.Children[0].Grade));
 
             var results2 = await RunAsync(documents, query2);
             Assert.Collection(results2, a => Assert.Equal(5, a.Value), a => Assert.Equal(8, a.Value));
 
-            // Same query in LINQ
-            var results3 = documents.CreateQuery<Family>()
+            var query3 = documents.CreateQuery<Family>()
                 .Select(family => family.Children.Count());
-            Assert.Collection(results2, a => Assert.Equal(1, a.Value), a => Assert.Equal(2, a.Value));
+            var results3 = await RunAsync(documents, query3);
+            Assert.Collection(results3, a => Assert.Equal(1, a.Value), a => Assert.Equal(2, a.Value));
         }
 
         private static async Task<List<IDocumentInfo<T>>> RunAsync<T>(IQuery documents,

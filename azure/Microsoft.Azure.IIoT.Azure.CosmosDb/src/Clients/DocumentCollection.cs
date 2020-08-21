@@ -78,9 +78,10 @@ namespace Microsoft.Azure.IIoT.Azure.CosmosDb.Clients {
             try {
                 return await Retry.WithExponentialBackoff(_logger, ct, async () => {
                     try {
-                        return new DocumentInfo<T>(await _db.Client.ReadDocumentAsync(
+                        var doc = await _db.Client.ReadDocumentAsync(
                             UriFactory.CreateDocumentUri(_db.DatabaseId, Container.Id, id),
-                            options.ToRequestOptions(_partitioned), ct));
+                            options.ToRequestOptions(_partitioned), ct);
+                        return new DocumentInfo<T>(doc.Resource);
                     }
                     catch (Exception ex) {
                         FilterException(ex);
@@ -98,12 +99,13 @@ namespace Microsoft.Azure.IIoT.Azure.CosmosDb.Clients {
             CancellationToken ct, string id, OperationOptions options, string etag) {
             return await Retry.WithExponentialBackoff(_logger, ct, async () => {
                 try {
-                    return new DocumentInfo<T>(await this._db.Client.UpsertDocumentAsync(
+                    ResourceResponse<Document> doc = await _db.Client.UpsertDocumentAsync(
                         UriFactory.CreateDocumentCollectionUri(_db.DatabaseId, Container.Id),
                         DocumentCollection.GetItem(id, newItem, options,
                             _jsonConfig?.Settings),
                         options.ToRequestOptions(_partitioned, etag),
-                        false, ct));
+                        false, ct);
+                    return new DocumentInfo<T>(doc.Resource);
                 }
                 catch (Exception ex) {
                     FilterException(ex);
@@ -122,11 +124,12 @@ namespace Microsoft.Azure.IIoT.Azure.CosmosDb.Clients {
             options.PartitionKey = existing.PartitionKey;
             return await Retry.WithExponentialBackoff(_logger, ct, async () => {
                 try {
-                    return new DocumentInfo<T>(await this._db.Client.ReplaceDocumentAsync(
+                    ResourceResponse<Document> doc = await _db.Client.ReplaceDocumentAsync(
                         UriFactory.CreateDocumentUri(_db.DatabaseId, Container.Id, existing.Id),
                         DocumentCollection.GetItem(existing.Id, newItem, options,
                             _jsonConfig?.Settings),
-                        options.ToRequestOptions(_partitioned, existing.Etag), ct));
+                        options.ToRequestOptions(_partitioned, existing.Etag), ct);
+                    return new DocumentInfo<T>(doc.Resource);
                 }
                 catch (Exception ex) {
                     FilterException(ex);
@@ -140,11 +143,12 @@ namespace Microsoft.Azure.IIoT.Azure.CosmosDb.Clients {
             string id, OperationOptions options) {
             return await Retry.WithExponentialBackoff(_logger, ct, async () => {
                 try {
-                    return new DocumentInfo<T>(await this._db.Client.CreateDocumentAsync(
+                    ResourceResponse<Document> doc = await _db.Client.CreateDocumentAsync(
                         UriFactory.CreateDocumentCollectionUri(_db.DatabaseId, Container.Id),
                         DocumentCollection.GetItem(id, newItem, options,
                             _jsonConfig?.Settings),
-                        options.ToRequestOptions(_partitioned), false, ct));
+                        options.ToRequestOptions(_partitioned), false, ct);
+                    return new DocumentInfo<T>(doc.Resource);
                 }
                 catch (Exception ex) {
                     FilterException(ex);

@@ -232,13 +232,14 @@ namespace Microsoft.Azure.IIoT.Storage.Default {
                 return this;
             }
 
+            /// <inheritdoc/>
             public IOrderedQueryable<T> CreateQuery<T>(int? pageSize, OperationOptions options) {
-                return new DocumentQuery<T>(_data.Values.AsQueryable(), pageSize);
+                return new MemoryDocumentQuery<T>(_data.Values.AsQueryable(), pageSize);
             }
 
             /// <inheritdoc/>
             public IResultFeed<IDocumentInfo<T>> GetResults<T>(IQueryable<T> query) {
-                var documentQuery = query as DocumentQuery<T>;
+                var documentQuery = query as MemoryDocumentQuery<T>;
                 var documents = documentQuery.Documents();
                 var results = documents
                     .Select(d => new Document<T>(d.Id, d.Value, d.PartitionKey));
@@ -250,7 +251,7 @@ namespace Microsoft.Azure.IIoT.Storage.Default {
 
             /// <inheritdoc/>
             public Task DropAsync<T>(IQueryable<T> query, CancellationToken ct) {
-                var documentQuery = query as DocumentQuery<T>;
+                var documentQuery = query as MemoryDocumentQuery<T>;
                 var documents = documentQuery.Documents();
                 foreach (var item in documents) {
                     _data.Remove(item.Id);
@@ -352,6 +353,15 @@ namespace Microsoft.Azure.IIoT.Storage.Default {
                 /// <inheritdoc/>
                 public VariantValue Value { get; }
 
+                /// <summary>
+                /// Get typed value
+                /// </summary>
+                /// <param name="type"></param>
+                /// <returns></returns>
+                public object Get(Type type) {
+                    return Value.ConvertTo(type);
+                }
+
                 /// <inheritdoc/>
                 public override bool Equals(object obj) {
                     if (obj is MemoryDocument wrapper) {
@@ -379,36 +389,7 @@ namespace Microsoft.Azure.IIoT.Storage.Default {
                     !(o1 == o2);
             }
 
-            /// <summary>
-            /// Rewrite expression to fit on top of memory document
-            /// </summary>
-            /// <typeparam name="T"></typeparam>
-            private class QueryTransform<T> : ExpressionVisitor {
-
-                internal QueryTransform(Type originalType, T replacementConstant) {
-                    _originalType = originalType;
-                    _replacementConstant = replacementConstant;
-                }
-
-                protected override Expression VisitConstant(ConstantExpression c) {
-                    return c.Type == _originalType ? Expression.Constant(_replacementConstant) : c;
-                }
-
-                private readonly Type _originalType;
-                private readonly T _replacementConstant;
-            }
-
-            /// <summary>
-            /// Expression modifier
-            /// </summary>
-            private class QueryTransform {
-                internal static Expression CopyAndReplace<T>(Expression expression, Type originalType, T replacementConstant) {
-                    var modifier = new QueryTransform<T>(originalType, replacementConstant);
-                    return modifier.Visit(expression);
-                }
-            }
-
-            public class DocumentQuery<T> : ExpressionVisitor, IOrderedQueryable<T>, IQueryProvider {
+            public class MemoryDocumentQuery<T> : ExpressionVisitor, IOrderedQueryable<T>, IQueryProvider {
 
                 /// <inheritdoc/>
                 public Type ElementType => typeof(T);
@@ -424,13 +405,13 @@ namespace Microsoft.Azure.IIoT.Storage.Default {
                 /// </summary>
                 public int? PageSize { get; }
 
-                private DocumentQuery(IQueryable source, Expression e, int? pageSize) {
+                private MemoryDocumentQuery(IQueryable source, Expression e, int? pageSize) {
                     Expression = e ?? throw new ArgumentNullException("e");
                     _source = source;
                     PageSize = pageSize;
                 }
 
-                public DocumentQuery(IQueryable source, int? pageSize) {
+                public MemoryDocumentQuery(IQueryable source, int? pageSize) {
                     Expression = Expression.Constant(this);
                     _source = source;
                     PageSize = pageSize;
@@ -448,7 +429,7 @@ namespace Microsoft.Azure.IIoT.Storage.Default {
 
                 /// <inheritdoc/>
                 public IQueryable<TElement> CreateQuery<TElement>(Expression expression) {
-                    return new DocumentQuery<TElement>(_source, expression, PageSize);
+                    return new MemoryDocumentQuery<TElement>(_source, expression, PageSize);
                 }
 
                 /// <inheritdoc/>
@@ -458,7 +439,7 @@ namespace Microsoft.Azure.IIoT.Storage.Default {
                     }
                     var elementType = expression.Type.GetGenericArguments().First();
                     var result = (IQueryable)Activator.CreateInstance(
-                        typeof(DocumentQuery<>).MakeGenericType(elementType),
+                        typeof(MemoryDocumentQuery<>).MakeGenericType(elementType),
                         new object[] { _source, expression, PageSize });
                     return result;
                 }
@@ -485,12 +466,13 @@ namespace Microsoft.Azure.IIoT.Storage.Default {
 
                 /// <inheritdoc/>
                 protected override Expression VisitConstant(ConstantExpression c) {
-                    if (c.Type == typeof(DocumentQuery<T>)) {
-                        return _source.Expression;
-                    }
-                    else {
-                        return base.VisitConstant(c);
-                    }
+                    return c.Type == typeof(MemoryDocumentQuery<T>) ?
+                        _source.Expression : base.VisitConstant(c);
+                }
+
+                /// <inheritdoc/>
+                protected override Expression VisitLambda<S>(Expression<S> node) {
+                    return new Replacer().Visit(node);
                 }
 
                 internal IEnumerable ExecuteEnumerable() {
@@ -500,7 +482,115 @@ namespace Microsoft.Azure.IIoT.Storage.Default {
 
                 internal IEnumerable<MemoryDocument> Documents() {
                     var translated = Visit(Expression);
-                    return (IEnumerable < MemoryDocument > )_source.Provider.CreateQuery(translated);
+                    return (IEnumerable<MemoryDocument>)_source.Provider.CreateQuery(translated);
+                }
+
+                private class Replacer : ExpressionVisitor {
+                    public Replacer() {
+
+                    }
+
+                    /// <inheritdoc/>
+                    protected override Expression VisitBinary(BinaryExpression node) {
+                        return base.VisitBinary(node);
+                    }
+
+                    /// <inheritdoc/>
+                    protected override Expression VisitBlock(BlockExpression node) {
+                        return base.VisitBlock(node);
+                    }
+
+                    /// <inheritdoc/>
+                    protected override Expression VisitConditional(ConditionalExpression node) {
+                        return base.VisitConditional(node);
+                    }
+
+                    /// <inheritdoc/>
+                    protected override Expression VisitDynamic(DynamicExpression node) {
+                        return base.VisitDynamic(node);
+                    }
+
+                    /// <inheritdoc/>
+                    protected override ElementInit VisitElementInit(ElementInit node) {
+                        return base.VisitElementInit(node);
+                    }
+
+                    /// <inheritdoc/>
+                    protected override Expression VisitExtension(Expression node) {
+                        return base.VisitExtension(node);
+                    }
+
+                    /// <inheritdoc/>
+                    protected override Expression VisitIndex(IndexExpression node) {
+                        return base.VisitIndex(node);
+                    }
+
+                    /// <inheritdoc/>
+                    protected override Expression VisitInvocation(InvocationExpression node) {
+                        return base.VisitInvocation(node);
+                    }
+
+                    /// <inheritdoc/>
+                    protected override Expression VisitLambda<S>(Expression<S> node) {
+                        return new Replacer().Visit(node);
+                    }
+
+                    /// <inheritdoc/>
+                    protected override Expression VisitMember(MemberExpression node) {
+                        return base.VisitMember(node);
+                    }
+
+                    /// <inheritdoc/>
+                    protected override MemberAssignment VisitMemberAssignment(MemberAssignment node) {
+                        return base.VisitMemberAssignment(node);
+                    }
+
+                    /// <inheritdoc/>
+                    protected override MemberBinding VisitMemberBinding(MemberBinding node) {
+                        return base.VisitMemberBinding(node);
+                    }
+
+                    /// <inheritdoc/>
+                    protected override Expression VisitMemberInit(MemberInitExpression node) {
+                        return base.VisitMemberInit(node);
+                    }
+
+                    /// <inheritdoc/>
+                    protected override MemberListBinding VisitMemberListBinding(MemberListBinding node) {
+                        return base.VisitMemberListBinding(node);
+                    }
+
+                    protected override MemberMemberBinding VisitMemberMemberBinding(MemberMemberBinding node) {
+                        return base.VisitMemberMemberBinding(node);
+                    }
+
+                    protected override Expression VisitMethodCall(MethodCallExpression node) {
+                        return base.VisitMethodCall(node);
+                    }
+
+                    protected override Expression VisitNew(NewExpression node) {
+                        return base.VisitNew(node);
+                    }
+
+                    protected override Expression VisitNewArray(NewArrayExpression node) {
+                        return base.VisitNewArray(node);
+                    }
+
+                    protected override Expression VisitParameter(ParameterExpression node) {
+                        return base.VisitParameter(node);
+                    }
+
+                    protected override Expression VisitRuntimeVariables(RuntimeVariablesExpression node) {
+                        return base.VisitRuntimeVariables(node);
+                    }
+
+                    protected override Expression VisitTypeBinary(TypeBinaryExpression node) {
+                        return base.VisitTypeBinary(node);
+                    }
+
+                    protected override Expression VisitUnary(UnaryExpression node) {
+                        return base.VisitUnary(node);
+                    }
                 }
 
                 private readonly IQueryable _source;

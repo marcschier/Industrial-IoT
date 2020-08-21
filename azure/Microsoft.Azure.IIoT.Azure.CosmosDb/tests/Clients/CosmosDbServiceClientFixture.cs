@@ -3,8 +3,7 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Azure.CosmosDb.Cli {
-    using Microsoft.Azure.IIoT.Azure.CosmosDb.Clients;
+namespace Microsoft.Azure.IIoT.Azure.CosmosDb.Clients {
     using Microsoft.Azure.IIoT.Azure.CosmosDb.Runtime;
     using Microsoft.Azure.IIoT.Utils;
     using Microsoft.Azure.IIoT.Diagnostics;
@@ -121,7 +120,7 @@ namespace Microsoft.Azure.IIoT.Azure.CosmosDb.Cli {
 
 
     [DataContract]
-    internal sealed class Parent {
+    public sealed class Parent {
         [DataMember]
         public string FamilyName { get; set; }
         [DataMember]
@@ -129,7 +128,7 @@ namespace Microsoft.Azure.IIoT.Azure.CosmosDb.Cli {
     }
 
     [DataContract]
-    internal sealed class Child {
+    public sealed class Child {
         [DataMember]
         public string FamilyName { get; set; }
         [DataMember]
@@ -143,13 +142,13 @@ namespace Microsoft.Azure.IIoT.Azure.CosmosDb.Cli {
     }
 
     [DataContract]
-    internal sealed class Pet {
+    public sealed class Pet {
         [DataMember]
         public string GivenName { get; set; }
     }
 
     [DataContract]
-    internal sealed class Address {
+    public sealed class Address {
         [DataMember]
         public string State { get; set; }
         [DataMember]
@@ -159,7 +158,7 @@ namespace Microsoft.Azure.IIoT.Azure.CosmosDb.Cli {
     }
 
     [DataContract]
-    internal sealed class Family {
+    public sealed class Family {
         [DataMember(Name = "id")]
         public string Id { get; set; }
         [DataMember]

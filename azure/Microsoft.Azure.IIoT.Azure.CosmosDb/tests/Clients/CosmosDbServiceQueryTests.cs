@@ -3,7 +3,7 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Azure.CosmosDb.Cli {
+namespace Microsoft.Azure.IIoT.Azure.CosmosDb.Clients {
     using Microsoft.Azure.IIoT.Storage;
     using System;
     using System.Threading.Tasks;
@@ -12,7 +12,7 @@ namespace Microsoft.Azure.IIoT.Azure.CosmosDb.Cli {
     using Xunit;
     using Autofac;
 
-    public class CosmosDbServiceQueryTests {
+    public class CosmosDbServiceQueryTests : IClassFixture<CosmosDbServiceClientFixture> {
         public CosmosDbServiceQueryTests(CosmosDbServiceClientFixture fixture) {
             _fixture = fixture;
         }
@@ -53,7 +53,7 @@ namespace Microsoft.Azure.IIoT.Azure.CosmosDb.Cli {
                 select new { Name = f.LastName, f.Address.City };
 
             var results1 = await RunAsync(documents, query);
-            Assert.Single(results1);
+            Assert.Equal(2, results1.Count);
 
             var query2 = documents.CreateQuery<Family>(1)
                 .Where(d => d.LastName == "Andersen")
@@ -67,7 +67,7 @@ namespace Microsoft.Azure.IIoT.Azure.CosmosDb.Cli {
                        .Select(f => new { Name = f.LastName, f.Address.City });
 
             results1 = await RunAsync(documents, query);
-            Assert.Single(results1);
+            Assert.Equal(2, results1.Count);
         }
 
         [SkippableFact]
@@ -252,7 +252,7 @@ namespace Microsoft.Azure.IIoT.Azure.CosmosDb.Cli {
                      .Select(c => c));
 
             var results = await RunAsync(documents, children);
-            Assert.Single(results);
+            Assert.Equal(3, results.Count);
         }
 
         [SkippableFact]
@@ -291,7 +291,7 @@ namespace Microsoft.Azure.IIoT.Azure.CosmosDb.Cli {
                     )));
 
             var results = await RunAsync(documents, query);
-            Assert.Single(results);
+            Assert.Equal(3, results.Count);
         }
 
         [SkippableFact]
@@ -300,13 +300,12 @@ namespace Microsoft.Azure.IIoT.Azure.CosmosDb.Cli {
             var documents = await _fixture.GetDocumentsAsync();
             Skip.If(documents == null);
 
-            // LINQ
             var query = documents.CreateQuery<Family>()
                     .SelectMany(family => family.Children
                     .Select(c => family.Id));
 
             var results = await RunAsync(documents, query);
-            Assert.Single(results);
+            Assert.Equal(3, results.Count);
         }
 
         [SkippableFact]
@@ -319,17 +318,16 @@ namespace Microsoft.Azure.IIoT.Azure.CosmosDb.Cli {
             var results1 = await RunAsync(documents, query1);
             Assert.Single(results1);
 
-            // Same query in LINQ. You can also use other Math operators
             var query2 = documents.CreateQuery<Family>()
                 .Select(family => (int)Math.Round((double)family.Children[0].Grade));
 
             var results2 = await RunAsync(documents, query2);
             Assert.Collection(results2, a => Assert.Equal(5, a.Value), a => Assert.Equal(8, a.Value));
 
-            // Same query in LINQ
-            var results3 = documents.CreateQuery<Family>()
+            var query3 = documents.CreateQuery<Family>()
                 .Select(family => family.Children.Count());
-            Assert.Collection(results2, a => Assert.Equal(1, a.Value), a => Assert.Equal(2, a.Value));
+            var results3 = await RunAsync(documents, query3);
+            Assert.Collection(results3, a => Assert.Equal(1, a.Value), a => Assert.Equal(2, a.Value));
         }
 
         private static async Task<List<IDocumentInfo<T>>> RunAsync<T>(IQuery documents,

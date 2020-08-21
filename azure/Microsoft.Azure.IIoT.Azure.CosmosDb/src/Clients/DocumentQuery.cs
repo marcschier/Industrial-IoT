@@ -53,8 +53,7 @@ namespace Microsoft.Azure.IIoT.Azure.CosmosDb.Clients {
 
         /// <inheritdoc/>
         public IResultFeed<IDocumentInfo<T>> GetResults<T>(IQueryable<T> query) {
-            var result = query.Select(d => (IDocumentInfo<T>)new DocumentInfo<T>(d as Document));
-            return new DocumentResultFeed<IDocumentInfo<T>>(result.AsDocumentQuery(), _logger);
+            return new DocumentInfoFeed<T, T>(query.AsDocumentQuery(), _logger);
         }
 
         /// <inheritdoc/>
@@ -86,7 +85,7 @@ namespace Microsoft.Azure.IIoT.Azure.CosmosDb.Clients {
 
                     EnableCrossPartitionQuery = pk == null
                 });
-            return new DocumentInfoFeed<T>(query.AsDocumentQuery(), _logger);
+            return new DocumentInfoFeed<Document, T>(query.AsDocumentQuery(), _logger);
         }
 
         /// <inheritdoc/>
@@ -106,7 +105,7 @@ namespace Microsoft.Azure.IIoT.Azure.CosmosDb.Clients {
                     RequestContinuation = continuationToken,
                     EnableCrossPartitionQuery = pk == null
                 });
-            return new DocumentInfoFeed<T>(query.AsDocumentQuery(), _logger);
+            return new DocumentInfoFeed<Document, T>(query.AsDocumentQuery(), _logger);
         }
 
         /// <inheritdoc/>

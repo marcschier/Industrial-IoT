@@ -175,6 +175,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Services {
 
                 // Should get single message with error
                 var message = events.GetMessages(null).WaitForEvent();
+                Assert.NotNull(message);
                 Assert.NotNull(message.Data);
                 Assert.NotNull(message.ContentEncoding);
                 Assert.Equal(ContentMimeType.Json, message.ContentType);
