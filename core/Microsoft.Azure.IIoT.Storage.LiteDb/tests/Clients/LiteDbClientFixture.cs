@@ -3,17 +3,17 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Storage.Memory {
-    using Microsoft.Azure.IIoT.Storage;
-    using Microsoft.Azure.IIoT.Storage.Default;
+namespace Microsoft.Azure.IIoT.Storage.LiteDb.Clients {
+    using Microsoft.Azure.IIoT.Storage.LiteDb.Runtime;
     using Microsoft.Azure.IIoT.Utils;
     using Microsoft.Azure.IIoT.Diagnostics;
-    using Microsoft.Azure.IIoT.Serializers.NewtonSoft;
+    using Microsoft.Azure.IIoT.Storage;
+    using Microsoft.Extensions.Configuration;
     using System;
     using System.Threading.Tasks;
     using System.Runtime.Serialization;
 
-    public class MemoryDatabaseFixture {
+    public class LiteDbClientFixture {
 
         /// <summary>
         /// Creates the documents used in this Sample
@@ -92,7 +92,12 @@ namespace Microsoft.Azure.IIoT.Storage.Memory {
         /// <returns></returns>
         public async Task<IDatabase> GetDatabaseAsync() {
             var logger = ConsoleLogger.Create();
-            var server = new MemoryDatabase(logger, new NewtonSoftJsonSerializer());
+            var config = new ConfigurationBuilder()
+                .AddFromDotEnvFile()
+                .AddFromKeyVault()
+                .Build();
+            var configuration = new LiteDbConfig(config);
+            var server = new LiteDbClient(configuration, logger);
             return await server.OpenAsync("test", null);
         }
 
@@ -115,7 +120,7 @@ namespace Microsoft.Azure.IIoT.Storage.Memory {
 
 
     [DataContract]
-    internal sealed class Parent {
+    public sealed class Parent {
         [DataMember]
         public string FamilyName { get; set; }
         [DataMember]
@@ -123,7 +128,7 @@ namespace Microsoft.Azure.IIoT.Storage.Memory {
     }
 
     [DataContract]
-    internal sealed class Child {
+    public sealed class Child {
         [DataMember]
         public string FamilyName { get; set; }
         [DataMember]
@@ -137,13 +142,13 @@ namespace Microsoft.Azure.IIoT.Storage.Memory {
     }
 
     [DataContract]
-    internal sealed class Pet {
+    public sealed class Pet {
         [DataMember]
         public string GivenName { get; set; }
     }
 
     [DataContract]
-    internal sealed class Address {
+    public sealed class Address {
         [DataMember]
         public string State { get; set; }
         [DataMember]
@@ -153,7 +158,7 @@ namespace Microsoft.Azure.IIoT.Storage.Memory {
     }
 
     [DataContract]
-    internal sealed class Family {
+    public sealed class Family {
         [DataMember(Name = "id")]
         public string Id { get; set; }
         [DataMember]

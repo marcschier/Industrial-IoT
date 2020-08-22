@@ -464,17 +464,6 @@ namespace Microsoft.Azure.IIoT.Storage.Default {
                     return _source.Provider.Execute(translated);
                 }
 
-                /// <inheritdoc/>
-                protected override Expression VisitConstant(ConstantExpression c) {
-                    return c.Type == typeof(MemoryDocumentQuery<T>) ?
-                        _source.Expression : base.VisitConstant(c);
-                }
-
-                /// <inheritdoc/>
-                protected override Expression VisitLambda<S>(Expression<S> node) {
-                    return new Replacer().Visit(node);
-                }
-
                 internal IEnumerable ExecuteEnumerable() {
                     var translated = Visit(Expression);
                     return _source.Provider.CreateQuery(translated);
@@ -485,112 +474,99 @@ namespace Microsoft.Azure.IIoT.Storage.Default {
                     return (IEnumerable<MemoryDocument>)_source.Provider.CreateQuery(translated);
                 }
 
-                private class Replacer : ExpressionVisitor {
-                    public Replacer() {
 
-                    }
+                /// <inheritdoc/>
+                protected override Expression VisitConstant(ConstantExpression c) {
+                    return c.Type == typeof(MemoryDocumentQuery<T>) ?
+                        _source.Expression : base.VisitConstant(c);
+                }
 
-                    /// <inheritdoc/>
-                    protected override Expression VisitBinary(BinaryExpression node) {
-                        return base.VisitBinary(node);
-                    }
+                /// <inheritdoc/>
+                protected override Expression VisitLambda<S>(Expression<S> node) {
+                    return Expression.Lambda(Visit(node.Body),
+                        node.Parameters.Select(p => Expression.Parameter(typeof(MemoryDocument), p.Name)));
+                }
 
-                    /// <inheritdoc/>
-                    protected override Expression VisitBlock(BlockExpression node) {
-                        return base.VisitBlock(node);
-                    }
+                /// <inheritdoc/>
+                protected override Expression VisitBinary(BinaryExpression node) {
+                    return base.VisitBinary(node);
+                }
 
-                    /// <inheritdoc/>
-                    protected override Expression VisitConditional(ConditionalExpression node) {
-                        return base.VisitConditional(node);
-                    }
+                /// <inheritdoc/>
+                protected override Expression VisitDynamic(DynamicExpression node) {
+                    return base.VisitDynamic(node);
+                }
 
-                    /// <inheritdoc/>
-                    protected override Expression VisitDynamic(DynamicExpression node) {
-                        return base.VisitDynamic(node);
-                    }
+                /// <inheritdoc/>
+                protected override Expression VisitExtension(Expression node) {
+                    return base.VisitExtension(node);
+                }
 
-                    /// <inheritdoc/>
-                    protected override ElementInit VisitElementInit(ElementInit node) {
-                        return base.VisitElementInit(node);
-                    }
+                /// <inheritdoc/>
+                protected override Expression VisitIndex(IndexExpression node) {
+                    return base.VisitIndex(node);
+                }
 
-                    /// <inheritdoc/>
-                    protected override Expression VisitExtension(Expression node) {
-                        return base.VisitExtension(node);
-                    }
+                /// <inheritdoc/>
+                protected override Expression VisitInvocation(InvocationExpression node) {
+                    return base.VisitInvocation(node);
+                }
 
-                    /// <inheritdoc/>
-                    protected override Expression VisitIndex(IndexExpression node) {
-                        return base.VisitIndex(node);
-                    }
+                /// <inheritdoc/>
+                protected override Expression VisitMember(MemberExpression node) {
+                    return base.VisitMember(node);
+                }
 
-                    /// <inheritdoc/>
-                    protected override Expression VisitInvocation(InvocationExpression node) {
-                        return base.VisitInvocation(node);
-                    }
+                /// <inheritdoc/>
+                protected override MemberAssignment VisitMemberAssignment(MemberAssignment node) {
+                    return base.VisitMemberAssignment(node);
+                }
 
-                    /// <inheritdoc/>
-                    protected override Expression VisitLambda<S>(Expression<S> node) {
-                        return new Replacer().Visit(node);
-                    }
+                /// <inheritdoc/>
+                protected override MemberBinding VisitMemberBinding(MemberBinding node) {
+                    return base.VisitMemberBinding(node);
+                }
 
-                    /// <inheritdoc/>
-                    protected override Expression VisitMember(MemberExpression node) {
-                        return base.VisitMember(node);
-                    }
+                /// <inheritdoc/>
+                protected override Expression VisitMemberInit(MemberInitExpression node) {
+                    return base.VisitMemberInit(node);
+                }
 
-                    /// <inheritdoc/>
-                    protected override MemberAssignment VisitMemberAssignment(MemberAssignment node) {
-                        return base.VisitMemberAssignment(node);
-                    }
+                /// <inheritdoc/>
+                protected override MemberListBinding VisitMemberListBinding(MemberListBinding node) {
+                    return base.VisitMemberListBinding(node);
+                }
 
-                    /// <inheritdoc/>
-                    protected override MemberBinding VisitMemberBinding(MemberBinding node) {
-                        return base.VisitMemberBinding(node);
-                    }
+                protected override MemberMemberBinding VisitMemberMemberBinding(MemberMemberBinding node) {
+                    return base.VisitMemberMemberBinding(node);
+                }
 
-                    /// <inheritdoc/>
-                    protected override Expression VisitMemberInit(MemberInitExpression node) {
-                        return base.VisitMemberInit(node);
-                    }
+                protected override Expression VisitMethodCall(MethodCallExpression node) {
+                    return base.VisitMethodCall(node);
+                }
 
-                    /// <inheritdoc/>
-                    protected override MemberListBinding VisitMemberListBinding(MemberListBinding node) {
-                        return base.VisitMemberListBinding(node);
-                    }
+                protected override Expression VisitNew(NewExpression node) {
+                    return base.VisitNew(node);
+                }
 
-                    protected override MemberMemberBinding VisitMemberMemberBinding(MemberMemberBinding node) {
-                        return base.VisitMemberMemberBinding(node);
-                    }
+                protected override Expression VisitNewArray(NewArrayExpression node) {
+                    return base.VisitNewArray(node);
+                }
 
-                    protected override Expression VisitMethodCall(MethodCallExpression node) {
-                        return base.VisitMethodCall(node);
-                    }
+                protected override Expression VisitParameter(ParameterExpression node) {
+                    return Expression.Parameter(typeof(MemoryDocument), node.Name);
+                }
 
-                    protected override Expression VisitNew(NewExpression node) {
-                        return base.VisitNew(node);
-                    }
+                protected override Expression VisitRuntimeVariables(RuntimeVariablesExpression node) {
+                    return base.VisitRuntimeVariables(node);
+                }
 
-                    protected override Expression VisitNewArray(NewArrayExpression node) {
-                        return base.VisitNewArray(node);
-                    }
+                protected override Expression VisitTypeBinary(TypeBinaryExpression node) {
+                    return base.VisitTypeBinary(node);
+                }
 
-                    protected override Expression VisitParameter(ParameterExpression node) {
-                        return base.VisitParameter(node);
-                    }
-
-                    protected override Expression VisitRuntimeVariables(RuntimeVariablesExpression node) {
-                        return base.VisitRuntimeVariables(node);
-                    }
-
-                    protected override Expression VisitTypeBinary(TypeBinaryExpression node) {
-                        return base.VisitTypeBinary(node);
-                    }
-
-                    protected override Expression VisitUnary(UnaryExpression node) {
-                        return base.VisitUnary(node);
-                    }
+                protected override Expression VisitUnary(UnaryExpression node) {
+                    return base.VisitUnary(node);
                 }
 
                 private readonly IQueryable _source;

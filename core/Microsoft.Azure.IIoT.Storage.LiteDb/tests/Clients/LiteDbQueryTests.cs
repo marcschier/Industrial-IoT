@@ -3,7 +3,7 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Storage.Memory {
+namespace Microsoft.Azure.IIoT.Storage.LiteDb.Clients {
     using Microsoft.Azure.IIoT.Storage;
     using System;
     using System.Threading.Tasks;
@@ -12,26 +12,29 @@ namespace Microsoft.Azure.IIoT.Storage.Memory {
     using Xunit;
     using Autofac;
 
-    public class MemoryDatabaseQueryTests : IClassFixture<MemoryDatabaseFixture> {
-        public MemoryDatabaseQueryTests(MemoryDatabaseFixture fixture) {
+    public class LiteDbQueryTests : IClassFixture<LiteDbClientFixture> {
+        public LiteDbQueryTests(LiteDbClientFixture fixture) {
             _fixture = fixture;
         }
 
         /// <summary>
         /// Dump all documents using linq
         /// </summary>
-        [Fact]
+        [SkippableFact]
         public async Task QueryAllDocuments1Async() {
             var documents = await _fixture.GetDocumentsAsync();
+            Skip.If(documents == null);
             var query = documents.CreateQuery<dynamic>();
             var results = await RunAsync(documents, query);
             Assert.Equal(2, results.Count);
         }
 
 
-        [Fact]
+        [SkippableFact]
         public async Task QueryAllDocuments2Async() {
             var documents = await _fixture.GetDocumentsAsync();
+            Skip.If(documents == null);
+
             var families =
                 from f in documents.CreateQuery<Family>()
                 select f;
@@ -39,9 +42,10 @@ namespace Microsoft.Azure.IIoT.Storage.Memory {
             Assert.Equal(2, results.Count);
         }
 
-        [Fact]
+        [SkippableFact]
         public async Task QueryWithAndFilterAndProjectionAsync() {
             var documents = await _fixture.GetDocumentsAsync();
+            Skip.If(documents == null);
 
             var query =
                 from f in documents.CreateQuery<Family>()
@@ -66,9 +70,10 @@ namespace Microsoft.Azure.IIoT.Storage.Memory {
             Assert.Equal(2, results1.Count);
         }
 
-        [Fact]
+        [SkippableFact]
         public async Task QueryWithAndFilterAsync() {
             var documents = await _fixture.GetDocumentsAsync();
+            Skip.If(documents == null);
 
             var families = from f in documents.CreateQuery<Family>()
                            where f.Id == "AndersenFamily" && f.Address.City == "Seattle"
@@ -84,9 +89,10 @@ namespace Microsoft.Azure.IIoT.Storage.Memory {
             Assert.Single(results);
         }
 
-        [Fact]
+        [SkippableFact]
         public async Task QueryWithEqualsOnIdAsync() {
             var documents = await _fixture.GetDocumentsAsync();
+            Skip.If(documents == null);
 
             var families =
                 from f in documents.CreateQuery<Family>()
@@ -101,9 +107,10 @@ namespace Microsoft.Azure.IIoT.Storage.Memory {
             Assert.Single(results);
         }
 
-        [Fact]
+        [SkippableFact]
         public async Task QueryWithInequalityAsync() {
             var documents = await _fixture.GetDocumentsAsync();
+            Skip.If(documents == null);
 
             var query = from f in documents.CreateQuery<Family>()
                         where f.Id != "AndersenFamily"
@@ -127,10 +134,10 @@ namespace Microsoft.Azure.IIoT.Storage.Memory {
             Assert.Empty(results);
         }
 
-        [Fact]
+        [SkippableFact]
         public async Task QueryWithRangeOperatorsOnNumbersAsync() {
             var documents = await _fixture.GetDocumentsAsync();
-
+            Skip.If(documents == null);
             var families = from f in documents.CreateQuery<Family>()
                            where f.Children[0].Grade > 5
                            select f;
@@ -145,10 +152,10 @@ namespace Microsoft.Azure.IIoT.Storage.Memory {
             Assert.Single(results);
         }
 
-        [Fact]
+        [SkippableFact]
         public async Task QueryWithRangeOperatorsOnStringsAsync() {
             var documents = await _fixture.GetDocumentsAsync();
-
+            Skip.If(documents == null);
 
             var families = documents.CreateQuery<Family>()
                 .Where(f => f.Address.State.CompareTo("NY") > 0);
@@ -157,9 +164,10 @@ namespace Microsoft.Azure.IIoT.Storage.Memory {
             Assert.Single(results);
         }
 
-        [Fact]
+        [SkippableFact]
         public async Task QueryWithRangeOperatorsDateTimesAsync() {
             var documents = await _fixture.GetDocumentsAsync();
+            Skip.If(documents == null);
 
             var families = documents.CreateQuery<Family>()
                 .Where(f => f.RegistrationDate >= DateTime.UtcNow.AddDays(-3));
@@ -168,10 +176,10 @@ namespace Microsoft.Azure.IIoT.Storage.Memory {
             Assert.Single(results);
         }
 
-        [Fact]
+        [SkippableFact]
         public async Task QueryWithOrderByNumbersAsync() {
             var documents = await _fixture.GetDocumentsAsync();
-
+            Skip.If(documents == null);
             var families =
                 from f in documents.CreateQuery<Family>()
                 where f.LastName == "Andersen"
@@ -190,10 +198,10 @@ namespace Microsoft.Azure.IIoT.Storage.Memory {
             Assert.Single(results);
         }
 
-        [Fact]
+        [SkippableFact]
         public async Task QueryWithOrderByStringsAsync() {
             var documents = await _fixture.GetDocumentsAsync();
-
+            Skip.If(documents == null);
             var families = from f in documents.CreateQuery<Family>()
                            where f.LastName == "Andersen"
                            orderby f.Address.State descending
@@ -210,9 +218,10 @@ namespace Microsoft.Azure.IIoT.Storage.Memory {
             Assert.Single(results);
         }
 
-        [Fact]
+        [SkippableFact]
         public async Task QueryWithAggregatesAsync() {
             var documents = await _fixture.GetDocumentsAsync();
+            Skip.If(documents == null);
 
             var count = documents.CreateQuery<Family>()
                 .Where(f => f.LastName == "Andersen")
@@ -233,9 +242,10 @@ namespace Microsoft.Azure.IIoT.Storage.Memory {
             Assert.Equal(8, maxGrade);
         }
 
-        [Fact]
+        [SkippableFact]
         public async Task QueryWithSubdocumentsAsync() {
             var documents = await _fixture.GetDocumentsAsync();
+            Skip.If(documents == null);
 
             var children = documents.CreateQuery<Family>()
                      .SelectMany(family => family.Children
@@ -245,9 +255,10 @@ namespace Microsoft.Azure.IIoT.Storage.Memory {
             Assert.Equal(3, results.Count);
         }
 
-        [Fact]
+        [SkippableFact]
         public async Task QueryWithTwoJoinsAndFilterAsync() {
             var documents = await _fixture.GetDocumentsAsync();
+            Skip.If(documents == null);
 
             var query = documents.CreateQuery<Family>()
                     .SelectMany(family => family.Children
@@ -264,9 +275,10 @@ namespace Microsoft.Azure.IIoT.Storage.Memory {
             Assert.Single(results);
         }
 
-        [Fact]
+        [SkippableFact]
         public async Task QueryWithTwoJoinsAsync() {
             var documents = await _fixture.GetDocumentsAsync();
+            Skip.If(documents == null);
 
             var query = documents.CreateQuery<Family>()
                     .SelectMany(family => family.Children
@@ -282,10 +294,11 @@ namespace Microsoft.Azure.IIoT.Storage.Memory {
             Assert.Equal(3, results.Count);
         }
 
-        [Fact]
+        [SkippableFact]
         public async Task QueryWithSingleJoinAsync() {
 
             var documents = await _fixture.GetDocumentsAsync();
+            Skip.If(documents == null);
 
             var query = documents.CreateQuery<Family>()
                     .SelectMany(family => family.Children
@@ -295,10 +308,10 @@ namespace Microsoft.Azure.IIoT.Storage.Memory {
             Assert.Equal(3, results.Count);
         }
 
-        [Fact]
+        [SkippableFact]
         public async Task QueryWithStringMathAndArrayOperatorsAsync() {
             var documents = await _fixture.GetDocumentsAsync();
-
+            Skip.If(documents == null);
 
             var query1 = documents.CreateQuery<Family>()
                 .Where(family => family.LastName.StartsWith("An"));
@@ -330,6 +343,6 @@ namespace Microsoft.Azure.IIoT.Storage.Memory {
             return results;
         }
 
-        private readonly MemoryDatabaseFixture _fixture;
+        private readonly LiteDbClientFixture _fixture;
     }
 }
