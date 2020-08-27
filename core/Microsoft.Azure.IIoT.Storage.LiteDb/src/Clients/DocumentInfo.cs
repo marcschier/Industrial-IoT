@@ -17,28 +17,48 @@ namespace Microsoft.Azure.IIoT.Storage.LiteDb.Clients {
         /// <summary>
         /// Create document
         /// </summary>
-        /// <param name="doc"></param>
-        internal DocumentInfo(object doc) {
-            _doc = doc ?? throw new ArgumentNullException(nameof(doc));
+        /// <param name="mapper"></param>
+        /// <param name="bson"></param>
+        internal DocumentInfo(BsonDocument bson, BsonMapper mapper = null) {
+            Bson = bson ?? throw new ArgumentNullException(nameof(bson));
+            _mapper = mapper ?? BsonMapper.Global;
         }
 
-        internal static DocumentInfo<S> Create<S>(dynamic doc) {
-            return new DocumentInfo<S>(doc);
+        /// <summary>
+        /// Create document
+        /// </summary>
+        /// <param name="mapper"></param>
+        /// <param name="value"></param>
+        /// <param name="id"></param>
+        internal DocumentInfo(T value, string id = null, BsonMapper mapper = null) {
+            _mapper = mapper ?? BsonMapper.Global;
+            Bson = mapper.ToDocument(value);
+            if (!string.IsNullOrEmpty(id)) {
+                Bson[IdProperty] = id;
+            }
+            Bson[EtagProperty] = Guid.NewGuid().ToString();
         }
 
         /// <inheritdoc/>
-        public string Id => _doc.Id;
+        public T Value => _mapper.Deserialize<T>(Bson);
 
         /// <inheritdoc/>
-        public T Value => (T)_doc;
+        public string Id => Bson[IdProperty];
 
         /// <inheritdoc/>
-        public string PartitionKey => _doc.GetPropertyValue<string>(
-            DocumentCollection.PartitionKeyProperty);
+        public string PartitionKey => Bson[PartitionKeyProperty];
 
         /// <inheritdoc/>
-        public string Etag => _doc.ETag;
+        public string Etag => Bson[EtagProperty];
 
-        private readonly dynamic _doc;
+        /// <summary>
+        /// Bson document
+        /// </summary>
+        public BsonDocument Bson { get; }
+
+        private readonly BsonMapper _mapper;
+        internal const string IdProperty = "id";
+        internal const string PartitionKeyProperty = "pk";
+        internal const string EtagProperty = "_etag";
     }
 }

@@ -12,7 +12,7 @@ namespace Microsoft.Azure.IIoT.Storage {
     /// <summary>
     /// List of documents
     /// </summary>
-    public interface IResultFeed<T> : IDisposable {
+    public interface IResultFeed<T> {
 
         /// <summary>
         /// Get continuation token to continue read later

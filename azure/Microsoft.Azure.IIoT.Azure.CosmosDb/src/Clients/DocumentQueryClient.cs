@@ -3,21 +3,23 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Storage.LiteDb.Clients {
+namespace Microsoft.Azure.IIoT.Azure.CosmosDb.Clients {
     using Microsoft.Azure.IIoT.Storage;
     using Microsoft.Azure.IIoT.Utils;
+    using Microsoft.Azure.Documents;
+    using Microsoft.Azure.Documents.Client;
+    using Microsoft.Azure.Documents.Linq;
     using Serilog;
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
-    using LiteDB;
 
     /// <summary>
     /// Document query client
     /// </summary>
-    internal sealed class DocumentQuery : ISqlClient, IQuery {
+    internal sealed class DocumentQueryClient : ISqlClient, IQueryClient {
 
         /// <summary>
         /// Create document query client
@@ -27,7 +29,7 @@ namespace Microsoft.Azure.IIoT.Storage.LiteDb.Clients {
         /// <param name="id"></param>
         /// <param name="partitioned"></param>
         /// <param name="logger"></param>
-        internal DocumentQuery(DocumentClient client, string databaseId,
+        internal DocumentQueryClient(DocumentClient client, string databaseId,
             string id, bool partitioned, ILogger logger) {
             _client = client ?? throw new ArgumentNullException(nameof(client));
             _databaseId = databaseId ?? throw new ArgumentNullException(nameof(databaseId));
@@ -37,28 +39,44 @@ namespace Microsoft.Azure.IIoT.Storage.LiteDb.Clients {
         }
 
         /// <inheritdoc/>
-        public IOrderedQueryable<T> CreateQuery<T>(int? pageSize, OperationOptions options) {
+        public IQuery<T> CreateQuery<T>(int? pageSize, OperationOptions options) {
             var pk = _partitioned || string.IsNullOrEmpty(options?.PartitionKey) ? null :
                 new PartitionKey(options.PartitionKey);
-            return _client.CreateDocumentQuery<T>(UriFactory.CreateDocumentCollectionUri(_databaseId, _id),
+            return new DocumentQuery<T>(_client.CreateDocumentQuery<T>(
+                UriFactory.CreateDocumentCollectionUri(_databaseId, _id),
                 new FeedOptions {
                     MaxDegreeOfParallelism = 8,
                     MaxItemCount = pageSize ?? -1,
                     PartitionKey = pk,
                     EnableCrossPartitionQuery = pk == null
+                }), _logger);
+        }
+
+        /// <inheritdoc/>
+        public IResultFeed<IDocumentInfo<T>> ContinueQuery<T>(string continuationToken,
+            int? pageSize, string partitionKey) {
+            if (string.IsNullOrEmpty(continuationToken)) {
+                throw new ArgumentNullException(nameof(continuationToken));
+            }
+            var pk = _partitioned || string.IsNullOrEmpty(partitionKey) ? null :
+                new PartitionKey(partitionKey);
+            var query = _client.CreateDocumentQuery<Document>(
+                UriFactory.CreateDocumentCollectionUri(_databaseId, _id),
+                new FeedOptions {
+                    MaxDegreeOfParallelism = 8,
+                    MaxItemCount = pageSize ?? -1,
+                    PartitionKey = pk,
+                    RequestContinuation = continuationToken,
+                    EnableCrossPartitionQuery = pk == null
                 });
+            return new DocumentInfoFeed<Document, T>(query.AsDocumentQuery(), _logger);
         }
 
-        /// <inheritdoc/>
-        public IResultFeed<IDocumentInfo<T>> GetResults<T>(IQueryable<T> query) {
-            return new DocumentInfoFeed<T, T>(query.AsDocumentQuery(), _logger);
-        }
 
-        /// <inheritdoc/>
-        public Task DropAsync<T>(IQueryable<T> query, CancellationToken ct) {
-            // TODO
-            throw new NotImplementedException();
-        }
+
+
+
+
 
         /// <inheritdoc/>
         public IResultFeed<IDocumentInfo<T>> Query<T>(string queryString,
@@ -81,26 +99,6 @@ namespace Microsoft.Azure.IIoT.Storage.LiteDb.Clients {
                     MaxItemCount = pageSize ?? -1,
                     PartitionKey = pk,
 
-                    EnableCrossPartitionQuery = pk == null
-                });
-            return new DocumentInfoFeed<Document, T>(query.AsDocumentQuery(), _logger);
-        }
-
-        /// <inheritdoc/>
-        public IResultFeed<IDocumentInfo<T>> ContinueQuery<T>(string continuationToken,
-            int? pageSize, string partitionKey) {
-            if (string.IsNullOrEmpty(continuationToken)) {
-                throw new ArgumentNullException(nameof(continuationToken));
-            }
-            var pk = _partitioned || string.IsNullOrEmpty(partitionKey) ? null :
-                new PartitionKey(partitionKey);
-            var query = _client.CreateDocumentQuery<Document>(
-                UriFactory.CreateDocumentCollectionUri(_databaseId, _id),
-                new FeedOptions {
-                    MaxDegreeOfParallelism = 8,
-                    MaxItemCount = pageSize ?? -1,
-                    PartitionKey = pk,
-                    RequestContinuation = continuationToken,
                     EnableCrossPartitionQuery = pk == null
                 });
             return new DocumentInfoFeed<Document, T>(query.AsDocumentQuery(), _logger);

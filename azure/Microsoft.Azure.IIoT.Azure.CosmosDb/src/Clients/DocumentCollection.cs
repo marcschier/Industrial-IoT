@@ -58,14 +58,14 @@ namespace Microsoft.Azure.IIoT.Azure.CosmosDb.Clients {
         }
 
         /// <inheritdoc/>
-        public IQuery Query() {
-            return new DocumentQuery(
+        public IQueryClient Query() {
+            return new DocumentQueryClient(
                 _db.Client, _db.DatabaseId, Container.Id, _partitioned, _logger);
         }
 
         /// <inheritdoc/>
         public ISqlClient OpenSqlClient() {
-            return new DocumentQuery(
+            return new DocumentQueryClient(
                 _db.Client, _db.DatabaseId, Container.Id, _partitioned, _logger);
         }
 

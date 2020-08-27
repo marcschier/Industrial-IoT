@@ -93,7 +93,7 @@ namespace Microsoft.Azure.IIoT.Storage {
         /// </summary>
         /// <exception cref="NotSupportedException"/>
         /// <returns></returns>
-        IQuery Query();
+        IQueryClient Query();
 
         /// <summary>
         /// Query using sql. If not supported will throw.

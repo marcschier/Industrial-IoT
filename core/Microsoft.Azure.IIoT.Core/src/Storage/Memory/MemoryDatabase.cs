@@ -82,7 +82,7 @@ namespace Microsoft.Azure.IIoT.Storage.Default {
         /// In memory container
         /// </summary>
         private class ItemContainer : IItemContainer, IDocuments,
-            ISqlClient, IQuery {
+            ISqlClient, IQueryClient {
 
             /// <inheritdoc/>
             public string Name { get; }
@@ -228,36 +228,75 @@ namespace Microsoft.Azure.IIoT.Storage.Default {
             }
 
             /// <inheritdoc/>
-            public IQuery Query() {
+            public IQueryClient Query() {
                 return this;
             }
 
             /// <inheritdoc/>
-            public IOrderedQueryable<T> CreateQuery<T>(int? pageSize, OperationOptions options) {
-                return new MemoryDocumentQuery<T>(_data.Values.AsQueryable(), pageSize);
+            public IQuery<T> CreateQuery<T>(int? pageSize, OperationOptions options) {
+                return new MemoryDocumentQuery<T>(_data.Values
+                    .Select(v => v.Value.ConvertTo<T>()).AsQueryable(), pageSize);
             }
 
-            /// <inheritdoc/>
-            public IResultFeed<IDocumentInfo<T>> GetResults<T>(IQueryable<T> query) {
-                var documentQuery = query as MemoryDocumentQuery<T>;
-                var documents = documentQuery.Documents();
-                var results = documents
-                    .Select(d => new Document<T>(d.Id, d.Value, d.PartitionKey));
-                var feed = (documentQuery.PageSize == null) ?
-                    results.YieldReturn() : results.Batch(documentQuery.PageSize.Value);
-                return new MemoryFeed<IDocumentInfo<T>>(this,
-                    new Queue<IEnumerable<IDocumentInfo<T>>>(feed));
-            }
+            /// <summary>
+            /// Query wrapper
+            /// </summary>
+            /// <typeparam name="T"></typeparam>
+            private class MemoryDocumentQuery<T> : IQuery<T> {
 
-            /// <inheritdoc/>
-            public Task DropAsync<T>(IQueryable<T> query, CancellationToken ct) {
-                var documentQuery = query as MemoryDocumentQuery<T>;
-                var documents = documentQuery.Documents();
-                foreach (var item in documents) {
-                    _data.Remove(item.Id);
+                /// <inheritdoc/>
+                public MemoryDocumentQuery(IQueryable<T> queryable, int? pageSize) {
+                    _queryable = queryable;
+                    _pageSize = pageSize;
                 }
-                return Task.CompletedTask;
+
+                /// <inheritdoc/>
+                public Task<int> CountAsync(CancellationToken ct = default) {
+                    throw new NotImplementedException();
+                }
+
+                /// <inheritdoc/>
+                public IResultFeed<IDocumentInfo<T>> GetResults() {
+                    throw new NotImplementedException();
+#if FALSE
+                    var results = _queryable
+                        .Select(d => new Document<T>(d.Id, d.Value, d.PartitionKey));
+                    var feed = (_pageSize == null) ?
+                        results.YieldReturn() : results.Batch(_pageSize.Value);
+                    return new MemoryFeed<IDocumentInfo<T>>(this,
+                        new Queue<IEnumerable<IDocumentInfo<T>>>(feed));
+#endif
+                }
+
+                /// <inheritdoc/>
+                public IQuery<T> OrderBy<K>(Expression<Func<T, K>> keySelector, int order = 1) {
+                    return new MemoryDocumentQuery<T>(_queryable.OrderBy(keySelector), _pageSize);
+                }
+
+                /// <inheritdoc/>
+                public IQuery<T> OrderByDescending<K>(Expression<Func<T, K>> keySelector) {
+                    throw new NotImplementedException();
+                }
+
+                /// <inheritdoc/>
+                public IQuery<K> Select<K>(Expression<Func<T, K>> selector) {
+                    throw new NotImplementedException();
+                }
+
+                /// <inheritdoc/>
+                public IQuery<K> SelectMany<K>(Expression<Func<T, IEnumerable<K>>> selector) {
+                    throw new NotImplementedException();
+                }
+
+                /// <inheritdoc/>
+                public IQuery<T> Where(Expression<Func<T, bool>> predicate) {
+                    throw new NotImplementedException();
+                }
+
+                private readonly IQueryable<T> _queryable;
+                private readonly int? _pageSize;
             }
+
 
             /// <inheritdoc/>
             public IResultFeed<IDocumentInfo<T>> ContinueQuery<T>(string continuationToken,
@@ -389,188 +428,6 @@ namespace Microsoft.Azure.IIoT.Storage.Default {
                     !(o1 == o2);
             }
 
-            public class MemoryDocumentQuery<T> : ExpressionVisitor, IOrderedQueryable<T>, IQueryProvider {
-
-                /// <inheritdoc/>
-                public Type ElementType => typeof(T);
-
-                /// <inheritdoc/>
-                public Expression Expression { get; }
-
-                /// <inheritdoc/>
-                public IQueryProvider Provider => this;
-
-                /// <summary>
-                /// Page size to paginate the query
-                /// </summary>
-                public int? PageSize { get; }
-
-                private MemoryDocumentQuery(IQueryable source, Expression e, int? pageSize) {
-                    Expression = e ?? throw new ArgumentNullException("e");
-                    _source = source;
-                    PageSize = pageSize;
-                }
-
-                public MemoryDocumentQuery(IQueryable source, int? pageSize) {
-                    Expression = Expression.Constant(this);
-                    _source = source;
-                    PageSize = pageSize;
-                }
-
-                /// <inheritdoc/>
-                public IEnumerator<T> GetEnumerator() {
-                    return ((IEnumerable<T>)ExecuteEnumerable()).GetEnumerator();
-                }
-
-                /// <inheritdoc/>
-                IEnumerator IEnumerable.GetEnumerator() {
-                    return ExecuteEnumerable().GetEnumerator();
-                }
-
-                /// <inheritdoc/>
-                public IQueryable<TElement> CreateQuery<TElement>(Expression expression) {
-                    return new MemoryDocumentQuery<TElement>(_source, expression, PageSize);
-                }
-
-                /// <inheritdoc/>
-                public IQueryable CreateQuery(Expression expression) {
-                    if (expression == null) {
-                        throw new ArgumentNullException("expression");
-                    }
-                    var elementType = expression.Type.GetGenericArguments().First();
-                    var result = (IQueryable)Activator.CreateInstance(
-                        typeof(MemoryDocumentQuery<>).MakeGenericType(elementType),
-                        new object[] { _source, expression, PageSize });
-                    return result;
-                }
-
-                /// <inheritdoc/>
-                public TResult Execute<TResult>(Expression expression) {
-                    if (expression == null) {
-                        throw new ArgumentNullException("expression");
-                    }
-
-                    var result = (this as IQueryProvider).Execute(expression);
-                    return (TResult)result;
-                }
-
-                /// <inheritdoc/>
-                public object Execute(Expression expression) {
-                    if (expression == null) {
-                        throw new ArgumentNullException("expression");
-                    }
-
-                    var translated = Visit(expression);
-                    return _source.Provider.Execute(translated);
-                }
-
-                internal IEnumerable ExecuteEnumerable() {
-                    var translated = Visit(Expression);
-                    return _source.Provider.CreateQuery(translated);
-                }
-
-                internal IEnumerable<MemoryDocument> Documents() {
-                    var translated = Visit(Expression);
-                    return (IEnumerable<MemoryDocument>)_source.Provider.CreateQuery(translated);
-                }
-
-
-                /// <inheritdoc/>
-                protected override Expression VisitConstant(ConstantExpression c) {
-                    return c.Type == typeof(MemoryDocumentQuery<T>) ?
-                        _source.Expression : base.VisitConstant(c);
-                }
-
-                /// <inheritdoc/>
-                protected override Expression VisitLambda<S>(Expression<S> node) {
-                    return Expression.Lambda(Visit(node.Body),
-                        node.Parameters.Select(p => Expression.Parameter(typeof(MemoryDocument), p.Name)));
-                }
-
-                /// <inheritdoc/>
-                protected override Expression VisitBinary(BinaryExpression node) {
-                    return base.VisitBinary(node);
-                }
-
-                /// <inheritdoc/>
-                protected override Expression VisitDynamic(DynamicExpression node) {
-                    return base.VisitDynamic(node);
-                }
-
-                /// <inheritdoc/>
-                protected override Expression VisitExtension(Expression node) {
-                    return base.VisitExtension(node);
-                }
-
-                /// <inheritdoc/>
-                protected override Expression VisitIndex(IndexExpression node) {
-                    return base.VisitIndex(node);
-                }
-
-                /// <inheritdoc/>
-                protected override Expression VisitInvocation(InvocationExpression node) {
-                    return base.VisitInvocation(node);
-                }
-
-                /// <inheritdoc/>
-                protected override Expression VisitMember(MemberExpression node) {
-                    return base.VisitMember(node);
-                }
-
-                /// <inheritdoc/>
-                protected override MemberAssignment VisitMemberAssignment(MemberAssignment node) {
-                    return base.VisitMemberAssignment(node);
-                }
-
-                /// <inheritdoc/>
-                protected override MemberBinding VisitMemberBinding(MemberBinding node) {
-                    return base.VisitMemberBinding(node);
-                }
-
-                /// <inheritdoc/>
-                protected override Expression VisitMemberInit(MemberInitExpression node) {
-                    return base.VisitMemberInit(node);
-                }
-
-                /// <inheritdoc/>
-                protected override MemberListBinding VisitMemberListBinding(MemberListBinding node) {
-                    return base.VisitMemberListBinding(node);
-                }
-
-                protected override MemberMemberBinding VisitMemberMemberBinding(MemberMemberBinding node) {
-                    return base.VisitMemberMemberBinding(node);
-                }
-
-                protected override Expression VisitMethodCall(MethodCallExpression node) {
-                    return base.VisitMethodCall(node);
-                }
-
-                protected override Expression VisitNew(NewExpression node) {
-                    return base.VisitNew(node);
-                }
-
-                protected override Expression VisitNewArray(NewArrayExpression node) {
-                    return base.VisitNewArray(node);
-                }
-
-                protected override Expression VisitParameter(ParameterExpression node) {
-                    return Expression.Parameter(typeof(MemoryDocument), node.Name);
-                }
-
-                protected override Expression VisitRuntimeVariables(RuntimeVariablesExpression node) {
-                    return base.VisitRuntimeVariables(node);
-                }
-
-                protected override Expression VisitTypeBinary(TypeBinaryExpression node) {
-                    return base.VisitTypeBinary(node);
-                }
-
-                protected override Expression VisitUnary(UnaryExpression node) {
-                    return base.VisitUnary(node);
-                }
-
-                private readonly IQueryable _source;
-            }
 
 
             /// <summary>

@@ -106,7 +106,7 @@ namespace Microsoft.Azure.IIoT.Azure.CosmosDb.Clients {
         /// </summary>
         /// <param name="options"></param>
         /// <returns></returns>
-        public async Task<IQuery> GetDocumentsAsync() {
+        public async Task<IQueryClient> GetDocumentsAsync() {
             var database = await Try.Async(() => GetDatabaseAsync());
             if (database == null) {
                 return null;

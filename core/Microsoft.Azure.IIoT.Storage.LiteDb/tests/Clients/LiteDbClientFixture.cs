@@ -12,6 +12,7 @@ namespace Microsoft.Azure.IIoT.Storage.LiteDb.Clients {
     using System;
     using System.Threading.Tasks;
     using System.Runtime.Serialization;
+    using Microsoft.Azure.IIoT.Storage.Default;
 
     public class LiteDbClientFixture {
 
@@ -92,12 +93,7 @@ namespace Microsoft.Azure.IIoT.Storage.LiteDb.Clients {
         /// <returns></returns>
         public async Task<IDatabase> GetDatabaseAsync() {
             var logger = ConsoleLogger.Create();
-            var config = new ConfigurationBuilder()
-                .AddFromDotEnvFile()
-                .AddFromKeyVault()
-                .Build();
-            var configuration = new LiteDbConfig(config);
-            var server = new LiteDbClient(configuration, logger);
+            var server = new LiteDbClient(null, logger);
             return await server.OpenAsync("test", null);
         }
 
@@ -106,7 +102,7 @@ namespace Microsoft.Azure.IIoT.Storage.LiteDb.Clients {
         /// </summary>
         /// <param name="options"></param>
         /// <returns></returns>
-        public async Task<IQuery> GetDocumentsAsync() {
+        public async Task<IQueryClient> GetDocumentsAsync() {
             var database = await Try.Async(() => GetDatabaseAsync());
             if (database == null) {
                 return null;

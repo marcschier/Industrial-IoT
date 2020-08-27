@@ -1,56 +1,75 @@
-// ------------------------------------------------------------
+﻿// ------------------------------------------------------------
 //  Copyright (c) Microsoft Corporation.  All rights reserved.
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
+
+
 namespace Microsoft.Azure.IIoT.Storage {
     using System;
-    using System.Linq;
+    using System.Collections;
+    using System.Collections.Generic;
+    using System.Linq.Expressions;
     using System.Threading;
     using System.Threading.Tasks;
 
     /// <summary>
-    /// Provides Query capability
+    /// Lightweight queryable abstraction
     /// </summary>
-    public interface IQuery : IDisposable {
+    /// <typeparam name="T"></typeparam>
+    public interface IQuery<T> {
 
         /// <summary>
-        /// Create Query
+        /// Where predicate
         /// </summary>
-        /// <typeparam name="T"></typeparam>
+        /// <param name="predicate"></param>
         /// <returns></returns>
-        IOrderedQueryable<T> CreateQuery<T>(int? pageSize = null,
-            OperationOptions options = null);
+        IQuery<T> Where(Expression<Func<T, bool>> predicate);
 
         /// <summary>
-        /// Continue a previously run query using continuation token
+        /// Order
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="continuationToken"></param>
-        /// <param name="pageSize"></param>
-        /// <param name="partitionKey"></param>
+        /// <typeparam name="K"></typeparam>
+        /// <param name="keySelector"></param>
+        /// <param name="order"></param>
         /// <returns></returns>
-        IResultFeed<IDocumentInfo<T>> ContinueQuery<T>(
-            string continuationToken,
-            int? pageSize = null, string partitionKey = null);
+        IQuery<T> OrderBy<K>(Expression<Func<T, K>> keySelector, int order = 1);
 
         /// <summary>
-        /// Run query items
+        /// Order
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="query"></param>
+        /// <typeparam name="K"></typeparam>
+        /// <param name="keySelector"></param>
         /// <returns></returns>
-        IResultFeed<IDocumentInfo<T>> GetResults<T>(
-            IQueryable<T> query);
+        IQuery<T> OrderByDescending<K>(Expression<Func<T, K>> keySelector);
 
         /// <summary>
-        /// Drop all items that match the query
+        /// Project
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="query"></param>
+        /// <typeparam name="K"></typeparam>
+        /// <param name="selector"></param>
+        /// <returns></returns>
+        IQuery<K> Select<K>(Expression<Func<T, K>> selector);
+
+        /// <summary>
+        /// Project many
+        /// </summary>
+        /// <typeparam name="K"></typeparam>
+        /// <param name="selector"></param>
+        /// <returns></returns>
+        IQuery<K> SelectMany<K>(Expression<Func<T, IEnumerable<K>>> selector);
+
+        /// <summary>
+        /// Run query and return feed
+        /// </summary>
+        /// <returns></returns>
+        IResultFeed<IDocumentInfo<T>> GetResults();
+
+        /// <summary>
+        /// Count
+        /// </summary>
         /// <param name="ct"></param>
         /// <returns></returns>
-        Task DropAsync<T>(IQueryable<T> query,
-            CancellationToken ct = default);
+        Task<int> CountAsync(CancellationToken ct = default);
     }
 }

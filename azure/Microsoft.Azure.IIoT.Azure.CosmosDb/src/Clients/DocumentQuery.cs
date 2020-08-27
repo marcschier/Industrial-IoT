@@ -1,152 +1,60 @@
-// ------------------------------------------------------------
+﻿// ------------------------------------------------------------
 //  Copyright (c) Microsoft Corporation.  All rights reserved.
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Azure.CosmosDb.Clients {
     using Microsoft.Azure.IIoT.Storage;
-    using Microsoft.Azure.IIoT.Utils;
-    using Microsoft.Azure.Documents;
-    using Microsoft.Azure.Documents.Client;
     using Microsoft.Azure.Documents.Linq;
     using Serilog;
     using System;
-    using System.Collections.Generic;
     using System.Linq;
-    using System.Threading;
+    using System.Linq.Expressions;
+    using System.Collections.Generic;
     using System.Threading.Tasks;
+    using System.Threading;
 
     /// <summary>
-    /// Document query client
+    /// Wrapper
     /// </summary>
-    internal sealed class DocumentQuery : ISqlClient, IQuery {
+    /// <typeparam name="T"></typeparam>
+    internal class DocumentQuery<T> : IQuery<T> {
 
-        /// <summary>
-        /// Create document query client
-        /// </summary>
-        /// <param name="client"></param>
-        /// <param name="databaseId"></param>
-        /// <param name="id"></param>
-        /// <param name="partitioned"></param>
-        /// <param name="logger"></param>
-        internal DocumentQuery(DocumentClient client, string databaseId,
-            string id, bool partitioned, ILogger logger) {
-            _client = client ?? throw new ArgumentNullException(nameof(client));
-            _databaseId = databaseId ?? throw new ArgumentNullException(nameof(databaseId));
-            _id = id ?? throw new ArgumentNullException(nameof(id));
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            _partitioned = partitioned;
+        internal DocumentQuery(IQueryable<T> orderedQueryable, ILogger logger) {
+            _queryable = orderedQueryable;
+            _logger = logger;
         }
 
-        /// <inheritdoc/>
-        public IOrderedQueryable<T> CreateQuery<T>(int? pageSize, OperationOptions options) {
-            var pk = _partitioned || string.IsNullOrEmpty(options?.PartitionKey) ? null :
-                new PartitionKey(options.PartitionKey);
-            return _client.CreateDocumentQuery<T>(UriFactory.CreateDocumentCollectionUri(_databaseId, _id),
-                new FeedOptions {
-                    MaxDegreeOfParallelism = 8,
-                    MaxItemCount = pageSize ?? -1,
-                    PartitionKey = pk,
-                    EnableCrossPartitionQuery = pk == null
-                });
+        public IResultFeed<IDocumentInfo<T>> GetResults() {
+            return new DocumentInfoFeed<T, T>(_queryable.AsDocumentQuery(), _logger);
         }
 
-        /// <inheritdoc/>
-        public IResultFeed<IDocumentInfo<T>> GetResults<T>(IQueryable<T> query) {
-            return new DocumentInfoFeed<T, T>(query.AsDocumentQuery(), _logger);
+        public Task<int> CountAsync(CancellationToken ct) {
+            return _queryable.CountAsync();
         }
 
-        /// <inheritdoc/>
-        public Task DropAsync<T>(IQueryable<T> query, CancellationToken ct) {
-            // TODO
-            throw new NotImplementedException();
+        public IQuery<T> OrderBy<K>(Expression<Func<T, K>> keySelector, int order = 1) {
+            return new DocumentQuery<T>(_queryable.OrderBy(keySelector), _logger);
         }
 
-        /// <inheritdoc/>
-        public IResultFeed<IDocumentInfo<T>> Query<T>(string queryString,
-            IDictionary<string, object> parameters, int? pageSize, string partitionKey) {
-            if (string.IsNullOrEmpty(queryString)) {
-                throw new ArgumentNullException(nameof(queryString));
-            }
-            var pk = _partitioned || string.IsNullOrEmpty(partitionKey) ? null :
-                new PartitionKey(partitionKey);
-            var query = _client.CreateDocumentQuery<Document>(
-                UriFactory.CreateDocumentCollectionUri(_databaseId, _id),
-                new SqlQuerySpec {
-                    QueryText = queryString,
-                    Parameters = new SqlParameterCollection(parameters?
-                        .Select(kv => new SqlParameter(kv.Key, kv.Value)) ??
-                            Enumerable.Empty<SqlParameter>())
-                },
-                new FeedOptions {
-                    MaxDegreeOfParallelism = 8,
-                    MaxItemCount = pageSize ?? -1,
-                    PartitionKey = pk,
-
-                    EnableCrossPartitionQuery = pk == null
-                });
-            return new DocumentInfoFeed<Document, T>(query.AsDocumentQuery(), _logger);
+        public IQuery<T> OrderByDescending<K>(Expression<Func<T, K>> keySelector) {
+            return new DocumentQuery<T>(_queryable.OrderByDescending(keySelector), _logger);
         }
 
-        /// <inheritdoc/>
-        public IResultFeed<IDocumentInfo<T>> ContinueQuery<T>(string continuationToken,
-            int? pageSize, string partitionKey) {
-            if (string.IsNullOrEmpty(continuationToken)) {
-                throw new ArgumentNullException(nameof(continuationToken));
-            }
-            var pk = _partitioned || string.IsNullOrEmpty(partitionKey) ? null :
-                new PartitionKey(partitionKey);
-            var query = _client.CreateDocumentQuery<Document>(
-                UriFactory.CreateDocumentCollectionUri(_databaseId, _id),
-                new FeedOptions {
-                    MaxDegreeOfParallelism = 8,
-                    MaxItemCount = pageSize ?? -1,
-                    PartitionKey = pk,
-                    RequestContinuation = continuationToken,
-                    EnableCrossPartitionQuery = pk == null
-                });
-            return new DocumentInfoFeed<Document, T>(query.AsDocumentQuery(), _logger);
+        public IQuery<K> Select<K>(Expression<Func<T, K>> selector) {
+            return new DocumentQuery<K>(_queryable.Select(selector), _logger);
         }
 
-        /// <inheritdoc/>
-        public async Task DropAsync<T>(string queryString,
-            IDictionary<string, object> parameters, string partitionKey,
-            CancellationToken ct) {
-            var query = new SqlQuerySpec {
-                QueryText = queryString,
-                Parameters = new SqlParameterCollection(parameters?
-                    .Select(kv => new SqlParameter(kv.Key, kv.Value)) ??
-                        Enumerable.Empty<SqlParameter>())
-            };
-            var uri = UriFactory.CreateStoredProcedureUri(_databaseId, _id,
-                DocumentDatabase.BulkDeleteSprocName);
-            var pk = _partitioned || string.IsNullOrEmpty(partitionKey) ? null :
-                new PartitionKey(partitionKey);
-            await Retry.WithExponentialBackoff(_logger, ct, async () => {
-                while (true) {
-                    try {
-                        dynamic scriptResult =
-                            await _client.ExecuteStoredProcedureAsync<dynamic>(uri,
-                            new RequestOptions { PartitionKey = pk }, query, ct);
-                        _logger.Debug("  {deleted} items deleted.", scriptResult.deleted);
-                        if (!scriptResult.continuation) {
-                            break;
-                        }
-                    }
-                    catch (Exception ex) {
-                        DocumentCollection.FilterException(ex);
-                    }
-                }
-            });
+        public IQuery<T> Where(Expression<Func<T, bool>> predicate) {
+            return new DocumentQuery<T>(_queryable.Where(predicate), _logger);
         }
 
-        public void Dispose() {
+        public IQuery<K> SelectMany<K>(Expression<Func<T, IEnumerable<K>>> selector) {
+            return new DocumentQuery<K>(_queryable.SelectMany(selector), _logger);
         }
 
-        private readonly DocumentClient _client;
-        private readonly string _databaseId;
-        private readonly string _id;
-        private readonly bool _partitioned;
+        private readonly IQueryable<T> _queryable;
         private readonly ILogger _logger;
     }
+
 }
