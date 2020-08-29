@@ -21,7 +21,7 @@ namespace Microsoft.Azure.IIoT.Cryptography {
         /// </param>
         /// <param name="ct">CancellationToken</param>
         /// <returns></returns>
-        Task<Certificate> GetLatestCertificateAsync(
+        Task<Certificate> FindLatestCertificateAsync(
             string certificateName, CancellationToken ct = default);
 
         /// <summary>

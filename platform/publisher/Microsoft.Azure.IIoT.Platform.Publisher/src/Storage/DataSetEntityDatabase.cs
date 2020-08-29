@@ -355,26 +355,22 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Storage.Default {
             if (string.IsNullOrEmpty(dataSetWriterId)) {
                 throw new ArgumentNullException(nameof(dataSetWriterId));
             }
-            var queryString = $"SELECT * FROM r WHERE " +
-$"r.{nameof(DataSetEntityDocument.DataSetWriterId)} = @dataSetWriterId AND " +
-$"r.{nameof(DataSetEntityDocument.ClassType)} = '{DataSetEntityDocument.ClassTypeName}'";
-            var client = _documents.OpenSqlClient();
-            var results = client.Query<DataSetEntityDocument>(queryString,
-                new Dictionary<string, object> {
-                    { "@dataSetWriterId", dataSetWriterId }
-                });
-            await results.ForEachAsync(doc => _documents.DeleteAsync(doc, ct), ct);
+            var results = _documents.CreateQuery<DataSetEntityDocument>()
+                .Where(x => x.DataSetWriterId == dataSetWriterId)
+                .Where(x => x.ClassType == DataSetEntityDocument.ClassTypeName)
+                .GetResults();
+            await results.ForEachAsync(d => 
+                _documents.DeleteAsync<DataSetEntityDocument>(d.Id, ct), ct);
         }
 
         /// <inheritdoc/>
         public async Task<PublishedDataSetVariableListModel> QueryDataSetVariablesAsync(
             string dataSetWriterId, PublishedDataSetVariableQueryModel query,
             string continuationToken, int? maxResults, CancellationToken ct) {
-            var client = _documents.OpenSqlClient();
             var results = continuationToken != null ?
-                client.ContinueQuery<DataSetEntityDocument>(continuationToken, maxResults) :
-                client.Query<DataSetEntityDocument>(CreateQuery(dataSetWriterId,
-                    query, out var queryParameters), queryParameters, maxResults);
+                _documents.ContinueQuery<DataSetEntityDocument>(continuationToken, maxResults) :
+                CreateQuery(_documents.CreateQuery<DataSetEntityDocument>(maxResults), 
+                    dataSetWriterId, query);
             if (!results.HasMore()) {
                 return new PublishedDataSetVariableListModel {
                     Variables = new List<PublishedDataSetVariableModel>()
@@ -392,37 +388,25 @@ $"r.{nameof(DataSetEntityDocument.ClassType)} = '{DataSetEntityDocument.ClassTyp
         /// </summary>
         /// <param name="dataSetWriterId"></param>
         /// <param name="query"></param>
-        /// <param name="queryParameters"></param>
+        /// <param name="filter"></param>
         /// <returns></returns>
-        private static string CreateQuery(string dataSetWriterId,
-            PublishedDataSetVariableQueryModel query, out Dictionary<string, object> queryParameters) {
-            queryParameters = new Dictionary<string, object>();
-            var queryString = $"SELECT * FROM r WHERE ";
+        private static IResultFeed<IDocumentInfo<DataSetEntityDocument>> CreateQuery(
+            IQuery<DataSetEntityDocument> query, string dataSetWriterId, 
+            PublishedDataSetVariableQueryModel filter) {
             if (!string.IsNullOrEmpty(dataSetWriterId)) {
-                queryString +=
-$"r.{nameof(DataSetEntityDocument.DataSetWriterId)} = @dataSetWriterId AND ";
-                queryParameters.Add("@dataSetWriterId", dataSetWriterId);
+                query = query.Where(x => x.DataSetWriterId == dataSetWriterId);
             }
-            if (query?.Attribute != null) {
-                queryString +=
-$"r.{nameof(DataSetEntityDocument.Attribute)} = @attribute AND ";
-                queryParameters.Add("@attribute", query.Attribute.Value);
+            if (filter?.Attribute != null) {
+                query = query.Where(x => x.Attribute == filter.Attribute.Value);
             }
-            if (query?.PublishedVariableDisplayName != null) {
-                queryString +=
-$"r.{nameof(DataSetEntityDocument.DisplayName)} = @name AND ";
-                queryParameters.Add("@name", query.PublishedVariableDisplayName);
+            if (filter?.PublishedVariableDisplayName != null) {
+                query = query.Where(x => x.DisplayName == filter.PublishedVariableDisplayName);
             }
-            if (query?.PublishedVariableNodeId != null) {
-                queryString +=
-$"r.{nameof(DataSetEntityDocument.NodeId)} = @nodeId AND ";
-                queryParameters.Add("@nodeId", query.PublishedVariableNodeId);
+            if (filter?.PublishedVariableNodeId != null) {
+                query = query.Where(x => x.NodeId == filter.PublishedVariableNodeId);
             }
-            queryString +=
-$"r.{nameof(DataSetEntityDocument.ClassType)} = '{DataSetEntityDocument.ClassTypeName}' AND ";
-            queryString +=
-$"r.{nameof(DataSetEntityDocument.Type)} = '{DataSetEntityDocument.Variable}'";
-            return queryString;
+            query = query.Where(x => x.ClassType == DataSetEntityDocument.ClassTypeName);
+            return query.GetResults();
         }
 
         private readonly IDocuments _documents;

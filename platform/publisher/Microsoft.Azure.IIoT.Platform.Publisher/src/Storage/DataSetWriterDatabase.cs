@@ -143,11 +143,9 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Storage.Default {
         /// <inheritdoc/>
         public async Task<DataSetWriterInfoListModel> QueryAsync(DataSetWriterInfoQueryModel query,
             string continuationToken, int? maxResults, CancellationToken ct) {
-            var client = _documents.OpenSqlClient();
             var results = continuationToken != null ?
-                client.ContinueQuery<DataSetWriterDocument>(continuationToken, maxResults) :
-                client.Query<DataSetWriterDocument>(CreateQuery(query, out var queryParameters),
-                    queryParameters, maxResults);
+                _documents.ContinueQuery<DataSetWriterDocument>(continuationToken, maxResults) :
+                CreateQuery(_documents.CreateQuery<DataSetWriterDocument>(maxResults), query);
             if (!results.HasMore()) {
                 return new DataSetWriterInfoListModel {
                     DataSetWriters = new List<DataSetWriterInfoModel>()
@@ -201,35 +199,25 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Storage.Default {
         /// <summary>
         /// Create query
         /// </summary>
+        /// <param name="filter"></param>
         /// <param name="query"></param>
-        /// <param name="queryParameters"></param>
         /// <returns></returns>
-        private static string CreateQuery(DataSetWriterInfoQueryModel query,
-            out Dictionary<string, object> queryParameters) {
-            queryParameters = new Dictionary<string, object>();
-            var queryString = $"SELECT * FROM r WHERE ";
-            if (query?.WriterGroupId != null) {
-                queryString +=
-$"r.{nameof(DataSetWriterDocument.WriterGroupId)} = @groupId AND ";
-                queryParameters.Add("@groupId", query.WriterGroupId);
+        private static IResultFeed<IDocumentInfo<DataSetWriterDocument>> CreateQuery(
+            IQuery<DataSetWriterDocument> query, DataSetWriterInfoQueryModel filter) {
+            if (filter?.WriterGroupId != null) {
+                query = query.Where(x => x.WriterGroupId == filter.WriterGroupId);
             }
-            if (query?.EndpointId != null) {
-                queryString +=
-$"r.{nameof(DataSetWriterDocument.EndpointId)} = @endpoint AND ";
-                queryParameters.Add("@endpoint", query.EndpointId);
+            if (filter?.EndpointId != null) {
+                query = query.Where(x => x.EndpointId == filter.EndpointId);
             }
-            if (query?.DataSetName != null) {
-                queryString +=
-$"r.{nameof(DataSetWriterDocument.DataSetName)} = @name AND ";
-                queryParameters.Add("@name", query.DataSetName);
+            if (filter?.DataSetName != null) {
+                query = query.Where(x => x.DataSetName == filter.DataSetName);
             }
-            if (query?.ExcludeDisabled == true) {
-                queryString +=
-$"r.{nameof(DataSetWriterDocument.IsDisabled)} = false AND ";
+            if (filter?.ExcludeDisabled == true) {
+                query = query.Where(x => x.IsDisabled == false);
             }
-            queryString +=
-$"r.{nameof(DataSetWriterDocument.ClassType)} = '{DataSetWriterDocument.ClassTypeName}'";
-            return queryString;
+            query = query.Where(x => x.ClassType == DataSetWriterDocument.ClassTypeName);
+            return query.GetResults();
         }
 
         private readonly IDocuments _documents;

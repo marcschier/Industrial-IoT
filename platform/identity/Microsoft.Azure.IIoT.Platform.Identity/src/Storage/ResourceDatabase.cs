@@ -74,10 +74,8 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Storage {
         /// <inheritdoc/>
         public async Task<IEnumerable<ApiScope>> FindApiScopesByNameAsync(
             IEnumerable<string> scopeNames) {
-            var resource = _documents.OpenSqlClient();
-            var results = resource.Query<ResourceDocumentModel>(
-                CreateNameQuery(out var queryParameters, scopeNames, nameof(ApiScope)),
-                    queryParameters);
+            var results = CreateNameQuery(_documents.CreateQuery<ResourceDocumentModel>(),
+                scopeNames, nameof(ApiScope));
 
             var apiScopes = new List<ApiScope>();
             while (results.HasMore()) {
@@ -91,10 +89,8 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Storage {
         /// <inheritdoc/>
         public async Task<IEnumerable<IdentityResource>> FindIdentityResourcesByScopeNameAsync(
             IEnumerable<string> scopeNames) {
-            var resource = _documents.OpenSqlClient();
-            var results = resource.Query<ResourceDocumentModel>(
-                CreateNameQuery(out var queryParameters, scopeNames, nameof(IdentityResource)),
-                    queryParameters);
+            var results = CreateNameQuery(_documents.CreateQuery<ResourceDocumentModel>(),
+                scopeNames, nameof(IdentityResource));
 
             var identityResources = new List<IdentityResource>();
             while (results.HasMore()) {
@@ -108,11 +104,8 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Storage {
         /// <inheritdoc/>
         public async Task<IEnumerable<ApiResource>> FindApiResourcesByScopeNameAsync(
             IEnumerable<string> scopeNames) {
-            var resource = _documents.OpenSqlClient();
-            var results = resource.Query<ResourceDocumentModel>(
-                CreateScopeQuery(out var queryParameters, scopeNames, nameof(ApiResource)),
-                    queryParameters);
-
+            var results = CreateScopeQuery(_documents.CreateQuery<ResourceDocumentModel>(),
+                scopeNames, nameof(ApiResource));
             var apiResources = new List<ApiResource>();
             while (results.HasMore()) {
                 var documents = await results.ReadAsync();
@@ -125,10 +118,8 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Storage {
         /// <inheritdoc/>
         public async Task<IEnumerable<ApiResource>> FindApiResourcesByNameAsync(
             IEnumerable<string> apiResourceNames) {
-            var resource = _documents.OpenSqlClient();
-            var results = resource.Query<ResourceDocumentModel>(
-                CreateNameQuery(out var queryParameters, apiResourceNames, nameof(ApiResource)),
-                    queryParameters);
+            var results = CreateNameQuery(_documents.CreateQuery<ResourceDocumentModel>(), 
+                apiResourceNames, nameof(ApiResource));
 
             var apiResources = new List<ApiResource>();
             while (results.HasMore()) {
@@ -150,8 +141,7 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Storage {
 
         /// <inheritdoc/>
         public async Task<Resources> GetAllResourcesAsync() {
-            var resource = _documents.OpenSqlClient();
-            var results = resource.Query<ResourceDocumentModel>("SELECT * FROM r");
+            var results = _documents.CreateQuery<ResourceDocumentModel>().GetResults();
             var apiResources = new List<ApiResource>();
             var apiScopes = new List<ApiScope>();
             var identityResources = new List<IdentityResource>();
@@ -173,41 +163,36 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Storage {
         /// <summary>
         /// Create query
         /// </summary>
-        /// <param name="queryParameters"></param>
+        /// <param name="query"></param>
         /// <param name="scopeNames"></param>
         /// <param name="resourceType"></param>
         /// <returns></returns>
-        private static string CreateScopeQuery(out Dictionary<string, object> queryParameters,
-            IEnumerable<string> scopeNames, string resourceType) {
-            queryParameters = new Dictionary<string, object> {
-                { "@scopes", scopeNames
-                      .Select(s => s.ToLowerInvariant()).ToList() }
-            };
-            var queryString = $"SELECT r FROM r JOIN " +
-$"(SELECT VALUE scope FROM scope IN r.{nameof(ResourceDocumentModel.Scopes)} WHERE scope IN (@scopes)) " +
-$"WHERE r.{nameof(ResourceDocumentModel.ResourceType)} = '{resourceType}'";
-            return queryString;
+        private static IResultFeed<IDocumentInfo<ResourceDocumentModel>> CreateScopeQuery(
+            IQuery<ResourceDocumentModel> query, IEnumerable<string> scopeNames, string resourceType) {
+            var normalizedNames = scopeNames
+                .Select(s => s.ToLowerInvariant()).ToArray();
+            return query
+                .Where(x => x.ResourceType == resourceType)
+                .Where(x => x.Scopes != null)
+                .Where(x => x.Scopes.Any(s => scopeNames.Contains(s)))
+                .GetResults();
         }
 
         /// <summary>
         /// Create query
         /// </summary>
-        /// <param name="queryParameters"></param>
+        /// <param name="query"></param>
         /// <param name="names"></param>
         /// <param name="resourceType"></param>
         /// <returns></returns>
-        private static string CreateNameQuery(out Dictionary<string, object> queryParameters,
-            IEnumerable<string> names, string resourceType) {
-            queryParameters = new Dictionary<string, object> {
-                { "@names", names
-                      .Select(s => s.ToLowerInvariant()).ToList() }
-            };
-            var queryString = $"SELECT * FROM r WHERE ";
-            queryString +=
-$"r.{nameof(ResourceDocumentModel.Name)} IN (@names)' AND ";
-            queryString +=
-$"r.{nameof(ResourceDocumentModel.ResourceType)} = '{resourceType}'";
-            return queryString;
+        private static IResultFeed<IDocumentInfo<ResourceDocumentModel>> CreateNameQuery(
+            IQuery<ResourceDocumentModel> query, IEnumerable<string> names, string resourceType) {
+            var normalizedNames = names
+                .Select(s => s.ToLowerInvariant()).ToArray();
+            return query
+                .Where(x => x.ResourceType == resourceType)
+                .Where(x => normalizedNames.Contains(x.Name))
+                .GetResults();
         }
 
         private readonly ILogger _logger;

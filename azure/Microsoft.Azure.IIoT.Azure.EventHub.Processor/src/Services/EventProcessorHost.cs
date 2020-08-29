@@ -4,7 +4,6 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Azure.EventHub.Processor.Services {
-    using Microsoft.Azure.IIoT.Azure.EventHub;
     using Microsoft.Azure.IIoT.Messaging;
     using Microsoft.Azure.IIoT.Exceptions;
     using Microsoft.Azure.EventHubs;

@@ -3,11 +3,8 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-
-
 namespace Microsoft.Azure.IIoT.Storage {
     using System;
-    using System.Collections;
     using System.Collections.Generic;
     using System.Linq.Expressions;
     using System.Threading;
@@ -58,6 +55,19 @@ namespace Microsoft.Azure.IIoT.Storage {
         /// <param name="selector"></param>
         /// <returns></returns>
         IQuery<K> SelectMany<K>(Expression<Func<T, IEnumerable<K>>> selector);
+
+        /// <summary>
+        /// Limit to max records to return
+        /// </summary>
+        /// <param name="maxRecords"></param>
+        /// <returns></returns>
+        IQuery<T> Take(int maxRecords = 1);
+
+        /// <summary>
+        /// Filter duplicates
+        /// </summary>
+        /// <returns></returns>
+        IQuery<T> Distinct();
 
         /// <summary>
         /// Run query and return feed

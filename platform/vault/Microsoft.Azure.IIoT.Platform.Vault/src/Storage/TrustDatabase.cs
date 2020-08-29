@@ -48,18 +48,10 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Storage {
             if (string.IsNullOrEmpty(subjectId)) {
                 throw new ArgumentNullException(nameof(subjectId));
             }
-            var client = _relationships.OpenSqlClient();
-            try {
-                await client.DropAsync<TrustDocument>(CreateQuery(subjectId, false,
-                    direction, objectId, out var queryParameters), queryParameters, null,
-                    ct);
-            }
-            catch {
-                var query = client.Query<string>(CreateQuery(subjectId, true,
-                    direction, objectId, out var queryParameters), queryParameters, null);
-                await query.ForEachAsync(
-                    document => _relationships.DeleteAsync(document, ct), ct);
-            }
+            var query = CreateQuery(_relationships.CreateQuery<TrustDocument>(), 
+                subjectId, direction, objectId);
+            await query.ForEachAsync(
+                d => _relationships.DeleteAsync<TrustDocument>(d.Id, ct), ct);
         }
 
         /// <inheritdoc/>
@@ -70,11 +62,11 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Storage {
             if (string.IsNullOrEmpty(entityId)) {
                 throw new ArgumentNullException(nameof(entityId));
             }
-            var client = _relationships.OpenSqlClient();
+
             var query = nextPageLink != null ?
-                client.ContinueQuery<TrustDocument>(nextPageLink, pageSize) :
-                client.Query<TrustDocument>(CreateQuery(entityId, false, direction,
-                    null, out var queryParameters), queryParameters, pageSize);
+                _relationships.ContinueQuery<TrustDocument>(nextPageLink, pageSize) :
+                CreateQuery(_relationships.CreateQuery<TrustDocument>(pageSize),
+                    entityId, direction, null);
 
             // Read results
             var results = await query.ReadAsync(ct);
@@ -88,51 +80,49 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Storage {
         /// Create query
         /// </summary>
         /// <param name="entityId"></param>
-        /// <param name="idOnly"></param>
         /// <param name="direction"></param>
         /// <param name="objectId"></param>
-        /// <param name="queryParameters"></param>
+        /// <param name="query"></param>
         /// <returns></returns>
-        private static string CreateQuery(string entityId, bool idOnly, TrustDirectionType? direction,
-            string objectId, out Dictionary<string, object> queryParameters) {
-
-            queryParameters = new Dictionary<string, object>();
-            var queryString = $"SELECT {(idOnly ? "g.Id" : "*")} FROM Trust g WHERE ";
+        private static IResultFeed<IDocumentInfo<TrustDocument>> CreateQuery(IQuery<TrustDocument> query,
+            string entityId, TrustDirectionType? direction, string objectId) {
 
             var trusted = direction == null ||
-                 TrustDirectionType.Trusted == (direction.Value & TrustDirectionType.Trusted);
+                TrustDirectionType.Trusted == (direction.Value & TrustDirectionType.Trusted);
             var trusts = direction == null ||
                 TrustDirectionType.Trusting == (direction.Value & TrustDirectionType.Trusting);
 
-            if (trusted || trusts) {
-                queryString += "(";
-            }
-            if (trusted) {
-                queryString += $"(g.{nameof(TrustDocument.TrustedId)} = @trustedS";
-                queryParameters.Add("@trustedS", entityId);
-                if (objectId != null) {
-                    queryString += $" AND g.{nameof(TrustDocument.TrustingId)} = @trustingO";
-                    queryParameters.Add("@trustingO", objectId);
-                }
-                queryString += ")";
-            }
             if (trusted && trusts) {
-                queryString += " OR ";
-            }
-            if (trusts) {
-                queryString += $"(g.{nameof(TrustDocument.TrustingId)} = @trustingS";
-                queryParameters.Add("@trustingS", entityId);
-                if (objectId != null) {
-                    queryString += $" AND g.{nameof(TrustDocument.TrustedId)} = @trustedO";
-                    queryParameters.Add("@trustedO", objectId);
+                if (objectId == null) {
+                    query = query.Where(x => 
+                        x.TrustedId == entityId || x.TrustingId == entityId);
                 }
-                queryString += ")";
+                else {
+                    query = query.Where(x =>
+                        (x.TrustedId == entityId && x.TrustingId == objectId) ||
+                        (x.TrustedId == objectId && x.TrustingId == entityId));
+                }
             }
-            if (trusted || trusts) {
-                queryString += ") AND ";
+            else if (trusted) {
+                if (objectId == null) {
+                    query = query.Where(x => x.TrustedId == entityId);
+                }
+                else {
+                    query = query.Where(x =>
+                        x.TrustedId == entityId && x.TrustingId == objectId);
+                }
             }
-            queryString += $"g.{nameof(TrustDocument.ClassType)} = '{TrustDocument.ClassTypeName}'";
-            return queryString;
+            else if (trusts) {
+                if (objectId == null) {
+                    query = query.Where(x => x.TrustingId == entityId);
+                }
+                else {
+                    query = query.Where(x =>
+                        x.TrustedId == objectId && x.TrustingId == entityId);
+                }
+            }
+            query = query.Where(x => x.ClassType == TrustDocument.ClassTypeName);
+            return query.GetResults();
         }
 
         private readonly IDocuments _relationships;

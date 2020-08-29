@@ -4,8 +4,6 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.App.Models {
-    using System;
-
     public class PublisherInfoRequested {
 
         public PublisherInfoRequested(PublisherInfo publisher) {

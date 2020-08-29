@@ -43,9 +43,7 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Storage {
             if (filter == null) {
                 throw new ArgumentNullException(nameof(filter));
             }
-            var client = _documents.OpenSqlClient();
-            var results = client.Query<GrantDocumentModel>(
-                CreateQuery(filter, out var queryParameters), queryParameters);
+            var results = CreateQuery(_documents.CreateQuery<GrantDocumentModel>(), filter);
             var grants = new List<PersistedGrant>();
             while (results.HasMore()) {
                 var documents = await results.ReadAsync();
@@ -71,40 +69,36 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Storage {
             if (filter == null) {
                 throw new ArgumentNullException(nameof(filter));
             }
-            var client = _documents.OpenSqlClient();
-            await client.DropAsync<GrantDocumentModel>(
-                CreateQuery(filter, out var queryParameters), queryParameters);
+            var results = CreateQuery(_documents.CreateQuery<GrantDocumentModel>(), 
+                filter);
+            await results.ForEachAsync(d =>
+                _documents.DeleteAsync<GrantDocumentModel>(d.Id));
         }
 
         /// <summary>
         /// Create query
         /// </summary>
         /// <param name="filter"></param>
-        /// <param name="queryParameters"></param>
+        /// <param name="query"></param>
         /// <returns></returns>
-        private string CreateQuery(PersistedGrantFilter filter,
-            out Dictionary<string, object> queryParameters) {
-            queryParameters = new Dictionary<string, object>();
-            var queryString = $"SELECT * FROM r WHERE ";
+        private IResultFeed<IDocumentInfo<GrantDocumentModel>> CreateQuery(
+            IQuery<GrantDocumentModel> query, PersistedGrantFilter filter) {
+
             if (filter.ClientId != null) {
-                queryString += $"r.{nameof(GrantDocumentModel.ClientId)} = @clientId AND";
-                queryParameters.Add("@subjectId", filter.SubjectId);
+                query = query.Where(x => x.ClientId == filter.ClientId);
             }
             if (filter.SubjectId != null) {
-                queryString += $"r.{nameof(GrantDocumentModel.SubjectId)} = @subjectId AND ";
-                queryParameters.Add("@type", filter.Type);
+                query = query.Where(x => x.SubjectId == filter.SubjectId);
             }
             if (filter.SessionId != null) {
-                queryString += $"r.{nameof(GrantDocumentModel.SessionId)} = @sessionId AND ";
-                queryParameters.Add("@sessionId", filter.SessionId);
+                query = query.Where(x => x.SessionId == filter.SessionId);
             }
             if (filter.Type != null) {
-                queryString += $"r.{nameof(GrantDocumentModel.Type)} = @type AND ";
-                queryParameters.Add("@clientId", filter.ClientId);
+                query = query.Where(x => x.Type == filter.Type);
             }
-
-            queryString += $"r.{nameof(GrantDocumentModel.Expiration)} < {DateTime.UtcNow}";
-            return queryString;
+            var now = DateTime.UtcNow;
+            query = query.Where(x => x.Expiration < now);
+            return query.GetResults();
         }
 
         private readonly IDocuments _documents;

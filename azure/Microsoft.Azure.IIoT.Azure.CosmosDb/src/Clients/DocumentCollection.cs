@@ -12,6 +12,7 @@ namespace Microsoft.Azure.IIoT.Azure.CosmosDb.Clients {
     using Microsoft.Azure.IIoT.Serializers;
     using Microsoft.Azure.Documents;
     using Microsoft.Azure.Documents.Client;
+    using Microsoft.Azure.Documents.Linq;
     using Serilog;
     using System;
     using System.Collections.Generic;
@@ -58,15 +59,37 @@ namespace Microsoft.Azure.IIoT.Azure.CosmosDb.Clients {
         }
 
         /// <inheritdoc/>
-        public IQueryClient Query() {
-            return new DocumentQueryClient(
-                _db.Client, _db.DatabaseId, Container.Id, _partitioned, _logger);
+        public IQuery<T> CreateQuery<T>(int? pageSize, OperationOptions options) {
+            var pk = _partitioned || string.IsNullOrEmpty(options?.PartitionKey) ? null :
+                new PartitionKey(options.PartitionKey);
+            return new DocumentQuery<T>(_db.Client.CreateDocumentQuery<T>(
+                UriFactory.CreateDocumentCollectionUri(_db.DatabaseId, Container.Id),
+                new FeedOptions {
+                    MaxDegreeOfParallelism = 8,
+                    MaxItemCount = pageSize ?? -1,
+                    PartitionKey = pk,
+                    EnableCrossPartitionQuery = pk == null
+                }), _logger);
         }
 
         /// <inheritdoc/>
-        public ISqlClient OpenSqlClient() {
-            return new DocumentQueryClient(
-                _db.Client, _db.DatabaseId, Container.Id, _partitioned, _logger);
+        public IResultFeed<IDocumentInfo<T>> ContinueQuery<T>(string continuationToken,
+            int? pageSize, string partitionKey) {
+            if (string.IsNullOrEmpty(continuationToken)) {
+                throw new ArgumentNullException(nameof(continuationToken));
+            }
+            var pk = _partitioned || string.IsNullOrEmpty(partitionKey) ? null :
+                new PartitionKey(partitionKey);
+            var query = _db.Client.CreateDocumentQuery<Document>(
+                UriFactory.CreateDocumentCollectionUri(_db.DatabaseId, Container.Id),
+                new FeedOptions {
+                    MaxDegreeOfParallelism = 8,
+                    MaxItemCount = pageSize ?? -1,
+                    PartitionKey = pk,
+                    RequestContinuation = continuationToken,
+                    EnableCrossPartitionQuery = pk == null
+                });
+            return new DocumentInfoFeed<Document, T>(query.AsDocumentQuery(), _logger);
         }
 
         /// <inheritdoc/>
@@ -119,6 +142,9 @@ namespace Microsoft.Azure.IIoT.Azure.CosmosDb.Clients {
             T newItem, CancellationToken ct, OperationOptions options) {
             if (existing == null) {
                 throw new ArgumentNullException(nameof(existing));
+            }
+            if (string.IsNullOrEmpty(existing.Id)) {
+                throw new ArgumentNullException(nameof(existing.Id));
             }
             options ??= new OperationOptions();
             options.PartitionKey = existing.PartitionKey;

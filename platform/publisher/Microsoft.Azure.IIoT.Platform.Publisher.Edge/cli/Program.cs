@@ -6,22 +6,8 @@
 namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Cli {
     using Microsoft.Azure.IIoT.Platform.Publisher.Models;
     using Microsoft.Azure.IIoT.Diagnostics;
-    using Microsoft.Azure.EventHubs;
-    using Microsoft.Azure.IIoT.Utils;
-    using Opc.Ua;
-    using Serilog;
     using Serilog.Events;
     using System;
-    using System.IO;
-    using System.Collections.Generic;
-    using System.Diagnostics;
-    using System.Linq;
-    using System.Threading;
-    using System.Threading.Tasks;
-    using System.Security.Cryptography.X509Certificates;
-    using System.Net.Security;
-    using uPLibrary.Networking.M2Mqtt;
-    using uPLibrary.Networking.M2Mqtt.Messages;
 
     /// <summary>
     /// Publisher module host process

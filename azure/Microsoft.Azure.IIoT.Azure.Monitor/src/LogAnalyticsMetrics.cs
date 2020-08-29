@@ -5,7 +5,6 @@
 
 namespace Microsoft.Azure.IIoT.Azure.LogAnalytics {
     using Microsoft.Azure.IIoT.Azure.LogAnalytics.Runtime;
-    using Microsoft.Azure.IIoT.Diagnostics.Default;
     using Microsoft.Azure.IIoT.Diagnostics;
     using Autofac;
     using Prometheus;

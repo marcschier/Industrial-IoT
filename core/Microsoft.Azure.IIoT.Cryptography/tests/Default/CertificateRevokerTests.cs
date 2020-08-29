@@ -28,7 +28,7 @@ namespace Microsoft.Azure.IIoT.Cryptography.Default {
         [Fact]
         public async Task RevokeRSAIssuerAndRSAIssuersTestAsync() {
 
-            using (var mock = Setup(HandleQuery)) {
+            using (var mock = Setup()) {
                 ICertificateIssuer service = mock.Create<CertificateIssuer>();
                 var rootca = await service.NewRootCertificateAsync("rootca",
                     X500DistinguishedNameEx.Create("CN=rootca"), DateTime.UtcNow, TimeSpan.FromDays(5),
@@ -75,7 +75,7 @@ namespace Microsoft.Azure.IIoT.Cryptography.Default {
         [Fact]
         public async Task RevokeECCIssuerAndECCIssuersTestAsync() {
 
-            using (var mock = Setup(HandleQuery)) {
+            using (var mock = Setup()) {
                 ICertificateIssuer service = mock.Create<CertificateIssuer>();
                 var rootca = await service.NewRootCertificateAsync("rootca",
                     X500DistinguishedNameEx.Create("CN=rootca"), DateTime.UtcNow, TimeSpan.FromDays(5),
@@ -124,7 +124,7 @@ namespace Microsoft.Azure.IIoT.Cryptography.Default {
         [Fact]
         public async Task RevokeRSAIssuersTestAsync() {
 
-            using (var mock = Setup(HandleQuery)) {
+            using (var mock = Setup()) {
                 // Setup
                 ICertificateIssuer service = mock.Create<CertificateIssuer>();
                 var rootca = await service.NewRootCertificateAsync("rootca",
@@ -179,7 +179,7 @@ namespace Microsoft.Azure.IIoT.Cryptography.Default {
         [Fact]
         public async Task RevokeECCIssuersTestAsync() {
 
-            using (var mock = Setup(HandleQuery)) {
+            using (var mock = Setup()) {
                 ICertificateIssuer service = mock.Create<CertificateIssuer>();
                 var rootca = await service.NewRootCertificateAsync("rootca",
                     X500DistinguishedNameEx.Create("CN=rootca"), DateTime.UtcNow, TimeSpan.FromDays(5),
@@ -349,12 +349,10 @@ namespace Microsoft.Azure.IIoT.Cryptography.Default {
         /// </summary>
         /// <param name="mock"></param>
         /// <param name="provider"></param>
-        private static AutoMock Setup(Func<IEnumerable<IDocumentInfo<VariantValue>>,
-            string, IEnumerable<IDocumentInfo<VariantValue>>> provider) {
+        private static AutoMock Setup() {
             var mock = AutoMock.GetLoose(builder => {
                 builder.RegisterType<NewtonSoftJsonConverters>().As<IJsonSerializerConverterProvider>();
                 builder.RegisterType<NewtonSoftJsonSerializer>().As<IJsonSerializer>();
-                builder.RegisterInstance(new QueryEngineAdapter(provider)).As<IQueryEngine>();
                 builder.RegisterType<MemoryDatabase>().SingleInstance().As<IDatabaseServer>();
                 builder.RegisterType<ItemContainerFactory>().As<IItemContainerFactory>();
                 builder.RegisterType<KeyDatabase>().As<IKeyStore>().As<IDigestSigner>();

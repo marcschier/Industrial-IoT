@@ -4,15 +4,13 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Storage.LiteDb.Clients {
-    using Microsoft.Azure.IIoT.Storage.LiteDb.Runtime;
     using Microsoft.Azure.IIoT.Utils;
     using Microsoft.Azure.IIoT.Diagnostics;
+    using Microsoft.Azure.IIoT.Storage.Default;
     using Microsoft.Azure.IIoT.Storage;
-    using Microsoft.Extensions.Configuration;
     using System;
     using System.Threading.Tasks;
     using System.Runtime.Serialization;
-    using Microsoft.Azure.IIoT.Storage.Default;
 
     public class LiteDbClientFixture {
 
@@ -82,8 +80,6 @@ namespace Microsoft.Azure.IIoT.Storage.LiteDb.Clients {
             };
 
             await collection.UpsertAsync(WakefieldFamily);
-
-
         }
 
         /// <summary>
@@ -93,7 +89,7 @@ namespace Microsoft.Azure.IIoT.Storage.LiteDb.Clients {
         /// <returns></returns>
         public async Task<IDatabase> GetDatabaseAsync() {
             var logger = ConsoleLogger.Create();
-            var server = new LiteDbClient(null, logger);
+            var server = new MemoryDatabase(logger);
             return await server.OpenAsync("test", null);
         }
 
@@ -102,7 +98,7 @@ namespace Microsoft.Azure.IIoT.Storage.LiteDb.Clients {
         /// </summary>
         /// <param name="options"></param>
         /// <returns></returns>
-        public async Task<IQueryClient> GetDocumentsAsync() {
+        public async Task<IDocuments> GetDocumentsAsync() {
             var database = await Try.Async(() => GetDatabaseAsync());
             if (database == null) {
                 return null;
@@ -110,10 +106,9 @@ namespace Microsoft.Azure.IIoT.Storage.LiteDb.Clients {
             var coll = await database.OpenContainerAsync("test");
             var docs = coll.AsDocuments();
             await CreateDocumentsAsync(docs);
-            return docs.Query();
+            return docs;
         }
     }
-
 
     [DataContract]
     public sealed class Parent {

@@ -170,6 +170,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher {
         /// <param name="dataSetWriterId"></param>
         /// <param name="ct"></param>
         /// <returns></returns>
-        Task DeleteDataSetAsync(string dataSetWriterId, CancellationToken ct = default);
+        Task DeleteDataSetAsync(string dataSetWriterId,
+            CancellationToken ct = default);
     }
 }

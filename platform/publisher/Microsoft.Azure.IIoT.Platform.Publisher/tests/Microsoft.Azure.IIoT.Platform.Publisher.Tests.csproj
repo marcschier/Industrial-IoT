@@ -19,6 +19,9 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\..\core\Microsoft.Azure.IIoT.Storage.LiteDb\src\Microsoft.Azure.IIoT.Storage.LiteDb.csproj" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\src\Microsoft.Azure.IIoT.Platform.Publisher.csproj" />
   </ItemGroup>
   <ItemGroup>

@@ -10,7 +10,6 @@ namespace Microsoft.Azure.IIoT.Platform.Edge.Events.Service.Runtime {
     using Microsoft.Azure.IIoT.Azure.EventHub.Processor;
     using Microsoft.Azure.IIoT.Azure.IoTHub.Runtime;
     using Microsoft.Azure.IIoT.Azure.IoTHub;
-    using Microsoft.Azure.IIoT.Azure.EventHub;
     using Microsoft.Azure.IIoT.Azure.ServiceBus;
     using Microsoft.Azure.IIoT.Azure.ServiceBus.Runtime;
     using Microsoft.Azure.IIoT.Azure.CosmosDb;

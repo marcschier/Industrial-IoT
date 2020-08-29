@@ -10,7 +10,6 @@ namespace Microsoft.Azure.IIoT.Platform.Edge.Tunnel.Service.Runtime {
     using Microsoft.Azure.IIoT.Azure.EventHub.Processor.Runtime;
     using Microsoft.Azure.IIoT.Azure.IoTHub.Runtime;
     using Microsoft.Azure.IIoT.Azure.IoTHub;
-    using Microsoft.Azure.IIoT.Azure.EventHub;
     using Microsoft.Azure.IIoT.Diagnostics;
     using Microsoft.Extensions.Configuration;
     using System;

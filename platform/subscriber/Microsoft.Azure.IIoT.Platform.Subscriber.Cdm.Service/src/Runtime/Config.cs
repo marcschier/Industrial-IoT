@@ -10,8 +10,6 @@ namespace Microsoft.Azure.IIoT.Platform.Subscriber.Cdm.Service.Runtime {
     using Microsoft.Azure.IIoT.Azure.AppInsights.Runtime;
     using Microsoft.Azure.IIoT.Azure.EventHub.Processor;
     using Microsoft.Azure.IIoT.Azure.EventHub.Processor.Runtime;
-    using Microsoft.Azure.IIoT.Azure.EventHub;
-    using Microsoft.Azure.IIoT.Azure.EventHub.Runtime;
     using Microsoft.Azure.IIoT.Diagnostics;
     using Microsoft.Extensions.Configuration;
     using System;

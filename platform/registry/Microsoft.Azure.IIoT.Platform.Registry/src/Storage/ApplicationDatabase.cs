@@ -17,6 +17,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
     using System.Linq;
     using System.Threading.Tasks;
     using System.Threading;
+    using System.Security.Cryptography.X509Certificates;
 
     /// <summary>
     /// Application registration repository using a item container as storage
@@ -50,13 +51,13 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
         /// <inheritdoc/>
         public async Task<ApplicationSiteListModel> ListSitesAsync(
             string continuation, int? pageSize, CancellationToken ct) {
-            var query = $"SELECT DISTINCT VALUE a.{nameof(ApplicationRegistration.SiteId)} " +
-                $"FROM Applications a " +
-                $"WHERE a.{nameof(ApplicationRegistration.DeviceType)} = '{IdentityType.Application}' ";
-            var client = _applications.OpenSqlClient();
             var compiled = continuation != null ?
-                client.ContinueQuery<string>(continuation, pageSize) :
-                client.Query<string>(query, null, pageSize);
+                _applications.ContinueQuery<string>(continuation, pageSize) :
+                _applications.CreateQuery<ApplicationRegistration>(pageSize)
+                    .Where(x => x.DeviceType == IdentityType.Application)
+                    .Select(x => x.SiteId)
+                    .Distinct()
+                    .GetResults();
             // Read results
             var results = await compiled.ReadAsync(ct);
             return new ApplicationSiteListModel {
@@ -79,17 +80,16 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
         /// <inheritdoc/>
         public async Task<ApplicationInfoListModel> ListAsync(
             string continuation, int? pageSize, CancellationToken ct) {
-            var query = "SELECT * FROM Applications a " +
-                $"WHERE a.{nameof(ApplicationRegistration.DeviceType)} = '{IdentityType.Application}' ";
-            var client = _applications.OpenSqlClient();
-            var compiled = continuation != null ?
-                client.ContinueQuery<ApplicationRegistration>(continuation, pageSize) :
-                client.Query<ApplicationRegistration>(query, null, pageSize);
+            var applications = continuation != null ?
+                _applications.ContinueQuery<ApplicationRegistration>(continuation, pageSize) :
+                _applications.CreateQuery<ApplicationRegistration>(pageSize)
+                    .Where(x => x.DeviceType == IdentityType.Application)
+                    .GetResults();
             // Read results
-            var results = await compiled.ReadAsync(ct);
+            var results = await applications.ReadAsync(ct);
             return new ApplicationInfoListModel {
                 Items = results.Select(r => r.Value.ToServiceModel()).ToList(),
-                ContinuationToken = compiled.ContinuationToken
+                ContinuationToken = applications.ContinuationToken
             };
         }
 
@@ -436,23 +436,16 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
         /// <returns></returns>
         private IResultFeed<IDocumentInfo<ApplicationRegistration>> CreateServerQuery(
             uint startingRecordId, int maxRecordsToQuery) {
-            string query;
-            var queryParameters = new Dictionary<string, object>();
-            if (maxRecordsToQuery != 0) {
-                query = "SELECT TOP @maxRecordsToQuery * FROM Applications a ";
-                queryParameters.Add("@maxRecordsToQuery", maxRecordsToQuery);
-            }
-            else {
-                query = "SELECT * FROM Applications a ";
-            }
-            query += $"WHERE a.{nameof(ApplicationRegistration.RecordId)} >= @startingRecord";
-            queryParameters.Add("@startingRecord", startingRecordId);
-            query += $" AND a.{ nameof(ApplicationRegistration.DeviceType)} = @classType";
-            queryParameters.Add("@classType", "Application");
-            query += $" ORDER BY a.{nameof(ApplicationRegistration.RecordId)}";
 
-            var client = _applications.OpenSqlClient();
-            return client.Query<ApplicationRegistration>(query, queryParameters, maxRecordsToQuery);
+            var query = _applications.CreateQuery<ApplicationRegistration>(
+                maxRecordsToQuery == 0 ? (int?)null : maxRecordsToQuery)
+                .Where(x => x.RecordId >= startingRecordId)
+                .Where(x => x.DeviceType == "Application")
+                .OrderBy(x => x.RecordId);
+            if (maxRecordsToQuery != 0) {
+                query = query.Take(maxRecordsToQuery);
+            }
+            return query.GetResults();
         }
 
         /// <summary>
@@ -464,8 +457,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
             if (!string.IsNullOrEmpty(pattern)) {
                 return false;
             }
-            return QueryPattern.IsMatchPattern(
-                pattern);
+            return QueryPattern.IsMatchPattern(pattern);
         }
 
         private const int kDefaultRecordsPerQuery = 10;

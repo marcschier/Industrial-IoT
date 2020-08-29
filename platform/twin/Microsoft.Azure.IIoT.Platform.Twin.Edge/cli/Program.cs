@@ -12,7 +12,6 @@ namespace Microsoft.Azure.IIoT.Platform.Cli {
     using Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Runtime;
     using Microsoft.Azure.IIoT.Platform.Twin;
     using Microsoft.Azure.IIoT.Platform.Twin.Models;
-    using Microsoft.Azure.IIoT.Storage;
     using Microsoft.Azure.IIoT.Storage.Default;
     using Microsoft.Azure.IIoT.Diagnostics;
     using Microsoft.Azure.IIoT.Rpc;
@@ -391,7 +390,6 @@ Operations (Mutually exclusive):
                 GC.Collect();
                 GC.WaitForPendingFinalizers();
                 var serializer = new NewtonSoftJsonSerializer();
-                _ = new MemoryDatabase(logger.Logger, serializer);
                 for (var i = 0; ; i++) {
                     Console.WriteLine($"{i}: Writing from {filename}...");
                     var sw = Stopwatch.StartNew();

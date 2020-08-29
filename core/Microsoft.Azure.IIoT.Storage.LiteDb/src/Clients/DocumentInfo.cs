@@ -5,8 +5,11 @@
 
 namespace Microsoft.Azure.IIoT.Storage.LiteDb.Clients {
     using Microsoft.Azure.IIoT.Storage;
+    using System.Reflection;
     using System;
     using LiteDB;
+    using System.Runtime.Serialization;
+    using System.Linq.Expressions;
 
     /// <summary>
     /// Document wrapper
@@ -14,14 +17,38 @@ namespace Microsoft.Azure.IIoT.Storage.LiteDb.Clients {
     /// <typeparam name="T"></typeparam>
     internal sealed class DocumentInfo<T> : IDocumentInfo<T> {
 
+        /// <inheritdoc/>
+        public T Value => _mapper.Deserialize<T>(_bson);
+
+        /// <inheritdoc/>
+        public string Id => _bson[kIdProperty];
+
+        /// <inheritdoc/>
+        public string PartitionKey => _bson[kPartitionKeyProperty];
+
+        /// <inheritdoc/>
+        public string Etag => _bson[kEtagProperty];
+
         /// <summary>
-        /// Create document
+        /// Bson
+        /// </summary>
+        internal BsonDocument Bson => _bson.AsDocument;
+
+        /// <summary>
+        /// Register type
+        /// </summary>
+        static DocumentInfo() {
+            DocumentSerializer.Register<T>();
+        }
+
+        /// <summary>
+        /// Create document reading
         /// </summary>
         /// <param name="mapper"></param>
         /// <param name="bson"></param>
-        internal DocumentInfo(BsonDocument bson, BsonMapper mapper = null) {
-            Bson = bson ?? throw new ArgumentNullException(nameof(bson));
-            _mapper = mapper ?? BsonMapper.Global;
+        internal DocumentInfo(BsonValue bson, BsonMapper mapper) {
+            _bson = bson ?? throw new ArgumentNullException(nameof(bson));
+            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
         /// <summary>
@@ -29,36 +56,32 @@ namespace Microsoft.Azure.IIoT.Storage.LiteDb.Clients {
         /// </summary>
         /// <param name="mapper"></param>
         /// <param name="value"></param>
-        /// <param name="id"></param>
-        internal DocumentInfo(T value, string id = null, BsonMapper mapper = null) {
-            _mapper = mapper ?? BsonMapper.Global;
-            Bson = mapper.ToDocument(value);
-            if (!string.IsNullOrEmpty(id)) {
-                Bson[IdProperty] = id;
-            }
-            Bson[EtagProperty] = Guid.NewGuid().ToString();
+        internal DocumentInfo(T value, BsonMapper mapper) {
+            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+            _bson = _mapper.Serialize(value);
         }
 
-        /// <inheritdoc/>
-        public T Value => _mapper.Deserialize<T>(Bson);
-
-        /// <inheritdoc/>
-        public string Id => Bson[IdProperty];
-
-        /// <inheritdoc/>
-        public string PartitionKey => Bson[PartitionKeyProperty];
-
-        /// <inheritdoc/>
-        public string Etag => Bson[EtagProperty];
-
         /// <summary>
-        /// Bson document
+        /// Create updated document
         /// </summary>
-        public BsonDocument Bson { get; }
+        /// <param name="mapper"></param>
+        /// <param name="value"></param>
+        /// <param name="id"></param>
+        internal DocumentInfo(T value, BsonMapper mapper, string id) :
+            this(value, mapper) {
+            if (_bson is BsonDocument doc) {
+                if (!string.IsNullOrEmpty(id)) {
+                    doc[kIdProperty] = id;
+                }
+                doc[kEtagProperty] = Guid.NewGuid().ToString();
+            }
+        }
 
         private readonly BsonMapper _mapper;
-        internal const string IdProperty = "id";
-        internal const string PartitionKeyProperty = "pk";
-        internal const string EtagProperty = "_etag";
+        private readonly BsonValue _bson;
+
+        private const string kIdProperty = "_id";
+        private const string kPartitionKeyProperty = "pk";
+        private const string kEtagProperty = "_etag";
     }
 }

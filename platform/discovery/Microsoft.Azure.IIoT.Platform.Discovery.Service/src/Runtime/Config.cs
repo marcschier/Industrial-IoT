@@ -10,7 +10,6 @@ namespace Microsoft.Azure.IIoT.Platform.Discovery.Service.Runtime {
     using Microsoft.Azure.IIoT.Azure.IoTHub;
     using Microsoft.Azure.IIoT.Azure.ServiceBus;
     using Microsoft.Azure.IIoT.Azure.ServiceBus.Runtime;
-    using Microsoft.Azure.IIoT.Azure.EventHub;
     using Microsoft.Azure.IIoT.Azure.CosmosDb;
     using Microsoft.Azure.IIoT.Azure.CosmosDb.Runtime;
     using Microsoft.Azure.IIoT.Azure.EventHub.Processor.Runtime;

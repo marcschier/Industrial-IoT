@@ -53,10 +53,9 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Migration {
             if (_source == null) {
                 return;
             }
-            var query = _source.OpenSqlClient().Query<Application>(
-                    "SELECT * FROM Applications a WHERE " +
-                    $"a.{nameof(Application.ClassType)} = '{Application.ClassTypeName}'",
-                null, null);
+            var query = _source.CreateQuery<Application>()
+                .Where(x => x.ClassType == Application.ClassTypeName)
+                .GetResults();
             // Read results
             while (query.HasMore()) {
                 var results = await query.ReadAsync();

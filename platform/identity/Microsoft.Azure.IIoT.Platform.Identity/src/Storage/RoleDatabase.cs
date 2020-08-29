@@ -14,6 +14,7 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Storage {
     using System.Threading.Tasks;
     using System.Threading;
     using System.Security.Claims;
+    using System.Security.Cryptography.X509Certificates;
 
     /// <summary>
     /// Represents a store for Identity roles
@@ -100,15 +101,10 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Storage {
             if (normalizedRoleName == null) {
                 throw new ArgumentNullException(nameof(normalizedRoleName));
             }
-            var client = _documents.OpenSqlClient();
-            var queryString = $"SELECT * FROM r WHERE ";
-            queryString +=
-                $"r.{nameof(RoleDocumentModel.NormalizedName)} = @name";
-            var queryParameters = new Dictionary<string, object> {
-                { "@name", normalizedRoleName.ToLowerInvariant() }
-            };
-            var results = client.Query<RoleDocumentModel>(queryString,
-                queryParameters, 1);
+            normalizedRoleName = normalizedRoleName.ToLowerInvariant();
+            var results = _documents.CreateQuery<RoleDocumentModel>(1)
+                .Where(x => x.NormalizedName == normalizedRoleName)
+                .GetResults();
             if (results.HasMore()) {
                 var documents = await results.ReadAsync();
                 return documents.FirstOrDefault().Value.ToServiceModel();

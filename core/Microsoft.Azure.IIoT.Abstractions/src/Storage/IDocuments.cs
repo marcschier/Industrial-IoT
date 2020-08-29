@@ -89,17 +89,23 @@ namespace Microsoft.Azure.IIoT.Storage {
             OperationOptions options = null, string etag = null);
 
         /// <summary>
-        /// Query documents. If not supported will throw.
+        /// Create Query
         /// </summary>
-        /// <exception cref="NotSupportedException"/>
+        /// <typeparam name="T"></typeparam>
         /// <returns></returns>
-        IQueryClient Query();
+        IQuery<T> CreateQuery<T>(int? pageSize = null,
+            OperationOptions options = null);
 
         /// <summary>
-        /// Query using sql. If not supported will throw.
+        /// Continue a previously run query using continuation token
         /// </summary>
-        /// <exception cref="NotSupportedException"/>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="continuationToken"></param>
+        /// <param name="pageSize"></param>
+        /// <param name="partitionKey"></param>
         /// <returns></returns>
-        ISqlClient OpenSqlClient();
+        IResultFeed<IDocumentInfo<T>> ContinueQuery<T>(
+            string continuationToken,
+            int? pageSize = null, string partitionKey = null);
     }
 }

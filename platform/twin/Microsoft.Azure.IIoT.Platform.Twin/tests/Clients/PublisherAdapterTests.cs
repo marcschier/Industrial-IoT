@@ -19,12 +19,10 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
     using Moq;
     using Autofac.Extras.Moq;
     using System;
-    using System.Collections.Generic;
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
     using Xunit;
-    using Xunit.Sdk;
     using Autofac;
 
     public class PublisherAdapterTests {
@@ -32,17 +30,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
         [Fact]
         public async Task StartPublishTest1Async() {
 
-            using (var mock = Setup((v, q) => {
-                var expected = "SELECT * FROM r WHERE r.DataSetWriterId = 'endpoint1' " +
-                    "AND r.ClassType = 'DataSetEntity' AND r.Type = 'Variable'";
-                if (q == expected) {
-                    return v
-                        .Where(o => o.Value["ClassType"] == "DataSetEntity")
-                        .Where(o => o.Value["Type"] == "Variable")
-                        .Where(o => o.Value["DataSetWriterId"] == "endpoint1");
-                }
-                throw new AssertActualExpectedException(null, q, "Query");
-            })) {
+            using (var mock = Setup()) {
 
                 IPublishServices service = mock.Create<PublisherAdapter>();
 
@@ -73,17 +61,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
         [Fact]
         public async Task StartPublishTest2Async() {
 
-            using (var mock = Setup((v, q) => {
-                var expected = "SELECT * FROM r WHERE r.DataSetWriterId = 'endpoint1' " +
-                    "AND r.ClassType = 'DataSetEntity' AND r.Type = 'Variable'";
-                if (q == expected) {
-                    return v
-                        .Where(o => o.Value["ClassType"] == "DataSetEntity")
-                        .Where(o => o.Value["Type"] == "Variable")
-                        .Where(o => o.Value["DataSetWriterId"] == "endpoint1");
-                }
-                throw new AssertActualExpectedException(null, q, "Query");
-            })) {
+            using (var mock = Setup()) {
 
                 IPublishServices service = mock.Create<PublisherAdapter>();
 
@@ -112,17 +90,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
         [Fact]
         public async Task StartStopPublishTestAsync() {
 
-            using (var mock = Setup((v, q) => {
-                var expected = "SELECT * FROM r WHERE r.DataSetWriterId = 'endpoint1' " +
-                    "AND r.ClassType = 'DataSetEntity' AND r.Type = 'Variable'";
-                if (q == expected) {
-                    return v
-                        .Where(o => o.Value["ClassType"] == "DataSetEntity")
-                        .Where(o => o.Value["Type"] == "Variable")
-                        .Where(o => o.Value["DataSetWriterId"] == "endpoint1");
-                }
-                throw new AssertActualExpectedException(null, q, "Query");
-            })) {
+            using (var mock = Setup()) {
 
                 IPublishServices service = mock.Create<PublisherAdapter>();
 
@@ -155,17 +123,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
         [Fact]
         public async Task StartTwicePublishTest1Async() {
 
-            using (var mock = Setup((v, q) => {
-                var expected = "SELECT * FROM r WHERE r.DataSetWriterId = 'endpoint1' " +
-                    "AND r.ClassType = 'DataSetEntity' AND r.Type = 'Variable'";
-                if (q == expected) {
-                    return v
-                        .Where(o => o.Value["ClassType"] == "DataSetEntity")
-                        .Where(o => o.Value["Type"] == "Variable")
-                        .Where(o => o.Value["DataSetWriterId"] == "endpoint1");
-                }
-                throw new AssertActualExpectedException(null, q, "Query");
-            })) {
+            using (var mock = Setup()) {
 
                 IPublishServices service = mock.Create<PublisherAdapter>();
 
@@ -204,17 +162,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
         [Fact]
         public async Task StartTwicePublishTest2Async() {
 
-            using (var mock = Setup((v, q) => {
-                var expected = "SELECT * FROM r WHERE r.DataSetWriterId = 'endpoint1' " +
-                    "AND r.ClassType = 'DataSetEntity' AND r.Type = 'Variable'";
-                if (q == expected) {
-                    return v
-                        .Where(o => o.Value["ClassType"] == "DataSetEntity")
-                        .Where(o => o.Value["Type"] == "Variable")
-                        .Where(o => o.Value["DataSetWriterId"] == "endpoint1");
-                }
-                throw new AssertActualExpectedException(null, q, "Query");
-            })) {
+            using (var mock = Setup()) {
 
                 IPublishServices service = mock.Create<PublisherAdapter>();
 
@@ -243,15 +191,15 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
                 Assert.NotNull(list);
                 Assert.NotNull(result);
                 Assert.Collection(list.Items,
-                    a => {
-                        Assert.Equal("i=2258", a.NodeId);
-                        Assert.Equal(TimeSpan.FromSeconds(2), a.PublishingInterval);
-                        Assert.Equal(TimeSpan.FromSeconds(1), a.SamplingInterval);
-                    },
                     b => {
                         Assert.Equal("i=2259", b.NodeId);
                         Assert.Equal(TimeSpan.FromSeconds(2), b.PublishingInterval);
                         Assert.Equal(TimeSpan.FromSeconds(1), b.SamplingInterval);
+                    },
+                    a => {
+                        Assert.Equal("i=2258", a.NodeId);
+                        Assert.Equal(TimeSpan.FromSeconds(2), a.PublishingInterval);
+                        Assert.Equal(TimeSpan.FromSeconds(1), a.SamplingInterval);
                     });
                 Assert.Null(list.ContinuationToken);
             }
@@ -260,17 +208,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
         [Fact]
         public async Task StartPublishSameNodeWithDifferentCredentialsOnlyHasLastInListAsync() {
 
-            using (var mock = Setup((v, q) => {
-                var expected = "SELECT * FROM r WHERE r.DataSetWriterId = 'endpoint1' " +
-                    "AND r.ClassType = 'DataSetEntity' AND r.Type = 'Variable'";
-                if (q == expected) {
-                    return v
-                        .Where(o => o.Value["ClassType"] == "DataSetEntity")
-                        .Where(o => o.Value["Type"] == "Variable")
-                        .Where(o => o.Value["DataSetWriterId"] == "endpoint1");
-                }
-                throw new AssertActualExpectedException(null, q, "Query");
-            })) {
+            using (var mock = Setup()) {
 
                 IPublishServices service = mock.Create<PublisherAdapter>();
 
@@ -326,17 +264,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
         [Fact]
         public async Task StartandStopPublishNodeWithDifferentCredentialsHasNoItemsInListAsync() {
 
-            using (var mock = Setup((v, q) => {
-                var expected = "SELECT * FROM r WHERE r.DataSetWriterId = 'endpoint1' " +
-                    "AND r.ClassType = 'DataSetEntity' AND r.Type = 'Variable'";
-                if (q == expected) {
-                    return v
-                        .Where(o => o.Value["ClassType"] == "DataSetEntity")
-                        .Where(o => o.Value["Type"] == "Variable")
-                        .Where(o => o.Value["DataSetWriterId"] == "endpoint1");
-                }
-                throw new AssertActualExpectedException(null, q, "Query");
-            })) {
+            using (var mock = Setup()) {
 
                 IPublishServices service = mock.Create<PublisherAdapter>();
 
@@ -378,17 +306,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
         [Fact]
         public async Task StartTwicePublishTest3Async() {
 
-            using (var mock = Setup((v, q) => {
-                var expected = "SELECT * FROM r WHERE r.DataSetWriterId = 'endpoint1' " +
-                    "AND r.ClassType = 'DataSetEntity' AND r.Type = 'Variable'";
-                if (q == expected) {
-                    return v
-                        .Where(o => o.Value["ClassType"] == "DataSetEntity")
-                        .Where(o => o.Value["Type"] == "Variable")
-                        .Where(o => o.Value["DataSetWriterId"] == "endpoint1");
-                }
-                throw new AssertActualExpectedException(null, q, "Query");
-            })) {
+            using (var mock = Setup()) {
 
                 IPublishServices service = mock.Create<PublisherAdapter>();
 
@@ -426,17 +344,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
         [Fact]
         public async Task StartStopMultiplePublishTestAsync() {
 
-            using (var mock = Setup((v, q) => {
-                var expected = "SELECT * FROM r WHERE r.DataSetWriterId = 'endpoint1' " +
-                    "AND r.ClassType = 'DataSetEntity' AND r.Type = 'Variable'";
-                if (q == expected) {
-                    return v
-                        .Where(o => o.Value["ClassType"] == "DataSetEntity")
-                        .Where(o => o.Value["Type"] == "Variable")
-                        .Where(o => o.Value["DataSetWriterId"] == "endpoint1");
-                }
-                throw new AssertActualExpectedException(null, q, "Query");
-            })) {
+            using (var mock = Setup()) {
 
                 IPublishServices service = mock.Create<PublisherAdapter>();
 
@@ -499,9 +407,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
         [Fact]
         public async Task ListNodesWhenNoNodesConfiguredTestAsync() {
 
-            using (var mock = Setup((v, q) => {
-                throw new AssertActualExpectedException(null, q, "Query");
-            })) {
+            using (var mock = Setup()) {
 
                 IPublishServices service = mock.Create<PublisherAdapter>();
 
@@ -521,13 +427,11 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
         /// </summary>
         /// <param name="mock"></param>
         /// <param name="provider"></param>
-        private static AutoMock Setup(Func<IEnumerable<IDocumentInfo<VariantValue>>,
-            string, IEnumerable<IDocumentInfo<VariantValue>>> provider) {
+        private static AutoMock Setup() {
             var mock = AutoMock.GetLoose(builder => {
 
                 builder.RegisterType<NewtonSoftJsonConverters>().As<IJsonSerializerConverterProvider>();
                 builder.RegisterType<NewtonSoftJsonSerializer>().As<IJsonSerializer>();
-                builder.RegisterInstance(new QueryEngineAdapter(provider)).As<IQueryEngine>();
                 builder.RegisterType<MemoryDatabase>().SingleInstance().As<IDatabaseServer>();
                 builder.RegisterType<MockConfig>().As<IItemContainerConfig>();
                 var registry = new Mock<IEndpointRegistry>();

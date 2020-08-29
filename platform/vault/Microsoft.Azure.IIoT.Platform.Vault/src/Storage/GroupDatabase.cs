@@ -123,11 +123,10 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Storage {
         public async Task<TrustGroupRegistrationListModel> QueryAsync(
             TrustGroupRegistrationQueryModel filter, string nextPageLink, int? pageSize,
             CancellationToken ct) {
-            var client = _groups.OpenSqlClient();
+
             var query = nextPageLink != null ?
-                client.ContinueQuery<GroupDocument>(nextPageLink, pageSize) :
-                client.Query<GroupDocument>(CreateQuery(
-                    filter, out var queryParameters), queryParameters, pageSize);
+                _groups.ContinueQuery<GroupDocument>(nextPageLink, pageSize) :
+                CreateQuery(_groups.CreateQuery<GroupDocument>(pageSize), filter);
 
             // Read results
             var results = await query.ReadAsync(ct);
@@ -141,66 +140,44 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Storage {
         /// Create query
         /// </summary>
         /// <param name="filter"></param>
-        /// <param name="queryParameters"></param>
+        /// <param name="query"></param>
         /// <returns></returns>
-        private static string CreateQuery(TrustGroupRegistrationQueryModel filter,
-            out Dictionary<string, object> queryParameters) {
-            queryParameters = new Dictionary<string, object>();
-            var queryString = "SELECT * FROM Policies g WHERE ";
+        private static IResultFeed<IDocumentInfo<GroupDocument>> CreateQuery(
+            IQuery<GroupDocument> query, TrustGroupRegistrationQueryModel filter) {
 
             if (filter?.IssuedKeySize != null) {
-                queryString +=
-                    $"g.{nameof(GroupDocument.IssuedKeySize)} = @iks AND ";
-                queryParameters.Add("@iks", filter.IssuedKeySize.Value);
+                query = query.Where(x => x.IssuedKeySize == filter.IssuedKeySize.Value);
             }
             if (filter?.IssuedLifetime != null) {
-                queryString +=
-                    $"g.{nameof(GroupDocument.IssuedLifetime)} = @ilt AND ";
-                queryParameters.Add("@ilt", filter.IssuedLifetime.Value);
+                query = query.Where(x => x.IssuedLifetime == filter.IssuedLifetime.Value);
             }
             if (filter?.IssuedSignatureAlgorithm != null) {
-                queryString +=
-                    $"g.{nameof(GroupDocument.IssuedSignatureAlgorithm)} = @isa AND ";
-                queryParameters.Add("@isa", filter.IssuedSignatureAlgorithm.Value);
+                query = query.Where(x =>
+                    x.IssuedSignatureAlgorithm == filter.IssuedSignatureAlgorithm.Value);
             }
             if (filter?.Type != null) {
-                queryString +=
-                    $"g.{nameof(GroupDocument.Type)} = @Type AND ";
-                queryParameters.Add("@Type", filter.Type.Value);
+                query = query.Where(x => x.Type == filter.Type.Value.ToString());
             }
             if (filter?.Name != null) {
-                queryString +=
-                    $"g.{nameof(GroupDocument.Name)} = @Name AND ";
-                queryParameters.Add("@Name", filter.Name);
+                query = query.Where(x => x.Name == filter.Name);
             }
             if (filter?.ParentId != null) {
-                queryString +=
-                    $"g.{nameof(GroupDocument.ParentId)} = @ParentId AND ";
-                queryParameters.Add("@ParentId", filter.ParentId);
+                query = query.Where(x => x.ParentId == filter.ParentId);
             }
             if (filter?.SubjectName != null) {
-                queryString +=
-                    $"g.{nameof(GroupDocument.SubjectName)} = @sn AND ";
-                queryParameters.Add("@sn", filter.ParentId);
+                query = query.Where(x => x.SubjectName == filter.SubjectName);
             }
             if (filter?.Lifetime != null) {
-                queryString +=
-                    $"g.{nameof(GroupDocument.Lifetime)} = @Lifetime AND ";
-                queryParameters.Add("@Lifetime", filter.ParentId);
+                query = query.Where(x => x.Lifetime == filter.Lifetime.Value);
             }
             if (filter?.KeySize != null) {
-                queryString +=
-                    $"g.{nameof(GroupDocument.KeySize)} = @KeySize AND ";
-                queryParameters.Add("@KeySize", filter.ParentId);
+                query = query.Where(x => x.KeySize == filter.KeySize.Value);
             }
             if (filter?.SignatureAlgorithm != null) {
-                queryString +=
-                    $"g.{nameof(GroupDocument.SignatureAlgorithm)} = @sa AND ";
-                queryParameters.Add("@sa", filter.SignatureAlgorithm);
+                query = query.Where(x => x.SignatureAlgorithm == filter.SignatureAlgorithm);
             }
-            queryString +=
-        $"g.{nameof(GroupDocument.ClassType)} = '{GroupDocument.ClassTypeName}'";
-            return queryString;
+            query = query.Where(x => x.ClassType == GroupDocument.ClassTypeName);
+            return query.GetResults();
         }
 
         private readonly IDocuments _groups;

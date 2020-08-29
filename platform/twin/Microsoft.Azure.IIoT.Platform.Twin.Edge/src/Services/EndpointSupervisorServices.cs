@@ -8,7 +8,6 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Services {
     using Microsoft.Azure.IIoT.Platform.Registry.Models;
     using Microsoft.Azure.IIoT.Platform.Edge;
     using Microsoft.Azure.IIoT.Hosting;
-    using Serilog;
     using System;
     using System.Linq;
     using System.Threading;

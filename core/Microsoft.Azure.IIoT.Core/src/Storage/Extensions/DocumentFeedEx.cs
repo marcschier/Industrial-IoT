@@ -5,6 +5,7 @@
 
 namespace Microsoft.Azure.IIoT.Storage {
     using System;
+    using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
 
@@ -25,7 +26,7 @@ namespace Microsoft.Azure.IIoT.Storage {
             CancellationToken ct = default) {
             while (feed.HasMore()) {
                 var results = await feed.ReadAsync(ct);
-                foreach (var item in results) {
+                foreach (var item in results.ToList()) {
                     await callback(item);
                 }
             }

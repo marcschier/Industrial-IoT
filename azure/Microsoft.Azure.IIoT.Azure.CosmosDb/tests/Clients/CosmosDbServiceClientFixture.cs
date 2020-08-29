@@ -106,7 +106,7 @@ namespace Microsoft.Azure.IIoT.Azure.CosmosDb.Clients {
         /// </summary>
         /// <param name="options"></param>
         /// <returns></returns>
-        public async Task<IQueryClient> GetDocumentsAsync() {
+        public async Task<IDocuments> GetDocumentsAsync() {
             var database = await Try.Async(() => GetDatabaseAsync());
             if (database == null) {
                 return null;
@@ -114,7 +114,7 @@ namespace Microsoft.Azure.IIoT.Azure.CosmosDb.Clients {
             var coll = await database.OpenContainerAsync("test");
             var docs = coll.AsDocuments();
             await CreateDocumentsAsync(docs);
-            return docs.Query();
+            return docs;
         }
     }
 

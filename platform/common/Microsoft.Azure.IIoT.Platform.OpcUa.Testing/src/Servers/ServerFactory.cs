@@ -15,7 +15,6 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Sample {
     using System.Threading;
     using System.Threading.Tasks;
     using System.Xml;
-    using System.IdentityModel.Selectors;
     using System.Security.Cryptography.X509Certificates;
 
     /// <summary>

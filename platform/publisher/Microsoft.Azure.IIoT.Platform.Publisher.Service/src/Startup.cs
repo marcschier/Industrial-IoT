@@ -12,7 +12,6 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Service {
     using Microsoft.Azure.IIoT.Azure.CosmosDb;
     using Microsoft.Azure.IIoT.Azure.ServiceBus;
     using Microsoft.Azure.IIoT.Azure.AppInsights;
-    using Microsoft.Azure.IIoT.Azure.IoTHub;
     using Microsoft.Azure.IIoT.Azure.IoTHub.Clients;
     using Microsoft.Azure.IIoT.Azure.IoTHub.Deploy;
     using Microsoft.Azure.IIoT.Storage.Default;

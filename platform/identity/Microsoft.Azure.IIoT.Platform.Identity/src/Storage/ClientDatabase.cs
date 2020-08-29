@@ -83,19 +83,12 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Storage {
             if (origin == null) {
                 throw new ArgumentNullException(nameof(origin));
             }
-            var client = _documents.OpenSqlClient();
-            var queryString = $"SELECT * FROM r WHERE ";
-            queryString +=
-                $"ARRAY_CONTAINS(r.{nameof(ClientDocumentModel.AllowedCorsOrigins)}, @origin)";
-            var queryParameters = new Dictionary<string, object> {
-                { "@origin", origin.ToLowerInvariant() }
-            };
-            var results = client.Query<ClientDocumentModel>(queryString, queryParameters, 1);
-            if (!results.HasMore()) {
-                return false;
-            }
-            var documents = await results.ReadAsync();
-            return documents.Any();
+            origin = origin.ToLowerInvariant();
+            var results = await _documents.CreateQuery<ClientDocumentModel>(1)
+                .Where(x => x.AllowedCorsOrigins != null)
+                .Where(x => x.AllowedCorsOrigins.Contains(origin))
+                .CountAsync();
+            return results != 0;
         }
 
         private readonly IDocuments _documents;

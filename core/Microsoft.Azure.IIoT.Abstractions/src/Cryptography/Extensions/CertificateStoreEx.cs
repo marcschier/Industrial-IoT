@@ -16,7 +16,7 @@ namespace Microsoft.Azure.IIoT.Cryptography {
     public static class CertificateStoreEx {
 
         /// <summary>
-        /// Find most recent certificate with the given name
+        /// Get most recent certificate with the given name
         /// from certificate store.
         /// </summary>
         /// <param name="store"></param>
@@ -24,15 +24,14 @@ namespace Microsoft.Azure.IIoT.Cryptography {
         /// </param>
         /// <param name="ct">CancellationToken</param>
         /// <returns></returns>
-        public static async Task<Certificate> FindLatestCertificateAsync(
+        public static async Task<Certificate> GetLatestCertificateAsync(
             this ICertificateStore store, string certificateName,
             CancellationToken ct = default) {
-            try {
-                return await store.GetLatestCertificateAsync(certificateName, ct);
+            var result = await store.FindLatestCertificateAsync(certificateName, ct);
+            if (result == null) {
+                throw new ResourceNotFoundException("Failed to find certificate");
             }
-            catch (ResourceNotFoundException) {
-                return null;
-            }
+            return result;
         }
 
         /// <summary>

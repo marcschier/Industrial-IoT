@@ -18,9 +18,9 @@ namespace Microsoft.Azure.IIoT.Storage.LiteDb.Clients {
     using LiteDB;
 
     /// <summary>
-    /// Wraps a cosmos db container
+    /// Wraps a collection
     /// </summary>
-    internal sealed class DocumentCollection : IItemContainer, IDocuments, IQueryClient {
+    internal sealed class DocumentCollection : IItemContainer, IDocuments {
 
         /// <inheritdoc/>
         public string Name { get; }
@@ -32,27 +32,17 @@ namespace Microsoft.Azure.IIoT.Storage.LiteDb.Clients {
         /// <param name="db"></param>
         /// <param name="options"></param>
         /// <param name="logger"></param>
-        internal DocumentCollection(string name, ILiteDatabase db, 
+        internal DocumentCollection(string name, ILiteDatabase db,
             ContainerOptions options, ILogger logger) {
             Name = name ?? throw new ArgumentNullException(nameof(name));
             _db = db ?? throw new ArgumentNullException(nameof(db));
-            _options = options ?? throw new ArgumentNullException(nameof(options));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _options = options ?? new ContainerOptions();
         }
 
         /// <inheritdoc/>
         public IDocuments AsDocuments() {
             return this;
-        }
-
-        /// <inheritdoc/>
-        public IQueryClient Query() {
-            return this;
-        }
-
-        /// <inheritdoc/>
-        public ISqlClient OpenSqlClient() {
-            throw new NotImplementedException();
         }
 
         /// <inheritdoc/>
@@ -75,7 +65,7 @@ namespace Microsoft.Azure.IIoT.Storage.LiteDb.Clients {
         public Task<IDocumentInfo<T>> UpsertAsync<T>(T newItem,
             CancellationToken ct, string id, OperationOptions options, string etag) {
             try {
-                var newDoc = new DocumentInfo<T>(newItem, id, _db.Mapper);
+                var newDoc = new DocumentInfo<T>(newItem, _db.Mapper, id);
                 if (!string.IsNullOrEmpty(etag)) {
                     _db.BeginTrans();
                     try {
@@ -104,6 +94,7 @@ namespace Microsoft.Azure.IIoT.Storage.LiteDb.Clients {
                     // Plain old upsert
                     _db.GetCollection(Name).Upsert(newDoc.Bson);
                 }
+                _db.Checkpoint();
                 return Task.FromResult<IDocumentInfo<T>>(newDoc);
             }
             catch (Exception ex) {
@@ -118,8 +109,11 @@ namespace Microsoft.Azure.IIoT.Storage.LiteDb.Clients {
             if (existing == null) {
                 throw new ArgumentNullException(nameof(existing));
             }
+            if (string.IsNullOrEmpty(existing.Id)) {
+                throw new ArgumentNullException(nameof(existing.Id));
+            }
             try {
-                var newDoc = new DocumentInfo<T>(newItem, existing.Id, _db.Mapper);
+                var newDoc = new DocumentInfo<T>(newItem, _db.Mapper, existing.Id);
                 _db.BeginTrans();
                 try {
                     // Get etag and compare with this here
@@ -139,6 +133,7 @@ namespace Microsoft.Azure.IIoT.Storage.LiteDb.Clients {
                     _db.Rollback();
                     throw;
                 }
+                _db.Checkpoint();
                 return Task.FromResult<IDocumentInfo<T>>(newDoc);
             }
             catch (Exception ex) {
@@ -151,9 +146,10 @@ namespace Microsoft.Azure.IIoT.Storage.LiteDb.Clients {
         public Task<IDocumentInfo<T>> AddAsync<T>(T newItem, CancellationToken ct,
             string id, OperationOptions options) {
             try {
-                var doc = new DocumentInfo<T>(newItem, id, _db.Mapper);
-                _db.GetCollection(Name).Insert(doc.Bson);
-                return Task.FromResult<IDocumentInfo<T>>(doc);
+                var newDoc = new DocumentInfo<T>(newItem, _db.Mapper, id);
+                _db.GetCollection(Name).Insert(newDoc.Bson);
+                _db.Checkpoint();
+                return Task.FromResult<IDocumentInfo<T>>(newDoc);
             }
             catch (Exception ex) {
                 FilterException(ex);
@@ -166,6 +162,9 @@ namespace Microsoft.Azure.IIoT.Storage.LiteDb.Clients {
             OperationOptions options) {
             if (item == null) {
                 throw new ArgumentNullException(nameof(item));
+            }
+            if (string.IsNullOrEmpty(item.Id)) {
+                throw new ArgumentNullException(nameof(item.Id));
             }
             return DeleteAsync<T>(item.Id, ct, options, item.Etag);
         }
@@ -182,6 +181,9 @@ namespace Microsoft.Azure.IIoT.Storage.LiteDb.Clients {
                     try {
                         // Get etag and compare with this here
                         var doc = Find<T>(id);
+                        if (doc == null) {
+                            throw new ResourceNotFoundException();
+                        }
                         if (doc.Etag != etag) {
                             throw new ResourceOutOfDateException();
                         }
@@ -196,6 +198,7 @@ namespace Microsoft.Azure.IIoT.Storage.LiteDb.Clients {
                 else {
                     _db.GetCollection(Name).Delete(id);
                 }
+                _db.Checkpoint();
             }
             catch (Exception ex) {
                 FilterException(ex);
@@ -205,13 +208,23 @@ namespace Microsoft.Azure.IIoT.Storage.LiteDb.Clients {
 
         /// <inheritdoc/>
         public IQuery<T> CreateQuery<T>(int? pageSize, OperationOptions options) {
-            return new DocumentQuery<T>(this, _db.GetCollection<T>().Query(), pageSize);
+            return new ServerSideQuery<T>(this, _db.GetCollection<T>(Name).Query(), pageSize);
         }
 
         /// <inheritdoc/>
         public IResultFeed<IDocumentInfo<T>> ContinueQuery<T>(string continuationToken,
-            int? pageSize = null, string partitionKey = null) {
-            throw new NotImplementedException();
+            int? pageSize, string partitionKey) {
+            if (_queryStore.TryGetValue(continuationToken, out var feed)) {
+                var result = feed as IResultFeed<IDocumentInfo<T>>;
+                if (result == null) {
+                    _logger.Error("Continuation {continuation} type mismatch.",
+                        continuationToken);
+                }
+                return result;
+            }
+            _logger.Error("Continuation {continuation} not found",
+                continuationToken);
+            return null;
         }
 
         /// <summary>
@@ -286,9 +299,10 @@ namespace Microsoft.Azure.IIoT.Storage.LiteDb.Clients {
         }
 
         /// <summary>
-        /// Query
+        /// Client side
         /// </summary>
-        internal sealed class DocumentQuery<T> : IQuery<T> {
+        /// <typeparam name="T"></typeparam>
+        internal sealed class ClientSideQuery<T> : IQuery<T> {
 
             /// <summary>
             /// Create query
@@ -296,7 +310,7 @@ namespace Microsoft.Azure.IIoT.Storage.LiteDb.Clients {
             /// <param name="collection"></param>
             /// <param name="queryable"></param>
             /// <param name="pageSize"></param>
-            internal DocumentQuery(DocumentCollection collection, ILiteQueryableResult<T> queryable,
+            internal ClientSideQuery(DocumentCollection collection, IQueryable<T> queryable,
                 int? pageSize) {
                 _queryable = queryable ?? throw new ArgumentNullException(nameof(queryable));
                 _collection = collection ?? throw new ArgumentNullException(nameof(collection));
@@ -305,49 +319,51 @@ namespace Microsoft.Azure.IIoT.Storage.LiteDb.Clients {
 
             /// <inheritdoc/>
             public IResultFeed<IDocumentInfo<T>> GetResults() {
-                var results = _queryable.ToDocuments().Select(d => new DocumentInfo<T>(d));
+                var results = _queryable.AsEnumerable()
+                    .Select(d => new DocumentInfo<T>(d, _collection._db.Mapper));
                 return new DocumentResultFeed<T>(_collection, results, _pageSize);
             }
 
             /// <inheritdoc/>
             public IQuery<T> Where(Expression<Func<T, bool>> predicate) {
-                if (!(_queryable is ILiteQueryable<T> queryable)) {
-                    throw new InvalidOperationException("Already evaluated query");
-                }
-                return new DocumentQuery<T>(_collection, queryable.Where(predicate), _pageSize);
+                return new ClientSideQuery<T>(_collection,
+                    _queryable.Where(predicate), _pageSize);
             }
 
             /// <inheritdoc/>
-            public IQuery<T> OrderBy<K>(Expression<Func<T, K>> keySelector, int order = 1) {
-                if (!(_queryable is ILiteQueryable<T> queryable)) {
-                    throw new InvalidOperationException("Already evaluated query");
-                }
-                return new DocumentQuery<T>(_collection, queryable.OrderBy(keySelector, order), _pageSize);
+            public IQuery<T> OrderBy<K>(Expression<Func<T, K>> keySelector, int order) {
+                return new ClientSideQuery<T>(_collection,
+                    _queryable.OrderBy(keySelector), _pageSize);
             }
 
             /// <inheritdoc/>
             public IQuery<T> OrderByDescending<K>(Expression<Func<T, K>> keySelector) {
-                if (!(_queryable is ILiteQueryable<T> queryable)) {
-                    throw new InvalidOperationException("Already evaluated query");
-                }
-                return new DocumentQuery<T>(_collection, queryable.OrderByDescending(keySelector), _pageSize);
+                return new ClientSideQuery<T>(_collection,
+                    _queryable.OrderByDescending(keySelector), _pageSize);
             }
 
             /// <inheritdoc/>
             public IQuery<K> Select<K>(Expression<Func<T, K>> selector) {
-                if (!(_queryable is ILiteQueryable<T> queryable)) {
-                    throw new InvalidOperationException("Already evaluated query");
-                }
-                return new DocumentQuery<K>(_collection, queryable.Select(selector), _pageSize);
+                return new ClientSideQuery<K>(_collection,
+                    _queryable.Select(selector), _pageSize);
             }
 
             /// <inheritdoc/>
             public IQuery<K> SelectMany<K>(Expression<Func<T, IEnumerable<K>>> selector) {
-                if (!(_queryable is ILiteQueryable<T> queryable)) {
-                    throw new InvalidOperationException("Already evaluated query");
-                }
-                throw new NotSupportedException();
-                // return new DocumentQuery<K>(_collection, queryable.Select(selector), _pageSize);
+                return new ClientSideQuery<K>(_collection,
+                    _queryable.SelectMany(selector), _pageSize);
+            }
+
+            /// <inheritdoc/>
+            public IQuery<T> Take(int maxRecords) {
+                return new ClientSideQuery<T>(_collection, 
+                    _queryable.Take(maxRecords), _pageSize);
+            }
+
+            /// <inheritdoc/>
+            public IQuery<T> Distinct() {
+                return new ClientSideQuery<T>(_collection,
+                    _queryable.Distinct(), _pageSize);
             }
 
             /// <inheritdoc/>
@@ -355,11 +371,107 @@ namespace Microsoft.Azure.IIoT.Storage.LiteDb.Clients {
                 return Task.FromResult(_queryable.Count());
             }
 
+            private readonly IQueryable<T> _queryable;
+            private readonly DocumentCollection _collection;
+            private readonly int? _pageSize;
+        }
+
+        /// <summary>
+        /// Server side
+        /// </summary>
+        internal sealed class ServerSideQuery<T> : IQuery<T> {
+
+            /// <summary>
+            /// Create query
+            /// </summary>
+            /// <param name="collection"></param>
+            /// <param name="queryable"></param>
+            /// <param name="pageSize"></param>
+            internal ServerSideQuery(DocumentCollection collection, 
+                ILiteQueryableResult<T> queryable, int? pageSize) {
+                _queryable = queryable ?? throw new ArgumentNullException(nameof(queryable));
+                _collection = collection ?? throw new ArgumentNullException(nameof(collection));
+                _pageSize = pageSize;
+            }
+
+            /// <inheritdoc/>
+            public IResultFeed<IDocumentInfo<T>> GetResults() {
+
+                var results = _queryable.ToDocuments()
+                    .Select(d => new DocumentInfo<T>(d, _collection._db.Mapper));
+                return new DocumentResultFeed<T>(_collection, results, _pageSize);
+            }
+
+            /// <inheritdoc/>
+            public IQuery<T> Where(Expression<Func<T, bool>> predicate) {
+                if (!(_queryable is ILiteQueryable<T> queryable)) {
+                    return Execute().Where(predicate);
+                }
+                return new ServerSideQuery<T>(_collection,
+                    queryable.Where(predicate), _pageSize);
+            }
+
+            /// <inheritdoc/>
+            public IQuery<T> OrderBy<K>(Expression<Func<T, K>> keySelector, int order = 1) {
+                if (!(_queryable is ILiteQueryable<T> queryable)) {
+                    return Execute().OrderBy(keySelector, order);
+                }
+                return new ServerSideQuery<T>(_collection, 
+                    queryable.OrderBy(keySelector, order), _pageSize);
+            }
+
+            /// <inheritdoc/>
+            public IQuery<T> OrderByDescending<K>(Expression<Func<T, K>> keySelector) {
+                if (!(_queryable is ILiteQueryable<T> queryable)) {
+                    return Execute().OrderByDescending(keySelector);
+                }
+                return new ServerSideQuery<T>(_collection, 
+                    queryable.OrderByDescending(keySelector), _pageSize);
+            }
+
+            /// <inheritdoc/>
+            public IQuery<K> Select<K>(Expression<Func<T, K>> selector) {
+                if (!(_queryable is ILiteQueryable<T> queryable) || typeof(T) != typeof(K)) {
+                    return Execute().Select(selector);
+                }
+                return new ServerSideQuery<K>(_collection,
+                    queryable.Select(selector), _pageSize);
+            }
+
+            /// <inheritdoc/>
+            public IQuery<T> Take(int maxRecords) {
+                return new ServerSideQuery<T>(_collection,
+                    _queryable.Limit(maxRecords), _pageSize);
+            }
+
+            /// <inheritdoc/>
+            public IQuery<T> Distinct() {
+                return Execute().Distinct();
+            }
+
+            /// <inheritdoc/>
+            public IQuery<K> SelectMany<K>(Expression<Func<T, IEnumerable<K>>> selector) {
+                return Execute().SelectMany(selector);
+            }
+
+            /// <inheritdoc/>
+            public Task<int> CountAsync(CancellationToken ct = default) {
+                return Task.FromResult(_queryable.Count());
+            }
+
+            /// <summary>
+            /// Execute query and return client side query as continuation
+            /// </summary>
+            /// <returns></returns>
+            public IQuery<T> Execute() {
+                return new ClientSideQuery<T>(_collection,
+                    _queryable.ToEnumerable().AsQueryable(), _pageSize);
+            }
+
             private readonly DocumentCollection _collection;
             private readonly ILiteQueryableResult<T> _queryable;
             private readonly int? _pageSize;
         }
-
 
         /// <summary>
         /// Filter exceptions
@@ -381,6 +493,5 @@ namespace Microsoft.Azure.IIoT.Storage.LiteDb.Clients {
 
         private readonly Dictionary<string, object> _queryStore =
             new Dictionary<string, object>();
-
     }
 }

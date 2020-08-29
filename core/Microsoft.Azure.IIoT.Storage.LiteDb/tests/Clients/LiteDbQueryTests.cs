@@ -17,9 +17,6 @@ namespace Microsoft.Azure.IIoT.Storage.LiteDb.Clients {
             _fixture = fixture;
         }
 
-        /// <summary>
-        /// Dump all documents using linq
-        /// </summary>
         [SkippableFact]
         public async Task QueryAllDocuments1Async() {
             var documents = await _fixture.GetDocumentsAsync();
@@ -28,7 +25,6 @@ namespace Microsoft.Azure.IIoT.Storage.LiteDb.Clients {
             var results = await RunAsync(query);
             Assert.Equal(2, results.Count);
         }
-
 
         [SkippableFact]
         public async Task QueryAllDocuments2Async() {
@@ -40,6 +36,32 @@ namespace Microsoft.Azure.IIoT.Storage.LiteDb.Clients {
                 select f;
             var results = await RunAsync(families);
             Assert.Equal(2, results.Count);
+        }
+
+        [SkippableFact]
+        public async Task QueryAllDocuments3Async() {
+            var documents = await _fixture.GetDocumentsAsync();
+            Skip.If(documents == null);
+
+            var families = documents.CreateQuery<Family>();
+            var results = await RunAsync(families);
+            Assert.Equal(2, results.Count);
+        }
+
+
+        [SkippableFact]
+        public async Task QueryAndersonAsync() {
+            var documents = await _fixture.GetDocumentsAsync();
+            Skip.If(documents == null);
+
+            var families = documents.CreateQuery<Family>(1)
+                .Where(d => d.LastName == "Andersen");
+
+            var results = await RunAsync(families);
+            Assert.Single(results);
+            var family = results.Single().Value;
+            Assert.Single(family.Children);
+            Assert.Equal(1, family.Children.Select(c => c.Pets.Length).Sum());
         }
 
         [SkippableFact]
@@ -158,7 +180,7 @@ namespace Microsoft.Azure.IIoT.Storage.LiteDb.Clients {
             Skip.If(documents == null);
 
             var families = documents.CreateQuery<Family>()
-                .Where(f => f.Address.State.CompareTo("NY") > 0);
+                .Where(f => f.Address.State.Equals("NY", StringComparison.OrdinalIgnoreCase));
 
             var results = await RunAsync(families);
             Assert.Single(results);
@@ -169,11 +191,66 @@ namespace Microsoft.Azure.IIoT.Storage.LiteDb.Clients {
             var documents = await _fixture.GetDocumentsAsync();
             Skip.If(documents == null);
 
+            var date = DateTime.UtcNow.AddDays(-3);
             var families = documents.CreateQuery<Family>()
-                .Where(f => f.RegistrationDate >= DateTime.UtcNow.AddDays(-3));
+                .Where(f => f.RegistrationDate >= date);
 
             var results = await RunAsync(families);
             Assert.Single(results);
+        }
+
+        [SkippableFact]
+        public async Task QueryWithOrderByDateTimesAsync() {
+            var documents = await _fixture.GetDocumentsAsync();
+            Skip.If(documents == null);
+
+            var families = documents.CreateQuery<Family>()
+                .OrderBy(f => f.RegistrationDate);
+
+            var results = await RunAsync(families);
+            Assert.Equal(2, results.Count);
+            Assert.Equal("WakefieldFamily", results.First().Id);
+        }
+
+        [SkippableFact]
+        public async Task QueryWithOrderByDescendingDateTimesAsync() {
+            var documents = await _fixture.GetDocumentsAsync();
+            Skip.If(documents == null);
+
+            var families = documents.CreateQuery<Family>()
+                .OrderByDescending(f => f.RegistrationDate);
+
+            var results = await RunAsync(families);
+            Assert.Equal(2, results.Count);
+            Assert.Equal("AndersenFamily", results.First().Id);
+        }
+
+        [SkippableFact]
+        public async Task QueryWithOrderByDateTimesLimitAsync() {
+            var documents = await _fixture.GetDocumentsAsync();
+            Skip.If(documents == null);
+
+            var families = documents.CreateQuery<Family>()
+                .OrderBy(f => f.RegistrationDate)
+                .Take(1);
+
+            var results = await RunAsync(families);
+            Assert.Single(results);
+            Assert.Equal("WakefieldFamily", results.Single().Id);
+        }
+
+        [SkippableFact]
+        public async Task QueryWithOrderByDescendingDateTimesLimitAsync() {
+            var documents = await _fixture.GetDocumentsAsync();
+            Skip.If(documents == null);
+
+            var families = documents.CreateQuery<Family>()
+                .OrderByDescending(f => f.RegistrationDate)
+                .Take(1);
+
+            var results = await RunAsync(families);
+            Assert.Single(results);
+            Assert.Equal("AndersenFamily", results.Single().Id);
         }
 
         [SkippableFact]
@@ -253,8 +330,8 @@ namespace Microsoft.Azure.IIoT.Storage.LiteDb.Clients {
             var documents = await _fixture.GetDocumentsAsync();
             Skip.If(documents == null);
 
-            var query = documents.CreateQuery<Family>()
-                    .SelectMany(family => family.Children
+            var query = documents.CreateQuery<Family>().Where(family => family.Children != null)
+                    .SelectMany(family => family.Children.Where(child => child.Pets != null)
                     .SelectMany(child => child.Pets
                     .Where(pet => pet.GivenName == "Fluffy")
                     .Select(pet => new {
@@ -273,8 +350,8 @@ namespace Microsoft.Azure.IIoT.Storage.LiteDb.Clients {
             var documents = await _fixture.GetDocumentsAsync();
             Skip.If(documents == null);
 
-            var query = documents.CreateQuery<Family>()
-                    .SelectMany(family => family.Children
+            var query = documents.CreateQuery<Family>().Where(family => family.Children != null)
+                    .SelectMany(family => family.Children.Where(child => child.Pets != null)
                     .SelectMany(child => child.Pets
                     .Select(pet => new {
                         family = family.Id,

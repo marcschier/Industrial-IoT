@@ -111,15 +111,10 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Storage {
             if (normalizedUserName == null) {
                 throw new ArgumentNullException(nameof(normalizedUserName));
             }
-            var client = _documents.OpenSqlClient();
-            var queryString = $"SELECT * FROM r WHERE ";
-            queryString +=
-                $"r.{nameof(UserDocumentModel.NormalizedUserName)} = @name";
-            var queryParameters = new Dictionary<string, object> {
-                { "@name", normalizedUserName.ToLowerInvariant() }
-            };
-            var results = client.Query<UserDocumentModel>(
-                queryString, queryParameters, 1);
+            normalizedUserName = normalizedUserName.ToLowerInvariant();
+            var results = _documents.CreateQuery<UserDocumentModel>(1)
+                .Where(x => x.NormalizedUserName == normalizedUserName)
+                .GetResults();
             if (results.HasMore()) {
                 var documents = await results.ReadAsync();
                 return documents.FirstOrDefault().Value.ToServiceModel();
@@ -136,16 +131,10 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Storage {
             if (providerKey == null) {
                 throw new ArgumentNullException(nameof(providerKey));
             }
-            var client = _documents.OpenSqlClient();
-            var queryString = $"SELECT * FROM r WHERE ";
-            queryString +=
-                $"r.{nameof(UserDocumentModel.NormalizedUserName)} = @name";
-            var queryParameters = new Dictionary<string, object> {
-                { "@provider", loginProvider },
-                { "@key", providerKey }
-            };
-            var results = client.Query<UserDocumentModel>(
-                queryString, queryParameters, 1);
+            var results = _documents.CreateQuery<UserDocumentModel>(1)
+                //   .Where(x => x.Provider == loginProvider)
+                //   .Where(x => x.ProviderKey == providerKey) // TODO
+                .GetResults();
             if (results.HasMore()) {
                 var documents = await results.ReadAsync();
                 return documents.FirstOrDefault().Value.ToServiceModel();
@@ -159,15 +148,10 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Storage {
             if (normalizedEmail == null) {
                 throw new ArgumentNullException(nameof(normalizedEmail));
             }
-            var client = _documents.OpenSqlClient();
-            var queryString = $"SELECT * FROM r WHERE ";
-            queryString +=
-                $"r.{nameof(UserDocumentModel.NormalizedEmail)} = @email";
-            var queryParameters = new Dictionary<string, object> {
-                { "@email", normalizedEmail }
-            };
-            var results = client.Query<UserDocumentModel>(
-                queryString, queryParameters, 1);
+            normalizedEmail = normalizedEmail.ToLowerInvariant();
+            var results = _documents.CreateQuery<UserDocumentModel>(1)
+                .Where(x => x.NormalizedEmail == normalizedEmail)
+                .GetResults();
             if (results.HasMore()) {
                 var documents = await results.ReadAsync();
                 return documents.FirstOrDefault().Value.ToServiceModel();
@@ -181,15 +165,11 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Storage {
             if (normalizedRoleName == null) {
                 throw new ArgumentNullException(nameof(normalizedRoleName));
             }
-            var client = _documents.OpenSqlClient();
-            var queryString = $"SELECT * FROM r WHERE ";
-            queryString +=
-                $"ARRAY_CONTAINS(r.{nameof(UserDocumentModel.Roles)}, @name)";
-            var queryParameters = new Dictionary<string, object> {
-                { "@name", normalizedRoleName.ToLowerInvariant() }
-            };
-            var results = client.Query<UserDocumentModel>(
-                queryString, queryParameters);
+            normalizedRoleName = normalizedRoleName.ToLowerInvariant();
+            var results = _documents.CreateQuery<UserDocumentModel>()
+                .Where(x => x.Roles != null)
+                .Where(x => x.Roles.Contains(normalizedRoleName))
+                .GetResults();
             var users = new List<UserModel>();
             if (results.HasMore()) {
                 var documents = await results.ReadAsync();
@@ -351,14 +331,10 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Storage {
             if (claim == null) {
                 throw new ArgumentNullException(nameof(claim));
             }
-            var client = _documents.OpenSqlClient();
-            var queryString = $"SELECT * FROM r WHERE ";
-            queryString +=
-                $"ARRAY_CONTAINS(r.{nameof(UserDocumentModel.Claims)}, @claim)";
-            var queryParameters = new Dictionary<string, object> {
-                { "@claim", claim.ToDocumentModel() }
-            };
-            var results = client.Query<UserDocumentModel>(queryString, queryParameters);
+            var results = _documents.CreateQuery<UserDocumentModel>()
+                .Where(x => x.Claims != null)
+                .Where(x => x.Claims.Contains(claim.ToDocumentModel())) // TODO---
+                .GetResults();
             var users = new List<UserModel>();
             if (results.HasMore()) {
                 var documents = await results.ReadAsync();

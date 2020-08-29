@@ -39,7 +39,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Storage.Default {
             while (true) {
                 if (!string.IsNullOrEmpty(writerGroup.WriterGroupId)) {
                     var document = await _documents.FindAsync<WriterGroupDocument>(
-                    writerGroup.WriterGroupId, ct);
+                        writerGroup.WriterGroupId, ct);
                     if (document != null) {
                         throw new ConflictingResourceException(
                             $"Writer Group {writerGroup.WriterGroupId} already exists.");
@@ -145,11 +145,9 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Storage.Default {
         /// <inheritdoc/>
         public async Task<WriterGroupInfoListModel> QueryAsync(WriterGroupInfoQueryModel query,
             string continuationToken, int? maxResults, CancellationToken ct) {
-            var client = _documents.OpenSqlClient();
             var results = continuationToken != null ?
-                client.ContinueQuery<WriterGroupDocument>(continuationToken, maxResults) :
-                client.Query<WriterGroupDocument>(CreateQuery(query, out var queryParameters),
-                    queryParameters, maxResults);
+                _documents.ContinueQuery<WriterGroupDocument>(continuationToken, maxResults) :
+                CreateQuery(_documents.CreateQuery<WriterGroupDocument>(maxResults), query);
             if (!results.HasMore()) {
                 return new WriterGroupInfoListModel {
                     WriterGroups = new List<WriterGroupInfoModel>()
@@ -203,51 +201,35 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Storage.Default {
         /// <summary>
         /// Create query
         /// </summary>
+        /// <param name="filter"></param>
         /// <param name="query"></param>
-        /// <param name="queryParameters"></param>
         /// <returns></returns>
-        private static string CreateQuery(WriterGroupInfoQueryModel query,
-            out Dictionary<string, object> queryParameters) {
-            queryParameters = new Dictionary<string, object>();
-            var queryString = $"SELECT * FROM r WHERE ";
-            if (query?.GroupVersion != null) {
-                queryString +=
-$"r.{nameof(WriterGroupDocument.GroupVersion)} = @version AND ";
-                queryParameters.Add("@version", query.GroupVersion.Value);
+        private static IResultFeed<IDocumentInfo<WriterGroupDocument>> CreateQuery(
+            IQuery<WriterGroupDocument> query, WriterGroupInfoQueryModel filter) {
+
+            if (filter?.GroupVersion != null) {
+                query = query.Where(x => x.GroupVersion == filter.GroupVersion.Value);
             }
-            if (query?.Encoding != null) {
-                queryString +=
-$"r.{nameof(WriterGroupDocument.MessageEncoding)} = @encoding AND ";
-                queryParameters.Add("@encoding", query.Encoding.Value);
+            if (filter?.Encoding != null) {
+                query = query.Where(x => x.MessageEncoding == filter.Encoding.Value);
             }
-            if (query?.Schema != null) {
-                queryString +=
-$"r.{nameof(WriterGroupDocument.Schema)} = @schema AND ";
-                queryParameters.Add("@schema", query.Schema.Value);
+            if (filter?.Schema != null) {
+                query = query.Where(x => x.Schema == filter.Schema.Value);
             }
-            if (query?.Priority != null) {
-                queryString +=
-$"r.{nameof(WriterGroupDocument.Priority)} = @priority AND ";
-                queryParameters.Add("@priority", query.Priority.Value);
+            if (filter?.Priority != null) {
+                query = query.Where(x => x.Priority == filter.Priority.Value);
             }
-            if (query?.SiteId != null) {
-                queryString +=
-$"r.{nameof(WriterGroupDocument.SiteId)} = @siteId AND ";
-                queryParameters.Add("@siteId", query.SiteId);
+            if (filter?.SiteId != null) {
+                query = query.Where(x => x.SiteId == filter.SiteId);
             }
-            if (query?.State != null) {
-                queryString +=
-$"r.{nameof(WriterGroupDocument.LastState)} = @state AND ";
-                queryParameters.Add("@state", query.State.Value);
+            if (filter?.State != null) {
+                query = query.Where(x => x.LastState == filter.State.Value);
             }
-            if (query?.Name != null) {
-                queryString +=
-$"r.{nameof(WriterGroupDocument.Name)} = @name AND ";
-                queryParameters.Add("@name", query.Name);
+            if (filter?.Name != null) {
+                query = query.Where(x => x.Name == filter.Name);
             }
-            queryString +=
-$"r.{nameof(WriterGroupDocument.ClassType)} = '{WriterGroupDocument.ClassTypeName}'";
-            return queryString;
+            query = query.Where(x => x.ClassType == WriterGroupDocument.ClassTypeName);
+            return query.GetResults();
         }
 
         private readonly IDocuments _documents;

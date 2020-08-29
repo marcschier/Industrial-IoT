@@ -42,21 +42,12 @@ namespace Microsoft.Azure.IIoT.Cryptography.Storage {
         /// <inheritdoc/>
         public async Task<Certificate> FindCertificateAsync(string certificateId,
             CancellationToken ct) {
-
-            // Select top 1 - there should only be 1
-            var query = "SELECT TOP 1 * FROM Certificates c WHERE";
-            query += $" c.{nameof(CertificateDocument.Type)} = '{nameof(Certificate)}'";
-
-            // With matching id
-            query += $" AND c.{nameof(CertificateDocument.CertificateId)} = @certificateId";
-            var queryParameters = new Dictionary<string, object> {
-                { "@certificateId", certificateId }
-            };
-
-            // Latest on top
-            query += $" ORDER BY c.{nameof(CertificateDocument.Version)} DESC";
-            var client = _certificates.OpenSqlClient();
-            var result = client.Query<CertificateDocument>(query, queryParameters, 1);
+            var result = _certificates.CreateQuery<CertificateDocument>(1)
+                .Where(x => x.Type == nameof(Certificate))
+                .Where(x => x.CertificateId == certificateId)
+                .OrderByDescending(x => x.Version)
+                .Take(1)
+                .GetResults();
             var documents = await result.ReadAsync(ct);
             return DocumentToCertificate(documents.SingleOrDefault()?.Value);
         }
@@ -102,24 +93,14 @@ namespace Microsoft.Azure.IIoT.Cryptography.Storage {
         }
 
         /// <inheritdoc/>
-        public async Task<Certificate> GetLatestCertificateAsync(string certificateName,
+        public async Task<Certificate> FindLatestCertificateAsync(string certificateName,
             CancellationToken ct) {
-
-            // Select top 1
-            var query = "SELECT TOP 1 * FROM Certificates c WHERE";
-            query += $" c.{nameof(CertificateDocument.Type)} = '{nameof(Certificate)}'";
-
-            // With matching name
-            query += $" AND c.{nameof(CertificateDocument.CertificateName)} = @certificateName";
-            var queryParameters = new Dictionary<string, object> {
-                { "@certificateName", certificateName }
-            };
-
-            // Latest on top
-            query += $" ORDER BY c.{nameof(CertificateDocument.Version)} DESC";
-
-            var client = _certificates.OpenSqlClient();
-            var result = client.Query<CertificateDocument>(query, queryParameters, 1);
+            var result = _certificates.CreateQuery<CertificateDocument>(1)
+                .Where(x => x.Type == nameof(Certificate))
+                .Where(x => x.CertificateName == certificateName)
+                .OrderByDescending(x => x.Version)
+                .Take(1)
+                .GetResults();
             var documents = await result.ReadAsync(ct);
             return DocumentToCertificate(documents.SingleOrDefault()?.Value);
         }
@@ -128,72 +109,62 @@ namespace Microsoft.Azure.IIoT.Cryptography.Storage {
         public async Task<CertificateCollection> QueryCertificatesAsync(
             CertificateFilter filter, int? pageSize, CancellationToken ct) {
 
-            var queryParameters = new Dictionary<string, object>();
-            var query = "SELECT * FROM Certificates c WHERE";
-            query += $" c.{nameof(CertificateDocument.Type)} = '{nameof(Certificate)}'";
+            var query = _certificates.CreateQuery<CertificateDocument>(pageSize)
+                .Where(x => x.Type == nameof(Certificate));
 
             if (filter.NotBefore != null) {
-                query += $" AND c.{nameof(CertificateDocument.NotBefore)} <= @NotBefore";
-                queryParameters.Add("@NotBefore", filter.NotBefore.ToString());
+                query = query.Where(x => x.NotBefore <= filter.NotBefore.Value);
             }
             if (filter.NotAfter != null) {
-                query += $" AND c.{nameof(CertificateDocument.NotAfter)} >= @NotAfter";
-                queryParameters.Add("@NotAfter", filter.NotAfter.ToString());
+                query = query.Where(x => x.NotAfter >= filter.NotAfter.Value);
             }
             if (filter.IncludeDisabled && filter.ExcludeEnabled) {
-                query += $" AND IS_DEFINED(c.{nameof(CertificateDocument.DisabledSince)})";
+                query = query.Where(x => x.DisabledSince != null);
             }
             if (!filter.IncludeDisabled && !filter.ExcludeEnabled) {
-                query += $" AND NOT IS_DEFINED(c.{nameof(CertificateDocument.DisabledSince)})";
+                query = query.Where(x => x.DisabledSince == null);
             }
             if (filter.CertificateName != null) {
-                query += $" AND c.{nameof(CertificateDocument.CertificateName)} = @Name";
-                queryParameters.Add("@Name", filter.CertificateName);
+                query = query.Where(x => x.CertificateName == filter.CertificateName);
             }
             if (filter.Subject != null) {
-                query += $" AND (c.{nameof(CertificateDocument.Subject)} = @Subject";
+                var subject = filter.Subject.Name;
                 if (filter.IncludeAltNames) {
-                    query += $" OR ARRAY_CONTAINS(" +
-                        $"c.{nameof(CertificateDocument.SubjectAltNames)}, @Subject )";
+                    query = query.Where(x => x.Subject == subject || 
+                        (x.SubjectAltNames != null && x.SubjectAltNames.Contains(subject)));
                 }
-                query += " )";
-                queryParameters.Add("@Subject", filter.Subject.Name);
+                else {
+                    query = query.Where(x => x.Subject == subject);
+                }
             }
             if (filter.Thumbprint != null) {
-                query += $" AND c.{nameof(CertificateDocument.Thumbprint)} = @Thumbprint";
-                queryParameters.Add("@Thumbprint", filter.Thumbprint);
+                query = query.Where(x => x.Thumbprint == filter.Thumbprint);
             }
             if (filter.KeyId != null) {
-                query += $" AND c.{nameof(CertificateDocument.KeyId)} = @KeyId";
-                queryParameters.Add("@KeyId", filter.KeyId);
+                query = query.Where(x => x.KeyId == filter.KeyId);
             }
             if (filter.IsIssuer != null) {
-                query += $" AND c.{nameof(CertificateDocument.IsIssuer)} = @IsIssuer";
-                queryParameters.Add("@IsIssuer", filter.IsIssuer.Value);
+                query = query.Where(x => x.IsIssuer == filter.IsIssuer.Value);
             }
             if (filter.Issuer != null) {
-                query += $" AND (c.{nameof(CertificateDocument.Issuer)} = @Issuer";
+                var issuer = filter.Issuer.Name;
                 if (filter.IncludeAltNames) {
-                    query += $" OR ARRAY_CONTAINS(" +
-                        $"c.{nameof(CertificateDocument.IssuerAltNames)}, @Issuer )";
+                    query = query.Where(x => x.Issuer == issuer ||
+                        (x.IssuerAltNames != null && x.IssuerAltNames.Contains(issuer)));
                 }
-                query += " )";
-                queryParameters.Add("@Issuer", filter.Issuer.Name);
+                else {
+                    query = query.Where(x => x.Issuer == issuer);
+                }
             }
-            if (filter.Issuer != null) {
-                query += $" AND c.{nameof(CertificateDocument.IssuerSerialNumber)} = @Isn";
-                queryParameters.Add("@Isn", new SerialNumber(filter.IssuerSerialNumber).ToString());
+            if (filter.IssuerSerialNumber != null) {
+                var sn = new SerialNumber(filter.IssuerSerialNumber).ToString();
+                query = query.Where(x => x.IssuerSerialNumber == sn);
             }
             if (filter.IssuerKeyId != null) {
-                query += $" AND c.{nameof(CertificateDocument.IssuerKeyId)} = @IssuerKeyId";
-                queryParameters.Add("@IssuerKeyId", filter.IssuerKeyId);
+                query = query.Where(x => x.IssuerKeyId == filter.IssuerKeyId);
             }
-
-            query += $" ORDER BY c.{nameof(CertificateDocument.Version)} DESC";
-
-            var client = _certificates.OpenSqlClient();
-            var result = client.Query<CertificateDocument>(query, queryParameters,
-                pageSize);
+            query = query.OrderByDescending(x => x.Version);
+            var result = query.GetResults();
             var documents = await result.ReadAsync(ct);
             return new CertificateCollection {
                 Certificates = documents
@@ -218,16 +189,17 @@ namespace Microsoft.Azure.IIoT.Cryptography.Storage {
         /// <inheritdoc/>
         public async Task<CertificateCollection> ListCertificatesAsync(
             string continuationToken, int? pageSize, CancellationToken ct) {
-            var client = _certificates.OpenSqlClient();
+
             IResultFeed<IDocumentInfo<CertificateDocument>> result;
             if (!string.IsNullOrEmpty(continuationToken)) {
-                result = client.ContinueQuery<CertificateDocument>(continuationToken, pageSize);
+                result = _certificates.ContinueQuery<CertificateDocument>(
+                    continuationToken, pageSize);
             }
             else {
-                var query = "SELECT * FROM Certificates c WHERE";
-                query += $" c.{nameof(CertificateDocument.Type)} = '{nameof(Certificate)}'";
-                query += $" ORDER BY c.{nameof(CertificateDocument.Version)} DESC";
-                result = client.Query<CertificateDocument>(query, null, pageSize);
+                result = _certificates.CreateQuery<CertificateDocument>(pageSize)
+                    .Where(x => x.Type == nameof(Certificate))
+                    .OrderByDescending(x => x.Version)
+                    .GetResults();
             }
             var documents = await result.ReadAsync(ct);
             return new CertificateCollection {
@@ -246,22 +218,15 @@ namespace Microsoft.Azure.IIoT.Cryptography.Storage {
         /// <returns></returns>
         public async Task<Certificate> GetCertificateBySubjectAsync(X500DistinguishedName subjectName,
             CancellationToken ct) {
-
-            // Select top 1
-            var query = "SELECT TOP 1 * FROM Certificates c WHERE";
-            query += $" c.{nameof(CertificateDocument.Type)} = '{nameof(Certificate)}'";
-
-            // With matching name
-            query += $" AND c.{nameof(CertificateDocument.Subject)} = @name";
-            var queryParameters = new Dictionary<string, object> {
-                { "@name", subjectName.Name }
-            };
-
-            // Latest on top
-            query += $" ORDER BY c.{nameof(CertificateDocument.Version)} DESC";
-
-            var client = _certificates.OpenSqlClient();
-            var result = client.Query<CertificateDocument>(query, queryParameters, 1);
+            var result = _certificates.CreateQuery<CertificateDocument>(1)
+                .Where(x => x.Type == nameof(Certificate))
+                // With matching name
+                .Where(x => x.Subject == subjectName.Name)
+                // Latest on top
+                .OrderByDescending(x => x.Version)
+                // Select top 1
+                .Take(1)
+                .GetResults();
             var documents = await result.ReadAsync(ct);
             return DocumentToCertificate(documents.SingleOrDefault()?.Value);
         }

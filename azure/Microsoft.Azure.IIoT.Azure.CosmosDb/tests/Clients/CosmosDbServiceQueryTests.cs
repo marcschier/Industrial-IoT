@@ -158,7 +158,7 @@ namespace Microsoft.Azure.IIoT.Azure.CosmosDb.Clients {
             Skip.If(documents == null);
 
             var families = documents.CreateQuery<Family>()
-                .Where(f => f.Address.State.CompareTo("NY") > 0);
+                .Where(f => f.Address.State.Equals("NY", StringComparison.OrdinalIgnoreCase));
 
             var results = await RunAsync(families);
             Assert.Single(results);
@@ -253,8 +253,8 @@ namespace Microsoft.Azure.IIoT.Azure.CosmosDb.Clients {
             var documents = await _fixture.GetDocumentsAsync();
             Skip.If(documents == null);
 
-            var query = documents.CreateQuery<Family>()
-                    .SelectMany(family => family.Children
+            var query = documents.CreateQuery<Family>().Where(family => family.Children != null)
+                    .SelectMany(family => family.Children.Where(child => child.Pets != null)
                     .SelectMany(child => child.Pets
                     .Where(pet => pet.GivenName == "Fluffy")
                     .Select(pet => new {
@@ -273,8 +273,8 @@ namespace Microsoft.Azure.IIoT.Azure.CosmosDb.Clients {
             var documents = await _fixture.GetDocumentsAsync();
             Skip.If(documents == null);
 
-            var query = documents.CreateQuery<Family>()
-                    .SelectMany(family => family.Children
+            var query = documents.CreateQuery<Family>().Where(family => family.Children != null)
+                    .SelectMany(family => family.Children.Where(child => child.Pets != null)
                     .SelectMany(child => child.Pets
                     .Select(pet => new {
                         family = family.Id,

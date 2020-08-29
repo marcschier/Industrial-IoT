@@ -132,12 +132,9 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Storage {
         public async Task<CertificateRequestListModel> QueryAsync(
             CertificateRequestQueryRequestModel query, string nextPageLink,
             int? maxResults, CancellationToken ct) {
-            var client = _requests.OpenSqlClient();
             var results = nextPageLink != null ?
-                client.ContinueQuery<RequestDocument>(nextPageLink, maxResults) :
-                client.Query<RequestDocument>(
-                    CreateQuery(query, out var queryParameters),
-                    queryParameters, maxResults);
+                _requests.ContinueQuery<RequestDocument>(nextPageLink, maxResults) :
+                CreateQuery(_requests.CreateQuery<RequestDocument>(maxResults), query);
             if (!results.HasMore()) {
                 return new CertificateRequestListModel {
                     Requests = new List<CertificateRequestModel>()
@@ -153,26 +150,20 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Storage {
         /// <summary>
         /// Create query string from parameters
         /// </summary>
+        /// <param name="filter"></param>
         /// <param name="query"></param>
-        /// <param name="queryParameters"></param>
         /// <returns></returns>
-        private static string CreateQuery(CertificateRequestQueryRequestModel query,
-            out Dictionary<string, object> queryParameters) {
-            queryParameters = new Dictionary<string, object>();
-            var queryString = "SELECT * FROM CertificateRequests r WHERE ";
-            if (query?.State != null) {
-                queryString +=
-                    $"r.{nameof(RequestDocument.State)} = @state AND ";
-                queryParameters.Add("@state", query.State.Value);
+        private static IResultFeed<IDocumentInfo<RequestDocument>> CreateQuery(
+            IQuery<RequestDocument> query, CertificateRequestQueryRequestModel filter) {
+
+            if (filter?.State != null) {
+                query = query.Where(x => x.State == filter.State);
             }
-            if (query?.EntityId != null) {
-                queryString +=
-$"r.{nameof(RequestDocument.Entity)}.{nameof(EntityInfoModel.Id)} = @entityId AND ";
-                queryParameters.Add("@entityId", query.EntityId);
+            if (filter?.EntityId != null) {
+                query = query.Where(x => x.Entity.Id == filter.EntityId);
             }
-            queryString +=
-$"r.{nameof(RequestDocument.ClassType)} = '{RequestDocument.ClassTypeName}'";
-            return queryString;
+            query = query.Where(x => x.ClassType == RequestDocument.ClassTypeName);
+            return query.GetResults();
         }
 
         private readonly IDocuments _requests;

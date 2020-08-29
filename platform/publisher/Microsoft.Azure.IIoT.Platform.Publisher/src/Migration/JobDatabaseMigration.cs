@@ -48,9 +48,9 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Migration {
             if (_documents == null) {
                 return;
             }
-            var query = _documents.OpenSqlClient().Query<JobDocument>(
-    $"SELECT * FROM r WHERE r.{nameof(JobDocument.ClassType)} = '{JobDocument.ClassTypeName}'",
-                null, null);
+            var query = _documents.CreateQuery<JobDocument>()
+                .Where(x => x.ClassType == JobDocument.ClassTypeName)
+                .GetResults();
             // Read results
             while (query.HasMore()) {
                 var results = await query.ReadAsync();

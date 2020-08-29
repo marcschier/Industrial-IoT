@@ -30,6 +30,10 @@ namespace Microsoft.Azure.IIoT.Storage.LiteDb.Clients {
         /// <inheritdoc/>
         public Task<IItemContainer> OpenContainerAsync(string id,
             ContainerOptions options) {
+            if (string.IsNullOrEmpty(id)) {
+                id = "default";
+            }
+            id = id.Replace('-', '_');
             var container = new DocumentCollection(id, _db, options, _logger);
             return Task.FromResult<IItemContainer>(container);
         }

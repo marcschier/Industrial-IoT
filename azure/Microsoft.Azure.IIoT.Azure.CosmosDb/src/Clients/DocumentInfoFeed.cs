@@ -7,7 +7,6 @@ namespace Microsoft.Azure.IIoT.Azure.CosmosDb.Clients {
     using Microsoft.Azure.IIoT.Storage;
     using Microsoft.Azure.IIoT.Utils;
     using Microsoft.Azure.Documents.Linq;
-    using Microsoft.Azure.Documents;
     using Serilog;
     using System.Collections.Generic;
     using System.Linq;

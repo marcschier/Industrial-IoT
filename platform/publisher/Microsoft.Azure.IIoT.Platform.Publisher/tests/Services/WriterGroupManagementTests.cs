@@ -21,7 +21,6 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
     using System.Threading.Tasks;
     using System.Threading;
     using Xunit;
-    using Xunit.Sdk;
     using Autofac;
     using Moq;
 
@@ -33,35 +32,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
         [Fact]
         public async Task UpdateWriterGroupStateTestAsync() {
 
-            using (var mock = Setup((v, q) => {
-                var expected =
-                    "SELECT * FROM r WHERE r.LastState = 'Pending' AND r.ClassType = 'WriterGroup'";
-                if (q == expected) {
-                    // Get variables and entities
-                    return v
-                        .Where(o => o.Value["LastState"] == "Pending")
-                        .Where(o => o.Value["ClassType"] == "WriterGroup");
-                }
-
-                expected =
-                    "SELECT * FROM r WHERE r.LastState = 'Disabled' AND r.ClassType = 'WriterGroup'";
-                if (q == expected) {
-                    // Get variables and entities
-                    return v
-                        .Where(o => o.Value["LastState"] == "Disabled")
-                        .Where(o => o.Value["ClassType"] == "WriterGroup");
-                }
-
-                expected =
-                    "SELECT * FROM r WHERE r.LastState = 'Publishing' AND r.ClassType = 'WriterGroup'";
-                if (q == expected) {
-                    // Get variables and entities
-                    return v
-                        .Where(o => o.Value["LastState"] == "Publishing")
-                        .Where(o => o.Value["ClassType"] == "WriterGroup");
-                }
-                throw new AssertActualExpectedException(null, q, "Query");
-            })) {
+            using (var mock = Setup()) {
 
                 IDataSetWriterRegistry writers = mock.Create<WriterGroupRegistry>();
                 IWriterGroupRegistry groups = mock.Create<WriterGroupRegistry>();
@@ -135,17 +106,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
         [Fact]
         public async Task UpdateDataSetWriterStateTestAsync() {
 
-            using (var mock = Setup((v, q) => {
-                var expected =
-                    "SELECT * FROM r WHERE r.IsDisabled = false AND r.ClassType = 'DataSetWriter'";
-                if (q == expected) {
-                    // Get variables and entities
-                    return v
-                        .Where(o => o.Value["IsDisabled"] == false)
-                        .Where(o => o.Value["ClassType"] == "DataSetWriter");
-                }
-                throw new AssertActualExpectedException(null, q, "Query");
-            })) {
+            using (var mock = Setup()) {
 
                 IDataSetWriterRegistry writers = mock.Create<WriterGroupRegistry>();
                 IWriterGroupRegistry groups = mock.Create<WriterGroupRegistry>();
@@ -211,58 +172,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
         [Fact]
         public async Task UpdateDataSetVariableStateTestAsync() {
 
-            using (var mock = Setup((v, q) => {
-                var id = q
-                    .Replace("SELECT * FROM r WHERE r.DataSetWriterId = '", "")
-                    .Replace("' AND r.ClassType = 'DataSetEntity' AND r.Type = 'Variable'", "");
-                if (Guid.TryParse(id, out var dataSetWriterid)) {
-                    // Get variables
-                    return v
-                        .Where(o => o.Value["DataSetWriterId"] == dataSetWriterid.ToString())
-                        .Where(o => o.Value["ClassType"] == "DataSetEntity")
-                        .Where(o => o.Value["Type"] == "Variable");
-                }
-
-                id = q
-                    .Replace("SELECT * FROM r WHERE r.WriterGroupId = '", "")
-                    .Replace("' AND r.IsDisabled = false AND r.ClassType = 'DataSetWriter'", "");
-                if (Guid.TryParse(id, out var writerGroupId)) {
-                    // Get writers
-                    return v
-                        .Where(o => o.Value["WriterGroupId"] == writerGroupId.ToString())
-                        .Where(o => o.Value["ClassType"] == "DataSetWriter")
-                        .Where(o => o.Value["IsDisabled"] == false);
-                }
-
-                id = q
-                    .Replace("SELECT * FROM r WHERE r.WriterGroupId = '", "")
-                    .Replace("' AND r.ClassType = 'DataSetWriter'", "");
-                if (Guid.TryParse(id, out writerGroupId)) {
-                    // Get writers not disabled
-                    return v
-                        .Where(o => o.Value["WriterGroupId"] == writerGroupId.ToString())
-                        .Where(o => o.Value["ClassType"] == "DataSetWriter");
-                }
-
-                id = q
-                    .Replace("SELECT * FROM r WHERE r.DataSetWriterId = '", "")
-                    .Replace("' AND r.ClassType = 'DataSetEntity'", "");
-                if (Guid.TryParse(id, out dataSetWriterid)) {
-                    // Get variables and entities
-                    return v
-                        .Where(o => o.Value["DataSetWriterId"] == dataSetWriterid.ToString())
-                        .Where(o => o.Value["ClassType"] == "DataSetEntity");
-                }
-                var expected =
-                    "SELECT * FROM r WHERE r.IsDisabled = false AND r.ClassType = 'DataSetWriter'";
-                if (q == expected) {
-                    // Get variables and entities
-                    return v
-                        .Where(o => o.Value["IsDisabled"] == false)
-                        .Where(o => o.Value["ClassType"] == "DataSetWriter");
-                }
-                throw new AssertActualExpectedException(null, q, "Query");
-            })) {
+            using (var mock = Setup()) {
 
                 IDataSetWriterRegistry writers = mock.Create<WriterGroupRegistry>();
                 IDataSetBatchOperations batch = mock.Create<WriterGroupRegistry>();
@@ -352,37 +262,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
         [Fact]
         public async Task HandleEndpointEventsTestAsync() {
 
-            using (var mock = Setup((v, q) => {
-                var expected =
-                    "SELECT * FROM r WHERE r.IsDisabled = false AND r.ClassType = 'DataSetWriter'";
-                if (q == expected) {
-                    return v
-                        .Where(o => o.Value["IsDisabled"] == false)
-                        .Where(o => o.Value["ClassType"] == "DataSetWriter");
-                }
-                expected =
-                    "SELECT * FROM r WHERE r.ClassType = 'DataSetWriter'";
-                if (q == expected) {
-                    return v
-                        .Where(o => o.Value["ClassType"] == "DataSetWriter");
-                }
-                expected =
-                    "SELECT * FROM r WHERE r.EndpointId = 'endpoint1' AND r.ClassType = 'DataSetWriter'";
-                if (q == expected) {
-                    return v
-                        .Where(o => o.Value["EndpointId"] == "endpoint1")
-                        .Where(o => o.Value["ClassType"] == "DataSetWriter");
-                }
-                expected =
-                    "SELECT * FROM r WHERE r.EndpointId = 'endpoint1' AND r.IsDisabled = false AND r.ClassType = 'DataSetWriter'";
-                if (q == expected) {
-                    return v
-                        .Where(o => o.Value["IsDisabled"] == false)
-                        .Where(o => o.Value["EndpointId"] == "endpoint1")
-                        .Where(o => o.Value["ClassType"] == "DataSetWriter");
-                }
-                throw new AssertActualExpectedException(null, q, "Query");
-            })) {
+            using (var mock = Setup()) {
 
                 IDataSetWriterRegistry writers = mock.Create<WriterGroupRegistry>();
                 IWriterGroupRegistry groups = mock.Create<WriterGroupRegistry>();
@@ -524,12 +404,10 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
         /// </summary>
         /// <param name="mock"></param>
         /// <param name="provider"></param>
-        private static AutoMock Setup(Func<IEnumerable<IDocumentInfo<VariantValue>>,
-            string, IEnumerable<IDocumentInfo<VariantValue>>> provider) {
+        private static AutoMock Setup() {
             var mock = AutoMock.GetLoose(builder => {
                 builder.RegisterType<NewtonSoftJsonConverters>().As<IJsonSerializerConverterProvider>();
                 builder.RegisterType<NewtonSoftJsonSerializer>().As<IJsonSerializer>();
-                builder.RegisterInstance(new QueryEngineAdapter(provider)).As<IQueryEngine>();
                 builder.RegisterType<MemoryDatabase>().SingleInstance().As<IDatabaseServer>();
                 builder.RegisterType<ItemContainerFactory>().As<IItemContainerFactory>();
                 builder.RegisterType<DataSetEntityDatabase>().AsImplementedInterfaces();

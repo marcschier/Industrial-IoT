@@ -6,7 +6,6 @@
 namespace Microsoft.Azure.IIoT.Platform.OpcUa.Models {
     using System.Collections.Generic;
     using Opc.Ua;
-    using System;
 
     /// <summary>
     /// Subscription notification model

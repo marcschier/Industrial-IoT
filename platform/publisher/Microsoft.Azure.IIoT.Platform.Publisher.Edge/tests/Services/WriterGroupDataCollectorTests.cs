@@ -32,7 +32,6 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Services {
     using System.Linq;
     using System.Net.Sockets;
     using Xunit;
-    using Xunit.Sdk;
     using Serilog;
     using Opc.Ua;
 
@@ -172,21 +171,6 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Services {
                 Assert.NotNull(v1evt);
                 Assert.Equal(StatusCodes.BadNodeIdUnknown, v1evt.LastResult?.StatusCode);
                 Assert.NotNull(v1evt.LastResult?.ErrorMessage);
-
-                // Should get single message with error
-                var message = events.GetMessages(null).WaitForEvent();
-                Assert.NotNull(message);
-                Assert.NotNull(message.Data);
-                Assert.NotNull(message.ContentEncoding);
-                Assert.Equal(ContentMimeType.Json, message.ContentType);
-                Assert.NotNull(message);
-                var value = message.Decode();
-                Assert.False(value.IsNull());
-                Assert.Equal("1", value.GetByPath("MessageId"));
-                Assert.Equal("ua-data", value.GetByPath("MessageType"));
-                Assert.Equal(1, value.GetByPath("Messages[0].MetaDataVersion.MajorVersion"));
-                Assert.Equal("Bad", value.GetByPath("Messages[0].Status.Symbol"));
-                Assert.Equal("BadNodeIdUnknown", value.GetByPath("Messages[0].Payload.i=88888.StatusCode.Symbol"));
 
                 // Deactivate - stop engine
                 await groups.DeactivateWriterGroupAsync(result1.WriterGroupId);
@@ -331,7 +315,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Services {
                 Assert.Null(v2evt.LastResult?.ErrorMessage);
                 Assert.Null(v2evt.LastResult?.StatusCode);
 
-                // Second message should at least be good
+                // Good
                 var message = events.GetMessages(null).WaitForEvent();
                 Assert.NotNull(message.Data);
                 Assert.Equal(ContentMimeType.Json, message.ContentType);
@@ -342,8 +326,8 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Services {
                 Assert.Equal("1", value.GetByPath("MessageId"));
                 Assert.Equal("ua-data", value.GetByPath("MessageType"));
                 Assert.Equal(1, value.GetByPath("Messages[0].MetaDataVersion.MajorVersion"));
-                Assert.Equal("Bad", value.GetByPath("Messages[0].Status.Symbol"));
-                Assert.Equal("BadNodeIdUnknown", value.GetByPath("Messages[0].Payload.i=88888.StatusCode.Symbol"));
+                Assert.True(value.GetByPath("Messages[0].Status").IsNull());
+                Assert.True(value.GetByPath("Messages[0].Payload.i=2258.Value").IsDateTime);
 
                 // Good
                 message = events.GetMessages(null).WaitForEvent();
@@ -461,19 +445,6 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Services {
                 builder.RegisterType<ClientServicesConfig>().AsImplementedInterfaces();
                 builder.RegisterType<NewtonSoftJsonConverters>().As<IJsonSerializerConverterProvider>();
                 builder.RegisterType<NewtonSoftJsonSerializer>().As<IJsonSerializer>();
-                builder.RegisterInstance(new QueryEngineAdapter((v, q) => {
-                    var id = q
-                        .Replace("SELECT * FROM r WHERE r.DataSetWriterId = '", "")
-                        .Replace("' AND r.ClassType = 'DataSetEntity' AND r.Type = 'Variable'", "");
-                    if (Guid.TryParse(id, out var dataSetWriterid)) {
-                        // Get variables
-                        return v
-                            .Where(o => o.Value["DataSetWriterId"] == dataSetWriterid.ToString())
-                            .Where(o => o.Value["ClassType"] == "DataSetEntity")
-                            .Where(o => o.Value["Type"] == "Variable");
-                    }
-                    throw new AssertActualExpectedException(null, q, "Query");
-                })).As<IQueryEngine>();
                 builder.RegisterType<MemoryDatabase>().As<IDatabaseServer>().SingleInstance();
                 builder.RegisterType<ItemContainerFactory>().As<IItemContainerFactory>();
                 builder.RegisterType<DataSetEntityDatabase>().AsImplementedInterfaces();

@@ -47,7 +47,7 @@ namespace Microsoft.Azure.IIoT.Cryptography.Default {
             }
 
             // Get CA certificate
-            var caCertificate = await _store.GetLatestCertificateAsync(rootCertificate, ct);
+            var caCertificate = await _store.FindLatestCertificateAsync(rootCertificate, ct);
             if (caCertificate.IssuerPolicies == null) {
                 throw new ArgumentException("root certificate is not an issuer");
             }
@@ -141,7 +141,7 @@ namespace Microsoft.Azure.IIoT.Cryptography.Default {
             }
 
             // Get CA certificate
-            var caCertificate = await _store.GetLatestCertificateAsync(rootCertificate, ct);
+            var caCertificate = await _store.FindLatestCertificateAsync(rootCertificate, ct);
             if (caCertificate.IssuerPolicies == null) {
                 throw new ArgumentException("Specified isseur certificate is not an issuer");
             }
@@ -170,7 +170,7 @@ namespace Microsoft.Azure.IIoT.Cryptography.Default {
             }
 
             // Get CA certificate
-            var caCertificate = await _store.GetLatestCertificateAsync(rootCertificate, ct);
+            var caCertificate = await _store.FindLatestCertificateAsync(rootCertificate, ct);
             if (caCertificate.IssuerPolicies == null) {
                 throw new ArgumentException("Specified issuer certificate is not an issuer");
             }

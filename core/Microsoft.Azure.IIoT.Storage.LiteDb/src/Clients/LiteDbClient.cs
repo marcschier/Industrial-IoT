@@ -8,7 +8,6 @@ namespace Microsoft.Azure.IIoT.Storage.LiteDb.Clients {
     using Serilog;
     using System;
     using System.Threading.Tasks;
-    using System.IO;
     using LiteDB;
 
     /// <summary>
@@ -28,21 +27,11 @@ namespace Microsoft.Azure.IIoT.Storage.LiteDb.Clients {
 
         /// <inheritdoc/>
         public Task<IDatabase> OpenAsync(string databaseId, DatabaseOptions options) {
-            if (string.IsNullOrEmpty(databaseId)) {
-                databaseId = "default";
-            }
-            ILiteDatabase client;
-            if (string.IsNullOrEmpty(_config.DbConnectionString)) {
-                client = new LiteDatabase(new MemoryStream(), _mapper);
-            }
-            else {
-                client = new LiteDatabase(_config.DbConnectionString, _mapper);
-            }
+            var client = new LiteDatabase(_config.DbConnectionString, DocumentSerializer.Mapper);
             var db = new DocumentDatabase(client, _logger);
             return Task.FromResult<IDatabase>(db);
         }
 
-        private readonly BsonMapper _mapper = new BsonMapper();
         private readonly ILiteDbConfig _config;
         private readonly ILogger _logger;
     }
