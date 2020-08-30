@@ -30,9 +30,8 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Storage {
                 throw new ArgumentNullException(nameof(db));
             }
 
-            var container = db.OpenAsync("requests").Result;
-            _requests = container.AsDocuments();
-            _index = new ContainerIndex(db, container.Name);
+            _requests = db.OpenAsync("requests").Result;
+            _index = new ContainerIndex(db, _requests.Name);
         }
 
         /// <inheritdoc/>
@@ -50,7 +49,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Storage {
                     var result = await _requests.AddAsync(request.ToDocument(), ct);
                     return result.Value.ToServiceModel();
                 }
-                catch (ConflictingResourceException) {
+                catch (ResourceConflictException) {
                     continue;
                 }
                 catch {
@@ -166,7 +165,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Storage {
             return query.GetResults();
         }
 
-        private readonly IDocuments _requests;
+        private readonly IItemContainer _requests;
         private readonly IContainerIndex _index;
     }
 }

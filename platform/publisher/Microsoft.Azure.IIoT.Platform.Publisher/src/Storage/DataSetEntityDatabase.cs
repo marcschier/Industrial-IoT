@@ -25,8 +25,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Storage.Default {
         /// <param name="config"></param>
         public DataSetEntityDatabase(IDatabaseServer databaseServer, IItemContainerConfig config) {
             var dbs = databaseServer.OpenAsync(config.DatabaseName).Result;
-            var cont = dbs.OpenContainerAsync(config.ContainerName ?? "publisher").Result;
-            _documents = cont.AsDocuments();
+            _documents = dbs.OpenContainerAsync(config.ContainerName ?? "publisher").Result;
         }
 
         /// <inheritdoc/>
@@ -42,13 +41,13 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Storage.Default {
             while (true) {
                 var document = await _documents.FindAsync<DataSetEntityDocument>(item.Id, ct);
                 if (document != null) {
-                    throw new ConflictingResourceException($"Events {item.Id} already exists.");
+                    throw new ResourceConflictException($"Events {item.Id} already exists.");
                 }
                 try {
                     var result = await _documents.AddAsync(item.ToDocumentModel(dataSetWriterId), ct);
                     return result.Value.ToEventDataSetModel();
                 }
-                catch (ConflictingResourceException) {
+                catch (ResourceConflictException) {
                     // Try again
                     continue;
                 }
@@ -80,7 +79,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Storage.Default {
                         var result = await _documents.AddAsync(updated, ct);
                         return result.Value.ToEventDataSetModel();
                     }
-                    catch (ConflictingResourceException) {
+                    catch (ResourceConflictException) {
                         // Conflict - try update now
                         continue;
                     }
@@ -191,7 +190,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Storage.Default {
                     var document = await _documents.FindAsync<DataSetEntityDocument>(
                         DataSetEntityDocumentEx.GetDocumentId(dataSetWriterId, item.Id), ct);
                     if (document != null) {
-                        throw new ConflictingResourceException($"Variable {item.Id} already exists.");
+                        throw new ResourceConflictException($"Variable {item.Id} already exists.");
                     }
                 }
                 else {
@@ -201,7 +200,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Storage.Default {
                     var result = await _documents.AddAsync(item.ToDocumentModel(dataSetWriterId), ct);
                     return result.Value.ToDataSetVariableModel();
                 }
-                catch (ConflictingResourceException) {
+                catch (ResourceConflictException) {
                     // Try again - reset to preset id or null if none was asked for
                     item.Id = presetId;
                     continue;
@@ -239,7 +238,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Storage.Default {
                         var result = await _documents.AddAsync(updated, ct);
                         return result.Value.ToDataSetVariableModel();
                     }
-                    catch (ConflictingResourceException) {
+                    catch (ResourceConflictException) {
                         // Conflict - try update now
                         continue;
                     }
@@ -405,10 +404,12 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Storage.Default {
             if (filter?.PublishedVariableNodeId != null) {
                 query = query.Where(x => x.NodeId == filter.PublishedVariableNodeId);
             }
-            query = query.Where(x => x.ClassType == DataSetEntityDocument.ClassTypeName);
+            query = query
+                .Where(x => x.ClassType == DataSetEntityDocument.ClassTypeName)
+                .OrderBy(x => x.NodeId);
             return query.GetResults();
         }
 
-        private readonly IDocuments _documents;
+        private readonly IItemContainer _documents;
     }
 }

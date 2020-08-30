@@ -32,10 +32,6 @@ namespace Microsoft.Azure.IIoT.Azure.CosmosDb.Clients {
         public T Value => (T)_doc;
 
         /// <inheritdoc/>
-        public string PartitionKey => _doc.GetPropertyValue<string>(
-            DocumentCollection.PartitionKeyProperty);
-
-        /// <inheritdoc/>
         public string Etag => _doc.ETag;
 
         private readonly dynamic _doc;

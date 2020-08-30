@@ -29,7 +29,7 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Storage {
             if (factory == null) {
                 throw new ArgumentNullException(nameof(factory));
             }
-            _documents = factory.OpenAsync("identity").Result.AsDocuments();
+            _documents = factory.OpenAsync("identity").Result;
         }
 
         /// <inheritdoc/>
@@ -239,6 +239,6 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Storage {
             }
         }
 
-        private readonly IDocuments _documents;
+        private readonly IItemContainer _documents;
     }
 }

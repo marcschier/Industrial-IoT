@@ -23,7 +23,7 @@ namespace Microsoft.Azure.IIoT.Cryptography {
         /// <param name="create">How to create</param>
         /// <param name="store">How to store</param>
         /// <param name="ct"></param>
-        /// <exception cref="ConflictingResourceException"></exception>
+        /// <exception cref="ResourceConflictException"></exception>
         /// <returns></returns>
         Task<KeyHandle> CreateKeyAsync(string name, CreateKeyParams create,
             KeyStoreProperties store = null, CancellationToken ct = default);
@@ -35,7 +35,7 @@ namespace Microsoft.Azure.IIoT.Cryptography {
         /// <param name="key">Key</param>
         /// <param name="store">How to store</param>
         /// <param name="ct"></param>
-        /// <exception cref="ConflictingResourceException"></exception>
+        /// <exception cref="ResourceConflictException"></exception>
         /// <returns></returns>
         Task<KeyHandle> ImportKeyAsync(string name, Key key,
             KeyStoreProperties store = null, CancellationToken ct = default);

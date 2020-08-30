@@ -61,7 +61,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Services {
                 }, ct);
                 _logger.Information("{@Entity} now trusting {@Trusted}", entity, trusted);
             }
-            catch (ConflictingResourceException) {
+            catch (ResourceConflictException) {
                 _logger.Debug("{@Entity} already trusting {@Trusted}", entity, trusted);
             }
         }

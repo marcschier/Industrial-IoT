@@ -22,7 +22,7 @@ namespace Microsoft.Azure.IIoT.Storage {
         /// <param name="options"></param>
         /// <returns></returns>
         public static async Task<IDocumentInfo<T>> GetAsync<T>(
-            this IDocuments documents, string id, CancellationToken ct = default,
+            this IItemContainer documents, string id, CancellationToken ct = default,
             OperationOptions options = null) {
             var result = await documents.FindAsync<T>(id, ct, options);
             if (result == null) {

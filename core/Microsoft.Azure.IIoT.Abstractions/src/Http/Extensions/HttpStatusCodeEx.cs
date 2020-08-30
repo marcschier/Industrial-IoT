@@ -52,7 +52,7 @@ namespace Microsoft.Azure.IIoT.Http {
                 case HttpStatusCode.NotFound:
                     throw new ResourceNotFoundException(message);
                 case HttpStatusCode.Conflict:
-                    throw new ConflictingResourceException(message, inner);
+                    throw new ResourceConflictException(message, inner);
                 case HttpStatusCode.RequestTimeout:
                     throw new TimeoutException(message, inner);
                 case HttpStatusCode.PreconditionFailed:

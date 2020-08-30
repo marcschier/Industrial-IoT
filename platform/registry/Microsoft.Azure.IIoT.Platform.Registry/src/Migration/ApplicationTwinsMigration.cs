@@ -46,7 +46,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Migration {
                             ApplicationInfoModelEx.CreateApplicationId(application);
                         await _repo.AddAsync(clone);
                     }
-                    catch (ConflictingResourceException ex) {
+                    catch (ResourceConflictException ex) {
                         _logger.Error(ex,
                             "Application {application} already exists - not migrating...",
                             application.ApplicationName);

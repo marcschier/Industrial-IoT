@@ -9,7 +9,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Exceptions {
     /// <summary>
     /// Subscription already exists
     /// </summary>
-    public class SubscriptionAlreadyExistsException : ConflictingResourceException {
+    public class SubscriptionAlreadyExistsException : ResourceConflictException {
         /// <inheritdoc/>
         public SubscriptionAlreadyExistsException() {
         }

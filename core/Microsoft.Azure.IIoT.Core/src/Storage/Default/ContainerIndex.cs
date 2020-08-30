@@ -25,7 +25,6 @@ namespace Microsoft.Azure.IIoT.Storage.Default {
                 name = "default";
             }
             _container = db.OpenAsync("indices").Result;
-            _indices = _container.AsDocuments();
             _id = $"__idx_doc_{name}__";
         }
 
@@ -35,7 +34,6 @@ namespace Microsoft.Azure.IIoT.Storage.Default {
         /// <param name="container"></param>
         public ContainerIndex(IItemContainer container) {
             _container = container ?? throw new ArgumentNullException(nameof(container));
-            _indices = _container.AsDocuments();
             _id = $"__idx_doc_{_container.Name}__";
         }
 
@@ -43,17 +41,17 @@ namespace Microsoft.Azure.IIoT.Storage.Default {
         public async Task<uint> AllocateAsync(CancellationToken ct) {
             while (true) {
                 // Get current value
-                var cur = await _indices.FindAsync<Bitmap>(_id, ct);
+                var cur = await _container.FindAsync<Bitmap>(_id, ct);
                 if (cur == null) {
                     // Add new index
                     try {
                         var idx = new Bitmap();
                         var value = idx.Allocate();
-                        await _indices.AddAsync(idx, ct, _id,
+                        await _container.AddAsync(idx, ct, _id,
                             kWithStrongConsistency);
                         return value;
                     }
-                    catch (ConflictingResourceException) {
+                    catch (ResourceConflictException) {
                         // Doc was added from another process/thread
                     }
                 }
@@ -62,7 +60,7 @@ namespace Microsoft.Azure.IIoT.Storage.Default {
                     try {
                         var idx = new Bitmap(cur.Value);
                         var value = idx.Allocate();
-                        await _indices.ReplaceAsync(cur, idx, ct,
+                        await _container.ReplaceAsync(cur, idx, ct,
                             kWithStrongConsistency);
                         return value; // Success - return index
                     }
@@ -77,7 +75,7 @@ namespace Microsoft.Azure.IIoT.Storage.Default {
         public async Task FreeAsync(uint index, CancellationToken ct) {
             while (true) {
                 // Get current value
-                var cur = await _indices.FindAsync<Bitmap>(_id, ct,
+                var cur = await _container.FindAsync<Bitmap>(_id, ct,
                     kWithStrongConsistency);
                 if (cur == null) {
                     return;
@@ -85,7 +83,7 @@ namespace Microsoft.Azure.IIoT.Storage.Default {
                 try {
                     var idx = new Bitmap(cur.Value);
                     if (idx.Free(index)) {
-                        await _indices.ReplaceAsync(cur, idx, ct,
+                        await _container.ReplaceAsync(cur, idx, ct,
                             kWithStrongConsistency);
                     }
                     return;
@@ -99,7 +97,6 @@ namespace Microsoft.Azure.IIoT.Storage.Default {
         private static readonly OperationOptions kWithStrongConsistency =
             new OperationOptions { Consistency = OperationConsistency.Strong };
         private readonly IItemContainer _container;
-        private readonly IDocuments _indices;
         private readonly string _id;
     }
 }

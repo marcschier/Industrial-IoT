@@ -27,7 +27,7 @@ namespace Microsoft.Azure.IIoT.Azure.CosmosDb.Clients {
     /// <summary>
     /// Wraps a cosmos db container
     /// </summary>
-    internal sealed class DocumentCollection : IItemContainer, IDocuments {
+    internal sealed class DocumentCollection : IItemContainer {
 
         /// <inheritdoc/>
         public string Name => Container.Id;
@@ -54,21 +54,13 @@ namespace Microsoft.Azure.IIoT.Azure.CosmosDb.Clients {
         }
 
         /// <inheritdoc/>
-        public IDocuments AsDocuments() {
-            return this;
-        }
-
-        /// <inheritdoc/>
         public IQuery<T> CreateQuery<T>(int? pageSize, OperationOptions options) {
-            var pk = _partitioned || string.IsNullOrEmpty(options?.PartitionKey) ? null :
-                new PartitionKey(options.PartitionKey);
             return new DocumentQuery<T>(_db.Client.CreateDocumentQuery<T>(
                 UriFactory.CreateDocumentCollectionUri(_db.DatabaseId, Container.Id),
                 new FeedOptions {
                     MaxDegreeOfParallelism = 8,
                     MaxItemCount = pageSize ?? -1,
-                    PartitionKey = pk,
-                    EnableCrossPartitionQuery = pk == null
+                    EnableCrossPartitionQuery = _partitioned
                 }), _logger);
         }
 
@@ -124,8 +116,7 @@ namespace Microsoft.Azure.IIoT.Azure.CosmosDb.Clients {
                 try {
                     ResourceResponse<Document> doc = await _db.Client.UpsertDocumentAsync(
                         UriFactory.CreateDocumentCollectionUri(_db.DatabaseId, Container.Id),
-                        DocumentCollection.GetItem(id, newItem, options,
-                            _jsonConfig?.Settings),
+                        DocumentCollection.GetItem(id, newItem, _jsonConfig?.Settings),
                         options.ToRequestOptions(_partitioned, etag),
                         false, ct);
                     return new DocumentInfo<T>(doc.Resource);
@@ -147,13 +138,11 @@ namespace Microsoft.Azure.IIoT.Azure.CosmosDb.Clients {
                 throw new ArgumentNullException(nameof(existing.Id));
             }
             options ??= new OperationOptions();
-            options.PartitionKey = existing.PartitionKey;
             return await Retry.WithExponentialBackoff(_logger, ct, async () => {
                 try {
                     ResourceResponse<Document> doc = await _db.Client.ReplaceDocumentAsync(
                         UriFactory.CreateDocumentUri(_db.DatabaseId, Container.Id, existing.Id),
-                        DocumentCollection.GetItem(existing.Id, newItem, options,
-                            _jsonConfig?.Settings),
+                        DocumentCollection.GetItem(existing.Id, newItem, _jsonConfig?.Settings),
                         options.ToRequestOptions(_partitioned, existing.Etag), ct);
                     return new DocumentInfo<T>(doc.Resource);
                 }
@@ -171,8 +160,7 @@ namespace Microsoft.Azure.IIoT.Azure.CosmosDb.Clients {
                 try {
                     ResourceResponse<Document> doc = await _db.Client.CreateDocumentAsync(
                         UriFactory.CreateDocumentCollectionUri(_db.DatabaseId, Container.Id),
-                        DocumentCollection.GetItem(id, newItem, options,
-                            _jsonConfig?.Settings),
+                        DocumentCollection.GetItem(id, newItem, _jsonConfig?.Settings),
                         options.ToRequestOptions(_partitioned), false, ct);
                     return new DocumentInfo<T>(doc.Resource);
                 }
@@ -190,7 +178,6 @@ namespace Microsoft.Azure.IIoT.Azure.CosmosDb.Clients {
                 throw new ArgumentNullException(nameof(item));
             }
             options ??= new OperationOptions();
-            options.PartitionKey = item.PartitionKey;
             return DeleteAsync<T>(item.Id, ct, options, item.Etag);
         }
 
@@ -239,18 +226,13 @@ namespace Microsoft.Azure.IIoT.Azure.CosmosDb.Clients {
         /// <typeparam name="T"></typeparam>
         /// <param name="id"></param>
         /// <param name="value"></param>
-        /// <param name="options"></param>
         /// <param name="settings"></param>
         /// <returns></returns>
-        private static dynamic GetItem<T>(string id, T value, OperationOptions options,
-            JsonSerializerSettings settings) {
+        private static dynamic GetItem<T>(string id, T value, JsonSerializerSettings settings) {
             var token = JObject.FromObject(value, settings == null ?
                 JsonSerializer.CreateDefault() : JsonSerializer.Create(settings));
-            if (options?.PartitionKey != null) {
-                token.AddOrUpdate(PartitionKeyProperty, options.PartitionKey);
-            }
             if (id != null) {
-                token.AddOrUpdate(IdProperty, id);
+                token.AddOrUpdate(kIdProperty, id);
             }
             return token;
         }
@@ -269,9 +251,7 @@ namespace Microsoft.Azure.IIoT.Azure.CosmosDb.Clients {
             return client;
         }
 
-        internal const string IdProperty = "id";
-        internal const string PartitionKeyProperty = "__pk";
-
+        private const string kIdProperty = "id";
         private readonly DocumentDatabase _db;
         private readonly IJsonSerializerSettingsProvider _jsonConfig;
         private readonly ILogger _logger;

@@ -30,7 +30,7 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Storage {
             if (factory == null) {
                 throw new ArgumentNullException(nameof(factory));
             }
-            _documents = factory.OpenAsync("resources").Result.AsDocuments();
+            _documents = factory.OpenAsync("resources").Result;
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -196,6 +196,6 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Storage {
         }
 
         private readonly ILogger _logger;
-        private readonly IDocuments _documents;
+        private readonly IItemContainer _documents;
     }
 }

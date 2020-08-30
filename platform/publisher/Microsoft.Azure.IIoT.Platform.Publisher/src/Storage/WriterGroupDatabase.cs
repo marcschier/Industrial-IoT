@@ -25,8 +25,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Storage.Default {
         /// <param name="config"></param>
         public WriterGroupDatabase(IDatabaseServer databaseServer, IItemContainerConfig config) {
             var dbs = databaseServer.OpenAsync(config.DatabaseName).Result;
-            var cont = dbs.OpenContainerAsync(config.ContainerName ?? "publisher").Result;
-            _documents = cont.AsDocuments();
+            _documents = dbs.OpenContainerAsync(config.ContainerName ?? "publisher").Result;
         }
 
         /// <inheritdoc/>
@@ -41,7 +40,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Storage.Default {
                     var document = await _documents.FindAsync<WriterGroupDocument>(
                         writerGroup.WriterGroupId, ct);
                     if (document != null) {
-                        throw new ConflictingResourceException(
+                        throw new ResourceConflictException(
                             $"Writer Group {writerGroup.WriterGroupId} already exists.");
                     }
                 }
@@ -52,7 +51,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Storage.Default {
                     var result = await _documents.AddAsync(writerGroup.ToDocumentModel(), ct);
                     return result.Value.ToFrameworkModel();
                 }
-                catch (ConflictingResourceException) {
+                catch (ResourceConflictException) {
                     // Try again - reset to preset id or null if none was asked for
                     writerGroup.WriterGroupId = presetId;
                     continue;
@@ -84,7 +83,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Storage.Default {
                         var result = await _documents.AddAsync(updated, ct);
                         return result.Value.ToFrameworkModel();
                     }
-                    catch (ConflictingResourceException) {
+                    catch (ResourceConflictException) {
                         // Conflict - try update now
                         continue;
                     }
@@ -232,6 +231,6 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Storage.Default {
             return query.GetResults();
         }
 
-        private readonly IDocuments _documents;
+        private readonly IItemContainer _documents;
     }
 }

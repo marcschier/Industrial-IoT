@@ -21,11 +21,6 @@ namespace Microsoft.Azure.IIoT.Storage {
         T Value { get; }
 
         /// <summary>
-        /// Partition key of the value
-        /// </summary>
-        string PartitionKey { get; }
-
-        /// <summary>
         /// Etag of the document
         /// </summary>
         string Etag { get; }

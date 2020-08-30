@@ -118,7 +118,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub.Mock {
                     _devices.Add(model);
                 }
                 else if (!force) {
-                    throw new ConflictingResourceException("Twin conflict");
+                    throw new ResourceConflictException("Twin conflict");
                 }
                 model.UpdateTwin(twin);
                 return Task.FromResult(model.Twin);

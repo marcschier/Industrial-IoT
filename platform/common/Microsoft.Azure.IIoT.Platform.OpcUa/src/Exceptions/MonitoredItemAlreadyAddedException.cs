@@ -9,7 +9,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Exceptions {
     /// <summary>
     /// Monitored item was already added
     /// </summary>
-    public class MonitoredItemAlreadyAddedException : ConflictingResourceException {
+    public class MonitoredItemAlreadyAddedException : ResourceConflictException {
 
         /// <inheritdoc/>
         public MonitoredItemAlreadyAddedException() {

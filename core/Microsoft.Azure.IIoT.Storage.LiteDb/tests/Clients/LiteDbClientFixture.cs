@@ -19,7 +19,7 @@ namespace Microsoft.Azure.IIoT.Storage.LiteDb.Clients {
         /// </summary>
         /// <param name="collection">collection</param>
         /// <returns>None</returns>
-        private async Task CreateDocumentsAsync(IDocuments collection) {
+        private async Task CreateDocumentsAsync(IItemContainer collection) {
             var AndersonFamily = new Family {
                 Id = "AndersenFamily",
                 LastName = "Andersen",
@@ -98,13 +98,12 @@ namespace Microsoft.Azure.IIoT.Storage.LiteDb.Clients {
         /// </summary>
         /// <param name="options"></param>
         /// <returns></returns>
-        public async Task<IDocuments> GetDocumentsAsync() {
+        public async Task<IItemContainer> GetDocumentsAsync() {
             var database = await Try.Async(() => GetDatabaseAsync());
             if (database == null) {
                 return null;
             }
-            var coll = await database.OpenContainerAsync("test");
-            var docs = coll.AsDocuments();
+            var docs = await database.OpenContainerAsync("test");
             await CreateDocumentsAsync(docs);
             return docs;
         }

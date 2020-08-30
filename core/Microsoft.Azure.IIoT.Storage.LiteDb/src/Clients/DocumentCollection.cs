@@ -20,7 +20,7 @@ namespace Microsoft.Azure.IIoT.Storage.LiteDb.Clients {
     /// <summary>
     /// Wraps a collection
     /// </summary>
-    internal sealed class DocumentCollection : IItemContainer, IDocuments {
+    internal sealed class DocumentCollection : IItemContainer {
 
         /// <inheritdoc/>
         public string Name { get; }
@@ -38,11 +38,6 @@ namespace Microsoft.Azure.IIoT.Storage.LiteDb.Clients {
             _db = db ?? throw new ArgumentNullException(nameof(db));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _options = options ?? new ContainerOptions();
-        }
-
-        /// <inheritdoc/>
-        public IDocuments AsDocuments() {
-            return this;
         }
 
         /// <inheritdoc/>
@@ -479,12 +474,98 @@ namespace Microsoft.Azure.IIoT.Storage.LiteDb.Clients {
         /// <param name="ex"></param>
         /// <returns></returns>
         internal static void FilterException(Exception ex) {
-            if (ex is HttpResponseException re) {
-                re.StatusCode.Validate(re.Message);
+            if (ex is LiteException lex) {
+                switch (lex.ErrorCode) {
+                    case LiteException.FILE_NOT_FOUND:
+                        throw new ResourceNotFoundException(
+                            nameof(LiteException.FILE_NOT_FOUND), lex);
+                    case LiteException.DATABASE_SHUTDOWN: 
+                        throw new ResourceInvalidStateException(
+                            nameof(LiteException.DATABASE_SHUTDOWN), lex);
+                    case LiteException.INVALID_DATABASE: 
+                        throw new ResourceInvalidStateException(
+                            nameof(LiteException.INVALID_DATABASE), lex);
+                    case LiteException.FILE_SIZE_EXCEEDED: 
+                        throw new ResourceExhaustionException(
+                            nameof(LiteException.FILE_SIZE_EXCEEDED), lex);
+                    case LiteException.COLLECTION_LIMIT_EXCEEDED: 
+                        throw new ResourceExhaustionException(
+                            nameof(LiteException.COLLECTION_LIMIT_EXCEEDED), lex);
+                    case LiteException.INDEX_DROP_ID: 
+                        throw new ResourceInvalidStateException(
+                            nameof(LiteException.INDEX_DROP_ID), lex);
+                    case LiteException.INDEX_DUPLICATE_KEY: 
+                        throw new ResourceConflictException(
+                            nameof(LiteException.INDEX_DUPLICATE_KEY), lex);
+                    case LiteException.INVALID_INDEX_KEY: 
+                        throw new ResourceInvalidStateException(
+                            nameof(LiteException.INVALID_INDEX_KEY), lex);
+                    case LiteException.INDEX_NOT_FOUND: 
+                        throw new ResourceNotFoundException(
+                            nameof(LiteException.INDEX_NOT_FOUND), lex);
+                    case LiteException.LOCK_TIMEOUT: 
+                        throw new TimeoutException(
+                            nameof(LiteException.LOCK_TIMEOUT), lex);
+                    case LiteException.INVALID_COMMAND: 
+                        throw new NotSupportedException(
+                            nameof(LiteException.INVALID_COMMAND), lex);
+                    case LiteException.ALREADY_EXISTS_COLLECTION_NAME: 
+                        throw new ResourceConflictException(
+                            nameof(LiteException.ALREADY_EXISTS_COLLECTION_NAME), lex);
+                    case LiteException.ALREADY_OPEN_DATAFILE: 
+                        throw new ResourceInvalidStateException(
+                            nameof(LiteException.ALREADY_OPEN_DATAFILE), lex);
+                    case LiteException.INVALID_TRANSACTION_STATE: 
+                        throw new ResourceInvalidStateException(
+                            nameof(LiteException.INVALID_TRANSACTION_STATE), lex);
+                    case LiteException.INDEX_NAME_LIMIT_EXCEEDED: 
+                        throw new ArgumentException(
+                            nameof(LiteException.INDEX_NAME_LIMIT_EXCEEDED), lex);
+                    case LiteException.INVALID_INDEX_NAME:
+                        throw new ArgumentException(
+                            nameof(LiteException.INVALID_INDEX_NAME), lex);
+                    case LiteException.INVALID_COLLECTION_NAME:
+                        throw new ArgumentException(
+                            nameof(LiteException.INVALID_COLLECTION_NAME), lex);
+                    case LiteException.COLLECTION_NOT_FOUND: 
+                        throw new ResourceNotFoundException(
+                            nameof(LiteException.COLLECTION_NOT_FOUND), lex);
+                    case LiteException.COLLECTION_ALREADY_EXIST: 
+                        throw new ResourceConflictException(
+                            nameof(LiteException.COLLECTION_ALREADY_EXIST), lex);
+                    case LiteException.INDEX_ALREADY_EXIST: 
+                        throw new ResourceConflictException(
+                            nameof(LiteException.INDEX_ALREADY_EXIST), lex);
+                    case LiteException.INVALID_FORMAT: 
+                        throw new FormatException(
+                            nameof(LiteException.INVALID_FORMAT), lex);
+                    case LiteException.DOCUMENT_MAX_DEPTH: 
+                        throw new SerializerException(
+                            nameof(LiteException.DOCUMENT_MAX_DEPTH), lex);
+                    case LiteException.UNEXPECTED_TOKEN: 
+                        throw new SerializerException(
+                            nameof(LiteException.UNEXPECTED_TOKEN), lex);
+                    case LiteException.INVALID_DATA_TYPE:
+                        throw new SerializerException(
+                            nameof(LiteException.INVALID_DATA_TYPE), lex);
+                    case LiteException.PROPERTY_NOT_MAPPED:
+                        throw new SerializerException(
+                            nameof(LiteException.PROPERTY_NOT_MAPPED), lex);
+                    case LiteException.INVALID_TYPED_NAME: 
+                        throw new SerializerException(
+                            nameof(LiteException.INVALID_TYPED_NAME), lex);
+                    case LiteException.PROPERTY_READ_WRITE:
+                        throw new SerializerException(
+                            nameof(LiteException.PROPERTY_READ_WRITE), lex);
+                    case LiteException.INVALID_INITIALSIZE: 
+                        throw new ArgumentException(
+                            nameof(LiteException.INVALID_INITIALSIZE), lex);
+                    case LiteException.INVALID_NULL_CHAR_STRING:
+                        throw new SerializerException(
+                            nameof(LiteException.INVALID_NULL_CHAR_STRING), lex);
+                }
             }
-            else {
-                throw ex;
-            }
+            throw ex;
         }
 
         private readonly ILiteDatabase _db;

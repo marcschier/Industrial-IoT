@@ -35,9 +35,8 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
             if (db == null) {
                 throw new ArgumentNullException(nameof(db));
             }
-            var container = db.OpenAsync("applications").Result;
-            _applications = container.AsDocuments();
-            _index = new ContainerIndex(db, container.Name);
+            _applications = db.OpenAsync("applications").Result;
+            _index = new ContainerIndex(db, _applications.Name);
         }
 
         /// <inheritdoc/>
@@ -462,7 +461,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
 
         private const int kDefaultRecordsPerQuery = 10;
         private readonly ILogger _logger;
-        private readonly IDocuments _applications;
+        private readonly IItemContainer _applications;
         private readonly IContainerIndex _index;
     }
 }

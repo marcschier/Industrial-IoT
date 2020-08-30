@@ -14,10 +14,5 @@ namespace Microsoft.Azure.IIoT.Storage {
         /// Set consistency level
         /// </summary>
         public OperationConsistency? Consistency { get; set; }
-
-        /// <summary>
-        /// Partition
-        /// </summary>
-        public string PartitionKey { get; set; }
     }
 }

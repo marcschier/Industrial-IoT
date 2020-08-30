@@ -24,9 +24,6 @@ namespace Microsoft.Azure.IIoT.Storage.LiteDb.Clients {
         public string Id => _bson[kIdProperty];
 
         /// <inheritdoc/>
-        public string PartitionKey => _bson[kPartitionKeyProperty];
-
-        /// <inheritdoc/>
         public string Etag => _bson[kEtagProperty];
 
         /// <summary>
@@ -81,7 +78,6 @@ namespace Microsoft.Azure.IIoT.Storage.LiteDb.Clients {
         private readonly BsonValue _bson;
 
         private const string kIdProperty = "_id";
-        private const string kPartitionKeyProperty = "pk";
         private const string kEtagProperty = "_etag";
     }
 }

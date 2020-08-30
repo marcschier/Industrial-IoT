@@ -28,7 +28,7 @@ namespace Microsoft.Azure.IIoT.Cryptography.Storage {
         /// <param name="keys"></param>
         public CertificateDatabase(IItemContainerFactory container,
             IKeyHandleSerializer keys) {
-            _certificates = container.OpenAsync("certificates").Result.AsDocuments();
+            _certificates = container.OpenAsync("certificates").Result;
             _keys = keys ?? throw new ArgumentNullException(nameof(keys));
         }
 
@@ -327,7 +327,7 @@ namespace Microsoft.Azure.IIoT.Cryptography.Storage {
                 });
         }
 
-        private readonly IDocuments _certificates;
+        private readonly IItemContainer _certificates;
         private readonly IKeyHandleSerializer _keys;
     }
 }

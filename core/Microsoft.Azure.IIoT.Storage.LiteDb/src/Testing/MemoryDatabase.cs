@@ -4,13 +4,13 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Storage.Default {
+    using Microsoft.Azure.IIoT.Storage.LiteDb.Clients;
     using Microsoft.Azure.IIoT.Storage;
     using Serilog;
     using System.Collections.Concurrent;
     using System.Threading.Tasks;
     using System.IO;
     using LiteDB;
-    using Microsoft.Azure.IIoT.Storage.LiteDb.Clients;
 
     /// <summary>
     /// Provides in memory storage with litedb engine.

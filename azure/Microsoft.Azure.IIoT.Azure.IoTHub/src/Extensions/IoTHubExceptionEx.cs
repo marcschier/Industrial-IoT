@@ -24,7 +24,7 @@ namespace Microsoft.Azure.Devices.Common.Exceptions {
                 case DeviceNotFoundException dex:
                     return new ResourceNotFoundException(dex.Message, dex);
                 case DeviceAlreadyExistsException aex:
-                    return new ConflictingResourceException(aex.Message, aex);
+                    return new ResourceConflictException(aex.Message, aex);
                 case ConfigurationNotFoundException cex:
                     return new ResourceNotFoundException(cex.Message, cex);
                 case JobNotFoundException jex:

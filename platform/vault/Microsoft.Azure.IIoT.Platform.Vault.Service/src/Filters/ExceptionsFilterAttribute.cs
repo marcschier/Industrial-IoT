@@ -46,7 +46,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Service.Filters {
                     context.Result = GetResponse(HttpStatusCode.NotFound,
                         context.Exception);
                     break;
-                case ConflictingResourceException _:
+                case ResourceConflictException _:
                     context.Result = GetResponse(HttpStatusCode.Conflict,
                         context.Exception);
                     break;

@@ -160,7 +160,7 @@ Options:
                     }
                 }, false, CancellationToken.None);
             }
-            catch (ConflictingResourceException) {
+            catch (ResourceConflictException) {
                 logger.Information("Gateway {deviceId} exists.", deviceId);
             }
             try {
@@ -175,7 +175,7 @@ Options:
                     }
                 }, true, CancellationToken.None);
             }
-            catch (ConflictingResourceException) {
+            catch (ResourceConflictException) {
                 logger.Information("Module {moduleId} exists...", moduleId);
             }
             var cs = await registry.GetConnectionStringAsync(deviceId, moduleId);

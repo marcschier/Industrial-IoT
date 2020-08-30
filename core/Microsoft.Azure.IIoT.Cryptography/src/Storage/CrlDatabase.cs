@@ -33,7 +33,7 @@ namespace Microsoft.Azure.IIoT.Cryptography.Storage {
             _certificates = certificates ?? throw new ArgumentNullException(nameof(certificates));
             _factory = factory ?? throw new ArgumentNullException(nameof(factory));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            _crls = container.OpenAsync("crls").Result.AsDocuments();
+            _crls = container.OpenAsync("crls").Result;
         }
 
         /// <inheritdoc/>
@@ -219,7 +219,7 @@ namespace Microsoft.Azure.IIoT.Cryptography.Storage {
         }
 
         private readonly ILogger _logger;
-        private readonly IDocuments _crls;
+        private readonly IItemContainer _crls;
         private readonly ICrlFactory _factory;
         private readonly ICertificateStore _certificates;
         private readonly SemaphoreSlim _lock = new SemaphoreSlim(1, 1);

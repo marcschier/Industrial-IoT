@@ -38,10 +38,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Migration {
                 configuration?.Bind("OpcVault", config);
 
                 var database = db.OpenAsync(config.CosmosDBDatabase).Result;
-
-                _source = database.OpenContainerAsync(config.CosmosDBCollection)
-                    .Result
-                    .AsDocuments();
+                _source = database.OpenContainerAsync(config.CosmosDBCollection).Result;
             }
             catch (Exception ex) {
                 logger.Error(ex, "Failed to open container - not migrating");
@@ -66,7 +63,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Migration {
                             ApplicationInfoModelEx.CreateApplicationId(application);
                         await _repo.AddAsync(application);
                     }
-                    catch (ConflictingResourceException ex) {
+                    catch (ResourceConflictException ex) {
                         _logger.Error(ex,
                             "Application {application} already exists - not migrating...",
                             application.ApplicationName);
@@ -238,7 +235,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Migration {
         }
 
         private readonly ILogger _logger;
-        private readonly IDocuments _source;
+        private readonly IItemContainer _source;
         private readonly IApplicationRepository _repo;
     }
 }

@@ -984,7 +984,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Services {
                     $"{paramName} did not resolve to any node.");
             }
             if (count != 1) {
-                throw new ConflictingResourceException(
+                throw new ResourceConflictException(
                     $"{paramName} resolved to {count} nodes.");
             }
             return response.Results[0].Targets[0].TargetId

@@ -352,7 +352,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                         supervisorId, siteId, null, false);
                     added++;
                 }
-                catch (ConflictingResourceException) {
+                catch (ResourceConflictException) {
                     unchange.Add(addition); // Update the existing one
                 }
                 catch (Exception ex) {

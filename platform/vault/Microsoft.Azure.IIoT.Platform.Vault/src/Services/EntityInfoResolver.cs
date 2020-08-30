@@ -55,7 +55,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Services {
             }
             var entity = entities.SingleOrDefault();
             if (entity == null) {
-                throw new ConflictingResourceException(
+                throw new ResourceConflictException(
                     $"Unexpected : Found more than one entity for {entityId}.");
             }
             try {

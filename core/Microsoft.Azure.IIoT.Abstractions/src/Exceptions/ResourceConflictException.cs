@@ -12,19 +12,19 @@ namespace Microsoft.Azure.IIoT.Exceptions {
     /// identifier. The client should change the identifier or assume the
     /// resource has already been created.
     /// </summary>
-    public class ConflictingResourceException : Exception {
+    public class ResourceConflictException : Exception {
 
         /// <inheritdoc />
-        public ConflictingResourceException() {
+        public ResourceConflictException() {
         }
 
         /// <inheritdoc />
-        public ConflictingResourceException(string message) :
+        public ResourceConflictException(string message) :
             base(message) {
         }
 
         /// <inheritdoc />
-        public ConflictingResourceException(string message, Exception innerException) :
+        public ResourceConflictException(string message, Exception innerException) :
             base(message, innerException) {
         }
     }

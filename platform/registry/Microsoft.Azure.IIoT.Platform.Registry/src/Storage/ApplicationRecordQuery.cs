@@ -86,7 +86,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
             try {
                 await _database.AddAsync(application, null, ct);
             }
-            catch (ConflictingResourceException) when (!noUpdate) {
+            catch (ResourceConflictException) when (!noUpdate) {
                 await UpdateAsync(application, true, ct);
             }
             catch (Exception ex) {

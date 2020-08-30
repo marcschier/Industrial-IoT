@@ -24,7 +24,7 @@ namespace Microsoft.Azure.Devices.Client.Exceptions {
                 case DeviceMaximumQueueDepthExceededException dm:
                     return new ResourceTooLargeException(dm.Message, dm); // TODO: Revisit
                 case DeviceAlreadyExistsException dae:
-                    return new ConflictingResourceException(dae.Message, dae);
+                    return new ResourceConflictException(dae.Message, dae);
                 case QuotaExceededException qee:
                     return new ResourceExhaustionException(qee.Message, qee);
                 case DeviceMessageLockLostException dle:

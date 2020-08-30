@@ -26,21 +26,9 @@ namespace Microsoft.Azure.Documents.Client {
             };
             return new RequestOptions {
                 AccessCondition = ac,
-                PartitionKey = options.ToPartitionKey(partitioned),
+               // PartitionKey = options.ToPartitionKey(partitioned),
                 ConsistencyLevel = options?.Consistency.ToConsistencyLevel()
             };
-        }
-
-        /// <summary>
-        /// Convert to request options
-        /// </summary>
-        /// <param name="options"></param>
-        /// <param name="partitioned"></param>
-        /// <returns></returns>
-        public static PartitionKey ToPartitionKey(this OperationOptions options,
-            bool partitioned = true) {
-            return !partitioned || string.IsNullOrEmpty(options?.PartitionKey) ? default :
-                new PartitionKey(options?.PartitionKey);
         }
     }
 }

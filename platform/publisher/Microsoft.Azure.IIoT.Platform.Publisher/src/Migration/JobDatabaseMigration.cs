@@ -35,8 +35,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Migration {
 
             try {
                 var dbs = databaseServer.OpenAsync(config?.DatabaseName ?? "iiot_opc").Result;
-                var cont = dbs.OpenContainerAsync(config?.ContainerName ?? "iiot_opc").Result;
-                _documents = cont.AsDocuments();
+                _documents = dbs.OpenContainerAsync(config?.ContainerName ?? "iiot_opc").Result;
             }
             catch (Exception ex) {
                 logger.Error(ex, "Failed to open container - not migrating");
@@ -227,7 +226,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Migration {
             public TimeSpan? DiagnosticsInterval { get; set; }
         }
 
-        private readonly IDocuments _documents;
+        private readonly IItemContainer _documents;
         private readonly ILogger _logger;
         private readonly IWriterGroupBatchOperations _batch;
     }

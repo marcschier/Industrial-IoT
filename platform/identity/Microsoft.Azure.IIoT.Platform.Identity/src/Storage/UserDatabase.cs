@@ -38,7 +38,7 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Storage {
                 throw new ArgumentNullException(nameof(factory));
             }
             _roleStore = roleStore;
-            _documents = factory.OpenAsync("identity").Result.AsDocuments();
+            _documents = factory.OpenAsync("identity").Result;
         }
 
 
@@ -722,6 +722,6 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Storage {
         }
 
         private readonly IRoleStore<RoleModel> _roleStore;
-        private readonly IDocuments _documents;
+        private readonly IItemContainer _documents;
     }
 }

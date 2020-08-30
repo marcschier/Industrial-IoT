@@ -49,7 +49,7 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Provider.Filters {
                     context.Result = GetResponse(HttpStatusCode.Forbidden,
                         context.Exception);
                     break;
-                case ConflictingResourceException _:
+                case ResourceConflictException _:
                     context.Result = GetResponse(HttpStatusCode.Conflict,
                         context.Exception);
                     break;

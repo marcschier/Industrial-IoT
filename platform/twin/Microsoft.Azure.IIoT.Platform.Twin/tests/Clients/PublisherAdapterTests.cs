@@ -191,15 +191,15 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
                 Assert.NotNull(list);
                 Assert.NotNull(result);
                 Assert.Collection(list.Items,
-                    b => {
-                        Assert.Equal("i=2259", b.NodeId);
-                        Assert.Equal(TimeSpan.FromSeconds(2), b.PublishingInterval);
-                        Assert.Equal(TimeSpan.FromSeconds(1), b.SamplingInterval);
-                    },
                     a => {
                         Assert.Equal("i=2258", a.NodeId);
                         Assert.Equal(TimeSpan.FromSeconds(2), a.PublishingInterval);
                         Assert.Equal(TimeSpan.FromSeconds(1), a.SamplingInterval);
+                    },
+                    b => {
+                        Assert.Equal("i=2259", b.NodeId);
+                        Assert.Equal(TimeSpan.FromSeconds(2), b.PublishingInterval);
+                        Assert.Equal(TimeSpan.FromSeconds(1), b.SamplingInterval);
                     });
                 Assert.Null(list.ContinuationToken);
             }

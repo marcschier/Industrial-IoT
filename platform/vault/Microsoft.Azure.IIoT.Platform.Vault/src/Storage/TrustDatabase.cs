@@ -26,8 +26,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Storage {
             if (db == null) {
                 throw new ArgumentNullException(nameof(db));
             }
-            var container = db.OpenAsync("trust").Result;
-            _relationships = container.AsDocuments();
+            _relationships = db.OpenAsync("trust").Result;
         }
 
         /// <inheritdoc/>
@@ -36,9 +35,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Storage {
             if (relationship == null) {
                 throw new ArgumentNullException(nameof(relationship));
             }
-            var result = await _relationships.AddAsync(relationship.ToDocumentModel(),
-                ct);
-
+            var result = await _relationships.AddAsync(relationship.ToDocumentModel(),ct);
             return result.Value.ToServiceModel();
         }
 
@@ -125,6 +122,6 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Storage {
             return query.GetResults();
         }
 
-        private readonly IDocuments _relationships;
+        private readonly IItemContainer _relationships;
     }
 }

@@ -43,7 +43,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Module.Filters {
                 case ResourceInvalidStateException _:
                     status = (int)HttpStatusCode.Forbidden;
                     break;
-                case ConflictingResourceException _:
+                case ResourceConflictException _:
                     status = (int)HttpStatusCode.Conflict;
                     break;
                 case SecurityException _:

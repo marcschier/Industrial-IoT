@@ -36,7 +36,7 @@ namespace Microsoft.Azure.IIoT.Platform.Identity {
                     try {
                         await repo.CreateAsync(resource, ct);
                     }
-                    catch (ConflictingResourceException) {
+                    catch (ResourceConflictException) {
                         // Existing - try to update
                         continue;
                     }

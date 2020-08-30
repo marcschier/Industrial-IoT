@@ -52,7 +52,7 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Services {
                 }
                 _logger.Information("Root user {user} added", _config.UserName);
             }
-            catch (ConflictingResourceException) { }
+            catch (ResourceConflictException) { }
             catch (Exception ex) {
                 _logger.Error(ex, "Failed to add root user");
             }
