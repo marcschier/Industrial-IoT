@@ -3,7 +3,7 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.OpcUa.Edge.Publisher.Utils {
+namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Utils {
     using System;
     using System.Threading;
     using System.Threading.Tasks;
