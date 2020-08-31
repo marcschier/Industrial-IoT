@@ -2410,6 +2410,5 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api.Models {
                 StatusCode = model.StatusCode
             };
         }
-
     }
 }
