@@ -4,10 +4,10 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.App.Pages {
-    using Microsoft.Azure.IIoT.App.Models;
-    using Microsoft.Azure.IIoT.Platform.Twin.Api.Models;
-    using Microsoft.AspNetCore.Components;
     using System.Threading.Tasks;
+    using Microsoft.AspNetCore.Components;
+    using Microsoft.Azure.IIoT.Platform.Twin.Api.Models;
+    using Microsoft.Azure.IIoT.App.Models;
 
     public partial class _DrawerPublisherContent {
         [Parameter]
