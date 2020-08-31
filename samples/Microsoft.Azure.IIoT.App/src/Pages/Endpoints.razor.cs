@@ -8,6 +8,7 @@ namespace Microsoft.Azure.IIoT.App.Pages {
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Components;
     using Microsoft.Azure.IIoT.App.Data;
+    using Microsoft.Azure.IIoT.Platform.Core.Api.Models;
     using Microsoft.Azure.IIoT.Platform.Registry.Api.Models;
     using Microsoft.Azure.IIoT.Platform.Registry.Api;
     using Microsoft.Azure.IIoT.App.Models;
@@ -54,8 +55,8 @@ namespace Microsoft.Azure.IIoT.App.Pages {
         /// <param name="endpoint">The endpoint info</param>
         /// <returns>True if the endpoint is activated, false otherwise</returns>
         private bool IsEndpointActivated(EndpointInfo endpoint) {
-            return endpoint.EndpointModel.ActivationState == EndpointActivationState.Activated ||
-                 endpoint.EndpointModel.ActivationState == EndpointActivationState.ActivatedAndConnected;
+            return endpoint.EndpointModel.ActivationState == EntityActivationState.Activated ||
+                 endpoint.EndpointModel.ActivationState == EntityActivationState.ActivatedAndConnected;
         }
 
         /// <summary>

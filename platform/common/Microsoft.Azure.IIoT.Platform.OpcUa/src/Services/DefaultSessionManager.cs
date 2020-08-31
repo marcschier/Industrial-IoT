@@ -338,7 +338,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
                     Try.Op(() => subscription.DeleteItems());
                     Try.Op(() => subscription.Delete(true));
                 }
-                Try.Op(() => wrapper.Session.RemoveSubscriptions(wrapper.Session.Subscriptions));
+                Try.Op(() => wrapper.Session.RemoveSubscriptions(wrapper.Session.Subscriptions.ToList()));
             }
             Try.Op(wrapper.Session.Close);
             Try.Op(wrapper.Session.Dispose);
@@ -546,7 +546,6 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
 
                 // Validate thumbprint
                 if (e.Certificate.RawData != null && !string.IsNullOrWhiteSpace(e.Certificate.Thumbprint)) {
-
                     if (_sessions.Keys.Any(id => id?.Connection?.Endpoint?.Certificate != null &&
                         e.Certificate.Thumbprint == id.Connection.Endpoint.Certificate)) {
                         e.Accept = true;

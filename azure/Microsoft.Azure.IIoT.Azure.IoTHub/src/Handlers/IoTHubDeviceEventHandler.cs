@@ -53,7 +53,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub.Handlers {
             if (properties.TryGetValue(CommonProperties.EventSchemaType, out var schemaType) ||
                 properties.TryGetValue(SystemProperties.MessageSchema, out schemaType)) {
 
-                //  TODO: when handling third party OPC UA Pub/Sub Messages
+                //  TODO: when handling third party OPC UA PubSub Messages
                 //  the schemaType might not exist
                 if (_handlers.TryGetValue(schemaType.ToLowerInvariant(), out var handler)) {
                     await handler.HandleAsync(deviceId, moduleId?.ToString(), eventData,

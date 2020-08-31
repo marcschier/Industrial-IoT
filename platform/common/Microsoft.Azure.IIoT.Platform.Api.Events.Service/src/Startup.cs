@@ -250,7 +250,7 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service {
                 DiscovererEventForwarder<DiscoverersHub>>()
                 .AsImplementedInterfaces().SingleInstance();
 
-            // Handle opc-ua pub/sub telemetry subscriptions ...
+            // Handle opc-ua pubsub telemetry subscriptions ...
             builder.RegisterType<MonitoredItemSampleModelHandler>()
                 .AsImplementedInterfaces();
             builder.RegisterType<NetworkMessageModelHandler>()

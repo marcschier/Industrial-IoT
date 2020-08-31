@@ -31,19 +31,11 @@
                 </div>
             </div>
             <div class="label">
-                SiteId:
-                <div class="body">
-                    @(string.IsNullOrEmpty(SupervisorStatus.SiteId)
-                        ? CommonHelper.None
-                        : SupervisorStatus.SiteId)
-                </div>
-            </div>
-            <div class="label">
                 Endpoints:
                 @{
-                    if (SupervisorStatus.Endpoints != null)
+                    if (SupervisorStatus.Entities != null)
                     {
-                        foreach (var endpoint in SupervisorStatus.Endpoints)
+                        foreach (var endpoint in SupervisorStatus.Entities)
                         {
                             string Id = endpoint.Id == null ? CommonHelper.None : endpoint.Id;
                             <div class="label">

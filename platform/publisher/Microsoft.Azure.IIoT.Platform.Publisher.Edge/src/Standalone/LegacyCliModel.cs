@@ -78,6 +78,11 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Models {
         public uint? MaxMessageSize { get; set; }
 
         /// <summary>
+        /// Maximum size of the IoT D2C egress message queue.
+        /// </summary>
+        public int? MaxEgressMessageQueue { get; set; }
+
+        /// <summary>
         /// The time to flush the log file to the disc.
         /// </summary>
         public TimeSpan? LogFileFlushTimeSpan { get; set; }

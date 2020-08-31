@@ -31,7 +31,6 @@
     <thead>
         <tr>
             <th class="width-large">Id</th>
-            <th class="width-medium">Site Id</th>
             <th class="width-medium">Connection Status</th>
             <th class="width-medium">Sync Status</th>
             <th class="width-small">Version</th>
@@ -47,13 +46,6 @@
                         <a href='endpoints/@RegistryHelper.PathAll/@RegistryHelper.PathAll/@supervisor.Id'>
                             @supervisor.Id
                         </a>
-                    </div>
-                </td>
-                <td class="hover-text width-medium">
-                    <div>
-                        @(string.IsNullOrEmpty(supervisor.SiteId)
-                            ? CommonHelper.None
-                            : supervisor.SiteId)
                     </div>
                 </td>
                 @{string connectStatus = supervisor.Connected == null
