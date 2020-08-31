@@ -5,12 +5,12 @@
 
 namespace Microsoft.Azure.IIoT.Storage.LiteDb.Clients {
     using Microsoft.Azure.IIoT.Storage;
+    using Autofac;
     using System;
-    using System.Threading.Tasks;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Threading.Tasks;
     using Xunit;
-    using Autofac;
 
     public class LiteDbQueryTests : IClassFixture<LiteDbClientFixture> {
         public LiteDbQueryTests(LiteDbClientFixture fixture) {

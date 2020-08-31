@@ -45,7 +45,7 @@ namespace Microsoft.Azure.IIoT.Storage.LiteDb.Clients {
                 if (dma.Name == "id") { // Cosmos db convention - use attribute going forward
                     // Create id accessor
                     builder = (EntityBuilder<T>)id.MakeGenericMethod(prop.PropertyType)
-                        .Invoke(builder, new object[] { expr, false });
+                        .Invoke(builder, new object[] { expr, /*assign auto id=*/ true });
                 }
                 else {
                     // Create regular field property accessor

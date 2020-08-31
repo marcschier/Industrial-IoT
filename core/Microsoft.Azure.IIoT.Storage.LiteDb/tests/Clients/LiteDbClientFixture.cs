@@ -99,12 +99,25 @@ namespace Microsoft.Azure.IIoT.Storage.LiteDb.Clients {
         /// <param name="options"></param>
         /// <returns></returns>
         public async Task<IItemContainer> GetDocumentsAsync() {
+            var docs = await GetContainerAsync();
+            if (docs == null) {
+                return null;
+            }
+            await CreateDocumentsAsync(docs);
+            return docs;
+        }
+
+        /// <summary>
+        /// Get collection interface
+        /// </summary>
+        /// <param name="options"></param>
+        /// <returns></returns>
+        public async Task<IItemContainer> GetContainerAsync() {
             var database = await Try.Async(() => GetDatabaseAsync());
             if (database == null) {
                 return null;
             }
             var docs = await database.OpenContainerAsync("test");
-            await CreateDocumentsAsync(docs);
             return docs;
         }
     }
