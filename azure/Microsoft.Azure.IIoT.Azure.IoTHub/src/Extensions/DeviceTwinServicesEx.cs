@@ -13,7 +13,7 @@ namespace Microsoft.Azure.IIoT.Hub {
     /// <summary>
     /// Twin services extensions
     /// </summary>
-    public static class IoTHubTwinServicesEx {
+    public static class DeviceTwinServicesEx {
 
         /// <summary>
         /// IoTHubOwner connection string to configuration
