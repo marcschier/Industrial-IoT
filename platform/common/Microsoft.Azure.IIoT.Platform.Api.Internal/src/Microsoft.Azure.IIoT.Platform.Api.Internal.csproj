@@ -9,7 +9,6 @@
     <ProjectReference Include="..\..\..\..\platform\publisher\Microsoft.Azure.IIoT.Platform.Publisher.Api\src\Microsoft.Azure.IIoT.Platform.Publisher.Api.csproj" />
     <ProjectReference Include="..\..\..\..\platform\registry\Microsoft.Azure.IIoT.Platform.Registry.Api\src\Microsoft.Azure.IIoT.Platform.Registry.Api.csproj" />
     <ProjectReference Include="..\..\..\..\platform\twin\Microsoft.Azure.IIoT.Platform.Twin.Api\src\Microsoft.Azure.IIoT.Platform.Twin.Api.csproj" />
-    <ProjectReference Include="..\..\..\..\platform\twin\Microsoft.Azure.IIoT.Platform.History.Api\src\Microsoft.Azure.IIoT.Platform.History.Api.csproj" />
     <ProjectReference Include="..\..\..\..\platform\vault\Microsoft.Azure.IIoT.Platform.Vault.Api\src\Microsoft.Azure.IIoT.Platform.Vault.Api.csproj" />
   </ItemGroup>
 </Project>

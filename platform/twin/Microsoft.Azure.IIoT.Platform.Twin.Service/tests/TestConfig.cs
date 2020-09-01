@@ -20,8 +20,5 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Service {
 
         /// <inheritdoc/>
         public string OpcUaTwinServiceUrl { get; }
-
-        /// <inheritdoc/>
-        public string OpcUaTwinServiceResourceId => null;
     }
 }

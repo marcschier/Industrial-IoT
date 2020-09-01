@@ -103,7 +103,6 @@ namespace Microsoft.Azure.IIoT.Platform.Service {
 
             if (!Config.IsMinimumDeployment) {
                 app.AddStartupBranch<Twin.Ua.Service.Startup>("/ua");
-                app.AddStartupBranch<History.Service.Startup>("/history");
             }
 
             app.UseHealthChecks("/healthz");

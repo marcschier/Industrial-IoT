@@ -9,7 +9,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.History.StartStop {
     using Microsoft.Azure.IIoT.Platform.Core.Models;
     using Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Fixtures;
     using Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests;
-    using Microsoft.Azure.IIoT.Platform.History;
+    using Microsoft.Azure.IIoT.Platform.Twin;
     using System.Net;
     using System.Threading.Tasks;
     using Xunit;

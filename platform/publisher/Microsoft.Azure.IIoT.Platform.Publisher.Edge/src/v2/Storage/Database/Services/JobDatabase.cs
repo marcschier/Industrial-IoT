@@ -8,7 +8,6 @@ namespace Microsoft.Azure.IIoT.Agent.Framework.Storage.Database {
     using Microsoft.Azure.IIoT.Exceptions;
     using Microsoft.Azure.IIoT.Storage;
     using System;
-    using System.Collections.Generic;
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
@@ -25,8 +24,7 @@ namespace Microsoft.Azure.IIoT.Agent.Framework.Storage.Database {
         /// <param name="databaseJobRepositoryConfig"></param>
         public JobDatabase(IDatabaseServer databaseServer, IJobDatabaseConfig databaseJobRepositoryConfig) {
             var dbs = databaseServer.OpenAsync(databaseJobRepositoryConfig.DatabaseName).Result;
-            var cont = dbs.OpenContainerAsync(databaseJobRepositoryConfig.ContainerName).Result;
-            _documents = cont.AsDocuments();
+            _documents = dbs.OpenContainerAsync(databaseJobRepositoryConfig.ContainerName).Result;
         }
 
         /// <inheritdoc/>
@@ -37,14 +35,14 @@ namespace Microsoft.Azure.IIoT.Agent.Framework.Storage.Database {
             while (true) {
                 var document = await _documents.FindAsync<JobDocument>(job.Id, ct);
                 if (document != null) {
-                    throw new ConflictingResourceException($"Job {job.Id} already exists.");
+                    throw new ResourceConflictException($"Job {job.Id} already exists.");
                 }
                 job.LifetimeData.Created = job.LifetimeData.Updated = DateTime.UtcNow;
                 try {
                     var result = await _documents.AddAsync(job.ToDocumentModel(), ct);
                     return result.Value.ToFrameworkModel();
                 }
-                catch (ConflictingResourceException) {
+                catch (ResourceConflictException) {
                     // Try again
                     continue;
                 }
@@ -75,7 +73,7 @@ namespace Microsoft.Azure.IIoT.Agent.Framework.Storage.Database {
                         var result = await _documents.AddAsync(updated, ct);
                         return result.Value.ToFrameworkModel();
                     }
-                    catch (ConflictingResourceException) {
+                    catch (ResourceConflictException) {
                         // Conflict - try update now
                         continue;
                     }
@@ -134,11 +132,9 @@ namespace Microsoft.Azure.IIoT.Agent.Framework.Storage.Database {
         /// <inheritdoc/>
         public async Task<JobInfoListModel> QueryAsync(JobInfoQueryModel query,
             string continuationToken, int? maxResults, CancellationToken ct) {
-            var client = _documents.OpenSqlClient();
             var results = continuationToken != null ?
-                client.Continue<JobDocument>(continuationToken, maxResults) :
-                client.Query<JobDocument>(CreateQuery(query, out var queryParameters),
-                    queryParameters, maxResults);
+                _documents.ContinueQuery<JobDocument>(continuationToken, maxResults) :
+                CreateQuery(_documents.CreateQuery<JobDocument>(maxResults), query);
             if (!results.HasMore()) {
                 return new JobInfoListModel();
             }
@@ -178,33 +174,24 @@ namespace Microsoft.Azure.IIoT.Agent.Framework.Storage.Database {
         /// <summary>
         /// Create query
         /// </summary>
+        /// <param name="filter"></param>
         /// <param name="query"></param>
-        /// <param name="queryParameters"></param>
         /// <returns></returns>
-        private static string CreateQuery(JobInfoQueryModel query,
-            out Dictionary<string, object> queryParameters) {
-            queryParameters = new Dictionary<string, object>();
-            var queryString = $"SELECT * FROM r WHERE ";
-            if (query?.Status != null) {
-                queryString +=
-$"r.{nameof(JobDocument.Status)} = @state AND ";
-                queryParameters.Add("@state", query.Status.Value);
+        private static IResultFeed<IDocumentInfo<JobDocument>> CreateQuery(
+            IQuery<JobDocument> query, JobInfoQueryModel filter) {
+            if (filter?.Status != null) {
+                query = query.Where(x => x.Status == filter.Status.Value);
             }
-            if (query?.Name != null) {
-                queryString +=
-$"r.{nameof(JobDocument.Name)} = @name AND ";
-                queryParameters.Add("@name", query.Name);
+            if (filter?.Name != null) {
+                query = query.Where(x => x.Name == filter.Name);
             }
-            if (query?.JobConfigurationType != null) {
-                queryString +=
-$"r.{nameof(JobDocument.Type)} = @type AND ";
-                queryParameters.Add("@type", query.JobConfigurationType);
+            if (filter?.JobConfigurationType != null) {
+                query = query.Where(x => x.Type == filter.JobConfigurationType);
             }
-            queryString +=
-$"r.{nameof(JobDocument.ClassType)} = '{JobDocument.ClassTypeName}'";
-            return queryString;
+            query = query.Where(x => x.ClassType == JobDocument.ClassTypeName);
+            return query.GetResults();
         }
 
-        private readonly IDocuments _documents;
+        private readonly IItemContainer _documents;
     }
 }

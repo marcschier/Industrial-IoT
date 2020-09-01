@@ -4,7 +4,7 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Tests {
-    using Microsoft.Azure.IIoT.Platform.History.Clients;
+    using Microsoft.Azure.IIoT.Platform.Twin.Clients;
     using Microsoft.Azure.IIoT.Platform.OpcUa.Services;
     using Microsoft.Azure.IIoT.Platform.Registry;
     using Microsoft.Azure.IIoT.Platform.Registry.Models;
@@ -15,8 +15,6 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Tests {
     using Microsoft.Azure.IIoT.Platform.Registry.Api.Clients;
     using Microsoft.Azure.IIoT.Platform.Twin.Api;
     using Microsoft.Azure.IIoT.Platform.Twin.Api.Clients;
-    using Microsoft.Azure.IIoT.Platform.History.Api.Clients;
-    using Microsoft.Azure.IIoT.Platform.History.Api;
     using Microsoft.Azure.IIoT.Azure.IoTEdge;
     using Microsoft.Azure.IIoT.Azure.IoTHub;
     using Microsoft.Azure.IIoT.Azure.IoTHub.Mock;
@@ -41,8 +39,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Tests {
     /// <summary>
     /// Harness for opc twin module
     /// </summary>
-    public class TwinModuleFixture : IInjector,
-        IHistoryModuleConfig, ITwinModuleConfig, IDisposable {
+    public class TwinModuleFixture : IInjector, ITwinModuleConfig, IDisposable {
 
         /// <summary>
         /// Device id
@@ -314,8 +311,6 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Tests {
             builder.RegisterType<TwinSupervisorAdapter>()
                 .AsImplementedInterfaces();
             builder.RegisterType<TwinModuleClient>()
-                .AsImplementedInterfaces();
-            builder.RegisterType<HistoryModuleClient>()
                 .AsImplementedInterfaces();
 
             // Adapts to expanded hda

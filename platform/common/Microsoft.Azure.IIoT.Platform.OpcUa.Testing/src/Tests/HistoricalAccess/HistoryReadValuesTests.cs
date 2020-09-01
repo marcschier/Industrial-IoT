@@ -4,8 +4,8 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
-    using Microsoft.Azure.IIoT.Platform.History.Models;
-    using Microsoft.Azure.IIoT.Platform.History;
+    using Microsoft.Azure.IIoT.Platform.Twin.Models;
+    using Microsoft.Azure.IIoT.Platform.Twin;
     using System.Threading.Tasks;
     using Xunit;
     using System;

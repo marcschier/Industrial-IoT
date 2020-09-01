@@ -3,8 +3,8 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Platform.History.Clients {
-    using Microsoft.Azure.IIoT.Platform.History.Models;
+namespace Microsoft.Azure.IIoT.Platform.Twin.Clients {
+    using Microsoft.Azure.IIoT.Platform.Twin.Models;
     using Microsoft.Azure.IIoT.Platform.OpcUa;
     using System;
     using System.Threading.Tasks;

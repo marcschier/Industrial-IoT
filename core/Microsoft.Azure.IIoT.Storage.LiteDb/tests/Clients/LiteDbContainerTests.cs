@@ -12,7 +12,6 @@ namespace Microsoft.Azure.IIoT.Storage.LiteDb.Clients {
     using System.Threading.Tasks;
     using AutoFixture;
     using Xunit;
-    using System.Reflection.Metadata;
 
     public class LiteDbContainerTests : IClassFixture<LiteDbClientFixture> {
         private readonly LiteDbClientFixture _fixture;

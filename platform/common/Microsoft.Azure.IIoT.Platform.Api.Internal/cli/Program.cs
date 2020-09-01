@@ -16,8 +16,6 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
     using Microsoft.Azure.IIoT.Platform.Twin.Api;
     using Microsoft.Azure.IIoT.Platform.Twin.Api.Clients;
     using Microsoft.Azure.IIoT.Platform.Twin.Api.Models;
-    using Microsoft.Azure.IIoT.Platform.History.Api;
-    using Microsoft.Azure.IIoT.Platform.History.Api.Clients;
     using Microsoft.Azure.IIoT.Platform.Vault.Api;
     using Microsoft.Azure.IIoT.Platform.Vault.Api.Clients;
     using Microsoft.Azure.IIoT.Platform.Vault.Api.Models;
@@ -78,8 +76,6 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
             builder.RegisterType<TwinServiceClient>()
                 .AsImplementedInterfaces();
             builder.RegisterType<RegistryServiceClient>()
-                .AsImplementedInterfaces();
-            builder.RegisterType<HistoryServiceClient>()
                 .AsImplementedInterfaces();
             builder.RegisterType<VaultServiceClient>()
                 .AsImplementedInterfaces();

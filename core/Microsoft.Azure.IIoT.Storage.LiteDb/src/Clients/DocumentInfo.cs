@@ -5,11 +5,8 @@
 
 namespace Microsoft.Azure.IIoT.Storage.LiteDb.Clients {
     using Microsoft.Azure.IIoT.Storage;
-    using System.Reflection;
     using System;
     using LiteDB;
-    using System.Runtime.Serialization;
-    using System.Linq.Expressions;
 
     /// <summary>
     /// Document wrapper

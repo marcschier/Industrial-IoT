@@ -12,7 +12,6 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Storage {
     using System.Linq;
     using System.Threading.Tasks;
     using System.Threading;
-    using System.Collections.Generic;
 
     /// <summary>
     /// Trust group database

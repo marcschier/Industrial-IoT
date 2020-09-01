@@ -17,7 +17,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
     using System.Linq;
     using System.Threading.Tasks;
     using System.Threading;
-    using System.Security.Cryptography.X509Certificates;
 
     /// <summary>
     /// Application registration repository using a item container as storage

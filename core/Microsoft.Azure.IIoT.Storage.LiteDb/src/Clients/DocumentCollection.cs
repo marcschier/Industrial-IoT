@@ -6,8 +6,6 @@
 namespace Microsoft.Azure.IIoT.Storage.LiteDb.Clients {
     using Microsoft.Azure.IIoT.Storage;
     using Microsoft.Azure.IIoT.Exceptions;
-    using Microsoft.Azure.IIoT.Http.Exceptions;
-    using Microsoft.Azure.IIoT.Http;
     using Serilog;
     using System;
     using System.Threading;

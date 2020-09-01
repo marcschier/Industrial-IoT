@@ -10,7 +10,6 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Module.Tests {
     using Microsoft.Azure.IIoT.Platform.OpcUa.Services;
     using Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Runtime;
     using Microsoft.Azure.IIoT.Platform.Twin.Api;
-    using Microsoft.Azure.IIoT.Platform.History.Api;
     using Microsoft.Azure.IIoT.Http.Default;
     using Microsoft.Azure.IIoT.Hub;
     using Microsoft.Azure.IIoT.Hub.Models;
@@ -32,8 +31,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Module.Tests {
     /// <summary>
     /// Harness for opc twin module
     /// </summary>
-    public class PublisherModuleFixture : IInjector,
-        IHistoryModuleConfig, ITwinModuleConfig, IDisposable {
+    public class PublisherModuleFixture : IInjector, ITwinModuleConfig, IDisposable {
 
         /// <summary>
         /// Device id

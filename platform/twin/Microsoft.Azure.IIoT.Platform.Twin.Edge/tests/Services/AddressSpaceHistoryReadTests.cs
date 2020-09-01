@@ -5,7 +5,7 @@
 
 namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Services {
     using Microsoft.Azure.IIoT.Platform.Core.Models;
-    using Microsoft.Azure.IIoT.Platform.History.Clients;
+    using Microsoft.Azure.IIoT.Platform.Twin.Clients;
     using Microsoft.Azure.IIoT.Platform.OpcUa.Services;
     using Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Fixtures;
     using Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests;

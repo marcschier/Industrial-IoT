@@ -8,7 +8,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Supervisor.History.Api 
     using Microsoft.Azure.IIoT.Platform.Core.Api.Models;
     using Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Fixtures;
     using Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests;
-    using Microsoft.Azure.IIoT.Platform.History;
+    using Microsoft.Azure.IIoT.Platform.Twin;
     using Microsoft.Azure.IIoT.Platform.Core.Models;
     using Microsoft.Azure.IIoT.Utils;
     using Opc.Ua;

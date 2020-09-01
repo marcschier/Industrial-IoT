@@ -4,16 +4,6 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Engine {
-    using Microsoft.Azure.IIoT.Platform.Publisher.Edge.Models;
-    using Microsoft.Azure.IIoT.Hub;
-    using Serilog;
-    using System.Linq;
-    using System.Threading.Tasks;
-    using System;
-    using System.Collections.Generic;
-    using System.Diagnostics;
-    using Prometheus;
-    using System.Globalization;
 
 #if FALSE
     /// <summary>

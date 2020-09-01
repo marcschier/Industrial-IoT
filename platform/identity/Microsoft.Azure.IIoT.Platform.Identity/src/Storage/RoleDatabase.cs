@@ -14,7 +14,6 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Storage {
     using System.Threading.Tasks;
     using System.Threading;
     using System.Security.Claims;
-    using System.Security.Cryptography.X509Certificates;
 
     /// <summary>
     /// Represents a store for Identity roles

@@ -8,8 +8,6 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Controllers {
     using Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Models;
     using Microsoft.Azure.IIoT.Platform.Twin.Api.Models;
     using Microsoft.Azure.IIoT.Platform.Twin;
-    using Microsoft.Azure.IIoT.Platform.History.Api.Models;
-    using Microsoft.Azure.IIoT.Platform.History;
     using Microsoft.Azure.IIoT.Platform.Core.Models;
     using Microsoft.Azure.IIoT.Hosting;
     using Microsoft.Azure.IIoT.Rpc;

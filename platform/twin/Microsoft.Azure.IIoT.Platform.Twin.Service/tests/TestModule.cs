@@ -4,8 +4,6 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Platform.Twin.Service {
-    using Microsoft.Azure.IIoT.Platform.History;
-    using Microsoft.Azure.IIoT.Platform.History.Models;
     using Microsoft.Azure.IIoT.Platform.Twin;
     using Microsoft.Azure.IIoT.Platform.Twin.Models;
     using Microsoft.Azure.IIoT.Platform.Core.Models;

@@ -9,6 +9,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Service {
     using Microsoft.Azure.IIoT.Platform.Twin.Clients;
     using Microsoft.Azure.IIoT.Platform.Twin.Api.Clients;
     using Microsoft.Azure.IIoT.Platform.Publisher.Api.Clients;
+    using Microsoft.Azure.IIoT.Platform.Registry.Models;
     using Microsoft.Azure.IIoT.Azure.LogAnalytics.Runtime;
     using Microsoft.Azure.IIoT.Azure.AppInsights;
     using Microsoft.Azure.IIoT.Azure.IoTHub;
@@ -189,6 +190,10 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Service {
             builder.RegisterType<TwinModuleControlClient>()
                 .AsImplementedInterfaces();
             builder.RegisterType<TwinModuleSupervisorClient>()
+                .AsImplementedInterfaces();
+            builder.RegisterType<HistoricAccessAdapter<string>>()
+              .AsImplementedInterfaces();
+            builder.RegisterType<HistoricAccessAdapter<EndpointRegistrationModel>>()
                 .AsImplementedInterfaces();
             builder.RegisterType<ChunkMethodClient>()
                 .AsImplementedInterfaces();

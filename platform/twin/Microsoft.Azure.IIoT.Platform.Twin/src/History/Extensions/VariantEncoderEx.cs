@@ -4,7 +4,7 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Platform.OpcUa {
-    using Microsoft.Azure.IIoT.Platform.History.Models;
+    using Microsoft.Azure.IIoT.Platform.Twin.Models;
     using Microsoft.Azure.IIoT.Serializers;
     using Opc.Ua;
     using Opc.Ua.Encoders;

@@ -7,8 +7,6 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Services {
     using Microsoft.Azure.IIoT.Platform.Core.Models;
     using Microsoft.Azure.IIoT.Platform.Twin.Models;
     using Microsoft.Azure.IIoT.Platform.Twin;
-    using Microsoft.Azure.IIoT.Platform.History.Models;
-    using Microsoft.Azure.IIoT.Platform.History;
     using Microsoft.Azure.IIoT.Platform.OpcUa;
     using Microsoft.Azure.IIoT.Platform.OpcUa.Models;
     using Microsoft.Azure.IIoT.Exceptions;
