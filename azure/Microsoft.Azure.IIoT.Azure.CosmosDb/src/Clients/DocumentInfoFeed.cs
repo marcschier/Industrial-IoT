@@ -6,18 +6,20 @@
 namespace Microsoft.Azure.IIoT.Azure.CosmosDb.Clients {
     using Microsoft.Azure.IIoT.Storage;
     using Microsoft.Azure.IIoT.Utils;
-    using Microsoft.Azure.Documents.Linq;
+    using Microsoft.Azure.IIoT.Serializers;
+    using Microsoft.Azure.Cosmos;
     using Serilog;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
     using System;
+    using System.IO;
 
     /// <summary>
     /// Wraps a document query to return document infos
     /// </summary>
-    internal sealed class DocumentInfoFeed<R, T> : IResultFeed<IDocumentInfo<T>> {
+    internal sealed class DocumentInfoFeed<T> : IResultFeed<IDocumentInfo<T>> {
 
         /// <inheritdoc/>
         public string ContinuationToken { get; private set; }
@@ -25,8 +27,9 @@ namespace Microsoft.Azure.IIoT.Azure.CosmosDb.Clients {
         /// <summary>
         /// Create feed
         /// </summary>
-        internal DocumentInfoFeed(IDocumentQuery<R> query, ILogger logger) {
+        internal DocumentInfoFeed(FeedIterator query, ISerializer serializer, ILogger logger) {
             _query = query ?? throw new ArgumentNullException(nameof(query));
+            _serializer = serializer ?? throw new ArgumentNullException(nameof(serializer));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -35,10 +38,11 @@ namespace Microsoft.Azure.IIoT.Azure.CosmosDb.Clients {
             return await Retry.WithExponentialBackoff(_logger, ct, async () => {
                 if (_query.HasMoreResults) {
                     try {
-                        var result = await _query.ExecuteNextAsync<object>(ct);
-                        ContinuationToken = result.ResponseContinuation;
-                        return result
-                            .Select(r => (IDocumentInfo<T>)new DocumentInfo<T>(r));
+                        var result = await _query.ReadNextAsync(ct);
+                        ContinuationToken = result.ContinuationToken;
+                        var items = _serializer.Parse(await result.Content.ReadAsMemoryAsync());
+                        return items["Documents"].Values
+                            .Select(v => (IDocumentInfo<T>)new DocumentInfo<T>(v));
                     }
                     catch (Exception ex) {
                         DocumentCollection.FilterException(ex);
@@ -60,7 +64,8 @@ namespace Microsoft.Azure.IIoT.Azure.CosmosDb.Clients {
             _query.Dispose();
         }
 
-        private readonly IDocumentQuery<R> _query;
+        private readonly FeedIterator _query;
+        private readonly ISerializer _serializer;
         private readonly ILogger _logger;
     }
 }

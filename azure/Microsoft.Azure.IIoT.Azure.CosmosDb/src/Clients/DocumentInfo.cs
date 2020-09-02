@@ -4,6 +4,7 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Azure.CosmosDb.Clients {
+    using Microsoft.Azure.IIoT.Serializers;
     using Microsoft.Azure.IIoT.Storage;
     using System;
 
@@ -13,27 +14,30 @@ namespace Microsoft.Azure.IIoT.Azure.CosmosDb.Clients {
     /// <typeparam name="T"></typeparam>
     internal sealed class DocumentInfo<T> : IDocumentInfo<T> {
 
+        /// <inheritdoc/>
+        public string Id => (string)Document["id"];
+
+        /// <inheritdoc/>
+        public T Value => Document.ConvertTo<T>();
+
+        /// <inheritdoc/>
+        public string Etag => (string)Document["_etag"];
+
+        /// <summary>
+        /// Document
+        /// </summary>
+        internal VariantValue Document { get; }
+
         /// <summary>
         /// Create document
         /// </summary>
+        /// <param name="id"></param>
         /// <param name="doc"></param>
-        internal DocumentInfo(object doc) {
-            _doc = doc ?? throw new ArgumentNullException(nameof(doc));
+        internal DocumentInfo(VariantValue doc, string id = null) {
+            Document = doc ?? throw new ArgumentNullException(nameof(doc));
+            if (!string.IsNullOrEmpty(id)) {
+                Document["id"].AssignValue(id);
+            }
         }
-
-        internal static DocumentInfo<S> Create<S>(dynamic doc) {
-            return new DocumentInfo<S>(doc);
-        }
-
-        /// <inheritdoc/>
-        public string Id => _doc.id;
-
-        /// <inheritdoc/>
-        public T Value => (T)_doc;
-
-        /// <inheritdoc/>
-        public string Etag => _doc._etag;
-
-        private readonly dynamic _doc;
     }
 }

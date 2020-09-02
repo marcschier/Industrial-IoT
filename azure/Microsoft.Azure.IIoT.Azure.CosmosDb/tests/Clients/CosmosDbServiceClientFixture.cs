@@ -7,6 +7,7 @@ namespace Microsoft.Azure.IIoT.Azure.CosmosDb.Clients {
     using Microsoft.Azure.IIoT.Azure.CosmosDb.Runtime;
     using Microsoft.Azure.IIoT.Utils;
     using Microsoft.Azure.IIoT.Diagnostics;
+    using Microsoft.Azure.IIoT.Serializers.NewtonSoft;
     using Microsoft.Azure.IIoT.Storage;
     using Microsoft.Extensions.Configuration;
     using System;
@@ -97,7 +98,7 @@ namespace Microsoft.Azure.IIoT.Azure.CosmosDb.Clients {
                 .AddFromKeyVault()
                 .Build();
             var configuration = new CosmosDbConfig(config);
-            var server = new CosmosDbServiceClient(configuration, logger);
+            var server = new CosmosDbServiceClient(configuration, new NewtonSoftJsonSerializer(), logger);
             return await server.OpenAsync("test", null);
         }
 

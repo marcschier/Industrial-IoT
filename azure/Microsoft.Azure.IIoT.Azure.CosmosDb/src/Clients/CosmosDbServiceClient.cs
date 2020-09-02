@@ -7,12 +7,12 @@ namespace Microsoft.Azure.IIoT.Azure.CosmosDb.Clients {
     using Microsoft.Azure.IIoT.Storage;
     using Microsoft.Azure.IIoT.Utils;
     using Microsoft.Azure.IIoT.Serializers;
-    using Microsoft.Azure.Documents.Client;
-    using Microsoft.Azure.Documents;
+    using Microsoft.Azure.Cosmos;
     using Serilog;
     using System;
     using System.Threading.Tasks;
-    using Newtonsoft.Json;
+    using System.IO;
+    using System.IO.Pipelines;
 
     /// <summary>
     /// Provides document db and graph functionality for storage interfaces.
@@ -23,13 +23,13 @@ namespace Microsoft.Azure.IIoT.Azure.CosmosDb.Clients {
         /// Creates server
         /// </summary>
         /// <param name="config"></param>
+        /// <param name="serializer"></param>
         /// <param name="logger"></param>
-        /// <param name="jsonConfig"></param>
-        public CosmosDbServiceClient(ICosmosDbConfig config,
-            ILogger logger, IJsonSerializerSettingsProvider jsonConfig = null) {
+        public CosmosDbServiceClient(ICosmosDbConfig config, IJsonSerializer serializer,
+            ILogger logger) {
             _config = config ?? throw new ArgumentNullException(nameof(config));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            _jsonConfig = jsonConfig;
+            _serializer = serializer ?? throw new ArgumentNullException(nameof(serializer));
             if (string.IsNullOrEmpty(_config?.DbConnectionString)) {
                 throw new ArgumentNullException(nameof(_config.DbConnectionString));
             }
@@ -41,20 +41,17 @@ namespace Microsoft.Azure.IIoT.Azure.CosmosDb.Clients {
                 databaseId = "default";
             }
             var cs = ConnectionString.Parse(_config.DbConnectionString);
-            if (_jsonConfig?.Settings != null) {
-                // Workaround https://github.com/Azure/azure-cosmos-dotnet-v2/issues/351
-                JsonConvert.DefaultSettings = () => _jsonConfig?.Settings;
-            }
-            var client = new DocumentClient(new Uri(cs.Endpoint), cs.SharedAccessKey,
-                _jsonConfig?.Settings, null, options?.Consistency.ToConsistencyLevel());
-            await client.CreateDatabaseIfNotExistsAsync(new Database {
-                Id = databaseId
-            });
-            return new DocumentDatabase(client, databaseId, _config.ThroughputUnits, _logger, _jsonConfig);
+            var client = new CosmosClient(cs.Endpoint, cs.SharedAccessKey,
+                new CosmosClientOptions {
+                    ConsistencyLevel = options?.Consistency.ToConsistencyLevel()
+                });
+            var response = await client.CreateDatabaseIfNotExistsAsync(databaseId,
+                _config.ThroughputUnits);
+            return new DocumentDatabase(response.Database, _serializer, _logger);
         }
 
         private readonly ICosmosDbConfig _config;
         private readonly ILogger _logger;
-        private readonly IJsonSerializerSettingsProvider _jsonConfig;
+        private readonly IJsonSerializer _serializer;
     }
 }
