@@ -26,7 +26,6 @@
     <ProjectReference Include="..\..\..\..\core\Microsoft.Azure.IIoT.Authentication.OpenId\src\Microsoft.Azure.IIoT.Authentication.OpenId.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Microsoft.Azure.IIoT.Platform.Twin.Ua\src\Microsoft.Azure.IIoT.Platform.Twin.Ua.csproj" />
     <ProjectReference Include="..\..\Microsoft.Azure.IIoT.Platform.Twin\src\Microsoft.Azure.IIoT.Platform.Twin.csproj" />
   </ItemGroup>
   <ItemGroup>

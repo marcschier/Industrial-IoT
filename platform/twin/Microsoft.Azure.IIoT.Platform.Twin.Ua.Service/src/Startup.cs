@@ -5,7 +5,7 @@
 
 namespace Microsoft.Azure.IIoT.Platform.Twin.Ua.Service {
     using Microsoft.Azure.IIoT.Platform.Twin.Ua.Service.Runtime;
-    using Microsoft.Azure.IIoT.Platform.Twin.Ua.Server;
+    using Microsoft.Azure.IIoT.Platform.Twin.Ua;
     using Microsoft.Azure.IIoT.Platform.OpcUa.Services;
     using Microsoft.Azure.IIoT.Platform.OpcUa.Transport;
     using Microsoft.Azure.IIoT.Platform.Registry.Api.Clients;
