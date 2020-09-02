@@ -146,54 +146,7 @@ namespace Microsoft.Azure.IIoT.Azure.CosmosDb.Clients {
                      OfferThroughput = options?.ThroughputUnits
                  }
             );
-            await CreateSprocIfNotExistsAsync(id, BulkUpdateSprocName);
-            await CreateSprocIfNotExistsAsync(id, BulkDeleteSprocName);
             return collection.Resource;
-        }
-
-        internal const string BulkUpdateSprocName = "bulkUpdate";
-        internal const string BulkDeleteSprocName = "bulkDelete";
-
-        /// <summary>
-        /// Create stored procedures
-        /// </summary>
-        /// <param name="collectionId"></param>
-        /// <param name="sprocName"></param>
-        /// <returns></returns>
-        private async Task CreateSprocIfNotExistsAsync(string collectionId, string sprocName) {
-            var assembly = GetType().Assembly;
-#if FALSE
-            try {
-                var sprocUri = UriFactory.CreateStoredProcedureUri(
-                    DatabaseId, collectionId, sprocName);
-                await _client.DeleteStoredProcedureAsync(sprocUri);
-            }
-            catch (DocumentClientException) {}
-#endif
-            var resource = $"{assembly.GetName().Name}.Script.{sprocName}.js";
-            using (var stream = assembly.GetManifestResourceStream(resource)) {
-                if (stream == null) {
-                    throw new FileNotFoundException(resource + " not found");
-                }
-                var sproc = new StoredProcedure {
-                    Id = sprocName,
-                    Body = stream.ReadAsString(Encoding.UTF8)
-                };
-                try {
-                    var sprocUri = UriFactory.CreateStoredProcedureUri(
-                        DatabaseId, collectionId, sprocName);
-                    await Client.ReadStoredProcedureAsync(sprocUri);
-                    return;
-                }
-                catch (DocumentClientException de) {
-                    if (de.StatusCode != HttpStatusCode.NotFound) {
-                        throw;
-                    }
-                }
-                await Client.CreateStoredProcedureAsync(
-                    UriFactory.CreateDocumentCollectionUri(DatabaseId,
-                    collectionId), sproc);
-            }
         }
 
         private readonly ILogger _logger;

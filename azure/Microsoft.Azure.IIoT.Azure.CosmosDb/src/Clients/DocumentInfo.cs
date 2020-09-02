@@ -26,13 +26,13 @@ namespace Microsoft.Azure.IIoT.Azure.CosmosDb.Clients {
         }
 
         /// <inheritdoc/>
-        public string Id => _doc.Id;
+        public string Id => _doc.id;
 
         /// <inheritdoc/>
         public T Value => (T)_doc;
 
         /// <inheritdoc/>
-        public string Etag => _doc.ETag;
+        public string Etag => _doc._etag;
 
         private readonly dynamic _doc;
     }
