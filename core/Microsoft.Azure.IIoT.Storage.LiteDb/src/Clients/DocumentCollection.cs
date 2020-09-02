@@ -59,11 +59,11 @@ namespace Microsoft.Azure.IIoT.Storage.LiteDb.Clients {
             CancellationToken ct, string id, OperationOptions options, string etag) {
             try {
                 var newDoc = new DocumentInfo<T>(newItem, _db.Mapper, id);
-                if (!string.IsNullOrEmpty(etag)) {
+                if (!string.IsNullOrEmpty(etag) && !string.IsNullOrEmpty(newDoc.Id)) {
                     _db.BeginTrans();
                     try {
                         // Get etag and compare with this here
-                        var doc = Find<T>(id);
+                        var doc = Find<T>(newDoc.Id);
                         if (doc == null) {
                             // Add new
                             _db.GetCollection(Name).Insert(newDoc.Bson);
@@ -105,6 +105,9 @@ namespace Microsoft.Azure.IIoT.Storage.LiteDb.Clients {
             if (string.IsNullOrEmpty(existing.Id)) {
                 throw new ArgumentNullException(nameof(existing.Id));
             }
+            if (newItem == null) {
+                throw new ArgumentNullException(nameof(newItem));
+            }
             try {
                 var newDoc = new DocumentInfo<T>(newItem, _db.Mapper, existing.Id);
                 _db.BeginTrans();
@@ -138,6 +141,9 @@ namespace Microsoft.Azure.IIoT.Storage.LiteDb.Clients {
         /// <inheritdoc/>
         public Task<IDocumentInfo<T>> AddAsync<T>(T newItem, CancellationToken ct,
             string id, OperationOptions options) {
+            if (newItem == null) {
+                throw new ArgumentNullException(nameof(newItem));
+            }
             try {
                 var newDoc = new DocumentInfo<T>(newItem, _db.Mapper, id);
                 _db.GetCollection(Name).Insert(newDoc.Bson);
@@ -349,7 +355,7 @@ namespace Microsoft.Azure.IIoT.Storage.LiteDb.Clients {
 
             /// <inheritdoc/>
             public IQuery<T> Take(int maxRecords) {
-                return new ClientSideQuery<T>(_collection, 
+                return new ClientSideQuery<T>(_collection,
                     _queryable.Take(maxRecords), _pageSize);
             }
 
@@ -380,7 +386,7 @@ namespace Microsoft.Azure.IIoT.Storage.LiteDb.Clients {
             /// <param name="collection"></param>
             /// <param name="queryable"></param>
             /// <param name="pageSize"></param>
-            internal ServerSideQuery(DocumentCollection collection, 
+            internal ServerSideQuery(DocumentCollection collection,
                 ILiteQueryableResult<T> queryable, int? pageSize) {
                 _queryable = queryable ?? throw new ArgumentNullException(nameof(queryable));
                 _collection = collection ?? throw new ArgumentNullException(nameof(collection));
@@ -409,7 +415,7 @@ namespace Microsoft.Azure.IIoT.Storage.LiteDb.Clients {
                 if (!(_queryable is ILiteQueryable<T> queryable)) {
                     return Execute().OrderBy(keySelector, order);
                 }
-                return new ServerSideQuery<T>(_collection, 
+                return new ServerSideQuery<T>(_collection,
                     queryable.OrderBy(keySelector, order), _pageSize);
             }
 
@@ -418,7 +424,7 @@ namespace Microsoft.Azure.IIoT.Storage.LiteDb.Clients {
                 if (!(_queryable is ILiteQueryable<T> queryable)) {
                     return Execute().OrderByDescending(keySelector);
                 }
-                return new ServerSideQuery<T>(_collection, 
+                return new ServerSideQuery<T>(_collection,
                     queryable.OrderByDescending(keySelector), _pageSize);
             }
 
@@ -477,46 +483,46 @@ namespace Microsoft.Azure.IIoT.Storage.LiteDb.Clients {
                     case LiteException.FILE_NOT_FOUND:
                         throw new ResourceNotFoundException(
                             nameof(LiteException.FILE_NOT_FOUND), lex);
-                    case LiteException.DATABASE_SHUTDOWN: 
+                    case LiteException.DATABASE_SHUTDOWN:
                         throw new ResourceInvalidStateException(
                             nameof(LiteException.DATABASE_SHUTDOWN), lex);
-                    case LiteException.INVALID_DATABASE: 
+                    case LiteException.INVALID_DATABASE:
                         throw new ResourceInvalidStateException(
                             nameof(LiteException.INVALID_DATABASE), lex);
-                    case LiteException.FILE_SIZE_EXCEEDED: 
+                    case LiteException.FILE_SIZE_EXCEEDED:
                         throw new ResourceExhaustionException(
                             nameof(LiteException.FILE_SIZE_EXCEEDED), lex);
-                    case LiteException.COLLECTION_LIMIT_EXCEEDED: 
+                    case LiteException.COLLECTION_LIMIT_EXCEEDED:
                         throw new ResourceExhaustionException(
                             nameof(LiteException.COLLECTION_LIMIT_EXCEEDED), lex);
-                    case LiteException.INDEX_DROP_ID: 
+                    case LiteException.INDEX_DROP_ID:
                         throw new ResourceInvalidStateException(
                             nameof(LiteException.INDEX_DROP_ID), lex);
-                    case LiteException.INDEX_DUPLICATE_KEY: 
+                    case LiteException.INDEX_DUPLICATE_KEY:
                         throw new ResourceConflictException(
                             nameof(LiteException.INDEX_DUPLICATE_KEY), lex);
-                    case LiteException.INVALID_INDEX_KEY: 
+                    case LiteException.INVALID_INDEX_KEY:
                         throw new ResourceInvalidStateException(
                             nameof(LiteException.INVALID_INDEX_KEY), lex);
-                    case LiteException.INDEX_NOT_FOUND: 
+                    case LiteException.INDEX_NOT_FOUND:
                         throw new ResourceNotFoundException(
                             nameof(LiteException.INDEX_NOT_FOUND), lex);
-                    case LiteException.LOCK_TIMEOUT: 
+                    case LiteException.LOCK_TIMEOUT:
                         throw new TimeoutException(
                             nameof(LiteException.LOCK_TIMEOUT), lex);
-                    case LiteException.INVALID_COMMAND: 
+                    case LiteException.INVALID_COMMAND:
                         throw new NotSupportedException(
                             nameof(LiteException.INVALID_COMMAND), lex);
-                    case LiteException.ALREADY_EXISTS_COLLECTION_NAME: 
+                    case LiteException.ALREADY_EXISTS_COLLECTION_NAME:
                         throw new ResourceConflictException(
                             nameof(LiteException.ALREADY_EXISTS_COLLECTION_NAME), lex);
-                    case LiteException.ALREADY_OPEN_DATAFILE: 
+                    case LiteException.ALREADY_OPEN_DATAFILE:
                         throw new ResourceInvalidStateException(
                             nameof(LiteException.ALREADY_OPEN_DATAFILE), lex);
-                    case LiteException.INVALID_TRANSACTION_STATE: 
+                    case LiteException.INVALID_TRANSACTION_STATE:
                         throw new ResourceInvalidStateException(
                             nameof(LiteException.INVALID_TRANSACTION_STATE), lex);
-                    case LiteException.INDEX_NAME_LIMIT_EXCEEDED: 
+                    case LiteException.INDEX_NAME_LIMIT_EXCEEDED:
                         throw new ArgumentException(
                             nameof(LiteException.INDEX_NAME_LIMIT_EXCEEDED), lex);
                     case LiteException.INVALID_INDEX_NAME:
@@ -525,22 +531,22 @@ namespace Microsoft.Azure.IIoT.Storage.LiteDb.Clients {
                     case LiteException.INVALID_COLLECTION_NAME:
                         throw new ArgumentException(
                             nameof(LiteException.INVALID_COLLECTION_NAME), lex);
-                    case LiteException.COLLECTION_NOT_FOUND: 
+                    case LiteException.COLLECTION_NOT_FOUND:
                         throw new ResourceNotFoundException(
                             nameof(LiteException.COLLECTION_NOT_FOUND), lex);
-                    case LiteException.COLLECTION_ALREADY_EXIST: 
+                    case LiteException.COLLECTION_ALREADY_EXIST:
                         throw new ResourceConflictException(
                             nameof(LiteException.COLLECTION_ALREADY_EXIST), lex);
-                    case LiteException.INDEX_ALREADY_EXIST: 
+                    case LiteException.INDEX_ALREADY_EXIST:
                         throw new ResourceConflictException(
                             nameof(LiteException.INDEX_ALREADY_EXIST), lex);
-                    case LiteException.INVALID_FORMAT: 
+                    case LiteException.INVALID_FORMAT:
                         throw new FormatException(
                             nameof(LiteException.INVALID_FORMAT), lex);
-                    case LiteException.DOCUMENT_MAX_DEPTH: 
+                    case LiteException.DOCUMENT_MAX_DEPTH:
                         throw new SerializerException(
                             nameof(LiteException.DOCUMENT_MAX_DEPTH), lex);
-                    case LiteException.UNEXPECTED_TOKEN: 
+                    case LiteException.UNEXPECTED_TOKEN:
                         throw new SerializerException(
                             nameof(LiteException.UNEXPECTED_TOKEN), lex);
                     case LiteException.INVALID_DATA_TYPE:
@@ -549,13 +555,13 @@ namespace Microsoft.Azure.IIoT.Storage.LiteDb.Clients {
                     case LiteException.PROPERTY_NOT_MAPPED:
                         throw new SerializerException(
                             nameof(LiteException.PROPERTY_NOT_MAPPED), lex);
-                    case LiteException.INVALID_TYPED_NAME: 
+                    case LiteException.INVALID_TYPED_NAME:
                         throw new SerializerException(
                             nameof(LiteException.INVALID_TYPED_NAME), lex);
                     case LiteException.PROPERTY_READ_WRITE:
                         throw new SerializerException(
                             nameof(LiteException.PROPERTY_READ_WRITE), lex);
-                    case LiteException.INVALID_INITIALSIZE: 
+                    case LiteException.INVALID_INITIALSIZE:
                         throw new ArgumentException(
                             nameof(LiteException.INVALID_INITIALSIZE), lex);
                     case LiteException.INVALID_NULL_CHAR_STRING:

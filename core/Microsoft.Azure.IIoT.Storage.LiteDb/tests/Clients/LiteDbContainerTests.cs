@@ -12,12 +12,58 @@ namespace Microsoft.Azure.IIoT.Storage.LiteDb.Clients {
     using System.Threading.Tasks;
     using AutoFixture;
     using Xunit;
+    using Microsoft.Azure.IIoT.Exceptions;
 
     public class LiteDbContainerTests : IClassFixture<LiteDbClientFixture> {
         private readonly LiteDbClientFixture _fixture;
 
         public LiteDbContainerTests(LiteDbClientFixture fixture) {
             _fixture = fixture;
+        }
+
+        [SkippableFact]
+        public async Task FindItemTestAsync() {
+            var documents = await _fixture.GetContainerAsync();
+            Skip.If(documents == null);
+
+            var f = new Fixture().Create<Family>();
+            var fr = await documents.AddAsync(f);
+            Assert.Equal(f.Id, fr.Id);
+            Assert.Equal(f.Id, fr.Value.Id);
+            Assert.Equal(f.LastName, fr.Value.LastName);
+            Assert.NotNull(fr.Etag);
+
+            var f2 = await documents.FindAsync<Family>(fr.Id);
+            Assert.Equal(fr.Id, f2.Id);
+            Assert.Equal(fr.Id, f2.Value.Id);
+            Assert.Equal(fr.Value.LastName, f2.Value.LastName);
+            Assert.NotNull(f2.Etag);
+            Assert.Equal(f2.Etag, fr.Etag);
+        }
+
+        [SkippableFact]
+        public async Task NotFindItemTestAsync() {
+            var documents = await _fixture.GetContainerAsync();
+            Skip.If(documents == null);
+
+            var f = new Fixture().Create<Family>();
+            var fr = await documents.AddAsync(f);
+            Assert.Equal(f.Id, fr.Id);
+            Assert.Equal(f.Id, fr.Value.Id);
+            Assert.Equal(f.LastName, fr.Value.LastName);
+            Assert.NotNull(fr.Etag);
+
+            var f2 = await documents.FindAsync<Family>("xyz");
+            Assert.Null(f2);
+        }
+
+        [SkippableFact]
+        public async Task FindItemBadArgumentTestsAsync() {
+            var documents = await _fixture.GetContainerAsync();
+            Skip.If(documents == null);
+
+            await Assert.ThrowsAsync<ArgumentNullException>(
+                () => documents.FindAsync<Family>(null, default, null));
         }
 
         [SkippableFact]
@@ -34,11 +80,444 @@ namespace Microsoft.Azure.IIoT.Storage.LiteDb.Clients {
             Assert.Equal(families.Select(f => f.Id), results.Select(f => f.Value.Id));
         }
 
+        [SkippableFact]
+        public async Task AddItemTestAsync() {
+            var documents = await _fixture.GetContainerAsync();
+            Skip.If(documents == null);
+
+            var f = new Fixture().Create<Family>();
+            var fr = await documents.AddAsync(f);
+            Assert.Equal(f.Id, fr.Id);
+            Assert.Equal(f.Id, fr.Value.Id);
+            Assert.Equal(f.LastName, fr.Value.LastName);
+            Assert.NotNull(fr.Etag);
+
+            var results = await ListAsync<Family>(documents);
+            Assert.Single(results);
+            Assert.Equal(f.Id, results.Single().Id);
+            Assert.Equal(f.Id, results.Single().Value.Id);
+            Assert.Equal(f.LastName, results.Single().Value.LastName);
+            Assert.NotNull(results.Single().Etag);
+            Assert.Equal(fr.Etag, results.Single().Etag);
+        }
+
+        [SkippableFact]
+        public async Task AddItemTwiceThrowsAsync() {
+            var documents = await _fixture.GetContainerAsync();
+            Skip.If(documents == null);
+
+            var f = new Fixture().Create<Family>();
+            var fr = await documents.AddAsync(f);
+            Assert.Equal(f.Id, fr.Id);
+            Assert.Equal(f.Id, fr.Value.Id);
+            Assert.Equal(f.LastName, fr.Value.LastName);
+            Assert.NotNull(fr.Etag);
+
+            var f2 = new Fixture().Create<Family>();
+            f2.Id = f.Id;
+            await Assert.ThrowsAsync<ResourceConflictException>(() => documents.AddAsync(f2));
+        }
+
+        [SkippableFact]
+        public async Task AddItemAfterUpsertThrowsAsync() {
+            var documents = await _fixture.GetContainerAsync();
+            Skip.If(documents == null);
+
+            var f = new Fixture().Create<Family>();
+            var fr = await documents.UpsertAsync(f);
+            Assert.Equal(f.Id, fr.Id);
+            Assert.Equal(f.Id, fr.Value.Id);
+            Assert.Equal(f.LastName, fr.Value.LastName);
+            Assert.NotNull(fr.Etag);
+
+            var f2 = new Fixture().Create<Family>();
+            f2.Id = f.Id;
+            await Assert.ThrowsAsync<ResourceConflictException>(() => documents.AddAsync(f2));
+        }
+
+        [SkippableFact]
+        public async Task AddItemBadArgumentTestsAsync() {
+            var documents = await _fixture.GetContainerAsync();
+            Skip.If(documents == null);
+
+            await Assert.ThrowsAsync<ArgumentNullException>(
+                () => documents.AddAsync<Family>(null, default, "good", null));
+            await Assert.ThrowsAsync<ArgumentNullException>(
+                () => documents.AddAsync(1, default, "badid", null));
+        }
+
+        [SkippableFact]
+        public async Task UpsertItemsTestAsync() {
+            var documents = await _fixture.GetContainerAsync();
+            Skip.If(documents == null);
+
+            var families = new Fixture().CreateMany<Family>(10).OrderBy(x => x.Id).ToArray();
+            foreach (var f in families) {
+                await documents.UpsertAsync(f);
+            }
+
+            var results = await ListAsync<Family, string>(documents, x => x.Id);
+            Assert.Equal(families.Select(f => f.Id), results.Select(f => f.Value.Id));
+        }
+
+        [SkippableFact]
+        public async Task UpsertItemTwiceAsync() {
+            var documents = await _fixture.GetContainerAsync();
+            Skip.If(documents == null);
+
+            var f = new Fixture().Create<Family>();
+            var fr = await documents.UpsertAsync(f);
+            Assert.Equal(f.Id, fr.Id);
+            Assert.Equal(f.Id, fr.Value.Id);
+            Assert.Equal(f.LastName, fr.Value.LastName);
+            Assert.NotNull(fr.Etag);
+
+            var results = await ListAsync<Family>(documents);
+            Assert.Single(results);
+            Assert.Equal(f.Id, results.Single().Id);
+            Assert.Equal(f.Id, results.Single().Value.Id);
+            Assert.Equal(f.LastName, results.Single().Value.LastName);
+            Assert.NotNull(results.Single().Etag);
+            Assert.Equal(fr.Etag, results.Single().Etag);
+
+            var f2 = new Fixture().Create<Family>();
+            f2.Id = f.Id;
+            var f3 = await documents.UpsertAsync(f2);
+            Assert.Equal(f2.Id, f3.Id);
+            Assert.Equal(f2.Id, f3.Value.Id);
+            Assert.Equal(f2.LastName, f3.Value.LastName);
+            Assert.NotNull(f3.Etag);
+            Assert.NotEqual(f3.Etag, fr.Etag);
+
+            results = await ListAsync<Family>(documents);
+            Assert.Single(results);
+            Assert.Equal(f2.Id, results.Single().Id);
+            Assert.Equal(f2.Id, results.Single().Value.Id);
+            Assert.Equal(f2.LastName, results.Single().Value.LastName);
+            Assert.NotNull(results.Single().Etag);
+            Assert.Equal(f3.Etag, results.Single().Etag);
+        }
+
+        [SkippableFact]
+        public async Task UpsertItemTwiceWithEtagAsync() {
+            var documents = await _fixture.GetContainerAsync();
+            Skip.If(documents == null);
+
+            var f = new Fixture().Create<Family>();
+            var fr = await documents.UpsertAsync(f);
+            Assert.Equal(f.Id, fr.Id);
+            Assert.Equal(f.Id, fr.Value.Id);
+            Assert.Equal(f.LastName, fr.Value.LastName);
+            Assert.NotNull(fr.Etag);
+
+            var f2 = new Fixture().Create<Family>();
+            f2.Id = f.Id;
+            var f3 = await documents.UpsertAsync(f2, etag: fr.Etag);
+            Assert.Equal(f2.Id, f3.Id);
+            Assert.Equal(f2.Id, f3.Value.Id);
+            Assert.Equal(f2.LastName, f3.Value.LastName);
+            Assert.NotNull(f3.Etag);
+            Assert.NotEqual(f3.Etag, fr.Etag);
+
+            var results = await ListAsync<Family>(documents);
+            Assert.Single(results);
+            Assert.Equal(f2.Id, results.Single().Id);
+            Assert.Equal(f2.Id, results.Single().Value.Id);
+            Assert.Equal(f2.LastName, results.Single().Value.LastName);
+            Assert.NotNull(results.Single().Etag);
+            Assert.Equal(f3.Etag, results.Single().Etag);
+        }
+
+        [SkippableFact]
+        public async Task UpsertItemFirstTimeWithEtagInsertsAsync() {
+            var documents = await _fixture.GetContainerAsync();
+            Skip.If(documents == null);
+
+            var f = new Fixture().Create<Family>();
+            var fr = await documents.UpsertAsync(f, etag: "OldEtag");
+            Assert.Equal(f.Id, fr.Id);
+            Assert.Equal(f.Id, fr.Value.Id);
+            Assert.Equal(f.LastName, fr.Value.LastName);
+            Assert.NotNull(fr.Etag);
+
+            var results = await ListAsync<Family>(documents);
+            Assert.Single(results);
+            Assert.Equal(fr.Id, results.Single().Id);
+            Assert.Equal(fr.Id, results.Single().Value.Id);
+            Assert.Equal(fr.Value.LastName, results.Single().Value.LastName);
+            Assert.NotNull(results.Single().Etag);
+            Assert.Equal(fr.Etag, results.Single().Etag);
+        }
+
+        [SkippableFact]
+        public async Task UpsertItemTwiceWithBadEtagThrowsAsync() {
+            var documents = await _fixture.GetContainerAsync();
+            Skip.If(documents == null);
+
+            var f = new Fixture().Create<Family>();
+            var fr = await documents.UpsertAsync(f);
+            Assert.Equal(f.Id, fr.Id);
+            Assert.Equal(f.Id, fr.Value.Id);
+            Assert.Equal(f.LastName, fr.Value.LastName);
+            Assert.NotNull(fr.Etag);
+
+            var f2 = new Fixture().Create<Family>();
+            f2.Id = f.Id;
+            await Assert.ThrowsAsync<ResourceOutOfDateException>(
+                () => documents.UpsertAsync(f2, etag: "bad"));
+        }
+
+        [SkippableFact]
+        public async Task UpsertItemAfterAddAsync() {
+            var documents = await _fixture.GetContainerAsync();
+            Skip.If(documents == null);
+
+            var f = new Fixture().Create<Family>();
+            var fr = await documents.AddAsync(f);
+            Assert.Equal(f.Id, fr.Id);
+            Assert.Equal(f.Id, fr.Value.Id);
+            Assert.Equal(f.LastName, fr.Value.LastName);
+            Assert.NotNull(fr.Etag);
+
+            var f2 = new Fixture().Create<Family>();
+            f2.Id = f.Id;
+            var f3 = await documents.UpsertAsync(f2);
+            Assert.Equal(f2.Id, f3.Id);
+            Assert.Equal(f2.Id, f3.Value.Id);
+            Assert.Equal(f2.LastName, f3.Value.LastName);
+            Assert.NotNull(f3.Etag);
+            Assert.NotEqual(f3.Etag, fr.Etag);
+
+            var results = await ListAsync<Family>(documents);
+            Assert.Single(results);
+            Assert.Equal(f2.Id, results.Single().Id);
+            Assert.Equal(f2.Id, results.Single().Value.Id);
+            Assert.Equal(f2.LastName, results.Single().Value.LastName);
+            Assert.NotNull(results.Single().Etag);
+            Assert.Equal(f3.Etag, results.Single().Etag);
+        }
+
+        [SkippableFact]
+        public async Task UpsertItemBadArgumentTestsAsync() {
+            var documents = await _fixture.GetContainerAsync();
+            Skip.If(documents == null);
+
+            await Assert.ThrowsAsync<ArgumentNullException>(
+                () => documents.UpsertAsync<Family>(null, default, "good", null));
+            await Assert.ThrowsAsync<ArgumentNullException>(
+                () => documents.UpsertAsync(1, default, "badid", null));
+        }
+
+        [SkippableFact]
+        public async Task ReplaceItemAfterAddAsync() {
+            var documents = await _fixture.GetContainerAsync();
+            Skip.If(documents == null);
+
+            var f = new Fixture().Create<Family>();
+            var fr = await documents.AddAsync(f);
+            Assert.Equal(f.Id, fr.Id);
+            Assert.Equal(f.Id, fr.Value.Id);
+            Assert.Equal(f.LastName, fr.Value.LastName);
+            Assert.NotNull(fr.Etag);
+
+            var f2 = new Fixture().Create<Family>();
+            var f3 = await documents.ReplaceAsync(fr, f2);
+            Assert.Equal(f.Id, f3.Id);
+            Assert.Equal(f.Id, f3.Value.Id); // Id was overridden with f.id
+            Assert.Equal(f2.LastName, f3.Value.LastName);
+            Assert.NotNull(f3.Etag);
+            Assert.NotEqual(f3.Etag, fr.Etag);
+
+            var results = await ListAsync<Family>(documents);
+            Assert.Single(results);
+            Assert.Equal(f.Id, results.Single().Id);
+            Assert.Equal(f.Id, results.Single().Value.Id);
+            Assert.Equal(f2.LastName, results.Single().Value.LastName);
+            Assert.NotNull(results.Single().Etag);
+            Assert.Equal(f3.Etag, results.Single().Etag);
+        }
+
+        [SkippableFact]
+        public async Task ReplaceItemAfterUpsertAsync() {
+            var documents = await _fixture.GetContainerAsync();
+            Skip.If(documents == null);
+
+            var f = new Fixture().Create<Family>();
+            var fr = await documents.UpsertAsync(f);
+            Assert.Equal(f.Id, fr.Id);
+            Assert.Equal(f.Id, fr.Value.Id);
+            Assert.Equal(f.LastName, fr.Value.LastName);
+            Assert.NotNull(fr.Etag);
+
+            var f2 = new Fixture().Create<Family>();
+            var f3 = await documents.ReplaceAsync(fr, f2);
+            Assert.Equal(f.Id, f3.Id);
+            Assert.Equal(f.Id, f3.Value.Id); // Id was overridden with f.id
+            Assert.Equal(f2.LastName, f3.Value.LastName);
+            Assert.NotNull(f3.Etag);
+            Assert.NotEqual(f3.Etag, fr.Etag);
+
+            var results = await ListAsync<Family>(documents);
+            Assert.Single(results);
+            Assert.Equal(f.Id, results.Single().Id);
+            Assert.Equal(f.Id, results.Single().Value.Id);
+            Assert.Equal(f2.LastName, results.Single().Value.LastName);
+            Assert.NotNull(results.Single().Etag);
+            Assert.Equal(f3.Etag, results.Single().Etag);
+        }
+
+        [SkippableFact]
+        public async Task ReplaceItemWithBadEtagThrowsAsync() {
+            var documents = await _fixture.GetContainerAsync();
+            Skip.If(documents == null);
+
+            var f = new Fixture().Create<Family>();
+            var fr = await documents.UpsertAsync(f);
+
+            var f2 = new Fixture().Create<Family>();
+            var f3 = await documents.ReplaceAsync(fr, f2);
+            var f4 = new Fixture().Create<Family>();
+            await Assert.ThrowsAsync<ResourceOutOfDateException>(
+                () => documents.ReplaceAsync(fr, f4, default, null));
+
+            await documents.DeleteAsync<Family>(f.Id);
+            var results = await ListAsync<Family>(documents);
+            Assert.Empty(results);
+
+            var f5 = new Fixture().Create<Family>();
+            await Assert.ThrowsAsync<ResourceNotFoundException>(
+                () => documents.ReplaceAsync(f3, f5, default, null));
+        }
+
+        [SkippableFact]
+        public async Task ReplaceItemBadArgumentTestsAsync() {
+            var documents = await _fixture.GetContainerAsync();
+            Skip.If(documents == null);
+
+            var f = new Fixture().Create<Family>();
+            var fr = await documents.UpsertAsync(f);
+
+            await Assert.ThrowsAsync<ArgumentNullException>(
+                () => documents.ReplaceAsync(fr, null, default, null));
+            await Assert.ThrowsAsync<ArgumentNullException>(
+                () => documents.ReplaceAsync(null, f, default, null));
+        }
+
+        [SkippableFact]
+        public async Task DeleteItemAfterAddAsync() {
+            var documents = await _fixture.GetContainerAsync();
+            Skip.If(documents == null);
+
+            var f = new Fixture().Create<Family>();
+            var fr = await documents.AddAsync(f);
+            Assert.Equal(f.Id, fr.Id);
+            Assert.Equal(f.Id, fr.Value.Id);
+            Assert.Equal(f.LastName, fr.Value.LastName);
+            Assert.NotNull(fr.Etag);
+
+            await documents.DeleteAsync(fr);
+
+            var results = await ListAsync<Family>(documents);
+            Assert.Empty(results);
+        }
+
+        [SkippableFact]
+        public async Task DeleteItemAfterUpsertAsync() {
+            var documents = await _fixture.GetContainerAsync();
+            Skip.If(documents == null);
+
+            var f = new Fixture().Create<Family>();
+            var fr = await documents.UpsertAsync(f);
+            Assert.Equal(f.Id, fr.Id);
+            Assert.Equal(f.Id, fr.Value.Id);
+            Assert.Equal(f.LastName, fr.Value.LastName);
+            Assert.NotNull(fr.Etag);
+
+            await documents.DeleteAsync(fr);
+
+            var results = await ListAsync<Family>(documents);
+            Assert.Empty(results);
+        }
+
+        [SkippableFact]
+        public async Task DeleteItemWithGoodEtagTestAsync() {
+            var documents = await _fixture.GetContainerAsync();
+            Skip.If(documents == null);
+
+            var f = new Fixture().Create<Family>();
+            var fr = await documents.AddAsync(f);
+            Assert.Equal(f.Id, fr.Id);
+            Assert.Equal(f.Id, fr.Value.Id);
+            Assert.Equal(f.LastName, fr.Value.LastName);
+            Assert.NotNull(fr.Etag);
+
+            await documents.DeleteAsync<Family>(fr.Id, etag: fr.Etag);
+
+            var results = await ListAsync<Family>(documents);
+            Assert.Empty(results);
+        }
+
+        [SkippableFact]
+        public async Task DeleteItemWithNoEtagTestAsync() {
+            var documents = await _fixture.GetContainerAsync();
+            Skip.If(documents == null);
+
+            var f = new Fixture().Create<Family>();
+            var fr = await documents.AddAsync(f);
+            Assert.Equal(f.Id, fr.Id);
+            Assert.Equal(f.Id, fr.Value.Id);
+            Assert.Equal(f.LastName, fr.Value.LastName);
+            Assert.NotNull(fr.Etag);
+
+            await documents.DeleteAsync<Family>(fr.Id);
+
+            var results = await ListAsync<Family>(documents);
+            Assert.Empty(results);
+        }
+
+        [SkippableFact]
+        public async Task DeleteItemWithBadEtagThrowsAsync() {
+            var documents = await _fixture.GetContainerAsync();
+            Skip.If(documents == null);
+
+            var f = new Fixture().Create<Family>();
+            var fr = await documents.AddAsync(f);
+            Assert.Equal(f.Id, fr.Id);
+            Assert.Equal(f.Id, fr.Value.Id);
+            Assert.Equal(f.LastName, fr.Value.LastName);
+            Assert.NotNull(fr.Etag);
+
+            await Assert.ThrowsAsync<ResourceOutOfDateException>(
+                () => documents.DeleteAsync<Family>(fr.Id, etag: "bad"));
+        }
+
+        [SkippableFact]
+        public async Task DeleteItemBadArgumentTestsAsync() {
+            var documents = await _fixture.GetContainerAsync();
+            Skip.If(documents == null);
+
+            await Assert.ThrowsAsync<ArgumentNullException>(
+                () => documents.DeleteAsync<Family>(null, default, null));
+            await Assert.ThrowsAsync<ArgumentNullException>(
+                () => documents.DeleteAsync<Family>(null, default, null, etag: "good"));
+            await Assert.ThrowsAsync<ArgumentNullException>(
+                () => documents.DeleteAsync<Family>(string.Empty, default, null, etag: "good"));
+        }
+
+
+
+
+
+
+
+
         private static Task<List<IDocumentInfo<T>>> ListAsync<T>(
             IItemContainer documents) {
             return ListAsync<T, object>(documents, null);
         }
-        
+
+
+
         private static async Task<List<IDocumentInfo<T>>> ListAsync<T, K>(
             IItemContainer documents, Expression<Func<T, K>> order) {
             var query = documents.CreateQuery<T>();
