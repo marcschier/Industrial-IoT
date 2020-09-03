@@ -39,6 +39,8 @@ namespace Microsoft.Azure.IIoT.Azure.CosmosDb.Clients {
                 if (_query.HasMoreResults) {
                     try {
                         var result = await _query.ReadNextAsync(ct);
+                        result.EnsureSuccessStatusCode();
+
                         ContinuationToken = result.ContinuationToken;
                         var items = _serializer.Parse(await result.Content.ReadAsMemoryAsync());
                         return items["Documents"].Values

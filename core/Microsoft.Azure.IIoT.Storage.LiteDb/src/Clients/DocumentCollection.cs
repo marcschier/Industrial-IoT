@@ -57,6 +57,12 @@ namespace Microsoft.Azure.IIoT.Storage.LiteDb.Clients {
         /// <inheritdoc/>
         public Task<IDocumentInfo<T>> UpsertAsync<T>(T newItem,
             CancellationToken ct, string id, OperationOptions options, string etag) {
+            if (newItem == null) {
+                throw new ArgumentNullException(nameof(newItem));
+            }
+            if (typeof(T).IsValueType) {
+                throw new NotSupportedException(typeof(T).Name);
+            }
             try {
                 var newDoc = new DocumentInfo<T>(newItem, _db.Mapper, id);
                 if (!string.IsNullOrEmpty(etag) && !string.IsNullOrEmpty(newDoc.Id)) {
@@ -108,6 +114,9 @@ namespace Microsoft.Azure.IIoT.Storage.LiteDb.Clients {
             if (newItem == null) {
                 throw new ArgumentNullException(nameof(newItem));
             }
+            if (typeof(T).IsValueType) {
+                throw new NotSupportedException(typeof(T).Name);
+            }
             try {
                 var newDoc = new DocumentInfo<T>(newItem, _db.Mapper, existing.Id);
                 _db.BeginTrans();
@@ -143,6 +152,9 @@ namespace Microsoft.Azure.IIoT.Storage.LiteDb.Clients {
             string id, OperationOptions options) {
             if (newItem == null) {
                 throw new ArgumentNullException(nameof(newItem));
+            }
+            if (typeof(T).IsValueType) {
+                throw new NotSupportedException(typeof(T).Name);
             }
             try {
                 var newDoc = new DocumentInfo<T>(newItem, _db.Mapper, id);
@@ -213,17 +225,18 @@ namespace Microsoft.Azure.IIoT.Storage.LiteDb.Clients {
         /// <inheritdoc/>
         public IResultFeed<IDocumentInfo<T>> ContinueQuery<T>(string continuationToken,
             int? pageSize, string partitionKey) {
+            if (string.IsNullOrEmpty(continuationToken)) {
+                throw new ArgumentNullException(nameof(continuationToken));
+            }
             if (_queryStore.TryGetValue(continuationToken, out var feed)) {
-                var result = feed as IResultFeed<IDocumentInfo<T>>;
-                if (result == null) {
-                    _logger.Error("Continuation {continuation} type mismatch.",
-                        continuationToken);
+                if (!(feed is DocumentResultFeed<T> result)) {
+                    throw new BadRequestException(
+                        $"Continuation token: {continuationToken} type mismatch");
                 }
+                result.PageSize = pageSize;
                 return result;
             }
-            _logger.Error("Continuation {continuation} not found",
-                continuationToken);
-            return null;
+            throw new BadRequestException($"Invalid continuation token: {continuationToken}.");
         }
 
         /// <summary>
@@ -256,13 +269,16 @@ namespace Microsoft.Azure.IIoT.Storage.LiteDb.Clients {
             }
 
             /// <summary>
+            /// Page size
+            /// </summary>
+            public int? PageSize { get; internal set; }
+
+            /// <summary>
             /// Create feed
             /// </summary>
             internal DocumentResultFeed(DocumentCollection collection,
-                IEnumerable<IDocumentInfo<T>> documents, int? pageSize) {
-                var feed = (pageSize == null) ?
-                    documents.YieldReturn() : documents.Batch(pageSize.Value);
-                _items = new Queue<IEnumerable<IDocumentInfo<T>>>(feed);
+                IEnumerable<IDocumentInfo<T>> documents) {
+                _items = new Queue<IDocumentInfo<T>>(documents);
                 _collection = collection ?? throw new ArgumentNullException(nameof(collection));
                 _continuationToken = Guid.NewGuid().ToString();
                 _collection._queryStore.Add(_continuationToken, this);
@@ -282,18 +298,21 @@ namespace Microsoft.Azure.IIoT.Storage.LiteDb.Clients {
             /// <inheritdoc/>
             public Task<IEnumerable<IDocumentInfo<T>>> ReadAsync(CancellationToken ct) {
                 lock (_lock) {
-                    var result = _items.Count != 0 ? _items.Dequeue()
-                        : Enumerable.Empty<DocumentInfo<T>>();
-                    if (result == null) {
+                    var page = new List<IDocumentInfo<T>>(PageSize ?? _items.Count);
+                    for (var i = 0; (!PageSize.HasValue || i < PageSize.Value) &&
+                        _items.Count != 0; i++) {
+                        page.Add(_items.Dequeue());
+                    }
+                    if (_items.Count == 0) {
                         _collection._queryStore.Remove(_continuationToken);
                     }
-                    return Task.FromResult(result);
+                    return Task.FromResult<IEnumerable<IDocumentInfo<T>>>(page);
                 }
             }
 
             private readonly DocumentCollection _collection;
             private readonly string _continuationToken;
-            private readonly Queue<IEnumerable<IDocumentInfo<T>>> _items;
+            private readonly Queue<IDocumentInfo<T>> _items;
             private readonly object _lock = new object();
         }
 
@@ -320,7 +339,9 @@ namespace Microsoft.Azure.IIoT.Storage.LiteDb.Clients {
             public IResultFeed<IDocumentInfo<T>> GetResults() {
                 var results = _queryable.AsEnumerable()
                     .Select(d => new DocumentInfo<T>(d, _collection._db.Mapper));
-                return new DocumentResultFeed<T>(_collection, results, _pageSize);
+                return new DocumentResultFeed<T>(_collection, results) {
+                    PageSize = _pageSize
+                };
             }
 
             /// <inheritdoc/>
@@ -330,7 +351,7 @@ namespace Microsoft.Azure.IIoT.Storage.LiteDb.Clients {
             }
 
             /// <inheritdoc/>
-            public IQuery<T> OrderBy<K>(Expression<Func<T, K>> keySelector, int order) {
+            public IQuery<T> OrderBy<K>(Expression<Func<T, K>> keySelector) {
                 return new ClientSideQuery<T>(_collection,
                     _queryable.OrderBy(keySelector), _pageSize);
             }
@@ -395,10 +416,11 @@ namespace Microsoft.Azure.IIoT.Storage.LiteDb.Clients {
 
             /// <inheritdoc/>
             public IResultFeed<IDocumentInfo<T>> GetResults() {
-
                 var results = _queryable.ToDocuments()
                     .Select(d => new DocumentInfo<T>(d, _collection._db.Mapper));
-                return new DocumentResultFeed<T>(_collection, results, _pageSize);
+                return new DocumentResultFeed<T>(_collection, results) {
+                    PageSize = _pageSize
+                };
             }
 
             /// <inheritdoc/>
@@ -411,12 +433,12 @@ namespace Microsoft.Azure.IIoT.Storage.LiteDb.Clients {
             }
 
             /// <inheritdoc/>
-            public IQuery<T> OrderBy<K>(Expression<Func<T, K>> keySelector, int order = 1) {
+            public IQuery<T> OrderBy<K>(Expression<Func<T, K>> keySelector) {
                 if (!(_queryable is ILiteQueryable<T> queryable)) {
-                    return Execute().OrderBy(keySelector, order);
+                    return Execute().OrderBy(keySelector);
                 }
                 return new ServerSideQuery<T>(_collection,
-                    queryable.OrderBy(keySelector, order), _pageSize);
+                    queryable.OrderBy(keySelector, 1), _pageSize);
             }
 
             /// <inheritdoc/>
@@ -573,8 +595,10 @@ namespace Microsoft.Azure.IIoT.Storage.LiteDb.Clients {
         }
 
         private readonly ILiteDatabase _db;
+#pragma warning disable IDE0052 // Remove unread private members
         private readonly ContainerOptions _options;
         private readonly ILogger _logger;
+#pragma warning restore IDE0052 // Remove unread private members
 
         private readonly Dictionary<string, object> _queryStore =
             new Dictionary<string, object>();

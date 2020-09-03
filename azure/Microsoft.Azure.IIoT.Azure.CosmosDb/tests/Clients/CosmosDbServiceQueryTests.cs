@@ -5,14 +5,18 @@
 
 namespace Microsoft.Azure.IIoT.Azure.CosmosDb.Clients {
     using Microsoft.Azure.IIoT.Storage;
+    using Microsoft.Azure.IIoT.Exceptions;
+    using AutoFixture;
+    using Autofac;
     using System;
     using System.Threading.Tasks;
     using System.Collections.Generic;
     using System.Linq;
     using Xunit;
-    using Autofac;
 
     public class CosmosDbServiceQueryTests : IClassFixture<CosmosDbServiceClientFixture> {
+        private readonly CosmosDbServiceClientFixture _fixture;
+
         public CosmosDbServiceQueryTests(CosmosDbServiceClientFixture fixture) {
             _fixture = fixture;
         }
@@ -296,7 +300,7 @@ namespace Microsoft.Azure.IIoT.Azure.CosmosDb.Clients {
         }
 
         [SkippableFact]
-        public async Task QueryWithAggregatesAsync() {
+        public async Task QueryWithCountAsync() {
             var documents = await _fixture.GetDocumentsAsync();
             Skip.If(documents == null);
 
@@ -400,6 +404,382 @@ namespace Microsoft.Azure.IIoT.Azure.CosmosDb.Clients {
             Assert.Collection(results3, a => Assert.Equal(1, a.Value), a => Assert.Equal(2, a.Value));
         }
 
+        [SkippableFact]
+        public async Task QueryWithDistinct1Async() {
+            using (var container = await _fixture.GetContainerAsync()) {
+                Skip.If(container == null);
+                var documents = container.Container;
+
+                var now = DateTime.UtcNow;
+                var families = new Fixture().CreateMany<Family>(20);
+                foreach (var f in families) {
+                    f.LastName = "Same";
+                    f.RegistrationDate = now;
+                    f.IsRegistered = true;
+                    f.Count = 6;
+                    await documents.UpsertAsync(f);
+                }
+
+                var query1 = documents.CreateQuery<Family>()
+                    .Select(x => x.LastName)
+                    .Distinct();
+                var results1 = await RunAsync(query1);
+                Assert.Single(results1);
+                Assert.Equal("Same", results1.Single().Value);
+
+                var query2 = documents.CreateQuery<Family>()
+                    .Select(x => x.Count)
+                    .Distinct();
+                var results2 = await RunAsync(query2);
+                Assert.Single(results2);
+                Assert.Equal(6, results2.Single().Value);
+
+                var query3 = documents.CreateQuery<Family>()
+                    .Select(x => x.RegistrationDate)
+                    .Distinct();
+                var results3 = await RunAsync(query3);
+                Assert.Single(results3);
+                Assert.Equal(now, results3.Single().Value);
+
+                var query4 = documents.CreateQuery<Family>()
+                    .Select(x => x.IsRegistered)
+                    .Distinct();
+                var results4 = await RunAsync(query4);
+                Assert.Single(results4);
+                Assert.True(results4.Single().Value);
+            }
+        }
+
+
+        [SkippableFact]
+        public async Task QueryWithDistinct2Async() {
+            using (var container = await _fixture.GetContainerAsync()) {
+                Skip.If(container == null);
+                var documents = container.Container;
+
+                var families = new Fixture().CreateMany<Family>(5);
+                foreach (var f in families) {
+                    f.LastName = "Same";
+                    f.Count = 6;
+                    await documents.UpsertAsync(f);
+                }
+
+                families = new Fixture().CreateMany<Family>(5);
+                foreach (var f in families) {
+                    f.LastName = "Other";
+                    f.Count = null;
+                    await documents.UpsertAsync(f);
+                }
+
+                var query1 = documents.CreateQuery<Family>()
+                    .Select(x => x.LastName)
+                    .Distinct();
+                var results1 = await RunAsync(query1);
+                Assert.Equal(2, results1.Count);
+
+                query1 = documents.CreateQuery<Family>()
+                    .Select(x => x.LastName)
+                    .Distinct()
+                    .OrderBy(x => x);
+                results1 = await RunAsync(query1);
+                Assert.Equal(2, results1.Count);
+                Assert.Equal("Other", results1.First().Value);
+                query1 = documents.CreateQuery<Family>()
+                    .Select(x => x.LastName)
+                    .Distinct()
+                    .OrderByDescending(x => x);
+                results1 = await RunAsync(query1);
+                Assert.Equal(2, results1.Count);
+                Assert.Equal("Same", results1.First().Value);
+
+                var query2 = documents.CreateQuery<Family>()
+                    .Select(x => x.Count)
+                    .Distinct();
+                var results2 = await RunAsync(query2);
+                Assert.Equal(2, results2.Count);
+
+                query2 = documents.CreateQuery<Family>()
+                    .Select(x => x.Count)
+                    .Distinct()
+                    .OrderBy(x => x);
+                results2 = await RunAsync(query2);
+                Assert.Equal(2, results2.Count);
+                Assert.Null(results2.First().Value);
+                query2 = documents.CreateQuery<Family>()
+                    .Select(x => x.Count)
+                    .Distinct()
+                    .OrderByDescending(x => x);
+                results2 = await RunAsync(query2);
+                Assert.Equal(2, results2.Count);
+                Assert.Equal(6, results2.First().Value);
+
+                query2 = documents.CreateQuery<Family>()
+                    .Select(x => x.Count)
+                    .Distinct()
+                    .OrderBy(x => x)
+                    .Take(1);
+                results2 = await RunAsync(query2);
+                Assert.Single(results2);
+                Assert.Null(results2.First().Value);
+                query2 = documents.CreateQuery<Family>()
+                    .Select(x => x.Count)
+                    .Distinct()
+                    .OrderByDescending(x => x)
+                    .Take(1);
+                results2 = await RunAsync(query2);
+                Assert.Single(results2);
+                Assert.Equal(6, results2.First().Value);
+            }
+        }
+
+        [SkippableFact]
+        public async Task QueryWithSelectAndOrderByAsync() {
+            using (var container = await _fixture.GetContainerAsync()) {
+                Skip.If(container == null);
+                var documents = container.Container;
+
+                var count = 0;
+                var families = new Fixture().CreateMany<Family>(5);
+                foreach (var f in families) {
+                    f.LastName = "Same";
+                    f.Count = ++count;
+                    await documents.UpsertAsync(f);
+                }
+
+                families = new Fixture().CreateMany<Family>(5);
+                foreach (var f in families) {
+                    f.LastName = "Other";
+                    f.Count = ++count;
+                    await documents.UpsertAsync(f);
+                }
+
+                var query1 = documents.CreateQuery<Family>()
+                    .Select(x => x.LastName)
+                    .OrderBy(x => x);
+                var results1 = await RunAsync(query1);
+                Assert.Equal(10, results1.Count);
+                Assert.Equal("Other", results1.First().Value);
+                query1 = documents.CreateQuery<Family>()
+                    .Select(x => x.LastName)
+                    .OrderByDescending(x => x);
+                results1 = await RunAsync(query1);
+                Assert.Equal(10, results1.Count);
+                Assert.Equal("Same", results1.First().Value);
+                query1 = documents.CreateQuery<Family>()
+                    .Select(x => x.LastName)
+                    .OrderByDescending(x => x)
+                    .Take(1);
+                results1 = await RunAsync(query1);
+                Assert.Single(results1);
+                Assert.Equal("Same", results1.First().Value);
+                query1 = documents.CreateQuery<Family>()
+                    .Select(x => x.LastName)
+                    .OrderBy(x => x)
+                    .Take(1);
+                results1 = await RunAsync(query1);
+                Assert.Single(results1);
+                Assert.Equal("Other", results1.First().Value);
+
+                var query2 = documents.CreateQuery<Family>()
+                    .Select(x => x.Count)
+                    .OrderBy(x => x);
+                var results2 = await RunAsync(query2);
+                Assert.Equal(10, results2.Count);
+                Assert.Equal(1, results2.First().Value);
+                query2 = documents.CreateQuery<Family>()
+                    .Select(x => x.Count)
+                    .OrderByDescending(x => x);
+                results2 = await RunAsync(query2);
+                Assert.Equal(10, results2.Count);
+                Assert.Equal(10, results2.First().Value);
+                query2 = documents.CreateQuery<Family>()
+                    .Select(x => x.Count)
+                    .OrderByDescending(x => x)
+                    .Take(1);
+                results2 = await RunAsync(query2);
+                Assert.Single(results1);
+                Assert.Equal(10, results2.First().Value);
+                query2 = documents.CreateQuery<Family>()
+                    .Select(x => x.Count)
+                    .OrderBy(x => x)
+                    .Take(2);
+                results2 = await RunAsync(query2);
+                Assert.Equal(2, results2.Count);
+                Assert.Equal(1, results2.First().Value);
+                query2 = documents.CreateQuery<Family>()
+                    .Select(x => x.Count)
+                    .OrderBy(x => x)
+                    .Take(100);
+                results2 = await RunAsync(query2);
+                Assert.Equal(10, results2.Count);
+                Assert.Equal(1, results2.First().Value);
+                query2 = documents.CreateQuery<Family>()
+                    .Select(x => x.Count)
+                    .OrderBy(x => x)
+                    .Where(x => x > 3);
+                results2 = await RunAsync(query2);
+                Assert.Equal(7, results2.Count);
+                Assert.Equal(4, results2.First().Value);
+            }
+        }
+
+        [SkippableFact]
+        public async Task QueryContinueTest1Async() {
+            using (var container = await _fixture.GetContainerAsync()) {
+                Skip.If(container == null);
+                var documents = container.Container;
+
+                var families = new Fixture().CreateMany<Family>(100);
+                foreach (var f in families) {
+                    await documents.UpsertAsync(f);
+                }
+
+                var query1 = documents.CreateQuery<Family>(10);
+                var results1 = await RunAsync(query1);
+                Assert.Equal(100, results1.Count);
+
+                var query2 = documents.CreateQuery<Family>(10);
+                var results2 = query2.GetResults();
+
+                var loops = 0;
+                for (var i = 0; i < 20; i++) {
+                    loops++;
+                    if (results2.HasMore()) {
+                        var result = await results2.ReadAsync();
+                        Assert.NotNull(result);
+                        Assert.NotEmpty(result);
+                        Assert.Equal(10, result.Count());
+                    }
+                    if (results2.ContinuationToken == null) {
+                        break;
+                    }
+                    results2 = documents.ContinueQuery<Family>(results2.ContinuationToken, 10);
+                }
+                Assert.Equal(10, loops);
+            }
+        }
+
+        [SkippableFact]
+        public async Task QueryContinueTest2Async() {
+            using (var container = await _fixture.GetContainerAsync()) {
+                Skip.If(container == null);
+                var documents = container.Container;
+
+                var families = new Fixture().CreateMany<Family>(100);
+                foreach (var f in families) {
+                    await documents.UpsertAsync(f);
+                }
+
+                var query1 = documents.CreateQuery<Family>(10);
+                var results1 = await RunAsync(query1);
+                Assert.Equal(100, results1.Count);
+
+                var query2 = documents.CreateQuery<Family>(10);
+                var results2 = query2.GetResults();
+
+                var loops = 0;
+                for (var i = 0; i < 20; i++) {
+                    loops++;
+                    var result = await results2.ReadAsync();
+                    Assert.NotNull(result);
+                    Assert.NotEmpty(result);
+                    Assert.Equal(10, result.Count());
+                    if (results2.ContinuationToken == null) {
+                        result = await results2.ReadAsync();
+                        Assert.NotNull(result);
+                        Assert.Empty(result);
+                        break;
+                    }
+                    results2 = documents.ContinueQuery<Family>(results2.ContinuationToken, 10);
+                }
+                Assert.Equal(10, loops);
+            }
+        }
+
+        [SkippableFact]
+        public async Task QueryContinueTest3Async() {
+            using (var container = await _fixture.GetContainerAsync()) {
+                Skip.If(container == null);
+                var documents = container.Container;
+
+                var families = new Fixture().CreateMany<Family>(5);
+                foreach (var f in families) {
+                    await documents.UpsertAsync(f);
+                }
+
+                var query1 = documents.CreateQuery<Family>(10);
+                var results1 = await RunAsync(query1);
+                Assert.Equal(5, results1.Count);
+
+                var query2 = documents.CreateQuery<Family>(10);
+                var results2 = query2.GetResults();
+
+                Assert.True(results2.HasMore());
+                var result = await results2.ReadAsync();
+                Assert.NotNull(result);
+                Assert.NotEmpty(result);
+                Assert.Equal(5, result.Count());
+                Assert.Null(results2.ContinuationToken);
+            }
+        }
+
+        [SkippableFact]
+        public async Task QueryContinueTest4Async() {
+            using (var container = await _fixture.GetContainerAsync()) {
+                Skip.If(container == null);
+                var documents = container.Container;
+
+                var families = new Fixture().CreateMany<Family>(100);
+                foreach (var f in families) {
+                    await documents.UpsertAsync(f);
+                }
+
+                var query2 = documents.CreateQuery<Family>(10);
+                var results2 = query2.GetResults();
+
+                Assert.True(results2.HasMore());
+                var result = await results2.ReadAsync();
+                Assert.NotNull(result);
+                Assert.NotEmpty(result);
+                Assert.Equal(10, result.Count());
+                Assert.NotNull(results2.ContinuationToken);
+
+                results2 = documents.ContinueQuery<Family>(results2.ContinuationToken, 40);
+                Assert.True(results2.HasMore());
+                result = await results2.ReadAsync();
+                Assert.NotNull(result);
+                Assert.NotEmpty(result);
+                Assert.Equal(40, result.Count());
+                Assert.NotNull(results2.ContinuationToken);
+
+                results2 = documents.ContinueQuery<Family>(results2.ContinuationToken);
+                Assert.True(results2.HasMore());
+                result = await results2.ReadAsync();
+                Assert.NotNull(result);
+                Assert.NotEmpty(result);
+                Assert.Equal(50, result.Count());
+                Assert.Null(results2.ContinuationToken);
+            }
+        }
+
+        [SkippableFact]
+        public async Task QueryContinueBadArgumentsThrowsAsync() {
+
+            var documents = await _fixture.GetDocumentsAsync();
+            Skip.If(documents == null);
+
+            Assert.Throws<ArgumentNullException>(() => documents.ContinueQuery<Family>(null));
+
+            await Assert.ThrowsAnyAsync<ArgumentException>(() => {
+                var results = documents.ContinueQuery<Family>("badtoken");
+                return results.ReadAsync();
+            });
+            await Assert.ThrowsAnyAsync<ArgumentException>(() => {
+                var results = documents.ContinueQuery<Family>("{}");
+                return results.ReadAsync();
+            });
+        }
+
         private static async Task<List<IDocumentInfo<T>>> RunAsync<T>(IQuery<T> query) {
             var feed = query.GetResults();
             var results = new List<IDocumentInfo<T>>();
@@ -411,7 +791,5 @@ namespace Microsoft.Azure.IIoT.Azure.CosmosDb.Clients {
             }
             return results;
         }
-
-        private readonly CosmosDbServiceClientFixture _fixture;
     }
 }

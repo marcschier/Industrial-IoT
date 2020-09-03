@@ -3,7 +3,7 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Storage.LiteDb.Clients {
+namespace Microsoft.Azure.IIoT.Azure.CosmosDb.Clients {
     using Microsoft.Azure.IIoT.Storage;
     using Microsoft.Azure.IIoT.Exceptions;
     using System;
@@ -14,10 +14,10 @@ namespace Microsoft.Azure.IIoT.Storage.LiteDb.Clients {
     using AutoFixture;
     using Xunit;
 
-    public class LiteDbContainerTests : IClassFixture<LiteDbClientFixture> {
-        private readonly LiteDbClientFixture _fixture;
+    public class CosmosDbServiceContainerTests : IClassFixture<CosmosDbServiceClientFixture> {
+        private readonly CosmosDbServiceClientFixture _fixture;
 
-        public LiteDbContainerTests(LiteDbClientFixture fixture) {
+        public CosmosDbServiceContainerTests(CosmosDbServiceClientFixture fixture) {
             _fixture = fixture;
         }
 

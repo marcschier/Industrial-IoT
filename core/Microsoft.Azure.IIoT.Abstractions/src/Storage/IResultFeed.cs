@@ -28,7 +28,6 @@ namespace Microsoft.Azure.IIoT.Storage {
         /// Read results from feed
         /// </summary>
         /// <returns></returns>
-        Task<IEnumerable<T>> ReadAsync(
-            CancellationToken ct = default);
+        Task<IEnumerable<T>> ReadAsync(CancellationToken ct = default);
     }
 }

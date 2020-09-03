@@ -45,8 +45,14 @@ namespace Microsoft.Azure.IIoT.Azure.CosmosDb.Clients {
 
         /// <inheritdoc/>
         public IQuery<T> CreateQuery<T>(int? pageSize, OperationOptions options) {
-            return new DocumentQuery<T>(_container.GetItemLinqQueryable<T>(),
-                _serializer, _logger);
+            var query = _container.GetItemLinqQueryable<T>(false, null,
+                new QueryRequestOptions {
+                    MaxItemCount = pageSize,
+                    // ConsistencyLevel,
+                    // PartitionKey =
+                    //  EnableScanInQuery = true
+                });
+            return new DocumentQuery<T>(query, _serializer, false, _logger);
         }
 
         /// <inheritdoc/>
@@ -55,7 +61,16 @@ namespace Microsoft.Azure.IIoT.Azure.CosmosDb.Clients {
             if (string.IsNullOrEmpty(continuationToken)) {
                 throw new ArgumentNullException(nameof(continuationToken));
             }
-            var query = _container.GetItemLinqQueryable<T>(false, continuationToken);
+            if (!continuationToken.Contains("\"Continuation\":")) {
+                throw new BadRequestException(nameof(continuationToken));
+            }
+            var query = _container.GetItemLinqQueryable<T>(false, continuationToken,
+                new QueryRequestOptions {
+                    MaxItemCount = pageSize,
+                    // ConsistencyLevel,
+                    // PartitionKey = partitionKey
+                    //  EnableScanInQuery = true
+                });
             return new DocumentInfoFeed<T>(query.ToStreamIterator(), _serializer, _logger);
         }
 
@@ -87,6 +102,9 @@ namespace Microsoft.Azure.IIoT.Azure.CosmosDb.Clients {
         /// <inheritdoc/>
         public async Task<IDocumentInfo<T>> UpsertAsync<T>(T newItem,
             CancellationToken ct, string id, OperationOptions options, string etag) {
+            if (newItem == null) {
+                throw new ArgumentNullException(nameof(newItem));
+            }
             return await Retry.WithExponentialBackoff(_logger, ct, async () => {
                 try {
                     var doc = await _container.UpsertItemStreamAsync(AsStream(newItem, id),
@@ -114,6 +132,9 @@ namespace Microsoft.Azure.IIoT.Azure.CosmosDb.Clients {
             if (string.IsNullOrEmpty(existing.Id)) {
                 throw new ArgumentNullException(nameof(existing.Id));
             }
+            if (newItem == null) {
+                throw new ArgumentNullException(nameof(newItem));
+            }
             options ??= new OperationOptions();
             return await Retry.WithExponentialBackoff(_logger, ct, async () => {
                 try {
@@ -137,6 +158,9 @@ namespace Microsoft.Azure.IIoT.Azure.CosmosDb.Clients {
         /// <inheritdoc/>
         public async Task<IDocumentInfo<T>> AddAsync<T>(T newItem, CancellationToken ct,
             string id, OperationOptions options) {
+            if (newItem == null) {
+                throw new ArgumentNullException(nameof(newItem));
+            }
             return await Retry.WithExponentialBackoff(_logger, ct, async () => {
                 try {
                     var doc = await _container.CreateItemStreamAsync(AsStream(newItem, id),

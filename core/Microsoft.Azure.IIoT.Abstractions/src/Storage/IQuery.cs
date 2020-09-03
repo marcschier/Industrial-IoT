@@ -28,9 +28,8 @@ namespace Microsoft.Azure.IIoT.Storage {
         /// </summary>
         /// <typeparam name="K"></typeparam>
         /// <param name="keySelector"></param>
-        /// <param name="order"></param>
         /// <returns></returns>
-        IQuery<T> OrderBy<K>(Expression<Func<T, K>> keySelector, int order = 1);
+        IQuery<T> OrderBy<K>(Expression<Func<T, K>> keySelector);
 
         /// <summary>
         /// Order
