@@ -10,7 +10,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Services {
     using System;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.Azure.IIoT.Cryptography;
+    using Microsoft.Azure.IIoT.Crypto;
     using System.Collections.Generic;
     using Microsoft.Azure.IIoT.Platform.Core.Models;
 

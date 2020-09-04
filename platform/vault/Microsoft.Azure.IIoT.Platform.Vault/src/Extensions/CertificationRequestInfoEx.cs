@@ -4,7 +4,7 @@
 // ------------------------------------------------------------
 
 namespace System.Security.Cryptography.X509Certificates {
-    using Microsoft.Azure.IIoT.Cryptography.Models;
+    using Microsoft.Azure.IIoT.Crypto.Models;
     using Org.BouncyCastle.Asn1;
     using Org.BouncyCastle.Asn1.Pkcs;
     using Org.BouncyCastle.Asn1.X509;

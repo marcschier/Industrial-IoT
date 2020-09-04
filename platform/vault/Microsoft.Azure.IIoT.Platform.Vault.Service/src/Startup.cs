@@ -20,8 +20,8 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Service {
     using Microsoft.Azure.IIoT.AspNetCore.Correlation;
     using Microsoft.Azure.IIoT.AspNetCore.Cors;
     using Microsoft.Azure.IIoT.Auth;
-    using Microsoft.Azure.IIoT.Cryptography.Default;
-    using Microsoft.Azure.IIoT.Cryptography.Storage;
+    using Microsoft.Azure.IIoT.Crypto.Default;
+    using Microsoft.Azure.IIoT.Crypto.Storage;
     using Microsoft.Azure.IIoT.Http.Default;
     using Microsoft.Azure.IIoT.Serializers;
     using Microsoft.Azure.IIoT.Utils;

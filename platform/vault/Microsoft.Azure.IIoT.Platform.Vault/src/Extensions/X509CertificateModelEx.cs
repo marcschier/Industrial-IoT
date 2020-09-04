@@ -5,8 +5,8 @@
 
 namespace Microsoft.Azure.IIoT.Platform.Vault.Models {
     using Microsoft.Azure.IIoT.Platform.Core.Models;
-    using Microsoft.Azure.IIoT.Cryptography;
-    using Microsoft.Azure.IIoT.Cryptography.Models;
+    using Microsoft.Azure.IIoT.Crypto;
+    using Microsoft.Azure.IIoT.Crypto.Models;
     using Opc.Ua;
     using System;
     using System.Linq;

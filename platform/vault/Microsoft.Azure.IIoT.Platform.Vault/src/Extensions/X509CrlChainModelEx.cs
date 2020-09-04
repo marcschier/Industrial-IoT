@@ -4,7 +4,7 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Platform.Vault.Models {
-    using Microsoft.Azure.IIoT.Cryptography.Models;
+    using Microsoft.Azure.IIoT.Crypto.Models;
     using System.Collections.Generic;
     using System.Linq;
 

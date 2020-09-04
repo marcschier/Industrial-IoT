@@ -5,13 +5,13 @@
 
 namespace Microsoft.Azure.IIoT.Platform.Vault.Handler {
     using Microsoft.Azure.IIoT.Platform.Vault.Models;
-    using Microsoft.Azure.IIoT.Cryptography;
+    using Microsoft.Azure.IIoT.Crypto;
     using Microsoft.Azure.IIoT.Utils;
     using System;
     using System.Security.Cryptography.X509Certificates;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.Azure.IIoT.Cryptography.Models;
+    using Microsoft.Azure.IIoT.Crypto.Models;
 
     /// <summary>
     /// Key pair request handler

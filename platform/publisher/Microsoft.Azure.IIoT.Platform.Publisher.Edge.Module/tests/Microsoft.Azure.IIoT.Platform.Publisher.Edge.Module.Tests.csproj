@@ -22,7 +22,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\platform\common\Microsoft.Azure.IIoT.Platform.Api.Internal\src\Microsoft.Azure.IIoT.Platform.Api.Internal.csproj" />
     <ProjectReference Include="..\..\..\..\platform\common\Microsoft.Azure.IIoT.Platform.OpcUa.Testing\src\Microsoft.Azure.IIoT.Platform.OpcUa.Testing.csproj" />
-    <ProjectReference Include="..\..\..\..\platform\twin\Microsoft.Azure.IIoT.Platform.Twin\src\Microsoft.Azure.IIoT.Platform.Twin.csproj" />
+    <ProjectReference Include="..\..\..\twin\Microsoft.Azure.IIoT.Platform.Twin\src\Microsoft.Azure.IIoT.Platform.Twin.csproj" />
     <ProjectReference Include="..\..\..\..\platform\registry\Microsoft.Azure.IIoT.Platform.Registry\src\Microsoft.Azure.IIoT.Platform.Registry.csproj" />
   </ItemGroup>
   <ItemGroup>

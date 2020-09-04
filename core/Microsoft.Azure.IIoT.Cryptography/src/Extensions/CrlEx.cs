@@ -3,9 +3,9 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Cryptography.Models {
-    using Microsoft.Azure.IIoT.Cryptography.BouncyCastle;
-    using Microsoft.Azure.IIoT.Cryptography.Utils;
+namespace Microsoft.Azure.IIoT.Crypto.Models {
+    using Microsoft.Azure.IIoT.Crypto.BouncyCastle;
+    using Microsoft.Azure.IIoT.Crypto.Utils;
     using System;
 
     /// <summary>

@@ -3,9 +3,9 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Cryptography.Default {
-    using Microsoft.Azure.IIoT.Cryptography.BouncyCastle;
-    using Microsoft.Azure.IIoT.Cryptography.Models;
+namespace Microsoft.Azure.IIoT.Crypto.Default {
+    using Microsoft.Azure.IIoT.Crypto.BouncyCastle;
+    using Microsoft.Azure.IIoT.Crypto.Models;
     using Org.BouncyCastle.Asn1.X509;
     using Org.BouncyCastle.Math;
     using Org.BouncyCastle.X509;

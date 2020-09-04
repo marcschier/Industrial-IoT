@@ -8,7 +8,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Services {
     using Microsoft.Azure.IIoT.Platform.Publisher.Models;
     using Microsoft.Azure.IIoT.Platform.OpcUa.Models;
     using Microsoft.Azure.IIoT.Platform.Core.Models;
-    using Microsoft.Azure.IIoT.Cryptography;
+    using Microsoft.Azure.IIoT.Crypto;
     using Microsoft.Azure.IIoT.Serializers;
     using Serilog;
     using System;

@@ -5,7 +5,7 @@
 
 namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Hosting {
     using Microsoft.Azure.IIoT.Azure.IoTEdge;
-    using Microsoft.Azure.IIoT.Cryptography;
+    using Microsoft.Azure.IIoT.Crypto;
     using Microsoft.Azure.IIoT.Hosting;
     using Microsoft.Azure.IIoT.Auth;
     using Microsoft.Azure.IIoT.Storage;

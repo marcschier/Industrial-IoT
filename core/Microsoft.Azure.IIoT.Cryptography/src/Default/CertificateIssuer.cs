@@ -3,8 +3,8 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Cryptography.Default {
-    using Microsoft.Azure.IIoT.Cryptography.Models;
+namespace Microsoft.Azure.IIoT.Crypto.Default {
+    using Microsoft.Azure.IIoT.Crypto.Models;
     using Microsoft.Azure.IIoT.Utils;
     using Serilog;
     using System;

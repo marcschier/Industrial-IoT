@@ -25,8 +25,8 @@
     <ProjectReference Include="..\..\..\..\platform\registry\Microsoft.Azure.IIoT.Platform.Registry.Service\src\Microsoft.Azure.IIoT.Platform.Registry.Service.csproj" />
     <ProjectReference Include="..\..\..\..\platform\registry\Microsoft.Azure.IIoT.Platform.Registry.Sync.Service\src\Microsoft.Azure.IIoT.Platform.Registry.Sync.Service.csproj" />
     <ProjectReference Include="..\..\..\..\platform\publisher\Microsoft.Azure.IIoT.Platform.Publisher.Service\src\Microsoft.Azure.IIoT.Platform.Publisher.Service.csproj" />
-    <ProjectReference Include="..\..\..\..\platform\twin\Microsoft.Azure.IIoT.Platform.Twin.Ua.Service\src\Microsoft.Azure.IIoT.Platform.Twin.Ua.Service.csproj" />
-    <ProjectReference Include="..\..\..\..\platform\twin\Microsoft.Azure.IIoT.Platform.Twin.Service\src\Microsoft.Azure.IIoT.Platform.Twin.Service.csproj" />
+    <ProjectReference Include="..\..\..\twin\Microsoft.Azure.IIoT.Platform.Twin.Ua.Service\src\Microsoft.Azure.IIoT.Platform.Twin.Ua.Service.csproj" />
+    <ProjectReference Include="..\..\..\twin\Microsoft.Azure.IIoT.Platform.Twin.Service\src\Microsoft.Azure.IIoT.Platform.Twin.Service.csproj" />
     <ProjectReference Include="..\..\..\..\platform\vault\Microsoft.Azure.IIoT.Platform.Vault.Service\src\Microsoft.Azure.IIoT.Platform.Vault.Service.csproj" />
   </ItemGroup>
   <ItemGroup>

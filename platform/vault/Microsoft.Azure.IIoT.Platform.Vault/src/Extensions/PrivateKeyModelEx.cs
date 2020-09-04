@@ -5,7 +5,7 @@
 
 namespace Microsoft.Azure.IIoT.Platform.Vault.Models {
     using System;
-    using Microsoft.Azure.IIoT.Cryptography.Models;
+    using Microsoft.Azure.IIoT.Crypto.Models;
 
     /// <summary>
     /// Key extensions

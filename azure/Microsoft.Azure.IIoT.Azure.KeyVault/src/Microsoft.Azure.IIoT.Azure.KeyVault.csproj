@@ -9,6 +9,6 @@
     <PackageReference Include="Microsoft.Azure.KeyVault" Version="3.0.5" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\core\Microsoft.Azure.IIoT.Cryptography\src\Microsoft.Azure.IIoT.Cryptography.csproj" />
+    <ProjectReference Include="..\..\..\core\Microsoft.Azure.IIoT.Cryptography\src\Microsoft.Azure.IIoT.Crypto.Bouncycastle.csproj" />
   </ItemGroup>
 </Project>

@@ -5,10 +5,10 @@
 
 namespace Microsoft.Azure.IIoT.Azure.KeyVault.Clients {
     using Microsoft.Azure.IIoT.Azure.KeyVault.Models;
-    using Microsoft.Azure.IIoT.Cryptography.Default;
-    using Microsoft.Azure.IIoT.Cryptography.Models;
-    using Microsoft.Azure.IIoT.Cryptography.Storage;
-    using Microsoft.Azure.IIoT.Cryptography;
+    using Microsoft.Azure.IIoT.Crypto.Default;
+    using Microsoft.Azure.IIoT.Crypto.Models;
+    using Microsoft.Azure.IIoT.Crypto.Storage;
+    using Microsoft.Azure.IIoT.Crypto;
     using Microsoft.Azure.IIoT.Storage;
     using Microsoft.Azure.IIoT.Storage.Default;
     using Microsoft.Azure.IIoT.Serializers.NewtonSoft;

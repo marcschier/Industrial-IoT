@@ -4,7 +4,7 @@
 // ------------------------------------------------------------
 
 namespace System.Security.Cryptography.X509Certificates {
-    using Microsoft.Azure.IIoT.Cryptography.Utils;
+    using Microsoft.Azure.IIoT.Crypto.Utils;
     using System.Linq;
 
     /// <summary>

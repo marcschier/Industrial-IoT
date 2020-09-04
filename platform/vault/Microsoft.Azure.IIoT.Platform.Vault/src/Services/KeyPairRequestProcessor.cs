@@ -4,7 +4,7 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Platform.Vault.Services {
-    using Microsoft.Azure.IIoT.Cryptography;
+    using Microsoft.Azure.IIoT.Crypto;
     using Microsoft.Azure.IIoT.Exceptions;
     using Microsoft.Azure.IIoT.Platform.Vault.Models;
     using Microsoft.Azure.IIoT.Utils;
