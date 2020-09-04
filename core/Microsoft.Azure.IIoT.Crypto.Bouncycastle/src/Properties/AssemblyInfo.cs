@@ -5,4 +5,4 @@
 
 using System.Runtime.CompilerServices;
 
-[assembly: InternalsVisibleTo("Microsoft.Azure.IIoT.Cryptography.Tests")]
+[assembly: InternalsVisibleTo("Microsoft.Azure.IIoT.Crypto.Bouncycastle.Tests")]
