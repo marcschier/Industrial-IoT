@@ -7,7 +7,7 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Provider.Runtime {
     using Microsoft.Azure.IIoT.AspNetCore.Authentication;
     using Microsoft.Azure.IIoT.AspNetCore.ForwardedHeaders;
     using Microsoft.Azure.IIoT.AspNetCore.ForwardedHeaders.Runtime;
-    using Microsoft.Azure.IIoT.Auth.Runtime;
+    using Microsoft.Azure.IIoT.Authentication.Runtime;
     using Microsoft.Azure.IIoT.Azure.CosmosDb;
     using Microsoft.Azure.IIoT.Azure.CosmosDb.Runtime;
     using Microsoft.Azure.IIoT.Diagnostics;

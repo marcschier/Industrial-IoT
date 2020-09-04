@@ -4,7 +4,7 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Http.Auth {
-    using Microsoft.Azure.IIoT.Auth;
+    using Microsoft.Azure.IIoT.Authentication;
     using System.Net.Http.Headers;
     using System.Threading.Tasks;
     using System.Net;

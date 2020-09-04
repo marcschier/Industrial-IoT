@@ -295,8 +295,14 @@ namespace Microsoft.Azure.IIoT {
         /// <summary> Log file path environment variable </summary>
         public const string PCS_LOGS_PATH =
             "PCS_LOGS_PATH";
-        /// <summary> The maximum size of the (IoT D2C) message egress queue </summary>
-        public const string PCS_MAX_EGRESS_MESSAGE_QUEUE =
-            "PCS_DEFAULT_PUBLISH_MAX_EGRESS_MESSAGE_QUEUE";
+        /// <summary> Rabbit mq host name </summary>
+        public const string PCS_RABBITMQ_HOSTNAME =
+            "PCS_RABBITMQ_HOSTNAME";
+        /// <summary> Rabbit mq password </summary>
+        public const string PCS_RABBITMQ_USERNAME =
+            "PCS_RABBITMQ_USERNAME";
+        /// <summary> Rabbit mq secret </summary>
+        public const string PCS_RABBITMQ_KEY =
+            "PCS_RABBITMQ_KEY";
     }
 }

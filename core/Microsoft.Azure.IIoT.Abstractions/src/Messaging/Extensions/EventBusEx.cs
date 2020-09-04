@@ -5,6 +5,7 @@
 
 namespace Microsoft.Azure.IIoT.Messaging {
     using System;
+    using System.Threading.Tasks;
 
     /// <summary>
     /// Event bus extensions
@@ -27,6 +28,39 @@ namespace Microsoft.Azure.IIoT.Messaging {
                 name = name.Substring(0, 50);
             }
             return name;
+        }
+
+        /// <summary>
+        /// Register callback
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="bus"></param>
+        /// <param name="handler"></param>
+        /// <returns></returns>
+        public static Task<string> RegisterAsync<T>(this IEventBus bus,
+            Func<T, Task> handler) {
+            if (handler == null) {
+                throw new ArgumentNullException(nameof(handler));
+            }
+            return bus.RegisterAsync(new DelegateHandler<T>(handler));
+        }
+
+        /// <summary>
+        /// Helper wrapper
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        private class DelegateHandler<T> : IEventHandler<T> {
+
+            internal DelegateHandler(Func<T, Task> handler) {
+                _handler = handler;
+            }
+
+            /// <inheritdoc/>
+            public Task HandleAsync(T eventData) {
+                return _handler(eventData);
+            }
+
+            private readonly Func<T, Task> _handler;
         }
     }
 }

@@ -10,7 +10,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Services {
     using Microsoft.Azure.IIoT.Platform.Core.Models;
     using Microsoft.Azure.IIoT.Platform.Twin.Models;
     using Microsoft.Azure.IIoT.Tasks;
-    using Microsoft.Azure.IIoT.Auth;
+    using Microsoft.Azure.IIoT.Authentication;
     using Microsoft.Azure.IIoT.Http;
     using Serilog;
     using System;

@@ -5,7 +5,7 @@
 
 namespace Microsoft.Azure.IIoT.Http.SignalR.Services {
     using Microsoft.Azure.IIoT.Utils;
-    using Microsoft.Azure.IIoT.Auth;
+    using Microsoft.Azure.IIoT.Authentication;
     using Microsoft.Azure.IIoT.Serializers;
     using Microsoft.Azure.IIoT.Rpc;
     using Microsoft.AspNetCore.SignalR.Client;

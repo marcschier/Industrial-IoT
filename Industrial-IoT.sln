@@ -63,7 +63,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Azure.IIoT.Azure.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Azure.IIoT.Azure.ActiveDirectory", "azure\Microsoft.Azure.IIoT.Azure.ActiveDirectory\src\Microsoft.Azure.IIoT.Azure.ActiveDirectory.csproj", "{B80792C1-F31E-4D21-8D26-8D69519678C0}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Azure.IIoT.Crypto.Bouncycastle", "core\Microsoft.Azure.IIoT.Crypto.Bouncycastle\src\Microsoft.Azure.IIoT.Crypto.Bouncycastle.csproj", "{A69DC376-C0E5-4084-8FC8-A69077D92F04}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Azure.IIoT.Crypto", "core\Microsoft.Azure.IIoT.Crypto\src\Microsoft.Azure.IIoT.Crypto.csproj", "{A69DC376-C0E5-4084-8FC8-A69077D92F04}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Azure.IIoT.Platform.Twin.Service.Tests", "platform\twin\Microsoft.Azure.IIoT.Platform.Twin.Service\tests\Microsoft.Azure.IIoT.Platform.Twin.Service.Tests.csproj", "{B3266A37-F0A1-449F-943A-6C4DF35C7953}"
 EndProject
@@ -102,7 +102,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.editorconfig = .editorconfig
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Azure.IIoT.Crypto.Bouncycastle.Tests", "core\Microsoft.Azure.IIoT.Crypto.Bouncycastle\tests\Microsoft.Azure.IIoT.Crypto.Bouncycastle.Tests.csproj", "{BA5EDBB9-331F-486B-8724-2E23DC3EEADA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Azure.IIoT.Crypto.Tests", "core\Microsoft.Azure.IIoT.Crypto\tests\Microsoft.Azure.IIoT.Crypto.Tests.csproj", "{BA5EDBB9-331F-486B-8724-2E23DC3EEADA}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Azure.IIoT.Platform.Discovery.Edge.Module", "platform\discovery\Microsoft.Azure.IIoT.Platform.Discovery.Edge.Module\src\Microsoft.Azure.IIoT.Platform.Discovery.Edge.Module.csproj", "{EB0E6E11-3C34-4BDE-8020-5324BCEB2C06}"
 EndProject
@@ -288,9 +288,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Azure.IIoT.Storag
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{3C07D78B-E4C6-4552-894A-BB91174B5745}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Cloud", "Cloud", "{154E6660-E909-4F7A-9CE3-2E13866D8578}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Azure.IIoT.Messaging.RabbitMq", "core\Microsoft.Azure.IIoT.Messaging.RabbitMq\src\Microsoft.Azure.IIoT.Messaging.RabbitMq.csproj", "{96633DA1-B86B-49D6-B4D0-3CB300F209CB}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Agnostic", "Agnostic", "{22341722-786C-4522-AC78-744A58AEAA0E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Azure.IIoT.Messaging.MassTransit", "core\Microsoft.Azure.IIoT.Messaging.MassTransit\src\Microsoft.Azure.IIoT.Messaging.MassTransit.csproj", "{1DF749F6-0243-4DB9-8635-6FD173299AE1}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Azure.IIoT.Messaging.RabbitMq.Tests", "core\Microsoft.Azure.IIoT.Messaging.RabbitMq\tests\Microsoft.Azure.IIoT.Messaging.RabbitMq.Tests.csproj", "{5651178A-18F6-41C8-92EC-DFF6912BC866}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Azure.IIoT.Messaging.MassTransit.Tests", "core\Microsoft.Azure.IIoT.Messaging.MassTransit\tests\Microsoft.Azure.IIoT.Messaging.MassTransit.Tests.csproj", "{9DDAFC4A-BF86-4267-B048-E3F6090A4C7F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -1076,6 +1080,38 @@ Global
 		{CC9B9EFC-300D-4817-BAA1-3C5361523935}.Release|Any CPU.Build.0 = Release|Any CPU
 		{CC9B9EFC-300D-4817-BAA1-3C5361523935}.Release|x64.ActiveCfg = Release|Any CPU
 		{CC9B9EFC-300D-4817-BAA1-3C5361523935}.Release|x64.Build.0 = Release|Any CPU
+		{96633DA1-B86B-49D6-B4D0-3CB300F209CB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{96633DA1-B86B-49D6-B4D0-3CB300F209CB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{96633DA1-B86B-49D6-B4D0-3CB300F209CB}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{96633DA1-B86B-49D6-B4D0-3CB300F209CB}.Debug|x64.Build.0 = Debug|Any CPU
+		{96633DA1-B86B-49D6-B4D0-3CB300F209CB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{96633DA1-B86B-49D6-B4D0-3CB300F209CB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{96633DA1-B86B-49D6-B4D0-3CB300F209CB}.Release|x64.ActiveCfg = Release|Any CPU
+		{96633DA1-B86B-49D6-B4D0-3CB300F209CB}.Release|x64.Build.0 = Release|Any CPU
+		{1DF749F6-0243-4DB9-8635-6FD173299AE1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1DF749F6-0243-4DB9-8635-6FD173299AE1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1DF749F6-0243-4DB9-8635-6FD173299AE1}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{1DF749F6-0243-4DB9-8635-6FD173299AE1}.Debug|x64.Build.0 = Debug|Any CPU
+		{1DF749F6-0243-4DB9-8635-6FD173299AE1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1DF749F6-0243-4DB9-8635-6FD173299AE1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1DF749F6-0243-4DB9-8635-6FD173299AE1}.Release|x64.ActiveCfg = Release|Any CPU
+		{1DF749F6-0243-4DB9-8635-6FD173299AE1}.Release|x64.Build.0 = Release|Any CPU
+		{5651178A-18F6-41C8-92EC-DFF6912BC866}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5651178A-18F6-41C8-92EC-DFF6912BC866}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5651178A-18F6-41C8-92EC-DFF6912BC866}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{5651178A-18F6-41C8-92EC-DFF6912BC866}.Debug|x64.Build.0 = Debug|Any CPU
+		{5651178A-18F6-41C8-92EC-DFF6912BC866}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5651178A-18F6-41C8-92EC-DFF6912BC866}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5651178A-18F6-41C8-92EC-DFF6912BC866}.Release|x64.ActiveCfg = Release|Any CPU
+		{5651178A-18F6-41C8-92EC-DFF6912BC866}.Release|x64.Build.0 = Release|Any CPU
+		{9DDAFC4A-BF86-4267-B048-E3F6090A4C7F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9DDAFC4A-BF86-4267-B048-E3F6090A4C7F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9DDAFC4A-BF86-4267-B048-E3F6090A4C7F}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{9DDAFC4A-BF86-4267-B048-E3F6090A4C7F}.Debug|x64.Build.0 = Debug|Any CPU
+		{9DDAFC4A-BF86-4267-B048-E3F6090A4C7F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9DDAFC4A-BF86-4267-B048-E3F6090A4C7F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9DDAFC4A-BF86-4267-B048-E3F6090A4C7F}.Release|x64.ActiveCfg = Release|Any CPU
+		{9DDAFC4A-BF86-4267-B048-E3F6090A4C7F}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -1168,7 +1204,6 @@ Global
 		{B5D8D779-4939-4884-A61C-47C1BC966E05} = {31F3A559-EB5A-4695-A389-23ADD3FB4A39}
 		{6EA8119D-2ACB-4CCF-A8B6-D95A02525E45} = {43E69B85-2743-48EE-8FAE-A59F070E21D2}
 		{262ECCD0-BFD0-4425-BC54-00D5E0673C35} = {43E69B85-2743-48EE-8FAE-A59F070E21D2}
-		{0169C791-7984-4DC1-8325-E9B9604CC3DE} = {154E6660-E909-4F7A-9CE3-2E13866D8578}
 		{1185F94F-1DD9-4ECA-80D0-D194B73D2366} = {0169C791-7984-4DC1-8325-E9B9604CC3DE}
 		{0CA8F8B9-566E-47F2-B821-8DF4F28F044A} = {0169C791-7984-4DC1-8325-E9B9604CC3DE}
 		{7B890A92-5267-41FA-A14C-5CF3092481D5} = {00D499F1-0262-4C1B-9702-F40960EDA2D4}
@@ -1213,7 +1248,10 @@ Global
 		{22E362BA-9694-40E9-8533-419380D87241} = {0CA8F8B9-566E-47F2-B821-8DF4F28F044A}
 		{32063973-E2B6-40EA-82EF-CBE123B64361} = {EDC413E0-BE91-477B-8A16-B20BBBB35933}
 		{CC9B9EFC-300D-4817-BAA1-3C5361523935} = {ADA1CE90-5727-4D1E-8544-50C19B09D3A1}
-		{22341722-786C-4522-AC78-744A58AEAA0E} = {154E6660-E909-4F7A-9CE3-2E13866D8578}
+		{96633DA1-B86B-49D6-B4D0-3CB300F209CB} = {EDC413E0-BE91-477B-8A16-B20BBBB35933}
+		{1DF749F6-0243-4DB9-8635-6FD173299AE1} = {EDC413E0-BE91-477B-8A16-B20BBBB35933}
+		{5651178A-18F6-41C8-92EC-DFF6912BC866} = {ADA1CE90-5727-4D1E-8544-50C19B09D3A1}
+		{9DDAFC4A-BF86-4267-B048-E3F6090A4C7F} = {ADA1CE90-5727-4D1E-8544-50C19B09D3A1}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {F09EFCEA-59F6-4A16-9CB6-7E865A3F62D8}

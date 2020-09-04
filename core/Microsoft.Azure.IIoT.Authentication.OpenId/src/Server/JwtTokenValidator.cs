@@ -3,8 +3,8 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Auth.Server.Default {
-    using Microsoft.Azure.IIoT.Auth.Models;
+namespace Microsoft.Azure.IIoT.Authentication.Server.Default {
+    using Microsoft.Azure.IIoT.Authentication.Models;
     using Microsoft.IdentityModel.Protocols;
     using Microsoft.IdentityModel.Protocols.OpenIdConnect;
     using Microsoft.IdentityModel.Tokens;

@@ -5,7 +5,7 @@
 
 namespace Microsoft.Azure.IIoT.Azure.ActiveDirectory.Utils {
     using Microsoft.Azure.IIoT.Azure.ActiveDirectory.Clients;
-    using Microsoft.Azure.IIoT.Auth;
+    using Microsoft.Azure.IIoT.Authentication;
     using Microsoft.Azure.IIoT.Diagnostics;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Azure.KeyVault;

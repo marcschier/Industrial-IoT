@@ -14,7 +14,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service {
     using Microsoft.Azure.IIoT.Azure.AppInsights;
     using Microsoft.Azure.IIoT.Azure.IoTHub;
     using Microsoft.Azure.IIoT.Azure.ServiceBus;
-    using Microsoft.Azure.IIoT.Auth;
+    using Microsoft.Azure.IIoT.Authentication;
     using Microsoft.Azure.IIoT.Utils;
     using Microsoft.Azure.IIoT.Http.Default;
     using Microsoft.Azure.IIoT.Rpc.Default;

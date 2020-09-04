@@ -6,7 +6,7 @@
 namespace Microsoft.Azure.IIoT.AspNetCore.Authentication.Clients {
     using Microsoft.AspNetCore.Authentication;
     using Microsoft.AspNetCore.Http;
-    using Microsoft.Azure.IIoT.Auth;
+    using Microsoft.Azure.IIoT.Authentication;
     using Microsoft.Extensions.Logging;
     using Microsoft.Extensions.Options;
     using System;

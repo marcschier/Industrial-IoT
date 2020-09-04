@@ -12,8 +12,8 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Ua.Service {
     using Microsoft.Azure.IIoT.Platform.Twin.Api.Clients;
     using Microsoft.Azure.IIoT.AspNetCore.Authentication;
     using Microsoft.Azure.IIoT.AspNetCore.Authentication.Clients;
-    using Microsoft.Azure.IIoT.Auth;
-    using Microsoft.Azure.IIoT.Auth.Server.Default;
+    using Microsoft.Azure.IIoT.Authentication;
+    using Microsoft.Azure.IIoT.Authentication.Server.Default;
     using Microsoft.Azure.IIoT.Azure.AppInsights;
     using Microsoft.Azure.IIoT.Http.Default;
     using Microsoft.Azure.IIoT.Serializers;

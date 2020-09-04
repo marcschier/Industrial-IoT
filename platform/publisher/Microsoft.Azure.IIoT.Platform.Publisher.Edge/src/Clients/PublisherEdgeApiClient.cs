@@ -6,7 +6,7 @@
 namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Clients {
     using Microsoft.Azure.IIoT.Platform.Publisher.Models;
     using Microsoft.Azure.IIoT.Platform.Publisher.Api.Models;
-    using Microsoft.Azure.IIoT.Auth;
+    using Microsoft.Azure.IIoT.Authentication;
     using Microsoft.Azure.IIoT.Serializers;
     using Microsoft.Azure.IIoT.Http;
     using System;

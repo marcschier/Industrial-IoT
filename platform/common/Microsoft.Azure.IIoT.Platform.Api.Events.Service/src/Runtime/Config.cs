@@ -20,7 +20,7 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service.Runtime {
     using Microsoft.Azure.IIoT.Azure.ServiceBus.Runtime;
     using Microsoft.Azure.IIoT.Azure.EventHub.Processor;
     using Microsoft.Azure.IIoT.Azure.EventHub.Processor.Runtime;
-    using Microsoft.Azure.IIoT.Auth.Runtime;
+    using Microsoft.Azure.IIoT.Authentication.Runtime;
     using Microsoft.Azure.IIoT.Hosting;
     using Microsoft.Extensions.Configuration;
     using System;

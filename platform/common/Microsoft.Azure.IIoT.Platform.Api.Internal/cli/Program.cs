@@ -22,7 +22,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
     using Microsoft.Azure.IIoT.Http.Default;
     using Microsoft.Azure.IIoT.Http.SignalR;
     using Microsoft.Azure.IIoT.Utils;
-    using Microsoft.Azure.IIoT.Auth.Runtime;
+    using Microsoft.Azure.IIoT.Authentication.Runtime;
     using Microsoft.Azure.IIoT.Serializers;
     using Microsoft.Extensions.Configuration;
     using Autofac;

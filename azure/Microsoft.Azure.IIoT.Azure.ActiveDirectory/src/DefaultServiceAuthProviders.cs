@@ -5,7 +5,7 @@
 
 namespace Microsoft.Azure.IIoT.Azure.ActiveDirectory {
     using Microsoft.Azure.IIoT.Azure.ActiveDirectory.Runtime;
-    using Microsoft.Azure.IIoT.Auth.Runtime;
+    using Microsoft.Azure.IIoT.Authentication.Runtime;
     using Autofac;
 
     /// <summary>

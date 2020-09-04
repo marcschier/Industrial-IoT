@@ -18,7 +18,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service.Runtime {
     using Microsoft.Azure.IIoT.Azure.IoTHub;
     using Microsoft.Azure.IIoT.Azure.ServiceBus;
     using Microsoft.Azure.IIoT.Azure.ServiceBus.Runtime;
-    using Microsoft.Azure.IIoT.Auth.Runtime;
+    using Microsoft.Azure.IIoT.Authentication.Runtime;
     using Microsoft.Azure.IIoT.Hosting;
     using Microsoft.Azure.IIoT.Deploy;
     using Microsoft.Azure.IIoT.Deploy.Runtime;

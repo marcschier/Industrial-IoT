@@ -11,8 +11,8 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Provider {
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Identity;
-    using Microsoft.Azure.IIoT.Auth;
-    using Microsoft.Azure.IIoT.Auth.Runtime;
+    using Microsoft.Azure.IIoT.Authentication;
+    using Microsoft.Azure.IIoT.Authentication.Runtime;
     using Microsoft.Azure.IIoT.Azure.ActiveDirectory;
     using Microsoft.Azure.IIoT.Azure.ActiveDirectory.Runtime;
     using Microsoft.Azure.IIoT.Azure.CosmosDb;

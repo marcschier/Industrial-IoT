@@ -5,7 +5,7 @@
 
 namespace Microsoft.Azure.IIoT.AspNetCore.Authentication {
     using Microsoft.AspNetCore.Http;
-    using Microsoft.Azure.IIoT.Auth.Models;
+    using Microsoft.Azure.IIoT.Authentication.Models;
     using System.Security.Authentication;
     using System.Threading.Tasks;
 

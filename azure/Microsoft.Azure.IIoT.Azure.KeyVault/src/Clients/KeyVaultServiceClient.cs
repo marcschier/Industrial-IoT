@@ -10,7 +10,7 @@ namespace Microsoft.Azure.IIoT.Azure.KeyVault.Clients {
     using Microsoft.Azure.IIoT.Exceptions;
     using Microsoft.Azure.IIoT.Serializers;
     using Microsoft.Azure.IIoT.Storage;
-    using Microsoft.Azure.IIoT.Auth;
+    using Microsoft.Azure.IIoT.Authentication;
     using Microsoft.Azure.IIoT.Http;
     using Microsoft.Azure.IIoT.Utils;
     using Microsoft.Azure.KeyVault;

@@ -7,10 +7,10 @@ namespace Microsoft.Azure.IIoT.AspNetCore.Authentication.Clients {
     using Microsoft.Azure.IIoT.AspNetCore.Storage;
     using Microsoft.Azure.IIoT.Azure.ActiveDirectory;
     using Microsoft.Azure.IIoT.Azure.ActiveDirectory.Clients;
-    using Microsoft.Azure.IIoT.Auth.Clients;
-    using Microsoft.Azure.IIoT.Auth.Clients.Default;
-    using Microsoft.Azure.IIoT.Auth.Runtime;
-    using Microsoft.Azure.IIoT.Auth;
+    using Microsoft.Azure.IIoT.Authentication.Clients;
+    using Microsoft.Azure.IIoT.Authentication.Clients.Default;
+    using Microsoft.Azure.IIoT.Authentication.Runtime;
+    using Microsoft.Azure.IIoT.Authentication;
     using Microsoft.Azure.IIoT.Http.Default;
     using Microsoft.Azure.IIoT.Http.Auth;
     using Microsoft.Azure.IIoT.Storage;

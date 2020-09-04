@@ -3,8 +3,8 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Auth.Clients.Default {
-    using Microsoft.Azure.IIoT.Auth.Models;
+namespace Microsoft.Azure.IIoT.Authentication.Clients.Default {
+    using Microsoft.Azure.IIoT.Authentication.Models;
     using Microsoft.Azure.IIoT.Http.Default;
     using global::IdentityModel.Client;
     using Serilog;

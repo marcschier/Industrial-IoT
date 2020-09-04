@@ -3,9 +3,9 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Auth.Clients {
-    using Microsoft.Azure.IIoT.Auth.Models;
-    using Microsoft.Azure.IIoT.Auth;
+namespace Microsoft.Azure.IIoT.Authentication.Clients {
+    using Microsoft.Azure.IIoT.Authentication.Models;
+    using Microsoft.Azure.IIoT.Authentication;
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using System;

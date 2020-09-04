@@ -18,7 +18,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Ua.Service.Runtime {
     using Microsoft.Azure.IIoT.Azure.AppInsights.Runtime;
     using Microsoft.Azure.IIoT.Azure.IoTHub.Runtime;
     using Microsoft.Azure.IIoT.Azure.IoTHub;
-    using Microsoft.Azure.IIoT.Auth.Runtime;
+    using Microsoft.Azure.IIoT.Authentication.Runtime;
     using Microsoft.Azure.IIoT.Hosting;
     using Microsoft.Extensions.Configuration;
     using System;

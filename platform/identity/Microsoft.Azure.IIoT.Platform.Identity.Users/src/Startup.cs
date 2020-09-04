@@ -16,7 +16,7 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Users {
     using Microsoft.Azure.IIoT.Http.Default;
     using Microsoft.Azure.IIoT.Utils;
     using Microsoft.Azure.IIoT.Serializers;
-    using Microsoft.Azure.IIoT.Auth;
+    using Microsoft.Azure.IIoT.Authentication;
     using Microsoft.Azure.IIoT.Azure.CosmosDb;
     using Microsoft.Azure.IIoT.Azure.AppInsights;
     using Microsoft.AspNetCore.Builder;

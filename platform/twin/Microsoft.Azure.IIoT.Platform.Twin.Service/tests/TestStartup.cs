@@ -11,7 +11,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Service {
     using Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Runtime;
     using Microsoft.Azure.IIoT.Platform.Core.Models;
     using Microsoft.Azure.IIoT.Azure.IoTHub;
-    using Microsoft.Azure.IIoT.Auth;
+    using Microsoft.Azure.IIoT.Authentication;
     using Microsoft.Azure.IIoT.Utils;
     using Microsoft.Azure.IIoT.Hub;
     using Microsoft.Azure.IIoT.Hub.Models;
