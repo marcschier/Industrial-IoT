@@ -296,6 +296,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Azure.IIoT.Messag
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Azure.IIoT.Messaging.Kafka.Tests", "core\Microsoft.Azure.IIoT.Messaging.MassTransit\tests\Microsoft.Azure.IIoT.Messaging.Kafka.Tests.csproj", "{9DDAFC4A-BF86-4267-B048-E3F6090A4C7F}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Azure.IIoT.Storage.CouchDb", "core\Microsoft.Azure.IIoT.Storage.CouchDb\src\Microsoft.Azure.IIoT.Storage.CouchDb.csproj", "{B7A1E358-9FD2-4502-B0A3-C21FBA3E2E2C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Azure.IIoT.Storage.CouchDb.Tests", "core\Microsoft.Azure.IIoT.Storage.CouchDb\tests\Microsoft.Azure.IIoT.Storage.CouchDb.Tests.csproj", "{EC92055F-8A42-4248-BD68-2DD3146C0186}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -1112,6 +1116,22 @@ Global
 		{9DDAFC4A-BF86-4267-B048-E3F6090A4C7F}.Release|Any CPU.Build.0 = Release|Any CPU
 		{9DDAFC4A-BF86-4267-B048-E3F6090A4C7F}.Release|x64.ActiveCfg = Release|Any CPU
 		{9DDAFC4A-BF86-4267-B048-E3F6090A4C7F}.Release|x64.Build.0 = Release|Any CPU
+		{B7A1E358-9FD2-4502-B0A3-C21FBA3E2E2C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B7A1E358-9FD2-4502-B0A3-C21FBA3E2E2C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B7A1E358-9FD2-4502-B0A3-C21FBA3E2E2C}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{B7A1E358-9FD2-4502-B0A3-C21FBA3E2E2C}.Debug|x64.Build.0 = Debug|Any CPU
+		{B7A1E358-9FD2-4502-B0A3-C21FBA3E2E2C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B7A1E358-9FD2-4502-B0A3-C21FBA3E2E2C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B7A1E358-9FD2-4502-B0A3-C21FBA3E2E2C}.Release|x64.ActiveCfg = Release|Any CPU
+		{B7A1E358-9FD2-4502-B0A3-C21FBA3E2E2C}.Release|x64.Build.0 = Release|Any CPU
+		{EC92055F-8A42-4248-BD68-2DD3146C0186}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EC92055F-8A42-4248-BD68-2DD3146C0186}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EC92055F-8A42-4248-BD68-2DD3146C0186}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{EC92055F-8A42-4248-BD68-2DD3146C0186}.Debug|x64.Build.0 = Debug|Any CPU
+		{EC92055F-8A42-4248-BD68-2DD3146C0186}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EC92055F-8A42-4248-BD68-2DD3146C0186}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EC92055F-8A42-4248-BD68-2DD3146C0186}.Release|x64.ActiveCfg = Release|Any CPU
+		{EC92055F-8A42-4248-BD68-2DD3146C0186}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -1252,6 +1272,8 @@ Global
 		{1DF749F6-0243-4DB9-8635-6FD173299AE1} = {EDC413E0-BE91-477B-8A16-B20BBBB35933}
 		{5651178A-18F6-41C8-92EC-DFF6912BC866} = {ADA1CE90-5727-4D1E-8544-50C19B09D3A1}
 		{9DDAFC4A-BF86-4267-B048-E3F6090A4C7F} = {ADA1CE90-5727-4D1E-8544-50C19B09D3A1}
+		{B7A1E358-9FD2-4502-B0A3-C21FBA3E2E2C} = {EDC413E0-BE91-477B-8A16-B20BBBB35933}
+		{EC92055F-8A42-4248-BD68-2DD3146C0186} = {ADA1CE90-5727-4D1E-8544-50C19B09D3A1}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {F09EFCEA-59F6-4A16-9CB6-7E865A3F62D8}
