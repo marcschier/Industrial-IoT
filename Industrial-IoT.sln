@@ -290,11 +290,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{3C07D78B-E
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Azure.IIoT.Messaging.RabbitMq", "core\Microsoft.Azure.IIoT.Messaging.RabbitMq\src\Microsoft.Azure.IIoT.Messaging.RabbitMq.csproj", "{96633DA1-B86B-49D6-B4D0-3CB300F209CB}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Azure.IIoT.Messaging.MassTransit", "core\Microsoft.Azure.IIoT.Messaging.MassTransit\src\Microsoft.Azure.IIoT.Messaging.MassTransit.csproj", "{1DF749F6-0243-4DB9-8635-6FD173299AE1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Azure.IIoT.Messaging.Kafka", "core\Microsoft.Azure.IIoT.Messaging.MassTransit\src\Microsoft.Azure.IIoT.Messaging.Kafka.csproj", "{1DF749F6-0243-4DB9-8635-6FD173299AE1}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Azure.IIoT.Messaging.RabbitMq.Tests", "core\Microsoft.Azure.IIoT.Messaging.RabbitMq\tests\Microsoft.Azure.IIoT.Messaging.RabbitMq.Tests.csproj", "{5651178A-18F6-41C8-92EC-DFF6912BC866}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Azure.IIoT.Messaging.MassTransit.Tests", "core\Microsoft.Azure.IIoT.Messaging.MassTransit\tests\Microsoft.Azure.IIoT.Messaging.MassTransit.Tests.csproj", "{9DDAFC4A-BF86-4267-B048-E3F6090A4C7F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Azure.IIoT.Messaging.Kafka.Tests", "core\Microsoft.Azure.IIoT.Messaging.MassTransit\tests\Microsoft.Azure.IIoT.Messaging.Kafka.Tests.csproj", "{9DDAFC4A-BF86-4267-B048-E3F6090A4C7F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

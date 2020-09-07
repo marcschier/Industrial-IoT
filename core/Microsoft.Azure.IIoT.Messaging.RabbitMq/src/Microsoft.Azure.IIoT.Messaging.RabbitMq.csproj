@@ -6,9 +6,9 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Docker.DotNet" Version="3.125.4" />
-    <PackageReference Include="MassTransit.RabbitMQ" Version="7.0.3" />
+    <PackageReference Include="RabbitMQ.Client" Version="6.2.1" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Microsoft.Azure.IIoT.Messaging.MassTransit\src\Microsoft.Azure.IIoT.Messaging.MassTransit.csproj" />
+    <ProjectReference Include="..\..\Microsoft.Azure.IIoT.Messaging.MassTransit\src\Microsoft.Azure.IIoT.Messaging.Kafka.csproj" />
   </ItemGroup>
 </Project>

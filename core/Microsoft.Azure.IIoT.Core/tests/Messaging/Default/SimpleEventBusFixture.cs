@@ -3,23 +3,28 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Messaging.MassTransit {
+namespace Microsoft.Azure.IIoT.Messaging.Default {
     using System;
     using System.Runtime.Serialization;
     using Autofac;
-    using Microsoft.Azure.IIoT.Messaging.MassTransit.Testing;
+    using Microsoft.Azure.IIoT.Tasks.Default;
     using Microsoft.Azure.IIoT.Utils;
 
-    public class MassTransitFixture {
+    public class SimpleEventBusFixture {
 
         /// <summary>
         /// Create fixture
         /// </summary>
-        public MassTransitFixture() {
+        public SimpleEventBusFixture() {
             try {
                 var builder = new ContainerBuilder();
 
-                builder.RegisterModule<MemoryBusModule>();
+                builder.RegisterType<EventBusHost>()
+                    .AsImplementedInterfaces().SingleInstance();
+                builder.RegisterType<SimpleEventBus>()
+                    .AsImplementedInterfaces().SingleInstance();
+                builder.RegisterType<TaskProcessor>()
+                    .AsImplementedInterfaces().SingleInstance();
                 builder.RegisterType<HostAutoStart>()
                     .AutoActivate()
                     .AsImplementedInterfaces().SingleInstance();

@@ -3,7 +3,7 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Messaging.MassTransit {
+namespace Microsoft.Azure.IIoT.Messaging.Default {
     using Microsoft.Azure.IIoT.Storage;
     using Microsoft.Azure.IIoT.Exceptions;
     using System;
@@ -15,10 +15,10 @@ namespace Microsoft.Azure.IIoT.Messaging.MassTransit {
     using Xunit;
     using System.Threading;
 
-    public class MassTransitEventBusTests : IClassFixture<MassTransitFixture> {
-        private readonly MassTransitFixture _fixture;
+    public class SimpleEventBusTests : IClassFixture<SimpleEventBusFixture> {
+        private readonly SimpleEventBusFixture _fixture;
 
-        public MassTransitEventBusTests(MassTransitFixture fixture) {
+        public SimpleEventBusTests(SimpleEventBusFixture fixture) {
             _fixture = fixture;
         }
 

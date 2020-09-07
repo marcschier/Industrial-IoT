@@ -22,6 +22,29 @@ namespace Microsoft.Azure.IIoT.Messaging.RabbitMq {
         }
 
         [SkippableFact]
+        public async Task PublishTestAsync() {
+            var bus = _fixture.GetEventBus();
+            Skip.If(bus == null);
+
+            var family = new Fixture().Create<Family>();
+
+            var tcs = new TaskCompletionSource<Family>();
+            var token = await bus.RegisterAsync<Family>(f => {
+                tcs.SetResult(f);
+                return Task.CompletedTask;
+            });
+
+            await bus.PublishAsync(family);
+
+            var f = await tcs.Task;
+            Assert.Equal(family.Id, f.Id);
+            Assert.Equal(family.LastName, f.LastName);
+            Assert.Equal(family.RegistrationDate, f.RegistrationDate);
+
+            await bus.UnregisterAsync(token);
+        }
+
+        [SkippableFact]
         public async Task BadArgumentTestsAsync() {
             var bus = _fixture.GetEventBus();
             Skip.If(bus == null);

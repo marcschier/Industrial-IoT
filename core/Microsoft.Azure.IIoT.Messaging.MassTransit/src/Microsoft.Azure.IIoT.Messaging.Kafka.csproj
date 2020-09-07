@@ -5,8 +5,8 @@
     <Description>Industrial IoT Azure ServiceBus support</Description>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="MassTransit" Version="7.0.3" />
-    <PackageReference Include="MassTransit.Autofac" Version="7.0.3" />
+    <PackageReference Include="Confluent.Kafka" Version="1.5.1" />
+    <PackageReference Include="Docker.DotNet" Version="3.125.4" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\core\Microsoft.Azure.IIoT.Core\src\Microsoft.Azure.IIoT.Core.csproj" />

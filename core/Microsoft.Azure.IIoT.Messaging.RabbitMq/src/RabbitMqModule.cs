@@ -4,30 +4,33 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Messaging.RabbitMq {
-    using Microsoft.Azure.IIoT.Messaging.MassTransit;
-    using global::MassTransit;
-    using global::MassTransit.AutofacIntegration;
+    using Microsoft.Azure.IIoT.Messaging.RabbitMq.Services;
+    using Microsoft.Azure.IIoT.Messaging.Default;
+    using Microsoft.Azure.IIoT.Tasks.Default;
+    using Microsoft.Azure.IIoT.Tasks;
+    using Autofac;
 
     /// <summary>
     /// Injected RabbitMq bus
     /// </summary>
-    public class RabbitMqModule : MassTransitModule {
+    public class RabbitMqModule : Module {
 
-        /// <inheritdoc/>
-        protected override void Configure(IContainerBuilderBusConfigurator configure) {
-            // add the bus to the container
-            configure.UsingRabbitMq((ctx, option) => {
-                var configuration = ctx.GetRequiredService<IRabbitMqConfig>();
+        /// <summary>
+        /// Load the module
+        /// </summary>
+        /// <param name="builder"></param>
+        protected override void Load(ContainerBuilder builder) {
+            builder.RegisterType<EventBusHost>()
+                .AsImplementedInterfaces().SingleInstance();
+            builder.RegisterType<RabbitMqConnection>()
+                .AsImplementedInterfaces().SingleInstance();
+            builder.RegisterType<RabbitMqEventBus>()
+                .AsImplementedInterfaces().InstancePerDependency();
+            builder.RegisterType<TaskProcessor>()
+                .AsImplementedInterfaces().SingleInstance()
+                .IfNotRegistered(typeof(ITaskProcessor));
 
-                option.Host(configuration.HostName, x => {
-                    x.Password(configuration.Key);
-                    x.Username(configuration.UserName);
-                });
-
-                // TODO Add more
-
-                option.ConfigureEndpoints(ctx);
-            });
+            base.Load(builder);
         }
     }
 }

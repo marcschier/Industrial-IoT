@@ -14,7 +14,7 @@ namespace Microsoft.Azure.IIoT.Messaging.MassTransit {
     /// <summary>
     /// Injected Mass transit event bus
     /// </summary>
-    public abstract class MassTransitModule : Module {
+    public abstract class KafkaModule : Module {
 
         /// <summary>
         /// Load the module

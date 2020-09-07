@@ -48,6 +48,9 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Services {
 
         /// <inheritdoc/>
         public async Task PublishAsync<T>(T message) {
+            if (message is null) {
+                throw new ArgumentNullException(nameof(message));
+            }
             var body = _serializer.SerializeToBytes(message).ToArray();
             try {
                 var client = await _factory.CreateOrGetTopicClientAsync();
@@ -99,6 +102,9 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Services {
 
         /// <inheritdoc/>
         public async Task<string> RegisterAsync<T>(IEventHandler<T> handler) {
+            if (handler == null) {
+                throw new ArgumentNullException(nameof(handler));
+            }
             var eventName = typeof(T).GetMoniker();
             await _lock.WaitAsync();
             try {
@@ -135,6 +141,9 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Services {
 
         /// <inheritdoc/>
         public async Task UnregisterAsync(string token) {
+            if (string.IsNullOrEmpty(token)) {
+                throw new ArgumentNullException(nameof(token));
+            }
             await _lock.WaitAsync();
             try {
                 string eventName = null;
