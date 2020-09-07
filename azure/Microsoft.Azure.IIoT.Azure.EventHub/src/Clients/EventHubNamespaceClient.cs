@@ -32,7 +32,7 @@ namespace Microsoft.Azure.IIoT.Azure.EventHub.Clients {
 
 
         /// <inheritdoc/>
-        public Task SendAsync(string target, byte[] payload,
+        public async Task SendAsync(string target, byte[] payload,
             IDictionary<string, string> properties, string partitionKey, CancellationToken ct) {
             using (var ev = new EventData(payload)) {
                 if (properties != null) {
@@ -42,30 +42,32 @@ namespace Microsoft.Azure.IIoT.Azure.EventHub.Clients {
                 }
                 var client = GetClient(target);
                 if (partitionKey != null) {
-                    return client.SendAsync(ev, partitionKey);
+                    await client.SendAsync(ev, partitionKey);
                 }
-                return client.SendAsync(ev);
+                else {
+                    await client.SendAsync(ev);
+                }
             }
         }
 
         /// <inheritdoc/>
-        public Task SendEventAsync(string target, byte[] data, string contentType,
+        public async Task SendEventAsync(string target, byte[] data, string contentType,
             string eventSchema, string contentEncoding, CancellationToken ct) {
             using (var ev = CreateEvent(data, contentType, eventSchema, contentEncoding)) {
                 var client = GetClient(target);
-                return client.SendAsync(ev);
+                await client.SendAsync(ev);
             }
         }
 
         /// <inheritdoc/>
-        public Task SendEventAsync(string target, IEnumerable<byte[]> batch, string contentType,
+        public async Task SendEventAsync(string target, IEnumerable<byte[]> batch, string contentType,
             string eventSchema, string contentEncoding, CancellationToken ct) {
             var events = batch
                 .Select(b => CreateEvent(b, contentType, eventSchema, contentEncoding))
                 .ToList();
             try {
                 var client = GetClient(target);
-                return client.SendAsync(events);
+                await client.SendAsync(events);
             }
             finally {
                 events.ForEach(e => e?.Dispose());
@@ -79,7 +81,6 @@ namespace Microsoft.Azure.IIoT.Azure.EventHub.Clients {
             }
             _cache.Clear();
         }
-
 
         /// <summary>
         /// Helper to create event from buffer and content type

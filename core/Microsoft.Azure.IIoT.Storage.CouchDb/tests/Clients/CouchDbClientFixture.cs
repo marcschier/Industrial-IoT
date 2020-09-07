@@ -6,7 +6,6 @@
 namespace Microsoft.Azure.IIoT.Storage.CouchDb.Clients {
     using Microsoft.Azure.IIoT.Utils;
     using Microsoft.Azure.IIoT.Diagnostics;
-    using Microsoft.Azure.IIoT.Storage.Default;
     using Microsoft.Azure.IIoT.Storage;
     using System;
     using System.Threading.Tasks;
@@ -26,16 +25,15 @@ namespace Microsoft.Azure.IIoT.Storage.CouchDb.Clients {
                 Parents = new Parent[]
                 {
                     new Parent { FirstName = "Thomas" },
-                    new Parent { FirstName = "Mary Kay"}
+                    new Parent { FirstName = "Mary Kay" }
                 },
                 Children = new Child[]
                 {
-                    new Child
-                    {
+                    new Child {
                         FirstName = "Henriette Thaulow",
                         Gender = "female",
                         Grade = 5,
-                        Pets = new []
+                        Pets = new[]
                         {
                             new Pet { GivenName = "Fluffy" }
                         }
@@ -43,6 +41,7 @@ namespace Microsoft.Azure.IIoT.Storage.CouchDb.Clients {
                 },
                 Address = new Address { State = "WA", County = "King", City = "Seattle" },
                 IsRegistered = true,
+                ExistsFor = TimeSpan.FromMinutes(1),
                 RegistrationDate = DateTime.UtcNow.AddDays(-1)
             };
 
@@ -76,6 +75,7 @@ namespace Microsoft.Azure.IIoT.Storage.CouchDb.Clients {
                 },
                 Address = new Address { State = "NY", County = "Manhattan", City = "NY" },
                 IsRegistered = false,
+                ExistsFor = TimeSpan.FromMinutes(2),
                 RegistrationDate = DateTime.UtcNow.AddDays(-30)
             };
 
@@ -89,7 +89,7 @@ namespace Microsoft.Azure.IIoT.Storage.CouchDb.Clients {
         /// <returns></returns>
         public async Task<IDatabase> GetDatabaseAsync() {
             var logger = ConsoleLogger.Create();
-            var server = new MemoryDatabase(logger);
+            var server = new CouchDbClient(null, logger);
             return await server.OpenAsync("test", null);
         }
 
@@ -99,12 +99,12 @@ namespace Microsoft.Azure.IIoT.Storage.CouchDb.Clients {
         /// <param name="options"></param>
         /// <returns></returns>
         public async Task<IItemContainer> GetDocumentsAsync() {
-            var docs = await GetContainerAsync();
-            if (docs == null) {
+            _query = await GetContainerAsync("test");
+            if (_query == null) {
                 return null;
             }
-            await CreateDocumentsAsync(docs);
-            return docs;
+            await CreateDocumentsAsync(_query.Container);
+            return _query.Container;
         }
 
         /// <summary>
@@ -112,13 +112,44 @@ namespace Microsoft.Azure.IIoT.Storage.CouchDb.Clients {
         /// </summary>
         /// <param name="options"></param>
         /// <returns></returns>
-        public async Task<IItemContainer> GetContainerAsync() {
+        public async Task<ContainerWrapper> GetContainerAsync(string name = null) {
             var database = await Try.Async(() => GetDatabaseAsync());
             if (database == null) {
                 return null;
             }
-            var docs = await database.OpenContainerAsync("test");
-            return docs;
+            if (name == null) {
+                name = "";
+                var rand = new Random();
+                for (var i = 0; i < 30; i++) {
+                    name += (char)rand.Next('a', 'z');
+                }
+            }
+            var docs = await database.OpenContainerAsync(name);
+            return new ContainerWrapper(database, docs);
+        }
+
+        /// <summary>
+        /// Clean up query container
+        /// </summary>
+        public void Dispose() {
+            _query?.Dispose();
+        }
+
+        private ContainerWrapper _query;
+    }
+
+    public class ContainerWrapper : IDisposable {
+        private readonly IDatabase _database;
+
+        public IItemContainer Container { get; }
+
+        public ContainerWrapper(IDatabase database, IItemContainer container) {
+            _database = database;
+            Container = container;
+        }
+
+        public void Dispose() {
+            Try.Op(() => _database.DeleteContainerAsync(Container.Name));
         }
     }
 
@@ -128,6 +159,8 @@ namespace Microsoft.Azure.IIoT.Storage.CouchDb.Clients {
         public string FamilyName { get; set; }
         [DataMember]
         public string FirstName { get; set; }
+        [DataMember]
+        public DateTimeOffset Dob { get; set; }
     }
 
     [DataContract]
@@ -142,12 +175,16 @@ namespace Microsoft.Azure.IIoT.Storage.CouchDb.Clients {
         public int Grade { get; set; }
         [DataMember]
         public Pet[] Pets { get; set; }
+        [DataMember]
+        public DateTime? Dob { get; set; }
     }
 
     [DataContract]
     public sealed class Pet {
         [DataMember]
         public string GivenName { get; set; }
+        [DataMember]
+        public DateTimeOffset? Dob { get; set; }
     }
 
     [DataContract]
@@ -158,6 +195,8 @@ namespace Microsoft.Azure.IIoT.Storage.CouchDb.Clients {
         public string County { get; set; }
         [DataMember]
         public string City { get; set; }
+        [DataMember]
+        public TimeSpan? LivedAt { get; set; }
     }
 
     [DataContract]
@@ -176,5 +215,11 @@ namespace Microsoft.Azure.IIoT.Storage.CouchDb.Clients {
         public bool IsRegistered { get; set; }
         [DataMember]
         public DateTime RegistrationDate { get; set; }
+        [DataMember]
+        public TimeSpan ExistsFor { get; set; }
+        [DataMember]
+        public int? Count { get; set; }
+
+        public int Ignored { get; set; }
     }
 }

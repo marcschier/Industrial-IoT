@@ -24,7 +24,6 @@ namespace Microsoft.Azure.IIoT.Azure.EventHub.Runtime {
         /// <summary> Event hub path </summary>
         public string EventHubPath => GetStringOrDefault(kEventHubNameKey,
             () => GetStringOrDefault(PcsVariable.PCS_EVENTHUB_NAME, () => null));
-        /// <summary> Whether use websockets to connect </summary>
 
         /// <summary>
         /// Configuration constructor

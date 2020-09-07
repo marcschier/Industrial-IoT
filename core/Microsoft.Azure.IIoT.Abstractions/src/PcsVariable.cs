@@ -304,5 +304,14 @@ namespace Microsoft.Azure.IIoT {
         /// <summary> Rabbit mq secret </summary>
         public const string PCS_RABBITMQ_KEY =
             "PCS_RABBITMQ_KEY";
+        /// <summary> Kafka Boostrap servers </summary>
+        public const string PCS_KAFKA_BOOTSTRAP_SERVERS =
+            "PCS_KAFKA_BOOTSTRAP_SERVERS";
+        /// <summary> Kafka Consumer group </summary>
+        public const string PCS_KAFKA_CONSUMERGROUP =
+            "PCS_KAFKA_CONSUMERGROUP";
+        /// <summary> Kafka Consumer topics </summary>
+        public const string PCS_KAFKA_CONSUMER_TOPIC_REGEX =
+            "PCS_KAFKA_CONSUMER_TOPIC_REGEX";
     }
 }

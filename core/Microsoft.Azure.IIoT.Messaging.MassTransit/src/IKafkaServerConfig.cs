@@ -3,6 +3,15 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-using System.Runtime.CompilerServices;
+namespace Microsoft.Azure.IIoT.Messaging.Kafka {
+    /// <summary>
+    /// Kafka configuration
+    /// </summary>
+    public interface IKafkaServerConfig {
 
-[assembly: InternalsVisibleTo("Microsoft.Azure.IIoT.Messaging.Kafka.Tests")]
+        /// <summary>
+        /// Comma seperated bootstrap servers
+        /// </summary>
+        string BootstrapServers { get; }
+    }
+}

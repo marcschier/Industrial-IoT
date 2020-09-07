@@ -21,6 +21,11 @@ namespace Microsoft.Azure.IIoT.Hosting.Docker {
     public abstract class DockerContainer {
 
         /// <summary>
+        /// Container name
+        /// </summary>
+        public string ContainerName { get; set; }
+
+        /// <summary>
         /// Create server
         /// </summary>
         /// <param name="logger"></param>
@@ -38,6 +43,7 @@ namespace Microsoft.Azure.IIoT.Hosting.Docker {
         protected async Task<(string, bool)> StartContainerAsync(
             CreateContainerParameters containerParameters, string containerName, string imageName) {
             using (var dockerClient = GetDockerClient()) {
+                ContainerName = containerName;
                 containerParameters.Image = imageName;
 
                 var containers = await dockerClient.Containers.ListContainersAsync(
@@ -68,14 +74,14 @@ namespace Microsoft.Azure.IIoT.Hosting.Docker {
         /// <summary>
         /// Wait to start
         /// </summary>
-        /// <param name="ports"></param>
+        /// <param name="port"></param>
         /// <returns></returns>
-        protected async Task WaitForContainerStartedAsync(int[] ports) {
+        protected async Task WaitForContainerStartedAsync(int port) {
             var attempts = 0;
             var sw = Stopwatch.StartNew();
             bool containerStarted;
             do {
-                containerStarted = await IsContainerRunningAsync(ports);
+                containerStarted = await IsContainerRunningAsync(port);
                 await Task.Delay(1000);
             } while (!containerStarted && attempts++ <= 60);
             sw.Stop();
@@ -90,8 +96,9 @@ namespace Microsoft.Azure.IIoT.Hosting.Docker {
         /// <param name="containerId"></param>
         protected async Task StopContainerAsync(string containerId) {
             using (var dockerClient = GetDockerClient()) {
-                var container = dockerClient.Containers.InspectContainerAsync(containerId).Result;
+                var container = await dockerClient.Containers.InspectContainerAsync(containerId);
                 if (container.State.Running) {
+                    ContainerName = null;
                     await dockerClient.Containers.KillContainerAsync(containerId,
                         new ContainerKillParameters());
                 }
@@ -101,11 +108,11 @@ namespace Microsoft.Azure.IIoT.Hosting.Docker {
         /// <summary>
         /// Waits for container to have started
         /// </summary>
-        /// <param name="ports"></param>
+        /// <param name="port"></param>
         /// <returns></returns>
-        private async Task<bool> IsContainerRunningAsync(int[] ports) {
+        private async Task<bool> IsContainerRunningAsync(int port) {
             try {
-                var remoteEP = new IPEndPoint(IPAddress.Loopback, ports.First());
+                var remoteEP = new IPEndPoint(IPAddress.Loopback, port);
                 var sender = new Socket(IPAddress.Loopback.AddressFamily,
                     SocketType.Stream, ProtocolType.Tcp);
                 await sender.ConnectAsync(remoteEP);
@@ -133,6 +140,8 @@ namespace Microsoft.Azure.IIoT.Hosting.Docker {
         }
 
         private int _success = 0;
+#pragma warning disable IDE0052 // Remove unread private members
         private readonly ILogger _logger;
+#pragma warning restore IDE0052 // Remove unread private members
     }
 }

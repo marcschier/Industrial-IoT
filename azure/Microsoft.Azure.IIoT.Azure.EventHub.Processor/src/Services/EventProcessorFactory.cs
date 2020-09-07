@@ -69,7 +69,8 @@ namespace Microsoft.Azure.IIoT.Azure.EventHub.Processor.Services {
                 _sw = Stopwatch.StartNew();
                 _logger.Information("EventProcessor {id} for partition {partitionId} created",
                     _processorId, _partitionContext.PartitionId);
-                kEventProcessorDetails.WithLabels(_processorId, _partitionContext.EventHubPath, _partitionContext.ConsumerGroupName,
+                kEventProcessorDetails.WithLabels(_processorId, _partitionContext.EventHubPath,
+                    _partitionContext.ConsumerGroupName,
                     _partitionContext.PartitionId, "created").Inc();
             }
 
@@ -85,7 +86,8 @@ namespace Microsoft.Azure.IIoT.Azure.EventHub.Processor.Services {
                     if (_outer._config.SkipEventsOlderThan != null &&
                         eventData.SystemProperties.TryGetValue("x-opt-enqueued-time", out var enqueued) &&
                         (DateTime)enqueued + _outer._config.SkipEventsOlderThan < DateTime.UtcNow ) {
-                        kOldEvent.WithLabels(_processorId, context.EventHubPath, context.ConsumerGroupName, context.PartitionId).Inc();
+                        kOldEvent.WithLabels(_processorId, context.EventHubPath,
+                            context.ConsumerGroupName, context.PartitionId).Inc();
                         continue;
                     }
                     var properties = new EventProperties(eventData.SystemProperties,

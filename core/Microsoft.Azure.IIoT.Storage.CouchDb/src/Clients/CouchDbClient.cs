@@ -8,8 +8,6 @@ namespace Microsoft.Azure.IIoT.Storage.CouchDb.Clients {
     using Serilog;
     using System;
     using System.Threading.Tasks;
-    using ;
-    using System.IO;
     using CouchDB.Driver;
 
     /// <summary>
@@ -35,7 +33,7 @@ namespace Microsoft.Azure.IIoT.Storage.CouchDb.Clients {
 
             var client = new CouchClient(_config.HostName, builder => {
                 builder.EnsureDatabaseExists();
-                
+
                 // ...
             });
 

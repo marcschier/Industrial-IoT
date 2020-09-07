@@ -3,32 +3,34 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Messaging.RabbitMq.Services {
-    using Microsoft.Azure.IIoT.Messaging.RabbitMq;
+namespace Microsoft.Azure.IIoT.Messaging.Kafka.Services {
     using Microsoft.Azure.IIoT.Hosting.Docker;
     using Microsoft.Azure.IIoT.Utils;
     using Serilog;
     using System;
     using System.Collections.Generic;
-    using System.Linq;
     using System.Threading.Tasks;
     using System.Threading;
     using Docker.DotNet.Models;
 
     /// <summary>
-    /// Represents a rabbit mq server instance
+    /// Represents a Zookeeper node
     /// </summary>
-    public class RabbitMqServer : DockerContainer, IHostProcess {
+    public class ZookeeperNode : DockerContainer, IHostProcess {
 
         /// <summary>
-        /// Create server
+        /// Network name
         /// </summary>
-        /// <param name="config"></param>
+        public string NetworkName { get; set; }
+
+        /// <summary>
+        /// Create node
+        /// </summary>
         /// <param name="logger"></param>
-        public RabbitMqServer(IRabbitMqConfig config, ILogger logger) : base(logger) {
-            _config = config ?? throw new ArgumentNullException(nameof(config));
+        /// <param name="port"></param>
+        public ZookeeperNode(ILogger logger, int? port = null) : base(logger) {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            _ports = new[] { 5672, 4369, 25672, 15672 }; // TODO
+            _port = port ?? 2181;
         }
 
         /// <inheritdoc/>
@@ -39,16 +41,16 @@ namespace Microsoft.Azure.IIoT.Messaging.RabbitMq.Services {
                     return;
                 }
 
-                _logger.Information("Starting RabbitMq server...");
-                var param = GetContainerParameters(_ports);
-                var name = $"rabbitmq_{string.Join("_", _ports)}_{param.GetHashCode()}";
+                _logger.Information("Starting Zookeeper node...");
+                var param = GetContainerParameters(_port);
+                var name = $"zookeeper_{_port}_{param.GetHashCode()}";
                 (_containerId, _owner) = await StartContainerAsync(
-                    param, name, "bitnami/rabbitmq:latest");
+                    param, name, "bitnami/zookeeper:latest");
 
                 try {
                     // Check running
-                    await WaitForContainerStartedAsync(_ports);
-                    _logger.Information("RabbitMq server running.");
+                    await WaitForContainerStartedAsync(_port);
+                    _logger.Information("Zookeeper node running.");
                 }
                 catch {
                     // Stop and retry
@@ -68,7 +70,7 @@ namespace Microsoft.Azure.IIoT.Messaging.RabbitMq.Services {
             try {
                 if (_containerId != null && _owner) {
                     await StopContainerAsync(_containerId);
-                    _logger.Information("Stopped RabbitMq server...");
+                    _logger.Information("Stopped Zookeeper node...");
                 }
             }
             finally {
@@ -85,35 +87,36 @@ namespace Microsoft.Azure.IIoT.Messaging.RabbitMq.Services {
         /// <summary>
         /// Create create parameters
         /// </summary>
-        /// <param name="hostPorts"></param>
+        /// <param name="port"></param>
         /// <returns></returns>
-        private CreateContainerParameters GetContainerParameters(int[] hostPorts) {
-            var containerPorts = new[] { 5672, 4369, 25672, 15672 };
+        private CreateContainerParameters GetContainerParameters(int port) {
+            const int zooKeeperPort = 2181;
             return new CreateContainerParameters(
                 new Config {
-                    ExposedPorts = containerPorts
-                        .ToDictionary<int, string, EmptyStruct>(p => p.ToString(), _ => default),
-                    Env = new List<string>(new[] {
-                        "RABBITMQ_USERNAME=" + _config.UserName,
-                        "RABBITMQ_PASSWORD=" + _config.Key,
-                    })
+                    ExposedPorts = new Dictionary<string, EmptyStruct>() {
+                        [zooKeeperPort.ToString()] = default
+                    },
+                    Env = new List<string> {
+                        "ZOO_ENABLE_AUTH=no",
+                        "ALLOW_ANONYMOUS_LOGIN=yes"
+                    }
                 }) {
                 HostConfig = new HostConfig {
-                    PortBindings = containerPorts.ToDictionary(k => k.ToString(),
-                    v => (IList<PortBinding>)new List<PortBinding> {
-                        new PortBinding {
-                            HostPort = hostPorts[Array.IndexOf(containerPorts, v) %
-                            hostPorts.Length].ToString()
+                    NetworkMode = NetworkName,
+                    PortBindings = new Dictionary<string, IList<PortBinding>> {
+                        [zooKeeperPort.ToString()] = new List<PortBinding> {
+                            new PortBinding {
+                                HostPort = port.ToString()
+                            }
                         }
-                    })
+                    }
                 }
             };
         }
 
         private readonly SemaphoreSlim _lock = new SemaphoreSlim(1, 1);
-        private readonly IRabbitMqConfig _config;
         private readonly ILogger _logger;
-        private readonly int[] _ports;
+        private readonly int _port;
         private string _containerId;
         private bool _owner;
     }
