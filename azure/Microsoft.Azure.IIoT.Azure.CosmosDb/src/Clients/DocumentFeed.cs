@@ -17,7 +17,7 @@ namespace Microsoft.Azure.IIoT.Azure.CosmosDb.Clients {
     /// <summary>
     /// Wraps a document query to return document infos
     /// </summary>
-    internal sealed class DocumentInfoFeed<R, T> : IResultFeed<IDocumentInfo<T>> {
+    internal sealed class DocumentFeed<R, T> : IResultFeed<IDocumentInfo<T>> {
 
         /// <inheritdoc/>
         public string ContinuationToken { get; private set; }
@@ -25,7 +25,7 @@ namespace Microsoft.Azure.IIoT.Azure.CosmosDb.Clients {
         /// <summary>
         /// Create feed
         /// </summary>
-        internal DocumentInfoFeed(IDocumentQuery<R> query, ILogger logger) {
+        internal DocumentFeed(IDocumentQuery<R> query, ILogger logger) {
             _query = query ?? throw new ArgumentNullException(nameof(query));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }

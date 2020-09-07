@@ -28,7 +28,7 @@ namespace Microsoft.Azure.IIoT.Azure.CosmosDb.Clients {
 
         /// <inheritdoc/>
         public IResultFeed<IDocumentInfo<T>> GetResults() {
-            return new DocumentInfoFeed<T, T>(_queryable.AsDocumentQuery(), _logger);
+            return new DocumentFeed<T, T>(_queryable.AsDocumentQuery(), _logger);
         }
 
         /// <inheritdoc/>

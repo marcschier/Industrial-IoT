@@ -81,7 +81,7 @@ namespace Microsoft.Azure.IIoT.Azure.CosmosDb.Clients {
                     RequestContinuation = continuationToken,
                     EnableCrossPartitionQuery = pk == null
                 });
-            return new DocumentInfoFeed<Document, T>(query.AsDocumentQuery(), _logger);
+            return new DocumentFeed<Document, T>(query.AsDocumentQuery(), _logger);
         }
 
         /// <inheritdoc/>

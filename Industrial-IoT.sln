@@ -288,6 +288,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Azure.IIoT.Storag
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Azure.IIoT.Storage.LiteDb.Tests", "core\Microsoft.Azure.IIoT.Storage.LiteDb\tests\Microsoft.Azure.IIoT.Storage.LiteDb.Tests.csproj", "{CC9B9EFC-300D-4817-BAA1-3C5361523935}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Azure.IIoT.Storage.CouchDb", "core\Microsoft.Azure.IIoT.Storage.CouchDb\src\Microsoft.Azure.IIoT.Storage.CouchDb.csproj", "{B7A1E358-9FD2-4502-B0A3-C21FBA3E2E2C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Azure.IIoT.Storage.CouchDb.Tests", "core\Microsoft.Azure.IIoT.Storage.CouchDb\tests\Microsoft.Azure.IIoT.Storage.CouchDb.Tests.csproj", "{EC92055F-8A42-4248-BD68-2DD3146C0186}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -1072,6 +1076,22 @@ Global
 		{CC9B9EFC-300D-4817-BAA1-3C5361523935}.Release|Any CPU.Build.0 = Release|Any CPU
 		{CC9B9EFC-300D-4817-BAA1-3C5361523935}.Release|x64.ActiveCfg = Release|Any CPU
 		{CC9B9EFC-300D-4817-BAA1-3C5361523935}.Release|x64.Build.0 = Release|Any CPU
+		{B7A1E358-9FD2-4502-B0A3-C21FBA3E2E2C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B7A1E358-9FD2-4502-B0A3-C21FBA3E2E2C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B7A1E358-9FD2-4502-B0A3-C21FBA3E2E2C}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{B7A1E358-9FD2-4502-B0A3-C21FBA3E2E2C}.Debug|x64.Build.0 = Debug|Any CPU
+		{B7A1E358-9FD2-4502-B0A3-C21FBA3E2E2C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B7A1E358-9FD2-4502-B0A3-C21FBA3E2E2C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B7A1E358-9FD2-4502-B0A3-C21FBA3E2E2C}.Release|x64.ActiveCfg = Release|Any CPU
+		{B7A1E358-9FD2-4502-B0A3-C21FBA3E2E2C}.Release|x64.Build.0 = Release|Any CPU
+		{EC92055F-8A42-4248-BD68-2DD3146C0186}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EC92055F-8A42-4248-BD68-2DD3146C0186}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EC92055F-8A42-4248-BD68-2DD3146C0186}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{EC92055F-8A42-4248-BD68-2DD3146C0186}.Debug|x64.Build.0 = Debug|Any CPU
+		{EC92055F-8A42-4248-BD68-2DD3146C0186}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EC92055F-8A42-4248-BD68-2DD3146C0186}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EC92055F-8A42-4248-BD68-2DD3146C0186}.Release|x64.ActiveCfg = Release|Any CPU
+		{EC92055F-8A42-4248-BD68-2DD3146C0186}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -1208,6 +1228,8 @@ Global
 		{22E362BA-9694-40E9-8533-419380D87241} = {0CA8F8B9-566E-47F2-B821-8DF4F28F044A}
 		{32063973-E2B6-40EA-82EF-CBE123B64361} = {EDC413E0-BE91-477B-8A16-B20BBBB35933}
 		{CC9B9EFC-300D-4817-BAA1-3C5361523935} = {ADA1CE90-5727-4D1E-8544-50C19B09D3A1}
+		{B7A1E358-9FD2-4502-B0A3-C21FBA3E2E2C} = {EDC413E0-BE91-477B-8A16-B20BBBB35933}
+		{EC92055F-8A42-4248-BD68-2DD3146C0186} = {ADA1CE90-5727-4D1E-8544-50C19B09D3A1}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {F09EFCEA-59F6-4A16-9CB6-7E865A3F62D8}
