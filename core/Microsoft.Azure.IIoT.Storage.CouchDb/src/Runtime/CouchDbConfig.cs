@@ -13,10 +13,21 @@ namespace Microsoft.Azure.IIoT.Storage.CouchDb.Runtime {
     public class CouchDbConfig : ConfigBase, ICouchDbConfig {
 
         private const string kCouchDbHostName = "CouchDb:HostName";
+        private const string kCouchDbUserName = "CouchDb:UserName";
+        private const string kCouchDbKey = "CouchDb:Key";
 
         /// <inheritdoc/>
         public string HostName => GetStringOrDefault(kCouchDbHostName,
-            () => "localhost");
+            () => GetStringOrDefault(PcsVariable.PCS_COUCHDB_HOSTNAME,
+                () => "localhost"));
+        /// <inheritdoc/>
+        public string UserName => GetStringOrDefault(kCouchDbUserName,
+            () => GetStringOrDefault(PcsVariable.PCS_COUCHDB_USERNAME,
+                () => "admin"));
+        /// <inheritdoc/>
+        public string Key => GetStringOrDefault(kCouchDbKey,
+            () => GetStringOrDefault(PcsVariable.PCS_COUCHDB_KEY,
+                () => "couchdb"));
 
         /// <summary>
         /// Configuration constructor

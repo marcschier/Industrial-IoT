@@ -43,7 +43,7 @@ namespace Microsoft.Azure.IIoT.Messaging.Kafka.Services {
 
                 _logger.Information("Starting Zookeeper node...");
                 var param = GetContainerParameters(_port);
-                var name = $"zookeeper_{_port}_{param.GetHashCode()}";
+                var name = $"zookeeper_{_port}";
                 (_containerId, _owner) = await StartContainerAsync(
                     param, name, "bitnami/zookeeper:latest");
 

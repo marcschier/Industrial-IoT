@@ -11,6 +11,7 @@ namespace Microsoft.Azure.IIoT.Storage.CouchDb.Clients {
     using System.Threading;
     using System.Collections.Generic;
     using CouchDB.Driver;
+    using System.Linq;
 
     /// <summary>
     /// Lite database
@@ -28,14 +29,13 @@ namespace Microsoft.Azure.IIoT.Storage.CouchDb.Clients {
         }
 
         /// <inheritdoc/>
-        public Task<IItemContainer> OpenContainerAsync(string id,
+        public async Task<IItemContainer> OpenContainerAsync(string id,
             ContainerOptions options) {
             if (string.IsNullOrEmpty(id)) {
                 id = "default";
             }
-            var db = _client.GetDatabase<CouchDbDocument>(id);
-            var container = new CouchDbCollection(id, db, options, _logger);
-            return Task.FromResult<IItemContainer>(container);
+            var db = await _client.GetOrCreateDatabaseAsync<CouchDbDocument>(id);
+            return new CouchDbCollection(id, db, options, _logger);
         }
 
         /// <inheritdoc/>

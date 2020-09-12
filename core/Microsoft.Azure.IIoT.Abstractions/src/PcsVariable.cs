@@ -313,5 +313,14 @@ namespace Microsoft.Azure.IIoT {
         /// <summary> Kafka Consumer topics </summary>
         public const string PCS_KAFKA_CONSUMER_TOPIC_REGEX =
             "PCS_KAFKA_CONSUMER_TOPIC_REGEX";
+        /// <summary> Couch DB host name </summary>
+        public const string PCS_COUCHDB_HOSTNAME =
+            "PCS_COUCHDB_HOSTNAME";
+        /// <summary> Couch DB password </summary>
+        public const string PCS_COUCHDB_USERNAME =
+            "PCS_COUCHDB_USERNAME";
+        /// <summary> Couch DBq secret </summary>
+        public const string PCS_COUCHDB_KEY =
+            "PCS_COUCHDB_KEY";
     }
 }

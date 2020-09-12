@@ -30,16 +30,17 @@ namespace Microsoft.Azure.IIoT.Storage.CouchDb.Clients {
 
         /// <inheritdoc/>
         public Task<IDatabase> OpenAsync(string databaseId, DatabaseOptions options) {
-
-            var client = new CouchClient(_config.HostName, builder => {
-                builder.EnsureDatabaseExists();
-
-                // ...
+            var client = new CouchClient("http://" + _config.HostName + ":5984", builder => {
+                builder
+                    .EnsureDatabaseExists()
+                    .UseBasicAuthentication(_config.UserName, _config.Key)
+                    .IgnoreCertificateValidation()
+                    .ConfigureFlurlClient(client => {
+                        // client.HttpClientFactory =
+                    })
+                    // ...
+                    ;
             });
-
-            if (string.IsNullOrEmpty(databaseId)) {
-                databaseId = "default";
-            }
             var db = new CouchDbDatabase(client, _logger);
             return Task.FromResult<IDatabase>(db);
         }

@@ -4,6 +4,7 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Storage.CouchDb.Clients {
+    using Microsoft.Azure.IIoT.Storage.CouchDb.Services;
     using Microsoft.Azure.IIoT.Storage;
     using AutoFixture;
     using Autofac;
@@ -13,6 +14,7 @@ namespace Microsoft.Azure.IIoT.Storage.CouchDb.Clients {
     using System.Linq;
     using Xunit;
 
+    [Collection(CouchDbServerCollection.Name)]
     public class CouchDbQueryTests : IClassFixture<CouchDbClientFixture> {
         private readonly CouchDbClientFixture _fixture;
 
@@ -96,6 +98,62 @@ namespace Microsoft.Azure.IIoT.Storage.CouchDb.Clients {
         }
 
         [SkippableFact]
+        public async Task QueryWithUnaryAsync() {
+            var documents = await _fixture.GetDocumentsAsync();
+            Skip.If(documents == null);
+
+            var families = from f in documents.CreateQuery<Family>()
+                           where !f.IsRegistered
+                           select f;
+
+            var results = await RunAsync(families);
+            Assert.Single(results);
+
+            families = documents.CreateQuery<Family>()
+                .Where(f => !f.IsRegistered);
+
+            results = await RunAsync(families);
+            Assert.Single(results);
+
+            families = documents.CreateQuery<Family>()
+                .Where(f => f.IsRegistered);
+
+            results = await RunAsync(families);
+            Assert.Single(results);
+
+            families = documents.CreateQuery<Family>()
+                .Where(f => f.IsRegistered && f.Id == "AndersenFamily");
+
+            results = await RunAsync(families);
+            Assert.Single(results);
+
+            families = documents.CreateQuery<Family>()
+                .Where(f => !f.IsRegistered && f.Id != "AndersenFamily");
+
+            results = await RunAsync(families);
+            Assert.Single(results);
+
+            families = documents.CreateQuery<Family>()
+                .Where(f => !f.IsRegistered)
+                .Where(f => f.Id != "AndersenFamily");
+
+            results = await RunAsync(families);
+            Assert.Single(results);
+
+            families = documents.CreateQuery<Family>()
+                .Where(f => !f.IsRegistered || f.Id == "AndersenFamily");
+
+            results = await RunAsync(families);
+            Assert.Equal(2, results.Count);
+
+            families = documents.CreateQuery<Family>()
+                .Where(f => !(f.IsRegistered && f.Id != "AndersenFamily"));
+
+            results = await RunAsync(families);
+            Assert.Equal(2, results.Count);
+        }
+
+        [SkippableFact]
         public async Task QueryWithAndFilterAsync() {
             var documents = await _fixture.GetDocumentsAsync();
             Skip.If(documents == null);
@@ -109,6 +167,203 @@ namespace Microsoft.Azure.IIoT.Storage.CouchDb.Clients {
 
             families = documents.CreateQuery<Family>()
                 .Where(f => f.Id == "AndersenFamily" && f.Address.City == "Seattle");
+
+            results = await RunAsync(families);
+            Assert.Single(results);
+
+            families = documents.CreateQuery<Family>()
+                .Where(f => f.Id == "AndersenFamily")
+                .Where(f => f.Address.City == "Seattle");
+
+            results = await RunAsync(families);
+            Assert.Single(results);
+        }
+
+        [SkippableFact]
+        public async Task QueryWithArrayLengthCompareAsync() {
+            var documents = await _fixture.GetDocumentsAsync();
+            Skip.If(documents == null);
+
+            var families = from f in documents.CreateQuery<Family>()
+                           where f.Children.Length == 2
+                           select f;
+
+            var results = await RunAsync(families);
+            Assert.Single(results);
+
+            families = documents.CreateQuery<Family>()
+                .Where(f => f.Children.Length == 1);
+
+            results = await RunAsync(families);
+            Assert.Single(results);
+
+            families = documents.CreateQuery<Family>()
+                .Where(f => f.Children.Length == 1)
+                .Where(f => f.Address.City == "Seattle");
+
+            results = await RunAsync(families);
+            Assert.Single(results);
+        }
+
+        [SkippableFact]
+        public async Task QueryWithModuloCompareAsync() {
+            var documents = await _fixture.GetDocumentsAsync();
+            Skip.If(documents == null);
+
+            var families = documents.CreateQuery<Family>()
+                .Where(f => (f.Address.Zip % 2) == 0);
+
+            var results = await RunAsync(families);
+            Assert.Single(results);
+
+            families = documents.CreateQuery<Family>()
+                .Where(f => (f.Address.Zip % 2) < 1);
+
+            results = await RunAsync(families);
+            Assert.Single(results);
+        }
+
+        [SkippableFact]
+        public async Task QueryWithListCountAsync() {
+            var documents = await _fixture.GetDocumentsAsync();
+            Skip.If(documents == null);
+
+            var families = documents.CreateQuery<Family>()
+                .Where(f => f.Colors.Count > 2);
+
+            var results = await RunAsync(families);
+            Assert.Single(results);
+
+            families = documents.CreateQuery<Family>()
+                .Where(f => f.Colors.Count == 2);
+
+            results = await RunAsync(families);
+            Assert.Single(results);
+
+            families = documents.CreateQuery<Family>()
+                .Where(f => f.Colors.Count > 2)
+                .Where(f => f.Address.City == "Seattle");
+
+            results = await RunAsync(families);
+            Assert.Single(results);
+        }
+
+        [SkippableFact]
+        public async Task QueryWithArrayContains1Async() {
+            var documents = await _fixture.GetDocumentsAsync();
+            Skip.If(documents == null);
+
+            var families = from f in documents.CreateQuery<Family>()
+                           where f.Colors.Contains("blue")
+                           select f;
+
+            var results = await RunAsync(families);
+            Assert.Equal(2, results.Count);
+
+            families = from f in documents.CreateQuery<Family>()
+                       where f.Colors.Contains("blue") && f.Colors.Contains("yellow")
+                       select f;
+
+            results = await RunAsync(families);
+            Assert.Single(results);
+
+            families = documents.CreateQuery<Family>()
+                .Where(f => f.Colors.Contains("blue"))
+                .Where(f => f.Colors.Contains("yellow"));
+
+            results = await RunAsync(families);
+            Assert.Single(results);
+
+            families = documents.CreateQuery<Family>()
+                .Where(f => f.Colors.Contains("blue"))
+                .Where(f => f.Address.City == "Seattle");
+
+            results = await RunAsync(families);
+            Assert.Single(results);
+        }
+
+        [SkippableFact]
+        public async Task QueryWithArrayContains2Async() {
+            var documents = await _fixture.GetDocumentsAsync();
+            Skip.If(documents == null);
+
+            var families1 = documents.CreateQuery<Family>()
+                .Where(f => f.Colors.Any(elem => elem == "red" || elem == "yellow" || elem == "blue"));
+
+            var results1 = await RunAsync(families1);
+            Assert.Equal(2, results1.Count);
+
+            var families2 = documents.CreateQuery<Family>()
+                .Where(f => f.Colors.Any(elem => elem == "red" || elem == "yellow"));
+
+            var results2 = await RunAsync(families2);
+            Assert.Equal(2, results2.Count);
+        }
+
+        [SkippableFact]
+        public async Task QueryWithArrayContains3Async() {
+            var documents = await _fixture.GetDocumentsAsync();
+            Skip.If(documents == null);
+
+            var families1 = documents.CreateQuery<Family>()
+                .Where(f => f.Colors.Contains("red") || f.Colors.Contains("yellow"));
+
+            var results1 = await RunAsync(families1);
+            Assert.Equal(2, results1.Count);
+        }
+
+        [SkippableFact]
+        public async Task QueryWithAndAndOrFilterAsync() {
+            var documents = await _fixture.GetDocumentsAsync();
+            Skip.If(documents == null);
+
+            var families = from f in documents.CreateQuery<Family>()
+                           where (f.Id == "AndersenFamily" || f.Id == "WakefieldFamily")
+                            && f.Address.City == "Seattle"
+                           select f;
+
+            var results = await RunAsync(families);
+            Assert.Single(results);
+
+            families = documents.CreateQuery<Family>()
+                .Where(f => (f.Id == "AndersenFamily" || f.Id == "WakefieldFamily")
+                    && f.Address.City == "Seattle");
+
+            results = await RunAsync(families);
+            Assert.Single(results);
+
+            families = documents.CreateQuery<Family>()
+                .Where(f => f.Id == "AndersenFamily" || f.Id == "WakefieldFamily")
+                .Where(f => f.Address.City == "Seattle");
+
+            results = await RunAsync(families);
+            Assert.Single(results);
+
+            families = from f in documents.CreateQuery<Family>()
+                           where (f.Id == "AndersenFamily" || f.Id == "WakefieldFamily") &&
+                            (f.Address.City == "Seattle" || f.Address.Zip > 0)
+                           select f;
+
+            results = await RunAsync(families);
+            Assert.Equal(2, results.Count);
+
+            families = documents.CreateQuery<Family>()
+                .Where(f => (f.Id == "AndersenFamily" || f.Id == "WakefieldFamily") &&
+                            (f.Address.City == "Seattle" || f.Address.Zip > 0));
+
+            results = await RunAsync(families);
+            Assert.Equal(2, results.Count);
+
+            families = documents.CreateQuery<Family>()
+                .Where(f => f.Id == "AndersenFamily" || f.Id == "WakefieldFamily")
+                .Where(f => f.Address.City == "Seattle" || f.Address.Zip != 0.6f);
+
+            results = await RunAsync(families);
+            Assert.Equal(2, results.Count);
+
+            families = documents.CreateQuery<Family>()
+                .Where(f => f.Id == "AndersenFamily" || f.Id == "WakefieldFamily")
+                .Where(f => !(f.Address.City == "Seattle" || f.Address.Zip == 98103));
 
             results = await RunAsync(families);
             Assert.Single(results);
@@ -160,7 +415,182 @@ namespace Microsoft.Azure.IIoT.Storage.CouchDb.Clients {
         }
 
         [SkippableFact]
-        public async Task QueryWithRangeOperatorsOnNumbersAsync() {
+        public async Task QueryWithRangeOperatorsOnNumbers1Async() {
+            var documents = await _fixture.GetDocumentsAsync();
+            Skip.If(documents == null);
+            var families = from f in documents.CreateQuery<Family>()
+                           where f.Address.Zip > 20000
+                           select f;
+
+            var results = await RunAsync(families);
+            Assert.Single(results);
+
+            families = documents.CreateQuery<Family>()
+                       .Where(f => f.Address.Zip > 20000);
+
+            results = await RunAsync(families);
+            Assert.Single(results);
+
+            families = from f in documents.CreateQuery<Family>()
+                       where f.Address.Zip >= 98103
+                       select f;
+
+            results = await RunAsync(families);
+            Assert.Single(results);
+
+            families = documents.CreateQuery<Family>()
+                       .Where(f => f.Address.Zip >= 98103);
+
+            results = await RunAsync(families);
+            Assert.Single(results);
+
+            families = from f in documents.CreateQuery<Family>()
+                       where f.Address.Zip < 98103
+                       select f;
+
+            results = await RunAsync(families);
+            Assert.Single(results);
+
+            families = documents.CreateQuery<Family>()
+                       .Where(f => f.Address.Zip < 98103);
+
+            results = await RunAsync(families);
+            Assert.Single(results);
+
+            families = from f in documents.CreateQuery<Family>()
+                       where f.Address.Zip <= 20000
+                       select f;
+
+            results = await RunAsync(families);
+            Assert.Single(results);
+
+            families = documents.CreateQuery<Family>()
+                       .Where(f => f.Address.Zip <= 20000);
+
+            results = await RunAsync(families);
+            Assert.Single(results);
+        }
+
+        [SkippableFact]
+        public async Task QueryWithRangeOperatorsOnNumbers2Async() {
+            var documents = await _fixture.GetDocumentsAsync();
+            Skip.If(documents == null);
+            var families = from f in documents.CreateQuery<Family>()
+                           where f.Address.Size > 5.82
+                           select f;
+
+            var results = await RunAsync(families);
+            Assert.Single(results);
+
+            families = documents.CreateQuery<Family>()
+                       .Where(f => f.Address.Size > 5.82);
+
+            results = await RunAsync(families);
+            Assert.Single(results);
+
+            families = from f in documents.CreateQuery<Family>()
+                       where f.Address.Size >= 15.82
+                       select f;
+
+            results = await RunAsync(families);
+            Assert.Single(results);
+
+            families = documents.CreateQuery<Family>()
+                       .Where(f => f.Address.Size >= 15.82);
+
+            results = await RunAsync(families);
+            Assert.Single(results);
+
+            families = from f in documents.CreateQuery<Family>()
+                       where f.Address.Size < 15.82
+                       select f;
+
+            results = await RunAsync(families);
+            Assert.Single(results);
+
+            families = documents.CreateQuery<Family>()
+                       .Where(f => f.Address.Size < 15.82);
+
+            results = await RunAsync(families);
+            Assert.Single(results);
+
+            families = from f in documents.CreateQuery<Family>()
+                       where f.Address.Size <= 5.82
+                       select f;
+
+            results = await RunAsync(families);
+            Assert.Single(results);
+
+            families = documents.CreateQuery<Family>()
+                       .Where(f => f.Address.Size <= 5.82);
+
+            results = await RunAsync(families);
+            Assert.Single(results);
+        }
+
+        [SkippableFact]
+        public async Task QueryWithRangeOperatorsOnNumbers3Async() {
+            var documents = await _fixture.GetDocumentsAsync();
+            Skip.If(documents == null);
+            var families = from f in documents.CreateQuery<Family>()
+                           where f.Address.Zip > 20000 && f.Address.Size > 5.82
+                           select f;
+
+            var results = await RunAsync(families);
+            Assert.Single(results);
+
+            families = documents.CreateQuery<Family>()
+                       .Where(f => f.Address.Zip > 20000)
+                       .Where(f => f.Address.Size > 5.82);
+
+            results = await RunAsync(families);
+            Assert.Single(results);
+
+            families = from f in documents.CreateQuery<Family>()
+                       where f.Address.Zip >= 98103 && f.Address.Size > 5.82
+                       select f;
+
+            results = await RunAsync(families);
+            Assert.Single(results);
+
+            families = documents.CreateQuery<Family>()
+                       .Where(f => f.Address.Zip >= 98103)
+                       .Where(f => f.Address.Size > 5.82);
+
+            results = await RunAsync(families);
+            Assert.Single(results);
+
+            families = from f in documents.CreateQuery<Family>()
+                       where f.Address.Zip < 98103 && f.Address.Size == 5.82
+                       select f;
+
+            results = await RunAsync(families);
+            Assert.Single(results);
+
+            families = documents.CreateQuery<Family>()
+                       .Where(f => f.Address.Zip < 98103)
+                       .Where(f => f.Address.Size == 5.82);
+
+            results = await RunAsync(families);
+            Assert.Single(results);
+
+            families = from f in documents.CreateQuery<Family>()
+                       where f.Address.Zip <= 20000 && f.Address.Size != 7.82
+                       select f;
+
+            results = await RunAsync(families);
+            Assert.Single(results);
+
+            families = documents.CreateQuery<Family>()
+                       .Where(f => f.Address.Zip <= 20000)
+                       .Where(f => f.Address.Size != 7.82);
+
+            results = await RunAsync(families);
+            Assert.Single(results);
+        }
+
+        [SkippableFact]
+        public async Task QueryWithRangeOperatorsOnNumbers4Async() {
             var documents = await _fixture.GetDocumentsAsync();
             Skip.If(documents == null);
             var families = from f in documents.CreateQuery<Family>()
@@ -172,6 +602,45 @@ namespace Microsoft.Azure.IIoT.Storage.CouchDb.Clients {
 
             families = documents.CreateQuery<Family>()
                        .Where(f => f.Children[0].Grade > 5);
+
+            results = await RunAsync(families);
+            Assert.Single(results);
+
+            families = from f in documents.CreateQuery<Family>()
+                       where f.Children[0].Grade >= 8
+                       select f;
+
+            results = await RunAsync(families);
+            Assert.Single(results);
+
+            families = documents.CreateQuery<Family>()
+                       .Where(f => f.Children[0].Grade >= 8);
+
+            results = await RunAsync(families);
+            Assert.Single(results);
+
+            families = from f in documents.CreateQuery<Family>()
+                       where f.Children[0].Grade <= 5
+                       select f;
+
+            results = await RunAsync(families);
+            Assert.Single(results);
+
+            families = documents.CreateQuery<Family>()
+                       .Where(f => f.Children[0].Grade <= 5);
+
+            results = await RunAsync(families);
+            Assert.Single(results);
+
+            families = from f in documents.CreateQuery<Family>()
+                       where f.Children[0].Grade < 8
+                       select f;
+
+            results = await RunAsync(families);
+            Assert.Single(results);
+
+            families = documents.CreateQuery<Family>()
+                       .Where(f => f.Children[0].Grade < 8);
 
             results = await RunAsync(families);
             Assert.Single(results);
@@ -646,8 +1115,14 @@ namespace Microsoft.Azure.IIoT.Storage.CouchDb.Clients {
                     if (results2.HasMore()) {
                         var result = await results2.ReadAsync();
                         Assert.NotNull(result);
-                        Assert.NotEmpty(result);
-                        Assert.Equal(10, result.Count());
+                        if (!result.Any()) {
+                            Assert.Null(results2.ContinuationToken);
+                            loops--; // Ok to return empty as last loop
+                        }
+                        else {
+                            Assert.NotEmpty(result);
+                            Assert.Equal(10, result.Count());
+                        }
                     }
                     if (results2.ContinuationToken == null) {
                         break;
@@ -681,8 +1156,14 @@ namespace Microsoft.Azure.IIoT.Storage.CouchDb.Clients {
                     loops++;
                     var result = await results2.ReadAsync();
                     Assert.NotNull(result);
-                    Assert.NotEmpty(result);
-                    Assert.Equal(10, result.Count());
+                    if (!result.Any()) {
+                        Assert.Null(results2.ContinuationToken);
+                        loops--; // Ok to return empty as last loop
+                    }
+                    else {
+                        Assert.NotEmpty(result);
+                        Assert.Equal(10, result.Count());
+                    }
                     if (results2.ContinuationToken == null) {
                         result = await results2.ReadAsync();
                         Assert.NotNull(result);
@@ -718,6 +1199,12 @@ namespace Microsoft.Azure.IIoT.Storage.CouchDb.Clients {
                 Assert.NotNull(result);
                 Assert.NotEmpty(result);
                 Assert.Equal(5, result.Count());
+
+                if (results2.ContinuationToken != null) {
+                    result = await results2.ReadAsync();
+                    Assert.NotNull(result);
+                    Assert.Empty(result);
+                }
                 Assert.Null(results2.ContinuationToken);
             }
         }
@@ -757,6 +1244,12 @@ namespace Microsoft.Azure.IIoT.Storage.CouchDb.Clients {
                 Assert.NotNull(result);
                 Assert.NotEmpty(result);
                 Assert.Equal(50, result.Count());
+
+                if (results2.ContinuationToken != null) {
+                    result = await results2.ReadAsync();
+                    Assert.NotNull(result);
+                    Assert.Empty(result);
+                }
                 Assert.Null(results2.ContinuationToken);
             }
         }

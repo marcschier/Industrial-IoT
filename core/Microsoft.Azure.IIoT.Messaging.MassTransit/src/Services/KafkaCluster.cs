@@ -92,6 +92,6 @@ namespace Microsoft.Azure.IIoT.Messaging.Kafka.Services {
         private readonly ILogger _logger;
         private readonly ZookeeperNode _zookeeper;
         private readonly int _kafkaNodes;
-        private readonly List<KafkaNode> _nodes;
+        private readonly List<KafkaNode> _nodes = new List<KafkaNode>();
     }
 }

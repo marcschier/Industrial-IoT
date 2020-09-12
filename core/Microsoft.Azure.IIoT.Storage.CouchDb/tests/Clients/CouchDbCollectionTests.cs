@@ -4,6 +4,7 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Storage.CouchDb.Clients {
+    using Microsoft.Azure.IIoT.Storage.CouchDb.Services;
     using Microsoft.Azure.IIoT.Storage;
     using Microsoft.Azure.IIoT.Exceptions;
     using System;
@@ -14,6 +15,7 @@ namespace Microsoft.Azure.IIoT.Storage.CouchDb.Clients {
     using AutoFixture;
     using Xunit;
 
+    [Collection(CouchDbServerCollection.Name)]
     public class CouchDbContainerTests : IClassFixture<CouchDbClientFixture> {
         private readonly CouchDbClientFixture _fixture;
 
@@ -175,6 +177,7 @@ namespace Microsoft.Azure.IIoT.Storage.CouchDb.Clients {
 
                 var results = await ListAsync<Family, string>(documents, x => x.Id);
                 Assert.Equal(families.Select(f => f.Id), results.Select(f => f.Value.Id));
+                Assert.Equal(families.Select(f => f.LastName), results.Select(f => f.Value.LastName));
             }
         }
 

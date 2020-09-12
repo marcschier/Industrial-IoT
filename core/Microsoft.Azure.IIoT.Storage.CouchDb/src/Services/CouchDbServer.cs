@@ -3,23 +3,20 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Messaging.Kafka.Services {
+namespace Microsoft.Azure.IIoT.Storage.CouchDb.Services {
     using Microsoft.Azure.IIoT.Hosting.Docker;
     using Microsoft.Azure.IIoT.Utils;
     using Serilog;
     using System;
     using System.Collections.Generic;
-    using System.Linq;
     using System.Threading.Tasks;
     using System.Threading;
-    using System.Net;
-    using System.Net.Sockets;
     using Docker.DotNet.Models;
 
     /// <summary>
-    /// Represents a Kafka node
+    /// Represents a CouchDB node
     /// </summary>
-    public class KafkaNode : DockerContainer, IHostProcess {
+    public class CouchDbServer : DockerContainer, IHostProcess {
 
         /// <summary>
         /// Network name
@@ -30,12 +27,10 @@ namespace Microsoft.Azure.IIoT.Messaging.Kafka.Services {
         /// Create node
         /// </summary>
         /// <param name="port"></param>
-        /// <param name="zookeeper"></param>
         /// <param name="logger"></param>
-        public KafkaNode(string zookeeper, int port, ILogger logger) : base(logger) {
-            _zookeeper = zookeeper ?? throw new ArgumentNullException(nameof(zookeeper));
+        public CouchDbServer(ILogger logger, int? port = null) : base(logger) {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            _port = port;
+            _port = port ?? 5984;
         }
 
         /// <inheritdoc/>
@@ -46,16 +41,16 @@ namespace Microsoft.Azure.IIoT.Messaging.Kafka.Services {
                     return;
                 }
 
-                _logger.Information("Starting Kafka node at {port}...", _port);
+                _logger.Information("Starting CouchDB server at {port}...", _port);
                 var param = GetContainerParameters(_port);
-                var name = $"kafka_{_port}";
+                var name = $"couchdb_{_port}";
                 (_containerId, _owner) = await StartContainerAsync(
-                    param, name, "bitnami/kafka:latest");
+                    param, name, "bitnami/couchdb:latest");
 
                 try {
                     // Check running
                     await WaitForContainerStartedAsync(_port);
-                    _logger.Information("Kafka node running at {port}.", _port);
+                    _logger.Information("CouchDB server running at {port}.", _port);
                 }
                 catch {
                     // Stop and retry
@@ -75,7 +70,7 @@ namespace Microsoft.Azure.IIoT.Messaging.Kafka.Services {
             try {
                 if (_containerId != null && _owner) {
                     await StopContainerAsync(_containerId);
-                    _logger.Information("Stopped Kafka node at {port}.", _port);
+                    _logger.Information("Stopped CouchDB server at {port}.", _port);
                 }
             }
             finally {
@@ -95,23 +90,22 @@ namespace Microsoft.Azure.IIoT.Messaging.Kafka.Services {
         /// <param name="port"></param>
         /// <returns></returns>
         private CreateContainerParameters GetContainerParameters(int port) {
-            const int kafkaPort = 9092;
+            const int couchPort = 5984;
             return new CreateContainerParameters(
                 new Config {
                     ExposedPorts = new Dictionary<string, EmptyStruct>() {
-                        [kafkaPort.ToString()] = default
+                        [couchPort.ToString()] = default
                     },
                     Env = new List<string> {
-                        $"KAFKA_CFG_ZOOKEEPER_CONNECT={_zookeeper}",
-                        "ALLOW_PLAINTEXT_LISTENER=yes",
-                        "KAFKA_CFG_LISTENERS=PLAINTEXT://0.0.0.0:"+ kafkaPort,
-                        "KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://" + HostIp.Value + ":" + port,
+                        "COUCHDB_CREATE_DATABASES=yes",
+                        "COUCHDB_USER=admin",
+                        "COUCHDB_PASSWORD=couchdb",
                     }
                 }) {
                 HostConfig = new HostConfig {
                     NetworkMode = NetworkName,
                     PortBindings = new Dictionary<string, IList<PortBinding>> {
-                        [kafkaPort.ToString()] = new List<PortBinding> {
+                        [couchPort.ToString()] = new List<PortBinding> {
                             new PortBinding {
                                 HostPort = port.ToString()
                             }
@@ -121,26 +115,8 @@ namespace Microsoft.Azure.IIoT.Messaging.Kafka.Services {
             };
         }
 
-        /// <summary>
-        /// Gets ip address
-        /// </summary>
-        private static Lazy<string> HostIp { get; } = new Lazy<string>(() => {
-            try {
-                using (var socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, 0)) {
-                    socket.Connect("8.8.8.8", 65530);
-                    var endPoint = socket.LocalEndPoint as IPEndPoint;
-                    return endPoint.Address.ToString();
-                }
-            }
-            catch {
-                return Dns.GetHostAddresses(Dns.GetHostName())
-                    .First(i => i.AddressFamily == AddressFamily.InterNetwork).ToString();
-            }
-        });
-
         private readonly SemaphoreSlim _lock = new SemaphoreSlim(1, 1);
         private readonly ILogger _logger;
-        private readonly string _zookeeper;
         private readonly int _port;
         private string _containerId;
         private bool _owner;

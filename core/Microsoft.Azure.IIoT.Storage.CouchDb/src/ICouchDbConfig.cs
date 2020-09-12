@@ -14,5 +14,15 @@ namespace Microsoft.Azure.IIoT.Storage.CouchDb {
         /// Host to use
         /// </summary>
         string HostName { get; }
+
+        /// <summary>
+        /// User name
+        /// </summary>
+        string UserName { get; }
+
+        /// <summary>
+        /// Key to use
+        /// </summary>
+        string Key { get; }
     }
 }

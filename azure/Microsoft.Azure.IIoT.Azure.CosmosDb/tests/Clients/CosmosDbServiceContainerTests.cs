@@ -175,6 +175,7 @@ namespace Microsoft.Azure.IIoT.Azure.CosmosDb.Clients {
 
                 var results = await ListAsync<Family, string>(documents, x => x.Id);
                 Assert.Equal(families.Select(f => f.Id), results.Select(f => f.Value.Id));
+                Assert.Equal(families.Select(f => f.LastName), results.Select(f => f.Value.LastName));
             }
         }
 

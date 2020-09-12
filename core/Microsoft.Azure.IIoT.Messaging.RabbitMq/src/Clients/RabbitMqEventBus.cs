@@ -16,7 +16,7 @@ namespace Microsoft.Azure.IIoT.Messaging.RabbitMq.Services {
     using RabbitMQ.Client;
 
     /// <summary>
-    /// Event bus built on top of mass transit
+    /// Event bus built on top of rabbitmq
     /// </summary>
     public class RabbitMqEventBus : IEventBus, IDisposable {
 
@@ -24,10 +24,13 @@ namespace Microsoft.Azure.IIoT.Messaging.RabbitMq.Services {
         /// Create mass transit bus event bus
         /// </summary>
         /// <param name="connection"></param>
+        /// <param name="serializer"></param>
         /// <param name="logger"></param>
-        public RabbitMqEventBus(IRabbitMqConnection connection, ILogger logger) {
+        public RabbitMqEventBus(IRabbitMqConnection connection, IJsonSerializer serializer,
+            ILogger logger) {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _connection = connection ?? throw new ArgumentNullException(nameof(connection));
+            _serializer = serializer ?? throw new ArgumentNullException(nameof(serializer));
         }
 
         /// <inheritdoc/>
@@ -124,6 +127,7 @@ namespace Microsoft.Azure.IIoT.Messaging.RabbitMq.Services {
             public Consumer(string token, RabbitMqEventBus outer) :
                 base(outer._connection.GetChannel(typeof(T).GetMoniker())) {
                 _outer = outer;
+                _consumerTag = ""; // TODO
             }
 
             /// <inheritdoc/>

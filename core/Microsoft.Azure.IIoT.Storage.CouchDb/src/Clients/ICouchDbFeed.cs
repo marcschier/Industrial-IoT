@@ -3,11 +3,16 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Messaging.Kafka {
+namespace Microsoft.Azure.IIoT.Storage.CouchDb.Clients {
+    using Microsoft.Azure.IIoT.Storage;
 
     /// <summary>
-    /// Kafka producer configuration
+    /// Feed
     /// </summary>
-    public interface IKafkaProducerConfig : IKafkaServerConfig {
+    /// <typeparam name="T"></typeparam>
+    internal interface ICouchDbFeed<T> : IResultFeed<IDocumentInfo<T>> {
+
+        /// <inheritdoc/>
+        int? PageSize { get; set; }
     }
 }

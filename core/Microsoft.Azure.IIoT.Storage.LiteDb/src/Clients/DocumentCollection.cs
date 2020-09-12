@@ -14,6 +14,7 @@ namespace Microsoft.Azure.IIoT.Storage.LiteDb.Clients {
     using System.Linq.Expressions;
     using System.Linq;
     using LiteDB;
+    using Microsoft.Azure.IIoT.Utils;
 
     /// <summary>
     /// Wraps a collection
@@ -105,14 +106,17 @@ namespace Microsoft.Azure.IIoT.Storage.LiteDb.Clients {
         /// <inheritdoc/>
         public Task<IDocumentInfo<T>> ReplaceAsync<T>(IDocumentInfo<T> existing,
             T newItem, CancellationToken ct, OperationOptions options) {
+            if (newItem == null) {
+                throw new ArgumentNullException(nameof(newItem));
+            }
             if (existing == null) {
                 throw new ArgumentNullException(nameof(existing));
             }
             if (string.IsNullOrEmpty(existing.Id)) {
                 throw new ArgumentNullException(nameof(existing.Id));
             }
-            if (newItem == null) {
-                throw new ArgumentNullException(nameof(newItem));
+            if (string.IsNullOrEmpty(existing.Etag)) {
+                throw new ArgumentNullException(nameof(existing.Etag));
             }
             if (typeof(T).IsValueType) {
                 throw new NotSupportedException(typeof(T).Name);
@@ -177,6 +181,9 @@ namespace Microsoft.Azure.IIoT.Storage.LiteDb.Clients {
             if (string.IsNullOrEmpty(item.Id)) {
                 throw new ArgumentNullException(nameof(item.Id));
             }
+            if (typeof(T).IsValueType) {
+                throw new NotSupportedException(typeof(T).Name);
+            }
             return DeleteAsync<T>(item.Id, ct, options, item.Etag);
         }
 
@@ -185,6 +192,9 @@ namespace Microsoft.Azure.IIoT.Storage.LiteDb.Clients {
             OperationOptions options, string etag) {
             if (string.IsNullOrEmpty(id)) {
                 throw new ArgumentNullException(nameof(id));
+            }
+            if (typeof(T).IsValueType) {
+                throw new NotSupportedException(typeof(T).Name);
             }
             try {
                 if (!string.IsNullOrEmpty(etag)) {
@@ -425,38 +435,35 @@ namespace Microsoft.Azure.IIoT.Storage.LiteDb.Clients {
 
             /// <inheritdoc/>
             public IQuery<T> Where(Expression<Func<T, bool>> predicate) {
-                if (!(_queryable is ILiteQueryable<T> queryable)) {
+                if (!TestQueryable(q => q.Where(predicate), out var queryable)) {
                     return Execute().Where(predicate);
                 }
-                return new ServerSideQuery<T>(_collection,
-                    queryable.Where(predicate), _pageSize);
+                return new ServerSideQuery<T>(_collection, queryable, _pageSize);
             }
 
             /// <inheritdoc/>
             public IQuery<T> OrderBy<K>(Expression<Func<T, K>> keySelector) {
-                if (!(_queryable is ILiteQueryable<T> queryable)) {
+                if (!TestQueryable(q => q.OrderBy(keySelector, 1), out var queryable)) {
                     return Execute().OrderBy(keySelector);
                 }
-                return new ServerSideQuery<T>(_collection,
-                    queryable.OrderBy(keySelector, 1), _pageSize);
+                return new ServerSideQuery<T>(_collection, queryable, _pageSize);
             }
 
             /// <inheritdoc/>
             public IQuery<T> OrderByDescending<K>(Expression<Func<T, K>> keySelector) {
-                if (!(_queryable is ILiteQueryable<T> queryable)) {
+                if (!TestQueryable(q => q.OrderByDescending(keySelector), out var queryable)) {
                     return Execute().OrderByDescending(keySelector);
                 }
-                return new ServerSideQuery<T>(_collection,
-                    queryable.OrderByDescending(keySelector), _pageSize);
+                return new ServerSideQuery<T>(_collection, queryable, _pageSize);
             }
 
             /// <inheritdoc/>
             public IQuery<K> Select<K>(Expression<Func<T, K>> selector) {
-                if (!(_queryable is ILiteQueryable<T> queryable) || typeof(T) != typeof(K)) {
+                if (typeof(T) != typeof(K) ||
+                    !TestQueryable<K>(q => q.Select(selector), out var queryable)) {
                     return Execute().Select(selector);
                 }
-                return new ServerSideQuery<K>(_collection,
-                    queryable.Select(selector), _pageSize);
+                return new ServerSideQuery<K>(_collection, queryable, _pageSize);
             }
 
             /// <inheritdoc/>
@@ -487,6 +494,21 @@ namespace Microsoft.Azure.IIoT.Storage.LiteDb.Clients {
             public IQuery<T> Execute() {
                 return new ClientSideQuery<T>(_collection,
                     _queryable.ToEnumerable().AsQueryable(), _pageSize);
+            }
+
+            /// <summary>
+            /// Helper to test queryable operation is possible
+            /// </summary>
+            /// <typeparam name="K"></typeparam>
+            /// <param name="call"></param>
+            /// <param name="queryable"></param>
+            /// <returns></returns>
+            private bool TestQueryable<K>(
+                Func<ILiteQueryable<T>, ILiteQueryableResult<K>> call,
+                out ILiteQueryableResult<K> queryable) {
+                queryable = _queryable is ILiteQueryable<T> q ?
+                    Try.Op(() => call(q)) : null;
+                return queryable != null;
             }
 
             private readonly DocumentCollection _collection;

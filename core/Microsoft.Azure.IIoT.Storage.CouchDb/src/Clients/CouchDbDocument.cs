@@ -7,6 +7,7 @@ namespace Microsoft.Azure.IIoT.Storage.CouchDb.Clients {
     using Microsoft.Azure.IIoT.Storage;
     using CouchDB.Driver.Types;
     using System;
+    using System.Linq;
     using System.Collections.Generic;
     using Newtonsoft.Json;
     using Newtonsoft.Json.Linq;
@@ -14,14 +15,26 @@ namespace Microsoft.Azure.IIoT.Storage.CouchDb.Clients {
     /// <summary>
     /// Document wrapper
     /// </summary>
-    internal sealed class CouchDbDocument : CouchDocument, IDocumentInfo<JObject> {
+    internal sealed class CouchDbDocument : CouchDocument, IDocumentInfo<JToken> {
+
+        /// <summary>
+        /// The actual document values to serialize
+        /// </summary>
+        [JsonExtensionData]
+        public IDictionary<string, JToken> Document { get; set; }
 
         /// <inheritdoc/>
         [JsonIgnore]
-        public JObject Value {
+        public JToken Value {
             get {
                 if (_value is null) {
-                    _value = JObject.FromObject(Document);
+                    var o = JObject.FromObject(Document);
+
+                    // Add etag and id as per convention
+                    o.AddOrUpdate(kIdProperty, Id);
+                    o.AddOrUpdate(kEtagProperty, Etag);
+
+                    _value = o;
                 }
                 return _value;
             }
@@ -31,25 +44,10 @@ namespace Microsoft.Azure.IIoT.Storage.CouchDb.Clients {
         [JsonIgnore]
         public string Etag {
             get {
-                if (Document.TryGetValue(kEtagProperty, out var etag)) {
-                    return (string)etag;
-                }
-                return null;
-            }
-        }
-
-        /// <inheritdoc/>
-        [JsonIgnore]
-        public override string Id {
-            get {
-                if (Document.TryGetValue(kIdProperty, out var id)) {
-                    return (string)id;
-                }
-                return base.Id; 
+                return Rev;
             }
             set {
-                base.Id = value;
-                Document.Add(kIdProperty, value);
+                Rev = value;
             }
         }
 
@@ -62,31 +60,52 @@ namespace Microsoft.Azure.IIoT.Storage.CouchDb.Clients {
             return new TypedDocument<T>(this);
         }
 
-        /// <inheritdoc/>
-        [JsonExtensionData]
-        public IDictionary<string, JToken> Document { get; set; }
-
         /// <summary>
         /// Create document
         /// </summary>
         /// <param name="value"></param>
-        internal static CouchDbDocument Create<T>(T value) {
-            return new CouchDbDocument {
-                Document = JObject
-                    .FromObject(value)
-                    .ToObject<IDictionary<string, JToken>>()
-            };
+        /// <param name="id"></param>
+        /// <param name="etag"></param>
+        internal static CouchDbDocument Wrap<T>(T value, string id, string etag) {
+            var token = value is null ? JValue.CreateNull() : JToken.FromObject(value);
+            if (token is JObject o) {
+                return WrapJson(o, id, etag);
+            }
+            return new CouchDbDocument { _value = token };
         }
 
         /// <summary>
-        /// Create updated document
+        /// Create document
         /// </summary>
-        /// <param name="value"></param>
+        /// <param name="o"></param>
         /// <param name="id"></param>
-        internal static CouchDbDocument CreateUpdated<T>(T value, string id) {
-            var doc = Create(value);
-            doc.Document[kEtagProperty] = Guid.NewGuid().ToString();
-            doc.Id = id;
+        /// <param name="etag"></param>
+        /// <returns></returns>
+        internal static CouchDbDocument WrapJson(JObject o, string id, string etag) {
+            var doc = new CouchDbDocument {
+                Document = o.Properties().ToDictionary(p => p.Name, p => p.Value)
+            };
+            if (!string.IsNullOrWhiteSpace(id)) {
+                doc.Id = id;
+            }
+            else if (doc.Document.TryGetValue(kIdProperty, out var jid)) {
+                doc.Id = (string)jid;
+            }
+            else {
+                doc.Id = Guid.NewGuid().ToString();
+            }
+            if (!string.IsNullOrWhiteSpace(etag)) {
+                doc.Rev = etag;
+            }
+            else if (doc.Document.TryGetValue(kEtagProperty, out var jetag)) {
+                doc.Rev = (string)jetag;
+            }
+            else {
+                // new document - let database assign.
+            }
+            // Remove any occurrence of id to avoid duplication
+            doc.Document.Remove(kIdProperty);
+            doc.Document.Remove(kEtagProperty);
             return doc;
         }
 
@@ -114,8 +133,8 @@ namespace Microsoft.Azure.IIoT.Storage.CouchDb.Clients {
             private readonly CouchDbDocument _doc;
         }
 
-        private JObject _value;
-        private const string kIdProperty = "_id";
+        private const string kIdProperty = "id";
         private const string kEtagProperty = "_etag";
+        private JToken _value;
     }
 }

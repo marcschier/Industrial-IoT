@@ -4,15 +4,16 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Storage.LiteDb.Clients {
+    using Microsoft.Azure.IIoT.Storage.Default;
     using Microsoft.Azure.IIoT.Utils;
     using Microsoft.Azure.IIoT.Diagnostics;
-    using Microsoft.Azure.IIoT.Storage.Default;
     using Microsoft.Azure.IIoT.Storage;
     using System;
     using System.Threading.Tasks;
     using System.Runtime.Serialization;
+    using System.Collections.Generic;
 
-    public class LiteDbClientFixture {
+    public class LiteDbClientFixture : IDisposable {
 
         /// <summary>
         /// Creates the documents used in this Sample
@@ -23,13 +24,11 @@ namespace Microsoft.Azure.IIoT.Storage.LiteDb.Clients {
             var AndersonFamily = new Family {
                 Id = "AndersenFamily",
                 LastName = "Andersen",
-                Parents = new Parent[]
-                {
+                Parents = new List<Parent> {
                     new Parent { FirstName = "Thomas" },
                     new Parent { FirstName = "Mary Kay" }
                 },
-                Children = new Child[]
-                {
+                Children = new Child[] {
                     new Child {
                         FirstName = "Henriette Thaulow",
                         Gender = "female",
@@ -40,7 +39,14 @@ namespace Microsoft.Azure.IIoT.Storage.LiteDb.Clients {
                         }
                     }
                 },
-                Address = new Address { State = "WA", County = "King", City = "Seattle" },
+                Address = new Address {
+                    State = "WA",
+                    County = "King",
+                    Zip = 98103,
+                    Size = 15.82,
+                    City = "Seattle"
+                },
+                Colors = new List<string> { "yellow", "blue", "orange" },
                 IsRegistered = true,
                 ExistsFor = TimeSpan.FromMinutes(1),
                 RegistrationDate = DateTime.UtcNow.AddDays(-1)
@@ -51,7 +57,7 @@ namespace Microsoft.Azure.IIoT.Storage.LiteDb.Clients {
             var WakefieldFamily = new Family {
                 Id = "WakefieldFamily",
                 LastName = "Wakefield",
-                Parents = new[] {
+                Parents = new List<Parent> {
                     new Parent { FamilyName= "Wakefield", FirstName= "Robin" },
                     new Parent { FamilyName= "Miller", FirstName= "Ben" }
                 },
@@ -74,7 +80,14 @@ namespace Microsoft.Azure.IIoT.Storage.LiteDb.Clients {
                         Grade= 1
                     }
                 },
-                Address = new Address { State = "NY", County = "Manhattan", City = "NY" },
+                Address = new Address {
+                    State = "NY",
+                    County = "Manhattan",
+                    Zip = 10592,
+                    Size = 5.82,
+                    City = "NY"
+                },
+                Colors = new List<string> { "blue", "red" },
                 IsRegistered = false,
                 ExistsFor = TimeSpan.FromMinutes(2),
                 RegistrationDate = DateTime.UtcNow.AddDays(-30)
@@ -129,9 +142,7 @@ namespace Microsoft.Azure.IIoT.Storage.LiteDb.Clients {
             return new ContainerWrapper(database, docs);
         }
 
-        /// <summary>
-        /// Clean up query container
-        /// </summary>
+        /// <inheritdoc/>
         public void Dispose() {
             _query?.Dispose();
         }
@@ -149,8 +160,9 @@ namespace Microsoft.Azure.IIoT.Storage.LiteDb.Clients {
             Container = container;
         }
 
+        /// <inheritdoc/>
         public void Dispose() {
-            Try.Op(() => _database.DeleteContainerAsync(Container.Name));
+            Try.Op(() => _database.DeleteContainerAsync(Container.Name).Wait());
         }
     }
 
@@ -162,6 +174,8 @@ namespace Microsoft.Azure.IIoT.Storage.LiteDb.Clients {
         public string FirstName { get; set; }
         [DataMember]
         public DateTimeOffset Dob { get; set; }
+        [DataMember]
+        public int Age { get; set; }
     }
 
     [DataContract]
@@ -197,6 +211,10 @@ namespace Microsoft.Azure.IIoT.Storage.LiteDb.Clients {
         [DataMember]
         public string City { get; set; }
         [DataMember]
+        public int Zip { get; set; }
+        [DataMember]
+        public double Size { get; set; }
+        [DataMember]
         public TimeSpan? LivedAt { get; set; }
     }
 
@@ -207,7 +225,7 @@ namespace Microsoft.Azure.IIoT.Storage.LiteDb.Clients {
         [DataMember]
         public string LastName { get; set; }
         [DataMember]
-        public Parent[] Parents { get; set; }
+        public List<Parent> Parents { get; set; }
         [DataMember]
         public Child[] Children { get; set; }
         [DataMember]
@@ -218,6 +236,8 @@ namespace Microsoft.Azure.IIoT.Storage.LiteDb.Clients {
         public DateTime RegistrationDate { get; set; }
         [DataMember]
         public TimeSpan ExistsFor { get; set; }
+        [DataMember]
+        public List<string> Colors { get; set; }
         [DataMember]
         public int? Count { get; set; }
 

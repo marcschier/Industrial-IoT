@@ -10,9 +10,9 @@ namespace Microsoft.Azure.IIoT.Storage {
     using System.Threading.Tasks;
 
     /// <summary>
-    /// List of documents
+    /// Result feed extensions
     /// </summary>
-    public static class DocumentFeedEx {
+    public static class ResultFeedEx {
 
         /// <summary>
         /// Invoke callback for each element
@@ -30,6 +30,22 @@ namespace Microsoft.Azure.IIoT.Storage {
                     await callback(item);
                 }
             }
+        }
+
+        /// <summary>
+        /// Count results in feed
+        /// </summary>
+        /// <param name="feed"></param>
+        /// <param name="ct"></param>
+        /// <returns></returns>
+        public static async Task<int> CountAsync<T>(this IResultFeed<T> feed,
+            CancellationToken ct = default) {
+            var count = 0;
+            while (feed.HasMore()) {
+                var results = await feed.ReadAsync(ct);
+                count += results.Count();
+            }
+            return count;
         }
     }
 }
