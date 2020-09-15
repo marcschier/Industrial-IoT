@@ -40,6 +40,9 @@ namespace Microsoft.Azure.IIoT.Azure.EventHub.Clients {
                         ev.Properties.Add(prop.Key, prop.Value);
                     }
                 }
+                if (!string.IsNullOrEmpty(target)) {
+                    ev.Properties.Add(EventProperties.Target, target);
+                }
                 var client = GetClient(target);
                 if (partitionKey != null) {
                     await client.SendAsync(ev, partitionKey);
@@ -67,17 +70,17 @@ namespace Microsoft.Azure.IIoT.Azure.EventHub.Clients {
         /// <inheritdoc/>
         public async Task SendEventAsync(string target, byte[] data, string contentType,
             string eventSchema, string contentEncoding, CancellationToken ct) {
-            using (var ev = CreateEvent(data, contentType, eventSchema, contentEncoding)) {
+            using (var ev = CreateEvent(data, target, contentType, eventSchema, contentEncoding)) {
                 var client = GetClient(target);
                 await client.SendAsync(ev);
             }
         }
 
         /// <inheritdoc/>
-        public async Task SendEventAsync(string target, IEnumerable<byte[]> batch, string contentType,
-            string eventSchema, string contentEncoding, CancellationToken ct) {
+        public async Task SendEventAsync(string target, IEnumerable<byte[]> batch,
+            string contentType, string eventSchema, string contentEncoding, CancellationToken ct) {
             var events = batch
-                .Select(b => CreateEvent(b, contentType, eventSchema, contentEncoding))
+                .Select(b => CreateEvent(b, target, contentType, eventSchema, contentEncoding))
                 .ToList();
             try {
                 var client = GetClient(target);
@@ -113,27 +116,39 @@ namespace Microsoft.Azure.IIoT.Azure.EventHub.Clients {
         /// Helper to create event from buffer and content type
         /// </summary>
         /// <param name="data"></param>
+        /// <param name="target"></param>
         /// <param name="contentType"></param>
         /// <param name="eventSchema"></param>
         /// <param name="contentEncoding"></param>
         /// <returns></returns>
-        private static EventData CreateEvent(byte[] data, string contentType,
-            string eventSchema, string contentEncoding) {
+        private static EventData CreateEvent(byte[] data, string target,
+            string contentType, string eventSchema, string contentEncoding) {
             var ev = new EventData(data);
-            ev.Properties.Add(EventProperties.ContentEncoding, contentEncoding);
-            ev.Properties.Add(EventProperties.ContentType, contentType);
-            ev.Properties.Add(EventProperties.EventSchema, eventSchema);
+            if (!string.IsNullOrEmpty(contentEncoding)) {
+                ev.Properties.Add(EventProperties.ContentEncoding, contentEncoding);
+            }
+            if (!string.IsNullOrEmpty(contentType)) {
+                ev.Properties.Add(EventProperties.ContentType, contentType);
+            }
+            if (!string.IsNullOrEmpty(eventSchema)) {
+                ev.Properties.Add(EventProperties.EventSchema, eventSchema);
+            }
+            if (!string.IsNullOrEmpty(target)) {
+                ev.Properties.Add(EventProperties.Target, target);
+            }
             return ev;
         }
 
         /// <summary>
         /// Get client from cache
         /// </summary>
-        /// <param name="name"></param>
+        /// <param name="target"></param>
         /// <returns></returns>
-        private EventHubClient GetClient(string name) {
-            var key = name ?? _config.EventHubPath;
-            return _cache.GetOrAdd(key, entityPath => {
+        private EventHubClient GetClient(string target) {
+            return _cache.GetOrAdd(target ?? _config.EventHubPath, entityPath => {
+                if (entityPath != _config.EventHubPath) {
+                    entityPath = entityPath.Split('/')[0];
+                }
                 var cs = new EventHubsConnectionStringBuilder(_config.EventHubConnString) {
                     EntityPath = entityPath
                 }.ToString();

@@ -223,7 +223,19 @@ namespace Microsoft.Azure.IIoT.Services.CouchDb.Clients {
         }
 
         [SkippableFact]
-        public async Task QueryWithListCountAsync() {
+        public async Task QueryWithListCount1Async() {
+            var documents = await _fixture.GetDocumentsAsync();
+            Skip.If(documents == null);
+
+            var families = documents.CreateQuery<Family>()
+                .Where(f => f.Colors.Count == 2);
+
+            var results = await RunAsync(families);
+            Assert.Single(results);
+        }
+
+        [SkippableFact]
+        public async Task QueryWithListCount2Async() {
             var documents = await _fixture.GetDocumentsAsync();
             Skip.If(documents == null);
 
@@ -231,12 +243,6 @@ namespace Microsoft.Azure.IIoT.Services.CouchDb.Clients {
                 .Where(f => f.Colors.Count > 2);
 
             var results = await RunAsync(families);
-            Assert.Single(results);
-
-            families = documents.CreateQuery<Family>()
-                .Where(f => f.Colors.Count == 2);
-
-            results = await RunAsync(families);
             Assert.Single(results);
 
             families = documents.CreateQuery<Family>()

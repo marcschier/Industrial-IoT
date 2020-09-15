@@ -45,13 +45,16 @@ namespace Microsoft.Azure.IIoT.Services.Kafka.Clients {
         /// <inheritdoc/>
         public async Task SendAsync(string target, byte[] payload,
             IDictionary<string, string> properties, string partitionKey, CancellationToken ct) {
+            if (target == null) {
+                throw new ArgumentNullException(nameof(target));
+            }
             if (payload == null) {
                 throw new ArgumentNullException(nameof(payload));
             }
             var ev = new Message<string, byte[]> {
-                Key = partitionKey ?? target,
+                Key = GetKey(target, null, partitionKey),
                 Value = payload,
-                Headers = CreateHeader(properties)
+                Headers = CreateHeader(target, properties)
             };
             var topic = await EnsureTopicAsync(target);
             await _producer.ProduceAsync(topic, ev, ct);
@@ -61,6 +64,9 @@ namespace Microsoft.Azure.IIoT.Services.Kafka.Clients {
         public void Send<T>(string target, byte[] payload, T token,
             Action<T, Exception> complete, IDictionary<string, string> properties,
             string partitionKey) {
+            if (target == null) {
+                throw new ArgumentNullException(nameof(target));
+            }
             if (payload == null) {
                 throw new ArgumentNullException(nameof(payload));
             }
@@ -71,19 +77,22 @@ namespace Microsoft.Azure.IIoT.Services.Kafka.Clients {
                 throw new ArgumentNullException(nameof(complete));
             }
             var ev = new Message<string, byte[]> {
-                Key = partitionKey ?? target,
+                Key = GetKey(target, null, partitionKey),
                 Value = payload,
-                Headers = CreateHeader(properties)
+                Headers = CreateHeader(target, properties)
             };
             var topic = EnsureTopicAsync(target).Result;
             _producer.Produce(topic, ev,
-                report => complete(token, report.Error == null ?
-                    null : new ExternalDependencyException(report.Error.Reason)));
+                report => complete(token, report.Error.IsError ?
+                    new ExternalDependencyException(report.Error.Reason) : null));
         }
 
         /// <inheritdoc/>
         public async Task SendEventAsync(string target, byte[] payload, string contentType,
             string eventSchema, string contentEncoding, CancellationToken ct) {
+            if (target == null) {
+                throw new ArgumentNullException(nameof(target));
+            }
             if (payload == null) {
                 throw new ArgumentNullException(nameof(payload));
             }
@@ -91,9 +100,9 @@ namespace Microsoft.Azure.IIoT.Services.Kafka.Clients {
                 target = "default";
             }
             var ev = new Message<string, byte[]> {
-                Key = eventSchema ?? target,
+                Key = GetKey(target, eventSchema, null),
                 Value = payload,
-                Headers = CreateHeader(contentType, eventSchema, contentEncoding)
+                Headers = CreateHeader(target, contentType, eventSchema, contentEncoding)
             };
             var topic = await EnsureTopicAsync(target);
             await _producer.ProduceAsync(topic, ev, ct);
@@ -102,14 +111,17 @@ namespace Microsoft.Azure.IIoT.Services.Kafka.Clients {
         /// <inheritdoc/>
         public async Task SendEventAsync(string target, IEnumerable<byte[]> batch, string contentType,
             string eventSchema, string contentEncoding, CancellationToken ct) {
+            if (target == null) {
+                throw new ArgumentNullException(nameof(target));
+            }
             if (batch == null) {
                 throw new ArgumentNullException(nameof(batch));
             }
-            var header = CreateHeader(contentType, eventSchema, contentEncoding);
+            var header = CreateHeader(target, contentType, eventSchema, contentEncoding);
             var topic = await EnsureTopicAsync(target);
             foreach (var payload in batch) {
                 var ev = new Message<string, byte[]> {
-                    Key = eventSchema ?? target,
+                    Key = GetKey(target, eventSchema, null),
                     Value = payload,
                     Headers = header
                 };
@@ -121,6 +133,9 @@ namespace Microsoft.Azure.IIoT.Services.Kafka.Clients {
         /// <inheritdoc/>
         public void SendEvent<T>(string target, byte[] payload, string contentType,
             string eventSchema, string contentEncoding, T token, Action<T, Exception> complete) {
+            if (target == null) {
+                throw new ArgumentNullException(nameof(target));
+            }
             if (payload == null) {
                 throw new ArgumentNullException(nameof(payload));
             }
@@ -131,32 +146,59 @@ namespace Microsoft.Azure.IIoT.Services.Kafka.Clients {
                 throw new ArgumentNullException(nameof(complete));
             }
             var ev = new Message<string, byte[]> {
-                Key = eventSchema ?? target,
+                Key = GetKey(target, eventSchema, null),
                 Value = payload,
-                Headers = CreateHeader(contentType, eventSchema, contentEncoding)
+                Headers = CreateHeader(target, contentType, eventSchema, contentEncoding)
             };
             var topic = EnsureTopicAsync(target).Result;
             _producer.Produce(topic, ev,
-                report => complete(token, report.Error == null ?
-                    null : new ExternalDependencyException(report.Error.Reason)));
+                report => complete(token, report.Error.IsError ?
+                    new ExternalDependencyException(report.Error.Reason) : null));
         }
 
         /// <inheritdoc/>
         public void Dispose() {
-            _producer.Dispose();
+            _producer?.Dispose();
+            _admin?.Dispose();
+            _topics.Clear();
+        }
+
+        /// <summary>
+        /// Get key
+        /// </summary>
+        /// <param name="schema"></param>
+        /// <param name="target"></param>
+        /// <param name="partitionKey"></param>
+        /// <returns></returns>
+        private string GetKey(string target, string schema, string partitionKey) {
+            var key = partitionKey;
+            if (string.IsNullOrEmpty(key)) {
+                key = target;
+            }
+            if (string.IsNullOrEmpty(key)) {
+                key = "default";
+            }
+            if (!string.IsNullOrEmpty(schema)) {
+                key += schema;
+            }
+            return key.ToLowerInvariant();
         }
 
         /// <summary>
         /// Create hader
         /// </summary>
+        /// <param name="target"></param>
         /// <param name="properties"></param>
         /// <returns></returns>
-        private static Headers CreateHeader(IDictionary<string, string> properties) {
+        private static Headers CreateHeader(string target, IDictionary<string, string> properties) {
             var header = new Headers();
             if (properties != null) {
                 foreach (var prop in properties) {
                     header.Add(prop.Key, Encoding.UTF8.GetBytes(prop.Value));
                 }
+            }
+            if (!string.IsNullOrEmpty(target)) {
+                header.Add(EventProperties.Target, Encoding.UTF8.GetBytes(target));
             }
             return header;
         }
@@ -164,11 +206,12 @@ namespace Microsoft.Azure.IIoT.Services.Kafka.Clients {
         /// <summary>
         /// Helper to create header
         /// </summary>
+        /// <param name="target"></param>
         /// <param name="contentType"></param>
         /// <param name="eventSchema"></param>
         /// <param name="contentEncoding"></param>
         /// <returns></returns>
-        private static Headers CreateHeader(string contentType, string eventSchema,
+        private static Headers CreateHeader(string target, string contentType, string eventSchema,
             string contentEncoding) {
             var header = new Headers();
             if (!string.IsNullOrEmpty(contentType)) {
@@ -180,6 +223,9 @@ namespace Microsoft.Azure.IIoT.Services.Kafka.Clients {
             if (!string.IsNullOrEmpty(eventSchema)) {
                 header.Add(EventProperties.EventSchema, Encoding.UTF8.GetBytes(eventSchema));
             }
+            if (!string.IsNullOrEmpty(target)) {
+                header.Add(EventProperties.Target, Encoding.UTF8.GetBytes(target));
+            }
             return header;
         }
 
@@ -190,18 +236,27 @@ namespace Microsoft.Azure.IIoT.Services.Kafka.Clients {
         /// <returns></returns>
         private Task<string> EnsureTopicAsync(string target) {
             return _topics.GetOrAdd(target, async k => {
-                var topic = target.Replace('/', '.');
-                await _admin.CreateTopicsAsync(
-                    new TopicSpecification {
-                        Name = topic,
-                        NumPartitions = _config.Partitions,
-                        ReplicationFactor = (short)_config.ReplicaFactor,
-                    }.YieldReturn(),
-                    new CreateTopicsOptions {
-                        OperationTimeout = TimeSpan.FromSeconds(30),
-                        RequestTimeout = TimeSpan.FromSeconds(30)
-                    });
-                return topic;
+                var topic = target.Split('/')[0];
+                try {
+                    await _admin.CreateTopicsAsync(
+                        new TopicSpecification {
+                            Name = topic,
+                            NumPartitions = _config.Partitions,
+                            ReplicationFactor = (short)_config.ReplicaFactor,
+                        }.YieldReturn(),
+                        new CreateTopicsOptions {
+                            OperationTimeout = TimeSpan.FromSeconds(30),
+                            RequestTimeout = TimeSpan.FromSeconds(30)
+                        });
+                    return topic;
+                }
+                catch (CreateTopicsException e) {
+                    if (e.Results.Count > 0 &&
+                        e.Results[0].Error?.Code == ErrorCode.TopicAlreadyExists) {
+                        return topic;
+                    }
+                    throw;
+                }
             });
         }
 

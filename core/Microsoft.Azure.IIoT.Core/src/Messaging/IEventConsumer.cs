@@ -18,7 +18,7 @@ namespace Microsoft.Azure.IIoT.Messaging {
         /// </summary>
         /// <param name="ct"></param>
         /// <returns></returns>
-        Task<IEnumerable<(string, byte[], IDictionary<string, string>)>> ConsumeAsync(
+        Task<IEnumerable<(byte[], IDictionary<string, string>)>> ConsumeAsync(
             CancellationToken ct = default);
     }
 }

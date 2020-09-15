@@ -23,8 +23,13 @@ namespace Microsoft.Azure.IIoT.Services.CouchDb.Server {
         /// </summary>
         /// <param name="port"></param>
         /// <param name="logger"></param>
-        public CouchDbServer(ILogger logger, int? port = null) : base(logger) {
+        /// <param name="user"></param>
+        /// <param name="key"></param>
+        public CouchDbServer(ILogger logger, string user = null, string key = null,
+            int? port = null) : base(logger) {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _user = user;
+            _key = key;
             _port = port ?? 5984;
         }
 
@@ -93,8 +98,8 @@ namespace Microsoft.Azure.IIoT.Services.CouchDb.Server {
                     },
                     Env = new List<string> {
                         "COUCHDB_CREATE_DATABASES=yes",
-                        "COUCHDB_USER=admin",
-                        "COUCHDB_PASSWORD=couchdb",
+                        "COUCHDB_USER=" + _user ?? "admin",
+                        "COUCHDB_PASSWORD=" + _key ?? "couchdb",
                     }
                 }) {
                 HostConfig = new HostConfig {
@@ -112,6 +117,8 @@ namespace Microsoft.Azure.IIoT.Services.CouchDb.Server {
 
         private readonly SemaphoreSlim _lock = new SemaphoreSlim(1, 1);
         private readonly ILogger _logger;
+        private readonly string _user;
+        private readonly string _key;
         private readonly int _port;
         private string _containerId;
         private bool _owner;

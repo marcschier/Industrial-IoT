@@ -24,5 +24,10 @@ namespace Microsoft.Azure.IIoT.Hub {
         /// Event schema.
         /// </summary>
         public const string EventSchema = "EventSchema";
+
+        /// <summary>
+        /// Target resource
+        /// </summary>
+        public const string Target = "Target";
     }
 }

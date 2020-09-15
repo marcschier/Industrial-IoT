@@ -42,7 +42,7 @@ namespace Microsoft.Azure.IIoT.Messaging.Default {
                     while (!ct.IsCancellationRequested) {
                         var messages = await _consumer.ConsumeAsync(ct);
                         foreach (var message in messages) {
-                            await _handler.HandleAsync(message.Item1, message.Item2, message.Item3,
+                            await _handler.HandleAsync(message.Item1, message.Item2,
                                 () => Task.CompletedTask);
                         }
                         await Try.Async(_handler.OnBatchCompleteAsync);

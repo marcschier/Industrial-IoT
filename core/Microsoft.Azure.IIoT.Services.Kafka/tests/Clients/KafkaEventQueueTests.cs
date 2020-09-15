@@ -22,11 +22,12 @@ namespace Microsoft.Azure.IIoT.Services.Kafka.Clients {
 
         [SkippableFact]
         public async Task SendDeviceEventTest1Async() {
-            using (var harness = _fixture.GetHarness()) {
+            var fix = new Fixture();
+            var hub = fix.Create<string>();
+            using (var harness = _fixture.GetHarness(hub)) {
                 var queue = harness.GetEventClient();
                 Skip.If(queue == null);
 
-                var fix = new Fixture();
                 var data = fix.CreateMany<byte>().ToArray();
                 var deviceId = fix.Create<string>();
                 var contentEncoding = fix.Create<string>();
@@ -34,10 +35,12 @@ namespace Microsoft.Azure.IIoT.Services.Kafka.Clients {
 
                 var tcs = new TaskCompletionSource<TelemetryEventArgs>();
                 harness.OnEvent += (_, a) => {
-                    tcs.TrySetResult(a);
+                    if (a.HandlerSchema == "Test1"){
+                        tcs.TrySetResult(a);
+                    }
                 };
 
-                await queue.SendEventAsync(HubResource.Format(deviceId), data, contentType, "Test1", contentEncoding);
+                await queue.SendEventAsync(HubResource.Format(hub, deviceId, null), data, contentType, "Test1", contentEncoding);
 
                 var result = await tcs.Task;
                 Assert.Equal(deviceId, result.DeviceId);
@@ -53,11 +56,12 @@ namespace Microsoft.Azure.IIoT.Services.Kafka.Clients {
 
         [SkippableFact]
         public async Task SendDeviceEventTest2Async() {
-            using (var harness = _fixture.GetHarness()) {
+            var fix = new Fixture();
+            var hub = fix.Create<string>();
+            using (var harness = _fixture.GetHarness(hub)) {
                 var queue = harness.GetEventClient();
                 Skip.If(queue == null);
 
-                var fix = new Fixture();
                 var data = fix.CreateMany<byte>().ToArray();
                 var deviceId = fix.Create<string>();
                 var contentEncoding = fix.Create<string>();
@@ -71,13 +75,13 @@ namespace Microsoft.Azure.IIoT.Services.Kafka.Clients {
                     }
                 };
 
-                await queue.SendEventAsync(HubResource.Format(deviceId), fix.CreateMany<byte>().ToArray(), contentType, "TEst1", contentEncoding);
-                await queue.SendEventAsync(HubResource.Format(deviceId), fix.CreateMany<byte>().ToArray(), contentType, "TeST1", contentEncoding);
-                await queue.SendEventAsync(HubResource.Format(deviceId), fix.CreateMany<byte>().ToArray(), contentType, "TeSt1", contentEncoding);
-                await queue.SendEventAsync(HubResource.Format(deviceId), fix.CreateMany<byte>().ToArray(), contentType, "TesT1", contentEncoding);
-                await queue.SendEventAsync(HubResource.Format(deviceId), data, contentType, "test1", contentEncoding);
-                await queue.SendEventAsync(HubResource.Format(deviceId), fix.CreateMany<byte>().ToArray(), contentType, "TESt1", contentEncoding);
-                await queue.SendEventAsync(HubResource.Format(deviceId), fix.CreateMany<byte>().ToArray(), contentType, "TEST1", contentEncoding);
+                await queue.SendEventAsync(HubResource.Format(hub, deviceId, null), fix.CreateMany<byte>().ToArray(), contentType, "TEst1", contentEncoding);
+                await queue.SendEventAsync(HubResource.Format(hub, deviceId, null), fix.CreateMany<byte>().ToArray(), contentType, "TeST1", contentEncoding);
+                await queue.SendEventAsync(HubResource.Format(hub, deviceId, null), fix.CreateMany<byte>().ToArray(), contentType, "TeSt1", contentEncoding);
+                await queue.SendEventAsync(HubResource.Format(hub, deviceId, null), fix.CreateMany<byte>().ToArray(), contentType, "TesT1", contentEncoding);
+                await queue.SendEventAsync(HubResource.Format(hub, deviceId, null), data, contentType, "test1", contentEncoding);
+                await queue.SendEventAsync(HubResource.Format(hub, deviceId, null), fix.CreateMany<byte>().ToArray(), contentType, "TESt1", contentEncoding);
+                await queue.SendEventAsync(HubResource.Format(hub, deviceId, null), fix.CreateMany<byte>().ToArray(), contentType, "TEST1", contentEncoding);
 
                 var result = await tcs.Task;
                 Assert.Equal(deviceId, result.DeviceId);
@@ -93,11 +97,12 @@ namespace Microsoft.Azure.IIoT.Services.Kafka.Clients {
 
         [SkippableFact]
         public async Task SendDeviceEventTestBatch1Async() {
-            using (var harness = _fixture.GetHarness()) {
+            var fix = new Fixture();
+            var hub = fix.Create<string>();
+            using (var harness = _fixture.GetHarness(hub)) {
                 var queue = harness.GetEventClient();
                 Skip.If(queue == null);
 
-                var fix = new Fixture();
                 var data = fix.CreateMany<byte>().ToArray();
                 var deviceId = fix.Create<string>();
                 var contentEncoding = fix.Create<string>();
@@ -111,13 +116,13 @@ namespace Microsoft.Azure.IIoT.Services.Kafka.Clients {
                     }
                 };
 
-                await queue.SendEventAsync(HubResource.Format(deviceId),
+                await queue.SendEventAsync(HubResource.Format(hub, deviceId, null),
                     Enumerable.Range(0, 10).Select(i => fix.CreateMany<byte>().ToArray()), contentType,
                     "TEst1", contentEncoding);
-                await queue.SendEventAsync(HubResource.Format(deviceId),
+                await queue.SendEventAsync(HubResource.Format(hub, deviceId, null),
                     Enumerable.Range(1, 5).Select(i => fix.CreateMany<byte>().ToArray()), contentType,
                     "bbbb", contentEncoding);
-                await queue.SendEventAsync(HubResource.Format(deviceId),
+                await queue.SendEventAsync(HubResource.Format(hub, deviceId, null),
                     Enumerable.Range(0, 10).Select(i => data), contentType,
                     "TEst1", contentEncoding);
 
@@ -135,11 +140,12 @@ namespace Microsoft.Azure.IIoT.Services.Kafka.Clients {
 
         [SkippableFact]
         public async Task SendDeviceEventTestBatch2Async() {
-            using (var harness = _fixture.GetHarness()) {
+            var fix = new Fixture();
+            var hub = fix.Create<string>();
+            using (var harness = _fixture.GetHarness(hub)) {
                 var queue = harness.GetEventClient();
                 Skip.If(queue == null);
 
-                var fix = new Fixture();
                 var data = fix.CreateMany<byte>().ToArray();
                 var deviceId = fix.Create<string>();
                 var contentEncoding = fix.Create<string>();
@@ -154,7 +160,7 @@ namespace Microsoft.Azure.IIoT.Services.Kafka.Clients {
                 };
 
                 var rand = new Random();
-                await queue.SendEventAsync(HubResource.Format(deviceId),
+                await queue.SendEventAsync(HubResource.Format(hub, deviceId, null),
                     Enumerable.Range(0, 1000).Select(i => data), contentType,
                     "Test3", contentEncoding);
 
@@ -172,11 +178,12 @@ namespace Microsoft.Azure.IIoT.Services.Kafka.Clients {
 
         [SkippableFact]
         public async Task SendDeviceEventWithCallbackTest1Async() {
-            using (var harness = _fixture.GetHarness()) {
+            var fix = new Fixture();
+            var hub = fix.Create<string>();
+            using (var harness = _fixture.GetHarness(hub)) {
                 var queue = harness.GetEventClient();
                 Skip.If(queue == null);
 
-                var fix = new Fixture();
                 var data = fix.CreateMany<byte>().ToArray();
                 var deviceId = fix.Create<string>();
                 var contentEncoding = fix.Create<string>();
@@ -189,7 +196,7 @@ namespace Microsoft.Azure.IIoT.Services.Kafka.Clients {
 
                 var expected = "ttttttttttttt";
                 var actual = new TaskCompletionSource<string>();
-                queue.SendEvent(HubResource.Format(deviceId), data, contentType,
+                queue.SendEvent(HubResource.Format(hub, deviceId, null), data, contentType,
                     "Test3", contentEncoding, expected, (t, e) => {
                         if (e != null) {
                             actual.TrySetException(e);
@@ -214,11 +221,12 @@ namespace Microsoft.Azure.IIoT.Services.Kafka.Clients {
 
         [SkippableFact]
         public async Task SendDeviceEventWithCallbackTest2Async() {
-            using (var harness = _fixture.GetHarness()) {
+            var fix = new Fixture();
+            var hub = fix.Create<string>();
+            using (var harness = _fixture.GetHarness(hub)) {
                 var queue = harness.GetEventClient();
                 Skip.If(queue == null);
 
-                var fix = new Fixture();
                 var data = fix.CreateMany<byte>().ToArray();
                 var deviceId = fix.Create<string>();
                 var contentEncoding = fix.Create<string>();
@@ -231,7 +239,7 @@ namespace Microsoft.Azure.IIoT.Services.Kafka.Clients {
 
                 var expected = 1234;
                 var actual = new TaskCompletionSource<int?>();
-                queue.SendEvent(HubResource.Format(deviceId), data, contentType,
+                queue.SendEvent(HubResource.Format(hub, deviceId, null), data, contentType,
                     "Test3", contentEncoding, expected, (t, e) => {
                         if (e != null) {
                             actual.TrySetException(e);
@@ -256,11 +264,12 @@ namespace Microsoft.Azure.IIoT.Services.Kafka.Clients {
 
         [SkippableFact]
         public async Task SendDeviceEventWithCallbackTest3Async() {
-            using (var harness = _fixture.GetHarness()) {
+            var fix = new Fixture();
+            var hub = fix.Create<string>();
+            using (var harness = _fixture.GetHarness(hub)) {
                 var queue = harness.GetEventClient();
                 Skip.If(queue == null);
 
-                var fix = new Fixture();
                 var data = fix.CreateMany<byte>().ToArray();
                 var deviceId = fix.Create<string>();
                 var contentEncoding = fix.Create<string>();
@@ -276,13 +285,13 @@ namespace Microsoft.Azure.IIoT.Services.Kafka.Clients {
 
                 var expected = 4;
                 var actual = new TaskCompletionSource<int?>();
-                queue.SendEvent(HubResource.Format(deviceId), data, fix.Create<string>(),
+                queue.SendEvent(HubResource.Format(hub, deviceId, null), data, fix.Create<string>(),
                     "Test3", fix.Create<string>(), 1, (t, e) => { });
-                queue.SendEvent(HubResource.Format(deviceId), data, fix.Create<string>(),
+                queue.SendEvent(HubResource.Format(hub, deviceId, null), data, fix.Create<string>(),
                     "Test3", fix.Create<string>(), 2, (t, e) => { });
-                queue.SendEvent(HubResource.Format(deviceId), data, fix.Create<string>(),
+                queue.SendEvent(HubResource.Format(hub, deviceId, null), data, fix.Create<string>(),
                     "Test3", fix.Create<string>(), 3, (t, e) => { });
-                queue.SendEvent(HubResource.Format(deviceId), data, contentType,
+                queue.SendEvent(HubResource.Format(hub, deviceId, null), data, contentType,
                     "Test3", contentEncoding, expected, (t, e) => {
                         if (e != null) {
                             actual.TrySetException(e);
@@ -291,9 +300,9 @@ namespace Microsoft.Azure.IIoT.Services.Kafka.Clients {
                             actual.TrySetResult(t);
                         }
                     });
-                queue.SendEvent(HubResource.Format(deviceId), data, fix.Create<string>(),
+                queue.SendEvent(HubResource.Format(hub, deviceId, null), data, fix.Create<string>(),
                     "Test3", fix.Create<string>(), 5, (t, e) => { });
-                queue.SendEvent(HubResource.Format(deviceId), data, fix.Create<string>(),
+                queue.SendEvent(HubResource.Format(hub, deviceId, null), data, fix.Create<string>(),
                     "Test3", fix.Create<string>(), 6, (t, e) => { });
 
                 var result = await tcs.Task;
@@ -311,11 +320,12 @@ namespace Microsoft.Azure.IIoT.Services.Kafka.Clients {
 
         [SkippableFact]
         public async Task SendDeviceEventWithCallbackLargeNumberOfEventsAsync() {
-            using (var harness = _fixture.GetHarness()) {
+            var fix = new Fixture();
+            var hub = fix.Create<string>();
+            using (var harness = _fixture.GetHarness(hub)) {
                 var queue = harness.GetEventClient();
                 Skip.If(queue == null);
 
-                var fix = new Fixture();
                 var data = fix.CreateMany<byte>().ToArray();
                 var deviceId = fix.Create<string>();
                 var contentEncoding = fix.Create<string>();
@@ -333,7 +343,7 @@ namespace Microsoft.Azure.IIoT.Services.Kafka.Clients {
                 var hashSet = new HashSet<int>(10000);
                 Enumerable.Range(0, 10000)
                     .ToList()
-                    .ForEach(i => queue.SendEvent(HubResource.Format(deviceId), data, contentType,
+                    .ForEach(i => queue.SendEvent(HubResource.Format(hub, deviceId, null), data, contentType,
                         "TesT3", contentEncoding, i, (t, e) => hashSet.Add(t)));
 
                 var result = await tcs.Task;
@@ -350,11 +360,12 @@ namespace Microsoft.Azure.IIoT.Services.Kafka.Clients {
 
         [SkippableFact]
         public async Task SendModuleEventTest1Async() {
-            using (var harness = _fixture.GetHarness()) {
+            var fix = new Fixture();
+            var hub = fix.Create<string>();
+            using (var harness = _fixture.GetHarness(hub)) {
                 var queue = harness.GetEventClient();
                 Skip.If(queue == null);
 
-                var fix = new Fixture();
                 var data = fix.CreateMany<byte>().ToArray();
                 var deviceId = fix.Create<string>();
                 var moduleId = fix.Create<string>();
@@ -366,7 +377,7 @@ namespace Microsoft.Azure.IIoT.Services.Kafka.Clients {
                     tcs.TrySetResult(a);
                 };
 
-                await queue.SendEventAsync(HubResource.Format(deviceId, moduleId), data, contentType, "test2", contentEncoding);
+                await queue.SendEventAsync(HubResource.Format(hub, deviceId, moduleId), data, contentType, "test2", contentEncoding);
 
                 var result = await tcs.Task;
                 Assert.Equal(deviceId, result.DeviceId);
@@ -382,11 +393,12 @@ namespace Microsoft.Azure.IIoT.Services.Kafka.Clients {
 
         [SkippableFact]
         public async Task SendModuleEventTest2Async() {
-            using (var harness = _fixture.GetHarness()) {
+            var fix = new Fixture();
+            var hub = fix.Create<string>();
+            using (var harness = _fixture.GetHarness(hub)) {
                 var queue = harness.GetEventClient();
                 Skip.If(queue == null);
 
-                var fix = new Fixture();
                 var data = fix.CreateMany<byte>().ToArray();
                 var deviceId = fix.Create<string>();
                 var moduleId = fix.Create<string>();
@@ -401,12 +413,12 @@ namespace Microsoft.Azure.IIoT.Services.Kafka.Clients {
                     }
                 };
 
-                await queue.SendEventAsync(HubResource.Format(deviceId, moduleId), fix.CreateMany<byte>().ToArray(), contentType, "Test2", contentEncoding);
-                await queue.SendEventAsync(HubResource.Format(deviceId, moduleId), fix.CreateMany<byte>().ToArray(), contentType, "Test2", contentEncoding);
-                await queue.SendEventAsync(HubResource.Format(deviceId, moduleId), fix.CreateMany<byte>().ToArray(), contentType, "Test2", contentEncoding);
-                await queue.SendEventAsync(HubResource.Format(deviceId, moduleId), data, contentType, "test2", contentEncoding);
-                await queue.SendEventAsync(HubResource.Format(deviceId, moduleId), fix.CreateMany<byte>().ToArray(), contentType, "Test2", contentEncoding);
-                await queue.SendEventAsync(HubResource.Format(deviceId, moduleId), fix.CreateMany<byte>().ToArray(), contentType, "aaaaa", contentEncoding);
+                await queue.SendEventAsync(HubResource.Format(hub, deviceId, moduleId), fix.CreateMany<byte>().ToArray(), contentType, "Test2", contentEncoding);
+                await queue.SendEventAsync(HubResource.Format(hub, deviceId, moduleId), fix.CreateMany<byte>().ToArray(), contentType, "Test2", contentEncoding);
+                await queue.SendEventAsync(HubResource.Format(hub, deviceId, moduleId), fix.CreateMany<byte>().ToArray(), contentType, "Test2", contentEncoding);
+                await queue.SendEventAsync(HubResource.Format(hub, deviceId, moduleId), data, contentType, "test2", contentEncoding);
+                await queue.SendEventAsync(HubResource.Format(hub, deviceId, moduleId), fix.CreateMany<byte>().ToArray(), contentType, "Test2", contentEncoding);
+                await queue.SendEventAsync(HubResource.Format(hub, deviceId, moduleId), fix.CreateMany<byte>().ToArray(), contentType, "aaaaa", contentEncoding);
 
                 var result = await tcs.Task;
                 Assert.Equal(deviceId, result.DeviceId);
@@ -422,11 +434,12 @@ namespace Microsoft.Azure.IIoT.Services.Kafka.Clients {
 
         [SkippableFact]
         public async Task SendModuleEventTestBatch1Async() {
-            using (var harness = _fixture.GetHarness()) {
+            var fix = new Fixture();
+            var hub = fix.Create<string>();
+            using (var harness = _fixture.GetHarness(hub)) {
                 var queue = harness.GetEventClient();
                 Skip.If(queue == null);
 
-                var fix = new Fixture();
                 var data = fix.CreateMany<byte>().ToArray();
                 var deviceId = fix.Create<string>();
                 var moduleId = fix.Create<string>();
@@ -441,13 +454,13 @@ namespace Microsoft.Azure.IIoT.Services.Kafka.Clients {
                     }
                 };
 
-                await queue.SendEventAsync(HubResource.Format(deviceId, moduleId),
+                await queue.SendEventAsync(HubResource.Format(hub, deviceId, moduleId),
                     Enumerable.Range(0, 100).Select(i => fix.CreateMany<byte>().ToArray()), contentType,
                     "TEst2", contentEncoding);
-                await queue.SendEventAsync(HubResource.Format(deviceId, moduleId),
+                await queue.SendEventAsync(HubResource.Format(hub, deviceId, moduleId),
                     Enumerable.Range(1, 5).Select(i => fix.CreateMany<byte>().ToArray()), contentType,
                     "bbbb", contentEncoding);
-                await queue.SendEventAsync(HubResource.Format(deviceId, moduleId),
+                await queue.SendEventAsync(HubResource.Format(hub, deviceId, moduleId),
                     Enumerable.Range(0, 20).Select(i => data), contentType,
                     "TEst2", contentEncoding);
 
@@ -465,11 +478,12 @@ namespace Microsoft.Azure.IIoT.Services.Kafka.Clients {
 
         [SkippableFact]
         public async Task SendModuleEventTestBatch2Async() {
-            using (var harness = _fixture.GetHarness()) {
+            var fix = new Fixture();
+            var hub = fix.Create<string>();
+            using (var harness = _fixture.GetHarness(hub)) {
                 var queue = harness.GetEventClient();
                 Skip.If(queue == null);
 
-                var fix = new Fixture();
                 var data = fix.CreateMany<byte>().ToArray();
                 var deviceId = fix.Create<string>();
                 var moduleId = fix.Create<string>();
@@ -484,7 +498,7 @@ namespace Microsoft.Azure.IIoT.Services.Kafka.Clients {
                     }
                 };
 
-                await queue.SendEventAsync(HubResource.Format(deviceId, moduleId),
+                await queue.SendEventAsync(HubResource.Format(hub, deviceId, moduleId),
                     Enumerable.Range(0, 1000).Select(i => data), contentType,
                     "Test2", contentEncoding);
 
@@ -502,11 +516,12 @@ namespace Microsoft.Azure.IIoT.Services.Kafka.Clients {
 
         [SkippableFact]
         public async Task SendModuleEventWithCallbackTest1Async() {
-            using (var harness = _fixture.GetHarness()) {
+            var fix = new Fixture();
+            var hub = fix.Create<string>();
+            using (var harness = _fixture.GetHarness(hub)) {
                 var queue = harness.GetEventClient();
                 Skip.If(queue == null);
 
-                var fix = new Fixture();
                 var data = fix.CreateMany<byte>().ToArray();
                 var deviceId = fix.Create<string>();
                 var moduleId = fix.Create<string>();
@@ -520,15 +535,15 @@ namespace Microsoft.Azure.IIoT.Services.Kafka.Clients {
 
                 var expected = "ttttttttttttt";
                 var actual = new TaskCompletionSource<string>();
-                queue.SendEvent(HubResource.Format(deviceId, moduleId), data,contentType,
+                queue.SendEvent(HubResource.Format(hub, deviceId, moduleId), data, contentType,
                     "Test2", contentEncoding, expected, (t, e) => {
-                    if (e != null) {
-                        actual.TrySetException(e);
-                    }
-                    else {
-                        actual.TrySetResult(t);
-                    }
-                });
+                        if (e != null) {
+                            actual.TrySetException(e);
+                        }
+                        else {
+                            actual.TrySetResult(t);
+                        }
+                    });
 
                 var result = await tcs.Task;
                 Assert.Equal(expected, await actual.Task);
@@ -545,11 +560,12 @@ namespace Microsoft.Azure.IIoT.Services.Kafka.Clients {
 
         [SkippableFact]
         public async Task SendModuleEventWithCallbackTest2Async() {
-            using (var harness = _fixture.GetHarness()) {
+            var fix = new Fixture();
+            var hub = fix.Create<string>();
+            using (var harness = _fixture.GetHarness(hub)) {
                 var queue = harness.GetEventClient();
                 Skip.If(queue == null);
 
-                var fix = new Fixture();
                 var data = fix.CreateMany<byte>().ToArray();
                 var deviceId = fix.Create<string>();
                 var moduleId = fix.Create<string>();
@@ -563,15 +579,15 @@ namespace Microsoft.Azure.IIoT.Services.Kafka.Clients {
 
                 var expected = 1234;
                 var actual = new TaskCompletionSource<int?>();
-                queue.SendEvent(HubResource.Format(deviceId, moduleId), data, contentType,
+                queue.SendEvent(HubResource.Format(hub, deviceId, moduleId), data, contentType,
                     "Test2", contentEncoding, expected, (t, e) => {
-                    if (e != null) {
-                        actual.TrySetException(e);
-                    }
-                    else {
-                        actual.TrySetResult(t);
-                    }
-                });
+                        if (e != null) {
+                            actual.TrySetException(e);
+                        }
+                        else {
+                            actual.TrySetResult(t);
+                        }
+                    });
 
                 var result = await tcs.Task;
                 Assert.Equal(expected, await actual.Task);
@@ -588,11 +604,12 @@ namespace Microsoft.Azure.IIoT.Services.Kafka.Clients {
 
         [SkippableFact]
         public async Task SendModuleEventWithCallbackTest3Async() {
-            using (var harness = _fixture.GetHarness()) {
+            var fix = new Fixture();
+            var hub = fix.Create<string>();
+            using (var harness = _fixture.GetHarness(hub)) {
                 var queue = harness.GetEventClient();
                 Skip.If(queue == null);
 
-                var fix = new Fixture();
                 var data = fix.CreateMany<byte>().ToArray();
                 var deviceId = fix.Create<string>();
                 var moduleId = fix.Create<string>();
@@ -609,24 +626,24 @@ namespace Microsoft.Azure.IIoT.Services.Kafka.Clients {
 
                 var expected = 4;
                 var actual = new TaskCompletionSource<int?>();
-                queue.SendEvent(HubResource.Format(deviceId, moduleId), data, fix.Create<string>(),
+                queue.SendEvent(HubResource.Format(hub, deviceId, moduleId), data, fix.Create<string>(),
                     "Test2", fix.Create<string>(), 1, (t, e) => { });
-                queue.SendEvent(HubResource.Format(deviceId, moduleId), data, fix.Create<string>(),
+                queue.SendEvent(HubResource.Format(hub, deviceId, moduleId), data, fix.Create<string>(),
                     "Test2", fix.Create<string>(), 2, (t, e) => { });
-                queue.SendEvent(HubResource.Format(deviceId, moduleId), data, fix.Create<string>(),
+                queue.SendEvent(HubResource.Format(hub, deviceId, moduleId), data, fix.Create<string>(),
                     "Test2", fix.Create<string>(), 3, (t, e) => { });
-                queue.SendEvent(HubResource.Format(deviceId, moduleId), data, contentType,
+                queue.SendEvent(HubResource.Format(hub, deviceId, moduleId), data, contentType,
                     "Test2", contentEncoding, expected, (t, e) => {
-                    if (e != null) {
-                        actual.TrySetException(e);
-                    }
-                    else {
-                        actual.TrySetResult(t);
-                    }
-                });
-                queue.SendEvent(HubResource.Format(deviceId, moduleId), data, fix.Create<string>(),
+                        if (e != null) {
+                            actual.TrySetException(e);
+                        }
+                        else {
+                            actual.TrySetResult(t);
+                        }
+                    });
+                queue.SendEvent(HubResource.Format(hub, deviceId, moduleId), data, fix.Create<string>(),
                     "Test2", fix.Create<string>(), 5, (t, e) => { });
-                queue.SendEvent(HubResource.Format(deviceId, moduleId), data, fix.Create<string>(),
+                queue.SendEvent(HubResource.Format(hub, deviceId, moduleId), data, fix.Create<string>(),
                     "Test2", fix.Create<string>(), 6, (t, e) => { });
 
                 var result = await tcs.Task;
@@ -644,11 +661,12 @@ namespace Microsoft.Azure.IIoT.Services.Kafka.Clients {
 
         [SkippableFact]
         public async Task SendModuleEventWithCallbackLargeNumberOfEventsAsync() {
-            using (var harness = _fixture.GetHarness()) {
+            var fix = new Fixture();
+            var hub = fix.Create<string>();
+            using (var harness = _fixture.GetHarness(hub)) {
                 var queue = harness.GetEventClient();
                 Skip.If(queue == null);
 
-                var fix = new Fixture();
                 var data = fix.CreateMany<byte>().ToArray();
                 var deviceId = fix.Create<string>();
                 var moduleId = fix.Create<string>();
@@ -667,7 +685,7 @@ namespace Microsoft.Azure.IIoT.Services.Kafka.Clients {
                 var hashSet = new HashSet<int>(10000);
                 Enumerable.Range(0, 10000)
                     .ToList()
-                    .ForEach(i => queue.SendEvent(HubResource.Format(deviceId, moduleId), data, contentType,
+                    .ForEach(i => queue.SendEvent(HubResource.Format(hub, deviceId, moduleId), data, contentType,
                         "TesT2", contentEncoding, i, (t, e) => hashSet.Add(t)));
 
                 var result = await tcs.Task;
@@ -684,7 +702,7 @@ namespace Microsoft.Azure.IIoT.Services.Kafka.Clients {
 
         [SkippableFact]
         public async Task BadArgumentTestsAsync() {
-            using (var harness = _fixture.GetHarness()) {
+            using (var harness = _fixture.GetHarness("testhub")) {
                 var queue = harness.GetEventClient();
                 Skip.If(queue == null);
 

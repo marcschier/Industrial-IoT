@@ -15,11 +15,10 @@ namespace Microsoft.Azure.IIoT.Messaging {
         /// <summary>
         /// Handle event
         /// </summary>
-        /// <param name="target"></param>
         /// <param name="eventData"></param>
         /// <param name="properties"></param>
         /// <returns></returns>
-        Task HandleAsync(string target, byte[] eventData,
+        Task HandleAsync(byte[] eventData,
             IDictionary<string, string> properties);
     }
 }

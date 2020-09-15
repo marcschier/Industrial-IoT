@@ -33,14 +33,18 @@ namespace Microsoft.Azure.IIoT.Messaging.Default {
         public Task SendAsync(string target, byte[] payload,
             IDictionary<string, string> properties, string partitionKey,
             CancellationToken ct) {
+            if (target == null) {
+                throw new ArgumentNullException(nameof(target));
+            }
             if (payload == null) {
                 throw new ArgumentNullException(nameof(payload));
             }
             var partition = GetOrAddPartition(partitionKey ?? target);
+            properties ??= new Dictionary<string, string>();
+            properties.AddOrUpdate(EventProperties.Target, target);
             if (!partition.TryAdd(new Message {
                 Value = payload,
-                Target = target,
-                Properties = properties ?? new Dictionary<string, string>()
+                Properties = properties
             })) {
                 throw new ExternalDependencyException("Failed to queue event");
             }
@@ -51,6 +55,9 @@ namespace Microsoft.Azure.IIoT.Messaging.Default {
         public void Send<T>(string target, byte[] payload, T token,
             Action<T, Exception> complete, IDictionary<string, string> properties,
             string partitionKey) {
+            if (target == null) {
+                throw new ArgumentNullException(nameof(target));
+            }
             if (payload == null) {
                 throw new ArgumentNullException(nameof(payload));
             }
@@ -67,19 +74,29 @@ namespace Microsoft.Azure.IIoT.Messaging.Default {
         /// <inheritdoc/>
         public Task SendEventAsync(string target, byte[] payload, string contentType,
             string eventSchema, string contentEncoding, CancellationToken ct) {
+            if (target == null) {
+                throw new ArgumentNullException(nameof(target));
+            }
+            if (payload == null) {
+                throw new ArgumentNullException(nameof(payload));
+            }
             return SendAsync(target, payload,
-                CreateProperties(contentType, eventSchema, contentEncoding), eventSchema, ct);
+                CreateProperties(contentType, eventSchema, contentEncoding),
+                eventSchema, ct);
         }
 
         /// <inheritdoc/>
         public async Task SendEventAsync(string target, IEnumerable<byte[]> batch,
             string contentType, string eventSchema, string contentEncoding,
             CancellationToken ct) {
+            if (target == null) {
+                throw new ArgumentNullException(nameof(target));
+            }
             if (batch == null) {
                 throw new ArgumentNullException(nameof(batch));
             }
-            var properties = CreateProperties(contentType, eventSchema, contentEncoding);
             foreach (var payload in batch) {
+                var properties = CreateProperties(contentType, eventSchema, contentEncoding);
                 await SendAsync(target, payload, properties, eventSchema, ct);
             }
         }
@@ -87,6 +104,9 @@ namespace Microsoft.Azure.IIoT.Messaging.Default {
         /// <inheritdoc/>
         public void SendEvent<T>(string target, byte[] payload, string contentType,
             string eventSchema, string contentEncoding, T token, Action<T, Exception> complete) {
+            if (target == null) {
+                throw new ArgumentNullException(nameof(target));
+            }
             if (payload == null) {
                 throw new ArgumentNullException(nameof(payload));
             }
@@ -101,10 +121,10 @@ namespace Microsoft.Azure.IIoT.Messaging.Default {
         }
 
         /// <inheritdoc/>
-        public Task<IEnumerable<(string, byte[], IDictionary<string, string>)>> ConsumeAsync(
+        public Task<IEnumerable<(byte[], IDictionary<string, string>)>> ConsumeAsync(
             CancellationToken ct) {
             return Task.Run(() => {
-                var results = new List<(string, byte[], IDictionary<string, string>)>();
+                var results = new List<(byte[], IDictionary<string, string>)>();
                 while (true) {
                     var queues = _targets.Values.ToArray();
                     if (-1 != BlockingCollection<Message>.TryTakeFromAny(queues,
@@ -113,13 +133,13 @@ namespace Microsoft.Azure.IIoT.Messaging.Default {
                             continue; // Received a control message - re-acquire all queues
                         }
 
-                        results.Add((message.Target, message.Value, message.Properties));
+                        results.Add((message.Value, message.Properties));
                         while (-1 != BlockingCollection<Message>.TryTakeFromAny(queues,
                             out message, 0, ct)) {
                             if (message.Reset) {
                                 break; // Control message - stop and return what we have
                             }
-                            results.Add((message.Target, message.Value, message.Properties));
+                            results.Add((message.Value, message.Properties));
                             if (results.Count > 20) { // max batch size
                                 break;
                             }
@@ -127,7 +147,7 @@ namespace Microsoft.Azure.IIoT.Messaging.Default {
                     }
                     break;
                 }
-                return (IEnumerable<(string, byte[], IDictionary<string, string>)>)results;
+                return (IEnumerable<(byte[], IDictionary<string, string>)>)results;
             }, ct);
         }
 
@@ -159,8 +179,8 @@ namespace Microsoft.Azure.IIoT.Messaging.Default {
         /// <param name="eventSchema"></param>
         /// <param name="contentEncoding"></param>
         /// <returns></returns>
-        private IDictionary<string, string> CreateProperties(string contentType,
-            string eventSchema, string contentEncoding) {
+        private IDictionary<string, string> CreateProperties(
+            string contentType, string eventSchema, string contentEncoding) {
             var header = new Dictionary<string, string>();
             if (!string.IsNullOrEmpty(contentType)) {
                 header.Add(EventProperties.ContentType, contentType);
@@ -183,11 +203,6 @@ namespace Microsoft.Azure.IIoT.Messaging.Default {
             /// Control message
             /// </summary>
             public bool Reset { get; internal set; }
-
-            /// <summary>
-            /// Target resource
-            /// </summary>
-            public string Target { get; internal set; }
 
             /// <summary>
             /// Value

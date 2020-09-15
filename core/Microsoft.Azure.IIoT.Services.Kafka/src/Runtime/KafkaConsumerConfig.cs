@@ -31,7 +31,7 @@ namespace Microsoft.Azure.IIoT.Services.Kafka.Runtime {
         /// <inheritdoc/>
         public string ConsumerTopic => GetStringOrDefault(kConsumerTopicKey,
             () => GetStringOrDefault(PcsVariable.PCS_KAFKA_CONSUMER_TOPIC_REGEX,
-                () => ".*"));
+                () => null));
         /// <inheritdoc/>
         public int ReceiveBatchSize => GetIntOrDefault(kReceiveBatchSizeKey,
             () => 999);

@@ -14,9 +14,9 @@ namespace Microsoft.Azure.IIoT.Services.Kafka.Services {
     using System.Collections.Generic;
     using System.Collections;
     using System.Threading.Tasks;
-    using System.Diagnostics;
     using System.Linq;
     using System.Text;
+    using Confluent.Kafka.Admin;
 
     /// <summary>
     /// Implementation of event processor host interface to host event
@@ -38,9 +38,7 @@ namespace Microsoft.Azure.IIoT.Services.Kafka.Services {
             _consumer = consumer ?? throw new ArgumentNullException(nameof(consumer));
             _config = config ?? throw new ArgumentNullException(nameof(config));
             _consumerId = identity.Id ?? Guid.NewGuid().ToString();
-            _interval = (long?)config.CheckpointInterval?.TotalMilliseconds
-               ?? long.MaxValue;
-            _sw = Stopwatch.StartNew();
+            _interval = (int?)config.CheckpointInterval?.TotalMilliseconds;
         }
 
         /// <summary>
@@ -48,17 +46,21 @@ namespace Microsoft.Azure.IIoT.Services.Kafka.Services {
         /// </summary>
         /// <param name="ct"></param>
         protected override async Task RunAsync(CancellationToken ct) {
-            _sw.Restart();
-            var messagesCount = 0;
+
             var config = new ConsumerConfig {
                 BootstrapServers = _config.BootstrapServers,
                 GroupId = _config.ConsumerGroup,
                 AutoOffsetReset = _config.InitialReadFromEnd ?
-                    AutoOffsetReset.Latest : AutoOffsetReset.Error,
-                EnableAutoCommit = false,
+                    AutoOffsetReset.Latest : AutoOffsetReset.Earliest,
+                EnableAutoCommit = true,
+                EnableAutoOffsetStore = true,
+                AutoCommitIntervalMs = _interval,
                 // ...
             };
-            var topic = _config.ConsumerTopic ?? ".*";
+            var topic = _config.ConsumerTopic ?? "^.*";
+            if (!topic.StartsWith("^")) {
+                await EnsureTopicAsync(topic);
+            }
             while (!ct.IsCancellationRequested) {
                 try {
                     using (var consumer = new ConsumerBuilder<string, byte[]>(config).Build()) {
@@ -68,38 +70,20 @@ namespace Microsoft.Azure.IIoT.Services.Kafka.Services {
                         while (!ct.IsCancellationRequested) {
                             var result = consumer.Consume(ct);
                             var ev = result.Message;
-                            messagesCount++;
-
+                            if (result.Topic == "__consumer_offsets") {
+                                continue;
+                            }
                             if (_config.SkipEventsOlderThan != null &&
                                 ev.Timestamp.UtcDateTime +
                                     _config.SkipEventsOlderThan < DateTime.UtcNow) {
                                 // Skip this one and catch up
                                 continue;
                             }
-
-                            await _consumer.HandleAsync(result.Topic.Replace('.', '/'),
-                                ev.Value, new EventHeader(ev.Headers),
+                            await _consumer.HandleAsync(ev.Value, new EventHeader(ev.Headers, result.Topic),
                                     () => CommitAsync(consumer, result));
-
-                            // Commit if needed
-                            if (_sw.ElapsedMilliseconds >= _interval) {
-                                try {
-                                    _logger.Debug("Checkpointing consumer {consumerId}...",
-                                        _consumerId);
-                                    await CommitAsync(consumer, result);
-                                    _sw.Restart();
-                                }
-                                catch (Exception ex) {
-                                    _logger.Warning(ex, "Failed checkpointing {consumerId}...",
-                                        _consumerId);
-                                    if (_sw.ElapsedMilliseconds >= 2 * _interval) {
-                                        // Give up checkpointing after trying a couple more times
-                                        _sw.Restart();
-                                    }
-                                }
-                            }
                             await Try.Async(_consumer.OnBatchCompleteAsync);
                         }
+                        consumer.Close();
                     }
                 }
                 catch (OperationCanceledException) { }
@@ -130,10 +114,38 @@ namespace Microsoft.Azure.IIoT.Services.Kafka.Services {
                 _logger.Warning(ex, "Failed to commit consumer {id} {memberId}...", _consumerId,
                     consumer.MemberId);
             }
-            finally {
-                _sw.Restart();
-            }
             return Task.CompletedTask;
+        }
+
+        /// <summary>
+        /// Ensure topic is created
+        /// </summary>
+        /// <param name="topic"></param>
+        /// <returns></returns>
+        private async Task EnsureTopicAsync(string topic) {
+            using (var admin = new AdminClientBuilder(new AdminClientConfig {
+                BootstrapServers = _config.BootstrapServers
+            }).Build()) {
+                try {
+                    await admin.CreateTopicsAsync(
+                        new TopicSpecification {
+                            Name = topic,
+                            NumPartitions = _config.Partitions,
+                            ReplicationFactor = (short)_config.ReplicaFactor,
+                        }.YieldReturn(),
+                        new CreateTopicsOptions {
+                            OperationTimeout = TimeSpan.FromSeconds(30),
+                            RequestTimeout = TimeSpan.FromSeconds(30)
+                        });
+                }
+                catch (CreateTopicsException e) {
+                    if (e.Results.Count > 0 &&
+                        e.Results[0].Error?.Code == ErrorCode.TopicAlreadyExists) {
+                        return;
+                    }
+                    throw;
+                }
+            }
         }
 
         /// <summary>
@@ -145,8 +157,12 @@ namespace Microsoft.Azure.IIoT.Services.Kafka.Services {
             /// Create properties wrapper
             /// </summary>
             /// <param name="headers"></param>
-            internal EventHeader(Headers headers) {
+            /// <param name="topic"></param>
+            internal EventHeader(Headers headers, string topic) {
                 _headers = headers ?? new Headers();
+                if (topic != null) {
+                    _headers.Add("x-topic", Encoding.UTF8.GetBytes(topic));
+                }
             }
 
             /// <inheritdoc/>
@@ -257,7 +273,6 @@ namespace Microsoft.Azure.IIoT.Services.Kafka.Services {
         private readonly IEventProcessingHandler _consumer;
         private readonly IKafkaConsumerConfig _config;
         private readonly string _consumerId;
-        private readonly long? _interval;
-        private readonly Stopwatch _sw;
+        private readonly int? _interval;
     }
 }

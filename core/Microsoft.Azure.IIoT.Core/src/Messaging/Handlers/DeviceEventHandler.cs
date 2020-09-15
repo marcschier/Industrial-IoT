@@ -34,7 +34,7 @@ namespace Microsoft.Azure.IIoT.Messaging.Handlers {
         }
 
         /// <inheritdoc/>
-        public async Task HandleAsync(string target, byte[] eventData,
+        public async Task HandleAsync(byte[] eventData,
             IDictionary<string, string> properties, Func<Task> checkpoint) {
 
             var handled = false;
@@ -42,14 +42,15 @@ namespace Microsoft.Azure.IIoT.Messaging.Handlers {
                 properties.TryGetValue(EventProperties.EventSchema, out schemaType)) {
 
                 string moduleId = null;
-                if (!properties.TryGetValue(CommonProperties.DeviceId, out var deviceId)) {
-                    deviceId = HubResource.Parse(target, out moduleId);
-                }
-                else {
+                if (properties.TryGetValue(CommonProperties.DeviceId, out var deviceId)) {
                     properties.TryGetValue(CommonProperties.ModuleId, out moduleId);
                 }
+                else if (properties.TryGetValue(EventProperties.Target, out var target)) {
+                    deviceId = HubResource.Parse(target, out var hub, out moduleId);
+                }
 
-                if (_handlers.TryGetValue(schemaType.ToLowerInvariant(), out var handler)) {
+                if (deviceId != null &&
+                    _handlers.TryGetValue(schemaType.ToLowerInvariant(), out var handler)) {
                     _used.Enqueue(handler);
                     await handler.HandleAsync(deviceId, moduleId, eventData, properties, checkpoint);
                     handled = true;
@@ -58,7 +59,7 @@ namespace Microsoft.Azure.IIoT.Messaging.Handlers {
 
             if (!handled && _unknown != null) {
                 // From a device, but does not have any event schema or message schema
-                await _unknown.HandleAsync(target, eventData, properties);
+                await _unknown.HandleAsync(eventData, properties);
                 if (checkpoint != null) {
                     await Try.Async(() => checkpoint());
                 }

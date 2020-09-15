@@ -10,10 +10,11 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
     using Microsoft.Azure.IIoT.Messaging;
     using Microsoft.Azure.IIoT.Hub;
     using Microsoft.Azure.IIoT.Utils;
+    using Autofac;
     using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
-    using Autofac;
+    using System.Linq;
 
     public class RabbitMqEventQueueFixture : IDisposable {
 
@@ -135,7 +136,7 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
                 byte[] payload, IDictionary<string, string> properties,
                 Func<Task> checkpoint) {
                 _outer.OnEvent?.Invoke(this, new TelemetryEventArgs(
-                    null, MessageSchema, deviceId, moduleId, payload, properties));
+                    MessageSchema, deviceId, moduleId, payload, properties));
                 return Task.CompletedTask;
             }
 
@@ -153,10 +154,10 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
                 _outer = outer;
             }
 
-            public Task HandleAsync(string target, byte[] eventData,
+            public Task HandleAsync(byte[] eventData,
                 IDictionary<string, string> properties) {
                 _outer.OnEvent?.Invoke(this, new TelemetryEventArgs(
-                    target, null, null, null, eventData, properties));
+                    null, null, null, eventData, properties));
                 return Task.CompletedTask;
             }
 
@@ -168,14 +169,16 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
 
     public class TelemetryEventArgs : EventArgs {
 
-        public TelemetryEventArgs(string target, string schema, string deviceId,
+        public TelemetryEventArgs(string schema, string deviceId,
             string moduleId, byte[] data, IDictionary<string, string> properties) {
             HandlerSchema = schema;
-            Target = target;
             DeviceId = deviceId;
             ModuleId = moduleId;
             Data = data;
-            Properties = properties;
+            Target = properties.TryGetValue(EventProperties.Target, out var v) ? v : null;
+            Properties = properties
+                .Where(k => k.Key != EventProperties.Target)
+                .ToDictionary(k => k.Key, v => v.Value);
         }
 
         public string Target { get; }

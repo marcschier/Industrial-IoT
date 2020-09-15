@@ -148,10 +148,10 @@ namespace Microsoft.Azure.IIoT.Platform.Subscriber.Service {
             }
 
             /// <inheritdoc/>
-            public async Task HandleAsync(string target, byte[] eventData,
+            public async Task HandleAsync(byte[] eventData,
                 IDictionary<string, string> properties) {
                 if (!properties.TryGetValue(SystemProperties.To, out var route)) {
-                    route = target;
+                    properties.TryGetValue(EventProperties.Target, out route);
                 }
                 await _client.SendAsync(route, eventData, properties);
             }
