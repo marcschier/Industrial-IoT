@@ -3,7 +3,7 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Services.Kafka.Clients {
+namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Clients {
     using Microsoft.Azure.IIoT.Messaging.Handlers;
     using Microsoft.Azure.IIoT.Hub;
     using System;
@@ -13,10 +13,10 @@ namespace Microsoft.Azure.IIoT.Services.Kafka.Clients {
     using AutoFixture;
     using Xunit;
 
-    public class KafkaEventQueueTests : IClassFixture<KafkaEventQueueFixture> {
-        private readonly KafkaEventQueueFixture _fixture;
+    public class ServiceBusEventQueueTests : IClassFixture<ServiceBusEventQueueFixture> {
+        private readonly ServiceBusEventQueueFixture _fixture;
 
-        public KafkaEventQueueTests(KafkaEventQueueFixture fixture) {
+        public ServiceBusEventQueueTests(ServiceBusEventQueueFixture fixture) {
             _fixture = fixture;
         }
 

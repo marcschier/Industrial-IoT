@@ -96,9 +96,6 @@ namespace Microsoft.Azure.IIoT.Services.Kafka.Clients {
             if (payload == null) {
                 throw new ArgumentNullException(nameof(payload));
             }
-            if (target == null) {
-                target = "default";
-            }
             var ev = new Message<string, byte[]> {
                 Key = GetKey(target, eventSchema, null),
                 Value = payload,
@@ -174,9 +171,6 @@ namespace Microsoft.Azure.IIoT.Services.Kafka.Clients {
             var key = partitionKey;
             if (string.IsNullOrEmpty(key)) {
                 key = target;
-            }
-            if (string.IsNullOrEmpty(key)) {
-                key = "default";
             }
             if (!string.IsNullOrEmpty(schema)) {
                 key += schema;

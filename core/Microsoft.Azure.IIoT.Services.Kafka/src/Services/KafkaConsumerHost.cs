@@ -185,12 +185,12 @@ namespace Microsoft.Azure.IIoT.Services.Kafka.Services {
                     }
                     return null;
                 }
-                set => Add(key, value);
+                set => throw new NotSupportedException();
             }
 
             /// <inheritdoc/>
             public void Add(string key, string value) {
-                _headers.Add(key, Encoding.UTF8.GetBytes(value));
+                throw new NotSupportedException();
             }
 
             /// <inheritdoc/>
@@ -200,7 +200,7 @@ namespace Microsoft.Azure.IIoT.Services.Kafka.Services {
 
             /// <inheritdoc/>
             public bool Remove(string key) {
-                throw new NotSupportedException("Cannot remove items");
+                throw new NotSupportedException();
             }
 
             /// <inheritdoc/>
@@ -215,12 +215,12 @@ namespace Microsoft.Azure.IIoT.Services.Kafka.Services {
 
             /// <inheritdoc/>
             public void Add(KeyValuePair<string, string> item) {
-                _headers.Add(item.Key, Encoding.UTF8.GetBytes(item.Value));
+                throw new NotSupportedException();
             }
 
             /// <inheritdoc/>
             public void Clear() {
-                Keys.ToList().ForEach(x => _headers.Remove(x));
+                throw new NotSupportedException();
             }
 
             /// <inheritdoc/>
@@ -244,10 +244,7 @@ namespace Microsoft.Azure.IIoT.Services.Kafka.Services {
 
             /// <inheritdoc/>
             public bool Remove(KeyValuePair<string, string> item) {
-                if (Contains(item)) {
-                    return Remove(item.Key);
-                }
-                return false;
+                throw new NotSupportedException();
             }
 
             /// <inheritdoc/>

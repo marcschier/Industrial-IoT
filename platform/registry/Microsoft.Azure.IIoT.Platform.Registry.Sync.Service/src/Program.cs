@@ -143,7 +143,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Sync.Service {
             // Iot hub services
             builder.RegisterModule<IoTHubModule>();
             // Register event bus to feed registry listeners
-            builder.RegisterModule<ServiceBusModule>();
+            builder.RegisterModule<ServiceBusEventBusModule>();
 
             return builder;
         }

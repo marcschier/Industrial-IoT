@@ -40,7 +40,8 @@ namespace Microsoft.Azure.IIoT.Messaging.Default {
                 throw new ArgumentNullException(nameof(payload));
             }
             var partition = GetOrAddPartition(partitionKey ?? target);
-            properties ??= new Dictionary<string, string>();
+            properties = properties?.ToDictionary(k => k.Key, v => v.Value) ??
+                new Dictionary<string, string>();
             properties.AddOrUpdate(EventProperties.Target, target);
             if (!partition.TryAdd(new Message {
                 Value = payload,

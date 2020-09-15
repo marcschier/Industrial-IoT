@@ -143,7 +143,7 @@ namespace Microsoft.Azure.IIoT.Platform.Discovery.Service {
             // Event processor host
             builder.RegisterModule<EventHubProcessorModule>();
             // Register event bus for integration events
-            builder.RegisterModule<ServiceBusModule>();
+            builder.RegisterModule<ServiceBusEventBusModule>();
 
             return builder;
         }

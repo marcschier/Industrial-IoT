@@ -22,20 +22,22 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
 
         [SkippableFact]
         public async Task SendDeviceEventTest1Async() {
-            using (var harness = _fixture.GetHarness()) {
+            var fix = new Fixture();
+            var hub = fix.Create<string>();
+            using (var harness = _fixture.GetHarness(hub)) {
                 var queue = harness.GetEventClient();
                 Skip.If(queue == null);
 
-                var fix = new Fixture();
                 var data = fix.CreateMany<byte>().ToArray();
-                var hub = fix.Create<string>();
                 var deviceId = fix.Create<string>();
                 var contentEncoding = fix.Create<string>();
                 var contentType = fix.Create<string>();
 
                 var tcs = new TaskCompletionSource<TelemetryEventArgs>();
                 harness.OnEvent += (_, a) => {
-                    tcs.TrySetResult(a);
+                    if (a.HandlerSchema == "Test1"){
+                        tcs.TrySetResult(a);
+                    }
                 };
 
                 await queue.SendEventAsync(HubResource.Format(hub, deviceId, null), data, contentType, "Test1", contentEncoding);
@@ -54,13 +56,13 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
 
         [SkippableFact]
         public async Task SendDeviceEventTest2Async() {
-            using (var harness = _fixture.GetHarness()) {
+            var fix = new Fixture();
+            var hub = fix.Create<string>();
+            using (var harness = _fixture.GetHarness(hub)) {
                 var queue = harness.GetEventClient();
                 Skip.If(queue == null);
 
-                var fix = new Fixture();
                 var data = fix.CreateMany<byte>().ToArray();
-                var hub = fix.Create<string>();
                 var deviceId = fix.Create<string>();
                 var contentEncoding = fix.Create<string>();
                 var contentType = fix.Create<string>();
@@ -95,13 +97,13 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
 
         [SkippableFact]
         public async Task SendDeviceEventTestBatch1Async() {
-            using (var harness = _fixture.GetHarness()) {
+            var fix = new Fixture();
+            var hub = fix.Create<string>();
+            using (var harness = _fixture.GetHarness(hub)) {
                 var queue = harness.GetEventClient();
                 Skip.If(queue == null);
 
-                var fix = new Fixture();
                 var data = fix.CreateMany<byte>().ToArray();
-                var hub = fix.Create<string>();
                 var deviceId = fix.Create<string>();
                 var contentEncoding = fix.Create<string>();
                 var contentType = fix.Create<string>();
@@ -138,13 +140,13 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
 
         [SkippableFact]
         public async Task SendDeviceEventTestBatch2Async() {
-            using (var harness = _fixture.GetHarness()) {
+            var fix = new Fixture();
+            var hub = fix.Create<string>();
+            using (var harness = _fixture.GetHarness(hub)) {
                 var queue = harness.GetEventClient();
                 Skip.If(queue == null);
 
-                var fix = new Fixture();
                 var data = fix.CreateMany<byte>().ToArray();
-                var hub = fix.Create<string>();
                 var deviceId = fix.Create<string>();
                 var contentEncoding = fix.Create<string>();
                 var contentType = fix.Create<string>();
@@ -176,13 +178,13 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
 
         [SkippableFact]
         public async Task SendDeviceEventWithCallbackTest1Async() {
-            using (var harness = _fixture.GetHarness()) {
+            var fix = new Fixture();
+            var hub = fix.Create<string>();
+            using (var harness = _fixture.GetHarness(hub)) {
                 var queue = harness.GetEventClient();
                 Skip.If(queue == null);
 
-                var fix = new Fixture();
                 var data = fix.CreateMany<byte>().ToArray();
-                var hub = fix.Create<string>();
                 var deviceId = fix.Create<string>();
                 var contentEncoding = fix.Create<string>();
                 var contentType = fix.Create<string>();
@@ -219,13 +221,13 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
 
         [SkippableFact]
         public async Task SendDeviceEventWithCallbackTest2Async() {
-            using (var harness = _fixture.GetHarness()) {
+            var fix = new Fixture();
+            var hub = fix.Create<string>();
+            using (var harness = _fixture.GetHarness(hub)) {
                 var queue = harness.GetEventClient();
                 Skip.If(queue == null);
 
-                var fix = new Fixture();
                 var data = fix.CreateMany<byte>().ToArray();
-                var hub = fix.Create<string>();
                 var deviceId = fix.Create<string>();
                 var contentEncoding = fix.Create<string>();
                 var contentType = fix.Create<string>();
@@ -262,13 +264,13 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
 
         [SkippableFact]
         public async Task SendDeviceEventWithCallbackTest3Async() {
-            using (var harness = _fixture.GetHarness()) {
+            var fix = new Fixture();
+            var hub = fix.Create<string>();
+            using (var harness = _fixture.GetHarness(hub)) {
                 var queue = harness.GetEventClient();
                 Skip.If(queue == null);
 
-                var fix = new Fixture();
                 var data = fix.CreateMany<byte>().ToArray();
-                var hub = fix.Create<string>();
                 var deviceId = fix.Create<string>();
                 var contentEncoding = fix.Create<string>();
                 var contentType = fix.Create<string>();
@@ -318,13 +320,13 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
 
         [SkippableFact]
         public async Task SendDeviceEventWithCallbackLargeNumberOfEventsAsync() {
-            using (var harness = _fixture.GetHarness()) {
+            var fix = new Fixture();
+            var hub = fix.Create<string>();
+            using (var harness = _fixture.GetHarness(hub)) {
                 var queue = harness.GetEventClient();
                 Skip.If(queue == null);
 
-                var fix = new Fixture();
                 var data = fix.CreateMany<byte>().ToArray();
-                var hub = fix.Create<string>();
                 var deviceId = fix.Create<string>();
                 var contentEncoding = fix.Create<string>();
                 var contentType = fix.Create<string>();
@@ -358,13 +360,13 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
 
         [SkippableFact]
         public async Task SendModuleEventTest1Async() {
-            using (var harness = _fixture.GetHarness()) {
+            var fix = new Fixture();
+            var hub = fix.Create<string>();
+            using (var harness = _fixture.GetHarness(hub)) {
                 var queue = harness.GetEventClient();
                 Skip.If(queue == null);
 
-                var fix = new Fixture();
                 var data = fix.CreateMany<byte>().ToArray();
-                var hub = fix.Create<string>();
                 var deviceId = fix.Create<string>();
                 var moduleId = fix.Create<string>();
                 var contentEncoding = fix.Create<string>();
@@ -391,13 +393,13 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
 
         [SkippableFact]
         public async Task SendModuleEventTest2Async() {
-            using (var harness = _fixture.GetHarness()) {
+            var fix = new Fixture();
+            var hub = fix.Create<string>();
+            using (var harness = _fixture.GetHarness(hub)) {
                 var queue = harness.GetEventClient();
                 Skip.If(queue == null);
 
-                var fix = new Fixture();
                 var data = fix.CreateMany<byte>().ToArray();
-                var hub = fix.Create<string>();
                 var deviceId = fix.Create<string>();
                 var moduleId = fix.Create<string>();
                 var contentEncoding = fix.Create<string>();
@@ -432,13 +434,13 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
 
         [SkippableFact]
         public async Task SendModuleEventTestBatch1Async() {
-            using (var harness = _fixture.GetHarness()) {
+            var fix = new Fixture();
+            var hub = fix.Create<string>();
+            using (var harness = _fixture.GetHarness(hub)) {
                 var queue = harness.GetEventClient();
                 Skip.If(queue == null);
 
-                var fix = new Fixture();
                 var data = fix.CreateMany<byte>().ToArray();
-                var hub = fix.Create<string>();
                 var deviceId = fix.Create<string>();
                 var moduleId = fix.Create<string>();
                 var contentEncoding = fix.Create<string>();
@@ -476,13 +478,13 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
 
         [SkippableFact]
         public async Task SendModuleEventTestBatch2Async() {
-            using (var harness = _fixture.GetHarness()) {
+            var fix = new Fixture();
+            var hub = fix.Create<string>();
+            using (var harness = _fixture.GetHarness(hub)) {
                 var queue = harness.GetEventClient();
                 Skip.If(queue == null);
 
-                var fix = new Fixture();
                 var data = fix.CreateMany<byte>().ToArray();
-                var hub = fix.Create<string>();
                 var deviceId = fix.Create<string>();
                 var moduleId = fix.Create<string>();
                 var contentEncoding = fix.Create<string>();
@@ -514,13 +516,13 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
 
         [SkippableFact]
         public async Task SendModuleEventWithCallbackTest1Async() {
-            using (var harness = _fixture.GetHarness()) {
+            var fix = new Fixture();
+            var hub = fix.Create<string>();
+            using (var harness = _fixture.GetHarness(hub)) {
                 var queue = harness.GetEventClient();
                 Skip.If(queue == null);
 
-                var fix = new Fixture();
                 var data = fix.CreateMany<byte>().ToArray();
-                var hub = fix.Create<string>();
                 var deviceId = fix.Create<string>();
                 var moduleId = fix.Create<string>();
                 var contentEncoding = fix.Create<string>();
@@ -558,13 +560,13 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
 
         [SkippableFact]
         public async Task SendModuleEventWithCallbackTest2Async() {
-            using (var harness = _fixture.GetHarness()) {
+            var fix = new Fixture();
+            var hub = fix.Create<string>();
+            using (var harness = _fixture.GetHarness(hub)) {
                 var queue = harness.GetEventClient();
                 Skip.If(queue == null);
 
-                var fix = new Fixture();
                 var data = fix.CreateMany<byte>().ToArray();
-                var hub = fix.Create<string>();
                 var deviceId = fix.Create<string>();
                 var moduleId = fix.Create<string>();
                 var contentEncoding = fix.Create<string>();
@@ -602,13 +604,13 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
 
         [SkippableFact]
         public async Task SendModuleEventWithCallbackTest3Async() {
-            using (var harness = _fixture.GetHarness()) {
+            var fix = new Fixture();
+            var hub = fix.Create<string>();
+            using (var harness = _fixture.GetHarness(hub)) {
                 var queue = harness.GetEventClient();
                 Skip.If(queue == null);
 
-                var fix = new Fixture();
                 var data = fix.CreateMany<byte>().ToArray();
-                var hub = fix.Create<string>();
                 var deviceId = fix.Create<string>();
                 var moduleId = fix.Create<string>();
                 var contentEncoding = fix.Create<string>();
@@ -659,13 +661,13 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
 
         [SkippableFact]
         public async Task SendModuleEventWithCallbackLargeNumberOfEventsAsync() {
-            using (var harness = _fixture.GetHarness()) {
+            var fix = new Fixture();
+            var hub = fix.Create<string>();
+            using (var harness = _fixture.GetHarness(hub)) {
                 var queue = harness.GetEventClient();
                 Skip.If(queue == null);
 
-                var fix = new Fixture();
                 var data = fix.CreateMany<byte>().ToArray();
-                var hub = fix.Create<string>();
                 var deviceId = fix.Create<string>();
                 var moduleId = fix.Create<string>();
                 var contentEncoding = fix.Create<string>();
@@ -700,20 +702,28 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
 
         [SkippableFact]
         public async Task BadArgumentTestsAsync() {
-            using (var harness = _fixture.GetHarness()) {
+            var fix = new Fixture();
+            var hub = fix.Create<string>();
+            using (var harness = _fixture.GetHarness(hub)) {
                 var queue = harness.GetEventClient();
                 Skip.If(queue == null);
 
                 await Assert.ThrowsAsync<ArgumentNullException>(
-                    () => queue.SendEventAsync(null, (byte[])null, null, null, null));
+                    () => queue.SendEventAsync(hub, (byte[])null, null, null, null));
                 await Assert.ThrowsAsync<ArgumentNullException>(
-                    () => queue.SendEventAsync(null, (IEnumerable<byte[]>)null, null, null, null));
+                    () => queue.SendEventAsync(hub, (IEnumerable<byte[]>)null, null, null, null));
+                await Assert.ThrowsAsync<ArgumentNullException>(
+                    () => queue.SendEventAsync(null, new byte[4], null, null, null));
+                await Assert.ThrowsAsync<ArgumentNullException>(
+                    () => queue.SendEventAsync(null, new byte[4].YieldReturn(), null, null, null));
                 Assert.Throws<ArgumentNullException>(
-                    () => queue.SendEvent(null, null, null, null, null, "test", (t, e) => { }));
+                    () => queue.SendEvent(null, new byte[4], null, null, null, "test", (t, e) => { }));
                 Assert.Throws<ArgumentNullException>(
-                    () => queue.SendEvent<string>(null, new byte[4], null, null, null, null, (t, e) => { }));
+                    () => queue.SendEvent(hub, null, null, null, null, "test", (t, e) => { }));
                 Assert.Throws<ArgumentNullException>(
-                    () => queue.SendEvent(null, new byte[4], null, null, null, "test", null));
+                    () => queue.SendEvent<string>(hub, new byte[4], null, null, null, null, (t, e) => { }));
+                Assert.Throws<ArgumentNullException>(
+                    () => queue.SendEvent(hub, new byte[4], null, null, null, "test", null));
             }
         }
     }

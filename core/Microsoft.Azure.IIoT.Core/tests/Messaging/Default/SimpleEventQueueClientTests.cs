@@ -20,11 +20,12 @@ namespace Microsoft.Azure.IIoT.Messaging.Default {
 
         [SkippableFact]
         public async Task SendTest1Async() {
-            using (var harness = _fixture.GetHarness()) {
+            var fix = new Fixture();
+            var target = fix.Create<string>();
+            using (var harness = _fixture.GetHarness(target)) {
                 var queue = harness.GetEventQueueClient();
                 Skip.If(queue == null);
 
-                var fix = new Fixture();
                 var data = fix.CreateMany<byte>().ToArray();
 
                 var tcs = new TaskCompletionSource<TelemetryEventArgs>();
@@ -32,7 +33,7 @@ namespace Microsoft.Azure.IIoT.Messaging.Default {
                     tcs.TrySetResult(a);
                 };
 
-                await queue.SendAsync("target", data);
+                await queue.SendAsync(target, data);
 
                 var result = await tcs.Task;
                 Assert.True(data.SequenceEqualsSafe(result.Data));
@@ -44,11 +45,12 @@ namespace Microsoft.Azure.IIoT.Messaging.Default {
 
         [SkippableFact]
         public async Task SendTest2Async() {
-            using (var harness = _fixture.GetHarness()) {
+            var fix = new Fixture();
+            var target = fix.Create<string>();
+            using (var harness = _fixture.GetHarness(target)) {
                 var queue = harness.GetEventQueueClient();
                 Skip.If(queue == null);
 
-                var fix = new Fixture();
                 var data = fix.CreateMany<byte>().ToArray();
                 var properties = fix.Create<IDictionary<string, string>>();
 
@@ -57,7 +59,7 @@ namespace Microsoft.Azure.IIoT.Messaging.Default {
                     tcs.TrySetResult(a);
                 };
 
-                await queue.SendAsync("target", data, properties);
+                await queue.SendAsync(target, data, properties);
 
                 var result = await tcs.Task;
                 Assert.True(data.SequenceEqualsSafe(result.Data));
@@ -69,11 +71,12 @@ namespace Microsoft.Azure.IIoT.Messaging.Default {
 
         [SkippableFact]
         public async Task SendTest3Async() {
-            using (var harness = _fixture.GetHarness()) {
+            var fix = new Fixture();
+            var target = fix.Create<string>();
+            using (var harness = _fixture.GetHarness(target)) {
                 var queue = harness.GetEventQueueClient();
                 Skip.If(queue == null);
 
-                var fix = new Fixture();
                 var data = fix.CreateMany<byte>().ToArray();
                 var properties = fix.Create<IDictionary<string, string>>();
 
@@ -85,12 +88,12 @@ namespace Microsoft.Azure.IIoT.Messaging.Default {
                     }
                 };
 
-                await queue.SendAsync("target", fix.CreateMany<byte>().ToArray(), properties);
-                await queue.SendAsync("target", fix.CreateMany<byte>().ToArray(), properties);
-                await queue.SendAsync("target", fix.CreateMany<byte>().ToArray(), properties);
-                await queue.SendAsync("target", data, properties);
-                await queue.SendAsync("target", fix.CreateMany<byte>().ToArray(), properties);
-                await queue.SendAsync("target", fix.CreateMany<byte>().ToArray(), properties);
+                await queue.SendAsync(target, fix.CreateMany<byte>().ToArray(), properties);
+                await queue.SendAsync(target, fix.CreateMany<byte>().ToArray(), properties);
+                await queue.SendAsync(target, fix.CreateMany<byte>().ToArray(), properties);
+                await queue.SendAsync(target, data, properties);
+                await queue.SendAsync(target, fix.CreateMany<byte>().ToArray(), properties);
+                await queue.SendAsync(target, fix.CreateMany<byte>().ToArray(), properties);
 
                 var result = await tcs.Task;
                 Assert.True(data.SequenceEqualsSafe(result.Data));
@@ -102,11 +105,12 @@ namespace Microsoft.Azure.IIoT.Messaging.Default {
 
         [SkippableFact]
         public async Task SendTestLargeNumberOfEventsAsync() {
-            using (var harness = _fixture.GetHarness()) {
+            var fix = new Fixture();
+            var target = fix.Create<string>();
+            using (var harness = _fixture.GetHarness(target)) {
                 var queue = harness.GetEventQueueClient();
                 Skip.If(queue == null);
 
-                var fix = new Fixture();
                 var data = fix.CreateMany<byte>().ToArray();
                 var properties = fix.Create<IDictionary<string, string>>();
                 var count = 0;
@@ -118,8 +122,8 @@ namespace Microsoft.Azure.IIoT.Messaging.Default {
                 };
 
                 var rand = new Random();
-                var senders = Enumerable.Range(0, 10000)
-                    .Select(i => queue.SendAsync("target" + rand.Next(0, 10), data, properties));
+                var senders = Enumerable.Range(0, 1000)
+                    .Select(i => queue.SendAsync(target + "/" + rand.Next(0, 10), data, properties));
                 await Task.WhenAll(senders);
 
                 var result = await tcs.Task;
@@ -132,11 +136,12 @@ namespace Microsoft.Azure.IIoT.Messaging.Default {
 
         [SkippableFact]
         public async Task SendWithCallbackTest1Async() {
-            using (var harness = _fixture.GetHarness()) {
+            var fix = new Fixture();
+            var target = fix.Create<string>();
+            using (var harness = _fixture.GetHarness(target)) {
                 var queue = harness.GetEventQueueClient();
                 Skip.If(queue == null);
 
-                var fix = new Fixture();
                 var data = fix.CreateMany<byte>().ToArray();
 
                 var tcs = new TaskCompletionSource<TelemetryEventArgs>();
@@ -146,7 +151,7 @@ namespace Microsoft.Azure.IIoT.Messaging.Default {
 
                 var expected = "token";
                 var actual = new TaskCompletionSource<string>();
-                queue.Send("target", data, expected, (t, e) => {
+                queue.Send(target, data, expected, (t, e) => {
                     if (e != null) {
                         actual.TrySetException(e);
                     }
@@ -166,11 +171,12 @@ namespace Microsoft.Azure.IIoT.Messaging.Default {
 
         [SkippableFact]
         public async Task SendWithCallbackTest2Async() {
-            using (var harness = _fixture.GetHarness()) {
+            var fix = new Fixture();
+            var target = fix.Create<string>();
+            using (var harness = _fixture.GetHarness(target)) {
                 var queue = harness.GetEventQueueClient();
                 Skip.If(queue == null);
 
-                var fix = new Fixture();
                 var data = fix.CreateMany<byte>().ToArray();
                 var properties = fix.Create<IDictionary<string, string>>();
 
@@ -181,7 +187,7 @@ namespace Microsoft.Azure.IIoT.Messaging.Default {
 
                 var expected = 1234;
                 var actual = new TaskCompletionSource<int?>();
-                queue.Send("target", data, expected, (t, e) => {
+                queue.Send(target, data, expected, (t, e) => {
                     if (e != null) {
                         actual.TrySetException(e);
                     }
@@ -201,11 +207,12 @@ namespace Microsoft.Azure.IIoT.Messaging.Default {
 
         [SkippableFact]
         public async Task SendWithCallbackTest3Async() {
-            using (var harness = _fixture.GetHarness()) {
+            var fix = new Fixture();
+            var target = fix.Create<string>();
+            using (var harness = _fixture.GetHarness(target)) {
                 var queue = harness.GetEventQueueClient();
                 Skip.If(queue == null);
 
-                var fix = new Fixture();
                 var data = fix.CreateMany<byte>().ToArray();
                 var properties = fix.Create<IDictionary<string, string>>();
 
@@ -219,10 +226,10 @@ namespace Microsoft.Azure.IIoT.Messaging.Default {
 
                 var expected = 4;
                 var actual = new TaskCompletionSource<int?>();
-                queue.Send("target", fix.CreateMany<byte>().ToArray(), 1, (t, e) => { }, properties);
-                queue.Send("target", fix.CreateMany<byte>().ToArray(), 2, (t, e) => { }, properties);
-                queue.Send("target", fix.CreateMany<byte>().ToArray(), 3, (t, e) => { }, properties);
-                queue.Send("target", data, expected, (t, e) => {
+                queue.Send(target, fix.CreateMany<byte>().ToArray(), 1, (t, e) => { }, properties);
+                queue.Send(target, fix.CreateMany<byte>().ToArray(), 2, (t, e) => { }, properties);
+                queue.Send(target, fix.CreateMany<byte>().ToArray(), 3, (t, e) => { }, properties);
+                queue.Send(target, data, expected, (t, e) => {
                     if (e != null) {
                         actual.TrySetException(e);
                     }
@@ -230,7 +237,7 @@ namespace Microsoft.Azure.IIoT.Messaging.Default {
                         actual.TrySetResult(t);
                     }
                 }, properties);
-                queue.Send("target", fix.CreateMany<byte>().ToArray(), 5, (t, e) => { }, properties);
+                queue.Send(target, fix.CreateMany<byte>().ToArray(), 5, (t, e) => { }, properties);
 
                 var result = await tcs.Task;
                 Assert.Equal(expected, await actual.Task);
@@ -243,11 +250,12 @@ namespace Microsoft.Azure.IIoT.Messaging.Default {
 
         [SkippableFact]
         public async Task SendWithCallbackLargeNumberOfEventsAsync() {
-            using (var harness = _fixture.GetHarness()) {
+            var fix = new Fixture();
+            var target = fix.Create<string>();
+            using (var harness = _fixture.GetHarness(target)) {
                 var queue = harness.GetEventQueueClient();
                 Skip.If(queue == null);
 
-                var fix = new Fixture();
                 var data = fix.CreateMany<byte>().ToArray();
                 var properties = fix.Create<IDictionary<string, string>>();
                 var count = 0;
@@ -262,7 +270,7 @@ namespace Microsoft.Azure.IIoT.Messaging.Default {
                 var hashSet = new HashSet<int>(10000);
                 Enumerable.Range(0, 10000)
                     .ToList()
-                    .ForEach(i => queue.Send("target" + rand.Next(0, 100), data, i,
+                    .ForEach(i => queue.Send(target + "/" + rand.Next(0, 100), data, i,
                         (t, e) => hashSet.Add(t), properties));
 
                 var result = await tcs.Task;
@@ -275,18 +283,24 @@ namespace Microsoft.Azure.IIoT.Messaging.Default {
 
         [SkippableFact]
         public async Task BadArgumentTestsAsync() {
-            using (var harness = _fixture.GetHarness()) {
+            var fix = new Fixture();
+            var target = fix.Create<string>();
+            using (var harness = _fixture.GetHarness(target)) {
                 var queue = harness.GetEventQueueClient();
                 Skip.If(queue == null);
 
                 await Assert.ThrowsAsync<ArgumentNullException>(
-                    () => queue.SendAsync(null, null));
+                    () => queue.SendAsync(target, null));
+                await Assert.ThrowsAsync<ArgumentNullException>(
+                    () => queue.SendAsync(null, new byte[4]));
                 Assert.Throws<ArgumentNullException>(
-                    () => queue.Send(null, null, "test", (t, e) => { }));
+                    () => queue.Send(target, null, "test", (t, e) => { }));
                 Assert.Throws<ArgumentNullException>(
-                    () => queue.Send<string>(null, new byte[4], null, (t, e) => { }));
+                    () => queue.Send(null, new byte[4], "test", (t, e) => { }));
                 Assert.Throws<ArgumentNullException>(
-                    () => queue.Send(null, new byte[4], "test", null));
+                    () => queue.Send<string>(target, new byte[4], null, (t, e) => { }));
+                Assert.Throws<ArgumentNullException>(
+                    () => queue.Send(target, new byte[4], "test", null));
             }
         }
     }

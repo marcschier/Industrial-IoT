@@ -220,7 +220,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Service {
             // Add diagnostics
             builder.AddAppInsightsLogging(Config);
             // Register event bus for integration events
-            builder.RegisterModule<ServiceBusModule>();
+            builder.RegisterModule<ServiceBusEventBusModule>();
             // Register Cosmos db for publisher storage
             builder.RegisterModule<CosmosDbModule>();
         }

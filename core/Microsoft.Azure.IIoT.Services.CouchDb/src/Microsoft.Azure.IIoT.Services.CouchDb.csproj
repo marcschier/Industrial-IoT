@@ -6,7 +6,6 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="CouchDB.NET" Version="2.0.2" />
-    <PackageReference Include="Docker.DotNet" Version="3.125.4" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\core\Microsoft.Azure.IIoT.Serializers.NewtonSoft\src\Microsoft.Azure.IIoT.Serializers.NewtonSoft.csproj" />

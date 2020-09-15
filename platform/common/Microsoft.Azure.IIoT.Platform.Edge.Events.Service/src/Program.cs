@@ -130,7 +130,7 @@ namespace Microsoft.Azure.IIoT.Platform.Edge.Events.Service {
             // Event processor services
             builder.RegisterModule<EventHubProcessorModule>();
             // Register event bus for integration events
-            builder.RegisterModule<ServiceBusModule>();
+            builder.RegisterModule<ServiceBusEventBusModule>();
 
             return builder;
         }

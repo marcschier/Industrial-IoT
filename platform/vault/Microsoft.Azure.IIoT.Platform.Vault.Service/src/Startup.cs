@@ -253,7 +253,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Service {
             // Add diagnostics
             builder.AddAppInsightsLogging(Config);
             // Register event bus for integration events
-            builder.RegisterModule<ServiceBusModule>();
+            builder.RegisterModule<ServiceBusEventBusModule>();
             // ... with cosmos db collection as storage
             builder.RegisterModule<CosmosDbModule>();
             // Add key vault  - TODO - enable

@@ -105,15 +105,15 @@ namespace Microsoft.Azure.IIoT.Services.Docker {
         protected async Task WaitForContainerStartedAsync(int port) {
             var attempts = 0;
             var sw = Stopwatch.StartNew();
-            bool containerStarted;
+            var ep = new IPEndPoint(IPAddress.Loopback, port);
             do {
-                containerStarted = await IsContainerRunningAsync(port);
+                if (await TryConnectAsync(ep)) {
+                    return;
+                }
                 await Task.Delay(1000);
-            } while (!containerStarted && attempts++ <= 60);
+            } while (attempts++ <= 60);
             sw.Stop();
-            if (!containerStarted) {
-                throw new TimeoutException($"Container failed to start after {sw.Elapsed}.)");
-            }
+            throw new TimeoutException($"Container failed to start after {sw.Elapsed}.)");
         }
 
         /// <summary>
@@ -134,22 +134,18 @@ namespace Microsoft.Azure.IIoT.Services.Docker {
         /// <summary>
         /// Waits for container to have started
         /// </summary>
-        /// <param name="port"></param>
+        /// <param name="ep"></param>
         /// <returns></returns>
-        private async Task<bool> IsContainerRunningAsync(int port) {
+        private async Task<bool> TryConnectAsync(IPEndPoint ep) {
             try {
-                var remoteEP = new IPEndPoint(IPAddress.Loopback, port);
-                var sender = new Socket(IPAddress.Loopback.AddressFamily,
-                    SocketType.Stream, ProtocolType.Tcp);
-                await sender.ConnectAsync(remoteEP);
-                sender.Dispose();
-                _success++;
-                await Task.Delay(1000);
-                return await Task.FromResult(_success >= 5);
+                using (var sender = new Socket(IPAddress.Loopback.AddressFamily,
+                    SocketType.Stream, ProtocolType.Tcp)) {
+                    await sender.ConnectAsync(ep);
+                    return true;
+                }
             }
             catch {
-                _success = 0;
-                return await Task.FromResult(false);
+                return false;
             }
         }
 
@@ -188,7 +184,6 @@ namespace Microsoft.Azure.IIoT.Services.Docker {
             )).CreateClient();
         }
 
-        private int _success = 0;
 #pragma warning disable IDE0052 // Remove unread private members
         private readonly ILogger _logger;
 #pragma warning restore IDE0052 // Remove unread private members

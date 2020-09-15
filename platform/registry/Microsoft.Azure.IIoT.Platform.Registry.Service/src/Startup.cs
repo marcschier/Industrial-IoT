@@ -220,7 +220,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service {
             // Iot hub services
             builder.RegisterModule<IoTHubModule>();
             // Register event bus for integration events
-            builder.RegisterModule<ServiceBusModule>();
+            builder.RegisterModule<ServiceBusEventBusModule>();
         }
     }
 }

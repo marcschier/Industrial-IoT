@@ -19,7 +19,7 @@ namespace Microsoft.Azure.IIoT.Messaging.Default {
         /// Create test harness
         /// </summary>
         /// <returns></returns>
-        public SimpleEventQueueHarness GetHarness() {
+        public SimpleEventQueueHarness GetHarness(string target) {
             return new SimpleEventQueueHarness();
         }
 

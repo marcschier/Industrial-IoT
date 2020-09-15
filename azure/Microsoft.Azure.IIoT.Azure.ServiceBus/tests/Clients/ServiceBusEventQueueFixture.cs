@@ -3,9 +3,8 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
-    using Microsoft.Azure.IIoT.Services.RabbitMq.Runtime;
-    using Microsoft.Azure.IIoT.Services.RabbitMq.Server;
+namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Clients {
+    using Microsoft.Azure.IIoT.Azure.ServiceBus.Runtime;
     using Microsoft.Azure.IIoT.Messaging.Handlers;
     using Microsoft.Azure.IIoT.Messaging;
     using Microsoft.Azure.IIoT.Hub;
@@ -16,18 +15,16 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
     using System.Threading.Tasks;
     using System.Linq;
 
-    public class RabbitMqEventQueueFixture : IDisposable {
+    public class ServiceBusEventQueueFixture : IDisposable {
 
         /// <summary>
         /// Create fixture
         /// </summary>
-        public RabbitMqEventQueueFixture() {
+        public ServiceBusEventQueueFixture() {
             try {
                 var builder = new ContainerBuilder();
 
-                builder.RegisterType<RabbitMqConfig>()
-                    .AsImplementedInterfaces().SingleInstance();
-                builder.RegisterType<RabbitMqServer>()
+                builder.RegisterType<ServiceBusConfig>()
                     .AsImplementedInterfaces().SingleInstance();
                 builder.RegisterType<HostAutoStart>()
                     .AutoActivate()
@@ -45,8 +42,8 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
         /// Create test harness
         /// </summary>
         /// <returns></returns>
-        public RabbitMqEventQueueHarness GetHarness(string topic) {
-            return new RabbitMqEventQueueHarness();
+        public ServiceBusEventQueueHarness GetHarness(string topic) {
+            return new ServiceBusEventQueueHarness();
         }
 
         /// <summary>
@@ -59,7 +56,7 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
         private readonly IContainer _container;
     }
 
-    public class RabbitMqEventQueueHarness : IDisposable {
+    public class ServiceBusEventQueueHarness : IDisposable {
 
         public event TelemetryEventHandler OnEvent;
         public event EventHandler OnComplete;
@@ -67,13 +64,13 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
         /// <summary>
         /// Create fixture
         /// </summary>
-        public RabbitMqEventQueueHarness() {
+        public ServiceBusEventQueueHarness() {
             try {
                 var builder = new ContainerBuilder();
 
-                builder.RegisterModule<RabbitMqEventQueueModule>();
+                builder.RegisterModule<ServiceBusEventQueueModule>();
                // builder.RegisterModule<RabbitMqEventProcessorModule>();
-                builder.RegisterType<RabbitMqConfig>()
+                builder.RegisterType<ServiceBusConfig>()
                     .AsImplementedInterfaces().SingleInstance();
 
                 builder.RegisterType<DeviceEventHandler>()
@@ -125,7 +122,7 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
 
         internal class TestHandler : ITelemetryHandler {
 
-            public TestHandler(RabbitMqEventQueueHarness outer, string schema) {
+            public TestHandler(ServiceBusEventQueueHarness outer, string schema) {
                 _outer = outer;
                 MessageSchema = schema;
             }
@@ -145,12 +142,12 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
                 return Task.CompletedTask;
             }
 
-            private readonly RabbitMqEventQueueHarness _outer;
+            private readonly ServiceBusEventQueueHarness _outer;
         }
 
         internal class UnknownHandler : IUnknownEventProcessor {
 
-            public UnknownHandler(RabbitMqEventQueueHarness outer) {
+            public UnknownHandler(ServiceBusEventQueueHarness outer) {
                 _outer = outer;
             }
 
@@ -161,7 +158,7 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
                 return Task.CompletedTask;
             }
 
-            private readonly RabbitMqEventQueueHarness _outer;
+            private readonly ServiceBusEventQueueHarness _outer;
         }
 
         private readonly IContainer _container;

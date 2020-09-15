@@ -15,7 +15,7 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus {
     /// <summary>
     /// Injected service bus
     /// </summary>
-    public class ServiceBusModule : Module {
+    public class ServiceBusEventBusModule : Module {
 
         /// <summary>
         /// Load the module

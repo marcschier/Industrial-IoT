@@ -268,7 +268,7 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service {
             // Add service to service authentication
             builder.RegisterModule<WebApiAuthentication>();
             // Register event bus for integration events
-            builder.RegisterModule<ServiceBusModule>();
+            builder.RegisterModule<ServiceBusEventBusModule>();
             // Register event processor host for telemetry
             builder.RegisterModule<EventHubProcessorModule>();
             builder.RegisterType<DeviceEventHandler>()
