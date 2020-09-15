@@ -19,7 +19,7 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\core\Microsoft.Azure.IIoT.Storage.LiteDb\src\Microsoft.Azure.IIoT.Storage.LiteDb.csproj" />
+    <ProjectReference Include="..\..\..\..\core\Microsoft.Azure.IIoT.Services.LiteDb\src\Microsoft.Azure.IIoT.Services.LiteDb.csproj" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\platform\common\Microsoft.Azure.IIoT.Platform.Api.Internal\src\Microsoft.Azure.IIoT.Platform.Api.Internal.csproj" />

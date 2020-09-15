@@ -5,6 +5,7 @@
 
 namespace Microsoft.Azure.IIoT.Azure.AppInsights {
     using Microsoft.Azure.IIoT.Diagnostics;
+    using Microsoft.Azure.IIoT.Hosting;
     using Microsoft.ApplicationInsights.DependencyCollector;
     using Microsoft.ApplicationInsights.Extensibility;
     using Autofac;

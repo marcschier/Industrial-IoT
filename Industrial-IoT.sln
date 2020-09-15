@@ -63,7 +63,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Azure.IIoT.Azure.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Azure.IIoT.Azure.ActiveDirectory", "azure\Microsoft.Azure.IIoT.Azure.ActiveDirectory\src\Microsoft.Azure.IIoT.Azure.ActiveDirectory.csproj", "{B80792C1-F31E-4D21-8D26-8D69519678C0}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Azure.IIoT.Crypto", "core\Microsoft.Azure.IIoT.Crypto\src\Microsoft.Azure.IIoT.Crypto.csproj", "{A69DC376-C0E5-4084-8FC8-A69077D92F04}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Azure.IIoT.Crypto.Bouncycastle", "core\Microsoft.Azure.IIoT.Crypto.Bouncycastle\src\Microsoft.Azure.IIoT.Crypto.Bouncycastle.csproj", "{A69DC376-C0E5-4084-8FC8-A69077D92F04}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Azure.IIoT.Platform.Twin.Service.Tests", "platform\twin\Microsoft.Azure.IIoT.Platform.Twin.Service\tests\Microsoft.Azure.IIoT.Platform.Twin.Service.Tests.csproj", "{B3266A37-F0A1-449F-943A-6C4DF35C7953}"
 EndProject
@@ -102,7 +102,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.editorconfig = .editorconfig
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Azure.IIoT.Crypto.Tests", "core\Microsoft.Azure.IIoT.Crypto\tests\Microsoft.Azure.IIoT.Crypto.Tests.csproj", "{BA5EDBB9-331F-486B-8724-2E23DC3EEADA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Azure.IIoT.Crypto.Tests", "core\Microsoft.Azure.IIoT.Crypto.Bouncycastle\tests\Microsoft.Azure.IIoT.Crypto.Tests.csproj", "{BA5EDBB9-331F-486B-8724-2E23DC3EEADA}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Azure.IIoT.Platform.Discovery.Edge.Module", "platform\discovery\Microsoft.Azure.IIoT.Platform.Discovery.Edge.Module\src\Microsoft.Azure.IIoT.Platform.Discovery.Edge.Module.csproj", "{EB0E6E11-3C34-4BDE-8020-5324BCEB2C06}"
 EndProject
@@ -282,23 +282,29 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Azure.IIoT.Platfo
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Azure.IIoT.Azure.CosmosDb.Tests", "azure\Microsoft.Azure.IIoT.Azure.CosmosDb\tests\Microsoft.Azure.IIoT.Azure.CosmosDb.Tests.csproj", "{22E362BA-9694-40E9-8533-419380D87241}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Azure.IIoT.Storage.LiteDb", "core\Microsoft.Azure.IIoT.Storage.LiteDb\src\Microsoft.Azure.IIoT.Storage.LiteDb.csproj", "{32063973-E2B6-40EA-82EF-CBE123B64361}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Azure.IIoT.Services.LiteDb", "core\Microsoft.Azure.IIoT.Services.LiteDb\src\Microsoft.Azure.IIoT.Services.LiteDb.csproj", "{32063973-E2B6-40EA-82EF-CBE123B64361}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Azure.IIoT.Storage.LiteDb.Tests", "core\Microsoft.Azure.IIoT.Storage.LiteDb\tests\Microsoft.Azure.IIoT.Storage.LiteDb.Tests.csproj", "{CC9B9EFC-300D-4817-BAA1-3C5361523935}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Azure.IIoT.Services.LiteDb.Tests", "core\Microsoft.Azure.IIoT.Services.LiteDb\tests\Microsoft.Azure.IIoT.Services.LiteDb.Tests.csproj", "{CC9B9EFC-300D-4817-BAA1-3C5361523935}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{3C07D78B-E4C6-4552-894A-BB91174B5745}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Azure.IIoT.Messaging.RabbitMq", "core\Microsoft.Azure.IIoT.Messaging.RabbitMq\src\Microsoft.Azure.IIoT.Messaging.RabbitMq.csproj", "{96633DA1-B86B-49D6-B4D0-3CB300F209CB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Azure.IIoT.Services.RabbitMq", "core\Microsoft.Azure.IIoT.Services.RabbitMq\src\Microsoft.Azure.IIoT.Services.RabbitMq.csproj", "{96633DA1-B86B-49D6-B4D0-3CB300F209CB}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Azure.IIoT.Messaging.Kafka", "core\Microsoft.Azure.IIoT.Messaging.MassTransit\src\Microsoft.Azure.IIoT.Messaging.Kafka.csproj", "{1DF749F6-0243-4DB9-8635-6FD173299AE1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Azure.IIoT.Services.Kafka", "core\Microsoft.Azure.IIoT.Services.Kafka\src\Microsoft.Azure.IIoT.Services.Kafka.csproj", "{1DF749F6-0243-4DB9-8635-6FD173299AE1}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Azure.IIoT.Messaging.RabbitMq.Tests", "core\Microsoft.Azure.IIoT.Messaging.RabbitMq\tests\Microsoft.Azure.IIoT.Messaging.RabbitMq.Tests.csproj", "{5651178A-18F6-41C8-92EC-DFF6912BC866}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Azure.IIoT.Services.RabbitMq.Tests", "core\Microsoft.Azure.IIoT.Services.RabbitMq\tests\Microsoft.Azure.IIoT.Services.RabbitMq.Tests.csproj", "{5651178A-18F6-41C8-92EC-DFF6912BC866}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Azure.IIoT.Messaging.Kafka.Tests", "core\Microsoft.Azure.IIoT.Messaging.MassTransit\tests\Microsoft.Azure.IIoT.Messaging.Kafka.Tests.csproj", "{9DDAFC4A-BF86-4267-B048-E3F6090A4C7F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Azure.IIoT.Services.Kafka.Tests", "core\Microsoft.Azure.IIoT.Services.Kafka\tests\Microsoft.Azure.IIoT.Services.Kafka.Tests.csproj", "{9DDAFC4A-BF86-4267-B048-E3F6090A4C7F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Azure.IIoT.Storage.CouchDb", "core\Microsoft.Azure.IIoT.Storage.CouchDb\src\Microsoft.Azure.IIoT.Storage.CouchDb.csproj", "{B7A1E358-9FD2-4502-B0A3-C21FBA3E2E2C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Azure.IIoT.Services.CouchDb", "core\Microsoft.Azure.IIoT.Services.CouchDb\src\Microsoft.Azure.IIoT.Services.CouchDb.csproj", "{B7A1E358-9FD2-4502-B0A3-C21FBA3E2E2C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Azure.IIoT.Storage.CouchDb.Tests", "core\Microsoft.Azure.IIoT.Storage.CouchDb\tests\Microsoft.Azure.IIoT.Storage.CouchDb.Tests.csproj", "{EC92055F-8A42-4248-BD68-2DD3146C0186}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Azure.IIoT.Services.CouchDb.Tests", "core\Microsoft.Azure.IIoT.Services.CouchDb\tests\Microsoft.Azure.IIoT.Services.CouchDb.Tests.csproj", "{EC92055F-8A42-4248-BD68-2DD3146C0186}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Azure.IIoT.Services.Testing", "core\Microsoft.Azure.IIoT.Services.Testing\src\Microsoft.Azure.IIoT.Services.Testing.csproj", "{26689678-190D-4741-96D8-FDC39F7E90AA}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Azure.IIoT.Services.Generic", "core\Microsoft.Azure.IIoT.Services.Generic\src\Microsoft.Azure.IIoT.Services.Generic.csproj", "{F451F01F-6FF9-4E4D-BC59-BC873D644578}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Azure.IIoT.Services.Generic.Tests", "core\Microsoft.Azure.IIoT.Services.Generic\tests\Microsoft.Azure.IIoT.Services.Generic.Tests.csproj", "{221879E8-BE7C-4FA2-89AE-51DEE96E2F51}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -1132,6 +1138,30 @@ Global
 		{EC92055F-8A42-4248-BD68-2DD3146C0186}.Release|Any CPU.Build.0 = Release|Any CPU
 		{EC92055F-8A42-4248-BD68-2DD3146C0186}.Release|x64.ActiveCfg = Release|Any CPU
 		{EC92055F-8A42-4248-BD68-2DD3146C0186}.Release|x64.Build.0 = Release|Any CPU
+		{26689678-190D-4741-96D8-FDC39F7E90AA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{26689678-190D-4741-96D8-FDC39F7E90AA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{26689678-190D-4741-96D8-FDC39F7E90AA}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{26689678-190D-4741-96D8-FDC39F7E90AA}.Debug|x64.Build.0 = Debug|Any CPU
+		{26689678-190D-4741-96D8-FDC39F7E90AA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{26689678-190D-4741-96D8-FDC39F7E90AA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{26689678-190D-4741-96D8-FDC39F7E90AA}.Release|x64.ActiveCfg = Release|Any CPU
+		{26689678-190D-4741-96D8-FDC39F7E90AA}.Release|x64.Build.0 = Release|Any CPU
+		{F451F01F-6FF9-4E4D-BC59-BC873D644578}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F451F01F-6FF9-4E4D-BC59-BC873D644578}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F451F01F-6FF9-4E4D-BC59-BC873D644578}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{F451F01F-6FF9-4E4D-BC59-BC873D644578}.Debug|x64.Build.0 = Debug|Any CPU
+		{F451F01F-6FF9-4E4D-BC59-BC873D644578}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F451F01F-6FF9-4E4D-BC59-BC873D644578}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F451F01F-6FF9-4E4D-BC59-BC873D644578}.Release|x64.ActiveCfg = Release|Any CPU
+		{F451F01F-6FF9-4E4D-BC59-BC873D644578}.Release|x64.Build.0 = Release|Any CPU
+		{221879E8-BE7C-4FA2-89AE-51DEE96E2F51}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{221879E8-BE7C-4FA2-89AE-51DEE96E2F51}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{221879E8-BE7C-4FA2-89AE-51DEE96E2F51}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{221879E8-BE7C-4FA2-89AE-51DEE96E2F51}.Debug|x64.Build.0 = Debug|Any CPU
+		{221879E8-BE7C-4FA2-89AE-51DEE96E2F51}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{221879E8-BE7C-4FA2-89AE-51DEE96E2F51}.Release|Any CPU.Build.0 = Release|Any CPU
+		{221879E8-BE7C-4FA2-89AE-51DEE96E2F51}.Release|x64.ActiveCfg = Release|Any CPU
+		{221879E8-BE7C-4FA2-89AE-51DEE96E2F51}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -1274,6 +1304,9 @@ Global
 		{9DDAFC4A-BF86-4267-B048-E3F6090A4C7F} = {ADA1CE90-5727-4D1E-8544-50C19B09D3A1}
 		{B7A1E358-9FD2-4502-B0A3-C21FBA3E2E2C} = {EDC413E0-BE91-477B-8A16-B20BBBB35933}
 		{EC92055F-8A42-4248-BD68-2DD3146C0186} = {ADA1CE90-5727-4D1E-8544-50C19B09D3A1}
+		{26689678-190D-4741-96D8-FDC39F7E90AA} = {EDC413E0-BE91-477B-8A16-B20BBBB35933}
+		{F451F01F-6FF9-4E4D-BC59-BC873D644578} = {EDC413E0-BE91-477B-8A16-B20BBBB35933}
+		{221879E8-BE7C-4FA2-89AE-51DEE96E2F51} = {ADA1CE90-5727-4D1E-8544-50C19B09D3A1}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {F09EFCEA-59F6-4A16-9CB6-7E865A3F62D8}

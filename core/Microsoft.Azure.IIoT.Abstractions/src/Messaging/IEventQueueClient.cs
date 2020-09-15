@@ -4,6 +4,7 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Messaging {
+    using System;
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
@@ -25,5 +26,20 @@ namespace Microsoft.Azure.IIoT.Messaging {
         Task SendAsync(string target, byte[] payload,
             IDictionary<string, string> properties = null,
             string partitionKey = null, CancellationToken ct = default);
+
+        /// <summary>
+        /// Send with callback
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="target"></param>
+        /// <param name="payload"></param>
+        /// <param name="token"></param>
+        /// <param name="complete"></param>
+        /// <param name="properties"></param>
+        /// <param name="partitionKey"></param>
+        void Send<T>(string target, byte[] payload,
+            T token, Action<T, Exception> complete,
+            IDictionary<string, string> properties = null,
+            string partitionKey = null);
     }
 }

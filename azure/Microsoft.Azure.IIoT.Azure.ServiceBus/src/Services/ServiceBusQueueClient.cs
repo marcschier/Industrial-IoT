@@ -44,6 +44,23 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Services {
         }
 
         /// <inheritdoc/>
+        public void Send<T>(string target, byte[] payload, T token,
+            Action<T, Exception> complete, IDictionary<string, string> properties,
+            string partitionKey) {
+            if (payload == null) {
+                throw new ArgumentNullException(nameof(payload));
+            }
+            if (token is null) {
+                throw new ArgumentNullException(nameof(token));
+            }
+            if (complete == null) {
+                throw new ArgumentNullException(nameof(complete));
+            }
+            _ = SendAsync(target, payload, properties, partitionKey, default)
+                .ContinueWith(task => complete?.Invoke(token, task.Exception));
+        }
+
+        /// <inheritdoc/>
         public async Task SendEventAsync(string target, byte[] data, string contentType,
             string eventSchema, string contentEncoding, CancellationToken ct) {
             var client = await _factory.CreateOrGetGetQueueClientAsync(target);
@@ -57,6 +74,19 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Services {
             await client.SendAsync(batch
                 .Select(b => CreateMessage(b, contentType, eventSchema, contentEncoding))
                 .ToList());
+        }
+
+        /// <inheritdoc/>
+        public void SendEvent<T>(string target, byte[] data, string contentType,
+            string eventSchema, string contentEncoding, T token, Action<T, Exception> complete) {
+            if (token is null) {
+                throw new ArgumentNullException(nameof(token));
+            }
+            if (complete == null) {
+                throw new ArgumentNullException(nameof(complete));
+            }
+            _ = SendEventAsync(target, data, contentType, eventSchema, contentEncoding, default)
+                .ContinueWith(task => complete?.Invoke(token, task.Exception));
         }
 
         /// <summary>

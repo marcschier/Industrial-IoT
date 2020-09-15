@@ -5,7 +5,6 @@
 
 namespace Microsoft.Azure.IIoT.Azure.CosmosDb.Clients {
     using Microsoft.Azure.IIoT.Storage;
-    using Microsoft.Azure.IIoT.Exceptions;
     using AutoFixture;
     using Autofac;
     using System;

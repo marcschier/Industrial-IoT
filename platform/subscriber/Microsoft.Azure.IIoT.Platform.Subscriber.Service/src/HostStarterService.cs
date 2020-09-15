@@ -4,9 +4,8 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Platform.Subscriber.Service {
-
-    using Microsoft.Azure.IIoT.Diagnostics;
     using Microsoft.Azure.IIoT.Platform.Subscriber.Service.Runtime;
+    using Microsoft.Azure.IIoT.Hosting;
     using Microsoft.Extensions.Hosting;
     using System;
     using System.Collections.Generic;

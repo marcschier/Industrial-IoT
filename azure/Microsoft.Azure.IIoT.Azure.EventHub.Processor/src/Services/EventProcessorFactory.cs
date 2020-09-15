@@ -97,7 +97,7 @@ namespace Microsoft.Azure.IIoT.Azure.EventHub.Processor.Services {
                             properties);
                         continue;
                     }
-                    await _handler.HandleAsync(eventData.Body.Array, properties,
+                    await _handler.HandleAsync(context.EventHubPath, eventData.Body.Array, properties,
                         () => CheckpointAsync(context, eventData));
 
                     if (context.CancellationToken.IsCancellationRequested) {

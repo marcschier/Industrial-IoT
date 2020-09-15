@@ -7,6 +7,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
     using Microsoft.Azure.IIoT.Platform.Registry;
     using Microsoft.Azure.IIoT.Platform.Edge;
     using Microsoft.Azure.IIoT.Hub;
+    using Microsoft.Azure.IIoT.Utils;
     using Microsoft.Azure.IIoT.Serializers;
     using Serilog;
     using System;
@@ -16,7 +17,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
     /// <summary>
     /// Update settings on all module entities
     /// </summary>
-    public class SettingsSyncHost : AbstractRunHost {
+    public class SettingsSyncHost : SchedulerHost {
 
         /// <summary>
         /// Create host

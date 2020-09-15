@@ -24,5 +24,6 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Microsoft.Azure.IIoT.Abstractions\src\Microsoft.Azure.IIoT.Abstractions.csproj" />
+    <ProjectReference Include="..\..\Microsoft.Azure.IIoT.Services.Generic\src\Microsoft.Azure.IIoT.Services.Generic.csproj" />
   </ItemGroup>
 </Project>

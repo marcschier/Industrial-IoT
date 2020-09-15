@@ -51,6 +51,20 @@ namespace Microsoft.Azure.IIoT.Azure.EventHub.Clients {
         }
 
         /// <inheritdoc/>
+        public void Send<T>(string target, byte[] payload, T token,
+            Action<T, Exception> complete, IDictionary<string, string> properties,
+            string partitionKey) {
+            if (token is null) {
+                throw new ArgumentNullException(nameof(token));
+            }
+            if (complete == null) {
+                throw new ArgumentNullException(nameof(complete));
+            }
+            _ = SendAsync(target, payload, properties, partitionKey, default)
+                .ContinueWith(task => complete?.Invoke(token, task.Exception));
+        }
+
+        /// <inheritdoc/>
         public async Task SendEventAsync(string target, byte[] data, string contentType,
             string eventSchema, string contentEncoding, CancellationToken ct) {
             using (var ev = CreateEvent(data, contentType, eventSchema, contentEncoding)) {
@@ -72,6 +86,19 @@ namespace Microsoft.Azure.IIoT.Azure.EventHub.Clients {
             finally {
                 events.ForEach(e => e?.Dispose());
             }
+        }
+
+        /// <inheritdoc/>
+        public void SendEvent<T>(string target, byte[] data, string contentType,
+            string eventSchema, string contentEncoding, T token, Action<T, Exception> complete) {
+            if (token is null) {
+                throw new ArgumentNullException(nameof(token));
+            }
+            if (complete == null) {
+                throw new ArgumentNullException(nameof(complete));
+            }
+            _ = SendEventAsync(target, data, contentType, eventSchema, contentEncoding, default)
+                .ContinueWith(task => complete?.Invoke(token, task.Exception));
         }
 
         /// <inheritdoc/>

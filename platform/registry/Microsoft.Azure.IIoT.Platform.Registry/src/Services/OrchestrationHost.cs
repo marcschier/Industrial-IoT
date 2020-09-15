@@ -5,6 +5,7 @@
 
 namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
     using Microsoft.Azure.IIoT.Platform.Registry;
+    using Microsoft.Azure.IIoT.Utils;
     using Serilog;
     using System;
     using System.Threading.Tasks;
@@ -13,7 +14,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
     /// <summary>
     /// Performs continous publisher placement of writer groups
     /// </summary>
-    public sealed class OrchestrationHost : AbstractRunHost {
+    public sealed class OrchestrationHost : SchedulerHost {
 
         /// <summary>
         /// Create process

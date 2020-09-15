@@ -7,6 +7,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
     using Microsoft.Azure.IIoT.Platform.Registry;
     using Microsoft.Azure.IIoT.Platform.Publisher.Models;
     using Microsoft.Azure.IIoT.Platform.Publisher;
+    using Microsoft.Azure.IIoT.Utils;
     using Serilog;
     using System;
     using System.Threading;
@@ -15,7 +16,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
     /// <summary>
     /// Synchronize Publisher registry twins with writer groups and and writers
     /// </summary>
-    public class WriterGroupSyncHost : AbstractRunHost {
+    public class WriterGroupSyncHost : SchedulerHost {
 
         /// <summary>
         /// Create host

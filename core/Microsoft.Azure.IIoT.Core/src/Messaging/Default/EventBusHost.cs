@@ -11,6 +11,7 @@ namespace Microsoft.Azure.IIoT.Messaging.Default {
     using System.Threading;
     using System.Collections.Generic;
     using System.Linq;
+    using Microsoft.Azure.IIoT.Exceptions;
 
     /// <summary>
     /// Event bus host to auto inject handlers
@@ -34,8 +35,7 @@ namespace Microsoft.Azure.IIoT.Messaging.Default {
             await _lock.WaitAsync();
             try {
                 if (_handlers.Any(h => h.Value != null)) {
-                    _logger.Debug("Event bus host already running.");
-                    return;
+                    throw new ResourceInvalidStateException("Event bus host already running.");
                 }
                 var register = _client.GetType().GetMethod(nameof(IEventBus.RegisterAsync));
                 foreach (var handler in _handlers.Keys.ToList()) {
@@ -85,7 +85,6 @@ namespace Microsoft.Azure.IIoT.Messaging.Default {
                         throw ex;
                     }
                 }
-                _handlers.Clear();
                 _logger.Information("Event bus host stopped.");
             }
             finally {

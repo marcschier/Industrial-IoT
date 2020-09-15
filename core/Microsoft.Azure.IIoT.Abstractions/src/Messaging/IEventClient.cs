@@ -4,6 +4,7 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Messaging {
+    using System;
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
@@ -14,7 +15,7 @@ namespace Microsoft.Azure.IIoT.Messaging {
     public interface IEventClient {
 
         /// <summary>
-        /// Send event
+        /// Send event to a target resource
         /// </summary>
         /// <param name="target"></param>
         /// <param name="data"></param>
@@ -28,7 +29,7 @@ namespace Microsoft.Azure.IIoT.Messaging {
             string contentEncoding, CancellationToken ct = default);
 
         /// <summary>
-        /// Send batch of events
+        /// Send batch of events to a target
         /// </summary>
         /// <param name="target"></param>
         /// <param name="batch"></param>
@@ -40,5 +41,20 @@ namespace Microsoft.Azure.IIoT.Messaging {
         Task SendEventAsync(string target, IEnumerable<byte[]> batch,
             string contentType, string eventSchema,
             string contentEncoding, CancellationToken ct = default);
+
+        /// <summary>
+        /// Send with completion callback
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="target"></param>
+        /// <param name="data"></param>
+        /// <param name="contentType"></param>
+        /// <param name="eventSchema"></param>
+        /// <param name="contentEncoding"></param>
+        /// <param name="token"></param>
+        /// <param name="complete"></param>
+        void SendEvent<T>(string target, byte[] data,
+            string contentType, string eventSchema,
+            string contentEncoding, T token, Action<T, Exception> complete);
     }
 }

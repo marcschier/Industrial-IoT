@@ -7,8 +7,9 @@ namespace Microsoft.Azure.IIoT.Messaging.Default {
     using Microsoft.Azure.IIoT.Messaging;
     using Microsoft.Azure.IIoT.Exceptions;
     using System.Threading.Tasks;
-    using System.Collections.Generic;
+    using System.Collections.Concurrent;
     using System;
+    using System.Linq;
 
     /// <summary>
     /// Simple in memory event bus
@@ -16,13 +17,14 @@ namespace Microsoft.Azure.IIoT.Messaging.Default {
     public class SimpleEventBus : IEventBus {
 
         /// <inheritdoc/>
-        public Task PublishAsync<T>(T message) {
+        public async Task PublishAsync<T>(T message) {
             if (message is null) {
                 throw new ArgumentNullException(nameof(message));
             }
             var name = typeof(T).GetMoniker();
-            _handlers.TryGetValue(name, out var handler);
-            return ((IEventHandler<T>)handler).HandleAsync(message);
+            await Task.WhenAll(_handlers.Values
+                .Where(h => h.Moniker == name)
+                .Select(h => h.HandleAsync(message)));
         }
 
         /// <inheritdoc/>
@@ -30,9 +32,9 @@ namespace Microsoft.Azure.IIoT.Messaging.Default {
             if (handler == null) {
                 throw new ArgumentNullException(nameof(handler));
             }
-            var token = typeof(T).GetMoniker();
-            _handlers.AddOrUpdate(token, handler);
-            return Task.FromResult(token);
+            var handle = new Handle(typeof(T), handler);
+            _handlers.TryAdd(handle.Token, handle);
+            return Task.FromResult(handle.Token);
         }
 
         /// <inheritdoc/>
@@ -40,13 +42,54 @@ namespace Microsoft.Azure.IIoT.Messaging.Default {
             if (string.IsNullOrEmpty(token)) {
                 throw new ArgumentNullException(nameof(token));
             }
-            if (!_handlers.Remove(token)) {
+            if (!_handlers.TryRemove(token, out _)) {
                 throw new ResourceInvalidStateException(nameof(token));
             }
             return Task.CompletedTask;
         }
 
-        private readonly Dictionary<string, object> _handlers =
-            new Dictionary<string, object>();
+        /// <summary>
+        /// Encapsulates the handler
+        /// </summary>
+        private class Handle {
+
+            /// <summary>
+            /// Registration
+            /// </summary>
+            public string Token { get; } = Guid.NewGuid().ToString();
+
+            /// <summary>
+            /// Moniker
+            /// </summary>
+            public string Moniker { get; }
+
+            /// <summary>
+            /// Create handler
+            /// </summary>
+            /// <param name="type"></param>
+            /// <param name="handler"></param>
+            public Handle(Type type, IHandler handler) {
+                _type = type;
+                _handler = handler;
+                Moniker = type.GetMoniker();
+            }
+
+            /// <summary>
+            /// Handle message
+            /// </summary>
+            /// <typeparam name="T"></typeparam>
+            /// <param name="message"></param>
+            /// <returns></returns>
+            public Task HandleAsync<T>(T message) {
+                System.Diagnostics.Debug.Assert(typeof(T) == _type);
+                return ((IEventHandler<T>)_handler).HandleAsync(message);
+            }
+
+            private readonly Type _type;
+            private readonly IHandler _handler;
+        }
+
+        private readonly ConcurrentDictionary<string, Handle> _handlers =
+            new ConcurrentDictionary<string, Handle>();
     }
 }

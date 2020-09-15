@@ -12,7 +12,7 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service {
     using Microsoft.Azure.IIoT.Azure.AppInsights;
     using Microsoft.Azure.IIoT.Azure.ServiceBus;
     using Microsoft.Azure.IIoT.Azure.EventHub.Processor;
-    using Microsoft.Azure.IIoT.Azure.EventHub.Processor.Handlers;
+    using Microsoft.Azure.IIoT.Messaging.Handlers;
     using Microsoft.Azure.IIoT.Messaging.SignalR.Services;
     using Microsoft.Azure.IIoT.Authentication;
     using Microsoft.Azure.IIoT.Http.Default;
@@ -271,7 +271,7 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service {
             builder.RegisterModule<ServiceBusModule>();
             // Register event processor host for telemetry
             builder.RegisterModule<EventHubProcessorModule>();
-            builder.RegisterType<EventHubDeviceEventHandler>()
+            builder.RegisterType<DeviceEventHandler>()
                 .AsImplementedInterfaces();
         }
     }

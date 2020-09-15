@@ -5,6 +5,7 @@
 
 namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
     using Microsoft.Azure.IIoT.Platform.Registry;
+    using Microsoft.Azure.IIoT.Utils;
     using Serilog;
     using System;
     using System.Threading.Tasks;
@@ -13,7 +14,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
     /// <summary>
     /// Performs continous endpoint activation synchronization
     /// </summary>
-    public sealed class ActivationSyncHost : AbstractRunHost {
+    public sealed class ActivationSyncHost : SchedulerHost {
 
         /// <summary>
         /// Create activation process

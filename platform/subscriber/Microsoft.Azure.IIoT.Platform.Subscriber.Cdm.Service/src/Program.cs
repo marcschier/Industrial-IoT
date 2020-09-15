@@ -11,12 +11,12 @@ namespace Microsoft.Azure.IIoT.Platform.Subscriber.Cdm.Service {
     using Microsoft.Azure.IIoT.Azure.ActiveDirectory.Clients;
     using Microsoft.Azure.IIoT.Azure.AppInsights;
     using Microsoft.Azure.IIoT.Azure.EventHub.Processor;
-    using Microsoft.Azure.IIoT.Azure.EventHub.Processor.Handlers;
     using Microsoft.Azure.IIoT.Azure.Datalake.Runtime;
     using Microsoft.Azure.IIoT.Azure.Datalake;
+    using Microsoft.Azure.IIoT.AspNetCore.Diagnostics.Default;
+    using Microsoft.Azure.IIoT.Messaging.Handlers;
     using Microsoft.Azure.IIoT.Http.Default;
     using Microsoft.Azure.IIoT.Serializers;
-    using Microsoft.Azure.IIoT.AspNetCore.Diagnostics.Default;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
@@ -121,7 +121,7 @@ namespace Microsoft.Azure.IIoT.Platform.Subscriber.Cdm.Service {
             builder.RegisterModule<StorageAuthentication>();
             // Event processor host
             builder.RegisterModule<EventHubProcessorModule>();
-            builder.RegisterType<EventHubDeviceEventHandler>()
+            builder.RegisterType<DeviceEventHandler>()
                 .AsImplementedInterfaces();
             // Datalake as storage
             builder.RegisterType<DatalakeConfig>()

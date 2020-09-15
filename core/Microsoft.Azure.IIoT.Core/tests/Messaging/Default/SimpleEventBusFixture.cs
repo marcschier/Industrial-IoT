@@ -10,16 +10,32 @@ namespace Microsoft.Azure.IIoT.Messaging.Default {
     using Microsoft.Azure.IIoT.Tasks.Default;
     using Microsoft.Azure.IIoT.Utils;
 
-    public class SimpleEventBusFixture {
+    public class SimpleEventBusFixture : IDisposable {
+
+        /// <summary>
+        /// Create test harness
+        /// </summary>
+        /// <returns></returns>
+        public SimpleEventBusHarness GetHarness(
+            Action<ContainerBuilder> configure = null) {
+            return new SimpleEventBusHarness(configure);
+        }
+
+        public void Dispose() {
+            // Turn off server
+        }
+    }
+
+    public class SimpleEventBusHarness : IDisposable {
 
         /// <summary>
         /// Create fixture
         /// </summary>
-        public SimpleEventBusFixture() {
+        public SimpleEventBusHarness(Action<ContainerBuilder> configure = null) {
             try {
                 var builder = new ContainerBuilder();
 
-                builder.RegisterType<EventBusHost>()
+                builder.RegisterType<EventBusHost>().AsSelf()
                     .AsImplementedInterfaces().SingleInstance();
                 builder.RegisterType<SimpleEventBus>()
                     .AsImplementedInterfaces().SingleInstance();
@@ -30,6 +46,7 @@ namespace Microsoft.Azure.IIoT.Messaging.Default {
                     .AsImplementedInterfaces().SingleInstance();
 
                 builder.AddDebugDiagnostics();
+                configure?.Invoke(builder);
                 _container = builder.Build();
             }
             catch {
@@ -44,6 +61,15 @@ namespace Microsoft.Azure.IIoT.Messaging.Default {
         /// <returns></returns>
         public IEventBus GetEventBus() {
             return Try.Op(() => _container?.Resolve<IEventBus>());
+        }
+
+        /// <summary>
+        /// Get Event Bus
+        /// </summary>
+        /// <param name="options"></param>
+        /// <returns></returns>
+        public EventBusHost GetEventBusHost() {
+            return Try.Op(() => _container?.Resolve<EventBusHost>());
         }
 
         /// <summary>

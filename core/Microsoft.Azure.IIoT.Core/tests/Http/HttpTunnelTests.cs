@@ -280,6 +280,7 @@ namespace Microsoft.Azure.IIoT.Http.Tunnel.Services {
             /// </summary>
             public ITelemetryHandler Handler { get; set; }
 
+            /// <inheritdoc/>
             public Task SendEventAsync(string target, byte[] data, string contentType,
                 string eventSchema, string contentEncoding, CancellationToken ct) {
                 return Handler.HandleAsync("test", "test", data, new Dictionary<string, string> {
@@ -287,8 +288,15 @@ namespace Microsoft.Azure.IIoT.Http.Tunnel.Services {
                 }, () => Task.CompletedTask);
             }
 
+            /// <inheritdoc/>
             public Task SendEventAsync(string target, IEnumerable<byte[]> batch, string contentType,
                 string eventSchema, string contentEncoding, CancellationToken ct) {
+                throw new NotImplementedException();
+            }
+
+            /// <inheritdoc/>
+            public void SendEvent<T>(string target, byte[] data, string contentType,
+                string eventSchema, string contentEncoding, T token, Action<T, Exception> complete) {
                 throw new NotImplementedException();
             }
         }

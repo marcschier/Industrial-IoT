@@ -6,7 +6,7 @@
 namespace Microsoft.Azure.IIoT.Hub {
 
     /// <summary>
-    /// Common IIoT IoT Hub properties
+    /// Common IoT Hub properties
     /// </summary>
     public static class CommonProperties {
 

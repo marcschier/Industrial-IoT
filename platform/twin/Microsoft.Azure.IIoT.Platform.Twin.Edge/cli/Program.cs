@@ -264,6 +264,13 @@ Operations (Mutually exclusive):
             }
 
             /// <inheritdoc/>
+            public void SendEvent<T>(string target, byte[] data, string contentType, string eventSchema,
+                string contentEncoding, T token, Action<T, Exception> complete) {
+                SendEventAsync(target, data, contentType, eventSchema, contentEncoding, default)
+                    .ContinueWith(task => complete(token, task.Exception));
+            }
+
+            /// <inheritdoc/>
             public Task ReportAsync(string propertyId, VariantValue value, CancellationToken ct) {
                 return Task.CompletedTask;
             }

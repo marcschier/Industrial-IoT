@@ -12,6 +12,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub.Handlers {
     using System.Collections.Concurrent;
     using System.Linq;
     using System.Threading.Tasks;
+    using Microsoft.Azure.IIoT.Messaging.Handlers;
 
     /// <summary>
     /// Default iot hub device event handler implementation
@@ -34,8 +35,8 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub.Handlers {
         }
 
         /// <inheritdoc/>
-        public async Task HandleAsync(byte[] eventData, IDictionary<string, string> properties,
-            Func<Task> checkpoint) {
+        public async Task HandleAsync(string target, byte[] eventData,
+            IDictionary<string, string> properties, Func<Task> checkpoint) {
             if (!properties.TryGetValue(CommonProperties.DeviceId, out var deviceId) &&
                 !properties.TryGetValue(SystemProperties.ConnectionDeviceId, out deviceId) &&
                 !properties.TryGetValue(SystemProperties.DeviceId, out deviceId)) {
@@ -67,7 +68,8 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub.Handlers {
 
             if (_unknown != null) {
                 // From a device, but does not have any event schema or message schema
-                await _unknown.HandleAsync(eventData, properties);
+                await _unknown.HandleAsync(HubResource.Format(deviceId, moduleId),
+                    eventData, properties);
                 if (checkpoint != null) {
                     await Try.Async(() => checkpoint());
                 }

@@ -35,6 +35,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Services {
             GetSourceStates(dataSetWriterId).Events.TryAdd(state);
         }
 
+        /// <inheritdoc/>
         public Task SendEventAsync(string target, byte[] data, string contentType, string eventSchema,
             string contentEncoding, CancellationToken ct) {
             var message = new Message(data, contentType, eventSchema, contentEncoding);
@@ -42,6 +43,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Services {
             return Task.CompletedTask;
         }
 
+        /// <inheritdoc/>
         public Task SendEventAsync(string target, IEnumerable<byte[]> batch, string contentType,
             string eventSchema, string contentEncoding, CancellationToken ct) {
             foreach (var data in batch) {
@@ -49,6 +51,13 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Services {
                 GetMessages(target).Events.TryAdd(message);
             }
             return Task.CompletedTask;
+        }
+
+        /// <inheritdoc/>
+        public void SendEvent<T>(string target, byte[] data, string contentType, string eventSchema,
+            string contentEncoding, T token, Action<T, Exception> complete) {
+            SendEventAsync(target, data, contentType, eventSchema, contentEncoding, default)
+                .ContinueWith(task => complete(token, task.Exception));
         }
 
         public EventStore<PublishedDataSetItemStateModel> GetItemStates(

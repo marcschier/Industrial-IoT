@@ -4,9 +4,8 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Platform.Registry.Sync.Service {
-
-    using Microsoft.Azure.IIoT.Diagnostics;
     using Microsoft.Azure.IIoT.Platform.Registry.Sync.Service.Runtime;
+    using Microsoft.Azure.IIoT.Hosting;
     using Microsoft.Extensions.Hosting;
     using System;
     using System.Collections.Generic;

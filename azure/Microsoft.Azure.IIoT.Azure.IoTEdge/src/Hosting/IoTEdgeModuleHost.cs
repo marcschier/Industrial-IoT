@@ -201,6 +201,19 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Hosting {
         }
 
         /// <inheritdoc/>
+        public void SendEvent<T>(string target, byte[] data, string contentType,
+            string eventSchema, string contentEncoding, T token, Action<T, Exception> complete) {
+            if (token is null) {
+                throw new ArgumentNullException(nameof(token));
+            }
+            if (complete == null) {
+                throw new ArgumentNullException(nameof(complete));
+            }
+            _ = SendEventAsync(target, data, contentType, eventSchema, contentEncoding, default)
+                .ContinueWith(task => complete?.Invoke(token, task.Exception));
+        }
+
+        /// <inheritdoc/>
         public async Task ReportAsync(IEnumerable<KeyValuePair<string, VariantValue>> properties,
             CancellationToken ct) {
             try {

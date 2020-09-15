@@ -307,9 +307,15 @@ namespace Microsoft.Azure.IIoT {
         /// <summary> Kafka Boostrap servers </summary>
         public const string PCS_KAFKA_BOOTSTRAP_SERVERS =
             "PCS_KAFKA_BOOTSTRAP_SERVERS";
+        /// <summary> Kafka partitions per topic </summary>
+        public const string PCS_KAFKA_PARTITION_COUNT =
+            "PCS_KAFKA_PARTITION_COUNT";
+        /// <summary> Kafka replica factor per topic </summary>
+        public const string PCS_KAFKA_REPLICA_FACTOR =
+            "PCS_KAFKA_REPLICA_FACTOR";
         /// <summary> Kafka Consumer group </summary>
-        public const string PCS_KAFKA_CONSUMERGROUP =
-            "PCS_KAFKA_CONSUMERGROUP";
+        public const string PCS_KAFKA_CONSUMER_GROUP =
+            "PCS_KAFKA_CONSUMER_GROUP";
         /// <summary> Kafka Consumer topics </summary>
         public const string PCS_KAFKA_CONSUMER_TOPIC_REGEX =
             "PCS_KAFKA_CONSUMER_TOPIC_REGEX";

@@ -5,7 +5,7 @@
 
 namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Services {
     using Microsoft.Azure.IIoT.Messaging;
-    using Microsoft.Azure.IIoT.Diagnostics;
+    using Microsoft.Azure.IIoT.Hosting;
     using Microsoft.Azure.IIoT.Serializers;
     using Microsoft.Azure.IIoT.Utils;
     using Microsoft.Azure.ServiceBus;
