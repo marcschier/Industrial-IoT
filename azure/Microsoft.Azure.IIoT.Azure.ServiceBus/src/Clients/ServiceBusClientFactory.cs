@@ -17,7 +17,7 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Clients {
     /// <summary>
     /// Create service bus clients
     /// </summary>
-    public class ServiceBusClientFactory : IServiceBusClientFactory, IAsyncDisposable {
+    public class ServiceBusClientFactory : IServiceBusClientFactory, IDisposable, IAsyncDisposable {
 
         /// <summary>
         /// Create factory
@@ -44,7 +44,7 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Clients {
                 if (!_subscriptionClients.TryGetValue(key, out var client) ||
                     client.IsClosedOrClosing) {
                     client = await NewSubscriptionClientAsync(topic, name);
-                    _subscriptionClients.Add(key, client);
+                    _subscriptionClients.AddOrUpdate(key, client);
 
                     //
                     // TODO: Should also check whether the handlers are different
@@ -72,7 +72,7 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Clients {
                 if (!_topicClients.TryGetValue(topic, out var client) ||
                     client.IsClosedOrClosing) {
                     client = await NewTopicClientAsync(topic);
-                    _topicClients.Add(topic, client);
+                    _topicClients.AddOrUpdate(topic, client);
                 }
                 return client;
             }
@@ -89,7 +89,7 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Clients {
                 if (!_queueClients.TryGetValue(queue, out var client) ||
                     client.IsClosedOrClosing) {
                     client = await NewQueueClientAsync(queue);
-                    _queueClients.Add(queue, client);
+                    _queueClients.AddOrUpdate(queue, client);
                 }
                 return client;
             }
@@ -104,6 +104,11 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Clients {
                 CloseAllAsync(_queueLock, _queueClients),
                 CloseAllAsync(_topicLock, _topicClients),
                 CloseAllAsync(_subscriptionLock, _subscriptionClients));
+        }
+
+        /// <inheritdoc/>
+        public void Dispose() {
+            DisposeAsync().AsTask().Wait();
         }
 
         /// <summary>
@@ -164,7 +169,7 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Clients {
                     }
                     return new QueueClient(
                         _config.ServiceBusConnString, GetEntityName(name), ReceiveMode.PeekLock,
-                        RetryPolicy.Default);
+                            RetryPolicy.Default);
                 }
                 catch (ServiceBusException ex) {
                     if (IsRetryableException(ex)) {

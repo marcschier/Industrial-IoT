@@ -33,7 +33,7 @@ namespace Microsoft.Azure.IIoT.Services.CouchDb.Runtime {
         /// Configuration constructor
         /// </summary>
         /// <param name="configuration"></param>
-        public CouchDbConfig(IConfiguration configuration) :
+        public CouchDbConfig(IConfiguration configuration = null) :
             base(configuration) {
         }
     }

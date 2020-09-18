@@ -7,6 +7,6 @@
     <Description>Azure Industrial IoT default services</Description>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="System.Runtime.Caching" Version="4.7.0" />
+    <ProjectReference Include="..\..\Microsoft.Azure.IIoT.Core\src\Microsoft.Azure.IIoT.Core.csproj" />
   </ItemGroup>
 </Project>

@@ -35,7 +35,7 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
 
                 await queue.SendAsync(target, data);
 
-                var result = await tcs.Task;
+                var result = await tcs.Task.With1MinuteTimeout();
                 Assert.True(data.SequenceEqualsSafe(result.Data));
                 Assert.Null(result.DeviceId);
                 Assert.Null(result.ModuleId);
@@ -61,7 +61,7 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
 
                 await queue.SendAsync(target, data, properties);
 
-                var result = await tcs.Task;
+                var result = await tcs.Task.With1MinuteTimeout();
                 Assert.True(data.SequenceEqualsSafe(result.Data));
                 Assert.Null(result.DeviceId);
                 Assert.Null(result.ModuleId);
@@ -95,7 +95,7 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
                 await queue.SendAsync(target, fix.CreateMany<byte>().ToArray(), properties);
                 await queue.SendAsync(target, fix.CreateMany<byte>().ToArray(), properties);
 
-                var result = await tcs.Task;
+                var result = await tcs.Task.With1MinuteTimeout();
                 Assert.True(data.SequenceEqualsSafe(result.Data));
                 Assert.Null(result.DeviceId);
                 Assert.Null(result.ModuleId);
@@ -103,8 +103,13 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
             }
         }
 
-        [SkippableFact]
-        public async Task SendTestLargeNumberOfEventsAsync() {
+        [SkippableTheory]
+        [InlineData(10)]
+        // [InlineData(100)]
+        // [InlineData(1000)]
+        // [InlineData(10000)]
+        // [InlineData(100000)]
+        public async Task SendTestLargeNumberOfEventsAsync(int max) {
             var fix = new Fixture();
             var target = fix.Create<string>();
             using (var harness = _fixture.GetHarness(target)) {
@@ -116,17 +121,17 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
                 var count = 0;
                 var tcs = new TaskCompletionSource<TelemetryEventArgs>();
                 harness.OnEvent += (_, a) => {
-                    if (++count == 1000) {
+                    if (++count == max) {
                         tcs.TrySetResult(a);
                     }
                 };
 
                 var rand = new Random();
-                var senders = Enumerable.Range(0, 1000)
+                var senders = Enumerable.Range(0, max)
                     .Select(i => queue.SendAsync(target + "/" + rand.Next(0, 10), data, properties));
                 await Task.WhenAll(senders);
 
-                var result = await tcs.Task;
+                var result = await tcs.Task.With1MinuteTimeout();
                 Assert.True(data.SequenceEqualsSafe(result.Data));
                 Assert.Null(result.DeviceId);
                 Assert.Null(result.ModuleId);
@@ -160,7 +165,7 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
                     }
                 });
 
-                var result = await tcs.Task;
+                var result = await tcs.Task.With1MinuteTimeout();
                 Assert.Equal(expected, await actual.Task);
                 Assert.True(data.SequenceEqualsSafe(result.Data));
                 Assert.Null(result.DeviceId);
@@ -196,7 +201,7 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
                     }
                 }, properties);
 
-                var result = await tcs.Task;
+                var result = await tcs.Task.With1MinuteTimeout();
                 Assert.Equal(expected, await actual.Task);
                 Assert.True(data.SequenceEqualsSafe(result.Data));
                 Assert.Null(result.DeviceId);
@@ -239,7 +244,7 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
                 }, properties);
                 queue.Send(target, fix.CreateMany<byte>().ToArray(), 5, (t, e) => { }, properties);
 
-                var result = await tcs.Task;
+                var result = await tcs.Task.With1MinuteTimeout();
                 Assert.Equal(expected, await actual.Task);
                 Assert.True(data.SequenceEqualsSafe(result.Data));
                 Assert.Null(result.DeviceId);
@@ -248,8 +253,13 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
             }
         }
 
-        [SkippableFact]
-        public async Task SendWithCallbackLargeNumberOfEventsAsync() {
+        [SkippableTheory]
+        [InlineData(10)]
+        //  [InlineData(77)]
+        //  [InlineData(888)]
+        //  [InlineData(8435)]
+        //  [InlineData(35234)]
+        public async Task SendWithCallbackLargeNumberOfEventsAsync(int max) {
             var fix = new Fixture();
             var target = fix.Create<string>();
             using (var harness = _fixture.GetHarness(target)) {
@@ -261,19 +271,19 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
                 var count = 0;
                 var tcs = new TaskCompletionSource<TelemetryEventArgs>();
                 harness.OnEvent += (_, a) => {
-                    if (++count == 10000) {
+                    if (++count == max) {
                         tcs.TrySetResult(a);
                     }
                 };
 
                 var rand = new Random();
-                var hashSet = new HashSet<int>(10000);
-                Enumerable.Range(0, 10000)
+                var hashSet = new HashSet<int>(max);
+                Enumerable.Range(0, max)
                     .ToList()
                     .ForEach(i => queue.Send(target + "/" + rand.Next(0, 100), data, i,
                         (t, e) => hashSet.Add(t), properties));
 
-                var result = await tcs.Task;
+                var result = await tcs.Task.With1MinuteTimeout();
                 Assert.True(data.SequenceEqualsSafe(result.Data));
                 Assert.Null(result.DeviceId);
                 Assert.Null(result.ModuleId);

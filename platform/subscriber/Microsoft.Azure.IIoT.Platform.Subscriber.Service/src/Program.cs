@@ -124,7 +124,7 @@ namespace Microsoft.Azure.IIoT.Platform.Subscriber.Service {
             // Event Hub client
             builder.RegisterType<EventHubClientConfig>()
                 .AsImplementedInterfaces();
-            builder.RegisterModule<EventHubModule>();
+            builder.RegisterModule<EventHubClientModule>();
             // Event processor host
             builder.RegisterModule<EventHubProcessorModule>();
             // Handle telemetry events

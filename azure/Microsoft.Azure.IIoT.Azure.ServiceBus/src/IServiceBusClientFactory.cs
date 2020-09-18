@@ -32,13 +32,15 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus {
         /// </summary>
         /// <param name="topicName"></param>
         /// <returns></returns>
-        Task<ITopicClient> CreateOrGetTopicClientAsync(string topicName = null);
+        Task<ITopicClient> CreateOrGetTopicClientAsync(
+            string topicName = null);
 
         /// <summary>
         /// Create queue client
         /// </summary>
         /// <param name="queueName"></param>
         /// <returns></returns>
-        Task<IQueueClient> CreateOrGetGetQueueClientAsync(string queueName = null);
+        Task<IQueueClient> CreateOrGetGetQueueClientAsync(
+            string queueName = null);
     }
 }

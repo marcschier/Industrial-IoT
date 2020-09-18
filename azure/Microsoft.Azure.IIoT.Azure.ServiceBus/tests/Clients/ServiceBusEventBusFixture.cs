@@ -8,6 +8,10 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Clients {
     using Microsoft.Azure.IIoT.Messaging.Default;
     using Microsoft.Azure.IIoT.Messaging;
     using Microsoft.Azure.IIoT.Utils;
+    using Microsoft.Azure.IIoT.Serializers;
+    using Microsoft.Azure.IIoT.Hosting;
+    using Microsoft.Azure.ServiceBus.Management;
+    using Microsoft.Extensions.Configuration;
     using System;
     using System.Runtime.Serialization;
     using Autofac;
@@ -15,55 +19,59 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Clients {
     public class ServiceBusEventBusFixture : IDisposable {
 
         /// <summary>
-        /// Create fixture
-        /// </summary>
-        public ServiceBusEventBusFixture() {
-            try {
-                var builder = new ContainerBuilder();
-
-                builder.RegisterType<ServiceBusConfig>()
-                    .AsImplementedInterfaces().SingleInstance();
-                builder.RegisterType<HostAutoStart>()
-                    .AutoActivate()
-                    .AsImplementedInterfaces().SingleInstance();
-
-                builder.AddDebugDiagnostics();
-                _container = builder.Build();
-            }
-            catch {
-                _container = null;
-            }
-        }
-
-        /// <summary>
         /// Create test harness
         /// </summary>
         /// <returns></returns>
-        public RabbitMqEventBusHarness GetHarness(
+        public ServiceBusEventBusHarness GetHarness(string bus,
             Action<ContainerBuilder> configure = null) {
-            return new RabbitMqEventBusHarness(configure);
+            return new ServiceBusEventBusHarness(bus, configure);
         }
 
-        /// <summary>
-        /// Clean up query container
-        /// </summary>
+        /// <inheritdoc/>
         public void Dispose() {
-            _container?.Dispose();
         }
-
-        private readonly IContainer _container;
     }
 
-    public class RabbitMqEventBusHarness : IDisposable {
+    public class Pid : IProcessIdentity {
+        public string Id { get; } = Guid.NewGuid().ToString();
+        public string ServiceId { get; } = Guid.NewGuid().ToString();
+        public string Name { get; } = "test";
+        public string Description { get; } = "the test";
+    }
+
+    public class ServiceBusEventBusConfig : IServiceBusEventBusConfig {
+        public ServiceBusEventBusConfig(string topic) {
+            Topic = topic;
+        }
+        public string Topic { get; }
+    }
+
+    public class ServiceBusEventBusHarness : IDisposable {
 
         /// <summary>
         /// Create fixture
         /// </summary>
-        public RabbitMqEventBusHarness(Action<ContainerBuilder> configure = null) {
+        public ServiceBusEventBusHarness(string bus, Action<ContainerBuilder> configure = null) {
             try {
                 var builder = new ContainerBuilder();
 
+                // Read connections string from keyvault
+                var config = new ConfigurationBuilder()
+                    .AddFromDotEnvFile()
+                    .AddFromKeyVault()
+                    .Build();
+                builder.RegisterInstance(config)
+                    .AsImplementedInterfaces();
+                builder.RegisterType<ServiceBusConfig>()
+                    .AsImplementedInterfaces().SingleInstance();
+                builder.RegisterInstance(new ServiceBusEventBusConfig(bus))
+                    .AsImplementedInterfaces();
+                builder.RegisterType<Pid>().SingleInstance()
+                    .AsImplementedInterfaces();
+
                 builder.RegisterModule<ServiceBusEventBusModule>();
+                builder.RegisterModule<NewtonSoftJsonModule>();
+
                 builder.RegisterType<EventBusHost>().AsSelf()
                     .AsImplementedInterfaces().SingleInstance();
 
@@ -76,6 +84,7 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Clients {
                 builder.AddDebugDiagnostics();
                 configure?.Invoke(builder);
                 _container = builder.Build();
+                _topic = bus;
             }
             catch {
                 _container = null;
@@ -100,14 +109,21 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Clients {
             return Try.Op(() => _container?.Resolve<EventBusHost>());
         }
 
-        /// <summary>
-        /// Clean up query container
-        /// </summary>
+        /// <inheritdoc/>
         public void Dispose() {
-            _container?.Dispose();
+            if (_container == null) {
+                return;
+            }
+            var config = _container.Resolve<IServiceBusConfig>();
+            var pid = _container.Resolve<IProcessIdentity>();
+            var managementClient = new ManagementClient(config.ServiceBusConnString);
+            Try.Op(() => managementClient.DeleteSubscriptionAsync(_topic, pid.ServiceId).Wait());
+            managementClient.DeleteTopicAsync(_topic).Wait();
+            _container.Dispose();
         }
 
         private readonly IContainer _container;
+        private readonly string _topic;
     }
 
     [DataContract]

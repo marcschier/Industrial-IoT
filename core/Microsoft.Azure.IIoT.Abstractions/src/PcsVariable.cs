@@ -91,6 +91,9 @@ namespace Microsoft.Azure.IIoT {
         /// <summary> Service bus connection string </summary>
         public const string PCS_SERVICEBUS_CONNSTRING =
             "PCS_SERVICEBUS_CONNSTRING";
+        /// <summary> Service bus queue string </summary>
+        public const string PCS_SERVICEBUS_QUEUE =
+            "PCS_SERVICEBUS_QUEUE";
         /// <summary> Instrumentation key </summary>
         public const string PCS_APPINSIGHTS_INSTRUMENTATIONKEY =
             "PCS_APPINSIGHTS_INSTRUMENTATIONKEY";

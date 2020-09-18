@@ -42,14 +42,12 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
         /// Create test harness
         /// </summary>
         /// <returns></returns>
-        public RabbitMqEventBusHarness GetHarness(
+        public RabbitMqEventBusHarness GetHarness(string bus,
             Action<ContainerBuilder> configure = null) {
-            return new RabbitMqEventBusHarness(configure);
+            return new RabbitMqEventBusHarness(bus, configure);
         }
 
-        /// <summary>
-        /// Clean up query container
-        /// </summary>
+        /// <inheritdoc/>
         public void Dispose() {
             _container?.Dispose();
         }
@@ -62,7 +60,7 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
         /// <summary>
         /// Create fixture
         /// </summary>
-        public RabbitMqEventBusHarness(Action<ContainerBuilder> configure = null) {
+        public RabbitMqEventBusHarness(string bus, Action<ContainerBuilder> configure = null) {
             try {
                 var builder = new ContainerBuilder();
 

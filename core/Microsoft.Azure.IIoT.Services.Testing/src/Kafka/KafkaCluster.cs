@@ -5,7 +5,9 @@
 
 namespace Microsoft.Azure.IIoT.Services.Kafka.Server {
     using Microsoft.Azure.IIoT.Services.Zookeeper.Server;
+    using Microsoft.Azure.IIoT.Exceptions;
     using Microsoft.Azure.IIoT.Utils;
+    using Microsoft.Extensions.Diagnostics.HealthChecks;
     using Serilog;
     using System;
     using System.Collections.Generic;
@@ -23,11 +25,14 @@ namespace Microsoft.Azure.IIoT.Services.Kafka.Server {
         /// </summary>
         /// <param name="logger"></param>
         /// <param name="kafkaNodes"></param>
-        public KafkaCluster(ILogger logger, int kafkaNodes = 3) {
+        /// <param name="checks"></param>
+        public KafkaCluster(ILogger logger, IEnumerable<IHealthCheck> checks,
+            int kafkaNodes = 3) {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _networkName = "Kafka";
             _zookeeper = new ZookeeperNode(logger, _networkName, 2181);
             _kafkaNodes = kafkaNodes;
+            _checks = checks?.ToList();
         }
 
         /// <inheritdoc/>
@@ -47,6 +52,7 @@ namespace Microsoft.Azure.IIoT.Services.Kafka.Server {
                     _nodes.Add(node);
                 }
                 await Task.WhenAll(_nodes.Select(n => n.StartAsync()));
+                await WaitForClusterHealthAsync();
                 _logger.Information("Kafka cluster running.");
             }
             catch {
@@ -84,11 +90,35 @@ namespace Microsoft.Azure.IIoT.Services.Kafka.Server {
             Try.Op(() => StopAsync().Wait());
         }
 
+        /// <summary>
+        /// Wait for cluster healthiness
+        /// </summary>
+        /// <returns></returns>
+        private async Task WaitForClusterHealthAsync() {
+            for (var attempt = 0; attempt < 10; attempt ++){
+                var up = true;
+                foreach (var check in _checks) {
+                    var result = await check.CheckHealthAsync(null);
+                    if (result.Status != HealthStatus.Healthy) {
+                        up = false;
+                        break;
+                    }
+                }
+                if (up) {
+                    // Up and running
+                    return;
+                }
+                await Task.Delay(1000);
+            }
+            throw new ExternalDependencyException("Cluster not available.");
+        }
+
         private readonly SemaphoreSlim _lock = new SemaphoreSlim(1, 1);
         private readonly ILogger _logger;
         private readonly ZookeeperNode _zookeeper;
         private readonly string _networkName;
         private readonly int _kafkaNodes;
+        private readonly List<IHealthCheck> _checks;
         private readonly List<KafkaNode> _nodes = new List<KafkaNode>();
     }
 }

@@ -15,6 +15,7 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Services {
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.Azure.IIoT.Exceptions;
 
     /// <summary>
     /// Event bus built on top of service bus
@@ -27,13 +28,15 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Services {
         /// <param name="factory"></param>
         /// <param name="serializer"></param>
         /// <param name="logger"></param>
+        /// <param name="config"></param>
         /// <param name="process"></param>
         public ServiceBusEventBus(IServiceBusClientFactory factory, IJsonSerializer serializer,
-            ILogger logger, IProcessIdentity process) {
+            ILogger logger, IProcessIdentity process, IServiceBusEventBusConfig config = null) {
 
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _serializer = serializer ?? throw new ArgumentNullException(nameof(serializer));
             _factory = factory ?? throw new ArgumentNullException(nameof(factory));
+            _config = config;
 
             if (string.IsNullOrEmpty(process?.ServiceId)) {
                 throw new ArgumentNullException(nameof(process));
@@ -41,7 +44,8 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Services {
 
             // Create subscription client
             _subscriptionClient = _factory.CreateOrGetSubscriptionClientAsync(
-                ProcessEventAsync, ExceptionReceivedHandler, process.ServiceId).Result;
+                ProcessEventAsync, ExceptionReceivedHandler, process.ServiceId,
+                    _config?.Topic).Result;
             Try.Async(() => _subscriptionClient.RemoveRuleAsync(
                 RuleDescription.DefaultRuleName)).Wait();
         }
@@ -53,12 +57,14 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Services {
             }
             var body = _serializer.SerializeToBytes(message).ToArray();
             try {
-                var client = await _factory.CreateOrGetTopicClientAsync();
+                var client = await _factory.CreateOrGetTopicClientAsync(_config?.Topic);
 
+                var moniker = typeof(T).GetMoniker();
                 await client.SendAsync(new Message {
                     MessageId = Guid.NewGuid().ToString(),
                     Body = body,
-                    Label = typeof(T).GetMoniker(),
+                    PartitionKey = moniker,
+                    Label = moniker,
                 });
 
                 _logger.Verbose("----->  {@message} sent...", message);
@@ -147,10 +153,11 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Services {
             await _lock.WaitAsync();
             try {
                 string eventName = null;
+                var found = false;
                 foreach (var subscriptions in _handlers) {
                     eventName = subscriptions.Key;
                     if (subscriptions.Value.TryGetValue(token, out var subscription)) {
-
+                        found = true;
                         // Remove handler
                         subscriptions.Value.Remove(token);
                         if (subscriptions.Value.Count != 0) {
@@ -158,6 +165,9 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Services {
                             break;
                         }
                     }
+                }
+                if (!found) {
+                    throw new ResourceInvalidStateException("Token not found");
                 }
                 if (string.IsNullOrEmpty(eventName)) {
                     return; // No more action
@@ -240,6 +250,7 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Services {
         private readonly ILogger _logger;
         private readonly IJsonSerializer _serializer;
         private readonly IServiceBusClientFactory _factory;
+        private readonly IServiceBusEventBusConfig _config;
         private readonly ISubscriptionClient _subscriptionClient;
     }
 }

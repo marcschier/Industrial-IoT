@@ -17,7 +17,9 @@ namespace Microsoft.Azure.IIoT.Services.Kafka {
         /// </summary>
         /// <param name="builder"></param>
         protected override void Load(ContainerBuilder builder) {
-            builder.RegisterType<KafkaProducer>()
+            builder.RegisterType<KafkaAdminClient>()
+                .AsImplementedInterfaces().InstancePerLifetimeScope();
+            builder.RegisterType<KafkaProducerClient>()
                 .AsImplementedInterfaces().InstancePerLifetimeScope();
             base.Load(builder);
         }

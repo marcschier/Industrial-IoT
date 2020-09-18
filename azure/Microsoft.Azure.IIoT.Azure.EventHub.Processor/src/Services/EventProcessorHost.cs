@@ -17,7 +17,7 @@ namespace Microsoft.Azure.IIoT.Azure.EventHub.Processor.Services {
     /// Implementation of event processor host interface to host event
     /// processors.
     /// </summary>
-    public sealed class EventProcessorHost : IDisposable, IEventProcessingHost, IHostProcess {
+    public sealed class EventProcessorHost : IDisposable, IEventProcessingHost {
 
         /// <summary>
         /// Create host wrapper
@@ -70,16 +70,17 @@ namespace Microsoft.Azure.IIoT.Azure.EventHub.Processor.Services {
                 if (_lease != null && _checkpoint != null) {
                     _host = new EventHubs.Processor.EventProcessorHost(
                         $"host-{Guid.NewGuid()}", _hub.EventHubPath, consumerGroup,
-                        GetEventHubConnectionString(), _checkpoint, _lease);
+                        GetEventHubConnectionString(out _), _checkpoint, _lease);
                 }
                 else {
                     var blobConnectionString = _config.GetStorageConnString();
                     if (!string.IsNullOrEmpty(blobConnectionString)) {
                         _host = new EventHubs.Processor.EventProcessorHost(
-                            _hub.EventHubPath, consumerGroup, GetEventHubConnectionString(),
+                            _hub.EventHubPath, consumerGroup,
+                            GetEventHubConnectionString(out var eventHub),
                             blobConnectionString,
                             !string.IsNullOrEmpty(_config.LeaseContainerName) ?
-                                _config.LeaseContainerName : _hub.EventHubPath.ToSha1Hash());
+                                _config.LeaseContainerName : eventHub.ToSha1Hash());
                     }
                     else {
                         throw new InvalidConfigurationException(
@@ -129,11 +130,6 @@ namespace Microsoft.Azure.IIoT.Azure.EventHub.Processor.Services {
         }
 
         /// <inheritdoc/>
-        public void Start() {
-            StartAsync().Wait();
-        }
-
-        /// <inheritdoc/>
         public void Dispose() {
             StopAsync().Wait();
             _lock.Dispose();
@@ -142,13 +138,16 @@ namespace Microsoft.Azure.IIoT.Azure.EventHub.Processor.Services {
         /// <summary>
         /// Helper to get connection string and validate configuration
         /// </summary>
-        private string GetEventHubConnectionString() {
+        private string GetEventHubConnectionString(out string eventHubPath) {
             if (!string.IsNullOrEmpty(_hub.EventHubConnString)) {
                 try {
                     var csb = new EventHubsConnectionStringBuilder(
                         _hub.EventHubConnString);
-                    if (!string.IsNullOrEmpty(csb.EntityPath) ||
-                        !string.IsNullOrEmpty(_hub.EventHubPath)) {
+                    eventHubPath = _hub.EventHubPath;
+                    if (string.IsNullOrEmpty(eventHubPath)) {
+                        eventHubPath = csb.EntityPath;
+                    }
+                    if (!string.IsNullOrEmpty(eventHubPath)) {
                         if (_hub.UseWebsockets) {
                             csb.TransportType = TransportType.AmqpWebSockets;
                         }

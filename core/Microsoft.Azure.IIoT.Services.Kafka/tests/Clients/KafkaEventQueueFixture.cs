@@ -26,7 +26,8 @@ namespace Microsoft.Azure.IIoT.Services.Kafka.Clients {
             try {
                 var builder = new ContainerBuilder();
 
-                builder.RegisterType<KafkaConsumerConfig>()
+                builder.RegisterModule<KafkaProducerModule>();
+                builder.RegisterType<KafkaServerConfig>()
                     .AsImplementedInterfaces().SingleInstance();
                 builder.RegisterType<KafkaCluster>()
                     .AsImplementedInterfaces().SingleInstance();
@@ -48,7 +49,7 @@ namespace Microsoft.Azure.IIoT.Services.Kafka.Clients {
         /// <param name="topic"></param>
         /// <returns></returns>
         public KafkaEventQueueHarness GetHarness(string topic) {
-            return new KafkaEventQueueHarness(topic);
+            return new KafkaEventQueueHarness(topic, _container != null);
         }
 
         /// <summary>
@@ -96,7 +97,11 @@ namespace Microsoft.Azure.IIoT.Services.Kafka.Clients {
         /// <summary>
         /// Create fixture
         /// </summary>
-        public KafkaEventQueueHarness(string topic) {
+        public KafkaEventQueueHarness(string topic, bool serverUp) {
+            if (!serverUp) {
+                _container = null;
+                return;
+            }
             try {
                 var builder = new ContainerBuilder();
 

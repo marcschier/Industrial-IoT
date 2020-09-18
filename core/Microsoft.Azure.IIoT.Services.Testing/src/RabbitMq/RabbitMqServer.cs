@@ -6,6 +6,7 @@
 namespace Microsoft.Azure.IIoT.Services.RabbitMq.Server {
     using Microsoft.Azure.IIoT.Services.Docker;
     using Microsoft.Azure.IIoT.Utils;
+    using Microsoft.Extensions.Diagnostics.HealthChecks;
     using Serilog;
     using System;
     using System.Collections.Generic;
@@ -22,12 +23,13 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Server {
         /// <summary>
         /// Create server
         /// </summary>
+        /// <param name="check"></param>
         /// <param name="ports"></param>
         /// <param name="logger"></param>
         /// <param name="user"></param>
         /// <param name="key"></param>
         public RabbitMqServer(ILogger logger, string user = null, string key = null,
-            int[] ports = null) : base(logger) {
+            int[] ports = null, IHealthCheck check = null) : base(logger, null, check) {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _user = user;
             _key = key;

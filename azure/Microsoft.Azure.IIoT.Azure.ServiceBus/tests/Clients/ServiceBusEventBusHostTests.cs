@@ -28,7 +28,9 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Clients {
             var children1 = new ChildHandler(4);
             var children2 = new ChildHandler(4);
             var pets = new PetHandler(3);
-            using (var harness = _fixture.GetHarness(builder => {
+            var fix = new Fixture();
+            var prefix = fix.Create<string>();
+            using (var harness = _fixture.GetHarness(prefix, builder => {
                 builder.RegisterInstance(families).AsImplementedInterfaces();
                 builder.RegisterInstance(children1).AsImplementedInterfaces();
                 builder.RegisterInstance(children2).AsImplementedInterfaces();
@@ -37,17 +39,17 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Clients {
                 var bus = harness.GetEventBus();
                 Skip.If(bus == null);
 
-                var family1 = new Fixture().Create<Family>();
-                var family2 = new Fixture().Create<Family>();
+                var family1 = fix.Create<Family>();
+                var family2 = fix.Create<Family>();
 
-                var child1 = new Fixture().Create<Child>();
-                var child2 = new Fixture().Create<Child>();
-                var child3 = new Fixture().Create<Child>();
-                var child4 = new Fixture().Create<Child>();
+                var child1 = fix.Create<Child>();
+                var child2 = fix.Create<Child>();
+                var child3 = fix.Create<Child>();
+                var child4 = fix.Create<Child>();
 
-                var pet1 = new Fixture().Create<Pet>();
-                var pet2 = new Fixture().Create<Pet>();
-                var pet3 = new Fixture().Create<Pet>();
+                var pet1 = fix.Create<Pet>();
+                var pet2 = fix.Create<Pet>();
+                var pet3 = fix.Create<Pet>();
 
                 await bus.PublishAsync(family1);
                 await bus.PublishAsync(child1);
@@ -63,10 +65,10 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Clients {
                 await bus.PublishAsync(pet3);
                 await bus.PublishAsync(pet3);
 
-                var f = await families.Complete.Task;
-                var c1 = await children1.Complete.Task;
-                var c2 = await children2.Complete.Task;
-                var p = await pets.Complete.Task;
+                var f = await families.Complete;
+                var c1 = await children1.Complete;
+                var c2 = await children2.Complete;
+                var p = await pets.Complete;
 
                 Assert.True(f.SetEqualsSafe(family1.YieldReturn().Append(family2)));
                 Assert.True(p.SetEqualsSafe(pet1.YieldReturn().Append(pet2).Append(pet3)));
@@ -75,41 +77,50 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Clients {
             }
         }
 
-        [SkippableFact]
-        public async Task PublishTest2Async() {
-            var families = new FamilyHandler(100);
-            var pets = new PetHandler(100);
-            using (var harness = _fixture.GetHarness(builder => {
+        [SkippableTheory]
+        [InlineData(11)]
+        //  [InlineData(55)]
+        //  [InlineData(100)]
+        //  [InlineData(234)]
+        public async Task PublishTest2Async(int count) {
+            var families = new FamilyHandler(count);
+            var pets = new PetHandler(count);
+            var fix = new Fixture();
+            var prefix = fix.Create<string>();
+            using (var harness = _fixture.GetHarness(prefix, builder => {
                 builder.RegisterInstance(families).AsImplementedInterfaces();
                 builder.RegisterInstance(pets).AsImplementedInterfaces();
             })) {
                 var bus = harness.GetEventBus();
                 Skip.If(bus == null);
 
-                var senders = Enumerable.Range(0, 100).Select(async i => {
-                    await bus.PublishAsync(new Fixture().Create<Family>());
-                    await bus.PublishAsync(new Fixture().Create<Pet>());
+                var senders = Enumerable.Range(0, count).Select(async i => {
+                    await bus.PublishAsync(fix.Create<Family>());
+                    await bus.PublishAsync(fix.Create<Pet>());
                 });
 
-                await Task.WhenAll(senders);
+                await Task.WhenAll(senders).With1MinuteTimeout();
 
-                var f = await families.Complete.Task;
-                var p = await pets.Complete.Task;
+                var f = await families.Complete;
+                var p = await pets.Complete;
 
-                Assert.Equal(100, f.Count);
-                Assert.Equal(100, p.Count);
+                Assert.Equal(count, f.Count);
+                Assert.Equal(count, p.Count);
             }
         }
 
         [SkippableFact]
         public async Task BadArgumentsAndInvalidStateTests1Async() {
-            var families = new FamilyHandler(100);
-            var pets = new PetHandler(100);
-            using (var harness = _fixture.GetHarness(builder => {
+            var families = new FamilyHandler(1);
+            var pets = new PetHandler(1);
+            var fix = new Fixture();
+            var prefix = fix.Create<string>();
+            using (var harness = _fixture.GetHarness(prefix, builder => {
                 builder.RegisterInstance(families).AsImplementedInterfaces();
                 builder.RegisterInstance(pets).AsImplementedInterfaces();
             })) {
                 var host = harness.GetEventBusHost();
+                Skip.If(host == null);
 
                 await host.StopAsync();
                 await host.StartAsync();
@@ -128,9 +139,13 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Clients {
 
         [SkippableFact]
         public async Task BadArgumentsAndInvalidStateTests2Async() {
-            var harness = _fixture.GetHarness();
+            var fix = new Fixture();
+            var prefix = fix.Create<string>();
+            var harness = _fixture.GetHarness(prefix);
             try {
                 var host = harness.GetEventBusHost();
+                Skip.If(host == null);
+
                 await host.StopAsync();
                 await host.StartAsync();
                 await host.StartAsync();
@@ -142,6 +157,7 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Clients {
                 host.Dispose();
                 Assert.True(true);
             }
+            catch (SkipException) { }
             catch (Exception ex) {
                 Assert.Null(ex);
             }
@@ -152,8 +168,9 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Clients {
 
         public class FamilyHandler : IEventHandler<Family> {
             private readonly int _count;
-            public TaskCompletionSource<HashSet<Family>> Complete { get; } =
+            private readonly TaskCompletionSource<HashSet<Family>> _complete =
                 new TaskCompletionSource<HashSet<Family>>();
+            public Task<HashSet<Family>> Complete => _complete.Task.With1MinuteTimeout();
 
             public FamilyHandler(int count) {
                 _count = count;
@@ -161,7 +178,7 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Clients {
             public Task HandleAsync(Family eventData) {
                 Families.Add(eventData);
                 if (Families.Count == _count) {
-                    Complete.TrySetResult(Families);
+                    _complete.TrySetResult(Families);
                 }
                 return Task.CompletedTask;
             }
@@ -171,15 +188,16 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Clients {
 
         public class ChildHandler : IEventHandler<Child> {
             private readonly int _count;
-            public TaskCompletionSource<HashSet<Child>> Complete { get; } =
+            private readonly TaskCompletionSource<HashSet<Child>> _complete =
                 new TaskCompletionSource<HashSet<Child>>();
+            public Task<HashSet<Child>> Complete => _complete.Task.With1MinuteTimeout();
             public ChildHandler(int count) {
                 _count = count;
             }
             public Task HandleAsync(Child eventData) {
                 Children.Add(eventData);
                 if (Children.Count == _count) {
-                    Complete.TrySetResult(Children);
+                    _complete.TrySetResult(Children);
                 }
                 return Task.CompletedTask;
             }
@@ -189,15 +207,16 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Clients {
 
         public class PetHandler : IEventHandler<Pet> {
             private readonly int _count;
-            public TaskCompletionSource<HashSet<Pet>> Complete { get; } =
+            private readonly TaskCompletionSource<HashSet<Pet>> _complete =
                 new TaskCompletionSource<HashSet<Pet>>();
+            public Task<HashSet<Pet>> Complete => _complete.Task.With1MinuteTimeout();
             public PetHandler(int count) {
                 _count = count;
             }
             public Task HandleAsync(Pet eventData) {
                 Pets.Add(eventData);
                 if (Pets.Count == _count) {
-                    Complete.TrySetResult(Pets);
+                    _complete.TrySetResult(Pets);
                 }
                 return Task.CompletedTask;
             }

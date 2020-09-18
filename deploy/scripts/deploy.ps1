@@ -549,6 +549,9 @@ Function Get-EnvironmentVariables() {
     if (![string]::IsNullOrEmpty($script:resourceGroupName)) {
         Write-Output "PCS_RESOURCE_GROUP=$($script:resourceGroupName)"
     }
+    if (![string]::IsNullOrEmpty($script:context.Subscription.Id)) {
+        Write-Output "PCS_SUBSCRIPTION_ID=$($script:context.Subscription.Id)"
+    }
     $var = $deployment.Outputs["keyVaultUri"].Value
     if (![string]::IsNullOrEmpty($var)) {
         Write-Output "PCS_KEYVAULT_URL=$($var)"

@@ -9,6 +9,9 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Clients {
     using Microsoft.Azure.IIoT.Messaging;
     using Microsoft.Azure.IIoT.Hub;
     using Microsoft.Azure.IIoT.Utils;
+    using Microsoft.Azure.IIoT.Serializers;
+    using Microsoft.Azure.ServiceBus.Management;
+    using Microsoft.Extensions.Configuration;
     using Autofac;
     using System;
     using System.Collections.Generic;
@@ -18,42 +21,23 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Clients {
     public class ServiceBusEventQueueFixture : IDisposable {
 
         /// <summary>
-        /// Create fixture
-        /// </summary>
-        public ServiceBusEventQueueFixture() {
-            try {
-                var builder = new ContainerBuilder();
-
-                builder.RegisterType<ServiceBusConfig>()
-                    .AsImplementedInterfaces().SingleInstance();
-                builder.RegisterType<HostAutoStart>()
-                    .AutoActivate()
-                    .AsImplementedInterfaces().SingleInstance();
-
-                builder.AddDebugDiagnostics();
-                _container = builder.Build();
-            }
-            catch {
-                _container = null;
-            }
-        }
-
-        /// <summary>
         /// Create test harness
         /// </summary>
         /// <returns></returns>
-        public ServiceBusEventQueueHarness GetHarness(string topic) {
-            return new ServiceBusEventQueueHarness();
+        public ServiceBusEventQueueHarness GetHarness(string queue) {
+            return new ServiceBusEventQueueHarness(queue);
         }
 
-        /// <summary>
-        /// Clean up query container
-        /// </summary>
+        /// <inheritdoc/>
         public void Dispose() {
-            _container?.Dispose();
         }
+    }
 
-        private readonly IContainer _container;
+    public class ServiceBusQueueConfig : IServiceBusProcessorConfig {
+        public ServiceBusQueueConfig(string queue) {
+            Queue = queue;
+        }
+        public string Queue { get; }
     }
 
     public class ServiceBusEventQueueHarness : IDisposable {
@@ -64,17 +48,31 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Clients {
         /// <summary>
         /// Create fixture
         /// </summary>
-        public ServiceBusEventQueueHarness() {
+        public ServiceBusEventQueueHarness(string queue) {
             try {
                 var builder = new ContainerBuilder();
 
-                builder.RegisterModule<ServiceBusEventQueueModule>();
-               // builder.RegisterModule<RabbitMqEventProcessorModule>();
+                // Read connections string from keyvault
+                var config = new ConfigurationBuilder()
+                    .AddFromDotEnvFile()
+                    .AddFromKeyVault()
+                    .Build();
+                builder.RegisterInstance(config)
+                    .AsImplementedInterfaces();
                 builder.RegisterType<ServiceBusConfig>()
                     .AsImplementedInterfaces().SingleInstance();
 
+                // Set queue name
+                builder.RegisterInstance(new ServiceBusQueueConfig(queue))
+                    .AsImplementedInterfaces();
+
+                builder.RegisterModule<ServiceBusEventQueueModule>();
+                builder.RegisterModule<ServiceBusEventProcessorModule>();
+                builder.RegisterModule<NewtonSoftJsonModule>();
+
                 builder.RegisterType<DeviceEventHandler>()
                     .AsImplementedInterfaces().InstancePerDependency();
+
                 builder.RegisterInstance(new TestHandler(this, "Test1"))
                     .AsImplementedInterfaces();
                 builder.RegisterInstance(new TestHandler(this, "Test2"))
@@ -83,12 +81,14 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Clients {
                     .AsImplementedInterfaces();
                 builder.RegisterInstance(new UnknownHandler(this))
                     .AsImplementedInterfaces();
+
                 builder.RegisterType<HostAutoStart>()
                     .AutoActivate()
                     .AsImplementedInterfaces().SingleInstance();
 
                 builder.AddDebugDiagnostics();
                 _container = builder.Build();
+                _queue = queue;
             }
             catch {
                 _container = null;
@@ -113,11 +113,17 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Clients {
             return Try.Op(() => _container?.Resolve<IEventClient>());
         }
 
-        /// <summary>
-        /// Clean up query container
-        /// </summary>
+        /// <inheritdoc/>
         public void Dispose() {
-            _container?.Dispose();
+            if (_container == null) {
+                return;
+            }
+            var config = _container.Resolve<IServiceBusConfig>();
+            var managementClient = new ManagementClient(config.ServiceBusConnString);
+          //  managementClient.GetQueuesAsync().Result
+          //      .ToList().ForEach(q => managementClient.DeleteQueueAsync(q.Path).Wait());
+             managementClient.DeleteQueueAsync(_queue).Wait();
+            _container.Dispose();
         }
 
         internal class TestHandler : ITelemetryHandler {
@@ -162,6 +168,7 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Clients {
         }
 
         private readonly IContainer _container;
+        private readonly string _queue;
     }
 
     public class TelemetryEventArgs : EventArgs {

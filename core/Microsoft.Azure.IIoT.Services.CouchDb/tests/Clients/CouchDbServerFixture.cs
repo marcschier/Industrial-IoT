@@ -5,9 +5,12 @@
 
 namespace Microsoft.Azure.IIoT.Services.CouchDb.Clients {
     using Microsoft.Azure.IIoT.Services.CouchDb.Server;
+    using Microsoft.Extensions.Diagnostics.HealthChecks;
     using Microsoft.Azure.IIoT.Diagnostics;
     using System;
     using Xunit;
+    using Autofac;
+    using Microsoft.Azure.IIoT.Services.CouchDb.Runtime;
 
     [CollectionDefinition(Name)]
     public class CouchDbServerCollection : ICollectionFixture<CouchDbServerFixture> {
@@ -17,13 +20,24 @@ namespace Microsoft.Azure.IIoT.Services.CouchDb.Clients {
 
     public class CouchDbServerFixture : IDisposable {
 
+        public static bool Up { get; private set; }
+
         /// <summary>
         /// Create fixture
         /// </summary>
         public CouchDbServerFixture() {
             try {
-                _server = new CouchDbServer(ConsoleLogger.Create());
+                var builder = new ContainerBuilder();
+                builder.RegisterModule<CouchDbModule>();
+                builder.RegisterType<CouchDbConfig>()
+                    .AsImplementedInterfaces();
+                builder.AddDebugDiagnostics();
+                _container = builder.Build();
+                var healthCheck = _container.Resolve<IHealthCheck>();
+                _server = new CouchDbServer(ConsoleLogger.Create(),
+                    check: healthCheck);
                 _server.StartAsync().GetAwaiter().GetResult();
+                Up = true;
             }
             catch (Exception) {
                 _server = null;
@@ -33,8 +47,10 @@ namespace Microsoft.Azure.IIoT.Services.CouchDb.Clients {
         /// <inheritdoc/>
         public void Dispose() {
             _server?.Dispose();
+            _container?.Dispose();
         }
 
         private readonly CouchDbServer _server;
+        private readonly IContainer _container;
     }
 }

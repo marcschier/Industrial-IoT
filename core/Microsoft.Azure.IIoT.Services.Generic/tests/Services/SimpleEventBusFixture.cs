@@ -3,12 +3,12 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Messaging.Default {
+namespace Microsoft.Azure.IIoT.Services.Generic.Services {
+    using Microsoft.Azure.IIoT.Tasks.Default;
+    using Microsoft.Azure.IIoT.Utils;
     using System;
     using System.Runtime.Serialization;
     using Autofac;
-    using Microsoft.Azure.IIoT.Tasks.Default;
-    using Microsoft.Azure.IIoT.Utils;
 
     public class SimpleEventBusFixture : IDisposable {
 
@@ -16,13 +16,13 @@ namespace Microsoft.Azure.IIoT.Messaging.Default {
         /// Create test harness
         /// </summary>
         /// <returns></returns>
-        public SimpleEventBusHarness GetHarness(
+        public SimpleEventBusHarness GetHarness(string bus,
             Action<ContainerBuilder> configure = null) {
-            return new SimpleEventBusHarness(configure);
+            return new SimpleEventBusHarness(bus, configure);
         }
 
+        /// <inheritdoc/>
         public void Dispose() {
-            // Turn off server
         }
     }
 
@@ -31,7 +31,7 @@ namespace Microsoft.Azure.IIoT.Messaging.Default {
         /// <summary>
         /// Create fixture
         /// </summary>
-        public SimpleEventBusHarness(Action<ContainerBuilder> configure = null) {
+        public SimpleEventBusHarness(string bus, Action<ContainerBuilder> configure = null) {
             try {
                 var builder = new ContainerBuilder();
 
@@ -72,9 +72,7 @@ namespace Microsoft.Azure.IIoT.Messaging.Default {
             return Try.Op(() => _container?.Resolve<EventBusHost>());
         }
 
-        /// <summary>
-        /// Clean up query container
-        /// </summary>
+        /// <inheritdoc/>
         public void Dispose() {
             _container?.Dispose();
         }

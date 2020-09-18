@@ -5,6 +5,7 @@
 
 namespace Microsoft.Azure.IIoT.Services.CouchDb.Server {
     using Microsoft.Azure.IIoT.Services.Docker;
+    using Microsoft.Extensions.Diagnostics.HealthChecks;
     using Microsoft.Azure.IIoT.Utils;
     using Serilog;
     using System;
@@ -21,12 +22,13 @@ namespace Microsoft.Azure.IIoT.Services.CouchDb.Server {
         /// <summary>
         /// Create node
         /// </summary>
+        /// <param name="check"></param>
         /// <param name="port"></param>
         /// <param name="logger"></param>
         /// <param name="user"></param>
         /// <param name="key"></param>
         public CouchDbServer(ILogger logger, string user = null, string key = null,
-            int? port = null) : base(logger) {
+            int? port = null, IHealthCheck check = null) : base(logger, null, check) {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _user = user;
             _key = key;

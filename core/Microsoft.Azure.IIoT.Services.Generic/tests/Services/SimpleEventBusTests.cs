@@ -3,7 +3,7 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Messaging.Default {
+namespace Microsoft.Azure.IIoT.Services.Generic.Services {
     using Microsoft.Azure.IIoT.Exceptions;
     using System;
     using System.Threading.Tasks;
@@ -19,11 +19,13 @@ namespace Microsoft.Azure.IIoT.Messaging.Default {
 
         [SkippableFact]
         public async Task PublishTest1Async() {
-            using (var harness = _fixture.GetHarness()) {
+            var fix = new Fixture();
+            var prefix = fix.Create<string>();
+            using (var harness = _fixture.GetHarness(prefix)) {
                 var bus = harness.GetEventBus();
                 Skip.If(bus == null);
 
-                var family = new Fixture().Create<Family>();
+                var family = fix.Create<Family>();
 
                 var tcs = new TaskCompletionSource<Family>();
                 var token = await bus.RegisterAsync<Family>(f => {
@@ -33,7 +35,7 @@ namespace Microsoft.Azure.IIoT.Messaging.Default {
 
                 await bus.PublishAsync(family);
 
-                var f = await tcs.Task;
+                var f = await tcs.Task.With1MinuteTimeout();
                 Assert.Equal(family.Id, f.Id);
                 Assert.Equal(family.LastName, f.LastName);
                 Assert.Equal(family.RegistrationDate, f.RegistrationDate);
@@ -44,12 +46,14 @@ namespace Microsoft.Azure.IIoT.Messaging.Default {
 
         [SkippableFact]
         public async Task PublishTest2Async() {
-            using (var harness = _fixture.GetHarness()) {
+            var fix = new Fixture();
+            var prefix = fix.Create<string>();
+            using (var harness = _fixture.GetHarness(prefix)) {
                 var bus = harness.GetEventBus();
                 Skip.If(bus == null);
 
-                var family = new Fixture().Create<Family>();
-                var family2 = new Fixture().Create<Family>();
+                var family = fix.Create<Family>();
+                var family2 = fix.Create<Family>();
 
                 var count = 0;
                 var tcs = new TaskCompletionSource<Family>();
@@ -65,7 +69,7 @@ namespace Microsoft.Azure.IIoT.Messaging.Default {
                 await bus.PublishAsync(family2);
                 await bus.PublishAsync(family);
 
-                var f = await tcs.Task;
+                var f = await tcs.Task.With1MinuteTimeout();
                 Assert.Equal(family.Id, f.Id);
                 Assert.Equal(family.LastName, f.LastName);
                 Assert.Equal(family.RegistrationDate, f.RegistrationDate);
@@ -76,12 +80,14 @@ namespace Microsoft.Azure.IIoT.Messaging.Default {
 
         [SkippableFact]
         public async Task PublishTest3Async() {
-            using (var harness = _fixture.GetHarness()) {
+            var fix = new Fixture();
+            var prefix = fix.Create<string>();
+            using (var harness = _fixture.GetHarness(prefix)) {
                 var bus = harness.GetEventBus();
                 Skip.If(bus == null);
 
-                var family = new Fixture().Create<Family>();
-                var family2 = new Fixture().Create<Family>();
+                var family = fix.Create<Family>();
+                var family2 = fix.Create<Family>();
 
                 var tcs1 = new TaskCompletionSource<Family>();
                 var token1 = await bus.RegisterAsync<Family>(f => {
@@ -99,8 +105,8 @@ namespace Microsoft.Azure.IIoT.Messaging.Default {
                 await bus.PublishAsync(family2);
                 await bus.PublishAsync(family2);
 
-                var f1 = await tcs1.Task;
-                var f2 = await tcs2.Task;
+                var f1 = await tcs1.Task.With1MinuteTimeout();
+                var f2 = await tcs2.Task.With1MinuteTimeout();
 
                 Assert.Equal(family.Id, f1.Id);
                 Assert.Equal(family.LastName, f1.LastName);
@@ -116,11 +122,13 @@ namespace Microsoft.Azure.IIoT.Messaging.Default {
 
         [SkippableFact]
         public async Task PublishTest4Async() {
-            using (var harness = _fixture.GetHarness()) {
+            var fix = new Fixture();
+            var prefix = fix.Create<string>();
+            using (var harness = _fixture.GetHarness(prefix)) {
                 var bus = harness.GetEventBus();
                 Skip.If(bus == null);
 
-                var family = new Fixture().Create<Family>();
+                var family = fix.Create<Family>();
 
                 var tcs2 = new TaskCompletionSource<Family>();
                 var token2 = await bus.RegisterAsync<Family>(f => {
@@ -136,7 +144,7 @@ namespace Microsoft.Azure.IIoT.Messaging.Default {
 
                 await bus.PublishAsync(family);
 
-                var f = await tcs1.Task;
+                var f = await tcs1.Task.With1MinuteTimeout();
                 Assert.Equal(family.Id, f.Id);
                 Assert.Equal(family.LastName, f.LastName);
                 Assert.Equal(family.RegistrationDate, f.RegistrationDate);
@@ -147,7 +155,9 @@ namespace Microsoft.Azure.IIoT.Messaging.Default {
 
         [SkippableFact]
         public async Task BadArgumentTestsAsync() {
-            using (var harness = _fixture.GetHarness()) {
+            var fix = new Fixture();
+            var prefix = fix.Create<string>();
+            using (var harness = _fixture.GetHarness(prefix)) {
                 var bus = harness.GetEventBus();
                 Skip.If(bus == null);
 

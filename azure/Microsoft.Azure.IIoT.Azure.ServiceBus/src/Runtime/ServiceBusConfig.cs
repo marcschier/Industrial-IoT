@@ -23,7 +23,7 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Runtime {
         /// Configuration constructor
         /// </summary>
         /// <param name="configuration"></param>
-        public ServiceBusConfig(IConfiguration configuration) :
+        public ServiceBusConfig(IConfiguration configuration = null) :
             base(configuration) {
         }
     }

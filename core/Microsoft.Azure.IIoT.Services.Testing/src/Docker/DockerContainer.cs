@@ -4,6 +4,7 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Services.Docker {
+    using Microsoft.Extensions.Diagnostics.HealthChecks;
     using Serilog;
     using System;
     using System.Linq;
@@ -36,8 +37,11 @@ namespace Microsoft.Azure.IIoT.Services.Docker {
         /// </summary>
         /// <param name="logger"></param>
         /// <param name="networkName"></param>
-        public DockerContainer(ILogger logger, string networkName = null) {
+        /// <param name="check"></param>
+        public DockerContainer(ILogger logger, string networkName = null,
+            IHealthCheck check = null) {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _check = check;
             NetworkName = networkName;
         }
 
@@ -107,7 +111,7 @@ namespace Microsoft.Azure.IIoT.Services.Docker {
             var sw = Stopwatch.StartNew();
             var ep = new IPEndPoint(IPAddress.Loopback, port);
             do {
-                if (await TryConnectAsync(ep)) {
+                if (await CheckAvailabilityAsync(ep)) {
                     return;
                 }
                 await Task.Delay(1000);
@@ -136,8 +140,14 @@ namespace Microsoft.Azure.IIoT.Services.Docker {
         /// </summary>
         /// <param name="ep"></param>
         /// <returns></returns>
-        private async Task<bool> TryConnectAsync(IPEndPoint ep) {
+        private async Task<bool> CheckAvailabilityAsync(IPEndPoint ep) {
             try {
+                if (_check != null) {
+                    // Run health check against container
+                    var result = await _check.CheckHealthAsync(null);
+                    return result.Status == HealthStatus.Healthy;
+                }
+
                 using (var sender = new Socket(IPAddress.Loopback.AddressFamily,
                     SocketType.Stream, ProtocolType.Tcp)) {
                     await sender.ConnectAsync(ep);
@@ -186,6 +196,7 @@ namespace Microsoft.Azure.IIoT.Services.Docker {
 
 #pragma warning disable IDE0052 // Remove unread private members
         private readonly ILogger _logger;
+        private readonly IHealthCheck _check;
 #pragma warning restore IDE0052 // Remove unread private members
         private readonly SemaphoreSlim _lock = new SemaphoreSlim(1, 1);
     }

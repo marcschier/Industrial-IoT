@@ -9,42 +9,46 @@ namespace Microsoft.Azure.IIoT.Services.Kafka.Clients {
     using Microsoft.Azure.IIoT.Hub;
     using Microsoft.Azure.IIoT.Hosting;
     using Microsoft.Azure.IIoT.Exceptions;
+    using Serilog;
     using System;
     using System.Collections.Generic;
+    using System.Collections.Concurrent;
     using System.Threading.Tasks;
     using System.Threading;
     using System.Net;
     using System.Text;
-    using System.Collections.Concurrent;
-    using System.Linq;
     using Confluent.Kafka;
-    using Confluent.Kafka.Admin;
 
     /// <summary>
     /// Kafka producer
     /// </summary>
-    public sealed class KafkaProducer : IEventQueueClient, IEventClient, IDisposable {
+    public sealed class KafkaProducerClient : IEventQueueClient, IEventClient,
+        IDisposable {
 
         /// <summary>
         /// Create service client
         /// </summary>
         /// <param name="config"></param>
+        /// <param name="logger"></param>
         /// <param name="identity"></param>
-        public KafkaProducer(IKafkaServerConfig config, IProcessIdentity identity = null) {
-            if (string.IsNullOrEmpty(config?.BootstrapServers)) {
-                throw new ArgumentException(nameof(config));
-            }
-            _config = config;
-            _clientId = identity?.Id ?? Dns.GetHostName();
-            _producer = new ProducerBuilder<string, byte[]>(ClientConfig<ProducerConfig>())
-                .Build();
-            _admin = new AdminClientBuilder(ClientConfig<AdminClientConfig>())
+        /// <param name="admin"></param>
+        public KafkaProducerClient(IKafkaServerConfig config, IKafkaAdminClient admin,
+            ILogger logger, IProcessIdentity identity = null) {
+            _admin = admin ?? throw new ArgumentNullException(nameof(admin));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _producer = new ProducerBuilder<string, byte[]>(
+                config.ToClientConfig<ProducerConfig>(
+                    identity?.Id ?? Dns.GetHostName()))
+                .SetErrorHandler(OnError)
+                .SetStatisticsHandler(OnMetrics)
+                .SetLogHandler((_, m) => _logger.Log(m))
                 .Build();
         }
 
         /// <inheritdoc/>
         public async Task SendAsync(string target, byte[] payload,
-            IDictionary<string, string> properties, string partitionKey, CancellationToken ct) {
+            IDictionary<string, string> properties, string partitionKey,
+            CancellationToken ct) {
             if (target == null) {
                 throw new ArgumentNullException(nameof(target));
             }
@@ -156,22 +160,18 @@ namespace Microsoft.Azure.IIoT.Services.Kafka.Clients {
         /// <inheritdoc/>
         public void Dispose() {
             _producer?.Dispose();
-            _admin?.Dispose();
             _topics.Clear();
         }
 
         /// <summary>
-        /// Get key
+        /// Get partition key
         /// </summary>
         /// <param name="schema"></param>
         /// <param name="target"></param>
         /// <param name="partitionKey"></param>
         /// <returns></returns>
         private string GetKey(string target, string schema, string partitionKey) {
-            var key = partitionKey;
-            if (string.IsNullOrEmpty(key)) {
-                key = target;
-            }
+            var key = string.IsNullOrEmpty(partitionKey) ? target : partitionKey;
             if (!string.IsNullOrEmpty(schema)) {
                 key += schema;
             }
@@ -207,7 +207,9 @@ namespace Microsoft.Azure.IIoT.Services.Kafka.Clients {
         /// <returns></returns>
         private static Headers CreateHeader(string target, string contentType, string eventSchema,
             string contentEncoding) {
-            var header = new Headers();
+            var header = new Headers {
+                { EventProperties.Target, Encoding.UTF8.GetBytes(target) }
+            };
             if (!string.IsNullOrEmpty(contentType)) {
                 header.Add(EventProperties.ContentType, Encoding.UTF8.GetBytes(contentType));
             }
@@ -216,9 +218,6 @@ namespace Microsoft.Azure.IIoT.Services.Kafka.Clients {
             }
             if (!string.IsNullOrEmpty(eventSchema)) {
                 header.Add(EventProperties.EventSchema, Encoding.UTF8.GetBytes(eventSchema));
-            }
-            if (!string.IsNullOrEmpty(target)) {
-                header.Add(EventProperties.Target, Encoding.UTF8.GetBytes(target));
             }
             return header;
         }
@@ -231,48 +230,32 @@ namespace Microsoft.Azure.IIoT.Services.Kafka.Clients {
         private Task<string> EnsureTopicAsync(string target) {
             return _topics.GetOrAdd(target, async k => {
                 var topic = target.Split('/')[0];
-                try {
-                    await _admin.CreateTopicsAsync(
-                        new TopicSpecification {
-                            Name = topic,
-                            NumPartitions = _config.Partitions,
-                            ReplicationFactor = (short)_config.ReplicaFactor,
-                        }.YieldReturn(),
-                        new CreateTopicsOptions {
-                            OperationTimeout = TimeSpan.FromSeconds(30),
-                            RequestTimeout = TimeSpan.FromSeconds(30)
-                        });
-                    return topic;
-                }
-                catch (CreateTopicsException e) {
-                    if (e.Results.Count > 0 &&
-                        e.Results[0].Error?.Code == ErrorCode.TopicAlreadyExists) {
-                        return topic;
-                    }
-                    throw;
-                }
+                await _admin.EnsureTopicExistsAsync(topic);
+                return topic;
             });
         }
 
         /// <summary>
-        /// Create configuration
+        /// Handle error
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <returns></returns>
-        private T ClientConfig<T>()
-            where T : ClientConfig, new() {
-            return new T {
-                BootstrapServers = _config.BootstrapServers,
-                ClientId = _clientId,
-                // ...
-            };
+        /// <param name="client"></param>
+        /// <param name="error"></param>
+        private void OnError(IProducer<string, byte[]> client, Error error) {
+            // Todo
+        }
+
+        /// <summary>
+        /// Handle metrics
+        /// </summary>
+        /// <param name="client"></param>
+        /// <param name="json"></param>
+        private void OnMetrics(IProducer<string, byte[]> client, string json) {
         }
 
         private readonly ConcurrentDictionary<string, Task<string>> _topics =
             new ConcurrentDictionary<string, Task<string>>();
         private readonly IProducer<string, byte[]> _producer;
-        private readonly IAdminClient _admin;
-        private readonly IKafkaServerConfig _config;
-        private readonly string _clientId;
+        private readonly IKafkaAdminClient _admin;
+        private readonly ILogger _logger;
     }
 }

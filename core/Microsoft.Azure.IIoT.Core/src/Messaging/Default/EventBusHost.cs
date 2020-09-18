@@ -5,13 +5,13 @@
 
 namespace Microsoft.Azure.IIoT.Messaging.Default {
     using Microsoft.Azure.IIoT.Messaging;
+    using Microsoft.Azure.IIoT.Exceptions;
     using Serilog;
     using System;
     using System.Threading.Tasks;
     using System.Threading;
     using System.Collections.Generic;
     using System.Linq;
-    using Microsoft.Azure.IIoT.Exceptions;
 
     /// <summary>
     /// Event bus host to auto inject handlers

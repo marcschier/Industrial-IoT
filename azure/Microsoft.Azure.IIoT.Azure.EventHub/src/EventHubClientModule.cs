@@ -10,7 +10,7 @@ namespace Microsoft.Azure.IIoT.Azure.EventHub {
     /// <summary>
     /// Injected event hub client
     /// </summary>
-    public class EventHubModule : Module {
+    public class EventHubClientModule : Module {
 
         /// <summary>
         /// Load the module
@@ -19,7 +19,7 @@ namespace Microsoft.Azure.IIoT.Azure.EventHub {
         protected override void Load(ContainerBuilder builder) {
 
             // Register event processor host for telemetry
-            builder.RegisterType<EventHubNamespaceClient>()
+            builder.RegisterType<EventHubQueueClient>()
                 .AsImplementedInterfaces();
 
             base.Load(builder);

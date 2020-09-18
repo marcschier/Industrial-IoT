@@ -4,11 +4,11 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Services.Kafka.Services {
+    using Microsoft.Azure.IIoT.Services.Kafka.Clients;
     using Microsoft.Azure.IIoT.Messaging;
     using Microsoft.Azure.IIoT.Hosting;
     using Microsoft.Azure.IIoT.Utils;
     using Serilog;
-    using Confluent.Kafka;
     using System;
     using System.Threading;
     using System.Collections.Generic;
@@ -16,7 +16,7 @@ namespace Microsoft.Azure.IIoT.Services.Kafka.Services {
     using System.Threading.Tasks;
     using System.Linq;
     using System.Text;
-    using Confluent.Kafka.Admin;
+    using Confluent.Kafka;
 
     /// <summary>
     /// Implementation of event processor host interface to host event
@@ -27,24 +27,23 @@ namespace Microsoft.Azure.IIoT.Services.Kafka.Services {
         /// <summary>
         /// Create host
         /// </summary>
+        /// <param name="admin"></param>
         /// <param name="consumer"></param>
         /// <param name="config"></param>
         /// <param name="logger"></param>
         /// <param name="identity"></param>
         public KafkaConsumerHost(IEventProcessingHandler consumer,
-            IKafkaConsumerConfig config, ILogger logger, IProcessIdentity identity) :
-            base(logger, "Kafka") {
+            IKafkaConsumerConfig config, ILogger logger, IKafkaAdminClient admin,
+            IProcessIdentity identity) : base(logger, "Kafka") {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _consumer = consumer ?? throw new ArgumentNullException(nameof(consumer));
+            _admin = admin ?? throw new ArgumentNullException(nameof(admin));
             _config = config ?? throw new ArgumentNullException(nameof(config));
             _consumerId = identity.Id ?? Guid.NewGuid().ToString();
             _interval = (int?)config.CheckpointInterval?.TotalMilliseconds;
         }
 
-        /// <summary>
-        /// Consumer loop
-        /// </summary>
-        /// <param name="ct"></param>
+        /// <inheritdoc/>
         protected override async Task RunAsync(CancellationToken ct) {
 
             var config = new ConsumerConfig {
@@ -59,11 +58,15 @@ namespace Microsoft.Azure.IIoT.Services.Kafka.Services {
             };
             var topic = _config.ConsumerTopic ?? "^.*";
             if (!topic.StartsWith("^")) {
-                await EnsureTopicAsync(topic);
+                await _admin.EnsureTopicExistsAsync(topic);
             }
             while (!ct.IsCancellationRequested) {
                 try {
-                    using (var consumer = new ConsumerBuilder<string, byte[]>(config).Build()) {
+                    using (var consumer = new ConsumerBuilder<string, byte[]>(config)
+                        .SetErrorHandler(OnError)
+                        .SetStatisticsHandler(OnMetrics)
+                        .SetLogHandler((_, m) => _logger.Log(m))
+                        .Build()) {
                         _logger.Information("Starting consumer {consumerId} on {topic}...",
                             _consumerId, topic);
                         consumer.Subscribe(topic);
@@ -79,7 +82,8 @@ namespace Microsoft.Azure.IIoT.Services.Kafka.Services {
                                 // Skip this one and catch up
                                 continue;
                             }
-                            await _consumer.HandleAsync(ev.Value, new EventHeader(ev.Headers, result.Topic),
+                            await _consumer.HandleAsync(ev.Value, new EventHeader(
+                                ev.Headers, result.Topic),
                                     () => CommitAsync(consumer, result));
                             await Try.Async(_consumer.OnBatchCompleteAsync);
                         }
@@ -107,45 +111,32 @@ namespace Microsoft.Azure.IIoT.Services.Kafka.Services {
         private Task CommitAsync(IConsumer<string, byte[]> consumer,
             ConsumeResult<string, byte[]> result) {
             try {
-                _logger.Debug("Commit consumer {id} {memberId}...", _consumerId, consumer.MemberId);
+                _logger.Debug("Commit consumer {id} {memberId}...", _consumerId,
+                    consumer.MemberId);
                 consumer.Commit(result);
             }
             catch (Exception ex) {
-                _logger.Warning(ex, "Failed to commit consumer {id} {memberId}...", _consumerId,
-                    consumer.MemberId);
+                _logger.Warning(ex, "Failed to commit consumer {id} {memberId}...",
+                    _consumerId, consumer.MemberId);
             }
             return Task.CompletedTask;
         }
 
         /// <summary>
-        /// Ensure topic is created
+        /// Handle error
         /// </summary>
-        /// <param name="topic"></param>
-        /// <returns></returns>
-        private async Task EnsureTopicAsync(string topic) {
-            using (var admin = new AdminClientBuilder(new AdminClientConfig {
-                BootstrapServers = _config.BootstrapServers
-            }).Build()) {
-                try {
-                    await admin.CreateTopicsAsync(
-                        new TopicSpecification {
-                            Name = topic,
-                            NumPartitions = _config.Partitions,
-                            ReplicationFactor = (short)_config.ReplicaFactor,
-                        }.YieldReturn(),
-                        new CreateTopicsOptions {
-                            OperationTimeout = TimeSpan.FromSeconds(30),
-                            RequestTimeout = TimeSpan.FromSeconds(30)
-                        });
-                }
-                catch (CreateTopicsException e) {
-                    if (e.Results.Count > 0 &&
-                        e.Results[0].Error?.Code == ErrorCode.TopicAlreadyExists) {
-                        return;
-                    }
-                    throw;
-                }
-            }
+        /// <param name="client"></param>
+        /// <param name="error"></param>
+        private void OnError(IConsumer<string, byte[]> client, Error error) {
+            // Todo
+        }
+
+        /// <summary>
+        /// Handle metrics
+        /// </summary>
+        /// <param name="client"></param>
+        /// <param name="json"></param>
+        private void OnMetrics(IConsumer<string, byte[]> client, string json) {
         }
 
         /// <summary>
@@ -268,6 +259,7 @@ namespace Microsoft.Azure.IIoT.Services.Kafka.Services {
 
         private readonly ILogger _logger;
         private readonly IEventProcessingHandler _consumer;
+        private readonly IKafkaAdminClient _admin;
         private readonly IKafkaConsumerConfig _config;
         private readonly string _consumerId;
         private readonly int? _interval;

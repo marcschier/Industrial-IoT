@@ -127,19 +127,24 @@ namespace Microsoft.Azure.IIoT.Services.CouchDb.Clients {
         /// <param name="options"></param>
         /// <returns></returns>
         public async Task<ContainerWrapper> GetContainerAsync(string name = null) {
-            var database = await Try.Async(() => GetDatabaseAsync());
-            if (database == null) {
+            try {
+                var database = await GetDatabaseAsync();
+                if (name == null) {
+                    name = "";
+                    var rand = new Random();
+                    for (var i = 0; i < 30; i++) {
+                        name += (char)rand.Next('a', 'z');
+                    }
+                }
+                var docs = await database.OpenContainerAsync(name);
+                return new ContainerWrapper(database, docs);
+            }
+            catch {
+                if (CouchDbServerFixture.Up) {
+                    throw;
+                }
                 return null;
             }
-            if (name == null) {
-                name = "";
-                var rand = new Random();
-                for (var i = 0; i < 30; i++) {
-                    name += (char)rand.Next('a', 'z');
-                }
-            }
-            var docs = await database.OpenContainerAsync(name);
-            return new ContainerWrapper(database, docs);
         }
 
         /// <inheritdoc/>

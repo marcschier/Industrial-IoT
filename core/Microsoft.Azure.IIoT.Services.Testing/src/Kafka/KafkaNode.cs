@@ -6,6 +6,7 @@
 namespace Microsoft.Azure.IIoT.Services.Kafka.Server {
     using Microsoft.Azure.IIoT.Services.Docker;
     using Microsoft.Azure.IIoT.Utils;
+    using Microsoft.Extensions.Diagnostics.HealthChecks;
     using Serilog;
     using System;
     using System.Collections.Generic;
@@ -27,9 +28,10 @@ namespace Microsoft.Azure.IIoT.Services.Kafka.Server {
         /// <param name="port"></param>
         /// <param name="zookeeper"></param>
         /// <param name="networkName"></param>
+        /// <param name="check"></param>
         /// <param name="logger"></param>
-        public KafkaNode(ILogger logger, string zookeeper, int port, string networkName) :
-            base(logger, networkName) {
+        public KafkaNode(ILogger logger, string zookeeper, int port, string networkName,
+            IHealthCheck check = null) : base(logger, networkName, check) {
             _zookeeper = zookeeper ?? throw new ArgumentNullException(nameof(zookeeper));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _port = port;

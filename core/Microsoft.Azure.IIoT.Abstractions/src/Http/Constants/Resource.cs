@@ -34,5 +34,10 @@ namespace Microsoft.Azure.IIoT.Http {
         /// Storage
         /// </summary>
         public static readonly string Storage = nameof(Storage);
+
+        /// <summary>
+        /// EventHub
+        /// </summary>
+        public static readonly string EventHub = nameof(EventHub);
     }
 }

@@ -6,6 +6,7 @@
 namespace Microsoft.Azure.IIoT.Services.Zookeeper.Server {
     using Microsoft.Azure.IIoT.Services.Docker;
     using Microsoft.Azure.IIoT.Utils;
+    using Microsoft.Extensions.Diagnostics.HealthChecks;
     using Serilog;
     using System;
     using System.Collections.Generic;
@@ -21,11 +22,12 @@ namespace Microsoft.Azure.IIoT.Services.Zookeeper.Server {
         /// <summary>
         /// Create node
         /// </summary>
+        /// <param name="check"></param>
         /// <param name="logger"></param>
         /// <param name="networkName"></param>
         /// <param name="port"></param>
-        public ZookeeperNode(ILogger logger, string networkName, int? port = null) :
-            base(logger, networkName) {
+        public ZookeeperNode(ILogger logger, string networkName, int? port = null,
+            IHealthCheck check = null) : base(logger, networkName, check) {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _port = port ?? 2181;
         }
