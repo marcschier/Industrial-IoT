@@ -4,6 +4,7 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Services.Generic.Services {
+    using Microsoft.Azure.IIoT.Messaging;
     using Microsoft.Azure.IIoT.Exceptions;
     using System;
     using System.Threading.Tasks;

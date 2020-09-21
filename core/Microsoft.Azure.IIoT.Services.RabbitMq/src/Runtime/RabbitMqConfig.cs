@@ -14,6 +14,7 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Runtime {
 
         private const string kRabbitMqHostName = "RabbitMq:HostName";
         private const string kRabbitMqUserName = "RabbitMq:UserName";
+        private const string kRabbitMqRoutingKey = "RabbitMq:RoutingKey";
         private const string kRabbitMqKey = "RabbitMq:Key";
 
         /// <inheritdoc/>
@@ -28,12 +29,15 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Runtime {
         public string Key => GetStringOrDefault(kRabbitMqKey,
             () => GetStringOrDefault(PcsVariable.PCS_RABBITMQ_KEY,
                 () => "bitnami"));
+        /// <inheritdoc/>
+        public string RoutingKey => GetStringOrDefault(kRabbitMqRoutingKey,
+            () => "");
 
         /// <summary>
         /// Configuration constructor
         /// </summary>
         /// <param name="configuration"></param>
-        public RabbitMqConfig(IConfiguration configuration) :
+        public RabbitMqConfig(IConfiguration configuration = null) :
             base(configuration) {
         }
     }

@@ -4,6 +4,8 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Services.Generic.Services {
+    using Microsoft.Azure.IIoT.Messaging.Default;
+    using Microsoft.Azure.IIoT.Messaging;
     using Microsoft.Azure.IIoT.Tasks.Default;
     using Microsoft.Azure.IIoT.Utils;
     using System;

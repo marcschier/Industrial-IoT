@@ -21,8 +21,13 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq {
         string UserName { get; }
 
         /// <summary>
-        /// Key
+        /// Secret
         /// </summary>
         string Key { get; }
+
+        /// <summary>
+        /// Routing key
+        /// </summary>
+        string RoutingKey { get; }
     }
 }

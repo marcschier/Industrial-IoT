@@ -33,7 +33,10 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Server {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _user = user;
             _key = key;
-            _ports = ports ?? new[] { 5672, 4369, 25672, 15672 }; // TODO
+            if (ports == null || ports.Length == 0) {
+                ports = new[] { 5672, 4369, 25672, 15672 }; // TODO
+            }
+            _ports = ports;
         }
 
         /// <inheritdoc/>
@@ -108,7 +111,7 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Server {
                     v => (IList<PortBinding>)new List<PortBinding> {
                         new PortBinding {
                             HostPort = hostPorts[Array.IndexOf(containerPorts, v) %
-                            hostPorts.Length].ToString()
+                                hostPorts.Length].ToString()
                         }
                     })
                 }

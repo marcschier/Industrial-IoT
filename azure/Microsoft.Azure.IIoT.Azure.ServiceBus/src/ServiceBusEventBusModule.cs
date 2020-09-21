@@ -24,7 +24,7 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus {
         protected override void Load(ContainerBuilder builder) {
 
             // Register event bus for integration events
-            builder.RegisterType<EventBusHost>()
+            builder.RegisterType<EventBusHost>().AsSelf()
                 .AsImplementedInterfaces().SingleInstance();
             builder.RegisterType<ServiceBusClientFactory>()
                 .AsImplementedInterfaces();

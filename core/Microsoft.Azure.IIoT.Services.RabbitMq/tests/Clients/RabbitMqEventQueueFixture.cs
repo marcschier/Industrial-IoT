@@ -10,11 +10,13 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
     using Microsoft.Azure.IIoT.Messaging;
     using Microsoft.Azure.IIoT.Hub;
     using Microsoft.Azure.IIoT.Utils;
+    using Microsoft.Azure.IIoT.Hosting;
     using Autofac;
     using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using System.Linq;
+    using Microsoft.Azure.IIoT.Services.RabbitMq.Services;
 
     public class RabbitMqEventQueueFixture : IDisposable {
 
@@ -25,6 +27,7 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
             try {
                 var builder = new ContainerBuilder();
 
+                builder.RegisterModule<RabbitMqEventQueueModule>();
                 builder.RegisterType<RabbitMqConfig>()
                     .AsImplementedInterfaces().SingleInstance();
                 builder.RegisterType<RabbitMqServer>()
@@ -45,8 +48,8 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
         /// Create test harness
         /// </summary>
         /// <returns></returns>
-        public RabbitMqEventQueueHarness GetHarness(string topic) {
-            return new RabbitMqEventQueueHarness();
+        public RabbitMqEventQueueHarness GetHarness(string queue) {
+            return new RabbitMqEventQueueHarness(queue);
         }
 
         /// <summary>
@@ -59,6 +62,13 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
         private readonly IContainer _container;
     }
 
+    public class RabbitMqQueueConfig : IRabbitMqQueueConfig {
+        public RabbitMqQueueConfig(string queue) {
+            Queue = queue;
+        }
+        public string Queue { get; }
+    }
+
     public class RabbitMqEventQueueHarness : IDisposable {
 
         public event TelemetryEventHandler OnEvent;
@@ -67,12 +77,14 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
         /// <summary>
         /// Create fixture
         /// </summary>
-        public RabbitMqEventQueueHarness() {
+        public RabbitMqEventQueueHarness(string queue) {
             try {
                 var builder = new ContainerBuilder();
 
                 builder.RegisterModule<RabbitMqEventQueueModule>();
-               // builder.RegisterModule<RabbitMqEventProcessorModule>();
+                builder.RegisterModule<RabbitMqEventProcessorModule>();
+                builder.RegisterInstance(new RabbitMqQueueConfig(queue))
+                    .AsImplementedInterfaces();
                 builder.RegisterType<RabbitMqConfig>()
                     .AsImplementedInterfaces().SingleInstance();
 
@@ -178,6 +190,7 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
             Target = properties.TryGetValue(EventProperties.Target, out var v) ? v : null;
             Properties = properties
                 .Where(k => k.Key != EventProperties.Target)
+                .Where(k => !k.Key.StartsWith("x-"))
                 .ToDictionary(k => k.Key, v => v.Value);
         }
 

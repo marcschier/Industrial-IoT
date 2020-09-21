@@ -83,7 +83,15 @@ namespace Microsoft.Azure.IIoT.Services.Docker {
                             Tag = tag,
                         };
                         await dockerClient.Images.CreateImageAsync(
-                            imagesCreateParameters, new AuthConfig(), null, default);
+                            imagesCreateParameters, new AuthConfig(),
+                                new Progress<JSONMessage>(m => {
+                                    if (m.Error != null) {
+                                        _logger.Error("{@message}", m);
+                                    }
+                                    else {
+                                        _logger.Information("{@message}", m);
+                                    }
+                                }), default);
                     }
                     containerParameters.Name = containerName;
                     if (!string.IsNullOrEmpty(NetworkName)) {

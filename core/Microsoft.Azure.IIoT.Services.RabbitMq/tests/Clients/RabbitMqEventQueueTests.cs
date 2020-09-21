@@ -140,9 +140,9 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
 
         [SkippableTheory]
         [InlineData(10)]
-       // [InlineData(50)]
-       // [InlineData(100)]
-       // [InlineData(1000)]
+        [InlineData(50)]
+        [InlineData(100)]
+        [InlineData(1000)]
         public async Task SendDeviceEventTestBatch2Async(int max) {
             var fix = new Fixture();
             var hub = fix.Create<string>();
@@ -324,10 +324,10 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
 
         [SkippableTheory]
         [InlineData(10)]
-        // [InlineData(50)]
-        // [InlineData(100)]
-        // [InlineData(1000)]
-        // [InlineData(10000)]
+        [InlineData(50)]
+        [InlineData(100)]
+        [InlineData(1000)]
+        [InlineData(10000)]
         public async Task SendDeviceEventWithCallbackLargeNumberOfEventsAsync(int max) {
             var fix = new Fixture();
             var hub = fix.Create<string>();
@@ -487,9 +487,9 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
 
         [SkippableTheory]
         [InlineData(10)]
-        // [InlineData(50)]
-        // [InlineData(100)]
-        // [InlineData(1000)]
+        [InlineData(50)]
+        [InlineData(100)]
+        [InlineData(1000)]
         public async Task SendModuleEventTestBatch2Async(int max) {
             var fix = new Fixture();
             var hub = fix.Create<string>();
@@ -674,10 +674,10 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
 
         [SkippableTheory]
         [InlineData(10)]
-        // [InlineData(50)]
-        // [InlineData(100)]
-        // [InlineData(1000)]
-        // [InlineData(10000)]
+        [InlineData(50)]
+        [InlineData(100)]
+        [InlineData(1000)]
+        [InlineData(10000)]
         public async Task SendModuleEventWithCallbackLargeNumberOfEventsAsync(int max) {
             var fix = new Fixture();
             var hub = fix.Create<string>();

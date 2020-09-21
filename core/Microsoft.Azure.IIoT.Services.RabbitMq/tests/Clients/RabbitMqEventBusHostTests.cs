@@ -79,9 +79,9 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
 
         [SkippableTheory]
         [InlineData(11)]
-        //  [InlineData(55)]
-        //  [InlineData(100)]
-        //  [InlineData(234)]
+        [InlineData(55)]
+        [InlineData(100)]
+        [InlineData(234)]
         public async Task PublishTest2Async(int count) {
             var families = new FamilyHandler(count);
             var pets = new PetHandler(count);

@@ -113,7 +113,6 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Services {
         /// <param name="ct"></param>
         /// <returns></returns>
         private async Task OnMessageAsync(Message ev, CancellationToken ct) {
-            var s = ev.SystemProperties.SequenceNumber;
             await _consumer.HandleAsync(ev.Body, ev.UserProperties
                 .ToDictionary(k => k.Key, v => v.Value?.ToString()),
                 () => Task.CompletedTask);

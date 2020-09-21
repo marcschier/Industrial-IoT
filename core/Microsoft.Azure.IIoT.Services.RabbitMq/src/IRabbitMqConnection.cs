@@ -3,9 +3,7 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-
 namespace Microsoft.Azure.IIoT.Services.RabbitMq {
-    using RabbitMQ.Client;
 
     /// <summary>
     /// Represents a connection
@@ -13,10 +11,14 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq {
     public interface IRabbitMqConnection {
 
         /// <summary>
-        /// Get queue channel
+        /// Get channel
         /// </summary>
-        /// <param name="target"></param>
+        /// <param name="name"></param>
+        /// <param name="consumer"></param>
+        /// <param name="fanout"></param>
         /// <returns></returns>
-        IModel GetChannel(string target);
+        IRabbitMqChannel GetChannel(string name,
+            IRabbitMqConsumer consumer = null,
+            bool fanout = false);
     }
 }

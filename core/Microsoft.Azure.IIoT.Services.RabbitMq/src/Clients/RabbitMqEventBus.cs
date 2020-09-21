@@ -6,11 +6,13 @@
 namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
     using Microsoft.Azure.IIoT.Messaging;
     using Microsoft.Azure.IIoT.Serializers;
+    using Microsoft.Azure.IIoT.Exceptions;
     using Serilog;
     using System;
     using System.Linq;
     using System.Threading.Tasks;
     using System.Collections.Generic;
+    using System.Collections.Concurrent;
     using System.Threading;
     using System.Buffers;
     using RabbitMQ.Client;
@@ -26,11 +28,14 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
         /// <param name="connection"></param>
         /// <param name="serializer"></param>
         /// <param name="logger"></param>
-        public RabbitMqEventBus(IRabbitMqConnection connection, IJsonSerializer serializer,
-            ILogger logger) {
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            _connection = connection ?? throw new ArgumentNullException(nameof(connection));
-            _serializer = serializer ?? throw new ArgumentNullException(nameof(serializer));
+        public RabbitMqEventBus(IRabbitMqConnection connection,
+            IJsonSerializer serializer, ILogger logger) {
+            _logger = logger ??
+                throw new ArgumentNullException(nameof(logger));
+            _connection = connection ??
+                throw new ArgumentNullException(nameof(connection));
+            _serializer = serializer ??
+                throw new ArgumentNullException(nameof(serializer));
         }
 
         /// <inheritdoc/>
@@ -40,16 +45,24 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
             }
             var eventName = typeof(T).GetMoniker();
             try {
-                var topic = _connection.GetChannel(eventName);
-                var properties = topic.CreateBasicProperties();
+                var channel = GetPublisherChannel(eventName);
                 var writer = new ArrayBufferWriter<byte>();
                 _serializer.Serialize(writer, message);
-                topic.BasicPublish("", eventName, false, properties, writer.WrittenMemory);
-                _logger.Verbose("----->  {@message} sent...", message);
-                return Task.CompletedTask;
+                var tcs = new TaskCompletionSource<bool>();
+                channel.Publish(writer.WrittenMemory, tcs, (t, ex) => {
+                    if (ex != null) {
+                        t.SetException(ex);
+                    }
+                    else {
+                        _logger.Verbose("----->  {@message} sent...", message);
+                        t.SetResult(true);
+                    }
+                });
+                return tcs.Task;
             }
             catch (Exception ex) {
-                _logger.Error(ex, "Failed to publish message {@message}", message);
+                _logger.Error(ex, "Failed to publish message {@message}",
+                    message);
                 throw;
             }
         }
@@ -71,13 +84,13 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
             var eventName = typeof(T).GetMoniker();
             await _lock.WaitAsync();
             try {
-                var token = Guid.NewGuid().ToString();
+                var tag = Guid.NewGuid().ToString();
                 if (!_consumers.TryGetValue(eventName, out var consumer)) {
-                    consumer = new Consumer<T>(token, this);
+                    consumer = new Consumer<T>(this, eventName);
                     _consumers.TryAdd(eventName, consumer);
                 }
-                consumer.Register(token, handler);
-                return token;
+                consumer.Add(tag, handler);
+                return tag;
             }
             finally {
                 _lock.Release();
@@ -92,13 +105,18 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
             string eventName = null;
             await _lock.WaitAsync();
             try {
+                var found = false;
                 foreach (var consumer in _consumers) {
-                    if (consumer.Value.Unregister(token, out var handler)) {
+                    if (consumer.Value.Remove(token, out var handler)) {
                         eventName = consumer.Key;
                     }
                     if (handler != null) {
+                        found = true;
                         break; // Found
                     }
+                }
+                if (!found) {
+                    throw new ResourceInvalidStateException("Token not found");
                 }
 
                 // Clean up consumer
@@ -117,29 +135,28 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
         /// <summary>
         /// Subscription holder
         /// </summary>
-        private class Consumer<T> : AsyncDefaultBasicConsumer, IConsumer {
+        private class Consumer<T> : IRabbitMqConsumer, ISubscription {
 
             /// <summary>
             /// Create consumer
             /// </summary>
-            /// <param name="token"></param>
             /// <param name="outer"></param>
-            public Consumer(string token, RabbitMqEventBus outer) :
-                base(outer._connection.GetChannel(typeof(T).GetMoniker())) {
+            /// <param name="eventName"></param>
+            public Consumer(RabbitMqEventBus outer, string eventName) {
                 _outer = outer;
-                _consumerTag = ""; // TODO
+                // Register this consumer on pub/sub connection
+                _channel = outer._connection.GetChannel(eventName, this, true);
             }
 
             /// <inheritdoc/>
-            public bool Unregister(string token, out IHandler handler) {
+            public bool Remove(string token, out IHandler handler) {
                 _lock.Wait();
                 try {
                     if (_subscriptions.TryGetValue(token, out var found)) {
                         _subscriptions.Remove(token);
                         handler = found;
                         if (_subscriptions.Count == 0) {
-                            Model.BasicCancel(_consumerTag); // Stop consume
-                            return true;
+                            return true; // Calls dispose
                         }
                     }
                     else {
@@ -153,15 +170,11 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
             }
 
             /// <inheritdoc/>
-            public void Register(string token, IHandler handler) {
+            public void Add(string token, IHandler handler) {
                 _lock.Wait();
                 try {
                     var first = _subscriptions.Count == 0;
                     _subscriptions.Add(token, (IEventHandler<T>)handler);
-                    if (first) {
-                        // Start to consume
-                        Model.BasicConsume(typeof(T).GetMoniker(), true, this);
-                    }
                 }
                 finally {
                     _lock.Release();
@@ -169,69 +182,74 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
             }
 
             /// <inheritdoc/>
-            public override async Task HandleBasicDeliver(string consumerTag,
+            public async Task HandleBasicDeliver(IModel model,
                 ulong deliveryTag, bool redelivered, string exchange,
                 string routingKey, IBasicProperties properties,
                 ReadOnlyMemory<byte> body) {
-
-                if (consumerTag != _consumerTag) {
-                    return;
-                }
                 var evt = _outer._serializer.Deserialize<T>(body);
                 List<IEventHandler<T>> handlers;
                 await _lock.WaitAsync();
                 try {
                     handlers = _subscriptions.Values.ToList();
-                    _outer._logger.Verbose("<-----  {@message} received and handled! ", evt);
                 }
                 finally {
                     _lock.Release();
                 }
                 foreach (var handler in handlers) {
                     await handler.HandleAsync(evt);
+                    _outer._logger.Verbose(
+                        "<-----  {@message} received and handled! ", evt);
                 }
             }
 
             /// <inheritdoc/>
-            public override Task HandleModelShutdown(object model, ShutdownEventArgs reason) {
-                return base.HandleModelShutdown(model, reason);
-            }
-
-            /// <inheritdoc/>
             public void Dispose() {
-                Model.Dispose();
+                _channel.Dispose();
             }
 
-            private readonly string _consumerTag;
             private readonly RabbitMqEventBus _outer;
+            private readonly IRabbitMqChannel _channel;
             private readonly SemaphoreSlim _lock = new SemaphoreSlim(1, 1);
             private readonly Dictionary<string, IEventHandler<T>> _subscriptions =
                 new Dictionary<string, IEventHandler<T>>();
         }
 
         /// <summary>
-        /// Generic consumer
+        /// Subscription interface
         /// </summary>
-        private interface IConsumer : IDisposable {
+        private interface ISubscription : IDisposable {
 
             /// <summary>
-            /// Remove
+            /// Remove Handler
             /// </summary>
             /// <param name="token"></param>
             /// <param name="handler"></param>
             /// <returns></returns>
-            bool Unregister(string token, out IHandler handler);
+            bool Remove(string token, out IHandler handler);
 
             /// <summary>
             /// Add handler
             /// </summary>
             /// <param name="token"></param>
             /// <param name="handler"></param>
-            void Register(string token, IHandler handler);
+            void Add(string token, IHandler handler);
         }
 
-        private readonly Dictionary<string, IConsumer> _consumers =
-            new Dictionary<string, IConsumer>();
+        /// <summary>
+        /// Get producer channel
+        /// </summary>
+        /// <param name="eventName"></param>
+        /// <returns></returns>
+        private IRabbitMqChannel GetPublisherChannel(string eventName) {
+            // Get channel from channel cache
+            return _producers.GetOrAdd(eventName,
+                n => _connection.GetChannel(n, fanout: true));
+        }
+
+        private readonly Dictionary<string, ISubscription> _consumers =
+            new Dictionary<string, ISubscription>();
+        private readonly ConcurrentDictionary<string, IRabbitMqChannel> _producers =
+            new ConcurrentDictionary<string, IRabbitMqChannel>();
         private readonly SemaphoreSlim _lock = new SemaphoreSlim(1, 1);
         private readonly ILogger _logger;
         private readonly IJsonSerializer _serializer;

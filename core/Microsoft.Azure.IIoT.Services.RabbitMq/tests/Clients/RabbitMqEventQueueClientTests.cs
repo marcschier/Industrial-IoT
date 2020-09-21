@@ -105,10 +105,10 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
 
         [SkippableTheory]
         [InlineData(10)]
-        // [InlineData(100)]
-        // [InlineData(1000)]
-        // [InlineData(10000)]
-        // [InlineData(100000)]
+        [InlineData(100)]
+        [InlineData(1000)]
+        [InlineData(10000)]
+        [InlineData(100000)]
         public async Task SendTestLargeNumberOfEventsAsync(int max) {
             var fix = new Fixture();
             var target = fix.Create<string>();
@@ -255,10 +255,10 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
 
         [SkippableTheory]
         [InlineData(10)]
-        //  [InlineData(77)]
-        //  [InlineData(888)]
-        //  [InlineData(8435)]
-        //  [InlineData(35234)]
+        [InlineData(77)]
+        [InlineData(888)]
+        [InlineData(8435)]
+        [InlineData(35234)]
         public async Task SendWithCallbackLargeNumberOfEventsAsync(int max) {
             var fix = new Fixture();
             var target = fix.Create<string>();

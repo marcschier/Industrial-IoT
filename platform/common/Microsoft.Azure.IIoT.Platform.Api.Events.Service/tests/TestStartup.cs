@@ -8,11 +8,11 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service {
     using Microsoft.Azure.IIoT.Platform.Publisher.Api;
     using Microsoft.Azure.IIoT.Platform.Registry.Api;
     using Microsoft.Azure.IIoT.Platform.Events.Api.Runtime;
+    using Microsoft.Azure.IIoT.Services.Generic.Services;
     using Microsoft.Azure.IIoT.Authentication.Runtime;
     using Microsoft.Azure.IIoT.Authentication.Models;
     using Microsoft.Azure.IIoT.Authentication;
     using Microsoft.Azure.IIoT.Http.SignalR;
-    using Microsoft.Azure.IIoT.Messaging.Default;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.Extensions.Configuration;
     using Autofac;

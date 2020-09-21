@@ -9,6 +9,7 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
     using Microsoft.Azure.IIoT.Messaging.Default;
     using Microsoft.Azure.IIoT.Messaging;
     using Microsoft.Azure.IIoT.Utils;
+    using Microsoft.Azure.IIoT.Serializers;
     using System;
     using System.Runtime.Serialization;
     using Autofac;
@@ -22,6 +23,7 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
             try {
                 var builder = new ContainerBuilder();
 
+                builder.RegisterModule<RabbitMqEventQueueModule>();
                 builder.RegisterType<RabbitMqConfig>()
                     .AsImplementedInterfaces().SingleInstance();
                 builder.RegisterType<RabbitMqServer>()
@@ -55,6 +57,23 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
         private readonly IContainer _container;
     }
 
+    public class RabbitMqEventBusConfig : IRabbitMqConfig {
+        public RabbitMqEventBusConfig(string routingKey) {
+            RoutingKey = routingKey;
+            _config = new RabbitMqConfig();
+        }
+
+        public string HostName => _config.HostName;
+
+        public string UserName => _config.UserName;
+
+        public string Key => _config.Key;
+
+        public string RoutingKey { get; }
+
+        private readonly RabbitMqConfig _config;
+    }
+
     public class RabbitMqEventBusHarness : IDisposable {
 
         /// <summary>
@@ -64,12 +83,11 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
             try {
                 var builder = new ContainerBuilder();
 
+                builder.RegisterModule<NewtonSoftJsonModule>();
                 builder.RegisterModule<RabbitMqEventBusModule>();
-                builder.RegisterType<EventBusHost>().AsSelf()
-                    .AsImplementedInterfaces().SingleInstance();
 
-                builder.RegisterType<RabbitMqConfig>()
-                    .AsImplementedInterfaces().SingleInstance();
+                builder.RegisterInstance(new RabbitMqEventBusConfig(bus))
+                    .AsImplementedInterfaces();
                 builder.RegisterType<HostAutoStart>()
                     .AutoActivate()
                     .AsImplementedInterfaces().SingleInstance();

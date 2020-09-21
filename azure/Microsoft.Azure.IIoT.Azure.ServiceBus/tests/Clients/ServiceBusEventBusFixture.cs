@@ -72,9 +72,6 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Clients {
                 builder.RegisterModule<ServiceBusEventBusModule>();
                 builder.RegisterModule<NewtonSoftJsonModule>();
 
-                builder.RegisterType<EventBusHost>().AsSelf()
-                    .AsImplementedInterfaces().SingleInstance();
-
                 builder.RegisterType<ServiceBusConfig>()
                     .AsImplementedInterfaces().SingleInstance();
                 builder.RegisterType<HostAutoStart>()
