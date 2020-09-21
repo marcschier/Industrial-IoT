@@ -8,6 +8,7 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Services {
     using Microsoft.Azure.IIoT.Hosting;
     using Microsoft.Azure.IIoT.Serializers;
     using Microsoft.Azure.IIoT.Utils;
+    using Microsoft.Azure.IIoT.Exceptions;
     using Microsoft.Azure.ServiceBus;
     using Serilog;
     using System;
@@ -15,7 +16,6 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Services {
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.Azure.IIoT.Exceptions;
 
     /// <summary>
     /// Event bus built on top of service bus
@@ -161,9 +161,9 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Services {
                         // Remove handler
                         subscriptions.Value.Remove(token);
                         if (subscriptions.Value.Count != 0) {
-                            eventName = null;
-                            break;
+                            eventName = null; // Do not clean up yet
                         }
+                        break;
                     }
                 }
                 if (!found) {
