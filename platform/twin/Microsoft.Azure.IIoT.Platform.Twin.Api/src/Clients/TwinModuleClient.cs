@@ -41,7 +41,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
         /// <param name="serializer"></param>
         public TwinModuleClient(IMethodClient methodClient, ITwinModuleConfig config,
             IJsonSerializer serializer) :
-            this(methodClient, config.AsResource(), serializer) {
+            this(methodClient, config.AsHubResource(), serializer) {
         }
 
         /// <inheritdoc/>

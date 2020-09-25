@@ -581,7 +581,7 @@ namespace Microsoft.Azure.IIoT.Hosting.Services {
 
         public class TestMethodClient : IJsonMethodClient {
 
-            public int MaxMethodPayloadCharacterCount => 120 * 1024;
+            public int MaxMethodPayloadSizeInBytes => 120 * 1024;
 
             public TestMethodClient(MethodRouter router) {
                 _router = router;

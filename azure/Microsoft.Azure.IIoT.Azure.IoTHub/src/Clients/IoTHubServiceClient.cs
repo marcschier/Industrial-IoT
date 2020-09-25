@@ -102,7 +102,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub.Clients {
                     update = await _registry.UpdateTwinAsync(twin.Id,
                         twin.ToTwin(true), etag, ct);
                 }
-                return _serializer.DeserializeTwin(update);
+                return _serializer.DeserializeTwin(update, HostName);
             }
             catch (Exception e) {
                 _logger.Verbose(e, "Create or update failed ");
@@ -155,7 +155,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub.Clients {
                 else {
                     twin = await _registry.GetTwinAsync(deviceId, moduleId, ct);
                 }
-                return _serializer.DeserializeTwin(twin);
+                return _serializer.DeserializeTwin(twin, HostName);
             }
             catch (Exception e) {
                 _logger.Verbose(e, "Get twin failed ");
@@ -169,10 +169,10 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub.Clients {
             try {
                 if (string.IsNullOrEmpty(moduleId)) {
                     var device = await _registry.GetDeviceAsync(deviceId, ct);
-                    return device.ToModel();
+                    return device.ToModel(HostName);
                 }
                 var module = await _registry.GetModuleAsync(deviceId, moduleId, ct);
-                return module.ToModel();
+                return module.ToModel(HostName);
             }
             catch (Exception e) {
                 _logger.Verbose(e, "Get registration failed ");

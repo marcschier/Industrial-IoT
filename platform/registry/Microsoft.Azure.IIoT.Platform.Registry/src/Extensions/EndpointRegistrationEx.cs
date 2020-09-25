@@ -195,6 +195,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
             var registration = new EndpointRegistration {
                 // Device
 
+                Hub = twin.Hub,
                 DeviceId = twin.Id,
                 Etag = twin.Etag,
                 Version = null,

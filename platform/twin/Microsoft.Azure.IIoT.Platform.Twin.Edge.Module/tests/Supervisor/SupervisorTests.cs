@@ -19,7 +19,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Supervisor {
     public class SupervisorTests {
 
         [Fact]
-        public async Task TestListSupervisors() {
+        public async Task TestListSupervisorsAsync() {
             using (var harness = new TwinModuleFixture()) {
                 await harness.RunTestAsync(async (hubName, device,module, services) => {
 
@@ -42,7 +42,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Supervisor {
         }
 
         [Fact]
-        public async Task TestGetSupervisor() {
+        public async Task TestGetSupervisorAsync() {
             using (var harness = new TwinModuleFixture()) {
                 await harness.RunTestAsync(async (hubName, device,module, services) => {
 
@@ -61,7 +61,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Supervisor {
         }
 
         [Fact]
-        public async Task TestGetSupervisorStatus() {
+        public async Task TestGetSupervisorStatusAsync() {
             using (var harness = new TwinModuleFixture()) {
                 await harness.RunTestAsync(async (hubName, device,module, services) => {
 
@@ -81,7 +81,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Supervisor {
         }
 
         [Fact]
-        public async Task TestActivateEndpoint() {
+        public async Task TestActivateEndpointAsync() {
             using (var harness = new TwinModuleFixture()) {
                 await harness.RunTestAsync(async (hubName, device,module, services) => {
 

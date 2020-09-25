@@ -99,15 +99,18 @@ namespace Microsoft.Azure.IIoT.Hub.Models {
         /// Convert twin to device twin model
         /// </summary>
         /// <param name="twin"></param>
+        /// <param name="hub"></param>
         /// <param name="serializer"></param>
         /// <returns></returns>
-        public static DeviceTwinModel DeserializeTwin(this IJsonSerializer serializer, Twin twin) {
+        public static DeviceTwinModel DeserializeTwin(this IJsonSerializer serializer,
+            Twin twin, string hub) {
             if (twin == null) {
                 return null;
             }
             return new DeviceTwinModel {
                 Id = twin.DeviceId,
                 Etag = twin.ETag,
+                Hub = hub,
                 ModuleId = twin.ModuleId,
                 ConnectionState = twin.ConnectionState?.ToString(),
                 LastActivityTime = twin.LastActivityTime,

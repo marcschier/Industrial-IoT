@@ -203,6 +203,12 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
                 applicationType = update?.ApplicationType;
             }
 
+            var hub = existing?.Hub;
+            if (update?.Hub != null) {
+                hub = update?.Hub;
+            }
+            twin.Hub = hub;
+
             var applicationId = ApplicationInfoModelEx.CreateApplicationId(
                 siteOrGatewayId, applicationUri, applicationType);
 
@@ -353,6 +359,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
 
                 // Device
 
+                Hub = twin.Hub,
                 DeviceId = twin.Id,
                 Etag = twin.Etag,
 

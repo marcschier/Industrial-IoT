@@ -48,7 +48,7 @@ namespace Microsoft.Azure.IIoT.Services.Kafka.Server {
                 _logger.Information("Starting Kafka node at {port}...", _port);
                 var param = GetContainerParameters(_port);
                 var name = $"kafka_{_port}";
-                (_containerId, _owner) = await StartContainerAsync(
+                (_containerId, _owner) = await CreateAndStartContainerAsync(
                     param, name, "bitnami/kafka:latest");
 
                 try {
@@ -58,7 +58,7 @@ namespace Microsoft.Azure.IIoT.Services.Kafka.Server {
                 }
                 catch {
                     // Stop and retry
-                    await StopContainerAsync(_containerId);
+                    await StopAndRemoveContainerAsync(_containerId);
                     _containerId = null;
                     throw;
                 }
@@ -73,7 +73,7 @@ namespace Microsoft.Azure.IIoT.Services.Kafka.Server {
             await _lock.WaitAsync();
             try {
                 if (_containerId != null && _owner) {
-                    await StopContainerAsync(_containerId);
+                    await StopAndRemoveContainerAsync(_containerId);
                     _logger.Information("Stopped Kafka node at {port}.", _port);
                 }
             }

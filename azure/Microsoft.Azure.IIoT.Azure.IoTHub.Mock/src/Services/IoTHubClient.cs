@@ -16,9 +16,10 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub.Mock {
     using System.Threading.Tasks;
 
     /// <summary>
-    /// A mocked client
+    /// A mocked iot sdk client
     /// </summary>
-    public class IoTHubClient : IIoTEdgeClient, IIoTClientCallback, IIdentity {
+    public class IoTHubClient : IIoTEdgeClient, IIdentity, IDisposable,
+        IIoTClientCallback {
 
         /// <inheritdoc />
         public string Hub { get; }
@@ -181,9 +182,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub.Mock {
 
         /// <inheritdoc />
         public void Dispose() {
-            if (!IsClosed) {
-                throw new ThreadStateException("Dispose but still open.");
-            }
+            CloseAsync().Wait();
         }
 
         /// <inheritdoc />

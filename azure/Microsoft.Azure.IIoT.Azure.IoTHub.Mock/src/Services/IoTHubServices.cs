@@ -29,7 +29,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub.Mock {
         IIoTHub, IEventProcessingHost, IHostProcess {
 
         /// <inheritdoc/>
-        public string HostName { get; } = "mock.azure-devices.net";
+        public string HostName { get; }
 
         /// <inheritdoc/>
         public IEnumerable<IIoTHubDevice> Devices =>
@@ -46,23 +46,21 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub.Mock {
         /// <summary>
         /// Create iot hub services
         /// </summary>
-        /// <param name="config"></param>
-        public IoTHubServices(IIoTHubConfig config = null) :
-            this(config, null, null) {
+        /// <param name="hub"></param>
+        public IoTHubServices(string hub = null) :
+            this(hub, null, null) {
         }
 
         /// <summary>
         /// Create iot hub services
         /// </summary>
-        /// <param name="config"></param>
+        /// <param name="hub"></param>
         /// <param name="devices"></param>
         /// <param name="serializer"></param>
-        private IoTHubServices(IIoTHubConfig config,
+        private IoTHubServices(string hub,
             IEnumerable<(DeviceTwinModel, DeviceModel)> devices,
             IJsonSerializer serializer) {
-            if (config?.IoTHubConnString != null) {
-                HostName = ConnectionString.Parse(config.IoTHubConnString).HostName;
-            }
+            HostName = hub ?? "mock.azure-devices.net";
             if (devices != null) {
                 _devices.AddRange(devices
                     .Select(d => new IoTHubDeviceModel(this, d.Item2, d.Item1)));
@@ -74,12 +72,13 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub.Mock {
         /// <summary>
         /// Create iot hub services with devices
         /// </summary>
+        /// <param name="hub"></param>
         /// <param name="serializer"></param>
         /// <param name="devices"></param>
-        public static IoTHubServices Create(
+        public static IoTHubServices Create(string hub,
             IEnumerable<(DeviceTwinModel, DeviceModel)> devices,
             IJsonSerializer serializer = null) {
-            return new IoTHubServices(null, devices, serializer);
+            return new IoTHubServices(hub, devices, serializer);
         }
 
         /// <inheritdoc/>
@@ -307,6 +306,8 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub.Mock {
                     Twin.LastActivityTime = DateTime.UtcNow;
                 }
                 Twin.Etag = Device.Etag = Guid.NewGuid().ToString();
+                Device.Hub = _outer.HostName;
+                Twin.Hub = _outer.HostName;
             }
 
             /// <inheritdoc/>

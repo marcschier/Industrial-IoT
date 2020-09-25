@@ -84,7 +84,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Hosting {
             const int kMaxMessageSize = 127 * 1024;
             foreach (var router in _routers) {
                 try {
-                    var result = await router.InvokeAsync(_identity.AsResource(),
+                    var result = await router.InvokeAsync(_identity.AsHubResource(),
                         request.Name, request.Data, ContentMimeType.Json);
                     if (result.Length > kMaxMessageSize) {
                         _logger.Error("Result (Payload too large => {Length}", result.Length);

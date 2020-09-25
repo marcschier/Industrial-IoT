@@ -223,7 +223,16 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Clients {
 
         /// <inheritdoc/>
         public void Dispose() {
-            Try.Op(() => (_client?.Result as IDisposable)?.Dispose());
+            var client = Try.Op(() => _client?.Result);
+            if (client != null) {
+                try {
+                    client?.CloseAsync().Wait();
+                }
+                catch { }
+                finally {
+                    (client as IDisposable)?.Dispose();
+                }
+            }
             _logHook?.Dispose();
         }
 

@@ -31,7 +31,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.History.Endpoint {
                     Certificate = _server.Certificate?.RawData?.ToThumbprint()
                 },
                 Id = "testid",
-                SupervisorId = _module.AsResource()
+                SupervisorId = _module.AsHubResource()
             };
             endpoint = _module.RegisterAndActivateTwinId(endpoint);
             return new HistoryReadValuesTests<string>(

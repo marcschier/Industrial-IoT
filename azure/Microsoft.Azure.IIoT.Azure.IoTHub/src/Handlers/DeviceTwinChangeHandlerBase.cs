@@ -61,6 +61,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub.Handlers {
             if (twin == null) {
                 return;
             }
+            twin.Hub = hub;
             twin.ModuleId = moduleId;
             twin.Id = deviceId;
             var operation = GetOperation(opType);

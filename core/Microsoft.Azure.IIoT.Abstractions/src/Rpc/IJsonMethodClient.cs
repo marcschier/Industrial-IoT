@@ -15,9 +15,9 @@ namespace Microsoft.Azure.IIoT.Rpc {
     public interface IJsonMethodClient {
 
         /// <summary>
-        /// Max payload string size in bytes.
+        /// Max payload size in bytes.
         /// </summary>
-        int MaxMethodPayloadCharacterCount { get; }
+        int MaxMethodPayloadSizeInBytes { get; }
 
         /// <summary>
         /// Call a method on a target with json payload.

@@ -36,7 +36,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Services {
 
         /// <inheritdoc/>
         public async Task ActivateAsync(string id, string secret, CancellationToken ct) {
-            await _hosts.StartAsync(id, IdentityType.Endpoint, secret, ct);
+            await _hosts.StartAsync(id, secret, IdentityType.Endpoint, ct);
         }
 
         /// <inheritdoc/>

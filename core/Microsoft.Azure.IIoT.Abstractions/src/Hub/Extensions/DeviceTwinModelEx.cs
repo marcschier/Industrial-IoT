@@ -61,6 +61,7 @@ namespace Microsoft.Azure.IIoT.Hub.Models {
                 ConnectionState = model.ConnectionState,
                 Etag = model.Etag,
                 Id = model.Id,
+                Hub = model.Hub,
                 LastActivityTime = model.LastActivityTime,
                 ModuleId = model.ModuleId,
                 Properties = model.Properties.Clone(),

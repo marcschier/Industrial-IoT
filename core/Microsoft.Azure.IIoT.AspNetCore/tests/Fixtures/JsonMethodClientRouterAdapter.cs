@@ -19,7 +19,7 @@ namespace Microsoft.Azure.IIoT.AspNetCore.Tests {
     /// </summary>
     public class JsonMethodClientRouterAdapter : IJsonMethodClient {
 
-        public int MaxMethodPayloadCharacterCount => 120 * 1024;
+        public int MaxMethodPayloadSizeInBytes => 120 * 1024;
 
         public JsonMethodClientRouterAdapter(IMethodRouter router) {
             _router = router;

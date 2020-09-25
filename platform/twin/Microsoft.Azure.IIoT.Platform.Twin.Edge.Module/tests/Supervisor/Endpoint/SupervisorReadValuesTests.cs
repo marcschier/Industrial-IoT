@@ -42,7 +42,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Supervisor.History.Endp
                         Certificate = _server.Certificate?.RawData?.ToThumbprint()
                     },
                     Id = "testid",
-                    SupervisorId = _module.AsResource()
+                    SupervisorId = _module.AsHubResource()
                 });
         }
 

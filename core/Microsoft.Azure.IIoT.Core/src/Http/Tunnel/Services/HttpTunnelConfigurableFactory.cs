@@ -9,6 +9,7 @@ namespace Microsoft.Azure.IIoT.Http.Tunnel.Services {
     using Microsoft.Azure.IIoT.Http;
     using Microsoft.Azure.IIoT.Http.Default;
     using Microsoft.Azure.IIoT.Serializers;
+    using Microsoft.Azure.IIoT.Hub;
     using Serilog;
     using System;
     using System.Net;
@@ -25,15 +26,17 @@ namespace Microsoft.Azure.IIoT.Http.Tunnel.Services {
 
         /// <inheritdoc/>
         public HttpTunnelConfigurableFactory(IEventClient client,
-            IJsonSerializer serializer, IEnumerable<IHttpHandler> handlers, ILogger logger) {
-            _tunnel = new HttpTunnelEventClientFactory(client, serializer, handlers, logger);
+            IJsonSerializer serializer, IEnumerable<IHttpHandler> handlers,
+            IIdentity identity, ILogger logger) {
+            _tunnel = new HttpTunnelEventClientFactory(client, serializer, handlers, identity, logger);
             _fallback = new HttpHandlerFactory(handlers, logger);
         }
 
         /// <inheritdoc/>
         public HttpTunnelConfigurableFactory(IEventClient client, IWebProxy proxy,
-            IJsonSerializer serializer, IEnumerable<IHttpHandler> handlers, ILogger logger) {
-            _tunnel = new HttpTunnelEventClientFactory(client, serializer, handlers, logger);
+            IJsonSerializer serializer, IEnumerable<IHttpHandler> handlers,
+            IIdentity identity, ILogger logger) {
+            _tunnel = new HttpTunnelEventClientFactory(client, serializer, handlers, identity, logger);
             _fallback = new HttpHandlerFactory(handlers, proxy, logger);
         }
 

@@ -35,7 +35,7 @@ namespace Microsoft.Azure.IIoT.Rpc.Default {
             // assume base64 encoding is 33% reduction compared to raw bytes
             // plus the additional overhead of the model payload.
             //
-            _maxSize = (int)(_client.MaxMethodPayloadCharacterCount * 0.66);
+            _maxSize = (int)(_client.MaxMethodPayloadSizeInBytes * 0.66);
             if (_maxSize == 0) {
                 _maxSize = 1;
             }

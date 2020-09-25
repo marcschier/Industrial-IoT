@@ -44,6 +44,7 @@ namespace Microsoft.Azure.IIoT.Agent.Framework.Jobs {
                 var deviceTwin = await _ioTHubTwinServices.FindAsync(jobDeviceId);
                 if (deviceTwin == null) {
                     deviceTwin = new DeviceTwinModel {
+                        Hub = null, // TODO
                         Id = jobDeviceId
                     };
                     await _ioTHubTwinServices.CreateOrUpdateAsync(deviceTwin, true);

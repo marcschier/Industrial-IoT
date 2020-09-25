@@ -24,10 +24,10 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
 
         [Fact]
         public void GetPublisherThatDoesNotExist() {
-            CreatePublisherFixtures(out var site, out var publishers, out var modules);
+            CreatePublisherFixtures(out var hubName, out var site, out var publishers, out var modules);
 
             using (var mock = AutoMock.GetLoose(builder => {
-                var hub = IoTHubServices.Create(modules);
+                var hub = IoTHubServices.Create(hubName,modules);
                 builder.RegisterType<NewtonSoftJsonConverters>().As<IJsonSerializerConverterProvider>();
                 builder.RegisterType<NewtonSoftJsonSerializer>().As<IJsonSerializer>();
                 builder.RegisterInstance(hub).As<IDeviceTwinServices>();
@@ -35,7 +35,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                 IPublisherRegistry service = mock.Create<PublisherRegistry>();
 
                 // Run
-                var t = service.GetPublisherAsync("test", false);
+                var t = service.GetPublisherAsync(HubResource.Format(hubName, "test", "test"), false);
 
                 // Assert
                 Assert.NotNull(t.Exception);
@@ -46,10 +46,10 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
 
         [Fact]
         public void GetPublisherThatExists() {
-            CreatePublisherFixtures(out var site, out var publishers, out var modules);
+            CreatePublisherFixtures(out var hubName, out var site,out var publishers, out var modules);
 
             using (var mock = AutoMock.GetLoose(builder => {
-                var hub = IoTHubServices.Create(modules);
+                var hub = IoTHubServices.Create(hubName,modules);
                 builder.RegisterType<NewtonSoftJsonConverters>().As<IJsonSerializerConverterProvider>();
                 builder.RegisterType<NewtonSoftJsonSerializer>().As<IJsonSerializer>();
                 builder.RegisterInstance(hub).As<IDeviceTwinServices>();
@@ -66,10 +66,10 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
 
         [Fact]
         public void UpdatePublisherThatExists() {
-            CreatePublisherFixtures(out var site, out var publishers, out var modules);
+            CreatePublisherFixtures(out var hubName, out var site,out var publishers, out var modules);
 
             using (var mock = AutoMock.GetLoose(builder => {
-                var hub = IoTHubServices.Create(modules);
+                var hub = IoTHubServices.Create(hubName,modules);
                 builder.RegisterType<NewtonSoftJsonConverters>().As<IJsonSerializerConverterProvider>();
                 builder.RegisterType<NewtonSoftJsonSerializer>().As<IJsonSerializer>();
                 builder.RegisterInstance(hub).As<IDeviceTwinServices>();
@@ -90,10 +90,10 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
 
         [Fact]
         public void ListAllPublishers() {
-            CreatePublisherFixtures(out var site, out var publishers, out var modules);
+            CreatePublisherFixtures(out var hubName, out var site,out var publishers, out var modules);
 
             using (var mock = AutoMock.GetLoose(builder => {
-                var hub = IoTHubServices.Create(modules);
+                var hub = IoTHubServices.Create(hubName,modules);
                 builder.RegisterType<NewtonSoftJsonConverters>().As<IJsonSerializerConverterProvider>();
                 builder.RegisterType<NewtonSoftJsonSerializer>().As<IJsonSerializer>();
                 builder.RegisterInstance(hub).As<IDeviceTwinServices>();
@@ -110,10 +110,10 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
 
         [Fact]
         public void ListAllPublishersUsingQuery() {
-            CreatePublisherFixtures(out var site, out var publishers, out var modules);
+            CreatePublisherFixtures(out var hubName, out var site,out var publishers, out var modules);
 
             using (var mock = AutoMock.GetLoose(builder => {
-                var hub = IoTHubServices.Create(modules);
+                var hub = IoTHubServices.Create(hubName,modules);
                 builder.RegisterType<NewtonSoftJsonConverters>().As<IJsonSerializerConverterProvider>();
                 builder.RegisterType<NewtonSoftJsonSerializer>().As<IJsonSerializer>();
                 builder.RegisterInstance(hub).As<IDeviceTwinServices>();
@@ -134,7 +134,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
         /// <param name="site"></param>
         /// <param name="publishers"></param>
         /// <param name="modules"></param>
-        private void CreatePublisherFixtures(out string site,
+        private void CreatePublisherFixtures(out string hub, out string site,
             out List<PublisherModel> publishers, out List<(DeviceTwinModel, DeviceModel)> modules,
             bool noSite = false) {
             var fix = new Fixture();
@@ -142,11 +142,12 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
             fix.Behaviors.OfType<ThrowingRecursionBehavior>().ToList()
                 .ForEach(b => fix.Behaviors.Remove(b));
             fix.Behaviors.Add(new OmitOnRecursionBehavior());
+            var hubx = hub = fix.Create<string>();
             var sitex = site = noSite ? null : fix.Create<string>();
             publishers = fix
                 .Build<PublisherModel>()
                 .Without(x => x.Id)
-                .Do(x => x.Id = HubResource.Format(fix.Create<string>(),
+                .Do(x => x.Id = HubResource.Format(hubx,
                     fix.Create<string>(), fix.Create<string>()))
                 .CreateMany(10)
                 .ToList();
@@ -160,7 +161,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                     };
                     return t;
                 })
-                .Select(t => (t, new DeviceModel { Id = t.Id, ModuleId = t.ModuleId }))
+                .Select(t => (t, new DeviceModel { Hub = t.Hub, Id = t.Id, ModuleId = t.ModuleId }))
                 .ToList();
         }
 

@@ -41,7 +41,7 @@ namespace Microsoft.Azure.IIoT.Platform.Discovery.Edge.Services {
         /// </summary>
         /// <param name="progress"></param>
         protected override void Send(DiscoveryProgressModel progress) {
-            progress.DiscovererId = _identity.AsResource();
+            progress.DiscovererId = _identity.AsHubResource();
             base.Send(progress);
             _processor.TrySchedule(() => SendAsync(progress));
         }

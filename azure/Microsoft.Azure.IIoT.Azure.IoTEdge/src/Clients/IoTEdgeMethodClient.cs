@@ -20,7 +20,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Hosting {
     public sealed class IoTEdgeMethodClient : IJsonMethodClient {
 
         /// <inheritdoc/>
-        public int MaxMethodPayloadCharacterCount => 120 * 1024;
+        public int MaxMethodPayloadSizeInBytes => 120 * 1024;
 
         /// <summary>
         /// Create method client

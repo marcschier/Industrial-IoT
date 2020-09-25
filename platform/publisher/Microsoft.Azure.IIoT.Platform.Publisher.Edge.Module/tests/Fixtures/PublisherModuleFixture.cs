@@ -88,6 +88,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Module.Tests {
                 .Build();
             HubContainer = CreateHubContainer();
             _hub = HubContainer.Resolve<IDeviceTwinServices>();
+            Hub = _hub.HostName;
 
             // Create gateway identitity
             var gw = _hub.CreateOrUpdateAsync(new DeviceTwinModel {
@@ -146,6 +147,11 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Module.Tests {
 
             // Add mock sdk
             builder.RegisterModule<IoTHubMockModule>();
+
+            builder.RegisterType<HostAutoStart>()
+                .AutoActivate()
+                .AsImplementedInterfaces().SingleInstance();
+
 
             // Override client config
             builder.RegisterInstance(_config).AsImplementedInterfaces();

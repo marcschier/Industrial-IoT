@@ -22,11 +22,11 @@ namespace Microsoft.Azure.IIoT.Hosting {
         /// Create instance for identity
         /// </summary>
         /// <param name="id"></param>
-        /// <param name="type"></param>
         /// <param name="secret"></param>
+        /// <param name="type"></param>
         /// <param name="ct"></param>
         /// <returns></returns>
-        Task StartAsync(string id, string type, string secret,
+        Task StartAsync(string id, string secret, string type,
             CancellationToken ct = default);
 
         /// <summary>

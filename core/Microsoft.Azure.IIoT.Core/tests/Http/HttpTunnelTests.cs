@@ -22,16 +22,19 @@ namespace Microsoft.Azure.IIoT.Http.Tunnel.Services {
     using System.Threading.Tasks;
     using Xunit;
     using System.Net.Http;
+    using AutoFixture.AutoMoq;
 
     public class HttpTunnelTests {
 
         [Fact]
         public async Task TestGetWebAsync() {
+            var fixture = new Fixture().Customize(new AutoMoqCustomization { ConfigureMembers = true });
 
             // Setup
             var logger = Log.Logger;
             var eventBridge = new EventBridge();
-            var factory = new HttpTunnelEventClientFactory(eventBridge, _serializer, null, logger);
+            var factory = new HttpTunnelEventClientFactory(eventBridge, _serializer, null,
+                fixture.Create<IIdentity>(), logger);
             var client = new HttpClientFactory(factory, logger).CreateClient("msft");
 
             var adapter = new MethodHandlerAdapter(factory.YieldReturn());
@@ -64,11 +67,13 @@ namespace Microsoft.Azure.IIoT.Http.Tunnel.Services {
 
         [Fact]
         public async Task TestGetAsync() {
+            var fixture = new Fixture().Customize(new AutoMoqCustomization { ConfigureMembers = true });
 
             // Setup
             var logger = Log.Logger;
             var eventBridge = new EventBridge();
-            var factory = new HttpTunnelEventClientFactory(eventBridge, _serializer, null, logger);
+            var factory = new HttpTunnelEventClientFactory(eventBridge, _serializer, null,
+                fixture.Create<IIdentity>(), logger);
             var client = new HttpClientFactory(factory, logger).CreateClient("msft");
 
             var adapter = new MethodHandlerAdapter(factory.YieldReturn());
@@ -118,11 +123,13 @@ namespace Microsoft.Azure.IIoT.Http.Tunnel.Services {
         [InlineData(1)]
         [InlineData(0)]
         public async Task TestPostAsync(int requestSize) {
+            var fixture = new Fixture().Customize(new AutoMoqCustomization { ConfigureMembers = true });
 
             // Setup
             var logger = Log.Logger;
             var eventBridge = new EventBridge();
-            var factory = new HttpTunnelEventClientFactory(eventBridge, _serializer, null, logger);
+            var factory = new HttpTunnelEventClientFactory(eventBridge, _serializer, null,
+                fixture.Create<IIdentity>(), logger);
             var client = new HttpClientFactory(factory, logger).CreateClient("msft");
 
             var adapter = new MethodHandlerAdapter(factory.YieldReturn());
@@ -179,11 +186,13 @@ namespace Microsoft.Azure.IIoT.Http.Tunnel.Services {
         [InlineData(1)]
         [InlineData(0)]
         public async Task TestPutAsync(int requestSize) {
+            var fixture = new Fixture().Customize(new AutoMoqCustomization { ConfigureMembers = true });
 
             // Setup
             var logger = Log.Logger;
             var eventBridge = new EventBridge();
-            var factory = new HttpTunnelEventClientFactory(eventBridge, _serializer, null, logger);
+            var factory = new HttpTunnelEventClientFactory(eventBridge, _serializer, null,
+                fixture.Create<IIdentity>(), logger);
             var client = new HttpClientFactory(factory, logger).CreateClient("msft");
 
             var adapter = new MethodHandlerAdapter(factory.YieldReturn());
@@ -228,11 +237,13 @@ namespace Microsoft.Azure.IIoT.Http.Tunnel.Services {
 
         [Fact]
         public async Task TestDeleteAsync() {
+            var fixture = new Fixture().Customize(new AutoMoqCustomization { ConfigureMembers = true });
 
             // Setup
             var logger = Log.Logger;
             var eventBridge = new EventBridge();
-            var factory = new HttpTunnelEventClientFactory(eventBridge, _serializer, null, logger);
+            var factory = new HttpTunnelEventClientFactory(eventBridge, _serializer, null,
+                fixture.Create<IIdentity>(), logger);
             var client = new HttpClientFactory(factory, logger).CreateClient("msft");
 
             var adapter = new MethodHandlerAdapter(factory.YieldReturn());

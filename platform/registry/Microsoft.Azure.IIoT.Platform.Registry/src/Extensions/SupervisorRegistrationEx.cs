@@ -83,6 +83,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
             var registration = new SupervisorRegistration {
                 // Device
 
+                Hub = twin.Hub,
                 DeviceId = twin.Id,
                 ModuleId = twin.ModuleId,
                 Etag = twin.Etag,

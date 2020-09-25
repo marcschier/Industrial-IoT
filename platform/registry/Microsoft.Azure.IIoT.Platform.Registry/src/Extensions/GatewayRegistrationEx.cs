@@ -70,11 +70,16 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
                 return null;
             }
 
+            if (properties is null) {
+                throw new ArgumentNullException(nameof(properties));
+            }
+
             var tags = twin.Tags ?? new Dictionary<string, VariantValue>();
 
             var registration = new GatewayRegistration {
                 // Device
 
+                Hub = twin.Hub,
                 DeviceId = twin.Id,
                 Etag = twin.Etag,
 

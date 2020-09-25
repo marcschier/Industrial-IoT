@@ -51,7 +51,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Hosting {
         }
 
         /// <inheritdoc/>
-        public async Task StartAsync(string id, string type, string secret, CancellationToken ct) {
+        public async Task StartAsync(string id, string secret, string type, CancellationToken ct) {
             await _lock.WaitAsync();
             try {
                 if (_hosts.TryGetValue(id, out var host) && host.Running) {

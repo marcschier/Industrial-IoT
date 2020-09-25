@@ -15,6 +15,11 @@ namespace Microsoft.Azure.IIoT.Hub.Models {
         public string Etag { get; set; }
 
         /// <summary>
+        /// Hub
+        /// </summary>
+        public string Hub { get; set; }
+
+        /// <summary>
         /// Device id
         /// </summary>
         public string Id { get; set; }

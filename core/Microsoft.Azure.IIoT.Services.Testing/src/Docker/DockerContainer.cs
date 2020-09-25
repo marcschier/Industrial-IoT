@@ -51,60 +51,55 @@ namespace Microsoft.Azure.IIoT.Services.Docker {
         /// <param name="containerParameters"></param>
         /// <param name="containerName"></param>
         /// <param name="imageName"></param>
+        /// <param name="ct"></param>
         /// <returns></returns>
-        protected async Task<(string, bool)> StartContainerAsync(
+        protected async Task<(string, bool)> CreateAndStartContainerAsync(
             CreateContainerParameters containerParameters, string containerName,
-            string imageName) {
+            string imageName, CancellationToken ct = default) {
             using (var dockerClient = GetDockerClient()) {
                 ContainerName = containerName;
                 containerParameters.Image = imageName;
                 await CreateNetworkIfNotExistsAsync(dockerClient);
 
                 var containers = await dockerClient.Containers.ListContainersAsync(
-                    new ContainersListParameters { All = true });
+                    new ContainersListParameters { All = true }, ct);
                 var existingContainer = containers
                     .SingleOrDefault(c => c.Names.Contains("/" + containerName));
-
-                string containerId = null;
                 if (existingContainer != null) {
-                    containerId = existingContainer.ID;
-                    if (existingContainer.State == "running") {
-                        return (containerId, false);
-                    }
+                    // Remove existing container
+                    await StopAndRemoveContainerAsync(
+                        dockerClient, existingContainer.ID, ct);
                 }
 
-                if (containerId == null) {
-                    var images = await dockerClient.Images.ListImagesAsync(
-                        new ImagesListParameters { MatchName = imageName });
-                    if (!images.Any()) {
-                        var tag = imageName.Split(':').Last();
-                        var imagesCreateParameters = new ImagesCreateParameters {
-                            FromImage = imageName,
-                            Tag = tag,
-                        };
-                        await dockerClient.Images.CreateImageAsync(
-                            imagesCreateParameters, new AuthConfig(),
-                                new Progress<JSONMessage>(m => {
-                                    if (m.Error != null) {
-                                        _logger.Error("{@message}", m);
-                                    }
-                                    else {
-                                        _logger.Information("{@message}", m);
-                                    }
-                                }), default);
-                    }
-                    containerParameters.Name = containerName;
-                    if (!string.IsNullOrEmpty(NetworkName)) {
-                        containerParameters.HostConfig ??= new HostConfig();
-                        containerParameters.HostConfig.NetworkMode = NetworkName;
-                    }
-                    var container = await dockerClient.Containers.CreateContainerAsync(
-                        containerParameters);
-                    containerId = container.ID;
+                var images = await dockerClient.Images.ListImagesAsync(
+                    new ImagesListParameters { MatchName = imageName }, ct);
+                if (!images.Any()) {
+                    var tag = imageName.Split(':').Last();
+                    var imagesCreateParameters = new ImagesCreateParameters {
+                        FromImage = imageName,
+                        Tag = tag,
+                    };
+                    await dockerClient.Images.CreateImageAsync(
+                        imagesCreateParameters, new AuthConfig(),
+                            new Progress<JSONMessage>(m => {
+                                if (m.Error != null) {
+                                    _logger.Error("{@message}", m);
+                                }
+                                else {
+                                    _logger.Information("{@message}", m);
+                                }
+                            }), ct);
                 }
-
+                containerParameters.Name = containerName;
+                if (!string.IsNullOrEmpty(NetworkName)) {
+                    containerParameters.HostConfig ??= new HostConfig();
+                    containerParameters.HostConfig.NetworkMode = NetworkName;
+                }
+                var container = await dockerClient.Containers.CreateContainerAsync(
+                    containerParameters, ct);
+                var containerId = container.ID;
                 await dockerClient.Containers.StartContainerAsync(containerId,
-                    new ContainerStartParameters());
+                    new ContainerStartParameters(), ct);
                 return (containerId, true);
             }
         }
@@ -132,15 +127,33 @@ namespace Microsoft.Azure.IIoT.Services.Docker {
         /// Stop container
         /// </summary>
         /// <param name="containerId"></param>
-        protected async Task StopContainerAsync(string containerId) {
+        /// <param name="ct"></param>
+        /// <returns></returns>
+        protected async Task StopAndRemoveContainerAsync(string containerId,
+            CancellationToken ct = default) {
             using (var dockerClient = GetDockerClient()) {
-                var container = await dockerClient.Containers.InspectContainerAsync(containerId);
-                if (container.State.Running) {
-                    ContainerName = null;
-                    await dockerClient.Containers.KillContainerAsync(containerId,
-                        new ContainerKillParameters());
-                }
+                await StopAndRemoveContainerAsync(dockerClient, containerId, ct);
+                ContainerName = null;
             }
+        }
+
+        /// <summary>
+        /// Helper to stop and remove container
+        /// </summary>
+        /// <param name="dockerClient"></param>
+        /// <param name="containerId"></param>
+        /// <param name="ct"></param>
+        /// <returns></returns>
+        private static async Task StopAndRemoveContainerAsync(DockerClient dockerClient,
+            string containerId, CancellationToken ct) {
+            var container = await dockerClient.Containers.InspectContainerAsync(
+                containerId, ct);
+            if (container.State.Running) {
+                await dockerClient.Containers.StopContainerAsync(containerId,
+                    new ContainerStopParameters { WaitBeforeKillSeconds = 1 }, ct);
+            }
+            await dockerClient.Containers.RemoveContainerAsync(containerId,
+                new ContainerRemoveParameters { Force = true }, ct);
         }
 
         /// <summary>

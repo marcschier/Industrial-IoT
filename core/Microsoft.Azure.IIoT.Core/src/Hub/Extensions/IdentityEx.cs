@@ -15,7 +15,7 @@ namespace Microsoft.Azure.IIoT.Hub {
         /// </summary>
         /// <param name="identity"></param>
         /// <returns></returns>
-        public static string AsResource(this IIdentity identity) {
+        public static string AsHubResource(this IIdentity identity) {
             return HubResource.Format(identity.Hub, identity.DeviceId, identity.ModuleId);
         }
     }

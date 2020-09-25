@@ -53,10 +53,11 @@ namespace Microsoft.Azure.IIoT.Platform.Discovery.Services {
             }.ToPublisherRegistration().ToDeviceTwin(_serializer),
                     new DeviceModel { Id = gateway, ModuleId = module });
 
-            var registry = IoTHubServices.Create(Gateway.YieldReturn() // Single device
-                .Append(Discoverer)
-                .Append(Supervisor)
-                .Append(Publisher));
+            var registry = IoTHubServices.Create(hub,
+                Gateway.YieldReturn() // Single device
+                    .Append(Discoverer)
+                    .Append(Supervisor)
+                    .Append(Publisher));
 
             using (var mock = AutoMock.GetLoose(builder => {
                 // Setup
@@ -420,7 +421,7 @@ namespace Microsoft.Azure.IIoT.Platform.Discovery.Services {
             fix.Behaviors.Add(new OmitOnRecursionBehavior());
             var sitex = site = fix.Create<string>();
 
-            hub = fix.Create<string>();
+            var hubx = hub = fix.Create<string>();
             gateway = fix.Create<string>();
             var Gateway = (new GatewayModel {
                 SiteId = site,
@@ -500,12 +501,12 @@ namespace Microsoft.Azure.IIoT.Platform.Discovery.Services {
                             Registration = e
                         }.ToEndpointRegistration(_serializer, disable))
                 .Select(e => e.ToDeviceTwin(_serializer)))
-                .Select(d => (d, new DeviceModel { Id = d.Id }));
+                .Select(d => (d, new DeviceModel { Hub = d.Hub, Id = d.Id }));
             appdevices = appdevices.Concat(epdevices);
             if (countDevices != -1) {
                 appdevices = appdevices.Take(countDevices);
             }
-            registry = IoTHubServices.Create(appdevices
+            registry = IoTHubServices.Create(hub, appdevices
                 .Concat(Gateway.YieldReturn())
                 .Concat(Discoverer.YieldReturn())
                 .Concat(Supervisor.YieldReturn())

@@ -17,7 +17,7 @@ namespace Microsoft.Azure.IIoT.Rpc {
 
         public TestChunkServer(IJsonSerializer serializer,
             int size, Func<string, string, byte[], string, byte[]> handler) {
-            MaxMethodPayloadCharacterCount = size;
+            MaxMethodPayloadSizeInBytes = size;
             _handler = handler;
             _serializer = serializer;
             _server = new ChunkMethodServer(_serializer, TraceLogger.Create());
@@ -27,7 +27,7 @@ namespace Microsoft.Azure.IIoT.Rpc {
             return new ChunkMethodClient(this, _serializer, TraceLogger.Create());
         }
 
-        public int MaxMethodPayloadCharacterCount { get; }
+        public int MaxMethodPayloadSizeInBytes { get; }
 
         public async Task<string> CallMethodAsync(string target, string method,
             string json, TimeSpan? timeout, CancellationToken ct) {

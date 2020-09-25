@@ -97,7 +97,7 @@ namespace Microsoft.Azure.IIoT.Hosting.Services {
                 }
                 var name = methodInfo.Name;
                 if (name.EndsWith("Async", StringComparison.Ordinal)) {
-                    name = name.Substring(0, name.Length - 5);
+                    name = name[0..^5];
                 }
                 name = name.ToLowerInvariant();
 

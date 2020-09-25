@@ -15,10 +15,12 @@ namespace Microsoft.Azure.IIoT.Hub.Models {
         /// Convert twin to module
         /// </summary>
         /// <param name="module"></param>
+        /// <param name="hub"></param>
         /// <returns></returns>
-        public static DeviceModel ToModel(this Module module) {
+        public static DeviceModel ToModel(this Module module, string hub) {
             return new DeviceModel {
                 Id = module.DeviceId,
+                Hub = hub,
                 ModuleId = module.Id,
                 Status = "enabled",
                 ConnectionState = module.ConnectionState.ToString(),
@@ -31,10 +33,12 @@ namespace Microsoft.Azure.IIoT.Hub.Models {
         /// Convert twin to module
         /// </summary>
         /// <param name="device"></param>
+        /// <param name="hub"></param>
         /// <returns></returns>
-        public static DeviceModel ToModel(this Device device) {
+        public static DeviceModel ToModel(this Device device, string hub) {
             return new DeviceModel {
                 Id = device.Id,
+                Hub = hub,
                 ModuleId = null,
                 Status = device.Status.ToString().ToLowerInvariant(),
                 ConnectionState = device.ConnectionState.ToString(),

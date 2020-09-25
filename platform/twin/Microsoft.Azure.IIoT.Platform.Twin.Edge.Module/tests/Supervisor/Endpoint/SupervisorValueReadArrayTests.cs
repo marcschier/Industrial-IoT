@@ -43,7 +43,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Supervisor.Endpoint {
                         Certificate = _server.Certificate?.RawData?.ToThumbprint()
                     },
                     Id = "testid",
-                    SupervisorId = _module.AsResource()
+                    SupervisorId = _module.AsHubResource()
                 }, (ep, n) => _server.Client.ReadValueAsync(ep.Endpoint, n));
         }
 

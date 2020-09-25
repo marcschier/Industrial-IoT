@@ -46,7 +46,7 @@ namespace Microsoft.Azure.IIoT.Services.CouchDb.Server {
                 _logger.Information("Starting CouchDB server at {port}...", _port);
                 var param = GetContainerParameters(_port);
                 var name = $"couchdb_{_port}";
-                (_containerId, _owner) = await StartContainerAsync(
+                (_containerId, _owner) = await CreateAndStartContainerAsync(
                     param, name, "bitnami/couchdb:latest");
 
                 try {
@@ -56,7 +56,7 @@ namespace Microsoft.Azure.IIoT.Services.CouchDb.Server {
                 }
                 catch {
                     // Stop and retry
-                    await StopContainerAsync(_containerId);
+                    await StopAndRemoveContainerAsync(_containerId);
                     _containerId = null;
                     throw;
                 }
@@ -71,7 +71,7 @@ namespace Microsoft.Azure.IIoT.Services.CouchDb.Server {
             await _lock.WaitAsync();
             try {
                 if (_containerId != null && _owner) {
-                    await StopContainerAsync(_containerId);
+                    await StopAndRemoveContainerAsync(_containerId);
                     _logger.Information("Stopped CouchDB server at {port}.", _port);
                 }
             }

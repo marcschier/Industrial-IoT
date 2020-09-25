@@ -40,11 +40,13 @@ namespace Microsoft.Azure.IIoT.Http.Tunnel.Services {
         /// <param name="client"></param>
         /// <param name="serializer"></param>
         /// <param name="handlers"></param>
+        /// <param name="identity"></param>
         /// <param name="logger"></param>
         public HttpTunnelEventClientFactory(IEventClient client, IJsonSerializer serializer,
-            IEnumerable<IHttpHandler> handlers, ILogger logger) {
+            IEnumerable<IHttpHandler> handlers, IIdentity identity, ILogger logger) {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _serializer = serializer ?? throw new ArgumentNullException(nameof(serializer));
+            _identity = identity ?? throw new ArgumentNullException(nameof(identity));
             _handlers = handlers?.ToList() ?? new List<IHttpHandler>();
             _client = client ?? throw new ArgumentNullException(nameof(client));
             _outstanding = new ConcurrentDictionary<string, RequestTask>();
@@ -156,8 +158,8 @@ namespace Microsoft.Azure.IIoT.Http.Tunnel.Services {
 
                 // Send events
                 for (var messageId = 0; messageId < buffers.Count; messageId++) {
-                    await _outer._client.SendEventAsync(null, buffers[messageId],
-                        requestId + "_" + messageId.ToString(),
+                    await _outer._client.SendEventAsync(_outer._identity.AsHubResource(),
+                        buffers[messageId], requestId + "_" + messageId.ToString(),
                         HttpTunnelRequestModel.SchemaName, ContentMimeType.Binary);
                 }
 
@@ -180,7 +182,8 @@ namespace Microsoft.Azure.IIoT.Http.Tunnel.Services {
             /// <param name="tunnelRequest"></param>
             /// <param name="payload"></param>
             /// <returns></returns>
-            private List<byte[]> SerializeRequest(HttpTunnelRequestModel tunnelRequest, byte[] payload) {
+            private List<byte[]> SerializeRequest(HttpTunnelRequestModel tunnelRequest,
+                byte[] payload) {
                 // Serialize data
                 var buffers = new List<byte[]>();
                 var remainingRoom = 0;
@@ -272,6 +275,7 @@ namespace Microsoft.Azure.IIoT.Http.Tunnel.Services {
         private readonly IEventClient _client;
         private readonly ILogger _logger;
         private readonly IJsonSerializer _serializer;
+        private readonly IIdentity _identity;
         private readonly ConcurrentDictionary<string, RequestTask> _outstanding;
     }
 }

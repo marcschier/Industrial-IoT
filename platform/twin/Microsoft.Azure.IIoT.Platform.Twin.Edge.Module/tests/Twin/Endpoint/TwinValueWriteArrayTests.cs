@@ -41,7 +41,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Twin.Endpoint {
                     Certificate = _server.Certificate?.RawData?.ToThumbprint()
                 },
                 Id = "testid",
-                SupervisorId = _module.AsResource()
+                SupervisorId = _module.AsHubResource()
             };
             endpoint = _module.RegisterAndActivateTwinId(endpoint);
             return new WriteArrayValueTests<string>(

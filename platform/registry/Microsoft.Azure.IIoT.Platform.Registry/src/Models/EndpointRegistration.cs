@@ -216,26 +216,18 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
 
         /// <inheritdoc/>
         public override int GetHashCode() {
-            var hashCode = base.GetHashCode();
-            hashCode = (hashCode * -1521134295) +
-                EqualityComparer<string>.Default.GetHashCode(SiteId);
-            hashCode = (hashCode * -1521134295) +
-                EqualityComparer<string>.Default.GetHashCode(EndpointUrlLC);
-            hashCode = (hashCode * -1521134295) +
-                EqualityComparer<string>.Default.GetHashCode(DiscovererId);
-            hashCode = (hashCode * -1521134295) +
-                EqualityComparer<string>.Default.GetHashCode(SupervisorId);
-            hashCode = (hashCode * -1521134295) +
-                EqualityComparer<string>.Default.GetHashCode(ApplicationId);
-            hashCode = (hashCode * -1521134295) +
-                EqualityComparer<string>.Default.GetHashCode(Thumbprint);
-            hashCode = (hashCode * -1521134295) +
-                EqualityComparer<int?>.Default.GetHashCode(SecurityLevel);
-            hashCode = (hashCode * -1521134295) +
-                EqualityComparer<SecurityMode?>.Default.GetHashCode(SecurityMode);
-            hashCode = (hashCode * -1521134295) +
-                EqualityComparer<string>.Default.GetHashCode(SecurityPolicy);
-            return hashCode;
+            var hash = new System.HashCode();
+            hash.Add(base.GetHashCode());
+            hash.Add(SiteId);
+            hash.Add(EndpointUrlLC);
+            hash.Add(DiscovererId);
+            hash.Add(SupervisorId);
+            hash.Add(ApplicationId);
+            hash.Add(Thumbprint);
+            hash.Add(SecurityLevel);
+            hash.Add(SecurityMode);
+            hash.Add(SecurityPolicy);
+            return hash.ToHashCode();
         }
 
         internal bool IsInSync() {

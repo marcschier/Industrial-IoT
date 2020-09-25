@@ -249,24 +249,17 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
 
         /// <inheritdoc/>
         public override int GetHashCode() {
-            var hashCode = base.GetHashCode();
-            hashCode = (hashCode * -1521134295) +
-                EqualityComparer<string>.Default.GetHashCode(SiteId);
-            hashCode = (hashCode * -1521134295) +
-                EqualityComparer<string>.Default.GetHashCode(DiscovererId);
-            hashCode = (hashCode * -1521134295) +
-                EqualityComparer<string>.Default.GetHashCode(ApplicationId);
-            hashCode = (hashCode * -1521134295) +
-                EqualityComparer<ApplicationType?>.Default.GetHashCode(ApplicationType);
-            hashCode = (hashCode * -1521134295) +
-                EqualityComparer<string>.Default.GetHashCode(ProductUri);
-            hashCode = (hashCode * -1521134295) +
-                EqualityComparer<string>.Default.GetHashCode(DiscoveryProfileUri);
-            hashCode = (hashCode * -1521134295) +
-                EqualityComparer<string>.Default.GetHashCode(GatewayServerUri);
-            hashCode = (hashCode * -1521134295) +
-                EqualityComparer<string>.Default.GetHashCode(ApplicationName);
-            return hashCode;
+            var hash = new HashCode();
+            hash.Add(base.GetHashCode());
+            hash.Add(SiteId);
+            hash.Add(DiscovererId);
+            hash.Add(ApplicationId);
+            hash.Add(ApplicationType);
+            hash.Add(ProductUri);
+            hash.Add(DiscoveryProfileUri);
+            hash.Add(GatewayServerUri);
+            hash.Add(ApplicationName);
+            return hash.ToHashCode();
         }
     }
 }

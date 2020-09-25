@@ -21,7 +21,7 @@ namespace Microsoft.Azure.IIoT.Services.Generic.Services {
         /// </summary>
         /// <returns></returns>
         public SimpleEventQueueHarness GetHarness(string target) {
-            return new SimpleEventQueueHarness();
+            return new SimpleEventQueueHarness(target);
         }
 
         public void Dispose() {
@@ -37,7 +37,10 @@ namespace Microsoft.Azure.IIoT.Services.Generic.Services {
         /// <summary>
         /// Create fixture
         /// </summary>
-        public SimpleEventQueueHarness() {
+        public SimpleEventQueueHarness(string target) {
+            if (target is null) {
+                throw new ArgumentNullException(nameof(target));
+            }
             try {
                 var builder = new ContainerBuilder();
 
