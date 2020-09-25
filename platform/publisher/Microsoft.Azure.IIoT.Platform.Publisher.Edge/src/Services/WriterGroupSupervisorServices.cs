@@ -78,7 +78,9 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Services {
             return Task.CompletedTask;
         }
 
+#pragma warning disable IDE0052 // Remove unread private members
         private readonly ILogger _logger;
+#pragma warning restore IDE0052 // Remove unread private members
         private readonly IModuleHostManager _hosts;
         private readonly IIdentity _identity;
         private readonly IProcessControl _process;

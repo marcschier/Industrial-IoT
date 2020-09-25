@@ -5,7 +5,6 @@
 
 namespace Microsoft.Azure.IIoT.Azure.ServiceBus {
     using Microsoft.Azure.IIoT.Azure.ServiceBus.Clients;
-    using Microsoft.Azure.IIoT.Azure.ServiceBus.Services;
     using Autofac;
 
     /// <summary>

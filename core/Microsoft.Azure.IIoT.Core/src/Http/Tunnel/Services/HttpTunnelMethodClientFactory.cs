@@ -11,7 +11,6 @@ namespace Microsoft.Azure.IIoT.Http.Tunnel.Services {
     using Microsoft.Azure.IIoT.Serializers;
     using Serilog;
     using System;
-    using System.IO;
     using System.Linq;
     using System.Net;
     using System.Net.Http;

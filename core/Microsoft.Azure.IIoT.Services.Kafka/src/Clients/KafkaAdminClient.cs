@@ -9,7 +9,6 @@ namespace Microsoft.Azure.IIoT.Services.Kafka.Clients {
     using Microsoft.Azure.IIoT.Hosting;
     using Microsoft.Extensions.Diagnostics.HealthChecks;
     using Serilog;
-    using Serilog.Events;
     using System;
     using System.Threading.Tasks;
     using System.Threading;

@@ -12,7 +12,6 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Users.Runtime {
     using Microsoft.Azure.IIoT.AspNetCore.Hosting;
     using Microsoft.Azure.IIoT.AspNetCore.Hosting.Runtime;
     using Microsoft.Azure.IIoT.Diagnostics;
-    using Microsoft.Azure.IIoT.Authentication.Runtime;
     using Microsoft.Azure.IIoT.Platform.Identity;
     using Microsoft.Azure.IIoT.Platform.Identity.Runtime;
     using Microsoft.Azure.IIoT.Hosting;

@@ -17,7 +17,8 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Service.Controllers {
     /// <summary>
     /// Services to delete history
     /// </summary>
-    [ApiVersion("2")][Route("v{version:apiVersion}/delete")]
+    [ApiVersion("2")][ApiVersion("3")]
+    [Route("v{version:apiVersion}/delete")]
     [ExceptionsFilter]
     [Authorize(Policy = Policies.CanControl)]
     [ApiController]

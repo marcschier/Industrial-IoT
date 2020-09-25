@@ -24,7 +24,6 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Service.Runtime {
     using Microsoft.Azure.IIoT.Azure.ServiceBus.Runtime;
     using Microsoft.Azure.IIoT.Azure.CosmosDb;
     using Microsoft.Azure.IIoT.Azure.CosmosDb.Runtime;
-    using Microsoft.Azure.IIoT.Authentication.Runtime;
     using Microsoft.Azure.IIoT.Storage;
     using Microsoft.Azure.IIoT.Hosting;
     using Microsoft.Extensions.Configuration;

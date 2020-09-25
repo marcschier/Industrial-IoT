@@ -17,7 +17,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Service.Controllers {
     /// <summary>
     /// Bulk manage writer and variable resources
     /// </summary>
-    [ApiVersion("2")]
+    [ApiVersion("2")][ApiVersion("3")]
     [Route("v{version:apiVersion}/bulk")]
     [ExceptionsFilter]
     [Authorize(Policy = Policies.CanWrite)]

@@ -4,7 +4,6 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
-    using System;
     using System.Collections.Generic;
     using System.Linq;
 

@@ -23,8 +23,6 @@ namespace Microsoft.Azure.Devices.Client.Exceptions {
                     return new ResourceUnauthorizedException(ua.Message, ua);
                 case DeviceMaximumQueueDepthExceededException dm:
                     return new ResourceTooLargeException(dm.Message, dm); // TODO: Revisit
-                case DeviceAlreadyExistsException dae:
-                    return new ResourceConflictException(dae.Message, dae);
                 case QuotaExceededException qee:
                     return new ResourceExhaustionException(qee.Message, qee);
                 case DeviceMessageLockLostException dle:
@@ -35,8 +33,6 @@ namespace Microsoft.Azure.Devices.Client.Exceptions {
                     return new TemporarilyBusyException(sb.Message, sb);
                 case IotHubThrottledException te:
                     return new TemporarilyBusyException(te.Message, te);
-                case DeviceDisabledException dd:
-                    return new ResourceUnauthorizedException(dd.Message, dd);
             }
             return ex;
         }

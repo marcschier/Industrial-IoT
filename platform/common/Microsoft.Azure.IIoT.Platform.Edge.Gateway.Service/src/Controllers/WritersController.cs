@@ -14,7 +14,8 @@ namespace Microsoft.Azure.IIoT.Platform.Edge.Gateway.Service.Controllers {
     /// <summary>
     /// Writer controller
     /// </summary>
-    [ApiVersion("2")][Route("v{version:apiVersion}/writers")]
+    [ApiVersion("2")][ApiVersion("3")]
+    [Route("v{version:apiVersion}/writers")]
     [ExceptionsFilter]
     [ApiController]
     public class WritersController : ControllerBase {

@@ -23,7 +23,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Service.Controllers {
     /// Certificate request services.
     /// </summary>
     [ExceptionsFilter]
-    [ApiVersion("2")]
+    [ApiVersion("2")][ApiVersion("3")]
     [Route("v{version:apiVersion}/requests")]
     [Authorize(Policy = Policies.CanRead)]
     [ApiController]

@@ -7,7 +7,6 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
     using Microsoft.Azure.IIoT.Platform.Twin.Models;
     using Microsoft.Azure.IIoT.Platform.Twin;
     using Microsoft.Azure.IIoT.Platform.Registry.Models;
-    using Microsoft.Azure.IIoT.Hub;
     using Microsoft.Azure.IIoT.Rpc;
     using Microsoft.Azure.IIoT.Serializers;
     using Serilog;

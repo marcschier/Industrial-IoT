@@ -3,7 +3,7 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Services {
+namespace Microsoft.Azure.IIoT.Platform.Twin.Edge {
     using Microsoft.Azure.IIoT.Platform.OpcUa;
     using Microsoft.Azure.IIoT.Platform.OpcUa.Models;
     using Microsoft.Azure.IIoT.Platform.Core.Models;
@@ -363,8 +363,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Services {
                     continuationToken = response.Results[0].ContinuationPoint;
                     var encodeable = ExtensionObject.ToEncodeable(
                         response.Results[0].HistoryData);
-                    return (continuationToken, encodeable is T ?
-                        (T)encodeable : default);
+                    return (continuationToken, encodeable is T t ? t : default);
                 });
         }
 

@@ -20,7 +20,8 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service.Controllers {
     /// <summary>
     /// Read, Update and Query Gateway resources
     /// </summary>
-    [ApiVersion("2")][Route("v{version:apiVersion}/gateways")]
+    [ApiVersion("2")][ApiVersion("3")]
+    [Route("v{version:apiVersion}/gateways")]
     [ExceptionsFilter]
     [Authorize(Policy = Policies.CanQuery)]
     [ApiController]

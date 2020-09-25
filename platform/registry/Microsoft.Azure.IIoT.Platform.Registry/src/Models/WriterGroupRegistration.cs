@@ -196,37 +196,23 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
 
         /// <inheritdoc/>
         public override int GetHashCode() {
-            var hashCode = base.GetHashCode();
-
-            hashCode = (hashCode * -1521134295) +
-                EqualityComparer<string>.Default.GetHashCode(SiteId);
-            hashCode = (hashCode * -1521134295) +
-                EqualityComparer<MessageSchema?>.Default.GetHashCode(Schema);
-            hashCode = (hashCode * -1521134295) +
-                EqualityComparer<MessageEncoding?>.Default.GetHashCode(Encoding);
-            hashCode = (hashCode * -1521134295) +
-                EqualityComparer<TimeSpan?>.Default.GetHashCode(KeepAliveTime);
-            hashCode = (hashCode * -1521134295) +
-                EqualityComparer<TimeSpan?>.Default.GetHashCode(PublishingInterval);
-            hashCode = (hashCode * -1521134295) +
-                EqualityComparer<uint?>.Default.GetHashCode(MaxNetworkMessageSize);
-            hashCode = (hashCode * -1521134295) +
-                EqualityComparer<string>.Default.GetHashCode(HeaderLayoutUri);
-            hashCode = (hashCode * -1521134295) +
-                EqualityComparer<string>.Default.GetHashCode(WriterGroupId);
-            hashCode = (hashCode * -1521134295) +
-                EqualityComparer<double?>.Default.GetHashCode(SamplingOffset);
-            hashCode = (hashCode * -1521134295) +
-                EqualityComparer<DataSetOrderingType?>.Default.GetHashCode(DataSetOrdering);
-            hashCode = (hashCode * -1521134295) +
-                EqualityComparer<NetworkMessageContentMask?>.Default.GetHashCode(NetworkMessageContentMask);
-            hashCode = (hashCode * -1521134295) +
-                EqualityComparer<byte?>.Default.GetHashCode(Priority);
-            hashCode = (hashCode * -1521134295) +
-                EqualityComparer<uint?>.Default.GetHashCode(GroupVersion);
-            hashCode = (hashCode * -1521134295) +
-                EqualityComparer<int?>.Default.GetHashCode(BatchSize);
-            return hashCode;
+            var hash = new HashCode();
+            hash.Add(base.GetHashCode());
+            hash.Add(SiteId);
+            hash.Add(Schema);
+            hash.Add(Encoding);
+            hash.Add(KeepAliveTime);
+            hash.Add(PublishingInterval);
+            hash.Add(MaxNetworkMessageSize);
+            hash.Add(HeaderLayoutUri);
+            hash.Add(WriterGroupId);
+            hash.Add(SamplingOffset);
+            hash.Add(DataSetOrdering);
+            hash.Add(NetworkMessageContentMask);
+            hash.Add(Priority);
+            hash.Add(GroupVersion);
+            hash.Add(BatchSize);
+            return hash.ToHashCode();
         }
 
         internal bool IsInSync() {

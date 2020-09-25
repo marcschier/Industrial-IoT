@@ -20,7 +20,8 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service.Controllers {
     /// <summary>
     /// Read, Update and Query publisher resources
     /// </summary>
-    [ApiVersion("2")][Route("v{version:apiVersion}/publishers")]
+    [ApiVersion("2")][ApiVersion("3")]
+    [Route("v{version:apiVersion}/publishers")]
     [ExceptionsFilter]
     [Authorize(Policy = Policies.CanQuery)]
     [ApiController]

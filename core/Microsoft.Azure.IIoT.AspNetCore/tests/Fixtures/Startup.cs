@@ -9,7 +9,6 @@ namespace Microsoft.Azure.IIoT.AspNetCore.Tests {
     using Microsoft.Azure.IIoT.Utils;
     using Microsoft.Azure.IIoT.AspNetCore.Correlation;
     using Microsoft.Azure.IIoT.AspNetCore.Cors;
-    using Microsoft.Azure.IIoT.AspNetCore.Http;
     using Microsoft.Azure.IIoT.AspNetCore.Http.Tunnel;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;

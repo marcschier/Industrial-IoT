@@ -5,7 +5,7 @@
 
 namespace Microsoft.Azure.IIoT.Platform.Cli {
     using Microsoft.Azure.IIoT.Platform.Core.Models;
-    using Microsoft.Azure.IIoT.Platform.Twin.Edge.Services;
+    using Microsoft.Azure.IIoT.Platform.Twin.Edge;
     using Microsoft.Azure.IIoT.Platform.OpcUa.Sample;
     using Microsoft.Azure.IIoT.Platform.OpcUa.Services;
     using Microsoft.Azure.IIoT.Platform.Registry.Models;

@@ -16,7 +16,7 @@ namespace Microsoft.Azure.IIoT.AspNetCore.Tests.Controllers {
     /// <summary>
     /// Test controller
     /// </summary>
-    [ApiVersion("2")]
+    [ApiVersion("2")][ApiVersion("3")]
     [Route("v{version:apiVersion}/path/test")]
     [ExceptionsFilter]
     [ApiController]

@@ -23,7 +23,7 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Users {
     /// <summary>
     /// User manager controller
     /// </summary>
-    [ApiVersion("2")]
+    [ApiVersion("2")][ApiVersion("3")]
     [Route("v{version:apiVersion}/users")]
     [ExceptionsFilter]
     [Authorize(Policy = Policies.CanManage)]

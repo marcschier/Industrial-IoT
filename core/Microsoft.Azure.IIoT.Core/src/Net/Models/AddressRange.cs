@@ -143,10 +143,7 @@ namespace Microsoft.Azure.IIoT.Net.Models {
 
         /// <inheritdoc/>
         public override int GetHashCode() {
-            var hashCode = 2082053542;
-            hashCode = (hashCode * -1521134295) + Low.GetHashCode();
-            hashCode = (hashCode * -1521134295) + High.GetHashCode();
-            return hashCode;
+            return HashCode.Combine(Low, High);
         }
 
         /// <inheritdoc/>

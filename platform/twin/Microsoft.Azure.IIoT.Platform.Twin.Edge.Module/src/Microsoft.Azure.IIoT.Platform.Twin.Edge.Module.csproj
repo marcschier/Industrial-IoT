@@ -26,6 +26,6 @@
     <ProjectReference Include="..\..\..\..\azure\Microsoft.Azure.IIoT.Azure.IoTEdge\src\Microsoft.Azure.IIoT.Azure.IoTEdge.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Microsoft.Azure.IIoT.Platform.Twin.Edge\src\Microsoft.Azure.IIoT.Platform.Twin.Edge.csproj" />
+    <ProjectReference Include="..\..\Microsoft.Azure.IIoT.Platform.Twin\src\Microsoft.Azure.IIoT.Platform.Twin.csproj" />
   </ItemGroup>
 </Project>

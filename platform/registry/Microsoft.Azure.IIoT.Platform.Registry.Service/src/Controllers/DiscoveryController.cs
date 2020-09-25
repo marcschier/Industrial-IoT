@@ -21,7 +21,8 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service.Controllers {
     /// <summary>
     /// Configure discovery
     /// </summary>
-    [ApiVersion("2")][Route("v{version:apiVersion}/discovery")]
+    [ApiVersion("2")][ApiVersion("3")]
+    [Route("v{version:apiVersion}/discovery")]
     [ExceptionsFilter]
     [Authorize(Policy = Policies.CanQuery)]
     [ApiController]

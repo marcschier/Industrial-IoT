@@ -6,7 +6,6 @@
 namespace Microsoft.Azure.IIoT.Platform.Publisher.Api.Clients {
     using Microsoft.Azure.IIoT.Platform.Publisher.Models;
     using Microsoft.Azure.IIoT.Platform.Registry;
-    using Microsoft.Azure.IIoT.Hub;
     using Microsoft.Azure.IIoT.Rpc;
     using Microsoft.Azure.IIoT.Serializers;
     using Serilog;

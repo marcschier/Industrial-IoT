@@ -63,10 +63,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
 
         /// <inheritdoc/>
         public override int GetHashCode() {
-            var hashCode = base.GetHashCode();
-            hashCode = (hashCode * -1521134295) +
-                EqualityComparer<string>.Default.GetHashCode(SiteId);
-            return hashCode;
+            return System.HashCode.Combine(base.GetHashCode(), SiteId);
         }
 
         internal bool IsInSync() {

@@ -21,7 +21,8 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service.Controllers {
     /// <summary>
     /// Activate, Deactivate and Query endpoint resources
     /// </summary>
-    [ApiVersion("2")][Route("v{version:apiVersion}/endpoints")]
+    [ApiVersion("2")][ApiVersion("3")]
+    [Route("v{version:apiVersion}/endpoints")]
     [ExceptionsFilter]
     [Authorize(Policy = Policies.CanQuery)]
     [ApiController]

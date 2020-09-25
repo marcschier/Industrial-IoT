@@ -11,8 +11,6 @@ namespace Microsoft.Azure.IIoT.Services.CouchDb.Clients {
     using System.Threading.Tasks;
     using CouchDB.Driver;
     using System.Threading;
-    using System.Linq;
-    using CouchDB.Driver.Extensions;
 
     /// <summary>
     /// Provides document db and graph functionality for storage interfaces.

@@ -101,20 +101,7 @@ namespace Microsoft.Azure.IIoT.Net.Models {
         /// </summary>
         /// <returns></returns>
         public override int GetHashCode() {
-            var hashCode = 1761702729;
-            hashCode = (hashCode * -1521134295) +
-                EqualityComparer<PhysicalAddress>.Default.GetHashCode(MacAddress);
-            hashCode = (hashCode * -1521134295) +
-                EqualityComparer<IPAddress>.Default.GetHashCode(UnicastAddress);
-            hashCode = (hashCode * -1521134295) +
-                EqualityComparer<IPAddress>.Default.GetHashCode(SubnetMask);
-            hashCode = (hashCode * -1521134295) +
-                EqualityComparer<IPAddress>.Default.GetHashCode(Gateway);
-            // hashCode = hashCode * -1521134295 +
-            //     EqualityComparer<DnsServers>.Default.GetHashCode(DnsServers);
-            hashCode = (hashCode * -1521134295) +
-                EqualityComparer<string>.Default.GetHashCode(DnsSuffix);
-            return hashCode;
+            return System.HashCode.Combine(MacAddress, UnicastAddress, SubnetMask, Gateway, DnsSuffix);
         }
     }
 }

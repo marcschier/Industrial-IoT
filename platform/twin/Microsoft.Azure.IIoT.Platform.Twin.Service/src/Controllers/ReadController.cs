@@ -18,7 +18,8 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Service.Controllers {
     /// <summary>
     /// Node read services
     /// </summary>
-    [ApiVersion("2")][Route("v{version:apiVersion}/read")]
+    [ApiVersion("2")][ApiVersion("3")]
+    [Route("v{version:apiVersion}/read")]
     [ExceptionsFilter]
     [Authorize(Policy = Policies.CanBrowse)]
     [ApiController]

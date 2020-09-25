@@ -6,7 +6,7 @@
 namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module {
     using Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Runtime;
     using Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Controllers;
-    using Microsoft.Azure.IIoT.Platform.Twin.Edge.Services;
+    using Microsoft.Azure.IIoT.Platform.Twin.Edge;
     using Microsoft.Azure.IIoT.Platform.OpcUa;
     using Microsoft.Azure.IIoT.Platform.OpcUa.Services;
     using Microsoft.Azure.IIoT.Hosting;

@@ -6,10 +6,8 @@
 namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Hosting {
     using Microsoft.Azure.IIoT.Azure.IoTEdge;
     using Microsoft.Azure.IIoT.Hub;
-    using Microsoft.Azure.IIoT.Hosting;
     using Microsoft.Azure.IIoT.Messaging;
     using Microsoft.Azure.Devices.Client;
-    using Serilog;
     using System;
     using System.Collections.Generic;
     using System.Linq;

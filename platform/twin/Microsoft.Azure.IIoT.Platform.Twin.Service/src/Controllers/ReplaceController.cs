@@ -17,7 +17,8 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Service.Controllers {
     /// <summary>
     /// History replace services
     /// </summary>
-    [ApiVersion("2")][Route("v{version:apiVersion}/replace")]
+    [ApiVersion("2")][ApiVersion("3")]
+    [Route("v{version:apiVersion}/replace")]
     [ExceptionsFilter]
     [Authorize(Policy = Policies.CanControl)]
     [ApiController]

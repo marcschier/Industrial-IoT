@@ -17,7 +17,6 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Hosting {
     using System.Collections.Generic;
     using System.Linq;
     using Microsoft.Azure.IIoT.Hub;
-    using Microsoft.Azure.IIoT.Hosting;
 
     /// <summary>
     /// Method server implementation

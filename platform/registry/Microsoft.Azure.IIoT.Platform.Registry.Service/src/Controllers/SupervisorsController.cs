@@ -20,7 +20,8 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service.Controllers {
     /// <summary>
     /// Read, Update and Query supervisor resources
     /// </summary>
-    [ApiVersion("2")][Route("v{version:apiVersion}/supervisors")]
+    [ApiVersion("2")][ApiVersion("3")]
+    [Route("v{version:apiVersion}/supervisors")]
     [ExceptionsFilter]
     [Authorize(Policy = Policies.CanQuery)]
     [ApiController]

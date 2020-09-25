@@ -21,7 +21,8 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service.Controllers {
     /// <summary>
     /// CRUD and Query application resources
     /// </summary>
-    [ApiVersion("2")][Route("v{version:apiVersion}/applications")]
+    [ApiVersion("2")][ApiVersion("3")]
+    [Route("v{version:apiVersion}/applications")]
     [ExceptionsFilter]
     [Authorize(Policy = Policies.CanQuery)]
     [ApiController]
