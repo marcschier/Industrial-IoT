@@ -14,17 +14,17 @@ namespace Microsoft.Azure.IIoT.Rpc {
     public interface IMethodClient {
 
         /// <summary>
-        /// Call method with buffer and return payload buffer.
+        /// Call method on target with buffer and return payload
+        /// as byte buffer.
         /// </summary>
-        /// <param name="deviceId"></param>
-        /// <param name="moduleId"></param>
+        /// <param name="target"></param>
         /// <param name="method"></param>
         /// <param name="payload"></param>
         /// <param name="contentType"></param>
         /// <param name="timeout"></param>
         /// <param name="ct"></param>
         /// <returns></returns>
-        Task<byte[]> CallMethodAsync(string deviceId, string moduleId,
+        Task<byte[]> CallMethodAsync(string target,
             string method, byte[] payload, string contentType,
             TimeSpan? timeout = null, CancellationToken ct = default);
     }

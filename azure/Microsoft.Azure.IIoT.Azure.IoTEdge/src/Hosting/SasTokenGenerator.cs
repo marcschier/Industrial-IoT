@@ -6,7 +6,7 @@
 namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Hosting {
     using Microsoft.Azure.IIoT.Azure.IoTEdge;
     using Microsoft.Azure.IIoT.Crypto;
-    using Microsoft.Azure.IIoT.Hosting;
+    using Microsoft.Azure.IIoT.Hub;
     using Microsoft.Azure.IIoT.Authentication;
     using Microsoft.Azure.IIoT.Storage;
     using Microsoft.Azure.IIoT.Utils;
@@ -28,8 +28,8 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Hosting {
         /// <param name="hsm"></param>
         /// <param name="cache"></param>
         /// <param name="identity"></param>
-        public SasTokenGenerator(IIoTEdgeConfig config, IIdentity identity, ISecureElement hsm,
-            ICache cache) {
+        public SasTokenGenerator(IIoTEdgeClientConfig config, IIdentity identity,
+            ISecureElement hsm, ICache cache) {
             _identity = identity ?? throw new ArgumentNullException(nameof(identity));
             _hsm = hsm ?? throw new ArgumentNullException(nameof(hsm));
             _cache = cache ?? throw new ArgumentNullException(nameof(cache));
@@ -40,7 +40,8 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Hosting {
         }
 
         /// <inheritdoc/>
-        public async Task<string> GenerateTokenAsync(string audience, CancellationToken ct) {
+        public async Task<string> GenerateTokenAsync(string audience,
+            CancellationToken ct) {
             if (string.IsNullOrEmpty(audience)) {
                 throw new ArgumentNullException(nameof(audience));
             }

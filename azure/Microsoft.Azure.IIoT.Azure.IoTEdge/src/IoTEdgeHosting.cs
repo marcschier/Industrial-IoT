@@ -12,9 +12,9 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge {
     using Autofac;
 
     /// <summary>
-    /// Injected iot hub edge hosting context
+    /// Injected iot hub edge hosting
     /// </summary>
-    public sealed class IoTEdgeHosted : Module {
+    public sealed class IoTEdgeHosting : Module {
 
         /// <summary>
         /// Load the module
@@ -22,15 +22,14 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge {
         /// <param name="builder"></param>
         protected override void Load(ContainerBuilder builder) {
 
-            // Edge metrics collection or server hosting
+            // Edge metrics collection and diagnostics
             builder.RegisterType<MetricsHost>()
-                .AsImplementedInterfaces().InstancePerLifetimeScope();
-
-            // Register sdk, edgelet client and token generators
-            builder.RegisterType<IoTSdkFactory>()
                 .AsImplementedInterfaces().InstancePerLifetimeScope();
             builder.RegisterType<EventSourceBroker>()
                 .AsImplementedInterfaces().SingleInstance();
+
+            builder.RegisterType<EdgeHubClient>()
+                .AsImplementedInterfaces().InstancePerLifetimeScope();
             builder.RegisterType<EdgeletClient>()
                 .AsImplementedInterfaces().InstancePerLifetimeScope();
             builder.RegisterType<SasTokenGenerator>()
@@ -38,8 +37,13 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge {
             builder.RegisterType<MemoryCache>()
                 .AsImplementedInterfaces().InstancePerLifetimeScope();
 
-            // .... and module host
+            builder.RegisterType<IoTEdgeEventClient>()
+                .AsImplementedInterfaces().InstancePerLifetimeScope();
+            builder.RegisterType<IoTEdgeMethodClient>()
+                .AsImplementedInterfaces().InstancePerLifetimeScope();
             builder.RegisterType<IoTEdgeModuleHost>()
+                .AsImplementedInterfaces().InstancePerLifetimeScope();
+            builder.RegisterType<IoTEdgeMethodServer>()
                 .AsImplementedInterfaces().InstancePerLifetimeScope();
             builder.RegisterType<IoTEdgeHostManager>()
                 .AsImplementedInterfaces().InstancePerLifetimeScope();

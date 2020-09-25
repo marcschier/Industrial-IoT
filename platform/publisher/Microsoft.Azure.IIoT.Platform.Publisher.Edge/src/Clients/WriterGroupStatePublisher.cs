@@ -9,7 +9,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Clients {
     using Microsoft.Azure.IIoT.Platform.Registry;
     using Microsoft.Azure.IIoT.Serializers;
     using Microsoft.Azure.IIoT.Tasks;
-    using Microsoft.Azure.IIoT.Hosting;
+    using Microsoft.Azure.IIoT.Hub;
     using Microsoft.Azure.IIoT.Messaging;
     using Serilog;
     using System;
@@ -88,7 +88,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Clients {
         private Task SendAsync(WriterGroupStateEventModel state) {
             return _events.SendEventAsync(null,
                 _serializer.SerializeToBytes(state).ToArray(), ContentMimeType.Json,
-                MessageSchemaTypes.WriterGroupEvents, "utf-8");
+                Registry.Models.MessageSchemaTypes.WriterGroupEvents, "utf-8");
         }
 
         private readonly WriterGroupStateLogger _logger;

@@ -175,8 +175,9 @@ namespace Microsoft.Azure.IIoT.Hosting.Services {
                 var buffer = new byte[1049];
                 kRand.NextBytes(buffer);
                 var expected = new TestModel { Test = buffer };
-                var response = await hub.CallMethodAsync(device, module, "Test1_V1",
-                    _serializer.SerializeToString(expected));
+                var response = await hub.CallMethodAsync(
+                    HubResource.Format(null, device, module), "Test1_V1",
+                        _serializer.SerializeToString(expected));
                 var returned = _serializer.Deserialize<TestModel>(response);
                 Assert.Equal(expected.Test, returned.Test);
             });
@@ -191,7 +192,8 @@ namespace Microsoft.Azure.IIoT.Hosting.Services {
                 var buffer = new byte[300809];
                 kRand.NextBytes(buffer);
                 var expected = new TestModel { Test = buffer };
-                var response = await hub.CallMethodAsync(device, module, "Test1_V1",
+                var response = await hub.CallMethodAsync(
+                    HubResource.Format(null, device, module), "Test1_V1",
                     _serializer.SerializeToString(expected));
                 var returned = _serializer.Deserialize<TestModel>(response);
                 Assert.Equal(expected.Test, returned.Test);
@@ -207,7 +209,8 @@ namespace Microsoft.Azure.IIoT.Hosting.Services {
                 var buffer = new byte[300809];
                 kRand.NextBytes(buffer);
 
-                var response = await hub.CallMethodAsync(device, module, "Test2_V1",
+                var response = await hub.CallMethodAsync(
+                    HubResource.Format(null, device, module), "Test2_V1",
                     _serializer.SerializeToString(buffer));
 
                 var returned = _serializer.Deserialize<byte[]>(response);
@@ -224,7 +227,8 @@ namespace Microsoft.Azure.IIoT.Hosting.Services {
                 var buffer = new byte[300809];
                 kRand.NextBytes(buffer);
 
-                var response = await hub.CallMethodAsync(device, module, "Test3_V1",
+                var response = await hub.CallMethodAsync(
+                    HubResource.Format(null, device, module), "Test3_V1",
                     _serializer.SerializeToString(new {
                         request = buffer,
                         value = 55
@@ -246,7 +250,8 @@ namespace Microsoft.Azure.IIoT.Hosting.Services {
                 kRand.NextBytes(buffer);
                 var expected = 3254;
 
-                var response = await hub.CallMethodAsync(device, module, "Test3_V2",
+                var response = await hub.CallMethodAsync(
+                    HubResource.Format(null, device, module), "Test3_V2",
                     _serializer.SerializeToString(new {
                         request = buffer,
                         value = expected
@@ -264,7 +269,8 @@ namespace Microsoft.Azure.IIoT.Hosting.Services {
             await harness.RunTestAsync(GetControllers(), async (device, module, services) => {
                 var hub = services.Resolve<IMethodClient>();
 
-                var response = await hub.CallMethodAsync(device, module, "TestNoParameters_V1",
+                var response = await hub.CallMethodAsync(
+                    HubResource.Format(null, device, module), "TestNoParameters_V1",
                     _serializer.SerializeToString(null));
 
                 var returned = _serializer.Deserialize<string>(response);
@@ -278,7 +284,8 @@ namespace Microsoft.Azure.IIoT.Hosting.Services {
             await harness.RunTestAsync(GetControllers(), async (device, module, services) => {
                 var hub = services.Resolve<IMethodClient>();
 
-                var response = await hub.CallMethodAsync(device, module, "TestNoParameters_V1",
+                var response = await hub.CallMethodAsync(
+                    HubResource.Format(null, device, module), "TestNoParameters_V1",
                     null);
 
                 var returned = _serializer.Deserialize<string>(response);
@@ -292,7 +299,8 @@ namespace Microsoft.Azure.IIoT.Hosting.Services {
             await harness.RunTestAsync(GetControllers(), async (device, module, services) => {
                 var hub = services.Resolve<IMethodClient>();
 
-                var response = await hub.CallMethodAsync(device, module, "TestNoReturn_V1",
+                var response = await hub.CallMethodAsync(
+                    HubResource.Format(null, device, module), "TestNoReturn_V1",
                     _serializer.SerializeToString(nameof(TestControllerV1.TestNoReturnAsync)));
 
                 Assert.Null(response);
@@ -306,7 +314,8 @@ namespace Microsoft.Azure.IIoT.Hosting.Services {
             await harness.RunTestAsync(controller.YieldReturn(), async (device, module, services) => {
                 var hub = services.Resolve<IMethodClient>();
 
-                var response = await hub.CallMethodAsync(device, module, "TestNoParametersAndNoReturn_V1",
+                var response = await hub.CallMethodAsync(
+                    HubResource.Format(null, device, module), "TestNoParametersAndNoReturn_V1",
                     _serializer.SerializeToString(null));
 
                 Assert.Null(response);
@@ -321,8 +330,8 @@ namespace Microsoft.Azure.IIoT.Hosting.Services {
             var buffer = new byte[1049];
             kRand.NextBytes(buffer);
             var expected = new TestModel { Test = buffer };
-            var response = InvokeMethodOnRouterAsync(router, new MethodRequest(
-                "Test1_V1",
+            var response = InvokeMethodOnRouterAsync(router,
+                "test/modules/test", new MethodRequest("Test1_V1",
                     _serializer.SerializeToBytes(expected).ToArray())).Result;
 
             var returned = _serializer.Deserialize<TestModel>(
@@ -339,7 +348,7 @@ namespace Microsoft.Azure.IIoT.Hosting.Services {
             var buffer = new byte[300809];
             kRand.NextBytes(buffer);
             var expected = new TestModel { Test = buffer };
-            var response = client.CallMethodAsync("test", "test", "Test1_V1",
+            var response = client.CallMethodAsync("test/modules/test", "Test1_V1",
                 _serializer.SerializeToBytes(expected).ToArray(),
                     null, null, CancellationToken.None).Result;
 
@@ -358,7 +367,8 @@ namespace Microsoft.Azure.IIoT.Hosting.Services {
             var router = GetRouter();
             var expected = new byte[size];
             kRand.NextBytes(expected);
-            var response = InvokeMethodOnRouterAsync(router, new MethodRequest(
+            var response = InvokeMethodOnRouterAsync(router, "test/modules/test",
+                new MethodRequest(
                 "Test2_V1", _serializer.SerializeToBytes(expected).ToArray())).Result;
             var returned = _serializer.Deserialize<byte[]>(
                 response.ResultAsJson);
@@ -375,7 +385,8 @@ namespace Microsoft.Azure.IIoT.Hosting.Services {
             var router = GetRouter();
             var expected = new byte[size];
             kRand.NextBytes(expected);
-            var response = InvokeMethodOnRouterAsync(router, new MethodRequest(
+            var response = InvokeMethodOnRouterAsync(router, "test/modules/test",
+                new MethodRequest(
                 "Test8_V1", _serializer.SerializeToBytes(expected).ToArray())).Result;
             var returned = _serializer.Deserialize<byte[]>(
                 response.ResultAsJson);
@@ -392,7 +403,8 @@ namespace Microsoft.Azure.IIoT.Hosting.Services {
             var router = GetRouter();
             var expected = new byte[size];
             kRand.NextBytes(expected);
-            var response = InvokeMethodOnRouterAsync(router, new MethodRequest(
+            var response = InvokeMethodOnRouterAsync(router, "test/modules/test",
+                new MethodRequest(
                 "Test8_V2", _serializer.SerializeToBytes(expected).ToArray())).Result;
             var returned = _serializer.Deserialize<byte[]>(
                 response.ResultAsJson);
@@ -404,7 +416,8 @@ namespace Microsoft.Azure.IIoT.Hosting.Services {
             var router = GetRouter();
             var expected = new byte[96 * 1024];
             kRand.NextBytes(expected);
-            var response = InvokeMethodOnRouterAsync(router, new MethodRequest(
+            var response = InvokeMethodOnRouterAsync(router, "test/modules/test",
+                new MethodRequest(
                 "Test2_V1", _serializer.SerializeToBytes(expected).ToArray())).Result;
             Assert.Equal((int)HttpStatusCode.RequestEntityTooLarge,
                 response.Status);
@@ -423,7 +436,7 @@ namespace Microsoft.Azure.IIoT.Hosting.Services {
                 _serializer, Log.Logger);
             var expected = new byte[size];
             kRand.NextBytes(expected);
-            var response = client.CallMethodAsync("test", "test", "Test2_V1",
+            var response = client.CallMethodAsync("test/modules/test", "Test2_V1",
                 _serializer.SerializeToBytes(expected).ToArray(),
                     null, null, CancellationToken.None).Result;
 
@@ -445,7 +458,7 @@ namespace Microsoft.Azure.IIoT.Hosting.Services {
                 _serializer, Log.Logger);
             var expected = new byte[size];
             kRand.NextBytes(expected);
-            var response = client.CallMethodAsync("test", "test", "Test8_V1",
+            var response = client.CallMethodAsync("test/modules/test", "Test8_V1",
                 _serializer.SerializeToBytes(expected).ToArray(),
                     null, null, CancellationToken.None).Result;
 
@@ -467,7 +480,7 @@ namespace Microsoft.Azure.IIoT.Hosting.Services {
                 _serializer, Log.Logger);
             var expected = new byte[size];
             kRand.NextBytes(expected);
-            var response = client.CallMethodAsync("test", "test", "Test8_V2",
+            var response = client.CallMethodAsync("test/modules/test", "Test8_V2",
                 _serializer.SerializeToBytes(expected).ToArray(),
                     null, null, CancellationToken.None).Result;
 
@@ -481,7 +494,8 @@ namespace Microsoft.Azure.IIoT.Hosting.Services {
             var router = GetRouter();
             var expected = new byte[1049];
             kRand.NextBytes(expected);
-            var response = InvokeMethodOnRouterAsync(router, new MethodRequest(
+            var response = InvokeMethodOnRouterAsync(router, "test/modules/test",
+                new MethodRequest(
                 "Test3_V1",
                     _serializer.SerializeToBytes(new {
                         request = expected,
@@ -498,7 +512,8 @@ namespace Microsoft.Azure.IIoT.Hosting.Services {
             var router = GetRouter();
             var buffer = new byte[1049];
             kRand.NextBytes(buffer);
-            var response = InvokeMethodOnRouterAsync(router, new MethodRequest(
+            var response = InvokeMethodOnRouterAsync(router, "test/modules/test",
+                new MethodRequest(
                 "Test2_v2",
                     _serializer.SerializeToBytes(buffer).ToArray())).Result;
 
@@ -514,7 +529,8 @@ namespace Microsoft.Azure.IIoT.Hosting.Services {
             var buffer = new byte[1049];
             kRand.NextBytes(buffer);
             var expected = 3254;
-            var response = InvokeMethodOnRouterAsync(router, new MethodRequest(
+            var response = InvokeMethodOnRouterAsync(router, "test/modules/test",
+                new MethodRequest(
                 "Test3_v2",
                     _serializer.SerializeToBytes(new {
                         request = buffer,
@@ -534,11 +550,11 @@ namespace Microsoft.Azure.IIoT.Hosting.Services {
             };
         }
 
-        private static async Task<MethodResponse> InvokeMethodOnRouterAsync(MethodRouter router,
-            MethodRequest request) {
+        private static async Task<MethodResponse> InvokeMethodOnRouterAsync(
+            MethodRouter router, string target, MethodRequest request) {
             const int kMaxMessageSize = 127 * 1024;
             try {
-                var result = await router.InvokeAsync(request.Name, request.Data,
+                var result = await router.InvokeAsync(target, request.Name, request.Data,
                     ContentMimeType.Json);
                 if (result.Length > kMaxMessageSize) {
                     return new MethodResponse((int)HttpStatusCode.RequestEntityTooLarge);
@@ -571,10 +587,9 @@ namespace Microsoft.Azure.IIoT.Hosting.Services {
                 _router = router;
             }
 
-            public async Task<string> CallMethodAsync(string deviceId,
-                string moduleId, string method, string payload,
-                TimeSpan? timeout, CancellationToken ct) {
-                var result = await InvokeMethodOnRouterAsync(_router,
+            public async Task<string> CallMethodAsync(string target, string method,
+                string payload, TimeSpan? timeout, CancellationToken ct) {
+                var result = await InvokeMethodOnRouterAsync(_router, target,
                     new MethodRequest(method, Encoding.UTF8.GetBytes(payload),
                         timeout, timeout));
                 if (result.Status != 200) {

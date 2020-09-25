@@ -91,8 +91,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module {
                         var version = GetType().Assembly.GetReleaseVersion().ToString();
                         logger.Information("Starting module OpcTwin version {version}.",
                             version);
-                        await module.StartAsync(IdentityType.Supervisor,
-                            "OpcTwin", version, this);
+                        await module.StartAsync(IdentityType.Supervisor, version);
                         if (hostScope.TryResolve(out server)) {
                             server.Start();
                         }
@@ -147,7 +146,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module {
 
             // Register module framework
             builder.RegisterModule<ModuleFramework>();
-            builder.RegisterModule<IoTEdgeHosted>();
+            builder.RegisterModule<IoTEdgeHosting>();
             builder.RegisterModule<LogAnalyticsMetrics>();
             builder.RegisterModule<NewtonSoftJsonModule>();
 
@@ -234,7 +233,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module {
 
                 // Register module framework
                 builder.RegisterModule<ModuleFramework>();
-                builder.RegisterModule<IoTEdgeHosted>();
+                builder.RegisterModule<IoTEdgeHosting>();
                 builder.RegisterModule<LogAnalyticsMetrics>();
                 builder.RegisterModule<NewtonSoftJsonModule>();
 

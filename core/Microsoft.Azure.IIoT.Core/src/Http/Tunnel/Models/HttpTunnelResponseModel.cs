@@ -46,5 +46,12 @@ namespace Microsoft.Azure.IIoT.Http.Tunnel.Models {
         [DataMember(Name = "status", Order = 3,
             EmitDefaultValue = false)]
         public int Status { get; set; }
+
+        /// <summary>
+        /// Status code reason string - in first response chunk
+        /// </summary>
+        [DataMember(Name = "reason", Order = 4,
+            EmitDefaultValue = false)]
+        public string Reason { get; set; }
     }
 }

@@ -9,215 +9,92 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Hosting {
     using Microsoft.Azure.IIoT.Rpc;
     using Microsoft.Azure.IIoT.Hub;
     using Microsoft.Azure.IIoT.Hosting;
-    using Microsoft.Azure.IIoT.Exceptions;
-    using Microsoft.Azure.IIoT.Messaging;
-    using Microsoft.Azure.Devices.Client;
-    using Microsoft.Azure.Devices.Client.Exceptions;
     using Microsoft.Azure.Devices.Shared;
     using Microsoft.Azure.IIoT.Serializers;
     using Serilog;
     using System;
     using System.Collections.Generic;
-    using System.Globalization;
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
-    using System.Text;
     using Prometheus;
-    using System.Net;
 
     /// <summary>
     /// Module host implementation
     /// </summary>
-    public sealed class IoTEdgeModuleHost : IModuleHost, ISettingsReporter,
-        IIdentity, IEventClient, IJsonMethodClient {
-
-        /// <inheritdoc/>
-        public int MaxMethodPayloadCharacterCount => 120 * 1024;
-
-        /// <inheritdoc/>
-        public string DeviceId { get; private set; }
-
-        /// <inheritdoc/>
-        public string ModuleId { get; private set; }
-
-        /// <inheritdoc/>
-        public string Gateway { get; private set; }
+    public sealed class IoTEdgeModuleHost : IModuleHost, ISettingsReporter {
 
         /// <summary>
         /// Create module host
         /// </summary>
-        /// <param name="router"></param>
         /// <param name="settings"></param>
-        /// <param name="factory"></param>
+        /// <param name="client"></param>
         /// <param name="serializer"></param>
         /// <param name="logger"></param>
-        public IoTEdgeModuleHost(IMethodRouter router, ISettingsRouter settings,
-            IClientFactory factory, IJsonSerializer serializer, ILogger logger) {
+        public IoTEdgeModuleHost(ISettingsRouter settings, IIoTEdgeClient client,
+            IJsonSerializer serializer, ILogger logger) {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            _factory = factory ?? throw new ArgumentNullException(nameof(factory));
-            _router = router ?? throw new ArgumentNullException(nameof(router));
+            _client = client ?? throw new ArgumentNullException(nameof(client));
             _settings = settings ?? throw new ArgumentNullException(nameof(settings));
             _serializer = serializer ?? throw new ArgumentNullException(nameof(serializer));
         }
 
         /// <inheritdoc/>
+        public async Task StartAsync(string type, string version) {
+            await _lock.WaitAsync();
+            try {
+                if (_started) {
+                    throw new InvalidOperationException("Already started");
+                }
+
+                _logger.Debug("Starting Module Host...");
+                await InitializeTwinAsync();
+
+                // Register callback to be called when settings change ...
+                await _client.SetDesiredPropertyUpdateCallbackAsync(
+                    (settings, _) => ProcessSettingsAsync(settings), null);
+
+                // Report type of service, chosen site, and connection state
+                var twinSettings = new TwinCollection {
+                    [TwinProperty.Type] = type
+                };
+
+                // Set version information
+                twinSettings[TwinProperty.Version] = version;
+                await _client.UpdateReportedPropertiesAsync(twinSettings);
+
+                _logger.Information("Module Host started.");
+                _started = true;
+            }
+            catch (Exception ex) {
+                _logger.Error(ex, "Module Host failed to start.");
+                throw;
+            }
+            finally {
+                _lock.Release();
+            }
+        }
+
+        /// <inheritdoc/>
         public async Task StopAsync() {
-            if (_client != null) {
-                try {
-                    await _lock.WaitAsync();
-                    if (_client != null) {
-                        _logger.Information("Stopping Module Host...");
-                        try {
-                            await _client.CloseAsync();
-                        }
-                        catch (OperationCanceledException) { }
-                        catch (IotHubCommunicationException) { }
-                        catch (DeviceNotFoundException) { }
-                        catch (UnauthorizedException) { }
-                        catch (Exception se) {
-                            _logger.Error(se, "Module Host not cleanly disconnected.");
-                        }
-                    }
-                    _logger.Information("Module Host stopped.");
-                }
-                catch (Exception ce) {
-                    _logger.Error(ce, "Module Host stopping caused exception.");
-                }
-                finally {
-                    kModuleStart.WithLabels(DeviceId ?? "", ModuleId ?? "", _moduleGuid, "",
-                        DateTime.UtcNow.ToString("yyyy-MM-dd'T'HH:mm:ss.FFFFFFFK",
-                        CultureInfo.InvariantCulture)).Set(0);
-                    _client?.Dispose();
-                    _client = null;
-                    DeviceId = null;
-                    ModuleId = null;
-                    Gateway = null;
-                    _lock.Release();
-                }
-            }
-        }
-
-        /// <inheritdoc/>
-        public async Task StartAsync(string type, string productInfo,
-            string version, IProcessControl reset) {
-            if (_client == null) {
-                try {
-                    await _lock.WaitAsync();
-                    if (_client == null) {
-                        // Create client
-                        _logger.Debug("Starting Module Host...");
-                        _client = await _factory.CreateAsync(productInfo + "_" + version, reset);
-                        DeviceId = _factory.DeviceId;
-                        ModuleId = _factory.ModuleId;
-                        Gateway = _factory.Gateway;
-                        // Register callback to be called when a method request is received
-                        await _client.SetMethodDefaultHandlerAsync((request, _) =>
-                            InvokeMethodAsync(request), null);
-
-                        await InitializeTwinAsync();
-
-                        // Register callback to be called when settings change ...
-                        await _client.SetDesiredPropertyUpdateCallbackAsync(
-                            (settings, _) => ProcessSettingsAsync(settings), null);
-
-                        // Report type of service, chosen site, and connection state
-                        var twinSettings = new TwinCollection {
-                            [TwinProperty.Type] = type
-                        };
-
-                        // Set version information
-                        twinSettings[TwinProperty.Version] = version;
-                        await _client.UpdateReportedPropertiesAsync(twinSettings);
-
-                        // Done...
-                        kModuleStart.WithLabels(DeviceId ?? "", ModuleId ?? "",
-                            _moduleGuid, version,
-                            DateTime.UtcNow.ToString("yyyy-MM-dd'T'HH:mm:ss.FFFFFFFK",
-                            CultureInfo.InvariantCulture)).Set(1);
-                        _logger.Information("Module Host started.");
-                        return;
-                    }
-                }
-                catch (Exception ex) {
-                    kModuleStart.WithLabels(DeviceId ?? "", ModuleId ?? "",
-                        _moduleGuid, version,
-                        DateTime.UtcNow.ToString("yyyy-MM-dd'T'HH:mm:ss.FFFFFFFK",
-                        CultureInfo.InvariantCulture)).Set(0);
-                    _logger.Error("Module Host failed to start.");
-                    _client?.Dispose();
-                    _client = null;
-                    DeviceId = null;
-                    ModuleId = null;
-                    Gateway = null;
-                    throw ex;
-                }
-                finally {
-                    _lock.Release();
-                }
-            }
-            throw new InvalidOperationException("Already started");
-        }
-
-        /// <inheritdoc/>
-        public async Task SendEventAsync(string target, IEnumerable<byte[]> batch, string contentType,
-            string eventSchema, string contentEncoding, CancellationToken ct) {
+            await _lock.WaitAsync();
             try {
-                await _lock.WaitAsync();
-                if (_client != null) {
-                    var messages = batch
-                        .Select(ev =>
-                             CreateMessage(ev, contentEncoding, contentType, eventSchema,
-                                DeviceId, ModuleId))
-                        .ToList();
-                    try {
-                        await _client.SendEventBatchAsync(target, messages);
-                    }
-                    finally {
-                        messages.ForEach(m => m?.Dispose());
-                    }
+                if (_started) {
+                    await _client.SetDesiredPropertyUpdateCallbackAsync(
+                        null, null);
                 }
             }
             finally {
+                _started = false;
                 _lock.Release();
             }
-        }
-
-        /// <inheritdoc/>
-        public async Task SendEventAsync(string target, byte[] data, string contentType, string eventSchema,
-            string contentEncoding, CancellationToken ct) {
-            try {
-                await _lock.WaitAsync();
-                if (_client != null) {
-                    using (var msg = CreateMessage(data, contentEncoding, contentType,
-                        eventSchema, DeviceId, ModuleId)) {
-                        await _client.SendEventAsync(target, msg, ct);
-                    }
-                }
-            }
-            finally {
-                _lock.Release();
-            }
-        }
-
-        /// <inheritdoc/>
-        public void SendEvent<T>(string target, byte[] data, string contentType,
-            string eventSchema, string contentEncoding, T token, Action<T, Exception> complete) {
-            if (token is null) {
-                throw new ArgumentNullException(nameof(token));
-            }
-            if (complete == null) {
-                throw new ArgumentNullException(nameof(complete));
-            }
-            _ = SendEventAsync(target, data, contentType, eventSchema, contentEncoding, default)
-                .ContinueWith(task => complete?.Invoke(token, task.Exception));
         }
 
         /// <inheritdoc/>
         public async Task ReportAsync(IEnumerable<KeyValuePair<string, VariantValue>> properties,
             CancellationToken ct) {
+            await _lock.WaitAsync();
             try {
-                await _lock.WaitAsync();
                 if (_client != null) {
                     var collection = new TwinCollection();
                     foreach (var property in properties) {
@@ -233,8 +110,8 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Hosting {
 
         /// <inheritdoc/>
         public async Task ReportAsync(string propertyId, VariantValue value, CancellationToken ct) {
+            await _lock.WaitAsync();
             try {
-                await _lock.WaitAsync();
                 if (_client != null) {
                     var collection = new TwinCollection {
                         [propertyId] = value?.ConvertTo<object>()
@@ -248,91 +125,11 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Hosting {
         }
 
         /// <inheritdoc/>
-        public async Task<string> CallMethodAsync(string deviceId, string moduleId,
-            string method, string payload, TimeSpan? timeout, CancellationToken ct) {
-            var request = new MethodRequest(method, Encoding.UTF8.GetBytes(payload),
-                timeout, null);
-            MethodResponse response;
-            if (string.IsNullOrEmpty(moduleId)) {
-                response = await _client.InvokeMethodAsync(deviceId, request, ct);
-            }
-            else {
-                response = await _client.InvokeMethodAsync(deviceId, moduleId, request, ct);
-            }
-            if (response.Status != 200) {
-                throw new MethodCallStatusException(
-                    response.ResultAsJson, response.Status);
-            }
-            return response.ResultAsJson;
-        }
-
-        /// <inheritdoc/>
         public void Dispose() {
             if (_client != null) {
                 StopAsync().Wait();
             }
             _lock.Dispose();
-        }
-
-        /// <summary>
-        /// Create message
-        /// </summary>
-        /// <param name="data"></param>
-        /// <param name="contentEncoding"></param>
-        /// <param name="contentType"></param>
-        /// <param name="eventSchema"></param>
-        /// <param name="deviceId"></param>
-        /// <param name="moduleId"></param>
-        /// <returns></returns>
-        private static Message CreateMessage(byte[] data, string contentEncoding,
-            string contentType, string eventSchema, string deviceId, string moduleId) {
-            var msg = new Message(data) {
-
-                ContentType = contentType,
-                ContentEncoding = contentEncoding,
-                // TODO - setting CreationTime causes issues in the Azure IoT java SDK
-                // revert the comment when the issue is fixed
-                //  CreationTimeUtc = DateTime.UtcNow
-            };
-            if (!string.IsNullOrEmpty(contentEncoding)) {
-                msg.Properties.Add(CommonProperties.ContentEncoding, contentEncoding);
-            }
-            if (!string.IsNullOrEmpty(eventSchema)) {
-                msg.Properties.Add(CommonProperties.EventSchemaType, eventSchema);
-            }
-            if (!string.IsNullOrEmpty(deviceId)) {
-                msg.Properties.Add(CommonProperties.DeviceId, deviceId);
-            }
-            if (!string.IsNullOrEmpty(moduleId)) {
-                msg.Properties.Add(CommonProperties.ModuleId, moduleId);
-            }
-            return msg;
-        }
-
-        /// <summary>
-        /// Invoke method handler on method router
-        /// </summary>
-        /// <param name="request"></param>
-        /// <returns></returns>
-        private async Task<MethodResponse> InvokeMethodAsync(MethodRequest request) {
-            const int kMaxMessageSize = 127 * 1024;
-            try {
-                var result = await _router.InvokeAsync(request.Name, request.Data,
-                    ContentMimeType.Json);
-                if (result.Length > kMaxMessageSize) {
-                    _logger.Error("Result (Payload too large => {Length}", result.Length);
-                    return new MethodResponse((int)HttpStatusCode.RequestEntityTooLarge);
-                }
-                return new MethodResponse(result, 200);
-            }
-            catch (MethodCallStatusException mex) {
-                var payload = Encoding.UTF8.GetBytes(mex.ResponsePayload);
-                return new MethodResponse(payload.Length > kMaxMessageSize ? null : payload,
-                    mex.Result);
-            }
-            catch (Exception) {
-                return new MethodResponse((int)HttpStatusCode.InternalServerError);
-            }
         }
 
         /// <summary>
@@ -347,15 +144,6 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Hosting {
 
             // Process initial setting snapshot from twin
             var twin = await _client.GetTwinAsync();
-            if (!string.IsNullOrEmpty(twin.DeviceId)) {
-                DeviceId = twin.DeviceId;
-            }
-            if (!string.IsNullOrEmpty(twin.ModuleId)) {
-                ModuleId = twin.ModuleId;
-            }
-            _logger.Information("Initialize device twin for {deviceId} - {moduleId}",
-                DeviceId, ModuleId ?? "standalone");
-
             var desired = new Dictionary<string, VariantValue>();
             var reported = new Dictionary<string, VariantValue>();
 
@@ -511,20 +299,18 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Hosting {
             return true;
         }
 
-        private IClient _client;
-
-        private readonly IMethodRouter _router;
+        private bool _started;
+        private readonly IIoTEdgeClient _client;
         private readonly ISettingsRouter _settings;
         private readonly IJsonSerializer _serializer;
         private readonly ILogger _logger;
-        private readonly IClientFactory _factory;
         private readonly SemaphoreSlim _lock = new SemaphoreSlim(1, 1);
         private readonly string _moduleGuid = Guid.NewGuid().ToString();
 
         private static readonly Gauge kModuleStart = Metrics
             .CreateGauge("iiot_edge_module_start", "starting module",
                 new GaugeConfiguration {
-                    LabelNames = new[] {"deviceid", "module", "runid", "version", "timestamp_utc" }
+                    LabelNames = new[] { "deviceid", "module", "runid", "version", "timestamp_utc" }
                 });
     }
 }

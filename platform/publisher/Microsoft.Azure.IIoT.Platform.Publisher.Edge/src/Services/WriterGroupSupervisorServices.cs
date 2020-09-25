@@ -8,6 +8,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Services {
     using Microsoft.Azure.IIoT.Platform.Registry.Models;
     using Microsoft.Azure.IIoT.Platform.Edge;
     using Microsoft.Azure.IIoT.Hosting;
+    using Microsoft.Azure.IIoT.Hub;
     using Serilog;
     using System;
     using System.Linq;
@@ -36,7 +37,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Services {
 
         /// <inheritdoc/>
         public async Task ActivateAsync(string id, string secret, CancellationToken ct) {
-            await _hosts.StartAsync(id, secret, ct);
+            await _hosts.StartAsync(id, secret, IdentityType.DataSet, ct);
         }
 
         /// <inheritdoc/>
@@ -46,7 +47,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Services {
 
         /// <inheritdoc/>
         public async Task AttachAsync(string id, string secret) {
-            await _hosts.QueueStartAsync(id, secret);
+            await _hosts.QueueStartAsync(id, IdentityType.DataSet, secret);
         }
 
         /// <inheritdoc/>

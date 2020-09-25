@@ -10,6 +10,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.History.Endpoint {
     using Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Fixtures;
     using Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests;
     using Microsoft.Azure.IIoT.Platform.Twin;
+    using Microsoft.Azure.IIoT.Hub;
     using System.Net;
     using System.Threading.Tasks;
     using Xunit;
@@ -30,8 +31,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.History.Endpoint {
                     Certificate = _server.Certificate?.RawData?.ToThumbprint()
                 },
                 Id = "testid",
-                SupervisorId = SupervisorModelEx.CreateSupervisorId(
-                  _module.DeviceId, _module.ModuleId)
+                SupervisorId = _module.AsResource()
             };
             endpoint = _module.RegisterAndActivateTwinId(endpoint);
             return new HistoryReadValuesTests<string>(

@@ -45,8 +45,8 @@ namespace Microsoft.Azure.IIoT.Rpc.Default {
         }
 
         /// <inheritdoc/>
-        public async Task<byte[]> InvokeAsync(byte[] payload, string contentType,
-            IMethodHandler handler) {
+        public async Task<byte[]> InvokeAsync(string target, byte[] payload,
+            string contentType, IMethodHandler handler) {
             var request = _serializer.Deserialize<MethodChunkModel>(payload);
             ChunkProcessor processor;
             if (request.Handle != null) {
@@ -57,7 +57,7 @@ namespace Microsoft.Azure.IIoT.Rpc.Default {
             }
             else {
                 var handle = Interlocked.Increment(ref _requestCounter).ToString();
-                processor = new ChunkProcessor(this, handle, request.MethodName,
+                processor = new ChunkProcessor(this, handle, request.Target, request.MethodName,
                     request.ContentType, request.ContentLength, request.MaxChunkLength,
                     request.Timeout);
                 if (!_requests.TryAdd(handle, processor)) {
@@ -100,17 +100,21 @@ namespace Microsoft.Azure.IIoT.Rpc.Default {
             /// </summary>
             /// <param name="outer"></param>
             /// <param name="handle"></param>
+            /// <param name="target"></param>
             /// <param name="method"></param>
             /// <param name="contentType"></param>
             /// <param name="contentLength"></param>
             /// <param name="maxChunkLength"></param>
             /// <param name="timeout"></param>
-            public ChunkProcessor(ChunkMethodServer outer, string handle, string method,
-                string contentType, int? contentLength, int? maxChunkLength, TimeSpan? timeout) {
+            public ChunkProcessor(ChunkMethodServer outer, string handle,
+                string target, string method, string contentType,
+                int? contentLength, int? maxChunkLength, TimeSpan? timeout) {
                 Handle = handle ??
                     throw new ArgumentNullException(nameof(handle));
                 _outer = outer ??
                     throw new ArgumentNullException(nameof(outer));
+                _target = target ??
+                    throw new ArgumentNullException(nameof(target));
                 _method = method ??
                     throw new ArgumentNullException(nameof(method));
                 if (contentLength == null) {
@@ -146,7 +150,7 @@ namespace Microsoft.Azure.IIoT.Rpc.Default {
                     }
                     try {
                         // Process
-                        var result = await handler.InvokeAsync(_method,
+                        var result = await handler.InvokeAsync(_target, _method,
                             _payload.Unzip(), _contentType);
                         // Set response payload
                         _payload = result.Zip();
@@ -190,6 +194,7 @@ namespace Microsoft.Azure.IIoT.Rpc.Default {
             private readonly string _contentType;
             private readonly TimeSpan _timeout;
             private readonly int _maxChunkLength;
+            private readonly string _target;
             private byte[] _payload;
             private int _received;
             private int _sent = -1;

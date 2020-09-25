@@ -43,7 +43,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
             if (string.IsNullOrEmpty(id)) {
                 throw new ArgumentException(nameof(id));
             }
-            var deviceId = PublisherModelEx.ParseDeviceId(id, out var moduleId);
+            var deviceId = HubResource.Parse(id, out var hub, out var moduleId);
             var device = await _iothub.GetAsync(deviceId, moduleId, ct);
             var registration = device.ToEntityRegistration(onlyServerState)
                 as PublisherRegistration;
@@ -65,7 +65,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
             }
 
             // Get existing endpoint and compare to see if we need to patch.
-            var deviceId = SupervisorModelEx.ParseDeviceId(publisherId, out var moduleId);
+            var deviceId = HubResource.Parse(publisherId, out var hub, out var moduleId);
 
             while (true) {
                 try {

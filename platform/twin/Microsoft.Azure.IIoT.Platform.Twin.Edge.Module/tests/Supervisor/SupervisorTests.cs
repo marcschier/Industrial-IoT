@@ -21,7 +21,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Supervisor {
         [Fact]
         public async Task TestListSupervisors() {
             using (var harness = new TwinModuleFixture()) {
-                await harness.RunTestAsync(async (device, module, services) => {
+                await harness.RunTestAsync(async (hubName, device,module, services) => {
 
                     // Setup
                     var registry = services.Resolve<ISupervisorRegistry>();
@@ -33,7 +33,9 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Supervisor {
                     Assert.Single(supervisors);
                     Assert.True(supervisors.Single().Connected.Value);
                     Assert.True(supervisors.Single().OutOfSync.Value);
-                    Assert.Equal(device, SupervisorModelEx.ParseDeviceId(supervisors.Single().Id, out var moduleId));
+                    Assert.Equal(device, HubResource.Parse(supervisors.Single().Id,
+                        out var hub, out var moduleId));
+                    Assert.Equal(hubName, hub);
                     Assert.Equal(module, moduleId);
                 });
             }
@@ -42,13 +44,14 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Supervisor {
         [Fact]
         public async Task TestGetSupervisor() {
             using (var harness = new TwinModuleFixture()) {
-                await harness.RunTestAsync(async (device, module, services) => {
+                await harness.RunTestAsync(async (hubName, device,module, services) => {
 
                     // Setup
                     var registry = services.Resolve<ISupervisorRegistry>();
 
                     // Act
-                    var supervisor = await registry.GetSupervisorAsync(SupervisorModelEx.CreateSupervisorId(device, module));
+                    var supervisor = await registry.GetSupervisorAsync(
+                        HubResource.Format(hubName, device, module));
 
                     // Assert
                     Assert.True(supervisor.Connected.Value);
@@ -60,13 +63,14 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Supervisor {
         [Fact]
         public async Task TestGetSupervisorStatus() {
             using (var harness = new TwinModuleFixture()) {
-                await harness.RunTestAsync(async (device, module, services) => {
+                await harness.RunTestAsync(async (hubName, device,module, services) => {
 
                     // Setup
                     var diagnostics = services.Resolve<ISupervisorDiagnostics>();
 
                     // Act
-                    var status = await diagnostics.GetSupervisorStatusAsync(SupervisorModelEx.CreateSupervisorId(device, module));
+                    var status = await diagnostics.GetSupervisorStatusAsync(
+                        HubResource.Format(hubName, device, module));
 
                     // Assert
                     Assert.Equal(status.DeviceId, device);
@@ -79,10 +83,10 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Supervisor {
         [Fact]
         public async Task TestActivateEndpoint() {
             using (var harness = new TwinModuleFixture()) {
-                await harness.RunTestAsync(async (device, module, services) => {
+                await harness.RunTestAsync(async (hubName, device,module, services) => {
 
                     // Setup
-                    var supervisorId = SupervisorModelEx.CreateSupervisorId(device, module);
+                    var supervisorId = HubResource.Format(hubName, device, module);
                     var activation = services.Resolve<IEndpointActivation>();
                     var hub = services.Resolve<IDeviceTwinServices>();
                     var twin = new EndpointInfoModel {
@@ -124,10 +128,10 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Supervisor {
         [Fact]
         public async Task TestActivateDeactivateEndpointAsync() {
             using (var harness = new TwinModuleFixture()) {
-                await harness.RunTestAsync(async (device, module, services) => {
+                await harness.RunTestAsync(async (hubName, device,module, services) => {
 
                     // Setup
-                    var supervisorId = SupervisorModelEx.CreateSupervisorId(device, module);
+                    var supervisorId = HubResource.Format(hubName, device, module);
                     var activation = services.Resolve<IEndpointActivation>();
                     var hub = services.Resolve<IDeviceTwinServices>();
                     var twin = new EndpointInfoModel {
@@ -169,10 +173,10 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Supervisor {
         [Fact]
         public async Task TestActivateDeactivateEndpoint20TimesAsync() {
             using (var harness = new TwinModuleFixture()) {
-                await harness.RunTestAsync(async (device, module, services) => {
+                await harness.RunTestAsync(async (hubName, device,module, services) => {
 
                     // Setup
-                    var supervisorId = SupervisorModelEx.CreateSupervisorId(device, module);
+                    var supervisorId = HubResource.Format(hubName, device, module);
                     var activation = services.Resolve<IEndpointActivation>();
                     var hub = services.Resolve<IDeviceTwinServices>();
                     var twin = new EndpointInfoModel {
@@ -215,10 +219,10 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Supervisor {
         [Fact]
         public async Task TestActivateDeactivate20Endpoints5TimesMultiThreadedAsync() {
             using (var harness = new TwinModuleFixture()) {
-                await harness.RunTestAsync(async (device, module, services) => {
+                await harness.RunTestAsync(async (hubName, device,module, services) => {
 
                     // Setup
-                    var supervisorId = SupervisorModelEx.CreateSupervisorId(device, module);
+                    var supervisorId = HubResource.Format(hubName, device, module);
                     var activation = services.Resolve<IEndpointActivation>();
                     var hub = services.Resolve<IDeviceTwinServices>();
 

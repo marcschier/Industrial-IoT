@@ -4,6 +4,7 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Platform.Discovery.Services {
+    using Microsoft.Azure.IIoT.Hub;
     using Microsoft.Azure.IIoT.Platform.Registry;
     using Microsoft.Azure.IIoT.Platform.Registry.Models;
     using System;
@@ -36,7 +37,7 @@ namespace Microsoft.Azure.IIoT.Platform.Discovery.Services {
                 throw new ArgumentNullException(nameof(discovererId));
             }
 
-            var gatewayId = DiscovererModelEx.ParseDeviceId(discovererId, out _);
+            var gatewayId = HubResource.Parse(discovererId, out _, out _);
 
             if (result == null) {
                 throw new ArgumentNullException(nameof(result));

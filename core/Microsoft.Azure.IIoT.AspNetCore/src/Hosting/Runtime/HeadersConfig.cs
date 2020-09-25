@@ -3,18 +3,17 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.AspNetCore.ForwardedHeaders.Runtime {
+namespace Microsoft.Azure.IIoT.AspNetCore.Hosting.Runtime {
     using Microsoft.Azure.IIoT.Utils;
     using Microsoft.Extensions.Configuration;
 
     /// <summary>
     /// Forwarded headers processing configuration.
     /// </summary>
-    public class ForwardedHeadersConfig : ConfigBase, IForwardedHeadersConfig {
+    public class HeadersConfig : ConfigBase, IHeadersConfig {
 
         private const string kAspNetCore_ForwardedHeaders_Enabled = "AspNetCore:ForwardedHeaders:Enabled";
         private const string kAspNetCore_ForwardedHeaders_ForwardLimit = "AspNetCore:ForwardedHeaders:ForwardLimit";
-
         private const bool kAspNetCore_ForwardedHeaders_Enabled_Default = false;
         private const int kAspNetCore_ForwardedHeaders_ForwardLimit_Default = 0;
 
@@ -34,7 +33,7 @@ namespace Microsoft.Azure.IIoT.AspNetCore.ForwardedHeaders.Runtime {
         /// Configuration constructor
         /// </summary>
         /// <param name="configuration"></param>
-        public ForwardedHeadersConfig(IConfiguration configuration) :
+        public HeadersConfig(IConfiguration configuration) :
             base(configuration) {
         }
     }

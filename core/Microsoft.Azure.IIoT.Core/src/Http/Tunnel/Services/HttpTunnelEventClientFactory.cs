@@ -29,7 +29,7 @@ namespace Microsoft.Azure.IIoT.Http.Tunnel.Services {
     /// Register on top of the HttpClientModule to use with injected
     /// <see cref="IHttpClient"/>.
     /// </summary>
-    public sealed class HttpTunnelHandlerFactory : IMethodInvoker, IHttpHandlerFactory {
+    public sealed class HttpTunnelEventClientFactory : IMethodInvoker, IHttpHandlerFactory {
 
         /// <inheritdoc/>
         public string MethodName => MethodNames.Response;
@@ -41,7 +41,7 @@ namespace Microsoft.Azure.IIoT.Http.Tunnel.Services {
         /// <param name="serializer"></param>
         /// <param name="handlers"></param>
         /// <param name="logger"></param>
-        public HttpTunnelHandlerFactory(IEventClient client, IJsonSerializer serializer,
+        public HttpTunnelEventClientFactory(IEventClient client, IJsonSerializer serializer,
             IEnumerable<IHttpHandler> handlers, ILogger logger) {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _serializer = serializer ?? throw new ArgumentNullException(nameof(serializer));
@@ -68,8 +68,8 @@ namespace Microsoft.Azure.IIoT.Http.Tunnel.Services {
         }
 
         /// <inheritdoc/>
-        public Task<byte[]> InvokeAsync(byte[] payload, string contentType,
-            IMethodHandler context) {
+        public Task<byte[]> InvokeAsync(string target, byte[] payload,
+            string contentType, IMethodHandler context) {
             // Handle response from device method
             var response = _serializer.Deserialize<HttpTunnelResponseModel>(payload);
             if (_outstanding.TryRemove(response.RequestId, out var request)) {
@@ -106,7 +106,7 @@ namespace Microsoft.Azure.IIoT.Http.Tunnel.Services {
             /// Create handler
             /// </summary>
             /// <param name="outer"></param>
-            public HttpTunnelClientHandler(HttpTunnelHandlerFactory outer) {
+            public HttpTunnelClientHandler(HttpTunnelEventClientFactory outer) {
                 // 256 KB - Max event message size - leave 4 kb for properties
                 _maxSize = 252 * 1024;
                 _outer = outer;
@@ -225,7 +225,7 @@ namespace Microsoft.Azure.IIoT.Http.Tunnel.Services {
             }
 
             private readonly int _maxSize;
-            private readonly HttpTunnelHandlerFactory _outer;
+            private readonly HttpTunnelEventClientFactory _outer;
         }
 
         /// <summary>

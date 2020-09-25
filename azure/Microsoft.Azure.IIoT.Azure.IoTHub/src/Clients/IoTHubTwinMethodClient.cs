@@ -32,10 +32,11 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub.Clients {
         }
 
         /// <inheritdoc/>
-        public async Task<string> CallMethodAsync(string deviceId, string moduleId,
+        public async Task<string> CallMethodAsync(string target,
             string method, string payload, TimeSpan? timeout, CancellationToken ct) {
+            var deviceId = HubResource.Parse(target, out _, out var moduleId);
             _logger.Verbose("Call {method} on {device} ({module}) with {payload}... ",
-            method, deviceId, moduleId, payload);
+                method, deviceId, moduleId, payload);
             var result = await _twin.CallMethodAsync(deviceId, moduleId,
                 new MethodParameterModel {
                     Name = method,

@@ -77,5 +77,12 @@ namespace Microsoft.Azure.IIoT.Rpc.Models {
         [DataMember(Name = "acceptedSize", Order = 7,
             EmitDefaultValue = false)]
         public int? MaxChunkLength { get; set; }
+
+        /// <summary>
+        /// Target of the call
+        /// </summary>
+        [DataMember(Name = "target", Order = 8,
+            EmitDefaultValue = false)]
+        public string Target { get; set; }
     }
 }

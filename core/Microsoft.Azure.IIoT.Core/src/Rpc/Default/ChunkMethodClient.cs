@@ -42,7 +42,7 @@ namespace Microsoft.Azure.IIoT.Rpc.Default {
         }
 
         /// <inheritdoc/>
-        public async Task<byte[]> CallMethodAsync(string deviceId, string moduleId,
+        public async Task<byte[]> CallMethodAsync(string target,
             string method, byte[] payload, string contentType, TimeSpan? timeout,
             CancellationToken ct) {
             if (string.IsNullOrEmpty(method)) {
@@ -62,11 +62,12 @@ namespace Microsoft.Azure.IIoT.Rpc.Default {
                 for (var offset = 0; offset < buffer.Length; offset += _maxSize) {
                     var length = Math.Min(buffer.Length - offset, _maxSize);
                     var chunk = buffer.AsSpan(offset, length).ToArray();
-                    var result = await _client.CallMethodAsync(deviceId, moduleId,
+                    var result = await _client.CallMethodAsync(target,
                         MethodNames.Call, _serializer.SerializeToString(offset == 0 ?
                             new MethodChunkModel {
                                 Timeout = timeout,
                                 MethodName = method,
+                                Target = target,
                                 ContentType = contentType,
                                 ContentLength = buffer.Length,
                                 MaxChunkLength = _maxSize,
@@ -87,7 +88,7 @@ namespace Microsoft.Azure.IIoT.Rpc.Default {
                 }
                 // Receive all responses
                 while (!string.IsNullOrEmpty(handle)) {
-                    var result = await _client.CallMethodAsync(deviceId, moduleId,
+                    var result = await _client.CallMethodAsync(target,
                         MethodNames.Call, _serializer.SerializeToString(new MethodChunkModel {
                             Handle = handle,
                         }), timeout, ct);
@@ -103,9 +104,9 @@ namespace Microsoft.Azure.IIoT.Rpc.Default {
                 payload = received.ToArray().Unzip();
                 if (status != 200) {
                     var result = AsString(payload);
-                    _logger.Debug("Chunked call on {method} on {device} ({module}) with {payload} " +
+                    _logger.Debug("Chunked call on {method} on {target} with {payload} " +
                          "returned with error {status}: {result}",
-                         method, deviceId, moduleId, payload, status, result);
+                         method, target, payload, status, result);
                     throw new MethodCallStatusException(result, status);
                 }
                 return payload;

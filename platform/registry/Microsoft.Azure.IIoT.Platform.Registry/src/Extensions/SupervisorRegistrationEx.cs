@@ -177,11 +177,12 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
             if (model == null) {
                 throw new ArgumentNullException(nameof(model));
             }
-            var deviceId = SupervisorModelEx.ParseDeviceId(model.Id,
+            var deviceId = HubResource.Parse(model.Id, out var hub,
                 out var moduleId);
             return new SupervisorRegistration {
                 IsDisabled = disabled,
                 DeviceId = deviceId,
+                Hub = hub,
                 ModuleId = moduleId,
                 LogLevel = model.LogLevel,
                 Version = null,
@@ -199,7 +200,8 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
                 return null;
             }
             return new SupervisorModel {
-                Id = SupervisorModelEx.CreateSupervisorId(registration.DeviceId, registration.ModuleId),
+                Id = HubResource.Format(registration.Hub,
+                    registration.DeviceId, registration.ModuleId),
                 LogLevel = registration.LogLevel,
                 Version = registration.Version,
                 Connected = registration.IsConnected() ? true : (bool?)null,

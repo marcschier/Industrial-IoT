@@ -23,8 +23,9 @@ namespace Microsoft.Azure.IIoT.Hosting {
         /// <param name="payload"></param>
         /// <param name="contentType"></param>
         /// <param name="context"></param>
+        /// <param name="target"></param>
         /// <returns></returns>
-        Task<byte[]> InvokeAsync(byte[] payload, string contentType,
-            IMethodHandler context);
+        Task<byte[]> InvokeAsync(string target, byte[] payload,
+            string contentType, IMethodHandler context);
     }
 }

@@ -8,15 +8,18 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Services {
     using Microsoft.Azure.IIoT.Platform.Registry.Models;
     using Microsoft.Azure.IIoT.Platform.Edge;
     using Microsoft.Azure.IIoT.Hosting;
+    using Microsoft.Azure.IIoT.Hub;
     using System;
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
 
     /// <summary>
-    /// Supervisor services allowing edge activating and managing endpoint twin instances
+    /// Supervisor services allowing edge activating and managing endpoint
+    /// twin instances
     /// </summary>
-    public class EndpointSupervisorServices : IActivationServices<string>, ISupervisorServices {
+    public class EndpointSupervisorServices : IActivationServices<string>,
+        ISupervisorServices {
 
         /// <summary>
         /// Create supervisor
@@ -33,7 +36,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Services {
 
         /// <inheritdoc/>
         public async Task ActivateAsync(string id, string secret, CancellationToken ct) {
-            await _hosts.StartAsync(id, secret, ct);
+            await _hosts.StartAsync(id, IdentityType.Endpoint, secret, ct);
         }
 
         /// <inheritdoc/>
@@ -43,7 +46,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Services {
 
         /// <inheritdoc/>
         public async Task AttachAsync(string id, string secret) {
-            await _hosts.QueueStartAsync(id, secret);
+            await _hosts.QueueStartAsync(id, IdentityType.Endpoint, secret);
         }
 
         /// <inheritdoc/>

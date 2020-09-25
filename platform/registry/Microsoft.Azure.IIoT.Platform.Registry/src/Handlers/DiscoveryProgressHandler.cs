@@ -39,8 +39,8 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Handlers {
         }
 
         /// <inheritdoc/>
-        public async Task HandleAsync(string deviceId, string moduleId,
-            byte[] payload, IDictionary<string, string> properties, Func<Task> checkpoint) {
+        public async Task HandleAsync(string source, byte[] payload,
+            IDictionary<string, string> properties, Func<Task> checkpoint) {
             DiscoveryProgressModel discovery;
             try {
                 discovery = _serializer.Deserialize<DiscoveryProgressModel>(payload);

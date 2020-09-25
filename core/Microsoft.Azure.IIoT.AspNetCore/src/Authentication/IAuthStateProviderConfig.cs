@@ -13,7 +13,7 @@ namespace Microsoft.Azure.IIoT.AspNetCore.Authentication {
     public interface IAuthStateProviderConfig {
 
         /// <summary>
-        /// Target <see cref="Http.Resource"/> which
+        /// Target <see cref="IIoT.Http.Resource"/> which
         /// determines the configuration to use.
         /// </summary>
         string Resource { get; }

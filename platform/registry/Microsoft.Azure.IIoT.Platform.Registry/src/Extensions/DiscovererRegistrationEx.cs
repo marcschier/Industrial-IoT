@@ -287,12 +287,13 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
             if (model == null) {
                 throw new ArgumentNullException(nameof(model));
             }
-            var deviceId = DiscovererModelEx.ParseDeviceId(model.Id,
+            var deviceId = HubResource.Parse(model.Id, out var hub,
                 out var moduleId);
             return new DiscovererRegistration {
                 IsDisabled = disabled,
                 DeviceId = deviceId,
                 ModuleId = moduleId,
+                Hub = hub,
                 LogLevel = model.LogLevel,
                 Discovery = model.RequestedMode ?? DiscoveryMode.Off,
                 AddressRangesToScan = model.RequestedConfig?.AddressRangesToScan,
@@ -330,7 +331,8 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
             return new DiscovererModel {
                 Discovery = registration.Discovery != DiscoveryMode.Off ?
                     registration.Discovery : (DiscoveryMode?)null,
-                Id = DiscovererModelEx.CreateDiscovererId(registration.DeviceId, registration.ModuleId),
+                Id = HubResource.Format(registration.Hub,
+                    registration.DeviceId, registration.ModuleId),
                 Version = registration.Version,
                 LogLevel = registration.LogLevel,
                 DiscoveryConfig = registration.ToConfigModel(),

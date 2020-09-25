@@ -18,17 +18,16 @@ namespace Microsoft.Azure.IIoT.Rpc {
         /// Call method with json payload.
         /// </summary>
         /// <param name="client"></param>
-        /// <param name="deviceId"></param>
-        /// <param name="moduleId"></param>
+        /// <param name="target"></param>
         /// <param name="method"></param>
         /// <param name="json"></param>
         /// <param name="timeout"></param>
         /// <param name="ct"></param>
         /// <returns></returns>
         public static async Task<string> CallMethodAsync(this IMethodClient client,
-            string deviceId, string moduleId, string method, string json,
+            string target, string method, string json,
             TimeSpan? timeout = null, CancellationToken ct = default) {
-            var response = await client.CallMethodAsync(deviceId, moduleId, method,
+            var response = await client.CallMethodAsync(target, method,
                 json == null ? null : Encoding.UTF8.GetBytes(json),
                 ContentMimeType.Json, timeout, ct);
             return response.Length == 0 ? null : Encoding.UTF8.GetString(response);

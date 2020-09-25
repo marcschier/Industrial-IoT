@@ -13,7 +13,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Runtime {
     /// <summary>
     /// IoT Edge device or module configuration
     /// </summary>
-    public class IoTEdgeConfig : ConfigBase, IIoTEdgeConfig {
+    public class IoTEdgeConfig : ConfigBase, IIoTEdgeClientConfig {
 
         /// <summary>
         /// Module configuration
@@ -22,6 +22,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Runtime {
         public const string EdgeHubConnectionStringKey = "EdgeHubConnectionString";
         public const string BypassCertVerificationKey = "BypassCertVerification";
         public const string TransportKey = "Transport";
+        public const string ProductKey = "Product";
 #pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 
         /// <summary>Hub connection string</summary>
@@ -33,6 +34,9 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Runtime {
         /// <summary>Transports to use</summary>
         public TransportOption Transport => (TransportOption)Enum.Parse(typeof(TransportOption),
             GetStringOrDefault(TransportKey, () => nameof(TransportOption.MqttOverTcp)), true);
+        /// <summary>Product name</summary>
+        public string Product =>
+            GetStringOrDefault(ProductKey, () => "iiot");
 
         /// <summary>
         /// Create configuration

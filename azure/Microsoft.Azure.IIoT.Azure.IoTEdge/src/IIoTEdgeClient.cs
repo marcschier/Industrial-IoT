@@ -6,7 +6,6 @@
 namespace Microsoft.Azure.IIoT.Azure.IoTEdge {
     using Microsoft.Azure.Devices.Client;
     using Microsoft.Azure.Devices.Shared;
-    using System;
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
@@ -14,7 +13,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge {
     /// <summary>
     /// IoT Hub device client abstraction
     /// </summary>
-    public interface IClient : IDisposable {
+    public interface IIoTEdgeClient {
 
         /// <summary>
         /// Sends an event to device hub

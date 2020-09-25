@@ -5,8 +5,8 @@
 
 namespace Microsoft.Azure.IIoT.Platform.Identity.Provider.Runtime {
     using Microsoft.Azure.IIoT.AspNetCore.Authentication;
-    using Microsoft.Azure.IIoT.AspNetCore.ForwardedHeaders;
-    using Microsoft.Azure.IIoT.AspNetCore.ForwardedHeaders.Runtime;
+    using Microsoft.Azure.IIoT.AspNetCore.Hosting;
+    using Microsoft.Azure.IIoT.AspNetCore.Hosting.Runtime;
     using Microsoft.Azure.IIoT.Authentication.Runtime;
     using Microsoft.Azure.IIoT.Azure.CosmosDb;
     using Microsoft.Azure.IIoT.Azure.CosmosDb.Runtime;
@@ -19,7 +19,7 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Provider.Runtime {
     /// Common web service configuration aggregation
     /// </summary>
     public class Config : DiagnosticsConfig, IWebHostConfig, IItemContainerConfig,
-        ICosmosDbConfig, IForwardedHeadersConfig, IRoleConfig {
+        ICosmosDbConfig, IHeadersConfig, IRoleConfig {
 
         /// <inheritdoc/>
         public string DbConnectionString => _cosmos.DbConnectionString;
@@ -55,11 +55,11 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Provider.Runtime {
 
             _host = new WebHostConfig(configuration);
             _cosmos = new CosmosDbConfig(configuration);
-            _fh = new ForwardedHeadersConfig(configuration);
+            _fh = new HeadersConfig(configuration);
         }
 
         private readonly WebHostConfig _host;
         private readonly CosmosDbConfig _cosmos;
-        private readonly ForwardedHeadersConfig _fh;
+        private readonly HeadersConfig _fh;
     }
 }

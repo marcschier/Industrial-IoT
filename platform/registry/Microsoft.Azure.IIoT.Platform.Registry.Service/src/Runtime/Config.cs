@@ -9,8 +9,8 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service.Runtime {
     using Microsoft.Azure.IIoT.AspNetCore.Authentication;
     using Microsoft.Azure.IIoT.AspNetCore.Cors;
     using Microsoft.Azure.IIoT.AspNetCore.Cors.Runtime;
-    using Microsoft.Azure.IIoT.AspNetCore.ForwardedHeaders;
-    using Microsoft.Azure.IIoT.AspNetCore.ForwardedHeaders.Runtime;
+    using Microsoft.Azure.IIoT.AspNetCore.Hosting;
+    using Microsoft.Azure.IIoT.AspNetCore.Hosting.Runtime;
     using Microsoft.Azure.IIoT.Diagnostics;
     using Microsoft.Azure.IIoT.Azure.AppInsights;
     using Microsoft.Azure.IIoT.Azure.AppInsights.Runtime;
@@ -29,7 +29,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service.Runtime {
     /// </summary>
     public class Config : DiagnosticsConfig, IWebHostConfig, IIoTHubConfig,
         ICorsConfig, IOpenApiConfig, IServiceBusConfig,
-        IForwardedHeadersConfig, IContainerRegistryConfig,
+        IHeadersConfig, IContainerRegistryConfig,
         IRoleConfig, IAppInsightsConfig {
 
         /// <inheritdoc/>
@@ -101,7 +101,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service.Runtime {
             _hub = new IoTHubConfig(configuration);
             _cors = new CorsConfig(configuration);
             _sb = new ServiceBusConfig(configuration);
-            _fh = new ForwardedHeadersConfig(configuration);
+            _fh = new HeadersConfig(configuration);
             _cr = new ContainerRegistryConfig(configuration);
             _ai = new AppInsightsConfig(configuration);
         }
@@ -113,6 +113,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service.Runtime {
         private readonly CorsConfig _cors;
         private readonly ServiceBusConfig _sb;
         private readonly IoTHubConfig _hub;
-        private readonly ForwardedHeadersConfig _fh;
+        private readonly HeadersConfig _fh;
     }
 }

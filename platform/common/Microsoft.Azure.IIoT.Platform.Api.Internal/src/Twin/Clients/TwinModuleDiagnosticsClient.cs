@@ -6,6 +6,7 @@
 namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
     using Microsoft.Azure.IIoT.Platform.Registry.Models;
     using Microsoft.Azure.IIoT.Platform.Registry;
+    using Microsoft.Azure.IIoT.Hub;
     using Microsoft.Azure.IIoT.Rpc;
     using Microsoft.Azure.IIoT.Serializers;
     using Serilog;
@@ -39,12 +40,10 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
                 throw new ArgumentNullException(nameof(supervisorId));
             }
             var sw = Stopwatch.StartNew();
-            var deviceId = SupervisorModelEx.ParseDeviceId(supervisorId,
-                out var moduleId);
-            var result = await _client.CallMethodAsync(deviceId, moduleId,
-                "GetStatus_V2", null, null, ct);
-            _logger.Debug("Gettwin supervisor {deviceId}/{moduleId} status took " +
-                "{elapsed} ms.", deviceId, moduleId, sw.ElapsedMilliseconds);
+            var result = await _client.CallMethodAsync(supervisorId, "GetStatus_V2",
+                    null, null, ct);
+            _logger.Debug("Get twin supervisor {supervisorId} status took " +
+                "{elapsed} ms.", supervisorId, sw.ElapsedMilliseconds);
             return _serializer.Deserialize<SupervisorStatusModel>(
                 result);
         }
@@ -56,12 +55,9 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
                 throw new ArgumentNullException(nameof(supervisorId));
             }
             var sw = Stopwatch.StartNew();
-            var deviceId = SupervisorModelEx.ParseDeviceId(supervisorId,
-                out var moduleId);
-            _ = await _client.CallMethodAsync(deviceId, moduleId,
-                "Reset_V2", null, null, ct);
-            _logger.Debug("Reset twin supervisor {deviceId}/{moduleId} took " +
-                "{elapsed} ms.", deviceId, moduleId, sw.ElapsedMilliseconds);
+            _ = await _client.CallMethodAsync(supervisorId, "Reset_V2", null, null, ct);
+            _logger.Debug("Reset twin supervisor {supervisorId} took " +
+                "{elapsed} ms.", supervisorId, sw.ElapsedMilliseconds);
         }
 
         private readonly IJsonSerializer _serializer;

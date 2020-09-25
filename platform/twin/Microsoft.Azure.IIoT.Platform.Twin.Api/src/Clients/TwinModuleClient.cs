@@ -13,6 +13,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
     using System.Threading.Tasks;
     using System.Linq;
     using System.Threading;
+    using Microsoft.Azure.IIoT.Hub;
 
     /// <summary>
     /// Implementation of supervisor module api.
@@ -23,15 +24,13 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
         /// Create module client
         /// </summary>
         /// <param name="methodClient"></param>
-        /// <param name="deviceId"></param>
-        /// <param name="moduleId"></param>
+        /// <param name="target"></param>
         /// <param name="serializer"></param>
-        public TwinModuleClient(IMethodClient methodClient, string deviceId, string moduleId,
+        public TwinModuleClient(IMethodClient methodClient, string target,
             IJsonSerializer serializer = null) {
             _serializer = serializer ?? new NewtonSoftJsonSerializer();
             _methodClient = methodClient ?? throw new ArgumentNullException(nameof(methodClient));
-            _moduleId = moduleId ?? throw new ArgumentNullException(nameof(moduleId));
-            _deviceId = deviceId ?? throw new ArgumentNullException(nameof(deviceId));
+            _target = target ?? throw new ArgumentNullException(nameof(target));
         }
 
         /// <summary>
@@ -42,7 +41,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
         /// <param name="serializer"></param>
         public TwinModuleClient(IMethodClient methodClient, ITwinModuleConfig config,
             IJsonSerializer serializer) :
-            this(methodClient, config?.DeviceId, config?.ModuleId, serializer) {
+            this(methodClient, config.AsResource(), serializer) {
         }
 
         /// <inheritdoc/>
@@ -57,7 +56,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
             if (request == null) {
                 throw new ArgumentNullException(nameof(request));
             }
-            var response = await _methodClient.CallMethodAsync(_deviceId, _moduleId,
+            var response = await _methodClient.CallMethodAsync(_target,
                 "Browse_V2", _serializer.SerializeToString(new {
                     endpoint,
                     request
@@ -80,7 +79,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
             if (request.ContinuationToken == null) {
                 throw new ArgumentNullException(nameof(request.ContinuationToken));
             }
-            var response = await _methodClient.CallMethodAsync(_deviceId, _moduleId,
+            var response = await _methodClient.CallMethodAsync(_target,
                 "BrowseNext_V2", _serializer.SerializeToString(new {
                     endpoint,
                     request
@@ -104,7 +103,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
                 request.BrowsePaths.Any(p => p == null || p.Length == 0)) {
                 throw new ArgumentNullException(nameof(request.BrowsePaths));
             }
-            var response = await _methodClient.CallMethodAsync(_deviceId, _moduleId,
+            var response = await _methodClient.CallMethodAsync(_target,
                 "BrowsePath_V2", _serializer.SerializeToString(new {
                     endpoint,
                     request
@@ -127,7 +126,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
             if (request.Attributes == null || request.Attributes.Count == 0) {
                 throw new ArgumentException(nameof(request.Attributes));
             }
-            var response = await _methodClient.CallMethodAsync(_deviceId, _moduleId,
+            var response = await _methodClient.CallMethodAsync(_target,
                 "NodeRead_V2", _serializer.SerializeToString(new {
                     endpoint,
                     request
@@ -150,7 +149,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
             if (request.Attributes == null || request.Attributes.Count == 0) {
                 throw new ArgumentException(nameof(request.Attributes));
             }
-            var response = await _methodClient.CallMethodAsync(_deviceId, _moduleId,
+            var response = await _methodClient.CallMethodAsync(_target,
                 "NodeWrite_V2", _serializer.SerializeToString(new {
                     endpoint,
                     request
@@ -170,7 +169,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
             if (request == null) {
                 throw new ArgumentNullException(nameof(request));
             }
-            var response = await _methodClient.CallMethodAsync(_deviceId, _moduleId,
+            var response = await _methodClient.CallMethodAsync(_target,
                 "ValueRead_V2", _serializer.SerializeToString(new {
                     endpoint,
                     request
@@ -193,7 +192,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
             if (request.Value is null) {
                 throw new ArgumentNullException(nameof(request.Value));
             }
-            var response = await _methodClient.CallMethodAsync(_deviceId, _moduleId,
+            var response = await _methodClient.CallMethodAsync(_target,
                 "ValueWrite_V2", _serializer.SerializeToString(new {
                     endpoint,
                     request
@@ -213,7 +212,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
             if (request == null) {
                 throw new ArgumentNullException(nameof(request));
             }
-            var response = await _methodClient.CallMethodAsync(_deviceId, _moduleId,
+            var response = await _methodClient.CallMethodAsync(_target,
                 "MethodMetadata_V2", _serializer.SerializeToString(new {
                     endpoint,
                     request
@@ -233,7 +232,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
             if (request == null) {
                 throw new ArgumentNullException(nameof(request));
             }
-            var response = await _methodClient.CallMethodAsync(_deviceId, _moduleId,
+            var response = await _methodClient.CallMethodAsync(_target,
                 "MethodCall_V2", _serializer.SerializeToString(new {
                     endpoint,
                     request
@@ -253,7 +252,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
             if (request == null) {
                 throw new ArgumentNullException(nameof(request));
             }
-            var response = await _methodClient.CallMethodAsync(_deviceId, _moduleId,
+            var response = await _methodClient.CallMethodAsync(_target,
                 "UploadModel_V2", _serializer.SerializeToString(new {
                     endpoint,
                     request
@@ -277,7 +276,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
             if (request.Details == null) {
                 throw new ArgumentNullException(nameof(request.Details));
             }
-            var response = await _methodClient.CallMethodAsync(_deviceId, _moduleId,
+            var response = await _methodClient.CallMethodAsync(_target,
                 "HistoryRead_V2", _serializer.SerializeToString(new {
                     endpoint,
                     request
@@ -301,7 +300,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
             if (string.IsNullOrEmpty(request.ContinuationToken)) {
                 throw new ArgumentNullException(nameof(request.ContinuationToken));
             }
-            var response = await _methodClient.CallMethodAsync(_deviceId, _moduleId,
+            var response = await _methodClient.CallMethodAsync(_target,
                 "HistoryReadNext_V2", _serializer.SerializeToString(new {
                     endpoint,
                     request
@@ -325,7 +324,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
             if (request.Details == null) {
                 throw new ArgumentNullException(nameof(request.Details));
             }
-            var response = await _methodClient.CallMethodAsync(_deviceId, _moduleId,
+            var response = await _methodClient.CallMethodAsync(_target,
                 "HistoryUpdate_V2", _serializer.SerializeToString(new {
                     endpoint,
                     request
@@ -335,7 +334,6 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
 
         private readonly IJsonSerializer _serializer;
         private readonly IMethodClient _methodClient;
-        private readonly string _moduleId;
-        private readonly string _deviceId;
+        private readonly string _target;
     }
 }

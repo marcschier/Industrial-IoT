@@ -79,6 +79,7 @@ namespace Microsoft.Azure.IIoT.Utils {
         /// <inheritdoc/>
         public void Dispose() {
             StopAsync().Wait();
+            OnDisposing();
             _lock.Dispose();
         }
 
@@ -87,6 +88,13 @@ namespace Microsoft.Azure.IIoT.Utils {
         /// </summary>
         /// <param name="ct"></param>
         protected abstract Task RunAsync(CancellationToken ct);
+
+        /// <summary>
+        /// Disposing
+        /// </summary>
+        protected virtual void OnDisposing() {
+            // nothing
+        }
 
         private Worker _host;
         private readonly ILogger _logger;

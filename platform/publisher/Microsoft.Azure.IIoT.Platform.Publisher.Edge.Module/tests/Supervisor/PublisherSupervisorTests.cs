@@ -22,7 +22,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Module.Supervisor {
         [Fact]
         public async Task TestListPublishersAsync() {
             using (var harness = new PublisherModuleFixture()) {
-                await harness.RunTestAsync(async (device, module, services) => {
+                await harness.RunTestAsync(async (hubName, device, module, services) => {
 
                     // Setup
                     var registry = services.Resolve<IPublisherRegistry>();
@@ -34,7 +34,9 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Module.Supervisor {
                     Assert.Single(supervisors);
                     Assert.True(supervisors.Single().Connected.Value);
                     Assert.True(supervisors.Single().OutOfSync.Value);
-                    Assert.Equal(device, PublisherModelEx.ParseDeviceId(supervisors.Single().Id, out var moduleId));
+                    Assert.Equal(device, HubResource.Parse(supervisors.Single().Id,
+                        out var hub, out var moduleId));
+                    Assert.Equal(hubName, hub);
                     Assert.Equal(module, moduleId);
                 });
             }
@@ -43,13 +45,14 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Module.Supervisor {
         [Fact]
         public async Task TestGetPublisherAsync() {
             using (var harness = new PublisherModuleFixture()) {
-                await harness.RunTestAsync(async (device, module, services) => {
+                await harness.RunTestAsync(async (hubName, device, module, services) => {
 
                     // Setup
                     var registry = services.Resolve<IPublisherRegistry>();
 
                     // Act
-                    var supervisor = await registry.GetPublisherAsync(PublisherModelEx.CreatePublisherId(device, module));
+                    var supervisor = await registry.GetPublisherAsync(
+                        HubResource.Format(hubName, device, module));
 
                     // Assert
                     Assert.True(supervisor.Connected.Value);
@@ -61,13 +64,14 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Module.Supervisor {
         [Fact]
         public async Task TestGetPublisherStatusAsync() {
             using (var harness = new PublisherModuleFixture()) {
-                await harness.RunTestAsync(async (device, module, services) => {
+                await harness.RunTestAsync(async (hubName, device, module, services) => {
 
                     // Setup
                     var diagnostics = services.Resolve<IPublisherDiagnostics>();
 
                     // Act
-                    var status = await diagnostics.GetPublisherStatusAsync(PublisherModelEx.CreatePublisherId(device, module));
+                    var status = await diagnostics.GetPublisherStatusAsync(
+                        HubResource.Format(hubName, device, module));
 
                     // Assert
                     Assert.Equal(status.DeviceId, device);
@@ -80,10 +84,10 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Module.Supervisor {
         [Fact]
         public async Task TestWriterGroupPlacementAsync() {
             using (var harness = new PublisherModuleFixture()) {
-                await harness.RunTestAsync(async (device, module, services) => {
+                await harness.RunTestAsync(async (hubName, device, module, services) => {
 
                     // Setup
-                    var publisherId = PublisherModelEx.CreatePublisherId(device, module);
+                    var publisherId = HubResource.Format(hubName, device, module);
                     var activation = services.Resolve<IWriterGroupOrchestration>();
                     var hub = services.Resolve<IDeviceTwinServices>();
                     var twin = new WriterGroupInfoModel {
@@ -116,10 +120,10 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Module.Supervisor {
         [Fact]
         public async Task TestWriterGroupPlacement2Async() {
             using (var harness = new PublisherModuleFixture()) {
-                await harness.RunTestAsync(async (device, module, services) => {
+                await harness.RunTestAsync(async (hubName, device, module, services) => {
 
                     // Setup
-                    var publisherId = PublisherModelEx.CreatePublisherId(device, module);
+                    var publisherId = HubResource.Format(hubName, device, module);
                     var activation = services.Resolve<IWriterGroupOrchestration>();
                     var hub = services.Resolve<IDeviceTwinServices>();
                     var twin = new WriterGroupInfoModel {
@@ -168,10 +172,10 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Module.Supervisor {
         [Fact]
         public async Task TestWriterGroupPlacementWithWrongSiteAsync() {
             using (var harness = new PublisherModuleFixture()) {
-                await harness.RunTestAsync(async (device, module, services) => {
+                await harness.RunTestAsync(async (hubName, device, module, services) => {
 
                     // Setup
-                    var publisherId = PublisherModelEx.CreatePublisherId(device, module);
+                    var publisherId = HubResource.Format(hubName, device, module);
                     var activation = services.Resolve<IWriterGroupOrchestration>();
                     var hub = services.Resolve<IDeviceTwinServices>();
                     var twin = new WriterGroupInfoModel {

@@ -21,6 +21,12 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
         public virtual string DeviceId { get; set; }
 
         /// <summary>
+        /// Hub for the registration
+        /// </summary>
+        [DataMember]
+        public string Hub { get; set; }
+
+        /// <summary>
         /// Etag of the registration
         /// </summary>
         public string Etag { get; set; }

@@ -12,6 +12,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Supervisor.Endpoint {
     using Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests;
     using Microsoft.Azure.IIoT.Platform.Twin;
     using Microsoft.Azure.IIoT.Utils;
+    using Microsoft.Azure.IIoT.Hub;
     using Opc.Ua;
     using System.Linq;
     using System.Net;
@@ -42,8 +43,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Supervisor.Endpoint {
                         Certificate = _server.Certificate?.RawData?.ToThumbprint()
                     },
                     Id = "testid",
-                    SupervisorId = SupervisorModelEx.CreateSupervisorId(
-                        _module.DeviceId, _module.ModuleId)
+                    SupervisorId = _module.AsResource()
                 }, (ep, n) => _server.Client.ReadValueAsync(ep.Endpoint, n));
         }
 

@@ -6,12 +6,14 @@
 namespace Microsoft.Azure.IIoT.Http.Tunnel {
     using Microsoft.Azure.IIoT.Http.Tunnel.Services;
     using Microsoft.Azure.IIoT.Http.Default;
+    using Microsoft.Azure.IIoT.Rpc.Default;
+    using Microsoft.Azure.IIoT.Rpc;
     using Autofac;
 
     /// <summary>
     /// Injected http tunnel handler
     /// </summary>
-    public sealed class HttpTunnelClient : Module {
+    public sealed class HttpTunnelMethodClient : Module {
 
         /// <summary>
         /// Load the module
@@ -22,10 +24,13 @@ namespace Microsoft.Azure.IIoT.Http.Tunnel {
 
             //
             // Override default factory with configurable http tunnel
-            // client handler factory.
+            // method client factory.
             //
-            builder.RegisterType<HttpTunnelConfigurableFactory>()
+            builder.RegisterType<HttpTunnelMethodClientFactory>()
                 .AsImplementedInterfaces();
+            builder.RegisterType<ChunkMethodClient>()
+                .AsImplementedInterfaces()
+                .IfNotRegistered(typeof(IMethodClient));
         }
     }
 }

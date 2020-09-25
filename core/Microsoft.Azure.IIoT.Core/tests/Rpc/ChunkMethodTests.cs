@@ -23,6 +23,7 @@ namespace Microsoft.Azure.IIoT.Rpc {
         public void SendReceiveJsonTestWithVariousChunkSizes(int chunkSize) {
             var fixture = new Fixture();
 
+            var expectedTarget = fixture.Create<string>();
             var expectedMethod = fixture.Create<string>();
             var expectedContentType = fixture.Create<string>();
             var expectedRequest = _serializer.SerializeToString(new {
@@ -33,14 +34,15 @@ namespace Microsoft.Azure.IIoT.Rpc {
                 test1 = fixture.Create<byte[]>(),
                 test2 = fixture.Create<string>()
             });
-            var server = new TestChunkServer(_serializer, chunkSize, (method, buffer, type) => {
+            var server = new TestChunkServer(_serializer, chunkSize, (target, method, buffer, type) => {
+                Assert.Equal(expectedTarget, target);
                 Assert.Equal(expectedMethod, method);
                 Assert.Equal(expectedContentType, type);
                 Assert.Equal(expectedRequest, Encoding.UTF8.GetString(buffer));
                 return Encoding.UTF8.GetBytes(expectedResponse);
             });
             var result = server.CreateClient().CallMethodAsync(
-                fixture.Create<string>(), fixture.Create<string>(), expectedMethod,
+                expectedTarget, expectedMethod,
                 Encoding.UTF8.GetBytes(expectedRequest), expectedContentType).Result;
             Assert.Equal(expectedResponse, Encoding.UTF8.GetString(result));
         }
@@ -59,6 +61,7 @@ namespace Microsoft.Azure.IIoT.Rpc {
         public void SendReceiveLargeBufferTestWithVariousChunkSizes(int chunkSize) {
             var fixture = new Fixture();
 
+            var expectedTarget = fixture.Create<string>();
             var expectedMethod = fixture.Create<string>();
             var expectedContentType = fixture.Create<string>();
 
@@ -67,14 +70,15 @@ namespace Microsoft.Azure.IIoT.Rpc {
             var expectedResponse = new byte[300000];
             kR.NextBytes(expectedResponse);
 
-            var server = new TestChunkServer(_serializer, chunkSize, (method, buffer, type) => {
+            var server = new TestChunkServer(_serializer, chunkSize, (target, method, buffer, type) => {
+                Assert.Equal(expectedTarget, target);
                 Assert.Equal(expectedMethod, method);
                 Assert.Equal(expectedContentType, type);
                 Assert.Equal(expectedRequest, buffer);
                 return expectedResponse;
             });
             var result = server.CreateClient().CallMethodAsync(
-                fixture.Create<string>(), fixture.Create<string>(), expectedMethod,
+                expectedTarget, expectedMethod,
                 expectedRequest, expectedContentType).Result;
             Assert.Equal(expectedResponse, result);
         }

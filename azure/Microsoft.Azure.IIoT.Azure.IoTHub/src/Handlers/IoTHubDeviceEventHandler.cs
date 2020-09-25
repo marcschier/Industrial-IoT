@@ -56,9 +56,9 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub.Handlers {
 
                 //  TODO: when handling third party OPC UA PubSub Messages
                 //  the schemaType might not exist
+                var source = HubResource.Format(null, deviceId, moduleId);
                 if (_handlers.TryGetValue(schemaType.ToLowerInvariant(), out var handler)) {
-                    await handler.HandleAsync(deviceId, moduleId?.ToString(), eventData,
-                        properties, checkpoint);
+                    await handler.HandleAsync(source, eventData, properties, checkpoint);
                     _used.Enqueue(handler);
                 }
 

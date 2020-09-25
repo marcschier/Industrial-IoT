@@ -146,7 +146,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
             publishers = fix
                 .Build<PublisherModel>()
                 .Without(x => x.Id)
-                .Do(x => x.Id = PublisherModelEx.CreatePublisherId(
+                .Do(x => x.Id = HubResource.Format(fix.Create<string>(),
                     fix.Create<string>(), fix.Create<string>()))
                 .CreateMany(10)
                 .ToList();

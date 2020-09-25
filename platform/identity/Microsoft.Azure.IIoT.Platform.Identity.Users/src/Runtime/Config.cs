@@ -9,8 +9,8 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Users.Runtime {
     using Microsoft.Azure.IIoT.AspNetCore.Cors;
     using Microsoft.Azure.IIoT.AspNetCore.Cors.Runtime;
     using Microsoft.Azure.IIoT.AspNetCore.Authentication;
-    using Microsoft.Azure.IIoT.AspNetCore.ForwardedHeaders;
-    using Microsoft.Azure.IIoT.AspNetCore.ForwardedHeaders.Runtime;
+    using Microsoft.Azure.IIoT.AspNetCore.Hosting;
+    using Microsoft.Azure.IIoT.AspNetCore.Hosting.Runtime;
     using Microsoft.Azure.IIoT.Diagnostics;
     using Microsoft.Azure.IIoT.Authentication.Runtime;
     using Microsoft.Azure.IIoT.Platform.Identity;
@@ -26,7 +26,7 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Users.Runtime {
     /// </summary>
     public class Config : DiagnosticsConfig, IWebHostConfig, ICorsConfig,
         IOpenApiConfig, IRootUserConfig, IItemContainerConfig, ICosmosDbConfig,
-        IForwardedHeadersConfig, IRoleConfig {
+        IHeadersConfig, IRoleConfig {
 
         /// <inheritdoc/>
         public string CorsWhitelist => _cors.CorsWhitelist;
@@ -90,7 +90,7 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Users.Runtime {
             _host = new WebHostConfig(configuration);
             _cors = new CorsConfig(configuration);
             _cosmos = new CosmosDbConfig(configuration);
-            _fh = new ForwardedHeadersConfig(configuration);
+            _fh = new HeadersConfig(configuration);
             _user = new RootUserConfig(configuration);
         }
 
@@ -98,7 +98,7 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Users.Runtime {
         private readonly WebHostConfig _host;
         private readonly CorsConfig _cors;
         private readonly CosmosDbConfig _cosmos;
-        private readonly ForwardedHeadersConfig _fh;
+        private readonly HeadersConfig _fh;
         private readonly RootUserConfig _user;
     }
 }

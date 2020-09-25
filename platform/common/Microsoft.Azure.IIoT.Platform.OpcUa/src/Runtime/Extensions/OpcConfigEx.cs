@@ -5,7 +5,7 @@
 
 namespace Microsoft.Azure.IIoT.Platform.OpcUa {
     using Microsoft.Azure.IIoT.Exceptions;
-    using Microsoft.Azure.IIoT.Hosting;
+    using Microsoft.Azure.IIoT.Hub;
     using Microsoft.Azure.IIoT.Utils;
     using Opc.Ua;
     using Opc.Ua.Configuration;

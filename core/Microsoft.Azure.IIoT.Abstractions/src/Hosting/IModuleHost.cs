@@ -16,13 +16,9 @@ namespace Microsoft.Azure.IIoT.Hosting {
         /// Start module host
         /// </summary>
         /// <param name="type"></param>
-        /// <param name="productInfo"></param>
         /// <param name="version"></param>
-        /// <param name="control"></param>
         /// <returns></returns>
-        Task StartAsync(string type,
-            string productInfo, string version,
-            IProcessControl control = null);
+        Task StartAsync(string type, string version);
 
         /// <summary>
         /// Stop module host

@@ -9,10 +9,9 @@ namespace Microsoft.Azure.IIoT.Platform.Edge.Gateway.Service.Runtime {
     using Microsoft.Azure.IIoT.AspNetCore.Authentication;
     using Microsoft.Azure.IIoT.AspNetCore.OpenApi;
     using Microsoft.Azure.IIoT.AspNetCore.OpenApi.Runtime;
-    using Microsoft.Azure.IIoT.AspNetCore.ForwardedHeaders;
-    using Microsoft.Azure.IIoT.AspNetCore.ForwardedHeaders.Runtime;
+    using Microsoft.Azure.IIoT.AspNetCore.Hosting;
+    using Microsoft.Azure.IIoT.AspNetCore.Hosting.Runtime;
     using Microsoft.Azure.IIoT.Hosting;
-    using Microsoft.Azure.IIoT.Authentication.Runtime;
     using Microsoft.Azure.IIoT.Diagnostics;
     using Microsoft.Azure.IIoT.Azure.AppInsights;
     using Microsoft.Azure.IIoT.Azure.AppInsights.Runtime;
@@ -24,7 +23,7 @@ namespace Microsoft.Azure.IIoT.Platform.Edge.Gateway.Service.Runtime {
     /// Common web service configuration aggregation
     /// </summary>
     public class Config : DiagnosticsConfig, IWebHostConfig, IIoTHubConfig,
-        ICorsConfig, IOpenApiConfig, IForwardedHeadersConfig, IRoleConfig,
+        ICorsConfig, IOpenApiConfig, IHeadersConfig, IRoleConfig,
         IAppInsightsConfig {
 
         /// <inheritdoc/>
@@ -35,6 +34,7 @@ namespace Microsoft.Azure.IIoT.Platform.Edge.Gateway.Service.Runtime {
 
         /// <inheritdoc/>
         public int HttpsRedirectPort => _host.HttpsRedirectPort;
+
         /// <inheritdoc/>
         public string ServicePathBase => GetStringOrDefault(
             PcsVariable.PCS_PUBLISHER_ORCHESTRATOR_SERVICE_PATH_BASE,
@@ -81,7 +81,7 @@ namespace Microsoft.Azure.IIoT.Platform.Edge.Gateway.Service.Runtime {
             _host = new WebHostConfig(configuration);
             _hub = new IoTHubConfig(configuration);
             _cors = new CorsConfig(configuration);
-            _fh = new ForwardedHeadersConfig(configuration);
+            _fh = new HeadersConfig(configuration);
             _ai = new AppInsightsConfig(configuration);
         }
 
@@ -90,6 +90,6 @@ namespace Microsoft.Azure.IIoT.Platform.Edge.Gateway.Service.Runtime {
         private readonly WebHostConfig _host;
         private readonly CorsConfig _cors;
         private readonly IoTHubConfig _hub;
-        private readonly ForwardedHeadersConfig _fh;
+        private readonly HeadersConfig _fh;
     }
 }

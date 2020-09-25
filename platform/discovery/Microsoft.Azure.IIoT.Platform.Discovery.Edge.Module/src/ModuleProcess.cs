@@ -89,8 +89,7 @@ namespace Microsoft.Azure.IIoT.Platform.Discovery.Edge.Module {
                         // Start module
                         var version = GetType().Assembly.GetReleaseVersion().ToString();
                         logger.Information("Starting module OpcDiscovery version {version}.", version);
-                        await module.StartAsync(IdentityType.Discoverer,
-                            "OpcDiscovery", version, this);
+                        await module.StartAsync(IdentityType.Discoverer, version);
                         await client.InitializeAsync();
                         kDiscoveryModuleStart.WithLabels(
                             identity.DeviceId ?? "", identity.ModuleId ?? "").Inc();
@@ -143,7 +142,7 @@ namespace Microsoft.Azure.IIoT.Platform.Discovery.Edge.Module {
 
             // Register module framework
             builder.RegisterModule<ModuleFramework>();
-            builder.RegisterModule<IoTEdgeHosted>();
+            builder.RegisterModule<IoTEdgeHosting>();
             builder.RegisterModule<LogAnalyticsMetrics>();
             builder.RegisterModule<NewtonSoftJsonModule>();
 

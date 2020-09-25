@@ -20,17 +20,15 @@ namespace Microsoft.Azure.IIoT.Rpc {
         int MaxMethodPayloadCharacterCount { get; }
 
         /// <summary>
-        /// Call a method on a module or device identity with
-        /// json payload.
+        /// Call a method on a target with json payload.
         /// </summary>
-        /// <param name="deviceId"></param>
-        /// <param name="moduleId"></param>
+        /// <param name="target"></param>
         /// <param name="method"></param>
         /// <param name="json"></param>
         /// <param name="timeout"></param>
         /// <param name="ct"></param>
         /// <returns>response json payload</returns>
-        Task<string> CallMethodAsync(string deviceId, string moduleId,
+        Task<string> CallMethodAsync(string target,
             string method, string json, TimeSpan? timeout = null,
             CancellationToken ct = default);
     }

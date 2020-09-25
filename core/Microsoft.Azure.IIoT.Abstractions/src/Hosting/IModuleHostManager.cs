@@ -22,10 +22,11 @@ namespace Microsoft.Azure.IIoT.Hosting {
         /// Create instance for identity
         /// </summary>
         /// <param name="id"></param>
+        /// <param name="type"></param>
         /// <param name="secret"></param>
         /// <param name="ct"></param>
         /// <returns></returns>
-        Task StartAsync(string id, string secret,
+        Task StartAsync(string id, string type, string secret,
             CancellationToken ct = default);
 
         /// <summary>
@@ -41,9 +42,11 @@ namespace Microsoft.Azure.IIoT.Hosting {
         /// Create identity but do not wait
         /// </summary>
         /// <param name="id"></param>
+        /// <param name="type"></param>
         /// <param name="secret"></param>
         /// <returns></returns>
-        Task QueueStartAsync(string id, string secret);
+        Task QueueStartAsync(string id, string type,
+            string secret);
 
         /// <summary>
         /// Delete instance but do not wait

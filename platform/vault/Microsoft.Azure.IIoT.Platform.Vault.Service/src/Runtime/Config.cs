@@ -13,8 +13,8 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Service.Runtime {
     using Microsoft.Azure.IIoT.AspNetCore.Authentication;
     using Microsoft.Azure.IIoT.AspNetCore.OpenApi;
     using Microsoft.Azure.IIoT.AspNetCore.OpenApi.Runtime;
-    using Microsoft.Azure.IIoT.AspNetCore.ForwardedHeaders;
-    using Microsoft.Azure.IIoT.AspNetCore.ForwardedHeaders.Runtime;
+    using Microsoft.Azure.IIoT.AspNetCore.Hosting;
+    using Microsoft.Azure.IIoT.AspNetCore.Hosting.Runtime;
     using Microsoft.Azure.IIoT.Diagnostics;
     using Microsoft.Azure.IIoT.Azure.AppInsights;
     using Microsoft.Azure.IIoT.Azure.AppInsights.Runtime;
@@ -35,7 +35,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Service.Runtime {
     public class Config : DiagnosticsConfig, IWebHostConfig,
         ICorsConfig, IOpenApiConfig, IVaultConfig, ICosmosDbConfig, IRoleConfig,
         IItemContainerConfig, IKeyVaultConfig, IServiceBusConfig, IRegistryConfig,
-        IForwardedHeadersConfig, IAppInsightsConfig {
+        IHeadersConfig, IAppInsightsConfig {
 
         /// <inheritdoc/>
         public string InstrumentationKey => _ai.InstrumentationKey;
@@ -114,7 +114,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Service.Runtime {
             _cors = new CorsConfig(configuration);
             _sb = new ServiceBusConfig(configuration);
             _registry = new RegistryConfig(configuration);
-            _fh = new ForwardedHeadersConfig(configuration);
+            _fh = new HeadersConfig(configuration);
             _ai = new AppInsightsConfig(configuration);
         }
 
@@ -127,7 +127,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Service.Runtime {
         private readonly CorsConfig _cors;
         private readonly ServiceBusConfig _sb;
         private readonly RegistryConfig _registry;
-        private readonly ForwardedHeadersConfig _fh;
+        private readonly HeadersConfig _fh;
     }
 }
 

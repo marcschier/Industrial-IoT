@@ -65,13 +65,11 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Clients {
                 throw new ArgumentNullException(nameof(discovererId));
             }
             var sw = Stopwatch.StartNew();
-            var deviceId = DiscovererModelEx.ParseDeviceId(discovererId,
-                out var moduleId);
-            _ = await _client.CallMethodAsync(deviceId, moduleId, service,
+            _ = await _client.CallMethodAsync(discovererId, service,
                 _serializer.SerializeToString(request), null, ct);
             _logger.Debug("Calling discoverer service '{service}' on " +
-                "{deviceId}/{moduleId} took {elapsed} ms.", service,
-                deviceId, moduleId, sw.ElapsedMilliseconds);
+                "{discovererId} took {elapsed} ms.", service,
+                discovererId, sw.ElapsedMilliseconds);
         }
 
         private readonly IJsonSerializer _serializer;

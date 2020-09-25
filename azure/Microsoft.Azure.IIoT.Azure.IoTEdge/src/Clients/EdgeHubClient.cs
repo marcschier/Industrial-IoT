@@ -28,9 +28,12 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Clients {
     using Prometheus;
 
     /// <summary>
-    /// Injectable factory that creates clients from device sdk
+    /// Injectable IoT Sdk client
     /// </summary>
-    public sealed class IoTSdkFactory : IClientFactory, IDisposable {
+    public sealed class EdgeHubClient : IIoTEdgeClient, IIdentity, IDisposable {
+
+        /// <inheritdoc />
+        public string Hub { get; }
 
         /// <inheritdoc />
         public string DeviceId { get; }
@@ -41,17 +44,18 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Clients {
         /// <inheritdoc />
         public string Gateway { get; }
 
-        /// <inheritdoc />
-        public IRetryPolicy RetryPolicy { get; set; }
-
         /// <summary>
         /// Create sdk factory
         /// </summary>
         /// <param name="config"></param>
         /// <param name="broker"></param>
+        /// <param name="ctrl"></param>
         /// <param name="logger"></param>
-        public IoTSdkFactory(IIoTEdgeConfig config, IEventSourceBroker broker, ILogger logger) {
+        public EdgeHubClient(IIoTEdgeClientConfig config, IEventSourceBroker broker,
+            IProcessControl ctrl, ILogger logger) {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _ctrl = ctrl ?? throw new ArgumentNullException(nameof(ctrl));
+            _config = config ?? throw new ArgumentNullException(nameof(config));
 
             if (broker != null) {
                 _logHook = broker.Subscribe(IoTSdkLogger.EventSource, new IoTSdkLogger(logger));
@@ -60,161 +64,262 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Clients {
             // The runtime injects this as an environment variable
             var deviceId = Environment.GetEnvironmentVariable("IOTEDGE_DEVICEID");
             var moduleId = Environment.GetEnvironmentVariable("IOTEDGE_MODULEID");
-            var ehubHost = Environment.GetEnvironmentVariable("IOTEDGE_GATEWAYHOSTNAME");
+            var gateway = Environment.GetEnvironmentVariable("IOTEDGE_GATEWAYHOSTNAME");
+            var hub = gateway;
 
+            IotHubConnectionStringBuilder cs = null;
             try {
-                if (!string.IsNullOrEmpty(config.EdgeHubConnectionString)) {
-                    _cs = IotHubConnectionStringBuilder.Create(config.EdgeHubConnectionString);
+                if (!string.IsNullOrEmpty(_config.EdgeHubConnectionString)) {
+                    cs = IotHubConnectionStringBuilder.Create(_config.EdgeHubConnectionString);
 
-                    if (string.IsNullOrEmpty(_cs.SharedAccessKey)) {
+                    if (string.IsNullOrEmpty(cs.SharedAccessKey)) {
                         throw new InvalidConfigurationException(
                             "Connection string is missing shared access key.");
                     }
-                    if (string.IsNullOrEmpty(_cs.DeviceId)) {
+                    if (string.IsNullOrEmpty(cs.DeviceId)) {
                         throw new InvalidConfigurationException(
                             "Connection string is missing device id.");
                     }
 
-                    deviceId = _cs.DeviceId;
-                    moduleId = _cs.ModuleId;
-                    ehubHost = _cs.GatewayHostName ?? ehubHost;
+
+                    deviceId = cs.DeviceId;
+                    moduleId = cs.ModuleId;
+                    hub = cs.HostName;
+                    gateway = cs.GatewayHostName ?? gateway;
                 }
             }
             catch (Exception e) {
-                _logger.Error(e, "Bad configuration value in EdgeHubConnectionString config.");
+                _logger.Error(e,
+                    "Bad configuration value in EdgeHubConnectionString config.");
             }
 
+            Hub = hub;
             ModuleId = moduleId;
             DeviceId = deviceId;
-            Gateway = ehubHost;
+            Gateway = gateway;
 
             if (string.IsNullOrEmpty(DeviceId)) {
                 var ex = new InvalidConfigurationException(
-                    "If you are running outside of an IoT Edge context or in EdgeHubDev mode, then the " +
-                    "host configuration is incomplete and missing the EdgeHubConnectionString setting." +
-                    "You can run the module using the command line interface or in IoT Edge context, or " +
-                    "manually set the 'EdgeHubConnectionString' environment variable.");
-
+        "If you are running outside of an IoT Edge context or in EdgeHubDev mode, then the " +
+        "host configuration is incomplete and missing the EdgeHubConnectionString setting." +
+        "You can run the module using the command line interface or in IoT Edge context, or " +
+        "manually set the 'EdgeHubConnectionString' environment variable.");
                 _logger.Error(ex, "The Twin module was not configured correctly.");
                 throw ex;
             }
 
-            _bypassCertValidation = config.BypassCertVerification;
-            if (!_bypassCertValidation) {
+            var bypassCertValidation = _config.BypassCertVerification;
+            if (!bypassCertValidation) {
                 var certPath = Environment.GetEnvironmentVariable("EdgeModuleCACertificateFile");
                 if (!string.IsNullOrWhiteSpace(certPath)) {
                     InstallCert(certPath);
                 }
-                else if (!string.IsNullOrEmpty(ehubHost)) {
-                    _bypassCertValidation = true;
+                else if (!string.IsNullOrEmpty(Gateway)) {
+                    bypassCertValidation = true;
                 }
             }
-            if (!string.IsNullOrEmpty(ehubHost)) {
+
+            TransportOption transportToUse;
+            if (!string.IsNullOrEmpty(Gateway)) {
+                //
                 // Running in edge mode
                 // the configured transport (if provided) will be forced to it's OverTcp
-                // variant as follows: AmqpOverTcp when Amqp, AmqpOverWebsocket or AmqpOverTcp specified
-                // and MqttOverTcp otherwise. Default is MqttOverTcp
-                if ((config.Transport & TransportOption.Mqtt) != 0) {
+                // variant as follows: AmqpOverTcp when Amqp, AmqpOverWebsocket or
+                // AmqpOverTcp specified and MqttOverTcp otherwise. Default is MqttOverTcp
+                if ((_config.Transport & TransportOption.Mqtt) != 0) {
                     // prefer Mqtt over Amqp due to performance reasons
-                    _transport = TransportOption.MqttOverTcp;
+                    transportToUse = TransportOption.MqttOverTcp;
                 }
                 else {
-                    _transport = TransportOption.AmqpOverTcp;
+                    transportToUse = TransportOption.AmqpOverTcp;
                 }
-                _logger.Information("Connecting all clients to {edgeHub} using {transport}.",
-                    ehubHost, _transport);
+                _logger.Information(
+                    "Connecting all clients to {edgeHub} using {transport}.",
+                        Gateway, transportToUse);
             }
             else {
-                _transport = config.Transport == 0 ? TransportOption.Any : config.Transport;
+                transportToUse = _config.Transport == 0 ?
+                    TransportOption.Any : _config.Transport;
             }
-            _timeout = TimeSpan.FromMinutes(5);
+
+            if (bypassCertValidation) {
+                _logger.Warning("Bypassing certificate validation for client.");
+            }
+            var transportSettings = GetTransportSettings(bypassCertValidation,
+                transportToUse);
+            _client = CreateAdapterAsync(cs, transportSettings);
+        }
+
+        /// <inheritdoc/>
+        public async Task SendEventAsync(string route, Message message,
+            CancellationToken ct) {
+            var client = await _client;
+            await client.SendEventAsync(route, message, ct);
+        }
+
+        /// <inheritdoc/>
+        public async Task SendEventBatchAsync(string route,
+            IEnumerable<Message> messages, CancellationToken ct) {
+            var client = await _client;
+            await client.SendEventBatchAsync(route, messages, ct);
+        }
+
+        /// <inheritdoc/>
+        public async Task SetMethodDefaultHandlerAsync(
+            MethodCallback methodHandler, object userContext) {
+            var client = await _client;
+            await client.SetMethodDefaultHandlerAsync(methodHandler, userContext);
+        }
+
+        /// <inheritdoc/>
+        public async Task SetMethodHandlerAsync(string methodName,
+            MethodCallback methodHandler, object userContext) {
+            var client = await _client;
+            await client.SetMethodHandlerAsync(methodName, methodHandler, userContext);
+        }
+
+        /// <inheritdoc/>
+        public async Task<Twin> GetTwinAsync(CancellationToken ct) {
+            var client = await _client;
+            return await client.GetTwinAsync(ct);
+        }
+
+        /// <inheritdoc/>
+        public async Task SetDesiredPropertyUpdateCallbackAsync(
+            DesiredPropertyUpdateCallback callback, object userContext) {
+            var client = await _client;
+            await client.SetDesiredPropertyUpdateCallbackAsync(callback, userContext);
+        }
+
+        /// <inheritdoc/>
+        public async Task UpdateReportedPropertiesAsync(
+            TwinCollection reportedProperties, CancellationToken ct) {
+            var client = await _client;
+            await client.UpdateReportedPropertiesAsync(reportedProperties, ct);
+        }
+
+        /// <inheritdoc/>
+        public async Task<MethodResponse> InvokeMethodAsync(
+            string deviceId, string moduleId,
+            MethodRequest methodRequest, CancellationToken ct) {
+            var client = await _client;
+            return await client.InvokeMethodAsync(deviceId, moduleId, methodRequest, ct);
+        }
+
+        /// <inheritdoc/>
+        public async Task<MethodResponse> InvokeMethodAsync(
+            string deviceId, MethodRequest methodRequest, CancellationToken ct) {
+            var client = await _client;
+            return await client.InvokeMethodAsync(deviceId, methodRequest, ct);
+        }
+
+        /// <inheritdoc/>
+        public async Task CloseAsync() {
+            var client = await _client;
+            if (client != null) {
+                await client.CloseAsync();
+            }
         }
 
         /// <inheritdoc/>
         public void Dispose() {
+            Try.Op(() => (_client?.Result as IDisposable)?.Dispose());
             _logHook?.Dispose();
         }
 
-        /// <inheritdoc/>
-        public async Task<IClient> CreateAsync(string product, IProcessControl ctrl) {
-
-            if (_bypassCertValidation) {
-                _logger.Warning("Bypassing certificate validation for client.");
-            }
-
+        /// <summary>
+        /// Get transport settings list for transport
+        /// </summary>
+        /// <param name="bypassCertValidation"></param>
+        /// <param name="transport"></param>
+        /// <returns></returns>
+        private static List<ITransportSettings> GetTransportSettings(
+            bool bypassCertValidation, TransportOption transport) {
             // Configure transport settings
             var transportSettings = new List<ITransportSettings>();
-
-            if ((_transport & TransportOption.MqttOverTcp) != 0) {
+            if ((transport & TransportOption.MqttOverTcp) != 0) {
                 var setting = new MqttTransportSettings(
                     TransportType.Mqtt_Tcp_Only);
-                if (_bypassCertValidation) {
+                if (bypassCertValidation) {
                     setting.RemoteCertificateValidationCallback =
                         (sender, certificate, chain, sslPolicyErrors) => true;
                 }
                 transportSettings.Add(setting);
             }
-            if ((_transport & TransportOption.MqttOverWebsocket) != 0) {
+            if ((transport & TransportOption.MqttOverWebsocket) != 0) {
                 var setting = new MqttTransportSettings(
                     TransportType.Mqtt_WebSocket_Only);
-                if (_bypassCertValidation) {
+                if (bypassCertValidation) {
                     setting.RemoteCertificateValidationCallback =
                         (sender, certificate, chain, sslPolicyErrors) => true;
                 }
                 transportSettings.Add(setting);
             }
-            if ((_transport & TransportOption.AmqpOverTcp) != 0) {
+            if ((transport & TransportOption.AmqpOverTcp) != 0) {
                 var setting = new AmqpTransportSettings(
                     TransportType.Amqp_Tcp_Only);
-                if (_bypassCertValidation) {
+                if (bypassCertValidation) {
                     setting.RemoteCertificateValidationCallback =
                         (sender, certificate, chain, sslPolicyErrors) => true;
                 }
                 transportSettings.Add(setting);
             }
-            if ((_transport & TransportOption.AmqpOverWebsocket) != 0) {
+            if ((transport & TransportOption.AmqpOverWebsocket) != 0) {
                 var setting = new AmqpTransportSettings(
                     TransportType.Amqp_WebSocket_Only);
-                if (_bypassCertValidation) {
+                if (bypassCertValidation) {
                     setting.RemoteCertificateValidationCallback =
                         (sender, certificate, chain, sslPolicyErrors) => true;
                 }
                 transportSettings.Add(setting);
             }
-            if (transportSettings.Count != 0) {
-                return await Try.Options(transportSettings
-                    .Select<ITransportSettings, Func<Task<IClient>>>(t =>
-                         () => CreateAdapterAsync(product, () => ctrl?.Reset(), t))
-                    .ToArray());
-            }
-            return await CreateAdapterAsync(product, () => ctrl?.Reset());
+            return transportSettings;
         }
 
         /// <summary>
         /// Create client adapter
         /// </summary>
-        /// <param name="product"></param>
-        /// <param name="onError"></param>
-        /// <param name="transportSetting"></param>
+        /// <param name="cs"></param>
+        /// <param name="settings"></param>
         /// <returns></returns>
-        private async Task<IClient> CreateAdapterAsync(string product, Action onError,
-            ITransportSettings transportSetting = null) {
+        private async Task<IIoTEdgeClient> CreateAdapterAsync(
+            IotHubConnectionStringBuilder cs, List<ITransportSettings> settings) {
+            if (settings.Count != 0) {
+                return await Try.Options(settings
+                    .Select<ITransportSettings, Func<Task<IIoTEdgeClient>>>(t =>
+                         () => CreateAdapterAsync(cs, t))
+                    .ToArray());
+            }
+            return await CreateAdapterAsync(cs, (ITransportSettings)null);
+        }
+
+        /// <summary>
+        /// Create client adapter
+        /// </summary>
+        /// <param name="cs"></param>
+        /// <param name="setting"></param>
+        /// <returns></returns>
+        private async Task<IIoTEdgeClient> CreateAdapterAsync(
+            IotHubConnectionStringBuilder cs, ITransportSettings setting) {
+            var timeout = TimeSpan.FromMinutes(5);
             if (string.IsNullOrEmpty(ModuleId)) {
-                if (_cs == null) {
+                if (cs == null) {
                     throw new InvalidConfigurationException(
                         "No connection string for device client specified.");
                 }
-                return await DeviceClientAdapter.CreateAsync(product, _cs, DeviceId,
-                    transportSetting, _timeout, RetryPolicy, onError, _logger);
+                return await DeviceClientAdapter.CreateAsync(_config.Product, cs,
+                    DeviceId, setting, timeout,
+                        () => _ctrl?.Reset(), _logger);
             }
-            return await ModuleClientAdapter.CreateAsync(product, _cs, DeviceId, ModuleId,
-                transportSetting, _timeout, RetryPolicy, onError, _logger);
+            return await ModuleClientAdapter.CreateAsync(_config.Product, cs,
+                DeviceId, ModuleId, setting, timeout,
+                    () => _ctrl?.Reset(), _logger);
         }
 
         /// <summary>
         /// Adapts module client to interface
         /// </summary>
-        public sealed class ModuleClientAdapter : IClient {
+        internal sealed class ModuleClientAdapter : IIoTEdgeClient {
 
             /// <summary>
             /// Whether the client is closed
@@ -225,9 +330,8 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Clients {
             /// Create client
             /// </summary>
             /// <param name="client"></param>
-            internal ModuleClientAdapter(ModuleClient client) {
-                _client = client ??
-                    throw new ArgumentNullException(nameof(client));
+            private ModuleClientAdapter(ModuleClient client) {
+                _client = client ?? throw new ArgumentNullException(nameof(client));
             }
 
             /// <summary>
@@ -239,15 +343,13 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Clients {
             /// <param name="moduleId"></param>
             /// <param name="transportSetting"></param>
             /// <param name="timeout"></param>
-            /// <param name="retry"></param>
             /// <param name="onConnectionLost"></param>
             /// <param name="logger"></param>
             /// <returns></returns>
-            public static async Task<IClient> CreateAsync(string product,
+            public static async Task<IIoTEdgeClient> CreateAsync(string product,
                 IotHubConnectionStringBuilder cs, string deviceId, string moduleId,
                 ITransportSettings transportSetting,
-                TimeSpan timeout, IRetryPolicy retry, Action onConnectionLost,
-                ILogger logger) {
+                TimeSpan timeout, Action onConnectionLost, ILogger logger) {
 
                 if (cs == null) {
                     logger.Information("Running in iotedge context.");
@@ -264,9 +366,6 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Clients {
                     client.SetConnectionStatusChangesHandler((s, r) =>
                         adapter.OnConnectionStatusChange(deviceId, moduleId, onConnectionLost,
                             logger, s, r));
-                    if (retry != null) {
-                        client.SetRetryPolicy(retry);
-                    }
                     client.ProductInfo = product;
                     await client.OpenAsync();
                     return adapter;
@@ -430,11 +529,13 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Clients {
                 if (status == ConnectionStatus.Connected) {
                     logger.Information("{counter}: Module {deviceId}_{moduleId} reconnected " +
                         "due to {reason}.", _reconnectCounter, deviceId, moduleId, reason);
-                    kReconnectionStatus.WithLabels(moduleId, deviceId, DateTime.UtcNow.ToString()).Set(_reconnectCounter);
+                    kReconnectionStatus.WithLabels(moduleId, deviceId, DateTime.UtcNow.ToString())
+                        .Set(_reconnectCounter);
                     _reconnectCounter++;
                     return;
                 }
-                kDisconnectionStatus.WithLabels(moduleId, deviceId, DateTime.UtcNow.ToString()).Set(_reconnectCounter);
+                kDisconnectionStatus.WithLabels(moduleId, deviceId, DateTime.UtcNow.ToString())
+                    .Set(_reconnectCounter);
                 logger.Information("{counter}: Module {deviceId}_{moduleId} disconnected " +
                     "due to {reason} - now {status}...", _reconnectCounter, deviceId, moduleId,
                         reason, status);
@@ -490,10 +591,11 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Clients {
                     });
         }
 
+
         /// <summary>
         /// Adapts device client to interface
         /// </summary>
-        public sealed class DeviceClientAdapter : IClient {
+        public sealed class DeviceClientAdapter : IIoTEdgeClient {
 
             /// <summary>
             /// Whether the client is closed
@@ -505,26 +607,24 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Clients {
             /// </summary>
             /// <param name="client"></param>
             internal DeviceClientAdapter(DeviceClient client) {
-                _client = client ??
-                    throw new ArgumentNullException(nameof(client));
+                _client = client ?? throw new ArgumentNullException(nameof(client));
             }
 
             /// <summary>
             /// Factory
             /// </summary>
-            /// <param name="product"></param>
             /// <param name="cs"></param>
+            /// <param name="product"></param>
             /// <param name="deviceId"></param>
             /// <param name="transportSetting"></param>
             /// <param name="timeout"></param>
-            /// <param name="retry"></param>
             /// <param name="onConnectionLost"></param>
             /// <param name="logger"></param>
             /// <returns></returns>
-            public static async Task<IClient> CreateAsync(string product,
+            public static async Task<IIoTEdgeClient> CreateAsync(string product,
                 IotHubConnectionStringBuilder cs, string deviceId,
                 ITransportSettings transportSetting, TimeSpan timeout,
-                IRetryPolicy retry, Action onConnectionLost, ILogger logger) {
+                Action onConnectionLost, ILogger logger) {
                 var client = Create(cs, transportSetting);
                 var adapter = new DeviceClientAdapter(client);
                 try {
@@ -532,9 +632,6 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Clients {
                     client.OperationTimeoutInMilliseconds = (uint)timeout.TotalMilliseconds;
                     client.SetConnectionStatusChangesHandler((s, r) =>
                         adapter.OnConnectionStatusChange(deviceId, onConnectionLost, logger, s, r));
-                    if (retry != null) {
-                        client.SetRetryPolicy(retry);
-                    }
                     client.ProductInfo = product;
 
                     await client.OpenAsync();
@@ -684,14 +781,16 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Clients {
                 if (status == ConnectionStatus.Connected) {
                     logger.Information("{counter}: Device {deviceId} reconnected " +
                         "due to {reason}.", _reconnectCounter, deviceId, reason);
-                    kReconnectionStatus.WithLabels(deviceId, DateTime.UtcNow.ToString()).Set(_reconnectCounter);
+                    kReconnectionStatus.WithLabels(deviceId, DateTime.UtcNow.ToString())
+                        .Set(_reconnectCounter);
                     _reconnectCounter++;
                     return;
                 }
                 logger.Information("{counter}: Device {deviceId} disconnected " +
                     "due to {reason} - now {status}...", _reconnectCounter, deviceId,
                         reason, status);
-                kDisconnectionStatus.WithLabels(deviceId, DateTime.UtcNow.ToString()).Set(_reconnectCounter);
+                kDisconnectionStatus.WithLabels(deviceId, DateTime.UtcNow.ToString())
+                    .Set(_reconnectCounter);
                 if (IsClosed) {
                     // Already closed - nothing to do
                     return;
@@ -710,24 +809,24 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Clients {
             /// <param name="cs"></param>
             /// <param name="transportSetting"></param>
             /// <returns></returns>
-            private static DeviceClient Create(IotHubConnectionStringBuilder cs,
+            private static Devices.Client.DeviceClient Create(IotHubConnectionStringBuilder cs,
                 ITransportSettings transportSetting) {
                 try {
                     if (cs == null) {
                         throw new ArgumentNullException(nameof(cs));
                     }
                     if (transportSetting != null) {
-                        return DeviceClient.CreateFromConnectionString(cs.ToString(),
+                        return Devices.Client.DeviceClient.CreateFromConnectionString(cs.ToString(),
                             new ITransportSettings[] { transportSetting });
                     }
-                    return DeviceClient.CreateFromConnectionString(cs.ToString());
+                    return Devices.Client.DeviceClient.CreateFromConnectionString(cs.ToString());
                 }
                 catch (Exception ex) {
                     throw ex.Translate();
                 }
             }
 
-            private readonly DeviceClient _client;
+            private readonly Devices.Client.DeviceClient _client;
             private int _reconnectCounter;
             private static readonly Gauge kReconnectionStatus = Metrics
                 .CreateGauge("iiot_edge_device_reconnected", "reconnected count",
@@ -789,11 +888,11 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Clients {
             public const string EventSource = "Microsoft-Azure-Devices-Device-Client";
         }
 
-        private readonly TimeSpan _timeout;
-        private readonly TransportOption _transport;
-        private readonly IotHubConnectionStringBuilder _cs;
+
+        private readonly Task<IIoTEdgeClient> _client;
         private readonly ILogger _logger;
+        private readonly IProcessControl _ctrl;
+        private readonly IIoTEdgeClientConfig _config;
         private readonly IDisposable _logHook;
-        private readonly bool _bypassCertValidation;
     }
 }

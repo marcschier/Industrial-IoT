@@ -9,8 +9,8 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service.Runtime {
     using Microsoft.Azure.IIoT.AspNetCore.Cors;
     using Microsoft.Azure.IIoT.AspNetCore.Cors.Runtime;
     using Microsoft.Azure.IIoT.AspNetCore.Authentication;
-    using Microsoft.Azure.IIoT.AspNetCore.ForwardedHeaders;
-    using Microsoft.Azure.IIoT.AspNetCore.ForwardedHeaders.Runtime;
+    using Microsoft.Azure.IIoT.AspNetCore.Hosting;
+    using Microsoft.Azure.IIoT.AspNetCore.Hosting.Runtime;
     using Microsoft.Azure.IIoT.Diagnostics;
     using Microsoft.Azure.IIoT.Azure.AppInsights;
     using Microsoft.Azure.IIoT.Azure.AppInsights.Runtime;
@@ -20,7 +20,6 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service.Runtime {
     using Microsoft.Azure.IIoT.Azure.ServiceBus.Runtime;
     using Microsoft.Azure.IIoT.Azure.EventHub.Processor;
     using Microsoft.Azure.IIoT.Azure.EventHub.Processor.Runtime;
-    using Microsoft.Azure.IIoT.Authentication.Runtime;
     using Microsoft.Azure.IIoT.Hosting;
     using Microsoft.Extensions.Configuration;
     using System;
@@ -30,7 +29,7 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service.Runtime {
     /// </summary>
     public class Config : DiagnosticsConfig, IWebHostConfig, IServiceBusConfig,
         ICorsConfig, IOpenApiConfig, ISignalRServiceConfig,
-        IEventProcessorConfig, IEventHubConsumerConfig, IForwardedHeadersConfig,
+        IEventProcessorConfig, IEventHubConsumerConfig, IHeadersConfig,
         IEventProcessorHostConfig, IRoleConfig, IAppInsightsConfig {
 
         /// <inheritdoc/>
@@ -128,7 +127,7 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service.Runtime {
             _cors = new CorsConfig(configuration);
             _sb = new ServiceBusConfig(configuration);
             _sr = new SignalRServiceConfig(configuration);
-            _fh = new ForwardedHeadersConfig(configuration);
+            _fh = new HeadersConfig(configuration);
             _ep = new EventProcessorConfig(configuration);
             _eh = new EventHubConsumerConfig(configuration);
             _ai = new AppInsightsConfig(configuration);
@@ -140,7 +139,7 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service.Runtime {
         private readonly CorsConfig _cors;
         private readonly ServiceBusConfig _sb;
         private readonly SignalRServiceConfig _sr;
-        private readonly ForwardedHeadersConfig _fh;
+        private readonly HeadersConfig _fh;
         private readonly EventProcessorConfig _ep;
         private readonly EventHubConsumerConfig _eh;
     }

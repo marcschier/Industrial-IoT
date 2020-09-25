@@ -54,24 +54,29 @@ namespace Microsoft.Azure.IIoT.Http.Tunnel.Services {
         }
 
         /// <inheritdoc/>
-        public async Task HandleAsync(string deviceId, string moduleId, byte[] payload,
+        public async Task HandleAsync(string source, byte[] payload,
             IDictionary<string, string> properties, Func<Task> checkpoint) {
-            var completed = await HandleEventAsync(deviceId, moduleId,
-                payload, properties);
+            var completed = await HandleEventAsync(source, payload, properties);
             if (completed) {
                 await Try.Async(() => checkpoint?.Invoke());
             }
         }
 
-        /// <inheritdoc/>
-        public async Task<bool> HandleEventAsync(string deviceId, string moduleId,
+        /// <summary>
+        /// Handle event from source
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="payload"></param>
+        /// <param name="properties"></param>
+        /// <returns></returns>
+        private async Task<bool> HandleEventAsync(string source,
             byte[] payload, IDictionary<string, string> properties) {
+
 
             if (!properties.TryGetValue("content-type", out var type) &&
                 !properties.TryGetValue("iothub-content-type", out type)) {
-                _logger.Error(
-                    "Missing content type in tunnel event from {deviceId} {moduleId}.",
-                    deviceId, moduleId);
+                _logger.Error("Missing content type in tunnel event from {source}.",
+                     source);
                 return true;
             }
 
@@ -80,7 +85,7 @@ namespace Microsoft.Azure.IIoT.Http.Tunnel.Services {
             if (typeParsed.Length != 2 ||
                 !int.TryParse(typeParsed[1], out var messageId)) {
                 _logger.Error("Bad content type {contentType} in tunnel event" +
-                    " from {deviceId} {moduleId}.", type, deviceId, moduleId);
+                    " from {source}.", type, source);
                 return true;
             }
             var requestId = typeParsed[0];
@@ -89,7 +94,7 @@ namespace Microsoft.Azure.IIoT.Http.Tunnel.Services {
             if (messageId == 0) {
                 try {
                     var chunk0 = DeserializeRequest0(payload, out var request, out var chunks);
-                    processor = new HttpRequestProcessor(this, deviceId, moduleId,
+                    processor = new HttpRequestProcessor(this, source,
                         requestId, request, chunks, chunk0, null);
                     if (chunks != 0) { // More to follow?
                         if (!_requests.TryAdd(requestId, processor)) {
@@ -101,9 +106,8 @@ namespace Microsoft.Azure.IIoT.Http.Tunnel.Services {
                     }
                 }
                 catch (Exception ex) {
-                    _logger.Error(ex, "Failed to parse tunnel request from {deviceId} " +
-                        "{moduleId} with id {requestId} - giving up.",
-                        deviceId, moduleId, requestId);
+                    _logger.Error(ex, "Failed to parse tunnel request from {source} " +
+                        "with id {requestId} - giving up.", source, requestId);
                     return true;
                 }
                 // Complete request
@@ -118,9 +122,9 @@ namespace Microsoft.Azure.IIoT.Http.Tunnel.Services {
             }
             else {
                 // Timed out or expired
-                _logger.Debug("Request from {deviceId} {moduleId} " +
-                    "with id {requestId} timed out - give up.",
-                    deviceId, moduleId, requestId);
+                _logger.Debug(
+                    "Request from {source} with id {requestId} timed out - give up.",
+                    source, requestId);
                 return true;
             }
 
@@ -129,10 +133,8 @@ namespace Microsoft.Azure.IIoT.Http.Tunnel.Services {
                 await processor.CompleteAsync();
             }
             catch (Exception ex) {
-                _logger.Error(ex,
-                    "Failed to complete request from {deviceId} {moduleId} " +
-                    "with id {requestId} - giving up.",
-                    deviceId, moduleId, requestId);
+                _logger.Error(ex, "Failed to complete request from {source} " +
+                    "with id {requestId} - giving up.", source, requestId);
             }
             return true;
         }
@@ -204,22 +206,20 @@ namespace Microsoft.Azure.IIoT.Http.Tunnel.Services {
             /// Create chunk
             /// </summary>
             /// <param name="outer"></param>
-            /// <param name="deviceId"></param>
-            /// <param name="moduleId"></param>
+            /// <param name="source"></param>
             /// <param name="requestId"></param>
             /// <param name="request"></param>
             /// <param name="chunks"></param>
             /// <param name="chunk0"></param>
             /// <param name="timeout"></param>
-            public HttpRequestProcessor(HttpTunnelServer outer, string deviceId,
-                string moduleId, string requestId, HttpTunnelRequestModel request,
+            public HttpRequestProcessor(HttpTunnelServer outer, string source,
+                string requestId, HttpTunnelRequestModel request,
                 int chunks, byte[] chunk0, TimeSpan? timeout) {
                 RequestId = requestId ??
                     throw new ArgumentNullException(nameof(requestId));
                 _outer = outer ??
                     throw new ArgumentNullException(nameof(outer));
-                _deviceId = deviceId;
-                _moduleId = moduleId;
+                _source = source;
                 _timeout = timeout ?? TimeSpan.FromSeconds(20);
                 _request = request;
                 _chunks = chunks + 1;
@@ -288,9 +288,9 @@ namespace Microsoft.Azure.IIoT.Http.Tunnel.Services {
                         _ => throw new ArgumentException(_request.Method, "Bad method"),
                     };
 
-                    // Forward response back to caller
+                    // Forward response back to source
                     await _outer._client.CallMethodAsync(
-                        _deviceId, _moduleId, MethodNames.Response,
+                        _source, MethodNames.Response,
                         _outer._serializer.SerializeToString(new HttpTunnelResponseModel {
                             Headers = response.Headers?
                                 .ToDictionary(h => h.Key, h => h.Value.ToList()),
@@ -301,9 +301,9 @@ namespace Microsoft.Azure.IIoT.Http.Tunnel.Services {
                     return;
                 }
                 catch (Exception ex) {
-                    // Forward failure back to caller
+                    // Forward failure back to source
                     await _outer._client.CallMethodAsync(
-                        _deviceId, _moduleId, MethodNames.Response,
+                        _source, MethodNames.Response,
                         _outer._serializer.SerializeToString(new HttpTunnelResponseModel {
                             RequestId = RequestId,
                             Status = (int)HttpStatusCode.InternalServerError,
@@ -331,8 +331,7 @@ namespace Microsoft.Azure.IIoT.Http.Tunnel.Services {
             }
 
             private readonly HttpTunnelServer _outer;
-            private readonly string _deviceId;
-            private readonly string _moduleId;
+            private readonly string _source;
             private readonly TimeSpan _timeout;
             private readonly HttpTunnelRequestModel _request;
             private readonly int _chunks;

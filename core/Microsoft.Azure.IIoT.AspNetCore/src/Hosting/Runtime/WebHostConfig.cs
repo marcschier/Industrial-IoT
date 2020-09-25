@@ -3,7 +3,7 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Authentication.Runtime {
+namespace Microsoft.Azure.IIoT.AspNetCore.Hosting.Runtime {
     using Microsoft.Azure.IIoT.Hosting;
     using Microsoft.Azure.IIoT.Utils;
     using Microsoft.Extensions.Configuration;

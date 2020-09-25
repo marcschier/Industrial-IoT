@@ -30,26 +30,40 @@ namespace Microsoft.Azure.IIoT.Http.Tunnel.Models {
         /// </summary>
         [DataMember(Name = "resourceId", Order = 1,
             EmitDefaultValue = false)]
-        public string ResourceId { get; internal set; }
+        public string ResourceId { get; set; }
 
         /// <summary>
         /// Uri to call
         /// </summary>
         [DataMember(Name = "uri", Order = 2)]
-        public string Uri { get; internal set; }
+        public string Uri { get; set; }
 
         /// <summary>
         /// Headers
         /// </summary>
         [DataMember(Name = "requestHeaders", Order = 3,
-            EmitDefaultValue = false)]
+            EmitDefaultValue = false, IsRequired = false)]
         public Dictionary<string, List<string>> RequestHeaders { get; set; }
 
         /// <summary>
         /// Headers
         /// </summary>
         [DataMember(Name = "contentHeaders", Order = 4,
-            EmitDefaultValue = false)]
+            EmitDefaultValue = false, IsRequired = false)]
         public Dictionary<string, List<string>> ContentHeaders { get; set; }
+
+        /// <summary>
+        /// Trace id (optional - can follow this info)
+        /// </summary>
+        [DataMember(Name = "traceId", Order = 5,
+            EmitDefaultValue = false, IsRequired = false)]
+        public string TraceId { get; set; }
+
+        /// <summary>
+        /// Body (optional - can follow this info)
+        /// </summary>
+        [DataMember(Name = "body", Order = 6,
+            EmitDefaultValue = false, IsRequired = false)]
+        public byte[] Body { get; set; }
     }
 }

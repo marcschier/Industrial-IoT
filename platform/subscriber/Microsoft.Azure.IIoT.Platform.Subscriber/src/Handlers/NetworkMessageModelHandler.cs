@@ -36,15 +36,15 @@ namespace Microsoft.Azure.IIoT.Platform.Subscriber.Handlers {
         }
 
         /// <inheritdoc/>
-        public async Task HandleAsync(string deviceId, string moduleId,
-            byte[] payload, IDictionary<string, string> properties, Func<Task> checkpoint) {
+        public async Task HandleAsync(string source, byte[] payload,
+            IDictionary<string, string> properties, Func<Task> checkpoint) {
             try {
                 var message = _serializer.Deserialize<DataSetMessageModel>(payload);
                 await Task.WhenAll(_handlers.Select(h => h.HandleMessageAsync(message)));
             }
             catch (Exception ex) {
                 _logger.Error(ex,
-                    "Exception handling sample from {deviceId}-{moduleId}", deviceId, moduleId);
+                    "Exception handling sample from {source}", source);
             }
         }
 

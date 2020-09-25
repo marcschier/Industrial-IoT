@@ -41,7 +41,7 @@ namespace Microsoft.Azure.IIoT.Platform.Discovery.Handlers {
         }
 
         /// <inheritdoc/>
-        public async Task HandleAsync(string deviceId, string moduleId,
+        public async Task HandleAsync(string source,
             byte[] payload, IDictionary<string, string> properties, Func<Task> checkpoint) {
             DiscoveryEventModel discovery;
             try {
@@ -53,10 +53,7 @@ namespace Microsoft.Azure.IIoT.Platform.Discovery.Handlers {
                 return;
             }
             try {
-                var discovererId = DiscovererModelEx.CreateDiscovererId(
-                    deviceId, moduleId?.ToString());
-
-                await ProcessServerEndpointDiscoveryAsync(discovererId,
+                await ProcessServerEndpointDiscoveryAsync(source,
                     discovery, checkpoint);
             }
             catch (Exception ex) {

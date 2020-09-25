@@ -15,12 +15,13 @@ namespace Microsoft.Azure.IIoT.Hosting {
         /// <summary>
         /// Method handler
         /// </summary>
+        /// <param name="target"></param>
         /// <param name="method"></param>
         /// <param name="payload"></param>
         /// <param name="contentType"></param>
         /// <exception cref="MethodCallStatusException"/>
         /// <returns></returns>
-        Task<byte[]> InvokeAsync(string method, byte[] payload,
+        Task<byte[]> InvokeAsync(string target, string method, byte[] payload,
             string contentType);
     }
 }

@@ -26,10 +26,10 @@ namespace Microsoft.Azure.IIoT.Rpc.Default {
         }
 
         /// <inheritdoc/>
-        public Task<byte[]> InvokeAsync(string method, byte[] payload,
+        public Task<byte[]> InvokeAsync(string target, string method, byte[] payload,
             string contentType) {
             if (_calltable.TryGetValue(method, out var invoker)) {
-                return invoker.InvokeAsync(payload, contentType, this);
+                return invoker.InvokeAsync(target, payload, contentType, this);
             }
             return Task.FromException<byte[]>(
                 new InvalidOperationException($"{method} invoker not registered"));

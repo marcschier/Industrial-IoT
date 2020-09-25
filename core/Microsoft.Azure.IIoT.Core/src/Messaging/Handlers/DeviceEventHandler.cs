@@ -41,18 +41,19 @@ namespace Microsoft.Azure.IIoT.Messaging.Handlers {
             if (properties.TryGetValue(CommonProperties.EventSchemaType, out var schemaType) ||
                 properties.TryGetValue(EventProperties.EventSchema, out schemaType)) {
 
-                string moduleId = null;
+                string source = null;
                 if (properties.TryGetValue(CommonProperties.DeviceId, out var deviceId)) {
-                    properties.TryGetValue(CommonProperties.ModuleId, out moduleId);
+                    properties.TryGetValue(CommonProperties.ModuleId, out var moduleId);
+                    source = HubResource.Format(null, deviceId, moduleId);
                 }
-                else if (properties.TryGetValue(EventProperties.Target, out var target)) {
-                    deviceId = HubResource.Parse(target, out var hub, out moduleId);
+                else {
+                    properties.TryGetValue(EventProperties.Target, out source);
                 }
 
-                if (deviceId != null &&
+                if (source != null &&
                     _handlers.TryGetValue(schemaType.ToLowerInvariant(), out var handler)) {
                     _used.Enqueue(handler);
-                    await handler.HandleAsync(deviceId, moduleId, eventData, properties, checkpoint);
+                    await handler.HandleAsync(source, eventData, properties, checkpoint);
                     handled = true;
                 }
             }

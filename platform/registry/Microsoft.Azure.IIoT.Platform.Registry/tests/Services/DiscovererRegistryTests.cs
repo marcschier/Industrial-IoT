@@ -157,7 +157,8 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
         /// <param name="discoverers"></param>
         /// <param name="modules"></param>
         private void CreateDiscovererFixtures(out string site,
-            out List<DiscovererModel> discoverers, out List<(DeviceTwinModel, DeviceModel)> modules,
+            out List<DiscovererModel> discoverers,
+            out List<(DeviceTwinModel, DeviceModel)> modules,
             bool noSite = false) {
             var fix = new Fixture();
             fix.Customizations.Add(new TypeRelay(typeof(VariantValue), typeof(VariantValue)));
@@ -168,7 +169,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
             discoverers = fix
                 .Build<DiscovererModel>()
                 .Without(x => x.Id)
-                .Do(x => x.Id = DiscovererModelEx.CreateDiscovererId(
+                .Do(x => x.Id = HubResource.Format(fix.Create<string>(),
                     fix.Create<string>(), fix.Create<string>()))
                 .CreateMany(10)
                 .ToList();

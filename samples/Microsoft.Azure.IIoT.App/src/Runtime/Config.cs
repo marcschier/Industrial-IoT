@@ -11,15 +11,15 @@ namespace Microsoft.Azure.IIoT.App.Runtime {
     using Microsoft.Azure.IIoT.Azure.AppInsights.Runtime;
     using Microsoft.Azure.IIoT.Azure.SignalR;
     using Microsoft.Azure.IIoT.Azure.SignalR.Runtime;
-    using Microsoft.Azure.IIoT.AspNetCore.ForwardedHeaders;
-    using Microsoft.Azure.IIoT.AspNetCore.ForwardedHeaders.Runtime;
+    using Microsoft.Azure.IIoT.AspNetCore.Hosting;
+    using Microsoft.Azure.IIoT.AspNetCore.Hosting.Runtime;
     using Microsoft.Extensions.Configuration;
 
     /// <summary>
     /// Configuration aggregation
     /// </summary>
     public class Config : ApiConfig, IAppInsightsConfig, ISignalRServiceConfig,
-        IWebHostConfig, IForwardedHeadersConfig {
+        IWebHostConfig, IHeadersConfig {
 
         /// <summary>Url</summary>
         public string TsiDataAccessFQDN =>
@@ -71,7 +71,7 @@ namespace Microsoft.Azure.IIoT.App.Runtime {
             base(configuration) {
 
             _host = new WebHostConfig(configuration);
-            _fh = new ForwardedHeadersConfig(configuration);
+            _fh = new HeadersConfig(configuration);
             _sr = new SignalRServiceConfig(configuration);
             _ai = new AppInsightsConfig(configuration);
         }
@@ -79,6 +79,6 @@ namespace Microsoft.Azure.IIoT.App.Runtime {
         private readonly AppInsightsConfig _ai;
         private readonly SignalRServiceConfig _sr;
         private readonly WebHostConfig _host;
-        private readonly ForwardedHeadersConfig _fh;
+        private readonly HeadersConfig _fh;
     }
 }

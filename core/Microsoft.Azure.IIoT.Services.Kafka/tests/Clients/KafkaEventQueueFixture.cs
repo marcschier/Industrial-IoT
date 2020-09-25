@@ -171,11 +171,11 @@ namespace Microsoft.Azure.IIoT.Services.Kafka.Clients {
 
             public string MessageSchema { get; }
 
-            public Task HandleAsync(string deviceId, string moduleId,
+            public Task HandleAsync(string source,
                 byte[] payload, IDictionary<string, string> properties,
                 Func<Task> checkpoint) {
                 _outer.OnEvent?.Invoke(this, new TelemetryEventArgs(
-                    MessageSchema, deviceId, moduleId, payload, properties));
+                    MessageSchema, source, payload, properties));
                 return Task.CompletedTask;
             }
 
@@ -196,7 +196,7 @@ namespace Microsoft.Azure.IIoT.Services.Kafka.Clients {
             public Task HandleAsync(byte[] eventData,
                 IDictionary<string, string> properties) {
                 _outer.OnEvent?.Invoke(this, new TelemetryEventArgs(
-                    null, null, null, eventData, properties));
+                    null, null, eventData, properties));
                 return Task.CompletedTask;
             }
 
@@ -206,24 +206,32 @@ namespace Microsoft.Azure.IIoT.Services.Kafka.Clients {
         private readonly IContainer _container;
     }
 
-
     public class TelemetryEventArgs : EventArgs {
 
-        public TelemetryEventArgs(string schema, string deviceId,
-            string moduleId, byte[] data, IDictionary<string, string> properties) {
+        public TelemetryEventArgs(string schema, string source,
+            byte[] data, IDictionary<string, string> properties) {
             HandlerSchema = schema;
-            DeviceId = deviceId;
-            ModuleId = moduleId;
+            Source = source;
+            try {
+                DeviceId = HubResource.Parse(source, out var hub, out var moduleId);
+                Hub = hub;
+                ModuleId = moduleId;
+            }
+            catch {
+
+            }
             Data = data;
             Target = properties.TryGetValue(EventProperties.Target, out var v) ? v : null;
             Properties = properties
                 .Where(k => k.Key != EventProperties.Target)
-                .Where(k => k.Key != "x-topic")
+                .Where(k => !k.Key.StartsWith("x-"))
                 .ToDictionary(k => k.Key, v => v.Value);
         }
 
         public string Target { get; }
+        public string Source { get; }
         public string HandlerSchema { get; }
+        public string Hub { get; }
         public string DeviceId { get; }
         public string ModuleId { get; }
         public byte[] Data { get; }

@@ -3,27 +3,31 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Azure.IoTEdge {
-    using Microsoft.Azure.IIoT.Messaging;
+namespace Microsoft.Azure.IIoT.Hub {
 
     /// <summary>
-    /// IoT Edge configuration
+    /// Module or device identity
     /// </summary>
-    public interface IIoTEdgeConfig {
+    public interface IIdentity {
 
         /// <summary>
-        /// IoTEdgeHub connection string
+        /// Hub of the identity
         /// </summary>
-        string EdgeHubConnectionString { get; }
+        string Hub { get; }
 
         /// <summary>
-        /// Bypass cert validation with hub
+        /// Device id
         /// </summary>
-        bool BypassCertVerification { get; }
+        string DeviceId { get; }
 
         /// <summary>
-        /// Transports to use
+        /// Module id
         /// </summary>
-        TransportOption Transport { get; }
+        string ModuleId { get; }
+
+        /// <summary>
+        /// Module's host (gateway) hostname
+        /// </summary>
+        string Gateway { get; }
     }
 }

@@ -22,11 +22,13 @@ namespace Microsoft.Azure.IIoT.Hosting {
             builder.RegisterType<MethodRouter>()
                 .AsImplementedInterfaces().InstancePerLifetimeScope()
                 .PropertiesAutowired(
-                    PropertyWiringOptions.AllowCircularDependencies);
+                    PropertyWiringOptions.AllowCircularDependencies)
+                .IfNotRegistered(typeof(IMethodRouter));
             builder.RegisterType<SettingsRouter>()
                 .AsImplementedInterfaces().InstancePerLifetimeScope()
                 .PropertiesAutowired(
-                    PropertyWiringOptions.AllowCircularDependencies);
+                    PropertyWiringOptions.AllowCircularDependencies)
+                .IfNotRegistered(typeof(ISettingsRouter));
 
             // If not already registered, register task scheduler
 #if USE_DEFAULT_FACTORY
@@ -39,7 +41,7 @@ namespace Microsoft.Azure.IIoT.Hosting {
                 .IfNotRegistered(typeof(ITaskScheduler));
 #endif
             // Register http (tunnel) client module
-            builder.RegisterModule<HttpTunnelClient>();
+            builder.RegisterModule<HttpTunnelEventClient>();
 
             base.Load(builder);
         }

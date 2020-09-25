@@ -5,8 +5,13 @@
 
 namespace Microsoft.Extensions.DependencyInjection {
     using Microsoft.AspNetCore.Builder;
+    using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.HttpOverrides;
-    using Microsoft.Azure.IIoT.AspNetCore.ForwardedHeaders;
+    using Microsoft.AspNetCore.HttpsPolicy;
+    using Microsoft.Azure.IIoT.AspNetCore.Hosting;
+    using Microsoft.Azure.IIoT.Hosting;
+    using Microsoft.Extensions.Options;
+    using System;
 
     /// <summary>
     /// Extension to configure processing of forwarded headers
@@ -14,24 +19,11 @@ namespace Microsoft.Extensions.DependencyInjection {
     public static class ServiceCollectionEx {
 
         /// <summary>
-        /// Use header forwarding
-        /// </summary>
-        /// <param name="builder"></param>
-        /// <returns></returns>
-        public static IApplicationBuilder UseHeaderForwarding(this IApplicationBuilder builder) {
-            var fhConfig = builder.ApplicationServices.GetService<IForwardedHeadersConfig>();
-            if (fhConfig == null || !fhConfig.AspNetCoreForwardedHeadersEnabled) {
-                return builder;
-            }
-            return builder.UseForwardedHeaders();
-        }
-
-        /// <summary>
         /// Configure processing of forwarded headers
         /// </summary>
         /// <param name="services"></param>
         public static IServiceCollection AddHeaderForwarding(this IServiceCollection services) {
-            var fhConfig = services.BuildServiceProvider().GetService<IForwardedHeadersConfig>();
+            var fhConfig = services.BuildServiceProvider().GetService<IHeadersConfig>();
             if (fhConfig == null || !fhConfig.AspNetCoreForwardedHeadersEnabled) {
                 return services;
             }
@@ -48,6 +40,31 @@ namespace Microsoft.Extensions.DependencyInjection {
                 // configuration.
                 options.KnownNetworks.Clear();
                 options.KnownProxies.Clear();
+            });
+            return services;
+        }
+
+        /// <summary>
+        /// Add https redirection
+        /// </summary>
+        /// <param name="services"></param>
+        public static IServiceCollection AddHttpsRedirect(this IServiceCollection services) {
+            services.AddHsts(options => {
+                options.Preload = true;
+                options.IncludeSubDomains = true;
+                options.MaxAge = TimeSpan.FromDays(60);
+            });
+            services.AddHttpsRedirection(options => options.HttpsPort = 0);
+            services.AddTransient<IConfigureOptions<HttpsRedirectionOptions>>(services => {
+                var config = services.GetService<IWebHostConfig>();
+                if (config == null) {
+                    throw new InvalidOperationException("Must have configured web host context");
+                }
+                return new ConfigureNamedOptions<HttpsRedirectionOptions>(
+                    Options.DefaultName, options => {
+                        options.RedirectStatusCode = StatusCodes.Status307TemporaryRedirect;
+                        options.HttpsPort = config.HttpsRedirectPort;
+                    });
             });
             return services;
         }

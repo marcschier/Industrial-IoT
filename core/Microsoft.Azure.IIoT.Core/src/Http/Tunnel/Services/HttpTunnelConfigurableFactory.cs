@@ -26,14 +26,14 @@ namespace Microsoft.Azure.IIoT.Http.Tunnel.Services {
         /// <inheritdoc/>
         public HttpTunnelConfigurableFactory(IEventClient client,
             IJsonSerializer serializer, IEnumerable<IHttpHandler> handlers, ILogger logger) {
-            _tunnel = new HttpTunnelHandlerFactory(client, serializer, handlers, logger);
+            _tunnel = new HttpTunnelEventClientFactory(client, serializer, handlers, logger);
             _fallback = new HttpHandlerFactory(handlers, logger);
         }
 
         /// <inheritdoc/>
         public HttpTunnelConfigurableFactory(IEventClient client, IWebProxy proxy,
             IJsonSerializer serializer, IEnumerable<IHttpHandler> handlers, ILogger logger) {
-            _tunnel = new HttpTunnelHandlerFactory(client, serializer, handlers, logger);
+            _tunnel = new HttpTunnelEventClientFactory(client, serializer, handlers, logger);
             _fallback = new HttpHandlerFactory(handlers, proxy, logger);
         }
 
@@ -44,7 +44,7 @@ namespace Microsoft.Azure.IIoT.Http.Tunnel.Services {
                 _fallback.Create(resource, out handler);
         }
 
-        private readonly HttpTunnelHandlerFactory _tunnel;
+        private readonly HttpTunnelEventClientFactory _tunnel;
         private readonly HttpHandlerFactory _fallback;
     }
 }

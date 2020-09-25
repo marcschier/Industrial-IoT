@@ -17,14 +17,17 @@ namespace Microsoft.Azure.IIoT.Hub {
         /// </summary>
         /// <param name="hub"></param>
         /// <param name="target"></param>
+        /// <param name="asHostName"></param>
         /// <param name="moduleId"></param>
         /// <returns></returns>
-        public static string Parse(string target, out string hub, out string moduleId) {
+        public static string Parse(string target, out string hub, out string moduleId,
+            bool asHostName = false) {
             if (string.IsNullOrEmpty(target)) {
                 throw new ArgumentNullException(nameof(target));
             }
             // Split path
-            var elements = target.Split('/', StringSplitOptions.RemoveEmptyEntries);
+            var delim = asHostName ? '.' : '/';
+            var elements = target.Split(delim, StringSplitOptions.RemoveEmptyEntries);
             var found = 0;
             hub = null;
             for (; found < elements.Length; found++) {
@@ -60,22 +63,28 @@ namespace Microsoft.Azure.IIoT.Hub {
         /// Format hub resource
         /// </summary>
         /// <param name="hub"></param>
+        /// <param name="asHostName"></param>
         /// <param name="deviceId"></param>
         /// <param name="moduleId"></param>
         /// <returns></returns>
-        public static string Format(string hub, string deviceId, string moduleId) {
+        public static string Format(string hub, string deviceId, string moduleId,
+            bool asHostName = false) {
             if (string.IsNullOrEmpty(deviceId)) {
                 throw new ArgumentNullException(nameof(deviceId));
             }
+            var delim = asHostName ? '.' : '/';
             var sb = new StringBuilder();
             if (!string.IsNullOrEmpty(hub)) {
                 sb.Append(hub);
-                sb.Append('/');
+                sb.Append(delim);
             }
-            sb.Append("devices/");
+            sb.Append("devices");
+            sb.Append(delim);
             sb.Append(deviceId);
             if (!string.IsNullOrEmpty(moduleId)) {
-                sb.Append("/modules/");
+                sb.Append(delim);
+                sb.Append("modules");
+                sb.Append(delim);
                 sb.Append(moduleId);
             }
             return sb.ToString();

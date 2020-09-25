@@ -64,7 +64,7 @@ namespace Microsoft.Azure.IIoT.AspNetCore.Authentication.Clients {
             /// <inheritdoc/>
             public UserTokenSource(OpenIdUserTokenClient oi, MsalUserTokenClient uc,
                 IEnumerable<ITokenClient> providers, ILogger logger)
-                : base(providers, Http.Resource.Platform, logger, oi, uc) {
+                : base(providers, IIoT.Http.Resource.Platform, logger, oi, uc) {
             }
         }
     }

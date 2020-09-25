@@ -28,25 +28,26 @@ namespace Microsoft.Azure.IIoT.Platform.Discovery.Services {
             var found = new List<DiscoveryEventModel>();
             var fix = new Fixture();
 
+            var hub = fix.Create<string>();
             var gateway = fix.Create<string>();
             var Gateway = (new GatewayModel {
                 Id = gateway
             }.ToGatewayRegistration().ToDeviceTwin(),
                     new DeviceModel { Id = gateway });
             var module = fix.Create<string>();
-            var discoverer = DiscovererModelEx.CreateDiscovererId(gateway, module);
+            var discoverer = HubResource.Format(hub, gateway, module);
             var Discoverer = (new DiscovererModel {
                 Id = discoverer
             }.ToDiscovererRegistration().ToDeviceTwin(_serializer),
                     new DeviceModel { Id = gateway, ModuleId = module });
             module = fix.Create<string>();
-            var supervisor = SupervisorModelEx.CreateSupervisorId(gateway, module);
+            var supervisor = HubResource.Format(hub, gateway, module);
             var Supervisor = (new SupervisorModel {
                 Id = supervisor
             }.ToSupervisorRegistration().ToDeviceTwin(_serializer),
                     new DeviceModel { Id = gateway, ModuleId = module });
             module = fix.Create<string>();
-            var publisher = PublisherModelEx.CreatePublisherId(gateway, module);
+            var publisher = HubResource.Format(hub, gateway, module);
             var Publisher = (new PublisherModel {
                 Id = publisher
             }.ToPublisherRegistration().ToDeviceTwin(_serializer),
@@ -82,7 +83,7 @@ namespace Microsoft.Azure.IIoT.Platform.Discovery.Services {
         [Fact]
         public void ProcessDiscoveryWithAlreadyExistingApplications() {
             CreateFixtures(out var site, out var discoverer, out var supervisor,
-                out var publisher, out var gateway, out var existing,
+                out var publisher, out var hub, out var gateway,  out var existing,
                 out var found, out var registry);
 
             using (var mock = AutoMock.GetLoose(builder => {
@@ -110,7 +111,7 @@ namespace Microsoft.Azure.IIoT.Platform.Discovery.Services {
         [Fact]
         public void ProcessDiscoveryWithNoExistingApplications() {
             CreateFixtures(out var site, out var discoverer, out var supervisor,
-                out var publisher, out var gateway, out var created,
+                out var publisher, out var hub, out var gateway,  out var created,
                 out var found, out var registry, 0);
 
             using (var mock = Setup(registry, out var service)) {
@@ -126,7 +127,7 @@ namespace Microsoft.Azure.IIoT.Platform.Discovery.Services {
         [Fact]
         public void ProcessDiscoveryWithOneExistingApplication() {
             CreateFixtures(out var site, out var discoverer, out var supervisor,
-                out var publisher, out var gateway, out var created,
+                out var publisher, out var hub, out var gateway,  out var created,
                 out var found, out var registry, 1);
 
             using (var mock = Setup(registry, out var service)) {
@@ -142,11 +143,11 @@ namespace Microsoft.Azure.IIoT.Platform.Discovery.Services {
         [Fact]
         public void ProcessDiscoveryWithDifferentDiscoverersSameSiteApplications() {
             var fix = new Fixture();
-            var discoverer2 = DiscovererModelEx.CreateDiscovererId(fix.Create<string>(), fix.Create<string>());
+            var discoverer2 = HubResource.Format(fix.Create<string>(), fix.Create<string>(), fix.Create<string>());
 
             // Readjust existing to be reported from different Discoverer...
             CreateFixtures(out var site, out var discoverer, out var supervisor,
-                out var publisher, out var gateway, out var existing,
+                out var publisher, out var hub, out var gateway,  out var existing,
                 out var found, out var registry, -1, x => {
                     x.Application.DiscovererId = discoverer2;
                     x.Endpoints.ForEach(e => e.DiscovererId = discoverer2);
@@ -168,11 +169,11 @@ namespace Microsoft.Azure.IIoT.Platform.Discovery.Services {
         [Fact]
         public void ProcessOneDiscoveryWithDifferentDiscoverersFromExisting() {
             var fix = new Fixture();
-            var discoverer2 = DiscovererModelEx.CreateDiscovererId(fix.Create<string>(), fix.Create<string>());
+            var discoverer2 = HubResource.Format(fix.Create<string>(), fix.Create<string>(), fix.Create<string>());
 
             // Readjust existing to be reported from different Discoverer...
             CreateFixtures(out var site, out var discoverer, out var supervisor,
-                out var publisher, out var gateway, out var existing,
+                out var publisher, out var hub, out var gateway,  out var existing,
                 out var found, out var registry, -1, x => {
                     x.Application.DiscovererId = discoverer2;
                     x.Endpoints.ForEach(e => e.DiscovererId = discoverer2);
@@ -196,11 +197,11 @@ namespace Microsoft.Azure.IIoT.Platform.Discovery.Services {
         [Fact]
         public void ProcessDiscoveryWithDifferentDiscoverersFromExistingWhenExistingDisabled() {
             var fix = new Fixture();
-            var discoverer2 = DiscovererModelEx.CreateDiscovererId(fix.Create<string>(), fix.Create<string>());
+            var discoverer2 = HubResource.Format(fix.Create<string>(), fix.Create<string>(), fix.Create<string>());
 
             // Readjust existing to be reported from different Discoverer...
             CreateFixtures(out var site, out var discoverer, out var supervisor,
-                out var publisher, out var gateway, out var existing,
+                out var publisher, out var hub, out var gateway,  out var existing,
                 out var found, out var registry, -1, x => {
                     x.Application.DiscovererId = discoverer2;
                     x.Endpoints.ForEach(e => e.DiscovererId = discoverer2);
@@ -228,11 +229,11 @@ namespace Microsoft.Azure.IIoT.Platform.Discovery.Services {
         [Fact]
         public void ProcessOneDiscoveryWithDifferentDiscoverersFromExistingWhenExistingDisabled() {
             var fix = new Fixture();
-            var discoverer2 = DiscovererModelEx.CreateDiscovererId(fix.Create<string>(), fix.Create<string>());
+            var discoverer2 = HubResource.Format(fix.Create<string>(), fix.Create<string>(), fix.Create<string>());
 
             // Readjust existing to be reported from different Discoverer...
             CreateFixtures(out var site, out var discoverer, out var supervisor,
-                out var publisher, out var gateway, out var existing,
+                out var publisher, out var hub, out var gateway,  out var existing,
                 out var found, out var registry, -1, x => {
                     x.Application.DiscovererId = discoverer2;
                     x.Endpoints.ForEach(e => e.DiscovererId = discoverer2);
@@ -262,11 +263,11 @@ namespace Microsoft.Azure.IIoT.Platform.Discovery.Services {
         [Fact]
         public void ProcessDiscoveryWithNoResultsWithDifferentDiscoverersFromExisting() {
             var fix = new Fixture();
-            var discoverer2 = DiscovererModelEx.CreateDiscovererId(fix.Create<string>(), fix.Create<string>());
+            var discoverer2 = HubResource.Format(fix.Create<string>(), fix.Create<string>(), fix.Create<string>());
 
             // Readjust existing to be reported from different Discoverer...
             CreateFixtures(out var site, out var discoverer, out var supervisor,
-                out var publisher, out var gateway, out var existing,
+                out var publisher, out var hub, out var gateway,  out var existing,
                 out var found, out var registry, -1, x => {
                     x.Application.DiscovererId = discoverer2;
                     x.Endpoints.ForEach(e => e.DiscovererId = discoverer2);
@@ -291,7 +292,7 @@ namespace Microsoft.Azure.IIoT.Platform.Discovery.Services {
         [Fact]
         public void ProcessDiscoveryWithNoResultsAndExisting() {
             CreateFixtures(out var site, out var discoverer, out var supervisor,
-                out var publisher, out var gateway, out var existing,
+                out var publisher, out var hub, out var gateway,  out var existing,
                 out var found, out var registry);
 
             // Found nothing
@@ -315,7 +316,7 @@ namespace Microsoft.Azure.IIoT.Platform.Discovery.Services {
         [Fact]
         public void ProcessDiscoveryWithOneEndpointResultsAndExisting() {
             CreateFixtures(out var site, out var discoverer, out var supervisor,
-                out var publisher, out var gateway, out var existing,
+                out var publisher, out var hub, out var gateway,  out var existing,
                 out var found, out var registry);
 
             // Found single endpoints
@@ -405,7 +406,7 @@ namespace Microsoft.Azure.IIoT.Platform.Discovery.Services {
         /// <param name="fixup"></param>
         /// <param name="disable"></param>
         private void CreateFixtures(out string site, out string discoverer,
-            out string supervisor, out string publisher, out string gateway,
+            out string supervisor, out string publisher, out string hub, out string gateway,
             out List<ApplicationRegistrationModel> existing, out List<DiscoveryEventModel> found,
             out IoTHubServices registry, int countDevices = -1,
             Func<ApplicationRegistrationModel, ApplicationRegistrationModel> fixup = null,
@@ -419,6 +420,7 @@ namespace Microsoft.Azure.IIoT.Platform.Discovery.Services {
             fix.Behaviors.Add(new OmitOnRecursionBehavior());
             var sitex = site = fix.Create<string>();
 
+            hub = fix.Create<string>();
             gateway = fix.Create<string>();
             var Gateway = (new GatewayModel {
                 SiteId = site,
@@ -426,19 +428,19 @@ namespace Microsoft.Azure.IIoT.Platform.Discovery.Services {
             }.ToGatewayRegistration().ToDeviceTwin(),
                     new DeviceModel { Id = gateway });
             var module = fix.Create<string>();
-            var discovererx = discoverer = DiscovererModelEx.CreateDiscovererId(gateway, module);
+            var discovererx = discoverer = HubResource.Format(hub, gateway, module);
             var Discoverer = (new DiscovererModel {
                 Id = discovererx
             }.ToDiscovererRegistration().ToDeviceTwin(_serializer),
                     new DeviceModel { Id = gateway, ModuleId = module });
             module = fix.Create<string>();
-            var supervisorx = supervisor = SupervisorModelEx.CreateSupervisorId(gateway, module);
+            var supervisorx = supervisor = HubResource.Format(hub, gateway, module);
             var Supervisor = (new SupervisorModel {
                 Id = supervisorx
             }.ToSupervisorRegistration().ToDeviceTwin(_serializer),
                     new DeviceModel { Id = gateway, ModuleId = module });
             module = fix.Create<string>();
-            var publisherx = publisher = PublisherModelEx.CreatePublisherId(gateway, module);
+            var publisherx = publisher = HubResource.Format(hub, gateway, module);
             var Publisher = (new PublisherModel {
                 Id = publisherx
             }.ToPublisherRegistration().ToDeviceTwin(_serializer),

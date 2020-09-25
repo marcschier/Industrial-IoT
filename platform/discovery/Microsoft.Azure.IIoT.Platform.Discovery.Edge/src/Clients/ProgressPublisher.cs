@@ -5,7 +5,7 @@
 
 namespace Microsoft.Azure.IIoT.Platform.Discovery.Edge.Services {
     using Microsoft.Azure.IIoT.Platform.Registry.Models;
-    using Microsoft.Azure.IIoT.Hosting;
+    using Microsoft.Azure.IIoT.Hub;
     using Microsoft.Azure.IIoT.Tasks;
     using Microsoft.Azure.IIoT.Utils;
     using Microsoft.Azure.IIoT.Serializers;
@@ -41,8 +41,7 @@ namespace Microsoft.Azure.IIoT.Platform.Discovery.Edge.Services {
         /// </summary>
         /// <param name="progress"></param>
         protected override void Send(DiscoveryProgressModel progress) {
-            progress.DiscovererId = DiscovererModelEx.CreateDiscovererId(_identity.DeviceId,
-                _identity.ModuleId);
+            progress.DiscovererId = _identity.AsResource();
             base.Send(progress);
             _processor.TrySchedule(() => SendAsync(progress));
         }
@@ -55,7 +54,7 @@ namespace Microsoft.Azure.IIoT.Platform.Discovery.Edge.Services {
         private Task SendAsync(DiscoveryProgressModel progress) {
             return Try.Async(() => _events.SendEventAsync(null, // TODO: Target
                 _serializer.SerializeToBytes(progress).ToArray(), ContentMimeType.Json,
-                MessageSchemaTypes.DiscoveryMessage, "utf-8"));
+                Registry.Models.MessageSchemaTypes.DiscoveryMessage, "utf-8"));
         }
 
         private readonly IJsonSerializer _serializer;

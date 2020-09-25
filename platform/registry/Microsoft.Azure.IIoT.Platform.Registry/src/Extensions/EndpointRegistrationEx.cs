@@ -379,7 +379,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
             if (siteOrGatewayId == null) {
                 var id = registration?.DiscovererId ?? registration?.SupervisorId;
                 if (id != null) {
-                    siteOrGatewayId = DiscovererModelEx.ParseDeviceId(id, out _);
+                    siteOrGatewayId = HubResource.Parse(id, out _, out _);
                 }
             }
             return siteOrGatewayId;

@@ -34,6 +34,16 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Module.Tests {
     public class PublisherModuleFixture : IInjector, ITwinModuleConfig, IDisposable {
 
         /// <summary>
+        /// Hub
+        /// </summary>
+        public string Hub { get; }
+
+        /// <summary>
+        /// Gateway
+        /// </summary>
+        public string Gateway { get; }
+
+        /// <summary>
         /// Device id
         /// </summary>
         public string DeviceId { get; }
@@ -148,10 +158,10 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Module.Tests {
         /// </summary>
         /// <param name="test"></param>
         /// <returns></returns>
-        public async Task RunTestAsync(Func<string, string, IContainer, Task> test) {
+        public async Task RunTestAsync(Func<string, string, string, IContainer, Task> test) {
             AssertRunning();
             try {
-                await test(DeviceId, ModuleId, HubContainer);
+                await test(Hub, DeviceId, ModuleId, HubContainer);
             }
             finally {
                 _module.Exit(1);
@@ -183,7 +193,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Module.Tests {
         }
 
         /// <inheritdoc/>
-        public class TestModuleConfig : IIoTEdgeConfig {
+        public class TestModuleConfig : IIoTEdgeClientConfig {
 
             /// <inheritdoc/>
             public TestModuleConfig(DeviceModel device) {
@@ -198,6 +208,9 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Module.Tests {
 
             /// <inheritdoc/>
             public bool BypassCertVerification => true;
+
+            /// <inheritdoc/>
+            public string Product => "Test";
 
             /// <inheritdoc/>
             public TransportOption Transport => TransportOption.Any;

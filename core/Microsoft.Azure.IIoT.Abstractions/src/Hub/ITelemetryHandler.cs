@@ -22,14 +22,13 @@ namespace Microsoft.Azure.IIoT.Hub {
         /// <summary>
         /// Handle event
         /// </summary>
-        /// <param name="deviceId"></param>
-        /// <param name="moduleId"></param>
+        /// <param name="source"></param>
         /// <param name="payload"></param>
         /// <param name="properties"></param>
         /// <param name="checkpoint"></param>
         /// <returns></returns>
-        Task HandleAsync(string deviceId, string moduleId,
-            byte[] payload, IDictionary<string, string> properties,
+        Task HandleAsync(string source, byte[] payload,
+            IDictionary<string, string> properties,
             Func<Task> checkpoint);
 
         /// <summary>

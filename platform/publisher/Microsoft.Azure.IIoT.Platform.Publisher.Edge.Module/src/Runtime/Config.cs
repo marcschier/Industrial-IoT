@@ -17,7 +17,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Module.Runtime {
     /// <summary>
     /// Wraps a configuration root
     /// </summary>
-    public class Config : ConfigBase, IIoTEdgeConfig, IClientServicesConfig,
+    public class Config : ConfigBase, IIoTEdgeClientConfig, IClientServicesConfig,
         IDiagnosticsConfig, IMetricServerConfig {
 
         /// <inheritdoc/>
@@ -26,6 +26,8 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Module.Runtime {
         public bool BypassCertVerification => _ie.BypassCertVerification;
         /// <inheritdoc/>
         public TransportOption Transport => _ie.Transport;
+        /// <inheritdoc/>
+        public string Product => "OpcPublisher";
 
         /// <inheritdoc/>
         public string ApplicationName => _opc.ApplicationName;

@@ -71,7 +71,7 @@ namespace Microsoft.Azure.IIoT.AspNetCore.Authentication.Clients {
             /// <inheritdoc/>
             public HybridTokenSource(PassThroughBearerToken pt, ClientCredentialClient cc,
                 AppAuthenticationClient aa, IEnumerable<ITokenClient> providers, ILogger logger)
-                    : base(providers, Http.Resource.Platform, logger, pt, cc, aa) {
+                    : base(providers, IIoT.Http.Resource.Platform, logger, pt, cc, aa) {
             }
         }
     }

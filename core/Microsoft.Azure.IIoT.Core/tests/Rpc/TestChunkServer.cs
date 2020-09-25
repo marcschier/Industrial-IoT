@@ -16,7 +16,7 @@ namespace Microsoft.Azure.IIoT.Rpc {
     public class TestChunkServer : IJsonMethodClient, IMethodHandler {
 
         public TestChunkServer(IJsonSerializer serializer,
-            int size, Func<string, byte[], string, byte[]> handler) {
+            int size, Func<string, string, byte[], string, byte[]> handler) {
             MaxMethodPayloadCharacterCount = size;
             _handler = handler;
             _serializer = serializer;
@@ -29,21 +29,21 @@ namespace Microsoft.Azure.IIoT.Rpc {
 
         public int MaxMethodPayloadCharacterCount { get; }
 
-        public async Task<string> CallMethodAsync(string deviceId,
-            string moduleId, string method, string json, TimeSpan? timeout,
-            CancellationToken ct) {
+        public async Task<string> CallMethodAsync(string target, string method,
+            string json, TimeSpan? timeout, CancellationToken ct) {
             var payload = Encoding.UTF8.GetBytes(json);
-            var processed = await _server.InvokeAsync(payload,
+            var processed = await _server.InvokeAsync(target, payload,
                 ContentMimeType.Json, this);
             return Encoding.UTF8.GetString(processed);
         }
 
-        public Task<byte[]> InvokeAsync(string method, byte[] payload, string contentType) {
-            return Task.FromResult(_handler.Invoke(method, payload, contentType));
+        public Task<byte[]> InvokeAsync(string target,
+            string method, byte[] payload, string contentType) {
+            return Task.FromResult(_handler.Invoke(target, method, payload, contentType));
         }
 
-        private readonly ChunkMethodServer _server;
+        private readonly IMethodInvoker _server;
         private readonly IJsonSerializer _serializer;
-        private readonly Func<string, byte[], string, byte[]> _handler;
+        private readonly Func<string, string, byte[], string, byte[]> _handler;
     }
 }

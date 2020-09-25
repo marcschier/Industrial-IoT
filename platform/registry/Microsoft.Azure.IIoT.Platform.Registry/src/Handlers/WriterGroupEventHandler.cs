@@ -39,7 +39,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Handlers {
         }
 
         /// <inheritdoc/>
-        public async Task HandleAsync(string deviceId, string moduleId, byte[] payload,
+        public async Task HandleAsync(string source, byte[] payload,
             IDictionary<string, string> properties, Func<Task> checkpoint) {
             WriterGroupStateEventModel change;
             try {

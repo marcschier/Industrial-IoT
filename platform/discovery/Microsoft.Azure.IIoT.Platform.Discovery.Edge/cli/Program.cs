@@ -12,7 +12,7 @@ namespace Microsoft.Azure.IIoT.Platform.Discovery.Edge.Cli {
     using Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Runtime;
     using Microsoft.Azure.IIoT.Diagnostics;
     using Microsoft.Azure.IIoT.Messaging;
-    using Microsoft.Azure.IIoT.Hosting;
+    using Microsoft.Azure.IIoT.Hub;
     using Microsoft.Azure.IIoT.Rpc;
     using Microsoft.Azure.IIoT.Net;
     using Microsoft.Azure.IIoT.Net.Models;
@@ -227,7 +227,10 @@ Operations (Mutually exclusive):
         private class ConsoleEmitter : ISettingsReporter, IEventClient, IIdentity {
 
             /// <inheritdoc/>
-            public string Gateway => Utils.GetHostName();
+            public string Gateway { get; } = Utils.GetHostName();
+
+            /// <inheritdoc/>
+            public string Hub => Gateway;
 
             /// <inheritdoc/>
             public string DeviceId => Gateway;

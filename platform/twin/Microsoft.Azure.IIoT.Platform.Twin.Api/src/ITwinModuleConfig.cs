@@ -4,20 +4,11 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Platform.Twin.Api {
+    using Microsoft.Azure.IIoT.Hub;
 
     /// <summary>
     /// Configuration for client
     /// </summary>
-    public interface ITwinModuleConfig {
-
-        /// <summary>
-        /// Edge device id
-        /// </summary>
-        string DeviceId { get; }
-
-        /// <summary>
-        /// Module id
-        /// </summary>
-        string ModuleId { get; }
+    public interface ITwinModuleConfig : IIdentity {
     }
 }

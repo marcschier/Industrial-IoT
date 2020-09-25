@@ -7,7 +7,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Service {
     using Microsoft.Azure.IIoT.Platform.Twin;
     using Microsoft.Azure.IIoT.Platform.Twin.Models;
     using Microsoft.Azure.IIoT.Platform.Core.Models;
-    using Microsoft.Azure.IIoT.Hosting;
+    using Microsoft.Azure.IIoT.Hub;
     using Microsoft.Azure.IIoT.Serializers;
     using Opc.Ua;
     using System;
@@ -28,6 +28,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Service {
         public string Gateway => Utils.GetHostName();
         public string DeviceId => Gateway;
         public string ModuleId => "TestModule";
+        public string Hub => "TestHub";
     }
 
     /// <summary>

@@ -9,7 +9,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Engine {
     using Microsoft.Azure.IIoT.Platform.Publisher.Models;
     using Microsoft.Azure.IIoT.Agent.Framework;
     using Microsoft.Azure.IIoT.Agent.Framework.Models;
-    using Microsoft.Azure.IIoT.Hosting;
+    using Microsoft.Azure.IIoT.Hub;
     using Serilog;
     using System;
     using System.Collections.Generic;
@@ -23,6 +23,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Engine {
     /// Job orchestrator the represents the legacy publishednodes.json with legacy command line arguments as job.
     /// </summary>
     public class LegacyJobOrchestrator : IJobOrchestrator {
+
         /// <summary>
         /// Creates a new class of the LegacyJobOrchestrator.
         /// </summary>

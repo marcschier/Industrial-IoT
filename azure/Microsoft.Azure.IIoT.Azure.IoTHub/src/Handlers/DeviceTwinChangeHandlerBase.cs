@@ -36,9 +36,8 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub.Handlers {
         }
 
         /// <inheritdoc/>
-        public async Task HandleAsync(string deviceId, string moduleId,
-            byte[] payload, IDictionary<string, string> properties,
-            Func<Task> checkpoint) {
+        public async Task HandleAsync(string source, byte[] payload,
+            IDictionary<string, string> properties, Func<Task> checkpoint) {
 
             if (_handlers.Count == 0) {
                 return;
@@ -47,6 +46,9 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub.Handlers {
                 !properties.TryGetValue("operationTimestamp", out var ts)) {
                 return;
             }
+
+            var deviceId = HubResource.Parse(source, out var hub, out var moduleId);
+
             DateTime.TryParse(ts, out var timestamp);
             if (timestamp + TimeSpan.FromSeconds(10) < DateTime.UtcNow) {
                 // Drop twin events that are too far in our past.

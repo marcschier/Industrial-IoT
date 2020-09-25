@@ -6,6 +6,7 @@
 namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
     using Microsoft.Azure.IIoT.Platform.Core.Models;
     using Microsoft.Azure.IIoT.Utils;
+    using Microsoft.Azure.IIoT.Hub;
     using Microsoft.Azure.IIoT.Hub.Models;
     using Microsoft.Azure.IIoT.Serializers;
     using System;
@@ -585,7 +586,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
             if (siteOrGatewayId == null) {
                 var id = registration?.DiscovererId;
                 if (id != null) {
-                    siteOrGatewayId = DiscovererModelEx.ParseDeviceId(id, out _);
+                    siteOrGatewayId = HubResource.Parse(id, out _, out _);
                 }
             }
             return siteOrGatewayId;

@@ -672,10 +672,10 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
             var site = endpoint.SiteId;
             if (string.IsNullOrEmpty(site)) {
                 // Use discovery id gateway part if no site found
-                site = DiscovererModelEx.ParseDeviceId(endpoint.DiscovererId, out _);
+                site = HubResource.Parse(endpoint.DiscovererId, out _, out _);
                 if (string.IsNullOrEmpty(site)) {
                     // Try supervisor id gateway part
-                    site = DiscovererModelEx.ParseDeviceId(endpoint.SupervisorId, out _);
+                    site = HubResource.Parse(endpoint.SupervisorId, out _, out _);
                 }
             }
 
@@ -829,7 +829,8 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
             var results = items.Distinct().ToList();
             foreach (var supervisor in results) {
                 try {
-                    var deviceId = SupervisorModelEx.ParseDeviceId(supervisor, out var moduleId);
+                    var deviceId = HubResource.Parse(supervisor, out var hub,
+                        out var moduleId);
                     // Remove from supervisor - this disconnects the device
                     await _iothub.UpdatePropertyAsync(deviceId, moduleId, twinId, null, ct);
                     _logger.Information("Twin {twinId} deactivated on {supervisorId}.",
@@ -863,7 +864,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
             if (string.IsNullOrEmpty(secret)) {
                 throw new ArgumentNullException(nameof(secret));
             }
-            var deviceId = SupervisorModelEx.ParseDeviceId(supervisorId, out var moduleId);
+            var deviceId = HubResource.Parse(supervisorId, out var hub, out var moduleId);
             // Update supervisor to start supervising this endpoint
             await _iothub.UpdatePropertyAsync(deviceId, moduleId, twinId, secret, ct);
             _logger.Information("Twin {twinId} activated on {supervisorId}.",

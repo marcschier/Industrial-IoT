@@ -8,6 +8,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
     using System.Collections.Generic;
     using System.Linq;
     using System;
+    using Microsoft.Azure.IIoT.Hub;
 
     /// <summary>
     /// Service model extensions for discovery service
@@ -37,7 +38,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
             }
             var siteOrGatewayId = model.SiteId;
             if (siteOrGatewayId == null && model.DiscovererId != null) {
-                siteOrGatewayId = DiscovererModelEx.ParseDeviceId(model.DiscovererId, out _);
+                siteOrGatewayId = HubResource.Parse(model.DiscovererId, out _, out _);
             }
             return CreateApplicationId(siteOrGatewayId, model.ApplicationUri,
                 model.ApplicationType);

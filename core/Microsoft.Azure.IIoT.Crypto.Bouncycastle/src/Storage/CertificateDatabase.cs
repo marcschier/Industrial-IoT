@@ -130,7 +130,7 @@ namespace Microsoft.Azure.IIoT.Crypto.Storage {
             if (filter.Subject != null) {
                 var subject = filter.Subject.Name;
                 if (filter.IncludeAltNames) {
-                    query = query.Where(x => x.Subject == subject || 
+                    query = query.Where(x => x.Subject == subject ||
                         (x.SubjectAltNames != null && x.SubjectAltNames.Contains(subject)));
                 }
                 else {

@@ -39,12 +39,10 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api.Clients {
                 throw new ArgumentNullException(nameof(publisherId));
             }
             var sw = Stopwatch.StartNew();
-            var deviceId = PublisherModelEx.ParseDeviceId(publisherId,
-                out var moduleId);
-            var result = await _client.CallMethodAsync(deviceId, moduleId,
+            var result = await _client.CallMethodAsync(publisherId,
                 "GetStatus_V2", null, null, ct);
-            _logger.Debug("Get publisher supervisor {deviceId}/{moduleId} status " +
-                "took {elapsed} ms.", deviceId, moduleId, sw.ElapsedMilliseconds);
+            _logger.Debug("Get publisher supervisor {publisherId} status " +
+                "took {elapsed} ms.", publisherId, sw.ElapsedMilliseconds);
             return _serializer.Deserialize<SupervisorStatusModel>(
                 result);
         }
@@ -56,12 +54,10 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api.Clients {
                 throw new ArgumentNullException(nameof(publisherId));
             }
             var sw = Stopwatch.StartNew();
-            var deviceId = PublisherModelEx.ParseDeviceId(publisherId,
-                out var moduleId);
-            _ = await _client.CallMethodAsync(deviceId, moduleId,
+            _ = await _client.CallMethodAsync(publisherId,
                 "Reset_V2", null, null, ct);
-            _logger.Debug("Reset publisher supervisor {deviceId}/{moduleId} took " +
-                "{elapsed} ms.", deviceId, moduleId, sw.ElapsedMilliseconds);
+            _logger.Debug("Reset publisher supervisor {publisherId} took " +
+                "{elapsed} ms.", publisherId, sw.ElapsedMilliseconds);
         }
 
         private readonly IJsonSerializer _serializer;

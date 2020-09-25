@@ -4,14 +4,19 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Hub.Models {
+    using Microsoft.Azure.IIoT.Serializers;
     using System;
     using System.Collections.Generic;
-    using Microsoft.Azure.IIoT.Serializers;
 
     /// <summary>
     /// Model of device registry / twin document
     /// </summary>
     public class DeviceTwinModel {
+
+        /// <summary>
+        /// Hub
+        /// </summary>
+        public string Hub { get; set; }
 
         /// <summary>
         /// Device id

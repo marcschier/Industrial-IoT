@@ -23,12 +23,20 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub.Mock {
         protected override void Load(ContainerBuilder builder) {
 
             // Module and device client simulation
-            builder.RegisterType<IoTHubClientFactory>()
+            builder.RegisterType<IoTHubClient>()
                 .AsImplementedInterfaces().InstancePerLifetimeScope();
 
-            // Module host
+            builder.RegisterType<IoTEdgeEventClient>()
+                .AsImplementedInterfaces().InstancePerLifetimeScope();
+            builder.RegisterType<IoTEdgeMethodClient>()
+                .AsImplementedInterfaces().InstancePerLifetimeScope();
             builder.RegisterType<IoTEdgeModuleHost>()
                 .AsImplementedInterfaces().InstancePerLifetimeScope();
+            builder.RegisterType<IoTEdgeMethodServer>()
+                .AsImplementedInterfaces().InstancePerLifetimeScope();
+            builder.RegisterType<IoTEdgeHostManager>()
+                .AsImplementedInterfaces().InstancePerLifetimeScope();
+
             // Auto wire property for circular dependency resolution
             builder.RegisterType<MethodRouter>()
                 .AsImplementedInterfaces().InstancePerLifetimeScope()

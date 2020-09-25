@@ -80,16 +80,14 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
         /// <param name="payload"></param>
         /// <param name="ct"></param>
         /// <returns></returns>
-        private async Task CallServiceOnSupervisorAsync(string service, string supervisorId,
-            object payload, CancellationToken ct) {
+        private async Task CallServiceOnSupervisorAsync(string service,
+            string supervisorId, object payload, CancellationToken ct) {
             var sw = Stopwatch.StartNew();
-            var deviceId = SupervisorModelEx.ParseDeviceId(supervisorId,
-                out var moduleId);
-            _ = await _client.CallMethodAsync(deviceId, moduleId, service,
+            _ = await _client.CallMethodAsync(supervisorId, service,
                 _serializer.SerializeToString(payload), null, ct);
             _logger.Debug("Calling supervisor service '{service}' on " +
-                "{deviceId}/{moduleId} took {elapsed} ms.", service, deviceId,
-                moduleId, sw.ElapsedMilliseconds);
+                "{supervisorId} took {elapsed} ms.", service, supervisorId,
+                    sw.ElapsedMilliseconds);
         }
 
         private readonly IJsonSerializer _serializer;

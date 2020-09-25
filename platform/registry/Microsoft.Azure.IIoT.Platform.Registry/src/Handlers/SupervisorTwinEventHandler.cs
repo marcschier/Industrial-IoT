@@ -71,8 +71,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Handlers {
                         break;
                     case DeviceTwinEventType.Delete:
                         await _broker.NotifyAllAsync(l => l.OnSupervisorDeletedAsync(ctx,
-                            SupervisorModelEx.CreateSupervisorId(
-                                ev.Twin.Id, ev.Twin.ModuleId)));
+                            HubResource.Format(ev.Twin.Hub, ev.Twin.Id, ev.Twin.ModuleId)));
                         break;
                 }
                 ev.Handled = true;

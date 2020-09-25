@@ -11,6 +11,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Twin.Endpoint {
     using Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Fixtures;
     using Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests;
     using Microsoft.Azure.IIoT.Platform.Twin;
+    using Microsoft.Azure.IIoT.Hub;
     using Microsoft.Azure.IIoT.Utils;
     using Opc.Ua;
     using System.Linq;
@@ -40,8 +41,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Twin.Endpoint {
                     Certificate = _server.Certificate?.RawData?.ToThumbprint()
                 },
                 Id = "testid",
-                SupervisorId = SupervisorModelEx.CreateSupervisorId(
-                  _module.DeviceId, _module.ModuleId)
+                SupervisorId = _module.AsResource()
             };
             endpoint = _module.RegisterAndActivateTwinId(endpoint);
             return new WriteScalarValueTests<string>(

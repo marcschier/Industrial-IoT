@@ -93,8 +93,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Module {
                         var version = GetType().Assembly.GetReleaseVersion().ToString();
                         logger.Information("Starting module OpcPublisher version {version}.",
                             version);
-                        await module.StartAsync(IdentityType.Publisher,
-                            "OpcPublisher", version, this);
+                        await module.StartAsync(IdentityType.Publisher, version);
                         if (hostScope.TryResolve(out server)) {
                             server.Start();
                         }
@@ -150,7 +149,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Module {
 
             // Register module and publisher framework ...
             builder.RegisterModule<ModuleFramework>();
-            builder.RegisterModule<IoTEdgeHosted>();
+            builder.RegisterModule<IoTEdgeHosting>();
             builder.RegisterModule<LogAnalyticsMetrics>();
             builder.RegisterModule<NewtonSoftJsonModule>();
 
@@ -250,7 +249,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Module {
 
                 // Register module framework
                 builder.RegisterModule<ModuleFramework>();
-                builder.RegisterModule<IoTEdgeHosted>();
+                builder.RegisterModule<IoTEdgeHosting>();
                 builder.RegisterModule<LogAnalyticsMetrics>();
                 builder.RegisterModule<NewtonSoftJsonModule>();
 

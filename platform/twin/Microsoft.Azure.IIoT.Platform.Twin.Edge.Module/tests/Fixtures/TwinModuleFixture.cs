@@ -42,6 +42,11 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Tests {
     public class TwinModuleFixture : IInjector, ITwinModuleConfig, IDisposable {
 
         /// <summary>
+        /// Hub
+        /// </summary>
+        public string Hub { get; }
+
+        /// <summary>
         /// Device id
         /// </summary>
         public string DeviceId { get; }
@@ -50,6 +55,11 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Tests {
         /// Module id
         /// </summary>
         public string ModuleId { get; }
+
+        /// <summary>
+        /// Gateway
+        /// </summary>
+        public string Gateway { get; }
 
         /// <summary>
         /// ServerPkiRootPath
@@ -155,10 +165,10 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Tests {
         /// </summary>
         /// <param name="test"></param>
         /// <returns></returns>
-        public async Task RunTestAsync(Func<string, string, IContainer, Task> test) {
+        public async Task RunTestAsync(Func<string, string, string, IContainer, Task> test) {
             AssertRunning();
             try {
-                await test(DeviceId, ModuleId, HubContainer);
+                await test(Hub, DeviceId, ModuleId, HubContainer);
             }
             finally {
                 _module.Exit(1);
@@ -179,8 +189,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Tests {
             Func<EndpointRegistrationModel, IContainer, Task> test) {
             var endpoint = new EndpointRegistrationModel {
                 Endpoint = ep,
-                SupervisorId = SupervisorModelEx.CreateSupervisorId(
-                    DeviceId, ModuleId)
+                SupervisorId = HubResource.Format(Hub, DeviceId, ModuleId)
             };
             AssertRunning();
             try {
@@ -253,7 +262,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Tests {
         }
 
         /// <inheritdoc/>
-        public class TestModuleConfig : IIoTEdgeConfig {
+        public class TestModuleConfig : IIoTEdgeClientConfig {
 
             /// <inheritdoc/>
             public TestModuleConfig(DeviceModel device) {
@@ -268,6 +277,9 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Tests {
 
             /// <inheritdoc/>
             public bool BypassCertVerification => true;
+
+            /// <inheritdoc/>
+            public string Product => "Test";
 
             /// <inheritdoc/>
             public TransportOption Transport => TransportOption.Any;

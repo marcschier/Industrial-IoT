@@ -1,28 +1,91 @@
-// ------------------------------------------------------------
+﻿// ------------------------------------------------------------
 //  Copyright (c) Microsoft Corporation.  All rights reserved.
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.AspNetCore.Hosting {
+namespace Microsoft.Extensions.DependencyInjection {
+    using Microsoft.Extensions.Configuration;
     using Microsoft.AspNetCore.Builder;
+    using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Hosting.Builder;
     using Microsoft.AspNetCore.Hosting.Server;
     using Microsoft.AspNetCore.Hosting.Server.Features;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Http.Features;
-    using Microsoft.Extensions.Configuration;
-    using Microsoft.Extensions.DependencyInjection;
+    using Microsoft.Azure.IIoT.Hosting;
+    using Microsoft.Azure.IIoT.AspNetCore;
+    using Microsoft.Azure.IIoT.AspNetCore.Hosting;
+    using Autofac.Extensions.DependencyInjection;
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
-    using Autofac.Extensions.DependencyInjection;
-    using System;
 
     /// <summary>
-    /// Application builder extensions
+    /// Configure application builder
     /// </summary>
     public static class ApplicationBuilderEx {
+
+        /// <summary>
+        /// Start application servers
+        /// </summary>
+        /// <param name="app"></param>
+        /// <returns></returns>
+        public static IApplicationBuilder RunAppServers(this IApplicationBuilder app) {
+            var servers = app.ApplicationServices.GetServices<IAppServer>();
+            foreach (var server in servers) {
+                var requestDelegate = app.Build();
+                server.Start(app.ApplicationServices, requestDelegate);
+            }
+            return app;
+        }
+
+        /// <summary>
+        /// Use header forwarding
+        /// </summary>
+        /// <param name="builder"></param>
+        /// <returns></returns>
+        public static IApplicationBuilder UseHeaderForwarding(this IApplicationBuilder builder) {
+            var fhConfig = builder.ApplicationServices.GetService<IHeadersConfig>();
+            if (fhConfig == null || !fhConfig.AspNetCoreForwardedHeadersEnabled) {
+                return builder;
+            }
+            return builder.UseForwardedHeaders();
+        }
+
+        /// <summary>
+        /// Use https redirection
+        /// </summary>
+        /// <param name="app"></param>
+        /// <returns></returns>
+        public static IApplicationBuilder UsePathBase(this IApplicationBuilder app) {
+            var config = app.ApplicationServices.GetService<IWebHostConfig>();
+            if (config == null) {
+                return app;
+            }
+            if (!string.IsNullOrEmpty(config.ServicePathBase)) {
+                app.UsePathBase(config.ServicePathBase);
+            }
+            return app;
+        }
+
+        /// <summary>
+        /// Use https redirection
+        /// </summary>
+        /// <param name="app"></param>
+        /// <returns></returns>
+        public static IApplicationBuilder UseHttpsRedirect(this IApplicationBuilder app) {
+            var config = app.ApplicationServices.GetService<IWebHostConfig>();
+            if (config == null) {
+                return app;
+            }
+            if (config.HttpsRedirectPort > 0) {
+                app.UseHsts();
+                app.UseHttpsRedirection();
+            }
+            return app;
+        }
 
         /// <summary>
         /// Sets up an application branch with a startup.

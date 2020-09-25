@@ -38,12 +38,12 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Hosting {
         }
 
         /// <summary>
-        /// Create supervisor
+        /// Create manager
         /// </summary>
         /// <param name="factory"></param>
         /// <param name="config"></param>
         /// <param name="logger"></param>
-        public IoTEdgeHostManager(IContainerFactory factory, IIoTEdgeConfig config,
+        public IoTEdgeHostManager(IContainerFactory factory, IIoTEdgeClientConfig config,
             ILogger logger) {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _config = config ?? throw new ArgumentNullException(nameof(config));
@@ -51,7 +51,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Hosting {
         }
 
         /// <inheritdoc/>
-        public async Task StartAsync(string id, string secret, CancellationToken ct) {
+        public async Task StartAsync(string id, string type, string secret, CancellationToken ct) {
             await _lock.WaitAsync();
             try {
                 if (_hosts.TryGetValue(id, out var host) && host.Running) {
@@ -60,7 +60,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Hosting {
                 }
                 _logger.Debug("{id} host starting...", id);
                 _hosts.Remove(id);
-                host = new IdentityHostProcess(this, _config, id, secret, _logger);
+                host = new IdentityHostProcess(this, _config, type, id, secret, _logger);
                 _hosts.Add(id, host);
 
                 var hosts = _hosts.Count;
@@ -107,7 +107,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Hosting {
         }
 
         /// <inheritdoc/>
-        public async Task QueueStartAsync(string id, string secret) {
+        public async Task QueueStartAsync(string id, string type, string secret) {
             await _lock.WaitAsync();
             try {
                 if (_hosts.TryGetValue(id, out var host)) {
@@ -115,7 +115,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Hosting {
                     return;
                 }
                 _logger.Debug("Attaching entity {id} host...", id);
-                host = new IdentityHostProcess(this, _config, id, secret, _logger);
+                host = new IdentityHostProcess(this, _config, type, id, secret, _logger);
                 _hosts.Add(id, host);
 
                 _logger.Information("{id} host attached to module.", id);
@@ -206,7 +206,8 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Hosting {
         /// <summary>
         /// Runs a device client connected to transparent gateway
         /// </summary>
-        private class IdentityHostProcess : IDisposable, IProcessControl, IIoTEdgeConfig {
+        private class IdentityHostProcess : IDisposable, IProcessControl,
+            IIoTEdgeClientConfig {
 
             /// <summary>
             /// Whether the host is running
@@ -229,6 +230,9 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Hosting {
             public bool BypassCertVerification { get; }
             /// <inheritdoc/>
             public TransportOption Transport { get; }
+            /// <inheritdoc/>
+            public string Product { get; }
+
 
             /// <summary>
             /// Create runner
@@ -236,16 +240,20 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Hosting {
             /// <param name="outer"></param>
             /// <param name="config"></param>
             /// <param name="deviceId"></param>
+            /// <param name="type"></param>
             /// <param name="secret"></param>
             /// <param name="logger"></param>
-            public IdentityHostProcess(IoTEdgeHostManager outer, IIoTEdgeConfig config,
+            public IdentityHostProcess(IoTEdgeHostManager outer,
+                IIoTEdgeClientConfig config, string type,
                 string deviceId, string secret, ILogger logger) {
-                _outer = outer;
                 _logger = (logger ?? Log.Logger)
                      .ForContext("SourceContext", deviceId, true);
 
                 BypassCertVerification = config.BypassCertVerification;
                 Transport = config.Transport;
+                Product = config.Product;
+                _type = type ?? "host";
+
                 EdgeHubConnectionString = GetEdgeHubConnectionString(config,
                     deviceId, secret);
 
@@ -313,10 +321,10 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Hosting {
                     // Wait until the module unloads or is cancelled
                     try {
                         var version = GetType().Assembly.GetReleaseVersion().ToString();
-                        await host.StartAsync("host", "OpcTwin", version, this);
+                        await host.StartAsync(_type, version);
                         Connected = true;
                         _started.TrySetResult(true);
-                        _logger.Debug("Twin host (re-)started.");
+                        _logger.Debug("Identity host (re-)started.");
                         // Reset retry counter on success
                         retryCount = 0;
                         await Task.WhenAny(cancel.Task, _reset.Task);
@@ -377,7 +385,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Hosting {
             /// <param name="deviceId"></param>
             /// <param name="secret"></param>
             /// <returns></returns>
-            private static string GetEdgeHubConnectionString(IIoTEdgeConfig config,
+            private static string GetEdgeHubConnectionString(IIoTEdgeClientConfig config,
                 string deviceId, string secret) {
 
                 var cs = config.EdgeHubConnectionString;
@@ -421,14 +429,14 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Hosting {
             private ILifetimeScope _container;
             private TaskCompletionSource<bool> _reset;
             private readonly TaskCompletionSource<bool> _started;
-            private readonly IoTEdgeHostManager _outer;
             private readonly ILogger _logger;
             private readonly CancellationTokenSource _cts;
             private readonly Task _runner;
+            private readonly string _type;
         }
 
         private readonly ILogger _logger;
-        private readonly IIoTEdgeConfig _config;
+        private readonly IIoTEdgeClientConfig _config;
         private readonly IContainerFactory _factory;
 
         private readonly SemaphoreSlim _lock = new SemaphoreSlim(1, 1);

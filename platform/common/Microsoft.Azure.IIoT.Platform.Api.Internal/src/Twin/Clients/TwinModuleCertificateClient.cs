@@ -45,15 +45,12 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
                 throw new ArgumentNullException(nameof(registration.SupervisorId));
             }
 
-            var deviceId = SupervisorModelEx.ParseDeviceId(registration.SupervisorId,
-                out var moduleId);
-
             var sw = Stopwatch.StartNew();
-            var result = await _client.CallMethodAsync(deviceId, moduleId,
+            var result = await _client.CallMethodAsync(registration.SupervisorId,
                  "GetEndpointCertificate_V2",
                 _serializer.SerializeToString(registration.Endpoint), null, ct);
-            _logger.Debug("Calling supervisor {deviceId}/{moduleId} to get certificate." +
-                "Took {elapsed} ms and returned {result}!", deviceId, moduleId,
+            _logger.Debug("Calling supervisor {supervisorId} to get certificate." +
+                "Took {elapsed} ms and returned {result}!", registration.SupervisorId,
                 sw.ElapsedMilliseconds, result);
             return _serializer.Deserialize<byte[]>(result);
         }

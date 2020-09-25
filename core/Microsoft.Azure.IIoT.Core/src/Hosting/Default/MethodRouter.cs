@@ -60,13 +60,13 @@ namespace Microsoft.Azure.IIoT.Hosting.Services {
         }
 
         /// <inheritdoc/>
-        public async Task<byte[]> InvokeAsync(string method, byte[] payload,
+        public async Task<byte[]> InvokeAsync(string target, string method, byte[] payload,
             string contentType) {
             if (!_calltable.TryGetValue(method.ToLowerInvariant(), out var invoker)) {
                 throw new NotSupportedException(
                     $"Unknown controller method {method} called.");
             }
-            return await invoker.InvokeAsync(payload, contentType, this);
+            return await invoker.InvokeAsync(target, payload, contentType, this);
         }
 
         /// <summary>
@@ -143,7 +143,8 @@ namespace Microsoft.Azure.IIoT.Hosting.Services {
             /// <param name="controller"></param>
             /// <param name="controllerMethod"></param>
             /// <param name="serializer"></param>
-            public void Add(object controller, MethodInfo controllerMethod, IJsonSerializer serializer) {
+            public void Add(object controller, MethodInfo controllerMethod,
+                IJsonSerializer serializer) {
                 _logger.Verbose("Adding {controller}.{method} method to invoker...",
                     controller.GetType().Name, controllerMethod.Name);
                 _invokers.Add(new JsonMethodInvoker(controller, controllerMethod, serializer, _logger));
@@ -151,12 +152,13 @@ namespace Microsoft.Azure.IIoT.Hosting.Services {
             }
 
             /// <inheritdoc/>
-            public async Task<byte[]> InvokeAsync(byte[] payload, string contentType,
-                IMethodHandler handler) {
+            public async Task<byte[]> InvokeAsync(string target, byte[] payload,
+                string contentType, IMethodHandler handler) {
                 Exception e = null;
                 foreach (var invoker in _invokers) {
                     try {
-                        return await invoker.InvokeAsync(payload, contentType, handler);
+                        return await invoker.InvokeAsync(target, payload, contentType,
+                            handler);
                     }
                     catch (Exception ex) {
                         // Save last, and continue
@@ -215,14 +217,14 @@ namespace Microsoft.Azure.IIoT.Hosting.Services {
                     new DefaultFilter();
                 var returnArgs = _controllerMethod.ReturnParameter.ParameterType.GetGenericArguments();
                 if (returnArgs.Length > 0) {
-                    _methodTaskContinuation = _methodResponseAsContinuation.MakeGenericMethod(
+                    _methodTaskContinuation = kMethodResponseAsContinuation.MakeGenericMethod(
                         returnArgs[0]);
                 }
             }
 
             /// <inheritdoc/>
-            public Task<byte[]> InvokeAsync(byte[] payload, string contentType,
-                IMethodHandler handler) {
+            public Task<byte[]> InvokeAsync(string target, byte[] payload,
+                string contentType, IMethodHandler handler) {
                 object task;
                 try {
                     object[] inputs;
@@ -305,7 +307,7 @@ namespace Microsoft.Azure.IIoT.Hosting.Services {
                 });
             }
 
-            private static readonly MethodInfo _methodResponseAsContinuation =
+            private static readonly MethodInfo kMethodResponseAsContinuation =
                 typeof(JsonMethodInvoker).GetMethod(nameof(MethodResultConverterContinuation),
                     BindingFlags.Public | BindingFlags.Instance);
             private readonly IJsonSerializer _serializer;
