@@ -25,7 +25,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.History.Endpoint {
         }
 
         private HistoryReadValuesTests<string> GetTests() {
-            var endpoint = new EndpointRegistrationModel {
+            var endpoint = new EndpointInfoModel {
                 Endpoint = new EndpointModel {
                     Url = $"opc.tcp://{Dns.GetHostName()}:{_server.Port}/UA/SampleServer",
                     Certificate = _server.Certificate?.RawData?.ToThumbprint()

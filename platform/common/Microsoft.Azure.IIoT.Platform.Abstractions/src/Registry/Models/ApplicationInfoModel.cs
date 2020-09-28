@@ -97,6 +97,11 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
         /// Updated
         /// </summary>
         public RegistryOperationContextModel Updated { get; set; }
+
+        /// <summary>
+        /// Generation Id
+        /// </summary>
+        public string GenerationId { get; set; }
     }
 }
 

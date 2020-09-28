@@ -87,15 +87,13 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Supervisor {
 
                     // Setup
                     var supervisorId = HubResource.Format(hubName, device, module);
-                    var activation = services.Resolve<IEndpointActivation>();
+                    var activation = services.Resolve<IEndpointRegistry>();
                     var hub = services.Resolve<IDeviceTwinServices>();
                     var twin = new EndpointInfoModel {
-                        Registration = new EndpointRegistrationModel {
-                            Endpoint = new EndpointModel {
-                                Url = "opc.tcp://test"
-                            },
-                            SupervisorId = supervisorId
+                        Endpoint = new EndpointModel {
+                            Url = "opc.tcp://test"
                         },
+                        SupervisorId = supervisorId,
                         ApplicationId = "ua326029342304923"
                     }.ToEndpointRegistration(_serializer).ToDeviceTwin(_serializer);
                     await hub.CreateOrUpdateAsync(twin);
@@ -105,7 +103,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Supervisor {
                     Assert.NotNull(ep1);
 
                     // Act
-                    await activation.ActivateEndpointAsync(ep1.Registration.Id);
+                    await activation.ActivateEndpointAsync(ep1.Id);
                     endpoints = await registry.ListAllEndpointsAsync();
                     var ep2 = endpoints.FirstOrDefault();
                     var diagnostics = services.Resolve<ISupervisorDiagnostics>();
@@ -115,7 +113,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Supervisor {
                     Assert.Equal(device, status.DeviceId);
                     Assert.Equal(module, status.ModuleId);
                     Assert.Single(status.Entities);
-                    Assert.Equal(ep1.Registration.Id, status.Entities.Single().Id);
+                    Assert.Equal(ep1.Id, status.Entities.Single().Id);
                     Assert.Equal(EntityActivationState.ActivatedAndConnected, status.Entities.Single().ActivationState);
                     Assert.Equal(EntityActivationState.ActivatedAndConnected, ep2.ActivationState);
                     Assert.True(
@@ -132,15 +130,13 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Supervisor {
 
                     // Setup
                     var supervisorId = HubResource.Format(hubName, device, module);
-                    var activation = services.Resolve<IEndpointActivation>();
+                    var activation = services.Resolve<IEndpointRegistry>();
                     var hub = services.Resolve<IDeviceTwinServices>();
                     var twin = new EndpointInfoModel {
-                        Registration = new EndpointRegistrationModel {
-                            Endpoint = new EndpointModel {
-                                Url = "opc.tcp://test"
-                            },
-                            SupervisorId = supervisorId
+                        Endpoint = new EndpointModel {
+                            Url = "opc.tcp://test"
                         },
+                        SupervisorId = supervisorId,
                         ApplicationId = "ua326029342304923"
                     }.ToEndpointRegistration(_serializer).ToDeviceTwin(_serializer);
 
@@ -151,10 +147,10 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Supervisor {
                     Assert.NotNull(ep1);
 
                     // Act
-                    await activation.ActivateEndpointAsync(ep1.Registration.Id);
+                    await activation.ActivateEndpointAsync(ep1.Id);
                     endpoints = await registry.ListAllEndpointsAsync();
                     var ep2 = endpoints.FirstOrDefault();
-                    await activation.DeactivateEndpointAsync(ep2.Registration.Id);
+                    await activation.DeactivateEndpointAsync(ep2.Id);
                     var diagnostics = services.Resolve<ISupervisorDiagnostics>();
                     endpoints = await registry.ListAllEndpointsAsync();
                     var ep3 = endpoints.FirstOrDefault();
@@ -177,15 +173,13 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Supervisor {
 
                     // Setup
                     var supervisorId = HubResource.Format(hubName, device, module);
-                    var activation = services.Resolve<IEndpointActivation>();
+                    var activation = services.Resolve<IEndpointRegistry>();
                     var hub = services.Resolve<IDeviceTwinServices>();
                     var twin = new EndpointInfoModel {
-                        Registration = new EndpointRegistrationModel {
-                            Endpoint = new EndpointModel {
-                                Url = "opc.tcp://test"
-                            },
-                            SupervisorId = supervisorId
+                        Endpoint = new EndpointModel {
+                            Url = "opc.tcp://test"
                         },
+                        SupervisorId = supervisorId,
                         ApplicationId = "ua326029342304923"
                     }.ToEndpointRegistration(_serializer).ToDeviceTwin(_serializer);
 
@@ -197,8 +191,8 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Supervisor {
 
                     for (var i = 0; i < 20; i++) {
                         // Act
-                        await activation.ActivateEndpointAsync(ep1.Registration.Id);
-                        await activation.DeactivateEndpointAsync(ep1.Registration.Id);
+                        await activation.ActivateEndpointAsync(ep1.Id);
+                        await activation.DeactivateEndpointAsync(ep1.Id);
                     }
 
                     var diagnostics = services.Resolve<ISupervisorDiagnostics>();
@@ -223,17 +217,15 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Supervisor {
 
                     // Setup
                     var supervisorId = HubResource.Format(hubName, device, module);
-                    var activation = services.Resolve<IEndpointActivation>();
+                    var activation = services.Resolve<IEndpointRegistry>();
                     var hub = services.Resolve<IDeviceTwinServices>();
 
                     for (var i = 0; i < 20; i++) {
                         var twin = new EndpointInfoModel {
-                            Registration = new EndpointRegistrationModel {
-                                Endpoint = new EndpointModel {
-                                    Url = "opc.tcp://test"
-                                },
-                                SupervisorId = supervisorId
+                            Endpoint = new EndpointModel {
+                                Url = "opc.tcp://test"
                             },
+                            SupervisorId = supervisorId,
                             ApplicationId = "uas" + i
                         }.ToEndpointRegistration(_serializer).ToDeviceTwin(_serializer);
                         await hub.CreateOrUpdateAsync(twin);
@@ -243,8 +235,8 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Supervisor {
                     var endpoints = await registry.ListAllEndpointsAsync();
 
                     for (var i = 0; i < 5; i++) {
-                        await Task.WhenAll(endpoints.Select(ep => activation.ActivateEndpointAsync(ep.Registration.Id)));
-                        await Task.WhenAll(endpoints.Select(ep => activation.DeactivateEndpointAsync(ep.Registration.Id)));
+                        await Task.WhenAll(endpoints.Select(ep => activation.ActivateEndpointAsync(ep.Id)));
+                        await Task.WhenAll(endpoints.Select(ep => activation.DeactivateEndpointAsync(ep.Id)));
                     }
 
                     var diagnostics = services.Resolve<ISupervisorDiagnostics>();

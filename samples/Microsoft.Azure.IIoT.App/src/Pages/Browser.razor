@@ -36,12 +36,12 @@
 @if (EndpointModel != null)
 {
     <div class="subtitle">
-        Url: @EndpointModel.Registration.EndpointUrl
-        Discoverer: @EndpointModel.Registration.DiscovererId
-        Site: @EndpointModel.Registration.SiteId
-        Security Mode: @EndpointModel.Registration.Endpoint.SecurityMode
-        Security Policy: @CommonHelper.ExtractSecurityPolicy(EndpointModel.Registration.Endpoint.SecurityPolicy)
-        Security Level: @EndpointModel.Registration.SecurityLevel
+        Url: @EndpointModel.EndpointUrl
+        Discoverer: @EndpointModel.DiscovererId
+        Site: @EndpointModel.SiteId
+        Security Mode: @EndpointModel.Endpoint.SecurityMode
+        Security Policy: @CommonHelper.ExtractSecurityPolicy(EndpointModel.Endpoint.SecurityPolicy)
+        Security Level: @EndpointModel.SecurityLevel
     </div>
 }
 

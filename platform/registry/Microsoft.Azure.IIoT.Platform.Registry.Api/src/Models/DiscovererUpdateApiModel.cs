@@ -32,5 +32,12 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Models {
         [DataMember(Name = "logLevel", Order = 3,
             EmitDefaultValue = false)]
         public TraceLogLevel? LogLevel { get; set; }
+
+        /// <summary>
+        /// Generation Id
+        /// </summary>
+        [DataMember(Name = "generationId", Order = 4,
+            EmitDefaultValue = false)]
+        public string GenerationId { get; set; }
     }
 }

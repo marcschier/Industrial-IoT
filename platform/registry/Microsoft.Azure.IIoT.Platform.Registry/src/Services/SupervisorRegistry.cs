@@ -39,13 +39,13 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
 
         /// <inheritdoc/>
         public async Task<SupervisorModel> GetSupervisorAsync(string id,
-            bool onlyServerState, CancellationToken ct) {
+            CancellationToken ct) {
             if (string.IsNullOrEmpty(id)) {
                 throw new ArgumentException(nameof(id));
             }
             var deviceId = HubResource.Parse(id, out var hub, out var moduleId);
             var device = await _iothub.GetAsync(deviceId, moduleId, ct);
-            var registration = device.ToEntityRegistration(onlyServerState)
+            var registration = device.ToEntityRegistration()
                 as SupervisorRegistration;
             if (registration == null) {
                 throw new ResourceNotFoundException(
@@ -75,7 +75,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                             nameof(supervisorId));
                     }
 
-                    var registration = twin.ToEntityRegistration(true) as SupervisorRegistration;
+                    var registration = twin.ToEntityRegistration() as SupervisorRegistration;
                     if (registration == null) {
                         throw new ResourceNotFoundException(
                             $"{supervisorId} is not a supervisor registration.");
@@ -108,7 +108,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
 
         /// <inheritdoc/>
         public async Task<SupervisorListModel> ListSupervisorsAsync(
-            string continuation, bool onlyServerState, int? pageSize, CancellationToken ct) {
+            string continuation, int? pageSize, CancellationToken ct) {
             var query = "SELECT * FROM devices.modules WHERE " +
                 $"properties.reported.{TwinProperty.Type} = '{IdentityType.Supervisor}' " +
                 $"AND NOT IS_DEFINED(tags.{nameof(EntityRegistration.NotSeenSince)})";
@@ -116,7 +116,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
             return new SupervisorListModel {
                 ContinuationToken = devices.ContinuationToken,
                 Items = devices.Items
-                    .Select(t => t.ToSupervisorRegistration(onlyServerState))
+                    .Select(t => t.ToSupervisorRegistration(false))
                     .Select(s => s.ToServiceModel())
                     .ToList()
             };
@@ -124,7 +124,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
 
         /// <inheritdoc/>
         public async Task<SupervisorListModel> QuerySupervisorsAsync(
-            SupervisorQueryModel model, bool onlyServerState, int? pageSize, CancellationToken ct) {
+            SupervisorQueryModel model, int? pageSize, CancellationToken ct) {
 
             var query = "SELECT * FROM devices.modules WHERE " +
                 $"properties.reported.{TwinProperty.Type} = '{IdentityType.Supervisor}'";
@@ -148,7 +148,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
             return new SupervisorListModel {
                 ContinuationToken = queryResult.ContinuationToken,
                 Items = queryResult.Items
-                    .Select(t => t.ToSupervisorRegistration(onlyServerState))
+                    .Select(t => t.ToSupervisorRegistration(true))
                     .Select(s => s.ToServiceModel())
                     .ToList()
             };

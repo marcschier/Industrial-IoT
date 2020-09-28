@@ -1774,7 +1774,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Ua {
         /// <param name="endpoint"></param>
         /// <param name="description"></param>
         /// <returns></returns>
-        private UserTokenPolicyCollection GetUserTokenPolicies(EndpointRegistrationModel endpoint,
+        private UserTokenPolicyCollection GetUserTokenPolicies(EndpointInfoModel endpoint,
             EndpointDescription description) {
             if (endpoint == null) {
                 throw new ArgumentNullException(nameof(endpoint));

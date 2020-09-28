@@ -206,7 +206,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
         /// <inheritdoc/>
         public Task OnEndpointNewAsync(RegistryOperationContextModel context,
             EndpointInfoModel endpoint) {
-            return EnableWritersWithEndpointAsync(endpoint.Registration.Id, true,
+            return EnableWritersWithEndpointAsync(endpoint.Id, true,
                 context == null ? null : new PublisherOperationContextModel {
                     AuthorityId = context.AuthorityId,
                     Time = context.Time
@@ -223,7 +223,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
         /// <inheritdoc/>
         public Task OnEndpointActivatedAsync(RegistryOperationContextModel context,
             EndpointInfoModel endpoint) {
-            return EnableWritersWithEndpointAsync(endpoint.Registration.Id, true,
+            return EnableWritersWithEndpointAsync(endpoint.Id, true,
                 context == null ? null : new PublisherOperationContextModel {
                     AuthorityId = context.AuthorityId,
                     Time = context.Time
@@ -233,7 +233,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
         /// <inheritdoc/>
         public Task OnEndpointEnabledAsync(RegistryOperationContextModel context,
             EndpointInfoModel endpoint) {
-            return EnableWritersWithEndpointAsync(endpoint.Registration.Id, true,
+            return EnableWritersWithEndpointAsync(endpoint.Id, true,
                 context == null ? null : new PublisherOperationContextModel {
                     AuthorityId = context.AuthorityId,
                     Time = context.Time
@@ -243,7 +243,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
         /// <inheritdoc/>
         public Task OnEndpointDeactivatedAsync(RegistryOperationContextModel context,
             EndpointInfoModel endpoint) {
-            return EnableWritersWithEndpointAsync(endpoint.Registration.Id, false,
+            return EnableWritersWithEndpointAsync(endpoint.Id, false,
                 context == null ? null : new PublisherOperationContextModel {
                     AuthorityId = context.AuthorityId,
                     Time = context.Time
@@ -253,7 +253,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
         /// <inheritdoc/>
         public Task OnEndpointDisabledAsync(RegistryOperationContextModel context,
             EndpointInfoModel endpoint) {
-            return EnableWritersWithEndpointAsync(endpoint.Registration.Id, false,
+            return EnableWritersWithEndpointAsync(endpoint.Id, false,
                 context == null ? null : new PublisherOperationContextModel {
                     AuthorityId = context.AuthorityId,
                     Time = context.Time

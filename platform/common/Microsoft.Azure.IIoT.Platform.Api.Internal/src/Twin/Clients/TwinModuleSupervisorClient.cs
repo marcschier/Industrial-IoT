@@ -18,9 +18,9 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
     /// <summary>
     /// Represents the supervisor api surface.
     /// </summary>
-    public sealed class TwinModuleSupervisorClient : IBrowseServices<EndpointRegistrationModel>,
-        IHistoricAccessServices<EndpointRegistrationModel>,
-        INodeServices<EndpointRegistrationModel> {
+    public sealed class TwinModuleSupervisorClient : IBrowseServices<EndpointInfoModel>,
+        IHistoricAccessServices<EndpointInfoModel>,
+        INodeServices<EndpointInfoModel> {
 
         /// <summary>
         /// Create service
@@ -37,7 +37,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
 
         /// <inheritdoc/>
         public async Task<BrowseResultModel> NodeBrowseFirstAsync(
-            EndpointRegistrationModel registration, BrowseRequestModel request) {
+            EndpointInfoModel registration, BrowseRequestModel request) {
             var result = await CallServiceOnSupervisorAsync<BrowseRequestModel,
                 BrowseResultModel>("Browse_V2", registration, request);
             return result;
@@ -45,7 +45,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
 
         /// <inheritdoc/>
         public async Task<BrowseNextResultModel> NodeBrowseNextAsync(
-            EndpointRegistrationModel registration, BrowseNextRequestModel request) {
+            EndpointInfoModel registration, BrowseNextRequestModel request) {
             if (request == null) {
                 throw new ArgumentNullException(nameof(request));
             }
@@ -59,7 +59,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
 
         /// <inheritdoc/>
         public async Task<BrowsePathResultModel> NodeBrowsePathAsync(
-            EndpointRegistrationModel registration, BrowsePathRequestModel request) {
+            EndpointInfoModel registration, BrowsePathRequestModel request) {
             if (request == null) {
                 throw new ArgumentNullException(nameof(request));
             }
@@ -74,7 +74,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
 
         /// <inheritdoc/>
         public async Task<ValueReadResultModel> NodeValueReadAsync(
-            EndpointRegistrationModel registration, ValueReadRequestModel request) {
+            EndpointInfoModel registration, ValueReadRequestModel request) {
             if (request == null) {
                 throw new ArgumentNullException(nameof(request));
             }
@@ -85,7 +85,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
 
         /// <inheritdoc/>
         public async Task<ValueWriteResultModel> NodeValueWriteAsync(
-            EndpointRegistrationModel registration, ValueWriteRequestModel request) {
+            EndpointInfoModel registration, ValueWriteRequestModel request) {
             if (request == null) {
                 throw new ArgumentNullException(nameof(request));
             }
@@ -99,7 +99,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
 
         /// <inheritdoc/>
         public async Task<MethodMetadataResultModel> NodeMethodGetMetadataAsync(
-            EndpointRegistrationModel registration, MethodMetadataRequestModel request) {
+            EndpointInfoModel registration, MethodMetadataRequestModel request) {
             if (request == null) {
                 throw new ArgumentNullException(nameof(request));
             }
@@ -110,7 +110,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
 
         /// <inheritdoc/>
         public async Task<MethodCallResultModel> NodeMethodCallAsync(
-            EndpointRegistrationModel registration, MethodCallRequestModel request) {
+            EndpointInfoModel registration, MethodCallRequestModel request) {
             if (request == null) {
                 throw new ArgumentNullException(nameof(request));
             }
@@ -121,7 +121,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
 
         /// <inheritdoc/>
         public async Task<ReadResultModel> NodeReadAsync(
-            EndpointRegistrationModel registration, ReadRequestModel request) {
+            EndpointInfoModel registration, ReadRequestModel request) {
             if (request == null) {
                 throw new ArgumentNullException(nameof(request));
             }
@@ -138,7 +138,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
 
         /// <inheritdoc/>
         public async Task<WriteResultModel> NodeWriteAsync(
-            EndpointRegistrationModel registration, WriteRequestModel request) {
+            EndpointInfoModel registration, WriteRequestModel request) {
             if (request == null) {
                 throw new ArgumentNullException(nameof(request));
             }
@@ -155,7 +155,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
 
         /// <inheritdoc/>
         public async Task<HistoryReadResultModel<VariantValue>> HistoryReadAsync(
-            EndpointRegistrationModel registration, HistoryReadRequestModel<VariantValue> request) {
+            EndpointInfoModel registration, HistoryReadRequestModel<VariantValue> request) {
             if (request == null) {
                 throw new ArgumentNullException(nameof(request));
             }
@@ -167,7 +167,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
 
         /// <inheritdoc/>
         public async Task<HistoryReadNextResultModel<VariantValue>> HistoryReadNextAsync(
-            EndpointRegistrationModel registration, HistoryReadNextRequestModel request) {
+            EndpointInfoModel registration, HistoryReadNextRequestModel request) {
             if (request == null) {
                 throw new ArgumentNullException(nameof(request));
             }
@@ -182,7 +182,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
 
         /// <inheritdoc/>
         public async Task<HistoryUpdateResultModel> HistoryUpdateAsync(
-            EndpointRegistrationModel registration,
+            EndpointInfoModel registration,
             HistoryUpdateRequestModel<VariantValue> request) {
             if (request == null) {
                 throw new ArgumentNullException(nameof(request));
@@ -206,7 +206,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
         /// <param name="request"></param>
         /// <returns></returns>
         private async Task<R> CallServiceOnSupervisorAsync<T, R>(string service,
-            EndpointRegistrationModel registration, T request) {
+            EndpointInfoModel registration, T request) {
             if (registration == null) {
                 throw new ArgumentNullException(nameof(registration));
             }

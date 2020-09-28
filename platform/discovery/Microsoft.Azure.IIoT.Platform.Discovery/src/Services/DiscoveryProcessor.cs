@@ -60,13 +60,6 @@ namespace Microsoft.Azure.IIoT.Platform.Discovery.Services {
                 // Use global discovery configuration
                 result.DiscoveryConfig = gateway.Modules?.Discoverer?.DiscoveryConfig;
             }
-            else {
-                if (result.DiscoveryConfig.ActivationFilter == null) {
-                    // Use global activation filter
-                    result.DiscoveryConfig.ActivationFilter =
-                        gateway.Modules?.Discoverer?.DiscoveryConfig?.ActivationFilter;
-                }
-            }
 
             // Process discovery events
             await _applications.ProcessDiscoveryEventsAsync(siteId, discovererId,

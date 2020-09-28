@@ -39,13 +39,13 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
 
         /// <inheritdoc/>
         public async Task<PublisherModel> GetPublisherAsync(string id,
-            bool onlyServerState, CancellationToken ct) {
+            CancellationToken ct) {
             if (string.IsNullOrEmpty(id)) {
                 throw new ArgumentException(nameof(id));
             }
             var deviceId = HubResource.Parse(id, out var hub, out var moduleId);
             var device = await _iothub.GetAsync(deviceId, moduleId, ct);
-            var registration = device.ToEntityRegistration(onlyServerState)
+            var registration = device.ToEntityRegistration()
                 as PublisherRegistration;
             if (registration == null) {
                 throw new ResourceNotFoundException(
@@ -108,7 +108,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
 
         /// <inheritdoc/>
         public async Task<PublisherListModel> ListPublishersAsync(
-            string continuation, bool onlyServerState, int? pageSize, CancellationToken ct) {
+            string continuation, int? pageSize, CancellationToken ct) {
             var query = "SELECT * FROM devices.modules WHERE " +
                 $"properties.reported.{TwinProperty.Type} = '{IdentityType.Publisher}' " +
                 $"AND NOT IS_DEFINED(tags.{nameof(EntityRegistration.NotSeenSince)})";
@@ -117,7 +117,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
             return new PublisherListModel {
                 ContinuationToken = devices.ContinuationToken,
                 Items = devices.Items
-                    .Select(t => t.ToPublisherRegistration(onlyServerState))
+                    .Select(t => t.ToPublisherRegistration(true))
                     .Select(s => s.ToServiceModel())
                     .ToList()
             };
@@ -125,7 +125,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
 
         /// <inheritdoc/>
         public async Task<PublisherListModel> QueryPublishersAsync(
-            PublisherQueryModel model, bool onlyServerState, int? pageSize, CancellationToken ct) {
+            PublisherQueryModel model, int? pageSize, CancellationToken ct) {
 
             var query = "SELECT * FROM devices.modules WHERE " +
                 $"properties.reported.{TwinProperty.Type} = '{IdentityType.Publisher}'";
@@ -144,7 +144,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
             return new PublisherListModel {
                 ContinuationToken = queryResult.ContinuationToken,
                 Items = queryResult.Items
-                    .Select(t => t.ToPublisherRegistration(onlyServerState))
+                    .Select(t => t.ToPublisherRegistration(true))
                     .Select(s => s.ToServiceModel())
                     .ToList()
             };

@@ -37,7 +37,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Twin.StartStop {
             Certificate = _server.Certificate?.RawData?.ToThumbprint()
         };
 
-        private ReadArrayValueTests<string> GetTests(EndpointRegistrationModel endpoint, IContainer services) {
+        private ReadArrayValueTests<string> GetTests(EndpointInfoModel endpoint, IContainer services) {
             return new ReadArrayValueTests<string>(
                 () => services.Resolve<INodeServices<string>>(), endpoint.Id,
                 (ep, n) => _server.Client.ReadValueAsync(endpoint.Endpoint, n));

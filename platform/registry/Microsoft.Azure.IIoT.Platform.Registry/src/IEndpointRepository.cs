@@ -23,7 +23,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry {
         /// <param name="ct"></param>
         /// <returns></returns>
         Task<EndpointInfoListModel> QueryAsync(
-            EndpointRegistrationQueryModel query = null,
+            EndpointInfoQueryModel query = null,
             string continuationToken = null, int? maxResults = null,
             CancellationToken ct = default);
 

@@ -202,12 +202,6 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
                                 case "update":
                                     await UpdateApplicationAsync(options);
                                     break;
-                                case "disable":
-                                    await DisableApplicationAsync(options);
-                                    break;
-                                case "enable":
-                                    await EnableApplicationAsync(options);
-                                    break;
                                 case "unregister":
                                     await UnregisterApplicationAsync(options);
                                     break;
@@ -1544,15 +1538,13 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
         /// </summary>
         private async Task ListPublishersAsync(CliOptions options) {
             if (options.IsSet("-A", "--all")) {
-                var result = await _registry.ListAllPublishersAsync(
-                    options.IsProvidedOrNull("-S", "--server"));
+                var result = await _registry.ListAllPublishersAsync();
                 PrintResult(options, result);
                 Console.WriteLine($"{result.Count()} item(s) found...");
             }
             else {
                 var result = await _registry.ListPublishersAsync(
                     options.GetValueOrDefault<string>("-C", "--continuation", null),
-                    options.IsProvidedOrNull("-S", "--server"),
                     options.GetValueOrDefault<int>("-P", "--page-size", null));
                 PrintResult(options, result);
             }
@@ -1566,14 +1558,12 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
                 Connected = options.IsProvidedOrNull("-c", "--connected"),
             };
             if (options.IsSet("-A", "--all")) {
-                var result = await _registry.QueryAllPublishersAsync(query,
-                    options.IsProvidedOrNull("-S", "--server"));
+                var result = await _registry.QueryAllPublishersAsync(query);
                 PrintResult(options, result);
                 Console.WriteLine($"{result.Count()} item(s) found...");
             }
             else {
                 var result = await _registry.QueryPublishersAsync(query,
-                    options.IsProvidedOrNull("-S", "--server"),
                     options.GetValueOrDefault<int>("-P", "--page-size", null));
                 PrintResult(options, result);
             }
@@ -1583,8 +1573,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
         /// Get publisher
         /// </summary>
         private async Task GetPublisherAsync(CliOptions options) {
-            var result = await _registry.GetPublisherAsync(GetPublisherId(options),
-                options.IsProvidedOrNull("-S", "--server"));
+            var result = await _registry.GetPublisherAsync(GetPublisherId(options));
             PrintResult(options, result);
         }
 
@@ -1785,15 +1774,13 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
         /// </summary>
         private async Task ListSupervisorsAsync(CliOptions options) {
             if (options.IsSet("-A", "--all")) {
-                var result = await _registry.ListAllSupervisorsAsync(
-                    options.IsProvidedOrNull("-S", "--server"));
+                var result = await _registry.ListAllSupervisorsAsync();
                 PrintResult(options, result);
                 Console.WriteLine($"{result.Count()} item(s) found...");
             }
             else {
                 var result = await _registry.ListSupervisorsAsync(
                     options.GetValueOrDefault<string>("-C", "--continuation", null),
-                    options.IsProvidedOrNull("-S", "--server"),
                     options.GetValueOrDefault<int>("-P", "--page-size", null));
                 PrintResult(options, result);
             }
@@ -1808,14 +1795,12 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
                 EndpointId = options.GetValueOrDefault<string>("-e", "--endpoint", null),
             };
             if (options.IsSet("-A", "--all")) {
-                var result = await _registry.QueryAllSupervisorsAsync(query,
-                    options.IsProvidedOrNull("-S", "--server"));
+                var result = await _registry.QueryAllSupervisorsAsync(query);
                 PrintResult(options, result);
                 Console.WriteLine($"{result.Count()} item(s) found...");
             }
             else {
                 var result = await _registry.QuerySupervisorsAsync(query,
-                    options.IsProvidedOrNull("-S", "--server"),
                     options.GetValueOrDefault<int>("-P", "--page-size", null));
                 PrintResult(options, result);
             }
@@ -1825,8 +1810,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
         /// Get supervisor
         /// </summary>
         private async Task GetSupervisorAsync(CliOptions options) {
-            var result = await _registry.GetSupervisorAsync(GetSupervisorId(options),
-                options.IsProvidedOrNull("-S", "--server"));
+            var result = await _registry.GetSupervisorAsync(GetSupervisorId(options));
             PrintResult(options, result);
         }
 
@@ -1946,8 +1930,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
                 Discovery = options.GetValueOrDefault<DiscoveryMode>("-d", "--discovery", null),
             };
             if (options.IsSet("-A", "--all")) {
-                var result = await _registry.QueryAllDiscoverersAsync(query,
-                    options.IsProvidedOrNull("-S", "--server"));
+                var result = await _registry.QueryAllDiscoverersAsync(query);
                 PrintResult(options, result);
                 Console.WriteLine($"{result.Count()} item(s) found...");
             }
@@ -2145,10 +2128,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
             await _registry.RegisterAsync(
                 new ServerRegistrationRequestApiModel {
                     Id = id,
-                    DiscoveryUrl = options.GetValue<string>("-u", "--url"),
-                    ActivationFilter = !activate ? null : new EndpointActivationFilterApiModel {
-                        SecurityMode = SecurityMode.None
-                    }
+                    DiscoveryUrl = options.GetValue<string>("-u", "--url")
                 });
         }
 
@@ -2213,7 +2193,8 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
         /// </summary>
         private async Task UpdateApplicationAsync(CliOptions options) {
             await _registry.UpdateApplicationAsync(GetApplicationId(options),
-                new ApplicationRegistrationUpdateApiModel {
+                new ApplicationInfoUpdateApiModel {
+                    GenerationId = options.GetValue<string>("-g", "--genid"),
                     ApplicationName = options.GetValueOrDefault<string>("-n", "--name", null),
                     GatewayServerUri = options.GetValueOrDefault<string>("-g", "--gwuri", null),
                     ProductUri = options.GetValueOrDefault<string>("-p", "--product", null),
@@ -2223,27 +2204,14 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
         }
 
         /// <summary>
-        /// Disable application
-        /// </summary>
-        private async Task DisableApplicationAsync(CliOptions options) {
-            await _registry.DisableApplicationAsync(GetApplicationId(options));
-        }
-
-        /// <summary>
-        /// Enable application
-        /// </summary>
-        private async Task EnableApplicationAsync(CliOptions options) {
-            await _registry.EnableApplicationAsync(GetApplicationId(options));
-        }
-
-        /// <summary>
         /// Unregister application
         /// </summary>
         private async Task UnregisterApplicationAsync(CliOptions options) {
 
             var id = GetApplicationId(options, false);
             if (id != null) {
-                await _registry.UnregisterApplicationAsync(id);
+                await _registry.UnregisterApplicationAsync(id,
+                    options.GetValue<string>("-g", "--genid"));
                 return;
             }
 
@@ -2261,7 +2229,8 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
             var result = await _registry.QueryAllApplicationsAsync(query);
             foreach (var item in result) {
                 try {
-                    await _registry.UnregisterApplicationAsync(item.ApplicationId);
+                    await _registry.UnregisterApplicationAsync(item.ApplicationId,
+                        item.GenerationId);
                 }
                 catch (Exception ex) {
                     Console.WriteLine($"Failed to unregister {item.ApplicationId}: {ex.Message}");
@@ -2448,7 +2417,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
                 var endpointId = options.GetValueOrDefault<string>("-i", "--id", null);
                 if (string.IsNullOrEmpty(endpointId)) {
                     var result = await _registry.ListAllEndpointsAsync();
-                    endpointId = ConsoleEx.Select(result.Select(r => r.Registration.Id));
+                    endpointId = ConsoleEx.Select(result.Select(r => r.Id));
                     if (string.IsNullOrEmpty(endpointId)) {
                         Console.WriteLine("Nothing selected - endpoint selection cleared.");
                     }
@@ -2465,15 +2434,13 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
         /// </summary>
         private async Task ListEndpointsAsync(CliOptions options) {
             if (options.IsSet("-A", "--all")) {
-                var result = await _registry.ListAllEndpointsAsync(
-                    options.IsProvidedOrNull("-S", "--server"));
+                var result = await _registry.ListAllEndpointsAsync();
                 PrintResult(options, result);
                 Console.WriteLine($"{result.Count()} item(s) found...");
             }
             else {
                 var result = await _registry.ListEndpointsAsync(
                     options.GetValueOrDefault<string>("-C", "--continuation", null),
-                    options.IsProvidedOrNull("-S", "--server"),
                     options.GetValueOrDefault<int>("-P", "--page-size", null));
                 PrintResult(options, result);
             }
@@ -2483,7 +2450,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
         /// Query endpoints
         /// </summary>
         private async Task QueryEndpointsAsync(CliOptions options) {
-            var query = new EndpointRegistrationQueryApiModel {
+            var query = new EndpointInfoQueryApiModel {
                 Url = options.GetValueOrDefault<string>("-u", "--uri", null),
                 SecurityMode = options
                     .GetValueOrDefault<Platform.Core.Api.Models.SecurityMode>("-m", "--mode", null),
@@ -2499,14 +2466,12 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
                 DiscovererId = options.GetValueOrDefault<string>("-D", "--discovererId", null)
             };
             if (options.IsSet("-A", "--all")) {
-                var result = await _registry.QueryAllEndpointsAsync(query,
-                    options.IsProvidedOrNull("-S", "--server"));
+                var result = await _registry.QueryAllEndpointsAsync(query);
                 PrintResult(options, result);
                 Console.WriteLine($"{result.Count()} item(s) found...");
             }
             else {
                 var result = await _registry.QueryEndpointsAsync(query,
-                    options.IsProvidedOrNull("-S", "--server"),
                     options.GetValueOrDefault<int>("-P", "--page-size", null));
                 PrintResult(options, result);
             }
@@ -2519,21 +2484,22 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
 
             var id = GetEndpointId(options, false);
             if (id != null) {
-                await _registry.ActivateEndpointAsync(id);
+                await _registry.ActivateEndpointAsync(id,
+                    options.GetValueOrDefault<string>("-g", "--genid", null));
                 return;
             }
 
             // Activate all sign and encrypt endpoints
-            var result = await _registry.QueryAllEndpointsAsync(new EndpointRegistrationQueryApiModel {
-                SecurityMode = options.GetValueOrDefault<Platform.Core.Api.Models.SecurityMode>("-m", "mode", null),
+            var result = await _registry.QueryAllEndpointsAsync(new EndpointInfoQueryApiModel {
+                SecurityMode = options.GetValueOrDefault<SecurityMode>("-m", "mode", null),
                 Activated = false
             });
             foreach (var item in result) {
                 try {
-                    await _registry.ActivateEndpointAsync(item.Registration.Id);
+                    await _registry.ActivateEndpointAsync(item.Id, item.GenerationId);
                 }
                 catch (Exception ex) {
-                    Console.WriteLine($"Failed to activate {item.Registration.Id}: {ex.Message}");
+                    Console.WriteLine($"Failed to activate {item.Id}: {ex.Message}");
                 }
             }
         }
@@ -2545,21 +2511,22 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
 
             var id = GetEndpointId(options, false);
             if (id != null) {
-                await _registry.DeactivateEndpointAsync(id);
+                await _registry.DeactivateEndpointAsync(id,
+                    options.GetValueOrDefault<string>("-g", "--genid", null));
                 return;
             }
 
             // Activate all sign and encrypt endpoints
-            var result = await _registry.QueryAllEndpointsAsync(new EndpointRegistrationQueryApiModel {
-                SecurityMode = options.GetValueOrDefault<Platform.Core.Api.Models.SecurityMode>("-m", "mode", null),
+            var result = await _registry.QueryAllEndpointsAsync(new EndpointInfoQueryApiModel {
+                SecurityMode = options.GetValueOrDefault<SecurityMode>("-m", "mode", null),
                 Activated = true
             });
             foreach (var item in result) {
                 try {
-                    await _registry.DeactivateEndpointAsync(item.Registration.Id);
+                    await _registry.DeactivateEndpointAsync(item.Id, item.GenerationId);
                 }
                 catch (Exception ex) {
-                    Console.WriteLine($"Failed to deactivate {item.Registration.Id}: {ex.Message}");
+                    Console.WriteLine($"Failed to deactivate {item.Id}: {ex.Message}");
                 }
             }
         }
@@ -2568,8 +2535,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
         /// Get endpoint
         /// </summary>
         private async Task GetEndpointAsync(CliOptions options) {
-            var result = await _registry.GetEndpointAsync(GetEndpointId(options),
-                options.IsProvidedOrNull("-S", "--server"));
+            var result = await _registry.GetEndpointAsync(GetEndpointId(options));
             PrintResult(options, result);
         }
 
@@ -3205,13 +3171,6 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
             var config = new DiscoveryConfigApiModel();
             var empty = true;
 
-            if (options.IsSet("-a", "--activate")) {
-                config.ActivationFilter = new EndpointActivationFilterApiModel {
-                    SecurityMode = SecurityMode.None
-                };
-                empty = false;
-            }
-
             var addressRange = options.GetValueOrDefault<string>("-r", "--address-ranges", null);
             if (addressRange != null) {
                 if (addressRange == "true") {
@@ -3339,14 +3298,12 @@ Commands and Options
         with ...
         -i, --id        Request id for the discovery request.
         -u, --url       Url of the discovery endpoint (mandatory)
-        -a, --activate  Activate all endpoints during onboarding.
         -m, --monitor   Monitor the discovery process to completion.
 
      discover    Discover applications and endpoints through config.
         with ...
         -i, --id        Request id for the discovery request.
         -d, --discovery Set discovery mode to use
-        -a, --activate  Activate all endpoints during onboarding.
         -m, --monitor   Monitor the discovery process to completion.
 
      cancel      Cancel application discovery.
@@ -3384,14 +3341,6 @@ Commands and Options
         with ...
         -i, --id        Id of application to get (mandatory)
         -F, --format    Json format for result
-
-     disable     Disable application
-        with ...
-        -i, --id        Id of application to get (mandatory)
-
-     enable      Enable application
-        with ...
-        -i, --id        Id of application to get (mandatory)
 
      update      Update application
         with ...
@@ -3443,7 +3392,6 @@ Commands and Options
 
      list        List endpoints
         with ...
-        -S, --server    Return only server state (default:false)
         -C, --continuation
                         Continuation from previous result.
         -P, --page-size Size of page
@@ -3451,7 +3399,6 @@ Commands and Options
         -F, --format    Json format for result
 
      query       Find endpoints
-        -S, --server    Return only server state (default:false)
         -u, --uri       Endpoint uri to seach for
         -m, --mode      Security mode to search for
         -p, --policy    Security policy to match
@@ -3473,7 +3420,6 @@ Commands and Options
      get         Get endpoint
         with ...
         -i, --id        Id of endpoint to retrieve (mandatory)
-        -S, --server    Return only server state (default:false)
         -F, --format    Json format for result
 
      validate    Get endpoint certificate chain and validate
@@ -3659,7 +3605,6 @@ Commands and Options
 
      list        List publishers
         with ...
-        -S, --server    Return only server state (default:false)
         -C, --continuation
                         Continuation from previous result.
         -P, --page-size Size of page
@@ -3667,7 +3612,6 @@ Commands and Options
         -F, --format    Json format for result
 
      query       Find publishers
-        -S, --server    Return only server state (default:false)
         -c, --connected Only return connected or disconnected.
         -P, --page-size Size of page
         -A, --all       Return all endpoints (unpaged)
@@ -3675,7 +3619,6 @@ Commands and Options
 
      get         Get publisher
         with ...
-        -S, --server    Return only server state (default:false)
         -i, --id        Id of publisher to retrieve (mandatory)
         -F, --format    Json format for result
 
@@ -3705,7 +3648,6 @@ Commands and Options
 
      list        List supervisors
         with ...
-        -S, --server    Return only server state (default:false)
         -C, --continuation
                         Continuation from previous result.
         -P, --page-size Size of page
@@ -3713,7 +3655,6 @@ Commands and Options
         -F, --format    Json format for result
 
      query       Find supervisors
-        -S, --server    Return only server state (default:false)
         -c, --connected Only return connected or disconnected.
         -e, --endpoint  Manages Endpoint twin with given id.
         -P, --page-size Size of page
@@ -3722,7 +3663,6 @@ Commands and Options
 
      get         Get supervisor
         with ...
-        -S, --server    Return only server state (default:false)
         -i, --id        Id of supervisor to retrieve (mandatory)
         -F, --format    Json format for result
 

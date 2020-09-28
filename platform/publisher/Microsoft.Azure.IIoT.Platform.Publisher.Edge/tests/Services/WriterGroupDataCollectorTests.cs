@@ -453,9 +453,8 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Services {
                 var registry = new Mock<IEndpointRegistry>();
                 var url = $"opc.tcp://{_hostEntry?.HostName ?? "localhost"}:{_server.Port}/UA/SampleServer";
                 registry
-                    .Setup(e => e.GetEndpointAsync(It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<CancellationToken>()))
+                    .Setup(e => e.GetEndpointAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
                     .Returns(Task.FromResult(new EndpointInfoModel {
-                        Registration = new EndpointRegistrationModel {
                             EndpointUrl = url,
                             Id = "endpoint1",
                             SiteId = "fakesite",
@@ -466,7 +465,6 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Services {
                                     .Select(ip => $"opc.tcp://{ip}:{_server.Port}/UA/SampleServer").ToHashSet(),
                                 Certificate = _server.Certificate?.RawData?.ToThumbprint()
                             }
-                        }
                     }));
                 builder.RegisterMock(registry);
                 builder.RegisterType<DataSetWriterEventBroker>().AsImplementedInterfaces().SingleInstance();

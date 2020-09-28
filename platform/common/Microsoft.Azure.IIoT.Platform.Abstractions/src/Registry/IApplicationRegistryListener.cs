@@ -31,24 +31,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry {
             ApplicationInfoModel application);
 
         /// <summary>
-        /// Called when application is enabled
-        /// </summary>
-        /// <param name="context"></param>
-        /// <param name="application"></param>
-        /// <returns></returns>
-        Task OnApplicationEnabledAsync(RegistryOperationContextModel context,
-            ApplicationInfoModel application);
-
-        /// <summary>
-        /// Called when application is disabled
-        /// </summary>
-        /// <param name="context"></param>
-        /// <param name="application"></param>
-        /// <returns></returns>
-        Task OnApplicationDisabledAsync(RegistryOperationContextModel context,
-            ApplicationInfoModel application);
-
-        /// <summary>
         /// Called when application is unregistered
         /// </summary>
         /// <param name="context"></param>

@@ -23,7 +23,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Models {
             if (config == null) {
                 config = new DiscoveryConfigApiModel();
             }
-            config.ActivationFilter = update.ActivationFilter;
             config.AddressRangesToScan = update.AddressRangesToScan;
             config.DiscoveryUrls = update.DiscoveryUrls;
             config.IdleTimeBetweenScans = update.IdleTimeBetweenScans;

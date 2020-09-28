@@ -35,7 +35,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                 IPublisherRegistry service = mock.Create<PublisherRegistry>();
 
                 // Run
-                var t = service.GetPublisherAsync(HubResource.Format(hubName, "test", "test"), false);
+                var t = service.GetPublisherAsync(HubResource.Format(hubName, "test", "test"));
 
                 // Assert
                 Assert.NotNull(t.Exception);
@@ -57,7 +57,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                 IPublisherRegistry service = mock.Create<PublisherRegistry>();
 
                 // Run
-                var result = service.GetPublisherAsync(publishers.First().Id, false).Result;
+                var result = service.GetPublisherAsync(publishers.First().Id).Result;
 
                 // Assert
                 Assert.True(result.IsSameAs(publishers.First()));
@@ -80,7 +80,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                 service.UpdatePublisherAsync(publishers.First().Id, new PublisherUpdateModel {
                     LogLevel = TraceLogLevel.Debug
                 }).Wait();
-                var result = service.GetPublisherAsync(publishers.First().Id, false).Result;
+                var result = service.GetPublisherAsync(publishers.First().Id).Result;
 
 
                 // Assert
@@ -101,7 +101,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                 IPublisherRegistry service = mock.Create<PublisherRegistry>();
 
                 // Run
-                var records = service.ListPublishersAsync(null, false, null).Result;
+                var records = service.ListPublishersAsync(null, null).Result;
 
                 // Assert
                 Assert.True(publishers.IsSameAs(records.Items));
@@ -121,7 +121,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                 IPublisherRegistry service = mock.Create<PublisherRegistry>();
 
                 // Run
-                var records = service.QueryPublishersAsync(null, false, null).Result;
+                var records = service.QueryPublishersAsync(null, null).Result;
 
                 // Assert
                 Assert.True(publishers.IsSameAs(records.Items));

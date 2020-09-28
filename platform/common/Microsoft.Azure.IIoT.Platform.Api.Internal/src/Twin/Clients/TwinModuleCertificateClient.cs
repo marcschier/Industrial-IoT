@@ -17,7 +17,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
     /// <summary>
     /// Client to retrieve endpoint certificate through the supervisor
     /// </summary>
-    public sealed class TwinModuleCertificateClient : ICertificateServices<EndpointRegistrationModel> {
+    public sealed class TwinModuleCertificateClient : ICertificateServices<EndpointInfoModel> {
 
         /// <summary>
         /// Create client
@@ -34,7 +34,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
 
         /// <inheritdoc/>
         public async Task<byte[]> GetEndpointCertificateAsync(
-            EndpointRegistrationModel registration, CancellationToken ct) {
+            EndpointInfoModel registration, CancellationToken ct) {
             if (registration == null) {
                 throw new ArgumentNullException(nameof(registration));
             }

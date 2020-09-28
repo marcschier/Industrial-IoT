@@ -39,12 +39,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry {
             builder.RegisterType<GatewayEventBroker>()
                 .AsImplementedInterfaces();
 
-            builder.RegisterType<EndpointTwinEventHandler>()
-                .AsImplementedInterfaces();
             builder.RegisterType<EndpointEventBroker>()
-                .AsImplementedInterfaces();
-
-            builder.RegisterType<ApplicationTwinEventHandler>()
                 .AsImplementedInterfaces();
             builder.RegisterType<ApplicationEventBroker>()
                 .AsImplementedInterfaces();

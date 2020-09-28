@@ -46,15 +46,10 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service.Controllers {
         /// A supervisor id corresponds to the twin modules module identity.
         /// </remarks>
         /// <param name="supervisorId">Supervisor identifier</param>
-        /// <param name="onlyServerState">Whether to include only server
-        /// state, or display current client state of the endpoint if
-        /// available</param>
         /// <returns>Supervisor registration</returns>
         [HttpGet("{supervisorId}")]
-        public async Task<SupervisorApiModel> GetSupervisorAsync(string supervisorId,
-            [FromQuery] bool? onlyServerState) {
-            var result = await _supervisors.GetSupervisorAsync(supervisorId,
-                onlyServerState ?? false);
+        public async Task<SupervisorApiModel> GetSupervisorAsync(string supervisorId) {
+            var result = await _supervisors.GetSupervisorAsync(supervisorId);
             return result.ToApiModel();
         }
 
@@ -118,8 +113,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service.Controllers {
         /// available.
         /// Call this operation again using the token to retrieve more results.
         /// </remarks>
-        /// <param name="onlyServerState">Whether to include only server
-        /// state, or display current client state of the endpoint if available</param>
         /// <param name="continuationToken">Optional Continuation token</param>
         /// <param name="pageSize">Optional number of results to return</param>
         /// <returns>
@@ -129,9 +122,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service.Controllers {
         [HttpGet]
         [AutoRestExtension(NextPageLinkName = "continuationToken")]
         public async Task<SupervisorListApiModel> GetListOfSupervisorsAsync(
-            [FromQuery] bool? onlyServerState,
-            [FromQuery] string continuationToken,
-            [FromQuery] int? pageSize) {
+            [FromQuery] string continuationToken, [FromQuery] int? pageSize) {
             if (Request.Headers.ContainsKey(HttpHeader.ContinuationToken)) {
                 continuationToken = Request.Headers[HttpHeader.ContinuationToken]
                     .FirstOrDefault();
@@ -141,7 +132,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service.Controllers {
                     .FirstOrDefault());
             }
             var result = await _supervisors.ListSupervisorsAsync(
-                continuationToken, onlyServerState ?? false, pageSize);
+                continuationToken, pageSize);
             return result.ToApiModel();
         }
 
@@ -156,15 +147,11 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service.Controllers {
         /// more results.
         /// </remarks>
         /// <param name="query">Supervisors query model</param>
-        /// <param name="onlyServerState">Whether to include only server
-        /// state, or display current client state of the endpoint if
-        /// available</param>
         /// <param name="pageSize">Number of results to return</param>
         /// <returns>Supervisors</returns>
         [HttpPost("query")]
         public async Task<SupervisorListApiModel> QuerySupervisorsAsync(
             [FromBody] [Required] SupervisorQueryApiModel query,
-            [FromQuery] bool? onlyServerState,
             [FromQuery] int? pageSize) {
             if (query == null) {
                 throw new ArgumentNullException(nameof(query));
@@ -174,7 +161,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service.Controllers {
                     .FirstOrDefault());
             }
             var result = await _supervisors.QuerySupervisorsAsync(
-                query.ToServiceModel(), onlyServerState ?? false, pageSize);
+                query.ToServiceModel(), pageSize);
 
             // TODO: Filter results based on RBAC
 
@@ -192,15 +179,11 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service.Controllers {
         /// more results.
         /// </remarks>
         /// <param name="query">Supervisors Query model</param>
-        /// <param name="onlyServerState">Whether to include only server
-        /// state, or display current client state of the endpoint if
-        /// available</param>
         /// <param name="pageSize">Number of results to return</param>
         /// <returns>Supervisors</returns>
         [HttpGet("query")]
         public async Task<SupervisorListApiModel> GetFilteredListOfSupervisorsAsync(
             [FromQuery] [Required] SupervisorQueryApiModel query,
-            [FromQuery] bool? onlyServerState,
             [FromQuery] int? pageSize) {
 
             if (query == null) {
@@ -211,7 +194,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service.Controllers {
                     .FirstOrDefault());
             }
             var result = await _supervisors.QuerySupervisorsAsync(
-                query.ToServiceModel(), onlyServerState ?? false, pageSize);
+                query.ToServiceModel(),  pageSize);
 
             // TODO: Filter results based on RBAC
 

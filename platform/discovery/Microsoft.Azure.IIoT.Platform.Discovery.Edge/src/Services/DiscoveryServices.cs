@@ -548,13 +548,13 @@ namespace Microsoft.Azure.IIoT.Platform.Discovery.Edge.Services {
             _logger.Information("Uploading {count} results...", discovered.Count);
             var messages = discovered
                 .SelectMany(server => server.Endpoints
-                    .Select(registration => new DiscoveryEventModel {
+                    .Select(endpoint => new DiscoveryEventModel {
                         Application = server.Application,
-                        Registration = registration,
+                        Endpoint = endpoint,
                         TimeStamp = timestamp
                     }))
                 .Append(new DiscoveryEventModel {
-                    Registration = null, // last
+                    Endpoint = null, // last
                     Result = new DiscoveryResultModel {
                         DiscoveryConfig = request.Configuration,
                         Id = request.Request.Id,

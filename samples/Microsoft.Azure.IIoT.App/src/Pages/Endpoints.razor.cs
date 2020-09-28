@@ -79,31 +79,19 @@ namespace Microsoft.Azure.IIoT.App.Pages {
         /// Activate or deactivate an endpoint
         /// </summary>
         /// <param name="endpointId"></param>
-        /// <param name="checkedValue"></param>
         /// <returns></returns>
         private async Task SetActivationAsync(EndpointInfo endpoint) {
-            string endpointId = endpoint.EndpointModel.Registration.Id;
-
-            if (!IsEndpointActivated(endpoint)) {
-                try {
-                    await RegistryService.ActivateEndpointAsync(endpointId);
-                }
-                catch (Exception e) {
-                    if (e.Message.Contains("404103")) {
-                        Status = "The endpoint is not available.";
-                    }
-                    else {
-                        Status = e.Message;
-                    }
-                }
+            try {
+                await RegistryService.UpdateEndpointAsync(endpoint.EndpointModel.Id,
+                    new EndpointInfoUpdateApiModel {
+                        GenerationId = endpoint.EndpointModel.GenerationId,
+                        ActivationState = IsEndpointActivated(endpoint) ?
+                            EntityActivationState.Activated :
+                            EntityActivationState.Deactivated
+                    });
             }
-            else {
-                try {
-                    await RegistryService.DeactivateEndpointAsync(endpointId);
-                }
-                catch (Exception e) {
-                    Status = e.Message;
-                }
+            catch (Exception e) {
+                Status = e.Message;
             }
         }
 

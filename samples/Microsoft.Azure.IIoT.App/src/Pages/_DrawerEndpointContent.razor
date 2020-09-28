@@ -25,25 +25,25 @@
             <div class="label">
                 Site Id:
                 <div class="body">
-                    @(string.IsNullOrEmpty(EndpointData.EndpointModel.Registration.SiteId)
+                    @(string.IsNullOrEmpty(EndpointData.EndpointModel.SiteId)
                         ? CommonHelper.None
-                        : EndpointData.EndpointModel.Registration.SiteId)
+                        : EndpointData.EndpointModel.SiteId)
                 </div>
             </div>
             <div class="label">
                 Supervisor Id:
                 <div class="body">
-                    @(string.IsNullOrEmpty(EndpointData.EndpointModel.Registration.SupervisorId)
+                    @(string.IsNullOrEmpty(EndpointData.EndpointModel.SupervisorId)
                         ? CommonHelper.None
-                        : EndpointData.EndpointModel.Registration.SupervisorId)
+                        : EndpointData.EndpointModel.SupervisorId)
                 </div>
             </div>
             <div class="label">
                 Endpoint Id:
                 <div class="body">
-                    @(string.IsNullOrEmpty(EndpointData.EndpointModel.Registration.Id)
+                    @(string.IsNullOrEmpty(EndpointData.EndpointModel.Id)
                         ? CommonHelper.None
-                        : EndpointData.EndpointModel.Registration.Id)
+                        : EndpointData.EndpointModel.Id)
                 </div>
             </div>
             <div class="label">
@@ -55,19 +55,11 @@
                 </div>
             </div>
             <div class="label">
-                Out Of Sync:
-                <div class="body">
-                    @(string.IsNullOrEmpty(EndpointData.EndpointModel.OutOfSync?.ToString())
-                        ? CommonHelper.None
-                        : EndpointData.EndpointModel.OutOfSync.ToString())
-                </div>
-            </div>
-            <div class="label">
                 Supported Authentication Methods:
                 <div class="body">
                     @{
-                        if (EndpointData.EndpointModel.Registration.AuthenticationMethods != null) {
-                            foreach (var authenticationMethod in EndpointData.EndpointModel.Registration.AuthenticationMethods) {
+                        if (EndpointData.EndpointModel.AuthenticationMethods != null) {
+                            foreach (var authenticationMethod in EndpointData.EndpointModel.AuthenticationMethods) {
                                 <div class="body">@authenticationMethod.CredentialType.ToString()</div>
                             }
                         }

@@ -4,6 +4,7 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Models {
+    using Microsoft.Azure.IIoT.Platform.Core.Api.Models;
 
     /// <summary>
     /// Handle event
@@ -27,9 +28,15 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Models {
             endpoint.ApplicationId = update.ApplicationId;
             endpoint.EndpointState = update.EndpointState;
             endpoint.NotSeenSince = update.NotSeenSince;
-            endpoint.OutOfSync = update.OutOfSync;
-            endpoint.Registration = (update.Registration ?? new EndpointRegistrationApiModel())
-                .Patch(endpoint.Registration);
+            endpoint.AuthenticationMethods = update.AuthenticationMethods;
+            endpoint.DiscovererId = update.DiscovererId;
+            endpoint.EndpointUrl = update.EndpointUrl;
+            endpoint.Id = update.Id;
+            endpoint.SecurityLevel = update.SecurityLevel;
+            endpoint.SiteId = update.SiteId;
+            endpoint.SupervisorId = update.SupervisorId;
+            endpoint.Endpoint = (update.Endpoint ?? new EndpointApiModel())
+                .Patch(endpoint.Endpoint);
             return endpoint;
         }
     }

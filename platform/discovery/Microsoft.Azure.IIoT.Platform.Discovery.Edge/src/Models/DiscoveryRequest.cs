@@ -123,7 +123,6 @@ namespace Microsoft.Azure.IIoT.Platform.Discovery.Edge.Models {
                 // Report empty configuration if off, but keep the
                 // discovery urls details from the original request
                 Request.Configuration = new DiscoveryConfigModel() {
-                    ActivationFilter = Request.Configuration.ActivationFilter?.Clone(),
                     DiscoveryUrls = Request.Configuration.DiscoveryUrls?.ToList(),
                     Locales = Request.Configuration.Locales?.ToList()
                 };

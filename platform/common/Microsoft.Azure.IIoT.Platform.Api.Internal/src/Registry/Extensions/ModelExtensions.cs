@@ -27,6 +27,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Models {
             }
             return new ApplicationInfoApiModel {
                 ApplicationId = model.ApplicationId,
+                GenerationId = model.GenerationId,
                 ApplicationType = (Core.Api.Models.ApplicationType)model.ApplicationType,
                 ApplicationUri = model.ApplicationUri,
                 ApplicationName = model.ApplicationName,
@@ -58,6 +59,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Models {
             }
             return new ApplicationInfoModel {
                 ApplicationId = model.ApplicationId,
+                GenerationId = model.GenerationId,
                 ApplicationType = (Core.Models.ApplicationType)model.ApplicationType,
                 ApplicationUri = model.ApplicationUri,
                 ApplicationName = model.ApplicationName,
@@ -286,13 +288,14 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Models {
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
-        public static ApplicationRegistrationUpdateApiModel ToApiModel(
-            this ApplicationRegistrationUpdateModel model) {
+        public static ApplicationInfoUpdateApiModel ToApiModel(
+            this ApplicationInfoUpdateModel model) {
             if (model == null) {
                 return null;
             }
-            return new ApplicationRegistrationUpdateApiModel {
+            return new ApplicationInfoUpdateApiModel {
                 ApplicationName = model.ApplicationName,
+                GenerationId = model.GenerationId,
                 Locale = model.Locale,
                 LocalizedNames = model.LocalizedNames?
                     .ToDictionary(k => k.Key, v => v.Value),
@@ -309,13 +312,14 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Models {
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
-        public static ApplicationRegistrationUpdateModel ToServiceModel(
-            this ApplicationRegistrationUpdateApiModel model) {
+        public static ApplicationInfoUpdateModel ToServiceModel(
+            this ApplicationInfoUpdateApiModel model) {
             if (model == null) {
                 return null;
             }
-            return new ApplicationRegistrationUpdateModel {
+            return new ApplicationInfoUpdateModel {
                 ApplicationName = model.ApplicationName,
+                GenerationId = model.GenerationId,
                 Locale = model.Locale,
                 LocalizedNames = model.LocalizedNames?
                     .ToDictionary(k => k.Key, v => v.Value),
@@ -409,6 +413,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Models {
             }
             return new DiscovererApiModel {
                 Id = model.Id,
+                GenerationId = model.GenerationId,
                 LogLevel = (TraceLogLevel?)model.LogLevel,
                 RequestedMode = (DiscoveryMode?)model.RequestedMode,
                 RequestedConfig = model.RequestedConfig.ToApiModel(),
@@ -432,6 +437,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Models {
             }
             return new DiscovererModel {
                 Id = model.Id,
+                GenerationId = model.GenerationId,
                 LogLevel = (Registry.Models.TraceLogLevel?)model.LogLevel,
                 RequestedMode = (Registry.Models.DiscoveryMode?)model.RequestedMode,
                 RequestedConfig = model.RequestedConfig.ToServiceModel(),
@@ -462,6 +468,39 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Models {
         }
 
         /// <summary>
+        /// Create service model
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public static DiscovererListModel ToServiceModel(
+            this DiscovererListApiModel model) {
+            if (model == null) {
+                return null;
+            }
+            return new DiscovererListModel {
+                ContinuationToken = model.ContinuationToken,
+                Items = model.Items?
+                    .Select(s => s.ToServiceModel())
+                    .ToList()
+            };
+        }
+
+        /// <summary>
+        /// Convert To api model
+        /// </summary>
+        /// <returns></returns>
+        public static DiscovererQueryApiModel ToApiModel(
+            this DiscovererQueryModel model) {
+            if (model == null) {
+                return null;
+            }
+            return new DiscovererQueryApiModel {
+                Connected = model.Connected,
+                Discovery = (DiscoveryMode?)model.Discovery
+            };
+        }
+
+        /// <summary>
         /// Convert back to service model
         /// </summary>
         /// <returns></returns>
@@ -477,6 +516,24 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Models {
         }
 
         /// <summary>
+        /// Create api model
+        /// </summary>
+        /// <returns></returns>
+        public static DiscovererUpdateApiModel ToApiModel(
+            this DiscovererUpdateModel model) {
+            if (model == null) {
+                return null;
+            }
+            return new DiscovererUpdateApiModel {
+                GenerationId = model.GenerationId,
+                LogLevel = (TraceLogLevel?)model.LogLevel,
+                Discovery = (DiscoveryMode?)model.Discovery,
+                DiscoveryConfig = model.DiscoveryConfig.ToApiModel()
+            };
+        }
+
+
+        /// <summary>
         /// Convert back to service model
         /// </summary>
         /// <returns></returns>
@@ -486,6 +543,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Models {
                 return null;
             }
             return new DiscovererUpdateModel {
+                GenerationId = model.GenerationId,
                 LogLevel = (Registry.Models.TraceLogLevel?)model.LogLevel,
                 Discovery = (Registry.Models.DiscoveryMode?)model.Discovery,
                 DiscoveryConfig = model.DiscoveryConfig.ToServiceModel()
@@ -511,7 +569,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Models {
                 MaxPortProbes = model.MaxPortProbes,
                 MinPortProbesPercent = model.MinPortProbesPercent,
                 IdleTimeBetweenScans = model.IdleTimeBetweenScans,
-                ActivationFilter = model.ActivationFilter.ToApiModel(),
                 Locales = model.Locales,
                 DiscoveryUrls = model.DiscoveryUrls
             };
@@ -535,7 +592,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Models {
                 MaxPortProbes = model.MaxPortProbes,
                 MinPortProbesPercent = model.MinPortProbesPercent,
                 IdleTimeBetweenScans = model.IdleTimeBetweenScans,
-                ActivationFilter = model.ActivationFilter.ToServiceModel(),
                 Locales = model.Locales,
                 DiscoveryUrls = model.DiscoveryUrls
             };
@@ -598,39 +654,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Models {
                 Id = model.Id,
                 Configuration = model.Configuration.ToServiceModel(),
                 Discovery = (Registry.Models.DiscoveryMode?)model.Discovery
-            };
-        }
-
-        /// <summary>
-        /// Create api model
-        /// </summary>
-        /// <param name="model"></param>
-        /// <returns></returns>
-        public static EndpointActivationFilterApiModel ToApiModel(
-            this EndpointActivationFilterModel model) {
-            if (model == null) {
-                return null;
-            }
-            return new EndpointActivationFilterApiModel {
-                TrustLists = model.TrustLists,
-                SecurityPolicies = model.SecurityPolicies,
-                SecurityMode = (Core.Api.Models.SecurityMode?)model.SecurityMode
-            };
-        }
-
-        /// <summary>
-        /// Convert back to service model
-        /// </summary>
-        /// <returns></returns>
-        public static EndpointActivationFilterModel ToServiceModel(
-            this EndpointActivationFilterApiModel model) {
-            if (model == null) {
-                return null;
-            }
-            return new EndpointActivationFilterModel {
-                TrustLists = model.TrustLists,
-                SecurityPolicies = model.SecurityPolicies,
-                SecurityMode = (Core.Models.SecurityMode?)model.SecurityMode
             };
         }
 
@@ -705,6 +728,38 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Models {
         }
 
         /// <summary>
+        /// Convert to api model
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public static EndpointInfoUpdateApiModel ToApiModel(
+            this EndpointInfoUpdateModel model) {
+            if (model == null) {
+                return null;
+            }
+            return new EndpointInfoUpdateApiModel {
+                GenerationId = model.GenerationId,
+                ActivationState = (EntityActivationState?)model.ActivationState,
+            };
+        }
+
+        /// <summary>
+        /// Convert to service model
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public static EndpointInfoUpdateModel ToServiceModel(
+            this EndpointInfoUpdateApiModel model) {
+            if (model == null) {
+                return null;
+            }
+            return new EndpointInfoUpdateModel {
+                GenerationId = model.GenerationId,
+                ActivationState = (Registry.Models.EntityActivationState?)model.ActivationState,
+            };
+        }
+
+        /// <summary>
         /// Create api model
         /// </summary>
         /// <param name="model"></param>
@@ -716,11 +771,20 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Models {
             }
             return new EndpointInfoApiModel {
                 ApplicationId = model.ApplicationId,
+                GenerationId = model.GenerationId,
                 NotSeenSince = model.NotSeenSince,
-                Registration = model.Registration.ToApiModel(),
                 ActivationState = (EntityActivationState?)model.ActivationState,
                 EndpointState = (Core.Api.Models.EndpointConnectivityState?)model.EndpointState,
-                OutOfSync = model.OutOfSync
+                Id = model.Id,
+                Endpoint = model.Endpoint.ToApiModel(),
+                EndpointUrl = model.EndpointUrl,
+                AuthenticationMethods = model.AuthenticationMethods?
+                    .Select(p => p.ToApiModel())
+                    .ToList(),
+                SecurityLevel = model.SecurityLevel,
+                SiteId = model.SiteId,
+                DiscovererId = model.DiscovererId,
+                SupervisorId = model.SupervisorId
             };
         }
 
@@ -736,11 +800,20 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Models {
             }
             return new EndpointInfoModel {
                 ApplicationId = model.ApplicationId,
+                GenerationId = model.GenerationId,
                 NotSeenSince = model.NotSeenSince,
-                Registration = model.Registration.ToServiceModel(),
                 ActivationState = (Registry.Models.EntityActivationState?)model.ActivationState,
                 EndpointState = (Core.Models.EndpointConnectivityState?)model.EndpointState,
-                OutOfSync = model.OutOfSync
+                Id = model.Id,
+                Endpoint = model.Endpoint.ToServiceModel(),
+                EndpointUrl = model.EndpointUrl,
+                AuthenticationMethods = model.AuthenticationMethods?
+                    .Select(p => p.ToServiceModel())
+                    .ToList(),
+                SecurityLevel = model.SecurityLevel,
+                SiteId = model.SiteId,
+                DiscovererId = model.DiscovererId,
+                SupervisorId = model.SupervisorId
             };
         }
 
@@ -781,64 +854,16 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Models {
         }
 
         /// <summary>
-        /// Create api model
-        /// </summary>
-        /// <param name="model"></param>
-        /// <returns></returns>
-        public static EndpointRegistrationApiModel ToApiModel(
-            this EndpointRegistrationModel model) {
-            if (model == null) {
-                return null;
-            }
-            return new EndpointRegistrationApiModel {
-                Id = model.Id,
-                Endpoint = model.Endpoint.ToApiModel(),
-                EndpointUrl = model.EndpointUrl,
-                AuthenticationMethods = model.AuthenticationMethods?
-                    .Select(p => p.ToApiModel())
-                    .ToList(),
-                SecurityLevel = model.SecurityLevel,
-                SiteId = model.SiteId,
-                DiscovererId = model.DiscovererId,
-                SupervisorId = model.SupervisorId
-            };
-        }
-
-        /// <summary>
-        /// Create api model
-        /// </summary>
-        /// <param name="model"></param>
-        /// <returns></returns>
-        public static EndpointRegistrationModel ToServiceModel(
-            this EndpointRegistrationApiModel model) {
-            if (model == null) {
-                return null;
-            }
-            return new EndpointRegistrationModel {
-                Id = model.Id,
-                Endpoint = model.Endpoint.ToServiceModel(),
-                EndpointUrl = model.EndpointUrl,
-                AuthenticationMethods = model.AuthenticationMethods?
-                    .Select(p => p.ToServiceModel())
-                    .ToList(),
-                SecurityLevel = model.SecurityLevel,
-                SiteId = model.SiteId,
-                DiscovererId = model.DiscovererId,
-                SupervisorId = model.SupervisorId
-            };
-        }
-
-        /// <summary>
         /// Convert to Api model
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
-        public static EndpointRegistrationQueryApiModel ToApiModel(
-            this EndpointRegistrationQueryModel model) {
+        public static EndpointInfoQueryApiModel ToApiModel(
+            this EndpointInfoQueryModel model) {
             if (model == null) {
                 return null;
             }
-            return new EndpointRegistrationQueryApiModel {
+            return new EndpointInfoQueryApiModel {
                 Url = model.Url,
                 Connected = model.Connected,
                 Activated = model.Activated,
@@ -859,12 +884,12 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Models {
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
-        public static EndpointRegistrationQueryModel ToServiceModel(
-            this EndpointRegistrationQueryApiModel model) {
+        public static EndpointInfoQueryModel ToServiceModel(
+            this EndpointInfoQueryApiModel model) {
             if (model == null) {
                 return null;
             }
-            return new EndpointRegistrationQueryModel {
+            return new EndpointInfoQueryModel {
                 Url = model.Url,
                 Connected = model.Connected,
                 Activated = model.Activated,
@@ -991,6 +1016,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Models {
             }
             return new PublisherApiModel {
                 Id = model.Id,
+                GenerationId = model.GenerationId,
                 LogLevel = (TraceLogLevel?)model.LogLevel,
                 OutOfSync = model.OutOfSync,
                 Version = model.Version,
@@ -1010,6 +1036,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Models {
             }
             return new PublisherModel {
                 Id = model.Id,
+                GenerationId = model.GenerationId,
                 LogLevel = (Registry.Models.TraceLogLevel?)model.LogLevel,
                 OutOfSync = model.OutOfSync,
                 Version = model.Version,
@@ -1094,6 +1121,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Models {
                 return null;
             }
             return new PublisherUpdateApiModel {
+                GenerationId = model.GenerationId,
                 LogLevel = (TraceLogLevel?)model.LogLevel,
             };
         }
@@ -1109,6 +1137,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Models {
                 return null;
             }
             return new PublisherUpdateModel {
+                GenerationId = model.GenerationId,
                 LogLevel = (Registry.Models.TraceLogLevel?)model.LogLevel,
             };
         }
@@ -1158,7 +1187,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Models {
             return new ServerRegistrationRequestModel {
                 DiscoveryUrl = model.DiscoveryUrl,
                 Id = model.Id,
-                ActivationFilter = model.ActivationFilter.ToServiceModel()
             };
         }
 
@@ -1174,6 +1202,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Models {
             }
             return new SupervisorApiModel {
                 Id = model.Id,
+                GenerationId = model.GenerationId,
                 LogLevel = (TraceLogLevel?)model.LogLevel,
                 OutOfSync = model.OutOfSync,
                 Version = model.Version,

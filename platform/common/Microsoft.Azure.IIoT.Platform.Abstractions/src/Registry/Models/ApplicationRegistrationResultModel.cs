@@ -14,5 +14,10 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
         /// New id application was registered under
         /// </summary>
         public string Id { get; set; }
+
+        /// <summary>
+        /// Generation Id
+        /// </summary>
+        public string GenerationId { get; set; }
     }
 }

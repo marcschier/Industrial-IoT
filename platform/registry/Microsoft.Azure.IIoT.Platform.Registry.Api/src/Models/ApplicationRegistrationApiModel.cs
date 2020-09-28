@@ -26,6 +26,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Models {
         /// </summary>
         [DataMember(Name = "endpoints", Order = 1,
             EmitDefaultValue = false)]
-        public List<EndpointRegistrationApiModel> Endpoints { get; set; }
+        public List<EndpointInfoApiModel> Endpoints { get; set; }
     }
 }

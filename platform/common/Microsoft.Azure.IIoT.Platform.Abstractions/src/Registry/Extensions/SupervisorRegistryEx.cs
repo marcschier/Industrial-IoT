@@ -26,7 +26,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry {
             this ISupervisorRegistry service, string supervisorId,
             CancellationToken ct = default) {
             try {
-                return await service.GetSupervisorAsync(supervisorId, false, ct);
+                return await service.GetSupervisorAsync(supervisorId, ct);
             }
             catch (ResourceNotFoundException) {
                 return null;
@@ -37,18 +37,15 @@ namespace Microsoft.Azure.IIoT.Platform.Registry {
         /// List all supervisors
         /// </summary>
         /// <param name="service"></param>
-        /// <param name="onlyServerState"></param>
         /// <param name="ct"></param>
         /// <returns></returns>
         public static async Task<List<SupervisorModel>> ListAllSupervisorsAsync(
-            this ISupervisorRegistry service, bool onlyServerState = false,
-            CancellationToken ct = default) {
+            this ISupervisorRegistry service, CancellationToken ct = default) {
             var supervisors = new List<SupervisorModel>();
-            var result = await service.ListSupervisorsAsync(null, onlyServerState, null, ct);
+            var result = await service.ListSupervisorsAsync(null, null, ct);
             supervisors.AddRange(result.Items);
             while (result.ContinuationToken != null) {
-                result = await service.ListSupervisorsAsync(result.ContinuationToken,
-                    onlyServerState, null, ct);
+                result = await service.ListSupervisorsAsync(result.ContinuationToken, null, ct);
                 supervisors.AddRange(result.Items);
             }
             return supervisors;
@@ -59,18 +56,16 @@ namespace Microsoft.Azure.IIoT.Platform.Registry {
         /// </summary>
         /// <param name="service"></param>
         /// <param name="query"></param>
-        /// <param name="onlyServerState"></param>
         /// <param name="ct"></param>
         /// <returns></returns>
         public static async Task<List<SupervisorModel>> QueryAllSupervisorsAsync(
             this ISupervisorRegistry service, SupervisorQueryModel query,
-            bool onlyServerState = false, CancellationToken ct = default) {
+            CancellationToken ct = default) {
             var supervisors = new List<SupervisorModel>();
-            var result = await service.QuerySupervisorsAsync(query, onlyServerState, null, ct);
+            var result = await service.QuerySupervisorsAsync(query, null, ct);
             supervisors.AddRange(result.Items);
             while (result.ContinuationToken != null) {
-                result = await service.ListSupervisorsAsync(result.ContinuationToken,
-                    onlyServerState, null, ct);
+                result = await service.ListSupervisorsAsync(result.ContinuationToken, null, ct);
                 supervisors.AddRange(result.Items);
             }
             return supervisors;

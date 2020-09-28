@@ -29,11 +29,11 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Supervisor.History.Star
                 ?? Try.Op(() => Dns.GetHostEntry("localhost"));
         }
 
-        private HistoryReadValuesTests<EndpointRegistrationModel> GetTests(string hub,
+        private HistoryReadValuesTests<EndpointInfoModel> GetTests(string hub,
             string deviceId, string moduleId, IContainer services) {
-            return new HistoryReadValuesTests<EndpointRegistrationModel>(
-                () => services.Resolve<IHistorianServices<EndpointRegistrationModel>>(),
-                new EndpointRegistrationModel {
+            return new HistoryReadValuesTests<EndpointInfoModel>(
+                () => services.Resolve<IHistorianServices<EndpointInfoModel>>(),
+                new EndpointInfoModel {
                     Endpoint = new EndpointModel {
                         Url = $"opc.tcp://{_hostEntry?.HostName ?? "localhost"}:{_server.Port}/UA/SampleServer",
                         AlternativeUrls = _hostEntry?.AddressList

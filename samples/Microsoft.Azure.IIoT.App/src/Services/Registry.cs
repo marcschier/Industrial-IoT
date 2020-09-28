@@ -42,7 +42,7 @@ namespace Microsoft.Azure.IIoT.App.Services {
 
             try {
                 var endpoints = new EndpointInfoListApiModel();
-                var query = new EndpointRegistrationQueryApiModel {
+                var query = new EndpointInfoQueryApiModel {
                     DiscovererId = discovererId == PathAll ? null : discovererId,
                     ApplicationId = applicationId == PathAll ? null : applicationId,
                     SupervisorId = supervisorId == PathAll ? null : supervisorId,
@@ -50,15 +50,15 @@ namespace Microsoft.Azure.IIoT.App.Services {
                 };
 
                 if (getNextPage && string.IsNullOrEmpty(previousPage?.ContinuationToken)) {
-                    endpoints = await _registryService.QueryEndpointsAsync(query, null, _commonHelper.PageLength);
+                    endpoints = await _registryService.QueryEndpointsAsync(query, _commonHelper.PageLength);
                 }
                 else {
-                    endpoints = await _registryService.ListEndpointsAsync(previousPage.ContinuationToken, null, _commonHelper.PageLength);
+                    endpoints = await _registryService.ListEndpointsAsync(previousPage.ContinuationToken, _commonHelper.PageLength);
                 }
 
                 foreach (var ep in endpoints.Items) {
                     // Get non cached version of endpoint
-                    var endpoint = await _registryService.GetEndpointAsync(ep.Registration.Id);
+                    var endpoint = await _registryService.GetEndpointAsync(ep.Id);
                     pageResult.Results.Add(new EndpointInfo {
                         EndpointModel = endpoint
                     });
@@ -122,7 +122,7 @@ namespace Microsoft.Azure.IIoT.App.Services {
 
                 if (previousPage != null && getNextPage) {
                     previousPage.Results.AddRange(pageResult.Results);
-                    pageResult.Results = previousPage.Results;            
+                    pageResult.Results = previousPage.Results;
                 }
 
                 pageResult.ContinuationToken = discoverers.ContinuationToken;
@@ -324,10 +324,10 @@ namespace Microsoft.Azure.IIoT.App.Services {
                 var publishers = new PublisherListApiModel();
 
                 if (getNextPage && string.IsNullOrEmpty(previousPage?.ContinuationToken)) {
-                    publishers = await _registryService.QueryPublishersAsync(publisherModel, null, _commonHelper.PageLengthSmall);
+                    publishers = await _registryService.QueryPublishersAsync(publisherModel, _commonHelper.PageLengthSmall);
                 }
                 else {
-                    publishers = await _registryService.ListPublishersAsync(previousPage.ContinuationToken, null, _commonHelper.PageLengthSmall);
+                    publishers = await _registryService.ListPublishersAsync(previousPage.ContinuationToken, _commonHelper.PageLengthSmall);
                 }
 
                 if (publishers != null) {
@@ -385,7 +385,9 @@ namespace Microsoft.Azure.IIoT.App.Services {
         public async Task<string> UnregisterApplicationAsync(string applicationId) {
 
             try {
-                await _registryService.UnregisterApplicationAsync(applicationId);
+                var application = await _registryService.GetApplicationAsync(applicationId);
+                await _registryService.UnregisterApplicationAsync(applicationId,
+                    application.Application.GenerationId);
             }
             catch (UnauthorizedAccessException) {
                 return "Unauthorized access: Bad User Access Denied.";
@@ -412,10 +414,10 @@ namespace Microsoft.Azure.IIoT.App.Services {
                 var supervisors = new SupervisorListApiModel();
 
                 if (getNextPage && string.IsNullOrEmpty(previousPage?.ContinuationToken)) {
-                    supervisors = await _registryService.QuerySupervisorsAsync(model, null, _commonHelper.PageLength);
+                    supervisors = await _registryService.QuerySupervisorsAsync(model, _commonHelper.PageLength);
                 }
                 else {
-                    supervisors = await _registryService.ListSupervisorsAsync(previousPage.ContinuationToken, null, _commonHelper.PageLengthSmall);
+                    supervisors = await _registryService.ListSupervisorsAsync(previousPage.ContinuationToken, _commonHelper.PageLengthSmall);
                 }
 
                 if (supervisors != null) {

@@ -323,14 +323,14 @@ Operations (Mutually exclusive):
             /// <inheritdoc/>
             public Task OnEndpointActivatedAsync(RegistryOperationContextModel context,
                 EndpointInfoModel endpoint) {
-                Console.WriteLine($"Activated {endpoint.Registration.Id}");
+                Console.WriteLine($"Activated {endpoint.Id}");
                 return Task.CompletedTask;
             }
 
             /// <inheritdoc/>
             public Task OnEndpointDeactivatedAsync(RegistryOperationContextModel context,
                 EndpointInfoModel endpoint) {
-                Console.WriteLine($"Deactivated {endpoint.Registration.Id}");
+                Console.WriteLine($"Deactivated {endpoint.Id}");
                 return Task.CompletedTask;
             }
 
@@ -344,28 +344,28 @@ Operations (Mutually exclusive):
             /// <inheritdoc/>
             public Task OnEndpointDisabledAsync(RegistryOperationContextModel context,
                 EndpointInfoModel endpoint) {
-                Console.WriteLine($"Disabled {endpoint.Registration.Id}");
+                Console.WriteLine($"Disabled {endpoint.Id}");
                 return Task.CompletedTask;
             }
 
             /// <inheritdoc/>
             public Task OnEndpointEnabledAsync(RegistryOperationContextModel context,
                 EndpointInfoModel endpoint) {
-                Console.WriteLine($"Enabled {endpoint.Registration.Id}");
+                Console.WriteLine($"Enabled {endpoint.Id}");
                 return Task.CompletedTask;
             }
 
             /// <inheritdoc/>
             public Task OnEndpointNewAsync(RegistryOperationContextModel context,
                 EndpointInfoModel endpoint) {
-                Console.WriteLine($"Created {endpoint.Registration.Id}");
+                Console.WriteLine($"Created {endpoint.Id}");
                 return Task.CompletedTask;
             }
 
             /// <inheritdoc/>
             public Task OnEndpointUpdatedAsync(RegistryOperationContextModel context,
                 EndpointInfoModel endpoint) {
-                Console.WriteLine($"Updated {endpoint.Registration.Id}");
+                Console.WriteLine($"Updated {endpoint.Id}");
                 return Task.CompletedTask;
             }
         }

@@ -46,15 +46,10 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service.Controllers {
         /// A publisher id corresponds to the twin modules module identity.
         /// </remarks>
         /// <param name="publisherId">Publisher identifier</param>
-        /// <param name="onlyServerState">Whether to include only server
-        /// state, or display current client state of the endpoint if
-        /// available</param>
         /// <returns>Publisher registration</returns>
         [HttpGet("{publisherId}")]
-        public async Task<PublisherApiModel> GetPublisherAsync(string publisherId,
-            [FromQuery] bool? onlyServerState) {
-            var result = await _publishers.GetPublisherAsync(publisherId,
-                onlyServerState ?? false);
+        public async Task<PublisherApiModel> GetPublisherAsync(string publisherId) {
+            var result = await _publishers.GetPublisherAsync(publisherId);
             return result.ToApiModel();
         }
 
@@ -118,8 +113,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service.Controllers {
         /// available.
         /// Call this operation again using the token to retrieve more results.
         /// </remarks>
-        /// <param name="onlyServerState">Whether to include only server
-        /// state, or display current client state of the endpoint if available</param>
         /// <param name="continuationToken">Optional Continuation token</param>
         /// <param name="pageSize">Optional number of results to return</param>
         /// <returns>
@@ -129,7 +122,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service.Controllers {
         [HttpGet]
         [AutoRestExtension(NextPageLinkName = "continuationToken")]
         public async Task<PublisherListApiModel> GetListOfPublisherAsync(
-            [FromQuery] bool? onlyServerState,
             [FromQuery] string continuationToken,
             [FromQuery] int? pageSize) {
             if (Request.Headers.ContainsKey(HttpHeader.ContinuationToken)) {
@@ -140,8 +132,8 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service.Controllers {
                 pageSize = int.Parse(Request.Headers[HttpHeader.MaxItemCount]
                     .FirstOrDefault());
             }
-            var result = await _publishers.ListPublishersAsync(
-                continuationToken, onlyServerState ?? false, pageSize);
+            var result = await _publishers.ListPublishersAsync(continuationToken,
+                pageSize);
             return result.ToApiModel();
         }
 
@@ -156,15 +148,11 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service.Controllers {
         /// more results.
         /// </remarks>
         /// <param name="query">Publisher query model</param>
-        /// <param name="onlyServerState">Whether to include only server
-        /// state, or display current client state of the endpoint if
-        /// available</param>
         /// <param name="pageSize">Number of results to return</param>
         /// <returns>Publisher</returns>
         [HttpPost("query")]
         public async Task<PublisherListApiModel> QueryPublisherAsync(
             [FromBody] [Required] PublisherQueryApiModel query,
-            [FromQuery] bool? onlyServerState,
             [FromQuery] int? pageSize) {
             if (query == null) {
                 throw new ArgumentNullException(nameof(query));
@@ -174,7 +162,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service.Controllers {
                     .FirstOrDefault());
             }
             var result = await _publishers.QueryPublishersAsync(
-                query.ToServiceModel(), onlyServerState ?? false, pageSize);
+                query.ToServiceModel(), pageSize);
 
             // TODO: Filter results based on RBAC
 
@@ -192,15 +180,11 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service.Controllers {
         /// more results.
         /// </remarks>
         /// <param name="query">Publisher Query model</param>
-        /// <param name="onlyServerState">Whether to include only server
-        /// state, or display current client state of the endpoint if
-        /// available</param>
         /// <param name="pageSize">Number of results to return</param>
         /// <returns>Publisher</returns>
         [HttpGet("query")]
         public async Task<PublisherListApiModel> GetFilteredListOfPublisherAsync(
             [FromQuery] [Required] PublisherQueryApiModel query,
-            [FromQuery] bool? onlyServerState,
             [FromQuery] int? pageSize) {
 
             if (query == null) {
@@ -211,7 +195,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service.Controllers {
                     .FirstOrDefault());
             }
             var result = await _publishers.QueryPublishersAsync(
-                query.ToServiceModel(), onlyServerState ?? false, pageSize);
+                query.ToServiceModel(), pageSize);
 
             // TODO: Filter results based on RBAC
 

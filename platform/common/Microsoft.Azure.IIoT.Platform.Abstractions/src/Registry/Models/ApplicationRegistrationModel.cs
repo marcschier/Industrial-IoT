@@ -19,6 +19,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
         /// <summary>
         /// List of endpoints for it
         /// </summary>
-        public List<EndpointRegistrationModel> Endpoints { get; set; }
+        public List<EndpointInfoModel> Endpoints { get; set; }
     }
 }

@@ -35,6 +35,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service {
     using Prometheus;
     using System;
     using ILogger = Serilog.ILogger;
+    using Microsoft.Azure.IIoT.Platform.Registry.Storage.Default;
 
     /// <summary>
     /// Webservice startup
@@ -187,7 +188,9 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service {
 
             // Registries and repositories
             builder.RegisterModule<RegistryServices>();
-            builder.RegisterType<ApplicationTwins>()
+            builder.RegisterType<ApplicationDatabase>()
+                .AsImplementedInterfaces().SingleInstance();
+            builder.RegisterType<EndpointDatabase>()
                 .AsImplementedInterfaces().SingleInstance();
 
             // Additional clients needed by registry services

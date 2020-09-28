@@ -234,14 +234,14 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                     continue;
                 }
                 var endpoints = await _endpoints.QueryEndpointsAsync(
-                    new EndpointRegistrationQueryModel {
+                    new EndpointInfoQueryModel {
                         Url = ep.Url,
                         SecurityMode = ep.SecurityMode,
                         SecurityPolicy = ep.SecurityPolicy,
-                    }, false, 1, ct);
+                    }, 1, ct);
 
                 var endpoint = endpoints.Items?.FirstOrDefault(); // Pick the first returned.
-                if (string.IsNullOrEmpty(endpoint?.Registration?.Id)) {
+                if (string.IsNullOrEmpty(endpoint?.Id)) {
                     _logger.Error(
                         "Dataset source endpoint not in registry - skip writer {writer} " +
                         "in group {group}.", dataSetWriter.DataSetWriterId, group.WriterGroupId);
@@ -249,14 +249,14 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                 }
 
                 var groupOfWriter = group;
-                if (endpoint.Registration.SiteId != null) {
+                if (endpoint.SiteId != null) {
                     //
                     // We have a site - if the group had no site make sure it is updated
                     // to reflect the writer endpoint site.
                     //
                     if (group.SiteId == null) {
                         // Group has no site yet - use this site
-                        group.SiteId = endpoint.Registration.SiteId;
+                        group.SiteId = endpoint.SiteId;
                         await _groups.UpdateAsync(group.WriterGroupId, existing => {
                             existing.SiteId = group.SiteId;
                             return Task.FromResult(true);
@@ -272,9 +272,9 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                     // Need to create a new group for the site of this writer. Also use a
                     // new writer group id here so we have a unique one.
                     //
-                    else if (group.SiteId != endpoint.Registration.SiteId) {
+                    else if (group.SiteId != endpoint.SiteId) {
                         groupOfWriter = group.Clone();
-                        groupOfWriter.SiteId = endpoint.Registration.SiteId;
+                        groupOfWriter.SiteId = endpoint.SiteId;
                         groupOfWriter.WriterGroupId = null;  // Assign
                         groupOfWriter = await _groups.AddAsync(groupOfWriter, ct);
 
@@ -293,7 +293,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
 
                 // now that we have a group - add the writer to this group
                 var writer = dataSetWriter.AsDataSetWriterInfo(groupOfWriter.WriterGroupId,
-                    endpoint.Registration.Id, context);
+                    endpoint.Id, context);
                 writer.DataSetWriterId ??= Guid.NewGuid().ToString();
                 writer = await _writers.AddOrUpdateAsync(writer.DataSetWriterId, existing => {
                     updated = existing != null;
@@ -402,7 +402,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
 
             // Find the specified endpoint and fail if not exist
             var endpoint = await Try.Async(() => _endpoints.GetEndpointAsync(
-                request.EndpointId, true, ct));
+                request.EndpointId, ct));
             ct.ThrowIfCancellationRequested();
             if (endpoint == null) {
                 throw new ArgumentException(nameof(request.EndpointId),
@@ -416,14 +416,14 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                     throw new ArgumentException(nameof(request.WriterGroupId),
                         "Dataset writer group not found.");
                 }
-                if (group.SiteId != endpoint.Registration.SiteId) {
+                if (group.SiteId != endpoint.SiteId) {
                     throw new ArgumentException(nameof(request.WriterGroupId),
                         "Dataset writer group not in same site as endpoint");
                 }
             }
             else {
                 // Use default writer group for site
-                request.WriterGroupId = endpoint.Registration.SiteId;
+                request.WriterGroupId = endpoint.SiteId;
             }
 
             var result = await _writers.AddAsync(request.AsDataSetWriterInfo(context));
@@ -433,9 +433,9 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                 l => l.OnDataSetWriterAddedAsync(context, result));
 
             // Make sure the default group is created if it does not exist yet
-            if (request.WriterGroupId == endpoint.Registration.SiteId) {
+            if (request.WriterGroupId == endpoint.SiteId) {
                 await Try.Async(() => EnsureDefaultWriterGroupExistsAsync(
-                     endpoint.Registration.SiteId, context, ct));
+                     endpoint.SiteId, context, ct));
             }
 
             return new DataSetWriterAddResultModel {
@@ -1081,10 +1081,10 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
         private async Task<DataSetWriterModel> GetDataSetWriterAsync(
             DataSetWriterInfoModel writerInfo, CancellationToken ct) {
             var endpoint = string.IsNullOrEmpty(writerInfo.DataSet.EndpointId) ? null :
-                await _endpoints.GetEndpointAsync(writerInfo.DataSet.EndpointId, true, ct);
-            var connection = endpoint.Registration?.Endpoint == null ? null :
+                await _endpoints.GetEndpointAsync(writerInfo.DataSet.EndpointId, ct);
+            var connection = endpoint?.Endpoint == null ? null :
                 new ConnectionModel {
-                    Endpoint = endpoint.Registration.Endpoint.Clone(),
+                    Endpoint = endpoint.Endpoint.Clone(),
                     User = writerInfo.DataSet?.User.Clone()
                 };
             // Find event
@@ -1167,12 +1167,12 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
             TimeSpan? publishingInterval, CredentialModel user, CancellationToken ct) {
             // Find the specified endpoint and fail if not exist
             var endpoint = await Try.Async(() => _endpoints.GetEndpointAsync(
-                endpointId, false, ct));
+                endpointId, ct));
             ct.ThrowIfCancellationRequested();
             if (endpoint == null) {
                 throw new ArgumentException(nameof(endpointId), "Endpoint not found.");
             }
-            if (string.IsNullOrEmpty(endpoint.Registration?.SiteId)) {
+            if (string.IsNullOrEmpty(endpoint?.SiteId)) {
                 throw new ResourceInvalidStateException("Endpoint has not site id.");
             }
 
@@ -1198,7 +1198,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                                 writer.DataSet.SubscriptionSettings.PublishingInterval =
                                     publishingInterval;
                             }
-                            writer.WriterGroupId = endpoint.Registration.SiteId;
+                            writer.WriterGroupId = endpoint.SiteId;
                         }
                     }
                     else {
@@ -1215,7 +1215,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                                     }
                             },
                             DataSetWriterId = endpointId,
-                            WriterGroupId = endpoint.Registration.SiteId,
+                            WriterGroupId = endpoint.SiteId,
                             Created = context,
                             Updated = context
                         };
@@ -1224,7 +1224,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                 }, ct);
 
             var group = await EnsureDefaultWriterGroupExistsAsync(
-                endpoint.Registration.SiteId, context, ct);
+                endpoint.SiteId, context, ct);
             if (writer != null) {
                 if (added) {
                     _logger.Information("Added default group for {endpointId}", endpointId);

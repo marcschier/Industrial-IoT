@@ -13,6 +13,8 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Migration {
     using Serilog;
     using System;
     using System.Threading.Tasks;
+    using System.Threading;
+    using System.Linq;
 
     /// <summary>
     /// Migrate from device twin repo to defined repo
@@ -24,20 +26,19 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Migration {
         /// </summary>
         /// <param name="source"></param>
         /// <param name="repo"></param>
-        /// <param name="serializer"></param>
         /// <param name="logger"></param>
-        public ApplicationTwinsMigration(IDeviceTwinServices source, IApplicationRepository repo,
-            IJsonSerializer serializer, ILogger logger) {
+        public ApplicationTwinsMigration(IDeviceTwinServices source,
+            IApplicationRepository repo, ILogger logger) {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _repo = repo ?? throw new ArgumentNullException(nameof(repo));
-            _source = new ApplicationTwins(source, serializer, logger);
+            _source = source ?? throw new ArgumentNullException(nameof(source));
         }
 
         /// <inheritdoc/>
         public async Task MigrateAsync() {
             string continuation = null;
             do {
-                var results = await _source.ListAsync(continuation, null);
+                var results = await ListAsync(continuation);
                 continuation = results.ContinuationToken;
                 foreach (var application in results.Items) {
                     try {
@@ -64,8 +65,23 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Migration {
             while (continuation != null);
         }
 
+        /// <inheritdoc/>
+        public async Task<ApplicationInfoListModel> ListAsync(
+            string continuation, int? pageSize = null, CancellationToken ct = default) {
+            var query = "SELECT * FROM devices WHERE " +
+                $"tags.{nameof(EntityRegistration.DeviceType)} = '{IdentityType.Application}' ";
+            var result = await _source.QueryDeviceTwinsAsync(query, continuation, pageSize, ct);
+            return new ApplicationInfoListModel {
+                ContinuationToken = result.ContinuationToken,
+                Items = result.Items
+                    .Select(t => t.ToApplicationRegistration())
+                    .Select(s => s.ToServiceModel())
+                    .ToList()
+            };
+        }
+
         private readonly ILogger _logger;
-        private readonly IApplicationRepository _source;
+        private readonly IDeviceTwinServices _source;
         private readonly IApplicationRepository _repo;
     }
 }

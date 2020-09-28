@@ -40,24 +40,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry {
             EndpointInfoModel endpoint);
 
         /// <summary>
-        /// Disabled endpoint
-        /// </summary>
-        /// <param name="context"></param>
-        /// <param name="endpoint"></param>
-        /// <returns></returns>
-        Task OnEndpointDisabledAsync(RegistryOperationContextModel context,
-            EndpointInfoModel endpoint);
-
-        /// <summary>
-        /// Enabled endpoint
-        /// </summary>
-        /// <param name="context"></param>
-        /// <param name="endpoint"></param>
-        /// <returns></returns>
-        Task OnEndpointEnabledAsync(RegistryOperationContextModel context,
-            EndpointInfoModel endpoint);
-
-        /// <summary>
         /// Updated endpoint
         /// </summary>
         /// <param name="context"></param>

@@ -35,5 +35,10 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
         /// The reported version of the publisher
         /// </summary>
         public string Version { get; set; }
+
+        /// <summary>
+        /// Generation Id
+        /// </summary>
+        public string GenerationId { get; set; }
     }
 }

@@ -75,7 +75,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api {
         /// <param name="ct"></param>
         /// <returns></returns>
         Task UpdateApplicationAsync(string applicationId,
-            ApplicationRegistrationUpdateApiModel request,
+            ApplicationInfoUpdateApiModel request,
             CancellationToken ct = default);
 
         /// <summary>
@@ -115,31 +115,14 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api {
             CancellationToken ct = default);
 
         /// <summary>
-        /// Enable the application
-        /// </summary>
-        /// <param name="applicationId"></param>
-        /// <param name="ct"></param>
-        /// <returns></returns>
-        Task EnableApplicationAsync(string applicationId,
-            CancellationToken ct = default);
-
-        /// <summary>
-        /// Disable the application
-        /// </summary>
-        /// <param name="applicationId"></param>
-        /// <param name="ct"></param>
-        /// <returns></returns>
-        Task DisableApplicationAsync(string applicationId,
-            CancellationToken ct = default);
-
-        /// <summary>
         /// Unregister and delete application and all endpoints.
         /// </summary>
         /// <param name="applicationId"></param>
+        /// <param name="generationId"></param>
         /// <param name="ct"></param>
         /// <returns></returns>
         Task UnregisterApplicationAsync(string applicationId,
-            CancellationToken ct = default);
+            string generationId, CancellationToken ct = default);
 
         /// <summary>
         /// Unregister disabled applications not seen since specified
@@ -155,12 +138,10 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api {
         /// Get endpoint
         /// </summary>
         /// <param name="endpointId"></param>
-        /// <param name="onlyServerState"></param>
         /// <param name="ct"></param>
         /// <returns></returns>
         Task<EndpointInfoApiModel> GetEndpointAsync(
-            string endpointId, bool? onlyServerState = null,
-            CancellationToken ct = default);
+            string endpointId, CancellationToken ct = default);
 
         /// <summary>
         /// Get endpoint certificate
@@ -172,33 +153,25 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api {
             string endpointId, CancellationToken ct = default);
 
         /// <summary>
-        /// Set endpoint activation state to activated
+        /// Update endpoint information including activation state
         /// </summary>
         /// <param name="endpointId"></param>
+        /// <param name="request"></param>
         /// <param name="ct"></param>
         /// <returns></returns>
-        Task ActivateEndpointAsync(string endpointId,
-            CancellationToken ct = default);
-
-        /// <summary>
-        /// Set endpoint activation state to deactivated
-        /// </summary>
-        /// <param name="endpointId"></param>
-        /// <param name="ct"></param>
-        /// <returns></returns>
-        Task DeactivateEndpointAsync(string endpointId,
+        Task UpdateEndpointAsync(string endpointId,
+            EndpointInfoUpdateApiModel request,
             CancellationToken ct = default);
 
         /// <summary>
         /// List all endpoints
         /// </summary>
         /// <param name="continuation"></param>
-        /// <param name="onlyServerState"></param>
         /// <param name="pageSize"></param>
         /// <param name="ct"></param>
         /// <returns></returns>
         Task<EndpointInfoListApiModel> ListEndpointsAsync(
-            string continuation = null, bool? onlyServerState = null,
+            string continuation = null,
             int? pageSize = null, CancellationToken ct = default);
 
         /// <summary>
@@ -207,13 +180,11 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api {
         /// the remaining items
         /// </summary>
         /// <param name="query"></param>
-        /// <param name="onlyServerState"></param>
         /// <param name="pageSize"></param>
         /// <param name="ct"></param>
         /// <returns></returns>
         Task<EndpointInfoListApiModel> QueryEndpointsAsync(
-            EndpointRegistrationQueryApiModel query,
-            bool? onlyServerState = null, int? pageSize = null,
+            EndpointInfoQueryApiModel query, int? pageSize = null,
             CancellationToken ct = default);
 
         /// <summary>
@@ -237,12 +208,10 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api {
         /// Get supervisor
         /// </summary>
         /// <param name="supervisorId"></param>
-        /// <param name="onlyServerState"></param>
         /// <param name="ct"></param>
         /// <returns></returns>
         Task<SupervisorApiModel> GetSupervisorAsync(
-            string supervisorId, bool? onlyServerState = null,
-            CancellationToken ct = default);
+            string supervisorId, CancellationToken ct = default);
 
         /// <summary>
         /// Update supervisor including config updates.
@@ -259,13 +228,12 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api {
         /// List all supervisors
         /// </summary>
         /// <param name="continuation"></param>
-        /// <param name="onlyServerState"></param>
         /// <param name="pageSize"></param>
         /// <param name="ct"></param>
         /// <returns></returns>
         Task<SupervisorListApiModel> ListSupervisorsAsync(
-            string continuation = null, bool? onlyServerState = null,
-            int? pageSize = null, CancellationToken ct = default);
+            string continuation = null, int? pageSize = null,
+            CancellationToken ct = default);
 
         /// <summary>
         /// Find supervisors based on specified criteria. Pass
@@ -273,13 +241,12 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api {
         /// retrieve remaining items.
         /// </summary>
         /// <param name="query"></param>
-        /// <param name="onlyServerState"></param>
         /// <param name="pageSize"></param>
         /// <param name="ct"></param>
         /// <returns></returns>
         Task<SupervisorListApiModel> QuerySupervisorsAsync(
-            SupervisorQueryApiModel query, bool? onlyServerState = null,
-            int? pageSize = null, CancellationToken ct = default);
+            SupervisorQueryApiModel query, int? pageSize = null,
+            CancellationToken ct = default);
 
         /// <summary>
         /// Get discoverer
@@ -358,11 +325,10 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api {
         /// Get gateway
         /// </summary>
         /// <param name="publisherId"></param>
-        /// <param name="onlyServerState"></param>
         /// <param name="ct"></param>
         /// <returns></returns>
         Task<PublisherApiModel> GetPublisherAsync(
-            string publisherId, bool? onlyServerState = null,
+            string publisherId,
             CancellationToken ct = default);
 
         /// <summary>
@@ -380,12 +346,11 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api {
         /// List all gateways
         /// </summary>
         /// <param name="continuation"></param>
-        /// <param name="onlyServerState"></param>
         /// <param name="pageSize"></param>
         /// <param name="ct"></param>
         /// <returns></returns>
         Task<PublisherListApiModel> ListPublishersAsync(
-            string continuation = null, bool? onlyServerState = null,
+            string continuation = null,
             int? pageSize = null, CancellationToken ct = default);
 
         /// <summary>
@@ -394,12 +359,11 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api {
         /// retrieve remaining items.
         /// </summary>
         /// <param name="query"></param>
-        /// <param name="onlyServerState"></param>
         /// <param name="pageSize"></param>
         /// <param name="ct"></param>
         /// <returns></returns>
         Task<PublisherListApiModel> QueryPublishersAsync(
-            PublisherQueryApiModel query, bool? onlyServerState = null,
+            PublisherQueryApiModel query,
             int? pageSize = null, CancellationToken ct = default);
 
         /// <summary>

@@ -204,7 +204,7 @@ namespace Microsoft.Azure.IIoT.Platform.Discovery.Handlers {
             /// <returns></returns>
             public void Enqueue(DiscoveryEventModel model) {
                 _maxIndex = Math.Max(model.Index, _maxIndex);
-                if (model.Registration != null) {
+                if (model.Endpoint != null) {
                     _endpoints.Add(model);
                 }
                 else {

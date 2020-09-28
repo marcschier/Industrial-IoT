@@ -60,34 +60,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service.Controllers {
         }
 
         /// <summary>
-        /// Disable an enabled application.
-        /// </summary>
-        /// <remarks>
-        /// A manager can disable an application.
-        /// </remarks>
-        /// <param name="applicationId">The application id</param>
-        /// <returns></returns>
-        [HttpPost("{applicationId}/disable")]
-        [Authorize(Policy = Policies.CanManage)]
-        public async Task DisableApplicationAsync(string applicationId) {
-            await _applications.DisableApplicationAsync(applicationId);
-        }
-
-        /// <summary>
-        /// Re-enable a disabled application.
-        /// </summary>
-        /// <remarks>
-        /// A manager can enable an application.
-        /// </remarks>
-        /// <param name="applicationId">The application id</param>
-        /// <returns></returns>
-        [HttpPost("{applicationId}/enable")]
-        [Authorize(Policy = Policies.CanManage)]
-        public async Task EnableApplicationAsync(string applicationId) {
-            await _applications.EnableApplicationAsync(applicationId);
-        }
-
-        /// <summary>
         /// Discover servers
         /// </summary>
         /// <remarks>
@@ -145,25 +117,28 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service.Controllers {
                 throw new ArgumentNullException(nameof(request));
             }
             var model = request.ToServiceModel();
-            // TODO: applicationServiceModel.AuthorityId = User.Identity.Name;
+            // TODO: model.Context.AuthorityId = User.Identity.Name;
             var result = await _applications.RegisterApplicationAsync(model);
             return result.ToApiModel();
         }
 
         /// <summary>
-        /// Get application registration
+        /// Get application information
         /// </summary>
         /// <param name="applicationId">Application id for the server</param>
         /// <returns>Application registration</returns>
         [HttpGet("{applicationId}")]
-        public async Task<ApplicationRegistrationApiModel> GetApplicationRegistrationAsync(
+        public async Task<ApplicationRegistrationApiModel> GetApplicationAsync(
             string applicationId) {
+            if (string.IsNullOrEmpty(applicationId)) {
+                throw new ArgumentNullException(nameof(applicationId));
+            }
             var result = await _applications.GetApplicationAsync(applicationId);
             return result.ToApiModel();
         }
 
         /// <summary>
-        /// Update application registration
+        /// Update application information
         /// </summary>
         /// <remarks>
         /// The application information is updated with new properties.  Note that
@@ -174,13 +149,16 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service.Controllers {
         /// <param name="request">Application update request</param>
         [HttpPatch("{applicationId}")]
         [Authorize(Policy = Policies.CanChange)]
-        public async Task UpdateApplicationRegistrationAsync(string applicationId,
-            [FromBody] [Required] ApplicationRegistrationUpdateApiModel request) {
+        public async Task UpdateApplicationAsync(string applicationId,
+            [FromBody] [Required] ApplicationInfoUpdateApiModel request) {
+            if (string.IsNullOrEmpty(applicationId)) {
+                throw new ArgumentNullException(nameof(applicationId));
+            }
             if (request == null) {
                 throw new ArgumentNullException(nameof(request));
             }
             var model = request.ToServiceModel();
-            // TODO: applicationServiceModel.AuthorityId = User.Identity.Name;
+            // TODO: model.Context.AuthorityId = User.Identity.Name;
             await _applications.UpdateApplicationAsync(applicationId, model);
         }
 
@@ -191,11 +169,21 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service.Controllers {
         /// Unregisters and deletes application and all its associated endpoints.
         /// </remarks>
         /// <param name="applicationId">The identifier of the application</param>
+        /// <param name="generationId">Generation id of the instance</param>
         /// <returns></returns>
-        [HttpDelete("{applicationId}")]
+        [HttpDelete("{applicationId}/{generationId}")]
         [Authorize(Policy = Policies.CanManage)]
-        public async Task DeleteApplicationAsync(string applicationId) {
-            await _applications.UnregisterApplicationAsync(applicationId);
+        public async Task DeleteApplicationAsync(string applicationId, string generationId) {
+            if (string.IsNullOrEmpty(applicationId)) {
+                throw new ArgumentNullException(nameof(applicationId));
+            }
+            if (string.IsNullOrEmpty(generationId)) {
+                throw new ArgumentNullException(nameof(generationId));
+            }
+            var context = (RegistryOperationContextModel)null;
+            // TODO: context.AuthorityId = User.Identity.Name;
+            await _applications.UnregisterApplicationAsync(applicationId, generationId,
+                context);
         }
 
         /// <summary>
@@ -210,8 +198,10 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service.Controllers {
         [Authorize(Policy = Policies.CanManage)]
         public async Task DeleteAllDisabledApplicationsAsync(
             [FromQuery] TimeSpan? notSeenFor) {
+            var context = (RegistryOperationContextModel)null;
+            // TODO: context.AuthorityId = User.Identity.Name;
             await _applications.PurgeDisabledApplicationsAsync(
-                notSeenFor ?? TimeSpan.FromTicks(0));
+                notSeenFor ?? TimeSpan.FromTicks(0), context);
         }
 
         /// <summary>
@@ -228,8 +218,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service.Controllers {
         [HttpGet("sites")]
         [AutoRestExtension(NextPageLinkName = "continuationToken")]
         public async Task<ApplicationSiteListApiModel> GetListOfSitesAsync(
-            [FromQuery] string continuationToken,
-            [FromQuery] int? pageSize) {
+            [FromQuery] string continuationToken, [FromQuery] int? pageSize) {
 
             if (Request.Headers.ContainsKey(HttpHeader.ContinuationToken)) {
                 continuationToken = Request.Headers[HttpHeader.ContinuationToken]
@@ -264,8 +253,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service.Controllers {
         [HttpGet]
         [AutoRestExtension(NextPageLinkName = "continuationToken")]
         public async Task<ApplicationInfoListApiModel> GetListOfApplicationsAsync(
-            [FromQuery] string continuationToken,
-            [FromQuery] int? pageSize) {
+            [FromQuery] string continuationToken, [FromQuery] int? pageSize) {
             if (Request.Headers.ContainsKey(HttpHeader.ContinuationToken)) {
                 continuationToken = Request.Headers[HttpHeader.ContinuationToken]
                     .FirstOrDefault();

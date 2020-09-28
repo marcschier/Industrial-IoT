@@ -206,12 +206,12 @@ namespace Microsoft.Azure.IIoT.Test.Scenarios.Cli {
         /// Test activation and deactivation
         /// </summary>
         private async Task TestActivationAsync(CliOptions options) {
-            IEnumerable<EndpointRegistrationApiModel> endpoints;
+            IEnumerable<EndpointInfoApiModel> endpoints;
             if (!options.IsSet("-a", "--all")) {
                 if (options.IsSet("-e", "--endpoint")) {
                     var id = await SelectEndpointAsync();
                     var ep = await _registry.GetEndpointAsync(id);
-                    endpoints = ep.Registration.YieldReturn();
+                    endpoints = ep.YieldReturn();
                 }
                 else {
                     var id = options.GetValueOrDefault<string>("-i", "--id", null);
@@ -230,8 +230,7 @@ namespace Microsoft.Azure.IIoT.Test.Scenarios.Cli {
                 }
             }
             else {
-                var infos = await _registry.ListAllEndpointsAsync();
-                endpoints = infos.Select(e => e.Registration);
+                endpoints = await _registry.ListAllEndpointsAsync();
             }
             await Task.WhenAll(endpoints.Select(e => TestActivationAsync(e, options)));
             Console.WriteLine("Success!");
@@ -241,12 +240,12 @@ namespace Microsoft.Azure.IIoT.Test.Scenarios.Cli {
         /// Test browsing
         /// </summary>
         private async Task TestBrowseAsync(CliOptions options) {
-            IEnumerable<EndpointRegistrationApiModel> endpoints;
+            IEnumerable<EndpointInfoApiModel> endpoints;
             if (!options.IsSet("-a", "--all")) {
                 if (options.IsSet("-e", "--endpoint")) {
                     var id = await SelectEndpointAsync();
                     var ep = await _registry.GetEndpointAsync(id);
-                    endpoints = ep.Registration.YieldReturn();
+                    endpoints = ep.YieldReturn();
                 }
                 else {
                     var id = options.GetValueOrDefault<string>("-i", "--id", null);
@@ -265,8 +264,7 @@ namespace Microsoft.Azure.IIoT.Test.Scenarios.Cli {
                 }
             }
             else {
-                var infos = await _registry.ListAllEndpointsAsync();
-                endpoints = infos.Select(e => e.Registration);
+                endpoints = await _registry.ListAllEndpointsAsync();
             }
             await Task.WhenAll(endpoints.Select(e => TestBrowseAsync(e, options)));
             Console.WriteLine("Success!");
@@ -276,12 +274,12 @@ namespace Microsoft.Azure.IIoT.Test.Scenarios.Cli {
         /// Test publishing
         /// </summary>
         private async Task TestPublishAsync(CliOptions options) {
-            IEnumerable<EndpointRegistrationApiModel> endpoints;
+            IEnumerable<EndpointInfoApiModel> endpoints;
             if (!options.IsSet("-a", "--all")) {
                 if (options.IsSet("-e", "--endpoint")) {
                     var id = await SelectEndpointAsync();
                     var ep = await _registry.GetEndpointAsync(id);
-                    endpoints = ep.Registration.YieldReturn();
+                    endpoints = ep.YieldReturn();
                 }
                 else {
                     var id = options.GetValueOrDefault<string>("-i", "--id", null);
@@ -300,8 +298,7 @@ namespace Microsoft.Azure.IIoT.Test.Scenarios.Cli {
                 }
             }
             else {
-                var infos = await _registry.ListAllEndpointsAsync();
-                endpoints = infos.Select(e => e.Registration);
+                endpoints = await _registry.ListAllEndpointsAsync();
             }
             await Task.WhenAll(endpoints.Select(e => TestPublishAsync(e, options)));
             Console.WriteLine("Success!");
@@ -313,7 +310,7 @@ namespace Microsoft.Azure.IIoT.Test.Scenarios.Cli {
         /// <param name="endpoint"></param>
         /// <param name="options"></param>
         /// <returns></returns>
-        private async Task TestActivationAsync(EndpointRegistrationApiModel endpoint,
+        private async Task TestActivationAsync(EndpointInfoApiModel endpoint,
             CliOptions options) {
             EndpointInfoApiModel ep;
             var repeats = options.GetValueOrDefault("-r", "--repeat", 10); // 10 times
@@ -383,12 +380,12 @@ namespace Microsoft.Azure.IIoT.Test.Scenarios.Cli {
         /// <param name="endpoint"></param>
         /// <param name="options"></param>
         /// <returns></returns>
-        private async Task TestPublishAsync(EndpointRegistrationApiModel endpoint,
+        private async Task TestPublishAsync(EndpointInfoApiModel endpoint,
             CliOptions options) {
             EndpointInfoApiModel ep;
 
             Console.WriteLine($"Activating {endpoint.Id} for publishing ...");
-            await _registry.ActivateEndpointAsync(endpoint.Id);
+            await _registry.ActivateEndpointAsync(endpoint.Id, endpoint.GenerationId);
             var sw = Stopwatch.StartNew();
             while (true) {
                 ep = await _registry.GetEndpointAsync(endpoint.Id);
@@ -422,7 +419,7 @@ namespace Microsoft.Azure.IIoT.Test.Scenarios.Cli {
             });
             Console.WriteLine($"{endpoint.Id} Unpublishing {nodes.Count} variables took {sw.Elapsed}.");
 
-            await _registry.DeactivateEndpointAsync(endpoint.Id);
+            await _registry.DeactivateEndpointAsync(endpoint.Id, endpoint.GenerationId);
             sw.Restart();
             while (true) {
                 ep = await _registry.GetEndpointAsync(endpoint.Id);
@@ -442,7 +439,7 @@ namespace Microsoft.Azure.IIoT.Test.Scenarios.Cli {
         /// <param name="endpoint"></param>
         /// <param name="options"></param>
         /// <returns></returns>
-        private async Task TestBrowseAsync(EndpointRegistrationApiModel endpoint,
+        private async Task TestBrowseAsync(EndpointInfoApiModel endpoint,
             CliOptions options) {
             EndpointInfoApiModel ep;
 
@@ -618,7 +615,7 @@ namespace Microsoft.Azure.IIoT.Test.Scenarios.Cli {
         /// </summary>
         private async Task<string> SelectEndpointAsync() {
             var result = await _registry.ListAllEndpointsAsync();
-            var endpointId = ConsoleEx.Select(result.Select(r => r.Registration.Id));
+            var endpointId = ConsoleEx.Select(result.Select(r => r.Id));
             if (string.IsNullOrEmpty(endpointId)) {
                 Console.WriteLine("Nothing selected - application selection cleared.");
             }

@@ -227,7 +227,7 @@ Operations (Mutually exclusive):
                 string eventSchema, string contentEncoding, CancellationToken ct) {
                 var ev = JsonConvert.DeserializeObject<DiscoveryEventModel>(
                     Encoding.UTF8.GetString(data));
-                var endpoint = ev.Registration?.Endpoint;
+                var endpoint = ev.Endpoint?.Endpoint;
                 if (endpoint == null) {
                     return;
                 }

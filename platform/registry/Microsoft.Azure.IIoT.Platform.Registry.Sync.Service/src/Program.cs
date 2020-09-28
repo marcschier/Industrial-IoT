@@ -124,8 +124,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Sync.Service {
                 .AsImplementedInterfaces();
 
             // Hosts to run the service tasks
-            builder.RegisterType<ActivationSyncHost>()
-                .AsImplementedInterfaces().SingleInstance();
             builder.RegisterType<SettingsSyncHost>()
                 .AsImplementedInterfaces().SingleInstance();
             builder.RegisterType<OrchestrationHost>()

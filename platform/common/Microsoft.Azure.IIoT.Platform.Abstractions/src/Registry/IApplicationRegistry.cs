@@ -46,7 +46,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry {
         /// <param name="ct"></param>
         /// <returns></returns>
         Task UpdateApplicationAsync(string applicationId,
-            ApplicationRegistrationUpdateModel request,
+            ApplicationInfoUpdateModel request,
             CancellationToken ct = default);
 
         /// <summary>
@@ -86,36 +86,15 @@ namespace Microsoft.Azure.IIoT.Platform.Registry {
             CancellationToken ct = default);
 
         /// <summary>
-        /// Disable the application. Does not remove the application
-        /// from the database.
-        /// </summary>
-        /// <param name="applicationId">The applicationId</param>
-        /// <param name="context"></param>
-        /// <param name="ct"></param>
-        /// <returns></returns>
-        Task DisableApplicationAsync(string applicationId,
-            RegistryOperationContextModel context = null,
-            CancellationToken ct = default);
-
-        /// <summary>
-        /// Re-enable a potentially disabled application.
-        /// </summary>
-        /// <param name="applicationId">The applicationId</param>
-        /// <param name="context"></param>
-        /// <param name="ct"></param>
-        /// <returns></returns>
-        Task EnableApplicationAsync(string applicationId,
-            RegistryOperationContextModel context = null,
-            CancellationToken ct = default);
-
-        /// <summary>
         /// Unregister application and all associated endpoints.
         /// </summary>
         /// <param name="applicationId"></param>
+        /// <param name="generationId"></param>
         /// <param name="context"></param>
         /// <param name="ct"></param>
         /// <returns></returns>
         Task UnregisterApplicationAsync(string applicationId,
+            string generationId,
             RegistryOperationContextModel context = null,
             CancellationToken ct = default);
 

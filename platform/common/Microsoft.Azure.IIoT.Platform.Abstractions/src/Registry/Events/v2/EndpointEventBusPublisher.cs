@@ -27,14 +27,14 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Events.v2 {
         public Task OnEndpointActivatedAsync(
             RegistryOperationContextModel context, EndpointInfoModel endpoint) {
             return _bus.PublishAsync(Wrap(EndpointEventType.Activated, context,
-                endpoint.Registration.Id, endpoint));
+                endpoint.Id, endpoint));
         }
 
         /// <inheritdoc/>
         public Task OnEndpointDeactivatedAsync(
             RegistryOperationContextModel context, EndpointInfoModel endpoint) {
             return _bus.PublishAsync(Wrap(EndpointEventType.Deactivated, context,
-                endpoint.Registration.Id, endpoint));
+                endpoint.Id, endpoint));
         }
 
         /// <inheritdoc/>
@@ -45,31 +45,17 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Events.v2 {
         }
 
         /// <inheritdoc/>
-        public Task OnEndpointDisabledAsync(
-            RegistryOperationContextModel context, EndpointInfoModel endpoint) {
-            return _bus.PublishAsync(Wrap(EndpointEventType.Disabled, context,
-                endpoint.Registration.Id, endpoint));
-        }
-
-        /// <inheritdoc/>
-        public Task OnEndpointEnabledAsync(
-            RegistryOperationContextModel context, EndpointInfoModel endpoint) {
-            return _bus.PublishAsync(Wrap(EndpointEventType.Enabled, context,
-                endpoint.Registration.Id, endpoint));
-        }
-
-        /// <inheritdoc/>
         public Task OnEndpointNewAsync(
             RegistryOperationContextModel context, EndpointInfoModel endpoint) {
             return _bus.PublishAsync(Wrap(EndpointEventType.New, context,
-                endpoint.Registration.Id, endpoint));
+                endpoint.Id, endpoint));
         }
 
         /// <inheritdoc/>
         public Task OnEndpointUpdatedAsync(
             RegistryOperationContextModel context, EndpointInfoModel endpoint) {
             return _bus.PublishAsync(Wrap(EndpointEventType.Updated, context,
-                endpoint.Registration.Id, endpoint));
+                endpoint.Id, endpoint));
         }
 
         /// <summary>

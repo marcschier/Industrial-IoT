@@ -36,7 +36,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Clients {
             }
             await DiscoverAsync(new DiscoveryRequestModel {
                 Configuration = new DiscoveryConfigModel {
-                    ActivationFilter = request.ActivationFilter.Clone(),
                     DiscoveryUrls = new List<string> { request.DiscoveryUrl },
                 },
                 Id = request.Id,

@@ -1,57 +1,48 @@
-// ------------------------------------------------------------
+﻿// ------------------------------------------------------------
 //  Copyright (c) Microsoft Corporation.  All rights reserved.
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
+namespace Microsoft.Azure.IIoT.Platform.Registry.Storage.Default {
     using Microsoft.Azure.IIoT.Platform.Registry.Models;
-    using Microsoft.Azure.IIoT.Platform.Registry.Utils;
+    using Microsoft.Azure.IIoT.Platform.Core.Models;
     using Microsoft.Azure.IIoT.Exceptions;
     using Microsoft.Azure.IIoT.Storage;
-    using Microsoft.Azure.IIoT.Storage.Default;
-    using Microsoft.Azure.IIoT.Utils;
     using Microsoft.Azure.IIoT.Hub;
-    using Serilog;
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Threading.Tasks;
     using System.Threading;
+    using System.Threading.Tasks;
 
     /// <summary>
-    /// Application registration repository using a item container as storage
+    /// Database application repository
     /// </summary>
-    public sealed class ApplicationDatabase : IApplicationRepository,
-        IApplicationRecordQuery {
+    public class ApplicationDatabase : IApplicationRepository {
 
         /// <summary>
-        /// Create registry services
+        /// Create
         /// </summary>
-        /// <param name="db"></param>
-        /// <param name="logger"></param>
-        public ApplicationDatabase(IItemContainerFactory db, ILogger logger) {
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            if (db == null) {
-                throw new ArgumentNullException(nameof(db));
+        /// <param name="databaseServer"></param>
+        /// <param name="config"></param>
+        public ApplicationDatabase(IDatabaseServer databaseServer,
+            IItemContainerConfig config) {
+            if (databaseServer is null) {
+                throw new ArgumentNullException(nameof(databaseServer));
             }
-            _applications = db.OpenAsync("applications").Result;
-            _index = new ContainerIndex(db, _applications.Name);
-        }
-
-        /// <inheritdoc/>
-        public Task<IEnumerable<ApplicationInfoModel>> ListAllAsync(
-            string siteId, string supervisorId, CancellationToken ct) {
-
-            // TODO
-            throw new NotImplementedException();
+            if (config is null) {
+                throw new ArgumentNullException(nameof(config));
+            }
+            var dbs = databaseServer.OpenAsync(config.DatabaseName).Result;
+            _documents = dbs.OpenContainerAsync(config.ContainerName ?? "twin").Result;
         }
 
         /// <inheritdoc/>
         public async Task<ApplicationSiteListModel> ListSitesAsync(
             string continuation, int? pageSize, CancellationToken ct) {
             var compiled = continuation != null ?
-                _applications.ContinueQuery<string>(continuation, pageSize) :
-                _applications.CreateQuery<ApplicationRegistration>(pageSize)
+                _documents.ContinueQuery<string>(continuation, pageSize) :
+                _documents.CreateQuery<ApplicationRegistration>(pageSize)
                     .Where(x => x.DeviceType == IdentityType.Application)
                     .Select(x => x.SiteId)
                     .Distinct()
@@ -65,402 +56,243 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
         }
 
         /// <inheritdoc/>
-        public async Task<ApplicationInfoModel> GetAsync(string applicationId,
-            bool throwIfNotFound, CancellationToken ct) {
-            var document = await _applications.FindAsync<ApplicationRegistration>(
-                applicationId, ct);
-            if (document == null && throwIfNotFound) {
-                throw new ResourceNotFoundException("Application does not exist");
+        public async Task<ApplicationInfoModel> AddAsync(ApplicationInfoModel application,
+            CancellationToken ct) {
+            if (application == null) {
+                throw new ArgumentNullException(nameof(application));
             }
-            return document?.Value?.ToServiceModel();
+            var presetId = application.ApplicationId;
+            while (true) {
+                if (!string.IsNullOrEmpty(application.ApplicationId)) {
+                    var document = await _documents.FindAsync<ApplicationRegistration>(
+                        application.ApplicationId, ct);
+                    if (document != null) {
+                        throw new ResourceConflictException(
+                            $"Writer Group {application.ApplicationId} already exists.");
+                    }
+                }
+                else {
+                    application.ApplicationId = Guid.NewGuid().ToString();
+                }
+                try {
+                    var result = await _documents.AddAsync(application.ToApplicationRegistration(), ct);
+                    return result.Value.ToServiceModel();
+                }
+                catch (ResourceConflictException) {
+                    // Try again - reset to preset id or null if none was asked for
+                    application.ApplicationId = presetId;
+                    continue;
+                }
+                catch {
+                    throw;
+                }
+            }
         }
 
         /// <inheritdoc/>
-        public async Task<ApplicationInfoListModel> ListAsync(
-            string continuation, int? pageSize, CancellationToken ct) {
-            var applications = continuation != null ?
-                _applications.ContinueQuery<ApplicationRegistration>(continuation, pageSize) :
-                _applications.CreateQuery<ApplicationRegistration>(pageSize)
-                    .Where(x => x.DeviceType == IdentityType.Application)
-                    .GetResults();
-            // Read results
-            var results = await applications.ReadAsync(ct);
-            return new ApplicationInfoListModel {
-                Items = results.Select(r => r.Value.ToServiceModel()).ToList(),
-                ContinuationToken = applications.ContinuationToken
-            };
+        public async Task<ApplicationInfoModel> AddOrUpdateAsync(string applicationId,
+            Func<ApplicationInfoModel, Task<ApplicationInfoModel>> predicate, CancellationToken ct) {
+            if (string.IsNullOrEmpty(applicationId)) {
+                throw new ArgumentNullException(nameof(applicationId));
+            }
+            while (true) {
+                var document = await _documents.FindAsync<ApplicationRegistration>(applicationId, ct);
+                var updateOrAdd = document?.Value.ToServiceModel();
+                var application = await predicate(updateOrAdd);
+                if (application == null) {
+                    return updateOrAdd;
+                }
+                application.ApplicationId = applicationId;
+                var updated = application.ToApplicationRegistration();
+                if (document == null) {
+                    try {
+                        // Add document
+                        var result = await _documents.AddAsync(updated, ct);
+                        return result.Value.ToServiceModel();
+                    }
+                    catch (ResourceConflictException) {
+                        // Conflict - try update now
+                        continue;
+                    }
+                }
+                // Try replacing
+                try {
+                    var result = await _documents.ReplaceAsync(document, updated, ct);
+                    return result.Value.ToServiceModel();
+                }
+                catch (ResourceOutOfDateException) {
+                    continue;
+                }
+            }
         }
 
         /// <inheritdoc/>
         public async Task<ApplicationInfoModel> UpdateAsync(string applicationId,
-            Func<ApplicationInfoModel, bool?, (bool?, bool?)> updater, CancellationToken ct) {
+            Func<ApplicationInfoModel, Task<bool>> predicate, CancellationToken ct) {
+
+            if (string.IsNullOrEmpty(applicationId)) {
+                throw new ArgumentNullException(nameof(applicationId));
+            }
             while (true) {
-                try {
-                    var document = await _applications.FindAsync<ApplicationRegistration>(applicationId, ct);
-                    if (document == null) {
-                        throw new ResourceNotFoundException("Application does not exist");
-                    }
-                    // Update registration from update request
-                    var clone = document.Value.Clone();
-                    var application = clone.ToServiceModel();
-                    var (patch, disabled) = updater(application, clone.IsDisabled);
-                    if (patch ?? false) {
-                        var update = application.ToApplicationRegistration(disabled, document.Value.Etag);
-                        var result = await _applications.ReplaceAsync(document, update, ct);
-                        application = result.Value.ToServiceModel();
-                    }
+                var document = await _documents.FindAsync<ApplicationRegistration>(applicationId, ct);
+                if (document == null) {
+                    throw new ResourceNotFoundException("Writer application not found");
+                }
+                var application = document.Value.ToServiceModel();
+                if (!await predicate(application)) {
                     return application;
                 }
-                catch (ResourceOutOfDateException ex) {
-                    // Retry create/update
-                    _logger.Debug(ex, "Retry updating application...");
+                application.ApplicationId = applicationId;
+                var updated = application.ToApplicationRegistration();
+                try {
+                    var result = await _documents.ReplaceAsync(document, updated, ct);
+                    return result.Value.ToServiceModel();
+                }
+                catch (ResourceOutOfDateException) {
                     continue;
                 }
             }
         }
 
         /// <inheritdoc/>
-        public async Task<ApplicationInfoModel> AddAsync(
-            ApplicationInfoModel application, bool? disabled, CancellationToken ct) {
-            if (application == null) {
-                throw new ArgumentNullException(nameof(application));
+        public async Task<ApplicationInfoModel> FindAsync(string applicationId,
+            CancellationToken ct) {
+            if (string.IsNullOrEmpty(applicationId)) {
+                throw new ArgumentNullException(nameof(applicationId));
             }
-            var recordId = await _index.AllocateAsync(ct);
-            try {
-                var document = application.ToApplicationRegistration(null, null, recordId);
-                var result = await _applications.AddAsync(document, ct);
-                return result.Value.ToServiceModel();
+            var document = await _documents.FindAsync<ApplicationRegistration>(
+                applicationId, ct);
+            if (document == null) {
+                return null;
             }
-            catch {
-                await Try.Async(() => _index.FreeAsync(recordId));
-                throw;
+            return document.Value.ToServiceModel();
+        }
+
+        /// <inheritdoc/>
+        public async Task<ApplicationInfoListModel> QueryAsync(ApplicationRegistrationQueryModel query,
+            string continuationToken, int? maxResults, CancellationToken ct) {
+            var results = continuationToken != null ?
+                _documents.ContinueQuery<ApplicationRegistration>(continuationToken, maxResults) :
+                CreateQuery(_documents.CreateQuery<ApplicationRegistration>(maxResults), query);
+            if (!results.HasMore()) {
+                return new ApplicationInfoListModel {
+                    Items = new List<ApplicationInfoModel>()
+                };
             }
+            var documents = await results.ReadAsync(ct);
+            return new ApplicationInfoListModel {
+                ContinuationToken = results.ContinuationToken,
+                Items = documents.Select(r => r.Value.ToServiceModel()).ToList()
+            };
         }
 
         /// <inheritdoc/>
         public async Task<ApplicationInfoModel> DeleteAsync(string applicationId,
-            Func<ApplicationInfoModel, bool> precondition, CancellationToken ct) {
+            Func<ApplicationInfoModel, Task<bool>> predicate, CancellationToken ct) {
+            if (string.IsNullOrEmpty(applicationId)) {
+                throw new ArgumentNullException(nameof(applicationId));
+            }
             while (true) {
-                var document = await _applications.FindAsync<ApplicationRegistration>(applicationId, ct);
+                var document = await _documents.FindAsync<ApplicationRegistration>(
+                    applicationId);
                 if (document == null) {
                     return null;
                 }
+                var application = document.Value.ToServiceModel();
+                if (!await predicate(application)) {
+                    return null;
+                }
                 try {
-                    var application = document.Value.ToServiceModel();
-                    if (precondition != null) {
-                        var shouldDelete = precondition(application);
-                        if (!shouldDelete) {
-                            return null;
-                        }
-                    }
-
-                    // Try delete
-                    await _applications.DeleteAsync(document, ct);
-                    // Try free record id
-                    if (document.Value.RecordId != null) {
-                        await Try.Async(() => _index.FreeAsync(document.Value.RecordId.Value));
-                    }
-                    // return deleted entity
-                    return application;
+                    await _documents.DeleteAsync(document, ct);
                 }
                 catch (ResourceOutOfDateException) {
-                    _logger.Verbose("Retry delete application operation.");
                     continue;
                 }
+                return application;
             }
         }
 
-
-
-
-
-#if FALSE
-        // TODO: Implement correctly.
-
         /// <inheritdoc/>
-        public async Task<ApplicationRecordListModel> QueryApplicationsAsync(
-            ApplicationRecordQueryModel request) {
-
-            // TODO: implement last query time
-            var lastCounterResetTime = DateTime.MinValue;
-
-            var records = new List<ApplicationRecordModel>();
-            // Get continuation token for the query from
-            var nextRecordId = request.StartingRecordId ?? 1;
-            string continuationToken = null;
-            while (true) {
-                var applications = await QueryRawAsync(request, continuationToken);
-                foreach (var application in applications.Items) {
-
-                    // pattern match
-                    if (IsMatchPattern(request.ApplicationName)) {
-                        if (!QueryPattern.Match(
-                            application.ApplicationName, request.ApplicationName)) {
-                            continue;
-                        }
-                    }
-                    if (IsMatchPattern(request.ApplicationUri)) {
-                        if (!QueryPattern.Match(
-                            application.ApplicationUri, request.ApplicationUri)) {
-                            continue;
-                        }
-                    }
-                    if (IsMatchPattern(request.ProductUri)) {
-                        if (!QueryPattern.Match(
-                            application.ProductUri, request.ProductUri)) {
-                            continue;
-                        }
-                    }
-
-                    // Match capabilities
-                    if (request.ServerCapabilities != null &&
-                        request.ServerCapabilities.Count > 0) {
-                        var match = true;
-                        foreach (var cap in request.ServerCapabilities) {
-                            if (application.Capabilities == null ||
-                                !application.Capabilities.Contains(cap)) {
-                                match = false;
-                                break;
-                            }
-                        }
-                        if (!match) {
-                            continue;
-                        }
-                    }
-                    records.Add(new ApplicationRecordModel {
-                        Application = application,
-                        RecordId = nextRecordId++
-                    });
-                }
-                continuationToken = applications.ContinuationToken;
-                if (records.Count != 0 || continuationToken == null) {
-                    // Done
-                    break;
-                }
+        public async Task DeleteAsync(string applicationId, string generationId,
+            CancellationToken ct) {
+            if (string.IsNullOrEmpty(applicationId)) {
+                throw new ArgumentNullException(nameof(applicationId));
             }
-
-            return new ApplicationRecordListModel {
-                Applications = records,
-                LastCounterResetTime = lastCounterResetTime,
-                NextRecordId = continuationToken == null ? 0 : nextRecordId + 1
-            };
+            if (string.IsNullOrEmpty(generationId)) {
+                throw new ArgumentNullException(nameof(generationId));
+            }
+            await _documents.DeleteAsync<ApplicationRegistration>(
+                applicationId, ct, null, generationId);
         }
 
         /// <summary>
-        /// Query raw
+        /// Create query
         /// </summary>
-        /// <param name="request"></param>
-        /// <param name="continuationToken"></param>
+        /// <param name="filter"></param>
+        /// <param name="query"></param>
         /// <returns></returns>
-        private async Task<ApplicationInfoListModel> QueryRawAsync(
-            ApplicationRecordQueryModel request, string continuationToken) {
-            // First get the continuation token for the query and starting record id
-            if (continuationToken == null) {
-                // Get the raw records
-                var query = new ApplicationRegistrationQueryModel {
-                    ApplicationType = request.ApplicationType,
-                    ApplicationName = IsMatchPattern(request.ApplicationName) ?
-                        null : request.ApplicationName,
-                    ApplicationUri = IsMatchPattern(request.ApplicationUri) ?
-                        null : request.ApplicationUri,
-                    ProductUri = IsMatchPattern(request.ProductUri) ?
-                        null : request.ProductUri
-                };
-                return await QueryAsync(query,
-                    (int?)request.MaxRecordsToReturn ?? kDefaultRecordsPerQuery);
-            }
-            return await ListAsync(continuationToken,
-                (int?)request.MaxRecordsToReturn ?? kDefaultRecordsPerQuery, null);
-        }
-#endif
+        private static IResultFeed<IDocumentInfo<ApplicationRegistration>> CreateQuery(
+            IQuery<ApplicationRegistration> query, ApplicationRegistrationQueryModel filter) {
 
-
-        /// <inheritdoc/>
-        public async Task<ApplicationRecordListModel> QueryApplicationsAsync(
-            ApplicationRecordQueryModel request, CancellationToken ct) {
-
-            // TODO: implement last query time
-            var lastCounterResetTime = DateTime.MinValue;
-            var records = new List<ApplicationRegistration>();
-            var matchQuery = false;
-            var complexQuery =
-                !string.IsNullOrEmpty(request.ApplicationName) ||
-                !string.IsNullOrEmpty(request.ApplicationUri) ||
-                !string.IsNullOrEmpty(request.ProductUri) ||
-                (request.ServerCapabilities != null && request.ServerCapabilities.Count > 0);
-            if (complexQuery) {
-                matchQuery =
-                    IsMatchPattern(
-                        request.ApplicationName) ||
-                    IsMatchPattern(
-                        request.ApplicationUri) ||
-                    IsMatchPattern(
-                        request.ProductUri);
-            }
-
-            var nextRecordId = request.StartingRecordId ?? 0;
-            var maxRecordsToReturn = request.MaxRecordsToReturn ?? 0;
-            var lastQuery = false;
-            do {
-                var queryRecords = complexQuery ? kDefaultRecordsPerQuery : maxRecordsToReturn;
-                var query = CreateServerQuery(nextRecordId, (int)queryRecords);
-                nextRecordId++;
-                var applications = await query.ReadAsync(ct);
-                lastQuery = queryRecords == 0 || applications.Count() < queryRecords;
-                foreach (var application in applications.Select(a => a.Value)) {
-                    if (application.RecordId == null) {
-                        continue; // Unexpected
+            if (filter != null) {
+                if (!(filter?.IncludeNotSeenSince ?? false)) {
+                    // Scope to non deleted applications
+                    query = query.Where(x => x.NotSeenSince == null);
+                }
+                if (filter?.Locale != null) {
+                    if (filter?.ApplicationName != null) {
+                        // If application name provided, include it in search
+                        query = query.Where(x =>
+                            x.LocalizedNames[filter.Locale] == filter.ApplicationName);
                     }
-                    nextRecordId = application.RecordId.Value + 1;
-                    if (!string.IsNullOrEmpty(request.ApplicationName)) {
-                        if (!QueryPattern.Match(
-                            application.ApplicationName, request.ApplicationName)) {
-                            continue;
-                        }
-                    }
-                    if (!string.IsNullOrEmpty(request.ApplicationUri)) {
-                        if (!QueryPattern.Match(
-                            application.ApplicationUri, request.ApplicationUri)) {
-                            continue;
-                        }
-                    }
-                    if (!string.IsNullOrEmpty(request.ProductUri)) {
-                        if (!QueryPattern.Match(
-                            application.ProductUri, request.ProductUri)) {
-                            continue;
-                        }
-                    }
-
-                    if (request.ServerCapabilities != null &&
-                        request.ServerCapabilities.Count > 0) {
-                        var match = true;
-                        foreach (var cap in request.ServerCapabilities) {
-                            if (!application.Capabilities.ContainsKey(cap)) {
-                                match = false;
-                                break;
-                            }
-                        }
-                        if (!match) {
-                            continue;
-                        }
-                    }
-                    records.Add(application);
-                    if (maxRecordsToReturn > 0 && --maxRecordsToReturn == 0) {
-                        break;
+                    else {
+                        // Just search for locale
+                        query = query.Where(x => x.LocalizedNames.ContainsKey(filter.Locale));
                     }
                 }
-            } while (maxRecordsToReturn > 0 && !lastQuery);
-            if (lastQuery) {
-                nextRecordId = 0;
-            }
-            return new ApplicationRecordListModel {
-                Applications = records.Select(a => new ApplicationRecordModel {
-                    Application = a.ToServiceModel(),
-                    RecordId = a.RecordId.Value
-                }).ToList(),
-                LastCounterResetTime = lastCounterResetTime,
-                NextRecordId = nextRecordId
-            };
-        }
-
-        /// <inheritdoc/>
-        public async Task<ApplicationInfoListModel> QueryAsync(
-            ApplicationRegistrationQueryModel request, int? maxRecordsToReturn, CancellationToken ct) {
-            var records = new List<ApplicationRegistration>();
-            var matchQuery = false;
-            var complexQuery =
-                !string.IsNullOrEmpty(request.ApplicationName) ||
-                !string.IsNullOrEmpty(request.ApplicationUri) ||
-                !string.IsNullOrEmpty(request.ProductUri) ||
-                !string.IsNullOrEmpty(request.Capability);
-
-            if (complexQuery) {
-                matchQuery =
-                    IsMatchPattern(
-                        request.ApplicationName) ||
-                    IsMatchPattern(
-                        request.ApplicationUri) ||
-                    IsMatchPattern(
-                        request.ProductUri);
-            }
-
-            if (maxRecordsToReturn == null || maxRecordsToReturn < 0) {
-                maxRecordsToReturn = kDefaultRecordsPerQuery;
-            }
-            var query = CreateServerQuery(0, maxRecordsToReturn.Value);
-            while (query.HasMore()) {
-                var applications = await query.ReadAsync(ct);
-                foreach (var application in applications.Select(a => a.Value)) {
-                    if (!string.IsNullOrEmpty(request.ApplicationName)) {
-                        if (!QueryPattern.Match(
-                            application.ApplicationName, request.ApplicationName)) {
-                            continue;
-                        }
-                    }
-                    if (!string.IsNullOrEmpty(request.ApplicationUri)) {
-                        if (!QueryPattern.Match(
-                            application.ApplicationUri, request.ApplicationUri)) {
-                            continue;
-                        }
-                    }
-                    if (!string.IsNullOrEmpty(request.ProductUri)) {
-                        if (!QueryPattern.Match(
-                            application.ProductUri, request.ProductUri)) {
-                            continue;
-                        }
-                    }
-                    if (!string.IsNullOrEmpty(request.Capability)) {
-                        if (!application.Capabilities?.ContainsKey(request.Capability) ?? false) {
-                            continue;
-                        }
-                    }
-                    records.Add(application);
-                    if (maxRecordsToReturn > 0 && records.Count >= maxRecordsToReturn) {
-                        break;
-                    }
+                else if (filter?.ApplicationName != null) {
+                    // If application name provided, search for default name
+                    query = query.Where(x => x.ApplicationName == filter.ApplicationName);
+                }
+                if (filter?.DiscovererId != null) {
+                    // If discoverer provided, include it in search
+                    query = query.Where(x => x.DiscovererId == filter.DiscovererId);
+                }
+                if (filter?.ProductUri != null) {
+                    // If product uri provided, include it in search
+                    query = query.Where(x => x.ProductUri == filter.ProductUri);
+                }
+                if (filter?.GatewayServerUri != null) {
+                    // If gateway uri provided, include it in search
+                    query = query.Where(x => x.GatewayServerUri == filter.GatewayServerUri);
+                }
+                if (filter?.DiscoveryProfileUri != null) {
+                    // If discovery profile uri provided, include it in search
+                    query = query.Where(x => x.DiscoveryProfileUri == filter.DiscoveryProfileUri);
+                }
+                if (filter?.ApplicationUri != null) {
+                    // If ApplicationUri provided, include it in search
+                    query = query.Where(x => x.ApplicationUriLC ==
+                        filter.ApplicationUri.ToLowerInvariant());
+                }
+                if (filter?.ApplicationType != null) {
+                    // If searching for clients include it in search
+                    query = query.Where(x => filter.ApplicationType.Value ==
+                        (x.ApplicationType & filter.ApplicationType.Value));
+                }
+                if (filter?.Capability != null) {
+                    // If Capabilities provided, filter results
+                    query = query.Where(x => x.Capabilities.ContainsKey(filter.Capability));
+                }
+                if (filter?.SiteOrGatewayId != null) {
+                    // If site or gateway id search provided, include it in search
+                    query = query.Where(x => x.SiteOrGatewayId == filter.SiteOrGatewayId);
                 }
             }
-            return new ApplicationInfoListModel {
-                Items = records.Select(a => a.ToServiceModel()).ToList(),
-                ContinuationToken = null
-            };
-        }
-
-        /// <summary>
-        /// Helper to create a SQL query for CosmosDB.
-        /// </summary>
-        /// <param name="startingRecordId">The first record Id</param>
-        /// <param name="maxRecordsToQuery">The max number of records</param>
-        /// <returns></returns>
-        private IResultFeed<IDocumentInfo<ApplicationRegistration>> CreateServerQuery(
-            uint startingRecordId, int maxRecordsToQuery) {
-
-            var query = _applications.CreateQuery<ApplicationRegistration>(
-                maxRecordsToQuery == 0 ? (int?)null : maxRecordsToQuery)
-                .Where(x => x.RecordId >= startingRecordId)
-                .Where(x => x.DeviceType == "Application")
-                .OrderBy(x => x.RecordId);
-            if (maxRecordsToQuery != 0) {
-                query = query.Take(maxRecordsToQuery);
-            }
+            query = query.Where(x => x.DeviceType == IdentityType.Application);
             return query.GetResults();
         }
 
-        /// <summary>
-        /// Test whether the string is a pattern
-        /// </summary>
-        /// <param name="pattern"></param>
-        /// <returns></returns>
-        private static bool IsMatchPattern(string pattern) {
-            if (!string.IsNullOrEmpty(pattern)) {
-                return false;
-            }
-            return QueryPattern.IsMatchPattern(pattern);
-        }
-
-        private const int kDefaultRecordsPerQuery = 10;
-        private readonly ILogger _logger;
-        private readonly IItemContainer _applications;
-        private readonly IContainerIndex _index;
+        private readonly IItemContainer _documents;
     }
 }

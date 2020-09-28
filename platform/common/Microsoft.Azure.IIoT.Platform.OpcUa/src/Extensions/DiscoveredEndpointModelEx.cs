@@ -32,14 +32,19 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Models {
                     ApplicationId = null,
                     DiscovererId = null,
                     SiteId = null,
+                    GenerationId = null,
+                    Created = null,
+                    Updated = null,
 
                     ApplicationType = type,
                     ProductUri = result.Description.Server.ProductUri,
                     ApplicationUri = result.Description.Server.ApplicationUri,
                     DiscoveryUrls = new HashSet<string>(result.Description.Server.DiscoveryUrls),
                     DiscoveryProfileUri = result.Description.Server.DiscoveryProfileUri,
+                    GatewayServerUri = result.Description.Server.GatewayServerUri,
                     HostAddresses = new HashSet<string> { hostAddress },
-                    ApplicationName = result.Description.Server.ApplicationName.Text,
+                    ApplicationName = result.Description.Server.ApplicationName?.Text,
+                    Locale = result.Description.Server.ApplicationName?.Locale,
                     LocalizedNames = string.IsNullOrEmpty(result.Description.Server.ApplicationName.Locale) ?
                         null : new Dictionary<string, string> {
                             [result.Description.Server.ApplicationName.Locale] =
@@ -48,13 +53,19 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Models {
                     NotSeenSince = null,
                     Capabilities = new HashSet<string>(result.Capabilities)
                 },
-                Endpoints = new List<EndpointRegistrationModel> {
-                    new EndpointRegistrationModel {
+                Endpoints = new List<EndpointInfoModel> {
+                    new EndpointInfoModel {
                         // Assigned at endpoint processing time - leave null
                         SiteId = null,
                         DiscovererId = null,
                         SupervisorId = null,
+                        ApplicationId = null,
                         Id = null,
+                        GenerationId = null,
+                        NotSeenSince = null,
+                        ActivationState = null,
+                        EndpointState = null,
+
                         SecurityLevel = result.Description.SecurityLevel,
                         AuthenticationMethods = result.Description.UserIdentityTokens
                             .ToServiceModel(serializer),

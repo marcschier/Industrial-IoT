@@ -35,7 +35,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                 ISupervisorRegistry service = mock.Create<SupervisorRegistry>();
 
                 // Run
-                var t = service.GetSupervisorAsync(HubResource.Format(hubName, "test", "test"), false);
+                var t = service.GetSupervisorAsync(HubResource.Format(hubName, "test", "test"));
 
                 // Assert
                 Assert.NotNull(t.Exception);
@@ -57,7 +57,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                 ISupervisorRegistry service = mock.Create<SupervisorRegistry>();
 
                 // Run
-                var result = service.GetSupervisorAsync(supervisors.First().Id, false).Result;
+                var result = service.GetSupervisorAsync(supervisors.First().Id).Result;
 
                 // Assert
                 Assert.True(result.IsSameAs(supervisors.First()));
@@ -80,7 +80,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                 service.UpdateSupervisorAsync(supervisors.First().Id, new SupervisorUpdateModel {
                     LogLevel = TraceLogLevel.Debug
                 }).Wait();
-                var result = service.GetSupervisorAsync(supervisors.First().Id, false).Result;
+                var result = service.GetSupervisorAsync(supervisors.First().Id).Result;
 
 
                 // Assert
@@ -101,7 +101,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                 ISupervisorRegistry service = mock.Create<SupervisorRegistry>();
 
                 // Run
-                var records = service.ListSupervisorsAsync(null, false, null).Result;
+                var records = service.ListSupervisorsAsync(null, null).Result;
 
                 // Assert
                 Assert.True(supervisors.IsSameAs(records.Items));
@@ -121,7 +121,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                 ISupervisorRegistry service = mock.Create<SupervisorRegistry>();
 
                 // Run
-                var records = service.QuerySupervisorsAsync(null, false, null).Result;
+                var records = service.QuerySupervisorsAsync(null, null).Result;
 
                 // Assert
                 Assert.True(supervisors.IsSameAs(records.Items));

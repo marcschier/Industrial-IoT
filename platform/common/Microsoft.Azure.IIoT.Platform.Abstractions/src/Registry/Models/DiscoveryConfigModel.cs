@@ -61,10 +61,5 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
         /// Only retrieve information for the provided locales
         /// </summary>
         public List<string> Locales { get; set; }
-
-        /// <summary>
-        /// Activate all endpoints with this filter during onboarding.
-        /// </summary>
-        public EndpointActivationFilterModel ActivationFilter { get; set; }
     }
 }

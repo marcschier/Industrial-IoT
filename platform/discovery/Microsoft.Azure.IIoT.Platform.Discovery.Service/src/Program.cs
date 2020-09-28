@@ -9,7 +9,7 @@ namespace Microsoft.Azure.IIoT.Platform.Discovery.Service {
     using Microsoft.Azure.IIoT.Platform.Registry;
     using Microsoft.Azure.IIoT.Platform.Registry.Clients;
     using Microsoft.Azure.IIoT.Platform.Discovery.Handlers;
-    using Microsoft.Azure.IIoT.Platform.Registry.Services;
+    using Microsoft.Azure.IIoT.Platform.Registry.Storage.Default;
     using Microsoft.Azure.IIoT.Platform.Twin.Api.Clients;
     using Microsoft.Azure.IIoT.Azure.AppInsights;
     using Microsoft.Azure.IIoT.Azure.LogAnalytics.Runtime;
@@ -110,7 +110,9 @@ namespace Microsoft.Azure.IIoT.Platform.Discovery.Service {
 
             // Use registry services directly
             builder.RegisterModule<RegistryServices>();
-            builder.RegisterType<ApplicationTwins>()
+            builder.RegisterType<ApplicationDatabase>()
+                .AsImplementedInterfaces().SingleInstance();
+            builder.RegisterType<EndpointDatabase>()
                 .AsImplementedInterfaces().SingleInstance();
             builder.RegisterType<TwinModuleCertificateClient>()
                 .AsImplementedInterfaces();

@@ -81,8 +81,8 @@
                 string application = ApplicationId ?? RegistryHelper.PathAll;
                 string supervisor = SupervisorId ?? RegistryHelper.PathAll;
             }
-            <a href='browser/@discover/@application/@supervisor/@endpoint.EndpointModel.Registration.Id'>
-                @endpoint.EndpointModel.Registration.Endpoint.Url
+            <a href='browser/@discover/@application/@supervisor/@endpoint.EndpointModel.Id'>
+                @endpoint.EndpointModel.Endpoint.Url
             </a>
         </div>
     </td>
@@ -90,18 +90,18 @@
 else {
     <td class="hover-text width-large">
         <div>
-            @endpoint.EndpointModel.Registration.Endpoint.Url
+            @endpoint.EndpointModel.Endpoint.Url
         </div>
     </td>
 }
                 <td class="hover-text width-medium-large">
                     <div>
-                        @endpoint.EndpointModel.Registration.Endpoint.SecurityMode - @CommonHelper.ExtractSecurityPolicy(endpoint.EndpointModel.Registration.Endpoint.SecurityPolicy)
+                        @endpoint.EndpointModel.Endpoint.SecurityMode - @CommonHelper.ExtractSecurityPolicy(endpoint.EndpointModel.Endpoint.SecurityPolicy)
                     </div>
                 </td>
                 <td class="hover-text width-small">
                     <div>
-                        @endpoint.EndpointModel.Registration.SecurityLevel
+                        @endpoint.EndpointModel.SecurityLevel
                     </div>
                 </td>
                 <td class="hover-text width-small">
@@ -127,7 +127,7 @@ else {
                 @if (IsEndpointSeen(endpoint) && IsEndpointActivated(endpoint)) {
                     <td class="width-small space-wrap">
                         <div>
-                            <a class="ellipsis-space" href='publishedNodes/@endpoint.EndpointModel.Registration.Id/@DiscovererId/@ApplicationId/@SupervisorId'>Published Nodes</a>
+                            <a class="ellipsis-space" href='publishedNodes/@endpoint.EndpointModel.Id/@DiscovererId/@ApplicationId/@SupervisorId'>Published Nodes</a>
                         </div>
                     </td>
                 }

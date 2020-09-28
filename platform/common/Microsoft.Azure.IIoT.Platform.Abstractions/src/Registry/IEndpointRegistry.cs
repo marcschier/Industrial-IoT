@@ -18,43 +18,41 @@ namespace Microsoft.Azure.IIoT.Platform.Registry {
         /// Get all endpoints in paged form
         /// </summary>
         /// <param name="continuation"></param>
-        /// <param name="onlyServerState">Whether only
-        /// desired endpoint state should be returned.
-        /// </param>
         /// <param name="pageSize"></param>
         /// <param name="ct"></param>
         /// <returns></returns>
         Task<EndpointInfoListModel> ListEndpointsAsync(string continuation,
-            bool onlyServerState = false, int? pageSize = null,
-            CancellationToken ct = default);
+            int? pageSize = null, CancellationToken ct = default);
 
         /// <summary>
         /// Find registration of the supplied endpoint.
         /// </summary>
         /// <param name="query"></param>
-        /// <param name="onlyServerState">Whether only
-        /// desired endpoint state should be returned.
-        /// </param>
         /// <param name="pageSize"></param>
         /// <param name="ct"></param>
         /// <returns></returns>
         Task<EndpointInfoListModel> QueryEndpointsAsync(
-            EndpointRegistrationQueryModel query,
-            bool onlyServerState = false, int? pageSize = null,
+            EndpointInfoQueryModel query, int? pageSize = null,
             CancellationToken ct = default);
 
         /// <summary>
         /// Get endpoint registration by identifer.
         /// </summary>
         /// <param name="endpointId"></param>
-        /// <param name="onlyServerState">Whether only
-        /// desired endpoint state should be returned.
-        /// </param>
         /// <param name="ct"></param>
         /// <returns></returns>
         Task<EndpointInfoModel> GetEndpointAsync(string endpointId,
-            bool onlyServerState = false,
             CancellationToken ct = default);
+
+        /// <summary>
+        /// Update the endpoint
+        /// </summary>
+        /// <param name="endpointId"></param>
+        /// <param name="model"></param>
+        /// <param name="ct"></param>
+        /// <returns></returns>
+        Task UpdateEndpointAsync(string endpointId,
+            EndpointInfoUpdateModel model, CancellationToken ct = default);
 
         /// <summary>
         /// Returns the endpoint certificate

@@ -60,7 +60,6 @@ namespace Microsoft.Azure.IIoT.Platform.Discovery.Edge.Module.Models {
                 MaxPortProbes = model.MaxPortProbes,
                 MinPortProbesPercent = model.MinPortProbesPercent,
                 IdleTimeBetweenScans = model.IdleTimeBetweenScans,
-                ActivationFilter = model.ActivationFilter.ToApiModel(),
                 Locales = model.Locales,
                 DiscoveryUrls = model.DiscoveryUrls,
             };
@@ -84,7 +83,6 @@ namespace Microsoft.Azure.IIoT.Platform.Discovery.Edge.Module.Models {
                 MaxPortProbes= model.MaxPortProbes,
                 MinPortProbesPercent= model.MinPortProbesPercent,
                 IdleTimeBetweenScans= model.IdleTimeBetweenScans,
-                ActivationFilter= model.ActivationFilter.ToServiceModel(),
                 Locales= model.Locales,
                 DiscoveryUrls= model.DiscoveryUrls,
             };
@@ -121,38 +119,6 @@ namespace Microsoft.Azure.IIoT.Platform.Discovery.Edge.Module.Models {
                 Configuration = model.Configuration.ToServiceModel(),
                 Discovery = (IIoT.Platform.Registry.Models.DiscoveryMode?)model.Discovery,
                 Context = model.Context.ToServiceModel()
-            };
-        }
-
-        /// <summary>
-        /// Create from service model
-        /// </summary>
-        /// <param name="model"></param>
-        public static EndpointActivationFilterApiModel ToApiModel(
-            this EndpointActivationFilterModel model) {
-            if (model == null) {
-                return null;
-            }
-            return new EndpointActivationFilterApiModel {
-                TrustLists = model.TrustLists,
-                SecurityPolicies = model.SecurityPolicies,
-                SecurityMode = (IIoT.Platform.Core.Api.Models.SecurityMode?)model.SecurityMode
-            };
-        }
-
-        /// <summary>
-        /// Convert back to service model
-        /// </summary>
-        /// <returns></returns>
-        public static EndpointActivationFilterModel ToServiceModel(
-            this EndpointActivationFilterApiModel model) {
-            if (model == null) {
-                return null;
-            }
-            return new EndpointActivationFilterModel {
-                TrustLists= model.TrustLists,
-                SecurityPolicies= model.SecurityPolicies,
-                SecurityMode= (IIoT.Platform.Core.Models.SecurityMode?)model.SecurityMode
             };
         }
 

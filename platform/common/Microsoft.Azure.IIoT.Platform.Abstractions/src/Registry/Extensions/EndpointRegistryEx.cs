@@ -4,8 +4,8 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Platform.Registry {
-    using Microsoft.Azure.IIoT.Exceptions;
     using Microsoft.Azure.IIoT.Platform.Registry.Models;
+    using Microsoft.Azure.IIoT.Exceptions;
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
@@ -26,7 +26,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry {
             this IEndpointRegistry service, string endpointId,
             CancellationToken ct = default) {
             try {
-                return await service.GetEndpointAsync(endpointId, false, ct);
+                return await service.GetEndpointAsync(endpointId, ct);
             }
             catch (ResourceNotFoundException) {
                 return null;
@@ -38,18 +38,17 @@ namespace Microsoft.Azure.IIoT.Platform.Registry {
         /// </summary>
         /// <param name="service"></param>
         /// <param name="query"></param>
-        /// <param name="onlyServerState"></param>
         /// <param name="ct"></param>
         /// <returns></returns>
         public static async Task<List<EndpointInfoModel>> QueryAllEndpointsAsync(
-            this IEndpointRegistry service, EndpointRegistrationQueryModel query,
-            bool onlyServerState = false, CancellationToken ct = default) {
+            this IEndpointRegistry service, EndpointInfoQueryModel query,
+            CancellationToken ct = default) {
             var registrations = new List<EndpointInfoModel>();
-            var result = await service.QueryEndpointsAsync(query, onlyServerState, null, ct);
+            var result = await service.QueryEndpointsAsync(query, null, ct);
             registrations.AddRange(result.Items);
             while (result.ContinuationToken != null) {
                 result = await service.ListEndpointsAsync(result.ContinuationToken,
-                    onlyServerState, null, ct);
+                    null, ct);
                 registrations.AddRange(result.Items);
             }
             return registrations;
@@ -59,21 +58,62 @@ namespace Microsoft.Azure.IIoT.Platform.Registry {
         /// List all endpoints
         /// </summary>
         /// <param name="service"></param>
-        /// <param name="onlyServerState"></param>
         /// <param name="ct"></param>
         /// <returns></returns>
         public static async Task<List<EndpointInfoModel>> ListAllEndpointsAsync(
-            this IEndpointRegistry service, bool onlyServerState = false,
-            CancellationToken ct = default) {
+            this IEndpointRegistry service, CancellationToken ct = default) {
             var registrations = new List<EndpointInfoModel>();
-            var result = await service.ListEndpointsAsync(null, onlyServerState, null, ct);
+            var result = await service.ListEndpointsAsync(null, null, ct);
             registrations.AddRange(result.Items);
             while (result.ContinuationToken != null) {
                 result = await service.ListEndpointsAsync(result.ContinuationToken,
-                    onlyServerState, null, ct);
+                     null, ct);
                 registrations.AddRange(result.Items);
             }
             return registrations;
         }
+
+        /// <summary>
+        /// Deactivate an endpoint
+        /// </summary>
+        /// <param name="service"></param>
+        /// <param name="endpointId"></param>
+        /// <param name="generationId"></param>
+        /// <param name="ct"></param>
+        /// <returns></returns>
+        public static async Task DeactivateEndpointAsync(this IEndpointRegistry service,
+            string endpointId, string generationId = null, CancellationToken ct = default) {
+            if (string.IsNullOrEmpty(generationId)) {
+                var ep = await service.GetEndpointAsync(endpointId, ct);
+                generationId = ep.GenerationId;
+            }
+            await service.UpdateEndpointAsync(endpointId,
+                new EndpointInfoUpdateModel {
+                    GenerationId = generationId,
+                    ActivationState = EntityActivationState.Deactivated
+                }, ct);
+        }
+
+        /// <summary>
+        /// Activate an endpoint
+        /// </summary>
+        /// <param name="service"></param>
+        /// <param name="endpointId"></param>
+        /// <param name="generationId"></param>
+        /// <param name="ct"></param>
+        /// <returns></returns>
+        public static async Task ActivateEndpointAsync(this IEndpointRegistry service,
+            string endpointId, string generationId = null, CancellationToken ct = default) {
+            if (string.IsNullOrEmpty(generationId)) {
+                var ep = await service.GetEndpointAsync(endpointId, ct);
+                generationId = ep.GenerationId;
+            }
+            await service.UpdateEndpointAsync(endpointId,
+                new EndpointInfoUpdateModel {
+                    GenerationId = generationId,
+                    ActivationState = EntityActivationState.Activated
+                }, ct);
+        }
+
     }
 }

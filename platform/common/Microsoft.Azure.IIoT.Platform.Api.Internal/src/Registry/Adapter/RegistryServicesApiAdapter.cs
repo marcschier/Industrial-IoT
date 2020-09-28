@@ -15,9 +15,9 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Clients {
     /// <summary>
     /// Registry services adapter to run dependent services outside of cloud.
     /// </summary>
-    public sealed class RegistryServicesApiAdapter : IEndpointRegistry, ISupervisorRegistry,
-        IApplicationRegistry, IPublisherRegistry, IDiscoveryServices, ISupervisorDiagnostics,
-        IPublisherDiagnostics, IEndpointActivation {
+    public sealed class RegistryServicesApiAdapter : IEndpointRegistry,
+        ISupervisorRegistry, IApplicationRegistry, IPublisherRegistry,
+        IDiscoveryServices, ISupervisorDiagnostics, IPublisherDiagnostics {
 
         /// <summary>
         /// Create registry services
@@ -29,25 +29,24 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Clients {
 
         /// <inheritdoc/>
         public async Task<EndpointInfoModel> GetEndpointAsync(string id,
-            bool onlyServerState, CancellationToken ct) {
-            var result = await _client.GetEndpointAsync(id, onlyServerState, ct);
+            CancellationToken ct) {
+            var result = await _client.GetEndpointAsync(id, ct);
             return result.ToServiceModel();
         }
 
         /// <inheritdoc/>
         public async Task<EndpointInfoListModel> ListEndpointsAsync(
-            string continuation, bool onlyServerState, int? pageSize, CancellationToken ct) {
+            string continuation, int? pageSize, CancellationToken ct) {
             var result = await _client.ListEndpointsAsync(continuation,
-                onlyServerState, pageSize, ct);
+                pageSize, ct);
             return result.ToServiceModel();
         }
 
         /// <inheritdoc/>
         public async Task<EndpointInfoListModel> QueryEndpointsAsync(
-            EndpointRegistrationQueryModel query, bool onlyServerState,
-            int? pageSize, CancellationToken ct) {
+            EndpointInfoQueryModel query, int? pageSize, CancellationToken ct) {
             var result = await _client.QueryEndpointsAsync(query.ToApiModel(),
-                onlyServerState, pageSize, ct);
+                pageSize, ct);
             return result.ToServiceModel();
         }
 
@@ -59,38 +58,32 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Clients {
         }
 
         /// <inheritdoc/>
-        public Task ActivateEndpointAsync(string id, RegistryOperationContextModel context,
-            CancellationToken ct) {
-            return _client.ActivateEndpointAsync(id, ct);
-        }
-
-        /// <inheritdoc/>
-        public Task DeactivateEndpointAsync(string id,
-            RegistryOperationContextModel context, CancellationToken ct) {
-            return _client.DeactivateEndpointAsync(id, ct);
+        public async Task UpdateEndpointAsync(string id,
+            EndpointInfoUpdateModel request, CancellationToken ct) {
+            await _client.UpdateEndpointAsync(id, request.ToApiModel(), ct);
         }
 
         /// <inheritdoc/>
         public async Task<SupervisorListModel> ListSupervisorsAsync(
-            string continuation, bool onlyServerState, int? pageSize, CancellationToken ct) {
+            string continuation, int? pageSize, CancellationToken ct) {
             var result = await _client.ListSupervisorsAsync(continuation,
-                onlyServerState, pageSize, ct);
+                pageSize, ct);
             return result.ToServiceModel();
         }
 
         /// <inheritdoc/>
         public async Task<SupervisorListModel> QuerySupervisorsAsync(
-            SupervisorQueryModel query, bool onlyServerState, int? pageSize,
+            SupervisorQueryModel query, int? pageSize,
             CancellationToken ct) {
             var result = await _client.QuerySupervisorsAsync(query.ToApiModel(),
-                onlyServerState, pageSize, ct);
+                pageSize, ct);
             return result.ToServiceModel();
         }
 
         /// <inheritdoc/>
         public async Task<SupervisorModel> GetSupervisorAsync(string id,
-            bool onlyServerState, CancellationToken ct) {
-            var result = await _client.GetSupervisorAsync(id, onlyServerState, ct);
+            CancellationToken ct) {
+            var result = await _client.GetSupervisorAsync(id, ct);
             return result.ToServiceModel();
         }
 
@@ -114,25 +107,25 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Clients {
 
         /// <inheritdoc/>
         public async Task<PublisherListModel> ListPublishersAsync(
-            string continuation, bool onlyServerState, int? pageSize, CancellationToken ct) {
+            string continuation, int? pageSize, CancellationToken ct) {
             var result = await _client.ListPublishersAsync(continuation,
-                onlyServerState, pageSize, ct);
+                pageSize, ct);
             return result.ToServiceModel();
         }
 
         /// <inheritdoc/>
         public async Task<PublisherListModel> QueryPublishersAsync(
-            PublisherQueryModel query, bool onlyServerState, int? pageSize,
+            PublisherQueryModel query, int? pageSize,
             CancellationToken ct) {
             var result = await _client.QueryPublishersAsync(query.ToApiModel(),
-                onlyServerState, pageSize, ct);
+                pageSize, ct);
             return result.ToServiceModel();
         }
 
         /// <inheritdoc/>
         public async Task<PublisherModel> GetPublisherAsync(string id,
-            bool onlyServerState, CancellationToken ct) {
-            var result = await _client.GetPublisherAsync(id, onlyServerState, ct);
+            CancellationToken ct) {
+            var result = await _client.GetPublisherAsync(id, ct);
             return result.ToServiceModel();
         }
 
@@ -171,7 +164,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Clients {
 
         /// <inheritdoc/>
         public Task UpdateApplicationAsync(string applicationId,
-            ApplicationRegistrationUpdateModel request, CancellationToken ct) {
+            ApplicationInfoUpdateModel request, CancellationToken ct) {
             return _client.UpdateApplicationAsync(applicationId, request.ToApiModel(), ct);
         }
 
@@ -197,21 +190,9 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Clients {
         }
 
         /// <inheritdoc/>
-        public Task DisableApplicationAsync(string applicationId,
+        public Task UnregisterApplicationAsync(string applicationId, string generationId,
             RegistryOperationContextModel context, CancellationToken ct) {
-            return _client.DisableApplicationAsync(applicationId, ct);
-        }
-
-        /// <inheritdoc/>
-        public Task EnableApplicationAsync(string applicationId,
-            RegistryOperationContextModel context, CancellationToken ct) {
-            return _client.EnableApplicationAsync(applicationId, ct);
-        }
-
-        /// <inheritdoc/>
-        public Task UnregisterApplicationAsync(string applicationId,
-            RegistryOperationContextModel context, CancellationToken ct) {
-            return _client.UnregisterApplicationAsync(applicationId, ct);
+            return _client.UnregisterApplicationAsync(applicationId, generationId, ct);
         }
 
         /// <inheritdoc/>

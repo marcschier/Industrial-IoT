@@ -17,7 +17,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
     /// <summary>
     /// Client for Activation services in supervisor
     /// </summary>
-    public sealed class TwinModuleActivationClient : IActivationServices<EndpointRegistrationModel> {
+    public sealed class TwinModuleActivationClient : IActivationServices<EndpointInfoModel> {
 
         /// <summary>
         /// Create client
@@ -33,7 +33,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
         }
 
         /// <inheritdoc/>
-        public async Task ActivateAsync(EndpointRegistrationModel registration,
+        public async Task ActivateAsync(EndpointInfoModel registration,
             string secret, CancellationToken ct) {
             if (registration == null) {
                 throw new ArgumentNullException(nameof(registration));
@@ -57,7 +57,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
         }
 
         /// <inheritdoc/>
-        public async Task DeactivateAsync(EndpointRegistrationModel registration,
+        public async Task DeactivateAsync(EndpointInfoModel registration,
             CancellationToken ct) {
             if (registration == null) {
                 throw new ArgumentNullException(nameof(registration));

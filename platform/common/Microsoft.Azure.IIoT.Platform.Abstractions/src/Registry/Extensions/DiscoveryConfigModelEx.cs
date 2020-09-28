@@ -21,7 +21,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
                 return null;
             }
             return new DiscoveryConfigModel {
-                ActivationFilter = model.ActivationFilter.Clone(),
                 AddressRangesToScan = model.AddressRangesToScan,
                 DiscoveryUrls = model.DiscoveryUrls?.ToList(),
                 Locales = model.Locales?.ToList(),

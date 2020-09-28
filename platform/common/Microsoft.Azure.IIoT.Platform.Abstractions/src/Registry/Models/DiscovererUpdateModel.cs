@@ -24,5 +24,10 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
         /// Current log level
         /// </summary>
         public TraceLogLevel? LogLevel { get; set; }
+
+        /// <summary>
+        /// Generation Id
+        /// </summary>
+        public string GenerationId { get; set; }
     }
 }

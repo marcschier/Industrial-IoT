@@ -21,11 +21,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
         public string Id { get; set; }
 
         /// <summary>
-        /// Upon discovery, activate all endpoints with this filter.
-        /// </summary>
-        public EndpointActivationFilterModel ActivationFilter { get; set; }
-
-        /// <summary>
         /// Operation audit context
         /// </summary>
         public RegistryOperationContextModel Context { get; set; }

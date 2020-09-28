@@ -13,7 +13,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Models {
     [DataContract]
     public class ServerRegistrationRequestApiModel {
 
-
         /// <summary>
         /// Discovery url to use for registration
         /// </summary>
@@ -27,12 +26,5 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Models {
         [DataMember(Name = "id", Order = 1,
             EmitDefaultValue = false)]
         public string Id { get; set; }
-
-        /// <summary>
-        /// Upon discovery, activate all endpoints with this filter.
-        /// </summary>
-        [DataMember(Name = "activationFilter", Order = 2,
-           EmitDefaultValue = false)]
-        public EndpointActivationFilterApiModel ActivationFilter { get; set; }
     }
 }

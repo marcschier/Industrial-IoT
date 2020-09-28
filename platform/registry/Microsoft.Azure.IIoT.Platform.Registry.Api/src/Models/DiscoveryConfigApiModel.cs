@@ -116,12 +116,5 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Models {
         [DataMember(Name = "locales", Order = 9,
             EmitDefaultValue = false)]
         public List<string> Locales { get; set; }
-
-        /// <summary>
-        /// Activate all twins with this filter during onboarding.
-        /// </summary>
-        [DataMember(Name = "activationFilter", Order = 10,
-            EmitDefaultValue = false)]
-        public EndpointActivationFilterApiModel ActivationFilter { get; set; }
     }
 }

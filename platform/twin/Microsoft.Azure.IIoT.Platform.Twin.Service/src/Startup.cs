@@ -193,7 +193,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Service {
                 .AsImplementedInterfaces();
             builder.RegisterType<HistoricAccessAdapter<string>>()
               .AsImplementedInterfaces();
-            builder.RegisterType<HistoricAccessAdapter<EndpointRegistrationModel>>()
+            builder.RegisterType<HistoricAccessAdapter<EndpointInfoModel>>()
                 .AsImplementedInterfaces();
             builder.RegisterType<ChunkMethodClient>()
                 .AsImplementedInterfaces();

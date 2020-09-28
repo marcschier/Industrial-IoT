@@ -35,6 +35,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Tests {
     using System.Text;
     using System.Threading.Tasks;
     using Xunit;
+    using Microsoft.Azure.IIoT.Platform.Registry.Storage.Default;
 
     /// <summary>
     /// Harness for opc twin module
@@ -192,8 +193,8 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Tests {
         /// <param name="test"></param>
         /// <returns></returns>
         public async Task RunTestAsync(EndpointModel ep,
-            Func<EndpointRegistrationModel, IContainer, Task> test) {
-            var endpoint = new EndpointRegistrationModel {
+            Func<EndpointInfoModel, IContainer, Task> test) {
+            var endpoint = new EndpointInfoModel {
                 Endpoint = ep,
                 SupervisorId = HubResource.Format(Hub, DeviceId, ModuleId)
             };
@@ -237,23 +238,18 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Tests {
         /// </summary>
         /// <param name="endpoint"></param>
         /// <returns></returns>
-        public EndpointRegistrationModel RegisterAndActivateTwinId(EndpointRegistrationModel endpoint) {
-            var twin =
-                new EndpointInfoModel {
-                    Registration = endpoint,
-                    ApplicationId = "uas" + Guid.NewGuid().ToString()
-                }.ToEndpointRegistration(_serializer).ToDeviceTwin(_serializer);
-            _ = _hub.CreateOrUpdateAsync(twin).Result;
+        public EndpointInfoModel RegisterAndActivateTwinId(EndpointInfoModel endpoint) {
+            endpoint.ApplicationId = "uas" + Guid.NewGuid().ToString();
+
             var registry = HubContainer.Resolve<IEndpointRegistry>();
-            var activate = HubContainer.Resolve<IEndpointActivation>();
             var endpoints = registry.ListAllEndpointsAsync().Result;
             var ep1 = endpoints.FirstOrDefault();
 
             if (ep1.ActivationState == EntityActivationState.Deactivated) {
                 // Activate
-                activate.ActivateEndpointAsync(ep1.Registration.Id).Wait();
+                registry.ActivateEndpointAsync(ep1.Id).Wait();
             }
-            return ep1.Registration;
+            return ep1;
         }
 
         /// <summary>
@@ -261,10 +257,10 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Tests {
         /// </summary>
         /// <param name="endpoint"></param>
         /// <returns></returns>
-        public void DeactivateTwinId(EndpointRegistrationModel endpoint) {
-            var activate = HubContainer.Resolve<IEndpointActivation>();
+        public void DeactivateTwinId(EndpointInfoModel endpoint) {
+            var registry = HubContainer.Resolve<IEndpointRegistry>();
             // Deactivate
-            activate.DeactivateEndpointAsync(endpoint.Id).Wait();
+            registry.DeactivateEndpointAsync(endpoint.Id).Wait();
         }
 
         /// <inheritdoc/>
@@ -334,7 +330,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Tests {
             // Adapts to expanded hda
             builder.RegisterType<HistoricAccessAdapter<string>>()
                 .AsImplementedInterfaces();
-            builder.RegisterType<HistoricAccessAdapter<EndpointRegistrationModel>>()
+            builder.RegisterType<HistoricAccessAdapter<EndpointInfoModel>>()
                 .AsImplementedInterfaces();
             builder.RegisterType<HistoricAccessAdapter<EndpointApiModel>>()
                 .AsImplementedInterfaces();
@@ -353,7 +349,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Tests {
 
             // Add services
             builder.RegisterModule<RegistryServices>();
-            builder.RegisterType<ApplicationTwins>()
+            builder.RegisterType<ApplicationDatabase>()
                 .AsImplementedInterfaces();
             builder.RegisterModule<EventBrokerStubs>();
 

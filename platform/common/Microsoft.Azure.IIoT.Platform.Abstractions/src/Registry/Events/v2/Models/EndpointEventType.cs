@@ -16,16 +16,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Events.v2.Models {
         New,
 
         /// <summary>
-        /// Enabled
-        /// </summary>
-        Enabled,
-
-        /// <summary>
-        /// Disabled
-        /// </summary>
-        Disabled,
-
-        /// <summary>
         /// Deactivated
         /// </summary>
         Deactivated,

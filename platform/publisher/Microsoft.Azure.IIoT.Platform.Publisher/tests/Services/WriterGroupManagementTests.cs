@@ -14,6 +14,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
     using Microsoft.Azure.IIoT.Serializers.NewtonSoft;
     using Microsoft.Azure.IIoT.Storage;
     using Microsoft.Azure.IIoT.Storage.Default;
+    using Autofac;
     using Autofac.Extras.Moq;
     using System;
     using System.Collections.Generic;
@@ -21,7 +22,6 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
     using System.Threading.Tasks;
     using System.Threading;
     using Xunit;
-    using Autofac;
     using Moq;
 
     /// <summary>
@@ -269,13 +269,11 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                 IEndpointRegistryListener service = mock.Create<WriterGroupManagement>();
 
                 var endpoint = new EndpointInfoModel {
-                    Registration = new EndpointRegistrationModel {
-                        EndpointUrl = "fakeurl",
-                        Id = "endpoint1",
-                        SiteId = "fakesite",
-                        Endpoint = new EndpointModel {
-                            Url = "fakeurl"
-                        }
+                    EndpointUrl = "fakeurl",
+                    Id = "endpoint1",
+                    SiteId = "fakesite",
+                    Endpoint = new EndpointModel {
+                        Url = "fakeurl"
                     }
                 };
 
@@ -333,15 +331,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                 Assert.Single(found);
 
                 // Act
-                await service.OnEndpointEnabledAsync(null, endpoint);
-                // Assert
-                found = await writers.QueryAllDataSetWritersAsync(new DataSetWriterInfoQueryModel {
-                    ExcludeDisabled = true
-                });
-                Assert.Single(found);
-
-                // Act
-                await service.OnEndpointDisabledAsync(null, endpoint);
+                await service.OnEndpointDeletedAsync(null, endpoint.Id, null);
                 // Assert
                 found = await writers.QueryAllDataSetWritersAsync(new DataSetWriterInfoQueryModel {
                     ExcludeDisabled = true
@@ -349,23 +339,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                 Assert.Empty(found);
 
                 // Act
-                await service.OnEndpointEnabledAsync(null, endpoint);
-                // Assert
-                found = await writers.QueryAllDataSetWritersAsync(new DataSetWriterInfoQueryModel {
-                    ExcludeDisabled = true
-                });
-                Assert.Single(found);
-
-                // Act
-                await service.OnEndpointDeletedAsync(null, endpoint.Registration.Id, null);
-                // Assert
-                found = await writers.QueryAllDataSetWritersAsync(new DataSetWriterInfoQueryModel {
-                    ExcludeDisabled = true
-                });
-                Assert.Empty(found);
-
-                // Act
-                await service.OnEndpointDeletedAsync(null, endpoint.Registration.Id, null);
+                await service.OnEndpointDeletedAsync(null, endpoint.Id, null);
                 // Assert
                 found = await writers.QueryAllDataSetWritersAsync(new DataSetWriterInfoQueryModel {
                     ExcludeDisabled = true
@@ -381,7 +355,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                 Assert.Single(found);
 
                 // Act
-                await service.OnEndpointDeletedAsync(null, endpoint.Registration.Id, null);
+                await service.OnEndpointDeletedAsync(null, endpoint.Id, null);
                 // Assert
                 found = await writers.QueryAllDataSetWritersAsync(new DataSetWriterInfoQueryModel {
                     ExcludeDisabled = true
@@ -415,16 +389,14 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                 builder.RegisterType<WriterGroupDatabase>().AsImplementedInterfaces();
                 var registry = new Mock<IEndpointRegistry>();
                 registry
-                    .Setup(e => e.GetEndpointAsync(It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<CancellationToken>()))
+                    .Setup(e => e.GetEndpointAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
                     .Returns(Task.FromResult(new EndpointInfoModel {
-                        Registration = new EndpointRegistrationModel {
                             EndpointUrl = "fakeurl",
                             Id = "endpoint1",
                             SiteId = "fakesite",
                             Endpoint = new EndpointModel {
                                 Url = "fakeurl"
                             }
-                        }
                     }));
                 builder.RegisterMock(registry);
                 builder.RegisterType<WriterGroupRegistry>().AsImplementedInterfaces();

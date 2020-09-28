@@ -32,7 +32,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Twin.Endpoint {
         }
 
         private WriteScalarValueTests<string> GetTests() {
-            var endpoint = new EndpointRegistrationModel {
+            var endpoint = new EndpointInfoModel {
                 Endpoint = new EndpointModel {
                     Url = $"opc.tcp://{_hostEntry?.HostName ?? "localhost"}:{_server.Port}/UA/SampleServer",
                     AlternativeUrls = _hostEntry?.AddressList

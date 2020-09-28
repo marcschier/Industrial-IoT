@@ -31,20 +31,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Events.v2 {
         }
 
         /// <inheritdoc/>
-        public Task OnApplicationDisabledAsync(
-            RegistryOperationContextModel context, ApplicationInfoModel application) {
-            return _bus.PublishAsync(Wrap(ApplicationEventType.Disabled, context,
-                application.ApplicationId, application));
-        }
-
-        /// <inheritdoc/>
-        public Task OnApplicationEnabledAsync(
-            RegistryOperationContextModel context, ApplicationInfoModel application) {
-            return _bus.PublishAsync(Wrap(ApplicationEventType.Enabled, context,
-                application.ApplicationId, application));
-        }
-
-        /// <inheritdoc/>
         public Task OnApplicationNewAsync(
             RegistryOperationContextModel context, ApplicationInfoModel application) {
             return _bus.PublishAsync(Wrap(ApplicationEventType.New, context,

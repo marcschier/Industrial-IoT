@@ -17,37 +17,32 @@ namespace Microsoft.Azure.IIoT.Platform.Registry {
         /// Get all supervisors in paged form
         /// </summary>
         /// <param name="continuation"></param>
-        /// <param name="onlyServerState"></param>
         /// <param name="pageSize"></param>
         /// <param name="ct"></param>
         /// <returns></returns>
         Task<SupervisorListModel> ListSupervisorsAsync(
-            string continuation, bool onlyServerState = false,
-            int? pageSize = null, CancellationToken ct = default);
+            string continuation, int? pageSize = null,
+            CancellationToken ct = default);
 
         /// <summary>
         /// Find supervisors using specific criterias.
         /// </summary>
         /// <param name="query"></param>
-        /// <param name="onlyServerState"></param>
         /// <param name="pageSize"></param>
         /// <param name="ct"></param>
         /// <returns></returns>
         Task<SupervisorListModel> QuerySupervisorsAsync(
-            SupervisorQueryModel query, bool onlyServerState = false,
-            int? pageSize = null,
+            SupervisorQueryModel query, int? pageSize = null,
             CancellationToken ct = default);
 
         /// <summary>
         /// Get supervisor registration by identifer.
         /// </summary>
-        /// <param name="onlyServerState"></param>
         /// <param name="id"></param>
         /// <param name="ct"></param>
         /// <returns></returns>
         Task<SupervisorModel> GetSupervisorAsync(
-            string id, bool onlyServerState = false,
-            CancellationToken ct = default);
+            string id, CancellationToken ct = default);
 
         /// <summary>
         /// Update supervisor, e.g. set discovery mode

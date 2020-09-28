@@ -19,18 +19,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Models {
         New,
 
         /// <summary>
-        /// Enabled
-        /// </summary>
-        [EnumMember]
-        Enabled,
-
-        /// <summary>
-        /// Disabled
-        /// </summary>
-        [EnumMember]
-        Disabled,
-
-        /// <summary>
         /// Deactivated
         /// </summary>
         [EnumMember]

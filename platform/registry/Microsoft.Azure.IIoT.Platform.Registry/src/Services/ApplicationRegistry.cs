@@ -55,13 +55,11 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
 
             var context = request.Context.Validate();
 
-            var application = await _database.AddAsync(request.ToApplicationInfo(context),
-                null, ct);
+            var application = await _database.AddAsync(
+                request.ToApplicationInfo(context), ct);
 
             await _broker.NotifyAllAsync(
                 l => l.OnApplicationNewAsync(context, application));
-            await _broker.NotifyAllAsync(
-                l => l.OnApplicationEnabledAsync(context, application));
 
             return new ApplicationRegistrationResultModel {
                 Id = application.ApplicationId
@@ -69,76 +67,81 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
         }
 
         /// <inheritdoc/>
-        public async Task DisableApplicationAsync(string applicationId,
+        public async Task UnregisterApplicationAsync(string applicationId, string generationId,
             RegistryOperationContextModel context, CancellationToken ct) {
             context = context.Validate();
 
-            var app = await _database.UpdateAsync(applicationId, (application, disabled) => {
-                // Disable application
-                if (!(disabled ?? false)) {
-                    application.NotSeenSince = DateTime.UtcNow;
-                    application.Updated = context;
-                    return (true, true);
+            var application = await _database.DeleteAsync(applicationId, application => {
+                if (application.GenerationId != generationId) {
+                    return Task.FromException<bool>(
+                        new ResourceOutOfDateException("Generation id not matching"));
                 }
-                return (null, null);
+                return Task.FromResult(false);
             }, ct);
-
-            await _broker.NotifyAllAsync(l => l.OnApplicationDisabledAsync(context, app));
-        }
-
-        /// <inheritdoc/>
-        public async Task EnableApplicationAsync(string applicationId,
-            RegistryOperationContextModel context, CancellationToken ct) {
-            context = context.Validate();
-
-            var app = await _database.UpdateAsync(applicationId, (application, disabled) => {
-                // Enable application
-                if (disabled ?? false) {
-                    application.NotSeenSince = null;
-                    application.Updated = context;
-                    return (true, false);
-                }
-                return (null, null);
-            }, ct);
-
-            await _broker.NotifyAllAsync(l => l.OnApplicationEnabledAsync(context, app));
-        }
-
-        /// <inheritdoc/>
-        public async Task UnregisterApplicationAsync(string applicationId,
-            RegistryOperationContextModel context, CancellationToken ct) {
-            context = context.Validate();
-
-            var app = await _database.DeleteAsync(applicationId, null, ct);
-            if (app == null) {
+            if (application == null) {
                 return;
             }
-
-            await _broker.NotifyAllAsync(l => l.OnApplicationDeletedAsync(context, applicationId, app));
+            await _broker.NotifyAllAsync(l => l.OnApplicationDeletedAsync(context,
+                applicationId, application));
         }
 
         /// <inheritdoc/>
         public async Task UpdateApplicationAsync(string applicationId,
-            ApplicationRegistrationUpdateModel request, CancellationToken ct) {
+            ApplicationInfoUpdateModel request, CancellationToken ct) {
             if (request == null) {
                 throw new ArgumentNullException(nameof(request));
             }
             var context = request.Context.Validate();
 
-            var application = await _database.UpdateAsync(applicationId, (existing, _) => {
-                existing.Patch(request);
+            var application = await _database.UpdateAsync(applicationId, existing => {
+                if (existing.GenerationId != request.GenerationId) {
+                    throw new ResourceOutOfDateException("Generation id no match");
+                }
+                // Update from update request
+                if (request.ApplicationName != null) {
+                    existing.ApplicationName = string.IsNullOrEmpty(request.ApplicationName) ?
+                        null : request.ApplicationName;
+                }
+                if (request.LocalizedNames != null) {
+                    existing.LocalizedNames = request.LocalizedNames;
+                }
+                if (request.ProductUri != null) {
+                    existing.ProductUri = string.IsNullOrEmpty(request.ProductUri) ?
+                        null : request.ProductUri;
+                }
+                if (request.GatewayServerUri != null) {
+                    existing.GatewayServerUri = string.IsNullOrEmpty(request.GatewayServerUri) ?
+                        null : request.GatewayServerUri;
+                }
+                if (request.Capabilities != null) {
+                    existing.Capabilities = request.Capabilities.Count == 0 ?
+                        null : request.Capabilities;
+                }
+                if (request.DiscoveryUrls != null) {
+                    existing.DiscoveryUrls = request.DiscoveryUrls.Count == 0 ?
+                        null : request.DiscoveryUrls;
+                }
+                if (request.Locale != null) {
+                    existing.Locale = string.IsNullOrEmpty(request.Locale) ?
+                        null : request.Locale;
+                }
+                if (request.DiscoveryProfileUri != null) {
+                    existing.DiscoveryProfileUri = string.IsNullOrEmpty(request.DiscoveryProfileUri) ?
+                        null : request.DiscoveryProfileUri;
+                }
                 existing.Updated = context;
-                return (true, null);
+                return Task.FromResult(true);
             }, ct);
 
             // Send update to through broker
-            await _broker.NotifyAllAsync(l => l.OnApplicationUpdatedAsync(context, application));
+            await _broker.NotifyAllAsync(l => l.OnApplicationUpdatedAsync(context,
+                application));
         }
 
         /// <inheritdoc/>
         public async Task<ApplicationRegistrationModel> GetApplicationAsync(
             string applicationId, bool filterInactiveTwins, CancellationToken ct) {
-            var application = await _database.GetAsync(applicationId, true, ct);
+            var application = await _database.FindAsync(applicationId, ct);
             if (application == null) {
                 return null;
             }
@@ -146,16 +149,14 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                 application.NotSeenSince != null, filterInactiveTwins);
             return new ApplicationRegistrationModel {
                 Application = application,
-                Endpoints = endpoints
-                    .Select(ep => ep.Registration)
-                    .ToList()
+                Endpoints = endpoints.ToList()
             };
         }
 
         /// <inheritdoc/>
         public Task<ApplicationInfoListModel> ListApplicationsAsync(
             string continuation, int? pageSize, CancellationToken ct) {
-            return _database.ListAsync(continuation, pageSize, ct);
+            return _database.QueryAsync(null, continuation, pageSize, ct);
         }
 
         /// <inheritdoc/>
@@ -165,32 +166,33 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
             var absolute = DateTime.UtcNow - notSeenSince;
             string continuation = null;
             do {
-                var applications = await _database.ListAsync(continuation, null, ct);
+                var applications = await _database.QueryAsync(null, continuation, null, ct);
                 continuation = applications?.ContinuationToken;
                 if (applications?.Items == null) {
                     continue;
                 }
-                foreach (var application in applications.Items) {
-                    if (application.NotSeenSince == null ||
-                        application.NotSeenSince.Value >= absolute) {
+                foreach (var found in applications.Items) {
+                    if (found.NotSeenSince == null ||
+                        found.NotSeenSince.Value >= absolute) {
                         // Skip
                         continue;
                     }
                     try {
                         // Delete if disabled state is reflected in the query result
-                        var app = await _database.DeleteAsync(application.ApplicationId,
-                            a => application.NotSeenSince != null &&
-                                 application.NotSeenSince.Value < absolute, ct);
-                        if (app == null) {
+                        var application = await _database.DeleteAsync(found.ApplicationId,
+                            a => Task.FromResult(
+                                a.NotSeenSince.HasValue &&
+                                a.NotSeenSince.Value < absolute), ct);
+                        if (application == null) {
                             // Skip - already deleted or not satisfying condition
                             continue;
                         }
-                        await _broker.NotifyAllAsync(
-                            l => l.OnApplicationDeletedAsync(context, app.ApplicationId, app));
+                        await _broker.NotifyAllAsync(l => l.OnApplicationDeletedAsync(
+                            context, application.ApplicationId, application));
                     }
                     catch (Exception ex) {
                         _logger.Error(ex, "Exception purging application {id} - continue",
-                            application.ApplicationId);
+                            found.ApplicationId);
                         continue;
                     }
                 }
@@ -201,7 +203,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
         /// <inheritdoc/>
         public Task<ApplicationInfoListModel> QueryApplicationsAsync(
             ApplicationRegistrationQueryModel model, int? pageSize, CancellationToken ct) {
-            return _database.QueryAsync(model, pageSize, ct);
+            return _database.QueryAsync(model, null, pageSize, ct);
         }
 
         /// <inheritdoc/>
@@ -212,7 +214,8 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
 
         /// <inheritdoc/>
         public async Task ProcessDiscoveryEventsAsync(string siteId, string discovererId,
-            string supervisorId, DiscoveryResultModel result, IEnumerable<DiscoveryEventModel> events) {
+            string supervisorId, DiscoveryResultModel result,
+            IEnumerable<DiscoveryEventModel> events) {
             if (string.IsNullOrEmpty(siteId)) {
                 throw new ArgumentNullException(nameof(siteId));
             }
@@ -234,7 +237,11 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
             // changed after a discovery run (same discoverer that registered, but now
             // different site reported).
             //
-            var existing = await _database.ListAllAsync(siteId, discovererId);
+            var existing = await _database.QueryAllAsync(
+                new ApplicationRegistrationQueryModel {
+                    SiteOrGatewayId = siteId,
+                    DiscovererId = discovererId
+                });
 
             //
             // Ensure we set the site id and discoverer id in the found applications
@@ -258,13 +265,11 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                         // Ensure the site id and discoverer id in the found endpoints
                         // have correct values, same as applications earlier.
                         //
-                        ev.Registration.SiteId = siteId;
-                        ev.Registration.DiscovererId = discovererId;
-                        ev.Registration.SupervisorId = supervisorId;
-                        return new EndpointInfoModel {
-                            ApplicationId = group.Key,
-                            Registration = ev.Registration
-                        };
+                        ev.Endpoint.SiteId = siteId;
+                        ev.Endpoint.DiscovererId = discovererId;
+                        ev.Endpoint.SupervisorId = supervisorId;
+                        ev.Endpoint.ApplicationId = group.Key;
+                        return ev.Endpoint.Clone();
                     })
                     .ToList());
 
@@ -303,24 +308,23 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                             var wasUpdated = false;
 
                             // Disable if not already disabled
-                            var app = await _database.UpdateAsync(removal.ApplicationId,
-                                (application, disabled) => {
+                            var application = await _database.UpdateAsync(removal.ApplicationId,
+                                application => {
                                     // Disable application
-                                    if (!(disabled ?? false)) {
+                                    if (application.NotSeenSince == null) {
                                         application.NotSeenSince = DateTime.UtcNow;
                                         application.Updated = context;
                                         removed++;
                                         wasUpdated = true;
-                                        return (true, true);
+                                        return Task.FromResult(true);
                                     }
                                     unchanged++;
-                                    return (null, null);
+                                    return Task.FromResult(false);
                                 });
 
                             if (wasUpdated) {
-                                await _broker.NotifyAllAsync(l => l.OnApplicationUpdatedAsync(context, app));
+                                await _broker.NotifyAllAsync(l => l.OnApplicationUpdatedAsync(context, application));
                             }
-                            await _broker.NotifyAllAsync(l => l.OnApplicationDisabledAsync(context, app));
                         }
                         else {
                             // Skip the ones owned by other discoverers
@@ -339,15 +343,14 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                 try {
                     var application = addition.Clone();
                     application.Created = context;
-
-                    var app = await _database.AddAsync(application, false);
+                    application.NotSeenSince = null;
+                    application = await _database.AddAsync(application);
 
                     // Notify addition!
-                    await _broker.NotifyAllAsync(l => l.OnApplicationNewAsync(context, app));
-                    await _broker.NotifyAllAsync(l => l.OnApplicationEnabledAsync(context, app));
+                    await _broker.NotifyAllAsync(l => l.OnApplicationNewAsync(context, application));
 
                     // Now - add all new endpoints
-                    endpoints.TryGetValue(app.ApplicationId, out var epFound);
+                    endpoints.TryGetValue(application.ApplicationId, out var epFound);
                     await _bulk.ProcessDiscoveryEventsAsync(epFound, result, discovererId,
                         supervisorId, siteId, null, false);
                     added++;
@@ -364,47 +367,40 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
             // Update applications and endpoints ...
             foreach (var update in unchange) {
                 try {
-                    var wasDisabled = false;
                     var wasUpdated = false;
 
                     // Disable if not already disabled
-                    var app = await _database.UpdateAsync(update.ApplicationId,
-                        (application, disabled) => {
-                            //
-                            // Check whether another discoverer owns this application (discoverer
-                            // id are not the same) and it is not disabled before updating it it.
-                            //
-                            if (update.DiscovererId != discovererId && !(disabled ?? false)) {
-                                // TODO: Decide whether we merge newly found endpoints...
-                                unchanged++;
-                                return (null, null);
-                            }
+                    var application = await _database.UpdateAsync(update.ApplicationId, application => {
+                        //
+                        // Check whether another discoverer owns this application (discoverer
+                        // id are not the same) and it is not disabled before updating it it.
+                        //
+                        if (update.DiscovererId != discovererId && application.NotSeenSince == null) {
+                            // TODO: Decide whether we merge newly found endpoints...
+                            unchanged++;
+                            return Task.FromResult(false);
+                        }
 
-                            wasDisabled = (disabled ?? false) && (application.NotSeenSince != null);
-                            wasUpdated = true;
+                        wasUpdated = true;
 
-                            application.Patch(update);
-                            application.DiscovererId = discovererId;
-                            application.SiteId = siteId;
-                            application.NotSeenSince = null;
-                            application.Updated = context;
-                            updated++;
-                            return (true, false);
-                        });
-
-                    if (wasDisabled) {
-                        await _broker.NotifyAllAsync(l => l.OnApplicationEnabledAsync(context, app));
-                    }
+                        application.Patch(update);
+                        application.DiscovererId = discovererId;
+                        application.SiteId = siteId;
+                        application.NotSeenSince = null;
+                        application.Updated = context;
+                        updated++;
+                        return Task.FromResult(true);
+                    });
 
                     if (wasUpdated) {
                         // If this is our discoverer's application we update all endpoints also.
-                        endpoints.TryGetValue(app.ApplicationId, out var epFound);
+                        endpoints.TryGetValue(application.ApplicationId, out var epFound);
 
                         // TODO: Handle case where we take ownership of all endpoints
                         await _bulk.ProcessDiscoveryEventsAsync(epFound, result, discovererId, supervisorId,
-                            siteId, app.ApplicationId, false);
+                            siteId, application.ApplicationId, false);
 
-                        await _broker.NotifyAllAsync(l => l.OnApplicationUpdatedAsync(context, app));
+                        await _broker.NotifyAllAsync(l => l.OnApplicationUpdatedAsync(context, application));
                     }
                 }
                 catch (Exception ex) {

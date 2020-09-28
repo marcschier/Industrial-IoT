@@ -5,11 +5,13 @@
 
 namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
     using Microsoft.Azure.IIoT.Platform.Registry.Models;
+    using Microsoft.Azure.IIoT.Platform.Registry.Storage.Default;
     using Microsoft.Azure.IIoT.Platform.Core.Models;
+    using Microsoft.Azure.IIoT.Storage.Default;
+    using Microsoft.Azure.IIoT.Storage;
     using Microsoft.Azure.IIoT.Exceptions;
     using Microsoft.Azure.IIoT.Hub;
     using Microsoft.Azure.IIoT.Azure.IoTHub.Mock;
-    using Microsoft.Azure.IIoT.Hub.Models;
     using Microsoft.Azure.IIoT.Serializers.NewtonSoft;
     using Microsoft.Azure.IIoT.Serializers;
     using Autofac.Extras.Moq;
@@ -26,15 +28,8 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
 
         [Fact]
         public void GetApplicationThatDoesNotExist() {
-            CreateAppFixtures(out var hubName, out var site, out var super, out var apps, out var devices);
+            using (var mock = CreateMock(out var hubName, out var site, out var super, out var apps)) {
 
-            using (var mock = AutoMock.GetLoose(builder => {
-                var hub = IoTHubServices.Create(hubName, devices);
-                builder.RegisterType<NewtonSoftJsonConverters>().As<IJsonSerializerConverterProvider>();
-                builder.RegisterType<NewtonSoftJsonSerializer>().As<IJsonSerializer>();
-                builder.RegisterInstance(hub).As<IDeviceTwinServices>();
-                builder.RegisterType<ApplicationTwins>().As<IApplicationRepository>();
-            })) {
                 IApplicationRegistry service = mock.Create<ApplicationRegistry>();
 
                 // Run
@@ -49,16 +44,8 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
 
         [Fact]
         public void GetApplicationThatExists() {
-            CreateAppFixtures(out var hubName, out var site, out var super, out var apps, out var devices);
-            var first = apps.First();
-
-            using (var mock = AutoMock.GetLoose(builder => {
-                var hub = IoTHubServices.Create(hubName, devices);
-                builder.RegisterType<NewtonSoftJsonConverters>().As<IJsonSerializerConverterProvider>();
-                builder.RegisterType<NewtonSoftJsonSerializer>().As<IJsonSerializer>();
-                builder.RegisterInstance(hub).As<IDeviceTwinServices>();
-                builder.RegisterType<ApplicationTwins>().As<IApplicationRepository>();
-            })) {
+            using (var mock = CreateMock(out var hubName, out var site, out var super, out var apps)) {
+                var first = apps.First();
                 IApplicationRegistry service = mock.Create<ApplicationRegistry>();
 
                 // Run
@@ -74,22 +61,14 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
 
         [Fact]
         public void UpdateApplicationThatExists() {
-            CreateAppFixtures(out var hubName, out var site, out var super, out var apps, out var devices);
-            var first = apps.First();
-            var appId = ApplicationInfoModelEx.CreateApplicationId(site, first.ApplicationUri,
-                first.ApplicationType);
-
-            using (var mock = AutoMock.GetLoose(builder => {
-                var hub = IoTHubServices.Create(hubName, devices);
-                builder.RegisterType<NewtonSoftJsonConverters>().As<IJsonSerializerConverterProvider>();
-                builder.RegisterType<NewtonSoftJsonSerializer>().As<IJsonSerializer>();
-                builder.RegisterInstance(hub).As<IDeviceTwinServices>();
-                builder.RegisterType<ApplicationTwins>().As<IApplicationRepository>();
-            })) {
+            using (var mock = CreateMock(out var hubName, out var site, out var super, out var apps)) {
+                var first = apps.First();
+                var appId = ApplicationInfoModelEx.CreateApplicationId(site, first.ApplicationUri,
+                    first.ApplicationType);
                 IApplicationRegistry service = mock.Create<ApplicationRegistry>();
 
                 // Run
-                service.UpdateApplicationAsync(appId, new ApplicationRegistrationUpdateModel {
+                service.UpdateApplicationAsync(appId, new ApplicationInfoUpdateModel {
                     ApplicationName = "TestName",
                     DiscoveryProfileUri = "pu"
                 }).Wait();
@@ -104,15 +83,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
 
         [Fact]
         public void ListAllApplications() {
-            CreateAppFixtures(out var hubName, out var site, out var super, out var apps, out var devices);
-
-            using (var mock = AutoMock.GetLoose(builder => {
-                var hub = IoTHubServices.Create(hubName, devices);
-                builder.RegisterType<NewtonSoftJsonConverters>().As<IJsonSerializerConverterProvider>();
-                builder.RegisterType<NewtonSoftJsonSerializer>().As<IJsonSerializer>();
-                builder.RegisterInstance(hub).As<IDeviceTwinServices>();
-                builder.RegisterType<ApplicationTwins>().As<IApplicationRepository>();
-            })) {
+            using (var mock = CreateMock(out var hubName, out var site, out var super, out var apps)) {
                 IApplicationRegistry service = mock.Create<ApplicationRegistry>();
 
                 // Run
@@ -125,15 +96,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
 
         [Fact]
         public void ListAllApplicationsUsingQuery() {
-            CreateAppFixtures(out var hubName, out var site, out var super, out var apps, out var devices);
-
-            using (var mock = AutoMock.GetLoose(builder => {
-                var hub = IoTHubServices.Create(hubName, devices);
-                builder.RegisterType<NewtonSoftJsonConverters>().As<IJsonSerializerConverterProvider>();
-                builder.RegisterType<NewtonSoftJsonSerializer>().As<IJsonSerializer>();
-                builder.RegisterInstance(hub).As<IDeviceTwinServices>();
-                builder.RegisterType<ApplicationTwins>().As<IApplicationRepository>();
-            })) {
+            using (var mock = CreateMock(out var hubName, out var site, out var super, out var apps)) {
                 IApplicationRegistry service = mock.Create<ApplicationRegistry>();
 
                 // Run
@@ -146,15 +109,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
 
         [Fact]
         public void QueryApplicationsByClientAndServerApplicationType() {
-            CreateAppFixtures(out var hubName, out var site, out var super, out var apps, out var devices);
-
-            using (var mock = AutoMock.GetLoose(builder => {
-                var hub = IoTHubServices.Create(hubName, devices);
-                builder.RegisterType<NewtonSoftJsonConverters>().As<IJsonSerializerConverterProvider>();
-                builder.RegisterType<NewtonSoftJsonSerializer>().As<IJsonSerializer>();
-                builder.RegisterInstance(hub).As<IDeviceTwinServices>();
-                builder.RegisterType<ApplicationTwins>().As<IApplicationRepository>();
-            })) {
+            using (var mock = CreateMock(out var hubName, out var site, out var super, out var apps)) {
                 IApplicationRegistry service = mock.Create<ApplicationRegistry>();
 
                 // Run
@@ -170,15 +125,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
 
         [Fact]
         public void QueryApplicationsByServerApplicationType() {
-            CreateAppFixtures(out var hubName, out var site, out var super, out var apps, out var devices);
-
-            using (var mock = AutoMock.GetLoose(builder => {
-                var hub = IoTHubServices.Create(hubName, devices);
-                builder.RegisterType<NewtonSoftJsonConverters>().As<IJsonSerializerConverterProvider>();
-                builder.RegisterType<NewtonSoftJsonSerializer>().As<IJsonSerializer>();
-                builder.RegisterInstance(hub).As<IDeviceTwinServices>();
-                builder.RegisterType<ApplicationTwins>().As<IApplicationRepository>();
-            })) {
+            using (var mock = CreateMock(out var hubName, out var site, out var super, out var apps)) {
                 IApplicationRegistry service = mock.Create<ApplicationRegistry>();
 
                 // Run
@@ -193,15 +140,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
 
         [Fact]
         public void QueryApplicationsByDiscoveryServerApplicationType() {
-            CreateAppFixtures(out var hubName, out var site, out var super, out var apps, out var devices);
-
-            using (var mock = AutoMock.GetLoose(builder => {
-                var hub = IoTHubServices.Create(hubName, devices);
-                builder.RegisterType<NewtonSoftJsonConverters>().As<IJsonSerializerConverterProvider>();
-                builder.RegisterType<NewtonSoftJsonSerializer>().As<IJsonSerializer>();
-                builder.RegisterInstance(hub).As<IDeviceTwinServices>();
-                builder.RegisterType<ApplicationTwins>().As<IApplicationRepository>();
-            })) {
+            using (var mock = CreateMock(out var hubName, out var site, out var super, out var apps)) {
                 IApplicationRegistry service = mock.Create<ApplicationRegistry>();
 
                 // Run
@@ -216,15 +155,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
 
         [Fact]
         public void QueryApplicationsBySiteId() {
-            CreateAppFixtures(out var hubName, out var site, out var super, out var apps, out var devices);
-
-            using (var mock = AutoMock.GetLoose(builder => {
-                var hub = IoTHubServices.Create(hubName, devices);
-                builder.RegisterType<NewtonSoftJsonConverters>().As<IJsonSerializerConverterProvider>();
-                builder.RegisterType<NewtonSoftJsonSerializer>().As<IJsonSerializer>();
-                builder.RegisterInstance(hub).As<IDeviceTwinServices>();
-                builder.RegisterType<ApplicationTwins>().As<IApplicationRepository>();
-            })) {
+            using (var mock = CreateMock(out var hubName, out var site, out var super, out var apps)) {
                 IApplicationRegistry service = mock.Create<ApplicationRegistry>();
 
                 // Run
@@ -239,15 +170,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
 
         [Fact]
         public void QueryApplicationsBySupervisorId() {
-            CreateAppFixtures(out var hubName, out var site, out var super, out var apps, out var devices, true);
-
-            using (var mock = AutoMock.GetLoose(builder => {
-                var hub = IoTHubServices.Create(hubName, devices);
-                builder.RegisterType<NewtonSoftJsonConverters>().As<IJsonSerializerConverterProvider>();
-                builder.RegisterType<NewtonSoftJsonSerializer>().As<IJsonSerializer>();
-                builder.RegisterInstance(hub).As<IDeviceTwinServices>();
-                builder.RegisterType<ApplicationTwins>().As<IApplicationRepository>();
-            })) {
+            using (var mock = CreateMock(out var hubName, out var site, out var super, out var apps)) {
                 IApplicationRegistry service = mock.Create<ApplicationRegistry>();
 
                 // Run
@@ -263,15 +186,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
 
         [Fact]
         public void QueryApplicationsByClientApplicationType() {
-            CreateAppFixtures(out var hubName, out var site, out var super, out var apps, out var devices);
-
-            using (var mock = AutoMock.GetLoose(builder => {
-                var hub = IoTHubServices.Create(hubName, devices);
-                builder.RegisterType<NewtonSoftJsonConverters>().As<IJsonSerializerConverterProvider>();
-                builder.RegisterType<NewtonSoftJsonSerializer>().As<IJsonSerializer>();
-                builder.RegisterInstance(hub).As<IDeviceTwinServices>();
-                builder.RegisterType<ApplicationTwins>().As<IApplicationRepository>();
-            })) {
+            using (var mock = CreateMock(out var hubName, out var site, out var super, out var apps)) {
                 IApplicationRegistry service = mock.Create<ApplicationRegistry>();
 
                 // Run
@@ -288,15 +203,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
 
         [Fact]
         public void QueryApplicationsByApplicationNameSameCase() {
-            CreateAppFixtures(out var hubName, out var site, out var super, out var apps, out var devices);
-
-            using (var mock = AutoMock.GetLoose(builder => {
-                var hub = IoTHubServices.Create(hubName, devices);
-                builder.RegisterType<NewtonSoftJsonConverters>().As<IJsonSerializerConverterProvider>();
-                builder.RegisterType<NewtonSoftJsonSerializer>().As<IJsonSerializer>();
-                builder.RegisterInstance(hub).As<IDeviceTwinServices>();
-                builder.RegisterType<ApplicationTwins>().As<IApplicationRepository>();
-            })) {
+            using (var mock = CreateMock(out var hubName, out var site, out var super, out var apps)) {
                 IApplicationRegistry service = mock.Create<ApplicationRegistry>();
 
                 // Run
@@ -312,15 +219,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
 
         [Fact]
         public void QueryApplicationsByApplicationNameDifferentCase() {
-            CreateAppFixtures(out var hubName, out var site, out var super, out var apps, out var devices);
-
-            using (var mock = AutoMock.GetLoose(builder => {
-                var hub = IoTHubServices.Create(hubName, devices);
-                builder.RegisterType<NewtonSoftJsonConverters>().As<IJsonSerializerConverterProvider>();
-                builder.RegisterType<NewtonSoftJsonSerializer>().As<IJsonSerializer>();
-                builder.RegisterInstance(hub).As<IDeviceTwinServices>();
-                builder.RegisterType<ApplicationTwins>().As<IApplicationRepository>();
-            })) {
+            using (var mock = CreateMock(out var hubName, out var site, out var super, out var apps)) {
                 IApplicationRegistry service = mock.Create<ApplicationRegistry>();
 
                 // Run
@@ -335,15 +234,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
 
         [Fact]
         public void QueryApplicationsByApplicationUriDifferentCase() {
-            CreateAppFixtures(out var hubName, out var site, out var super, out var apps, out var devices);
-
-            using (var mock = AutoMock.GetLoose(builder => {
-                var hub = IoTHubServices.Create(hubName, devices);
-                builder.RegisterType<NewtonSoftJsonConverters>().As<IJsonSerializerConverterProvider>();
-                builder.RegisterType<NewtonSoftJsonSerializer>().As<IJsonSerializer>();
-                builder.RegisterInstance(hub).As<IDeviceTwinServices>();
-                builder.RegisterType<ApplicationTwins>().As<IApplicationRepository>();
-            })) {
+            using (var mock = CreateMock(out var hubName, out var site, out var super, out var apps)) {
                 IApplicationRegistry service = mock.Create<ApplicationRegistry>();
 
                 // Run
@@ -362,15 +253,8 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
         /// </summary>
         [Fact]
         public void RegisterApplication() {
-            CreateAppFixtures(out var hubName, out var site, out var super, out var apps, out var devices);
-
-            var hub = new IoTHubServices(hubName);
-            using (var mock = AutoMock.GetLoose(builder => {
-                builder.RegisterType<NewtonSoftJsonConverters>().As<IJsonSerializerConverterProvider>();
-                builder.RegisterType<NewtonSoftJsonSerializer>().As<IJsonSerializer>();
-                builder.RegisterInstance(hub).As<IDeviceTwinServices>();
-                builder.RegisterType<ApplicationTwins>().As<IApplicationRepository>();
-            })) {
+            using (var mock = CreateMock(out var hubName, out var site, out var super, out var apps,
+                false, true)) {
                 IApplicationRegistry service = mock.Create<ApplicationRegistry>();
 
                 // Run
@@ -380,10 +264,9 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                 }
 
                 // Assert
-                Assert.Equal(apps.Count, hub.Devices.Count());
                 var records = service.ListApplicationsAsync(null, null).Result;
 
-                // Assert
+                Assert.Equal(apps.Count, records.Items.Count);
                 Assert.True(apps.IsSameAs(records.Items));
             }
         }
@@ -393,15 +276,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
         /// </summary>
         [Fact]
         public void UnregisterApplications() {
-            CreateAppFixtures(out var hubName, out var site, out var super, out var apps, out var devices);
-
-            var hub = IoTHubServices.Create(hubName, devices);
-            using (var mock = AutoMock.GetLoose(builder => {
-                builder.RegisterType<NewtonSoftJsonConverters>().As<IJsonSerializerConverterProvider>();
-                builder.RegisterType<NewtonSoftJsonSerializer>().As<IJsonSerializer>();
-                builder.RegisterInstance(hub).As<IDeviceTwinServices>();
-                builder.RegisterType<ApplicationTwins>().As<IApplicationRepository>();
-            })) {
+            using (var mock = CreateMock(out var hubName, out var site, out var super, out var apps)) {
                 IApplicationRegistry service = mock.Create<ApplicationRegistry>();
 
                 // Run
@@ -410,7 +285,10 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                 }
 
                 // Assert
-                Assert.Empty(hub.Devices);
+                var records = service.ListApplicationsAsync(null, null).Result;
+
+                Assert.Empty(records.Items);
+                Assert.Null(records.ContinuationToken);
             }
         }
 
@@ -419,12 +297,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
         /// </summary>
         [Fact]
         public async Task BadArgShouldThrowExceptionsAsync() {
-            using (var mock = AutoMock.GetLoose(builder => {
-                builder.RegisterType<NewtonSoftJsonConverters>().As<IJsonSerializerConverterProvider>();
-                builder.RegisterType<NewtonSoftJsonSerializer>().As<IJsonSerializer>();
-                builder.RegisterType<IoTHubServices>().As<IDeviceTwinServices>();
-                builder.RegisterType<ApplicationTwins>().As<IApplicationRepository>();
-            })) {
+            using (var mock = CreateMock(out var hubName, out var site, out var super, out var apps)) {
                 IApplicationRegistry service = mock.Create<ApplicationRegistry>();
 
                 await Assert.ThrowsAsync<ArgumentNullException>(
@@ -440,39 +313,8 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
             }
         }
 
-        [Fact]
-        public void DisableEnableApplication() {
-            CreateAppFixtures(out var hubName, out var site, out var super, out var apps, out var devices);
-
-            using (var mock = AutoMock.GetLoose(builder => {
-                var hub = IoTHubServices.Create(hubName, devices);
-                builder.RegisterType<NewtonSoftJsonConverters>().As<IJsonSerializerConverterProvider>();
-                builder.RegisterType<NewtonSoftJsonSerializer>().As<IJsonSerializer>();
-                builder.RegisterInstance(hub).As<IDeviceTwinServices>();
-                builder.RegisterType<ApplicationTwins>().As<IApplicationRepository>();
-            })) {
-                IApplicationRegistry service = mock.Create<ApplicationRegistry>();
-
-                var app = apps.First();
-                service.DisableApplicationAsync(app.ApplicationId, null).Wait();
-                var registration = service.GetApplicationAsync(app.ApplicationId, false).Result;
-                Assert.NotNull(registration.Application.NotSeenSince);
-                service.EnableApplicationAsync(app.ApplicationId, null).Wait();
-                registration = service.GetApplicationAsync(app.ApplicationId, false).Result;
-                Assert.Null(registration.Application.NotSeenSince);
-            }
-        }
-
-        /// <summary>
-        /// Helper to create app fixtures
-        /// </summary>
-        /// <param name="site"></param>
-        /// <param name="super"></param>
-        /// <param name="apps"></param>
-        /// <param name="devices"></param>
-        private void CreateAppFixtures(out string hub, out string site, out string super,
-            out List<ApplicationInfoModel> apps, out List<(DeviceTwinModel, DeviceModel)> devices,
-            bool noSite = false) {
+        public AutoMock CreateMock(out string hub, out string site, out string super,
+            out List<ApplicationInfoModel> apps, bool noSite = false, bool noAdd = false) {
             var fix = new Fixture();
             fix.Customizations.Add(new TypeRelay(typeof(VariantValue), typeof(VariantValue)));
             fix.Behaviors.OfType<ThrowingRecursionBehavior>().ToList()
@@ -490,11 +332,22 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                 .ToList();
             apps.ForEach(x => x.ApplicationId = ApplicationInfoModelEx.CreateApplicationId(
                  sitex, x.ApplicationUri, x.ApplicationType));
-            devices = apps
-                .Select(a => a.ToApplicationRegistration())
-                .Select(a => a.ToDeviceTwin(_serializer))
-                .Select(t => (t, new DeviceModel { Hub = t.Hub, Id = t.Id }))
-                .ToList();
+
+            var mock = AutoMock.GetLoose(builder => {
+                builder.RegisterType<NewtonSoftJsonConverters>().As<IJsonSerializerConverterProvider>();
+                builder.RegisterType<NewtonSoftJsonSerializer>().As<IJsonSerializer>();
+                builder.RegisterType<MemoryDatabase>().As<IDatabaseServer>().SingleInstance();
+                builder.RegisterType<ItemContainerFactory>().As<IItemContainerFactory>();
+                builder.RegisterType<ApplicationDatabase>().As<IApplicationRepository>();
+            });
+
+            if (!noAdd) {
+                IApplicationRepository repo = mock.Create<ApplicationDatabase>();
+                foreach (var app in apps) {
+                    repo.AddAsync(app);
+                }
+            }
+            return mock;
         }
 
         private readonly IJsonSerializer _serializer = new NewtonSoftJsonSerializer();

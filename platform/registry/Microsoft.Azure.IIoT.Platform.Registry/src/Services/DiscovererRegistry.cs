@@ -140,13 +140,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                                 request.DiscoveryConfig.PortProbeTimeout.Value.Ticks <= 0 ?
                                     null : request.DiscoveryConfig.PortProbeTimeout;
                         }
-                        if (request.DiscoveryConfig.ActivationFilter != null) {
-                            patched.RequestedConfig.ActivationFilter =
-                                request.DiscoveryConfig.ActivationFilter.SecurityMode == null &&
-                                request.DiscoveryConfig.ActivationFilter.SecurityPolicies == null &&
-                                request.DiscoveryConfig.ActivationFilter.TrustLists == null ?
-                                    null : request.DiscoveryConfig.ActivationFilter;
-                        }
                         if (request.DiscoveryConfig.DiscoveryUrls != null) {
                             patched.RequestedConfig.DiscoveryUrls =
                                 request.DiscoveryConfig.DiscoveryUrls.Count == 0 ?

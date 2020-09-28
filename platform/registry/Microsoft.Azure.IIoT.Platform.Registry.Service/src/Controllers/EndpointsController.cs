@@ -32,9 +32,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service.Controllers {
         /// Create controller for endpoints services
         /// </summary>
         /// <param name="endpoints"></param>
-        /// <param name="activation"></param>
-        public EndpointsController(IEndpointRegistry endpoints, IEndpointActivation activation) {
-            _activation = activation;
+        public EndpointsController(IEndpointRegistry endpoints) {
             _endpoints = endpoints;
         }
 
@@ -49,23 +47,36 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service.Controllers {
         [HttpGet("{endpointId}/certificate")]
         public async Task<X509CertificateChainApiModel> GetEndpointCertificateAsync(
             string endpointId) {
+            if (string.IsNullOrEmpty(endpointId)) {
+                throw new ArgumentNullException(nameof(endpointId));
+            }
             var result = await _endpoints.GetEndpointCertificateAsync(endpointId);
             return result.ToApiModel();
         }
 
         /// <summary>
-        /// Activate endpoint
+        /// Update endpoint information
         /// </summary>
         /// <remarks>
-        /// Activates an endpoint for subsequent use in twin service.
-        /// All endpoints must be activated using this API or through a
-        /// activation filter during application registration or discovery.
+        /// The endpoint information is updated with new properties.  Note that
+        /// this information might be overridden if the endpoint is re-discovered
+        /// during a discovery run (recurring or one-time).
         /// </remarks>
-        /// <param name="endpointId">endpoint identifier</param>
-        [HttpPost("{endpointId}/activate")]
+        /// <param name="endpointId">The identifier of the endpoint</param>
+        /// <param name="request">Endpoint update request</param>
+        [HttpPatch("{endpointId}")]
         [Authorize(Policy = Policies.CanChange)]
-        public async Task ActivateEndpointAsync(string endpointId) {
-            await _activation.ActivateEndpointAsync(endpointId);
+        public async Task UpdateEndpointAsync(string endpointId,
+            [FromBody][Required] EndpointInfoUpdateApiModel request) {
+            if (string.IsNullOrEmpty(endpointId)) {
+                throw new ArgumentNullException(nameof(endpointId));
+            }
+            if (request == null) {
+                throw new ArgumentNullException(nameof(request));
+            }
+            var model = request.ToServiceModel();
+            // TODO: model.AuthorityId = User.Identity.Name;
+            await _endpoints.UpdateEndpointAsync(endpointId, model);
         }
 
         /// <summary>
@@ -75,14 +86,13 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service.Controllers {
         /// Gets information about an endpoint.
         /// </remarks>
         /// <param name="endpointId">endpoint identifier</param>
-        /// <param name="onlyServerState">Whether to include only server
-        /// state, or display current client state of the endpoint if
-        /// available</param>
         /// <returns>Endpoint registration</returns>
         [HttpGet("{endpointId}")]
-        public async Task<EndpointInfoApiModel> GetEndpointAsync(string endpointId,
-            [FromQuery] bool? onlyServerState) {
-            var result = await _endpoints.GetEndpointAsync(endpointId, onlyServerState ?? false);
+        public async Task<EndpointInfoApiModel> GetEndpointAsync(string endpointId) {
+            if (string.IsNullOrEmpty(endpointId)) {
+                throw new ArgumentNullException(nameof(endpointId));
+            }
+            var result = await _endpoints.GetEndpointAsync(endpointId);
             return result.ToApiModel();
         }
 
@@ -95,15 +105,12 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service.Controllers {
         /// available.
         /// Call this operation again using the token to retrieve more results.
         /// </remarks>
-        /// <param name="onlyServerState">Whether to include only server
-        /// state, or display current client state of the endpoint if available</param>
         /// <param name="continuationToken">Optional Continuation token</param>
         /// <param name="pageSize">Optional number of results to return</param>
         /// <returns>List of endpoints and continuation token to use for next request</returns>
         [HttpGet]
         [AutoRestExtension(NextPageLinkName = "continuationToken")]
         public async Task<EndpointInfoListApiModel> GetListOfEndpointsAsync(
-            [FromQuery] bool? onlyServerState,
             [FromQuery] string continuationToken,
             [FromQuery] int? pageSize) {
             if (Request.Headers.ContainsKey(HttpHeader.ContinuationToken)) {
@@ -115,7 +122,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service.Controllers {
                     .FirstOrDefault());
             }
             var result = await _endpoints.ListEndpointsAsync(continuationToken,
-                onlyServerState ?? false, pageSize);
+                pageSize);
 
             // TODO: Redact username/token based on policy/permission
 
@@ -133,14 +140,11 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service.Controllers {
         /// more results.
         /// </remarks>
         /// <param name="query">Query to match</param>
-        /// <param name="onlyServerState">Whether to include only server
-        /// state, or display current client state of the endpoint if available</param>
         /// <param name="pageSize">Optional number of results to return</param>
         /// <returns>List of endpoints and continuation token to use for next request</returns>
         [HttpPost("query")]
         public async Task<EndpointInfoListApiModel> QueryEndpointsAsync(
-            [FromBody] [Required] EndpointRegistrationQueryApiModel query,
-            [FromQuery] bool? onlyServerState,
+            [FromBody] [Required] EndpointInfoQueryApiModel query,
             [FromQuery] int? pageSize) {
             if (query == null) {
                 throw new ArgumentNullException(nameof(query));
@@ -150,7 +154,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service.Controllers {
                     .FirstOrDefault());
             }
             var result = await _endpoints.QueryEndpointsAsync(query.ToServiceModel(),
-                onlyServerState ?? false, pageSize);
+                pageSize);
 
             return result.ToApiModel();
         }
@@ -166,15 +170,12 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service.Controllers {
         /// more results.
         /// </remarks>
         /// <param name="query">Query to match</param>
-        /// <param name="onlyServerState">Whether to include only server state, or display
-        /// current client state of the endpoint if available</param>
         /// <param name="pageSize">Optional number of results to
         /// return</param>
         /// <returns>List of endpoints and continuation token to use for next request</returns>
         [HttpGet("query")]
         public async Task<EndpointInfoListApiModel> GetFilteredListOfEndpointsAsync(
-            [FromQuery] [Required] EndpointRegistrationQueryApiModel query,
-            [FromQuery] bool? onlyServerState,
+            [FromQuery] [Required] EndpointInfoQueryApiModel query,
             [FromQuery] int? pageSize) {
             if (query == null) {
                 throw new ArgumentNullException(nameof(query));
@@ -184,25 +185,11 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service.Controllers {
                     .FirstOrDefault());
             }
             var result = await _endpoints.QueryEndpointsAsync(query.ToServiceModel(),
-                onlyServerState ?? false, pageSize);
+                pageSize);
 
             return result.ToApiModel();
         }
 
-        /// <summary>
-        /// Deactivate endpoint
-        /// </summary>
-        /// <remarks>
-        /// Deactivates the endpoint and disable access through twin service.
-        /// </remarks>
-        /// <param name="endpointId">endpoint identifier</param>
-        [HttpPost("{endpointId}/deactivate")]
-        [Authorize(Policy = Policies.CanChange)]
-        public async Task DeactivateEndpointAsync(string endpointId) {
-            await _activation.DeactivateEndpointAsync(endpointId);
-        }
-
         private readonly IEndpointRegistry _endpoints;
-        private readonly IEndpointActivation _activation;
     }
 }

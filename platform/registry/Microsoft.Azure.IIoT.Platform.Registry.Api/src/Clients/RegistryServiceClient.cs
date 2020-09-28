@@ -180,11 +180,8 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Clients {
 
         /// <inheritdoc/>
         public async Task<SupervisorListApiModel> ListSupervisorsAsync(
-            string continuation, bool? onlyServerState, int? pageSize, CancellationToken ct) {
+            string continuation, int? pageSize, CancellationToken ct) {
             var uri = new UriBuilder($"{_serviceUri}/v2/supervisors");
-            if (onlyServerState ?? false) {
-                uri.Query = "onlyServerState=true";
-            }
             var request = _httpClient.NewRequest(uri.Uri, Resource.Platform);
             if (continuation != null) {
                 request.AddHeader(HttpHeader.ContinuationToken, continuation);
@@ -200,12 +197,9 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Clients {
 
         /// <inheritdoc/>
         public async Task<SupervisorListApiModel> QuerySupervisorsAsync(
-            SupervisorQueryApiModel query, bool? onlyServerState, int? pageSize,
+            SupervisorQueryApiModel query, int? pageSize,
             CancellationToken ct) {
             var uri = new UriBuilder($"{_serviceUri}/v2/supervisors/query");
-            if (onlyServerState ?? false) {
-                uri.Query = "onlyServerState=true";
-            }
             var request = _httpClient.NewRequest(uri.Uri, Resource.Platform);
             if (pageSize != null) {
                 request.AddHeader(HttpHeader.MaxItemCount, pageSize.ToString());
@@ -218,14 +212,11 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Clients {
 
         /// <inheritdoc/>
         public async Task<SupervisorApiModel> GetSupervisorAsync(
-            string supervisorId, bool? onlyServerState, CancellationToken ct) {
+            string supervisorId, CancellationToken ct) {
             if (string.IsNullOrEmpty(supervisorId)) {
                 throw new ArgumentNullException(nameof(supervisorId));
             }
             var uri = new UriBuilder($"{_serviceUri}/v2/supervisors/{supervisorId}");
-            if (onlyServerState ?? false) {
-                uri.Query = "onlyServerState=true";
-            }
             var request = _httpClient.NewRequest(uri.Uri, Resource.Platform);
             _serializer.SetAcceptHeaders(request);
             var response = await _httpClient.GetAsync(request, ct).ConfigureAwait(false);
@@ -296,30 +287,8 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Clients {
         }
 
         /// <inheritdoc/>
-        public async Task EnableApplicationAsync(string applicationId, CancellationToken ct) {
-            if (string.IsNullOrEmpty(applicationId)) {
-                throw new ArgumentNullException(nameof(applicationId));
-            }
-            var uri = $"{_serviceUri}/v2/applications/{applicationId}/enable";
-            var request = _httpClient.NewRequest(uri);
-            var response = await _httpClient.PostAsync(request, ct).ConfigureAwait(false);
-            response.Validate();
-        }
-
-        /// <inheritdoc/>
-        public async Task DisableApplicationAsync(string applicationId, CancellationToken ct) {
-            if (string.IsNullOrEmpty(applicationId)) {
-                throw new ArgumentNullException(nameof(applicationId));
-            }
-            var uri = $"{_serviceUri}/v2/applications/{applicationId}/disable";
-            var request = _httpClient.NewRequest(uri);
-            var response = await _httpClient.PostAsync(request, ct).ConfigureAwait(false);
-            response.Validate();
-        }
-
-        /// <inheritdoc/>
         public async Task UpdateApplicationAsync(string applicationId,
-            ApplicationRegistrationUpdateApiModel content, CancellationToken ct) {
+            ApplicationInfoUpdateApiModel content, CancellationToken ct) {
             if (content == null) {
                 throw new ArgumentNullException(nameof(content));
             }
@@ -396,12 +365,17 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Clients {
         }
 
         /// <inheritdoc/>
-        public async Task UnregisterApplicationAsync(string applicationId, CancellationToken ct) {
+        public async Task UnregisterApplicationAsync(string applicationId, string generationId,
+            CancellationToken ct) {
             if (string.IsNullOrEmpty(applicationId)) {
                 throw new ArgumentNullException(nameof(applicationId));
             }
-            var request = _httpClient.NewRequest($"{_serviceUri}/v2/applications/{applicationId}",
-                Resource.Platform);
+            if (string.IsNullOrEmpty(generationId)) {
+                throw new ArgumentNullException(nameof(generationId));
+            }
+            var request = _httpClient.NewRequest(
+                $"{_serviceUri}/v2/applications/{applicationId}/{generationId}",
+                    Resource.Platform);
             var response = await _httpClient.DeleteAsync(request, ct).ConfigureAwait(false);
             response.Validate();
         }
@@ -417,11 +391,8 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Clients {
 
         /// <inheritdoc/>
         public async Task<EndpointInfoListApiModel> ListEndpointsAsync(string continuation,
-            bool? onlyServerState, int? pageSize, CancellationToken ct) {
+            int? pageSize, CancellationToken ct) {
             var uri = new UriBuilder($"{_serviceUri}/v2/endpoints");
-            if (onlyServerState ?? false) {
-                uri.Query = "onlyServerState=true";
-            }
             var request = _httpClient.NewRequest(uri.Uri, Resource.Platform);
             if (continuation != null) {
                 request.AddHeader(HttpHeader.ContinuationToken, continuation);
@@ -437,12 +408,9 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Clients {
 
         /// <inheritdoc/>
         public async Task<EndpointInfoListApiModel> QueryEndpointsAsync(
-            EndpointRegistrationQueryApiModel query, bool? onlyServerState, int? pageSize,
+            EndpointInfoQueryApiModel query, int? pageSize,
             CancellationToken ct) {
             var uri = new UriBuilder($"{_serviceUri}/v2/endpoints/query");
-            if (onlyServerState ?? false) {
-                uri.Query = "onlyServerState=true";
-            }
             var request = _httpClient.NewRequest(uri.Uri, Resource.Platform);
             if (pageSize != null) {
                 request.AddHeader(HttpHeader.MaxItemCount, pageSize.ToString());
@@ -455,14 +423,11 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Clients {
 
         /// <inheritdoc/>
         public async Task<EndpointInfoApiModel> GetEndpointAsync(string endpointId,
-            bool? onlyServerState, CancellationToken ct) {
+            CancellationToken ct) {
             if (string.IsNullOrEmpty(endpointId)) {
                 throw new ArgumentNullException(nameof(endpointId));
             }
             var uri = new UriBuilder($"{_serviceUri}/v2/endpoints/{endpointId}");
-            if (onlyServerState ?? false) {
-                uri.Query = "onlyServerState=true";
-            }
             var request = _httpClient.NewRequest(uri.Uri, Resource.Platform);
             _serializer.SetAcceptHeaders(request);
             var response = await _httpClient.GetAsync(request, ct).ConfigureAwait(false);
@@ -485,34 +450,25 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Clients {
         }
 
         /// <inheritdoc/>
-        public async Task ActivateEndpointAsync(string endpointId, CancellationToken ct) {
+        public async Task UpdateEndpointAsync(string endpointId,
+            EndpointInfoUpdateApiModel content, CancellationToken ct) {
+            if (content == null) {
+                throw new ArgumentNullException(nameof(content));
+            }
             if (string.IsNullOrEmpty(endpointId)) {
                 throw new ArgumentNullException(nameof(endpointId));
             }
-            var request = _httpClient.NewRequest(
-                $"{_serviceUri}/v2/endpoints/{endpointId}/activate", Resource.Platform);
-            var response = await _httpClient.PostAsync(request, ct).ConfigureAwait(false);
-            response.Validate();
-        }
-
-        /// <inheritdoc/>
-        public async Task DeactivateEndpointAsync(string endpointId, CancellationToken ct) {
-            if (string.IsNullOrEmpty(endpointId)) {
-                throw new ArgumentNullException(nameof(endpointId));
-            }
-            var request = _httpClient.NewRequest(
-                $"{_serviceUri}/v2/endpoints/{endpointId}/deactivate", Resource.Platform);
-            var response = await _httpClient.PostAsync(request, ct).ConfigureAwait(false);
+            var request = _httpClient.NewRequest($"{_serviceUri}/v2/endpoints/{endpointId}",
+                Resource.Platform);
+            _serializer.SerializeToRequest(request, content);
+            var response = await _httpClient.PatchAsync(request, ct).ConfigureAwait(false);
             response.Validate();
         }
 
         /// <inheritdoc/>
         public async Task<PublisherListApiModel> ListPublishersAsync(
-            string continuation, bool? onlyServerState, int? pageSize, CancellationToken ct) {
+            string continuation, int? pageSize, CancellationToken ct) {
             var uri = new UriBuilder($"{_serviceUri}/v2/publishers");
-            if (onlyServerState ?? false) {
-                uri.Query = "onlyServerState=true";
-            }
             var request = _httpClient.NewRequest(uri.Uri, Resource.Platform);
             if (continuation != null) {
                 request.AddHeader(HttpHeader.ContinuationToken, continuation);
@@ -544,12 +500,9 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Clients {
 
         /// <inheritdoc/>
         public async Task<PublisherListApiModel> QueryPublishersAsync(
-            PublisherQueryApiModel query, bool? onlyServerState, int? pageSize,
+            PublisherQueryApiModel query, int? pageSize,
             CancellationToken ct) {
             var uri = new UriBuilder($"{_serviceUri}/v2/publishers/query");
-            if (onlyServerState ?? false) {
-                uri.Query = "onlyServerState=true";
-            }
             var request = _httpClient.NewRequest(uri.Uri, Resource.Platform);
             if (pageSize != null) {
                 request.AddHeader(HttpHeader.MaxItemCount, pageSize.ToString());
@@ -587,14 +540,11 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Clients {
 
         /// <inheritdoc/>
         public async Task<PublisherApiModel> GetPublisherAsync(
-            string publisherId, bool? onlyServerState, CancellationToken ct) {
+            string publisherId, CancellationToken ct) {
             if (string.IsNullOrEmpty(publisherId)) {
                 throw new ArgumentNullException(nameof(publisherId));
             }
             var uri = new UriBuilder($"{_serviceUri}/v2/publishers/{publisherId}");
-            if (onlyServerState ?? false) {
-                uri.Query = "onlyServerState=true";
-            }
             var request = _httpClient.NewRequest(uri.Uri, Resource.Platform);
             _serializer.SetAcceptHeaders(request);
             var response = await _httpClient.GetAsync(request, ct).ConfigureAwait(false);

@@ -24,7 +24,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
         /// <summary>
         /// Discovered endpoint in form of endpoint registration
         /// </summary>
-        public EndpointRegistrationModel Registration { get; set; }
+        public EndpointInfoModel Endpoint { get; set; }
 
         /// <summary>
         /// Application to which this endpoint belongs

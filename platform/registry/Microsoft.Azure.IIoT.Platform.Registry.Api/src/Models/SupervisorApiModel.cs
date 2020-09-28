@@ -48,5 +48,12 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Models {
         [DataMember(Name = "version", Order = 5,
             EmitDefaultValue = false)]
         public string Version { get; set; }
+
+        /// <summary>
+        /// Generation Id
+        /// </summary>
+        [DataMember(Name = "generationId", Order = 6,
+            EmitDefaultValue = false)]
+        public string GenerationId { get; set; }
     }
 }

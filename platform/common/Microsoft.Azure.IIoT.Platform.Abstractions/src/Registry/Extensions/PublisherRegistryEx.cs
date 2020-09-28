@@ -88,7 +88,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry {
             this IPublisherRegistry service, string publisherId,
             CancellationToken ct = default) {
             try {
-                return await service.GetPublisherAsync(publisherId, false, ct);
+                return await service.GetPublisherAsync(publisherId, ct);
             }
             catch (ResourceNotFoundException) {
                 return null;
@@ -99,18 +99,15 @@ namespace Microsoft.Azure.IIoT.Platform.Registry {
         /// List all publishers
         /// </summary>
         /// <param name="service"></param>
-        /// <param name="onlyServerState"></param>
         /// <param name="ct"></param>
         /// <returns></returns>
         public static async Task<List<PublisherModel>> ListAllPublishersAsync(
-            this IPublisherRegistry service, bool onlyServerState = false,
-            CancellationToken ct = default) {
+            this IPublisherRegistry service, CancellationToken ct = default) {
             var publishers = new List<PublisherModel>();
-            var result = await service.ListPublishersAsync(null, onlyServerState, null, ct);
+            var result = await service.ListPublishersAsync(null, null, ct);
             publishers.AddRange(result.Items);
             while (result.ContinuationToken != null) {
-                result = await service.ListPublishersAsync(result.ContinuationToken,
-                    onlyServerState, null, ct);
+                result = await service.ListPublishersAsync(result.ContinuationToken, null, ct);
                 publishers.AddRange(result.Items);
             }
             return publishers;
@@ -121,18 +118,16 @@ namespace Microsoft.Azure.IIoT.Platform.Registry {
         /// </summary>
         /// <param name="service"></param>
         /// <param name="query"></param>
-        /// <param name="onlyServerState"></param>
         /// <param name="ct"></param>
         /// <returns></returns>
         public static async Task<List<PublisherModel>> QueryAllPublishersAsync(
             this IPublisherRegistry service, PublisherQueryModel query,
-            bool onlyServerState = false, CancellationToken ct = default) {
+            CancellationToken ct = default) {
             var supervisors = new List<PublisherModel>();
-            var result = await service.QueryPublishersAsync(query, onlyServerState, null, ct);
+            var result = await service.QueryPublishersAsync(query, null, ct);
             supervisors.AddRange(result.Items);
             while (result.ContinuationToken != null) {
-                result = await service.ListPublishersAsync(result.ContinuationToken,
-                    onlyServerState, null, ct);
+                result = await service.ListPublishersAsync(result.ContinuationToken, null, ct);
                 supervisors.AddRange(result.Items);
             }
             return supervisors;

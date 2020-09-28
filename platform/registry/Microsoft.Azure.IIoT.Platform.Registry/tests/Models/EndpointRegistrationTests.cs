@@ -42,7 +42,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
         [Fact]
         public void TestEqualIsEqualWithServiceModelConversion() {
             var r1 = CreateRegistration();
-            var m = r1.ToServiceModel();
+            var m = r1.ToServiceModel("etag");
             var r2 = m.ToEndpointRegistration(_serializer);
 
             Assert.Equal(r1, r2);
@@ -54,7 +54,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
         [Fact]
         public void TestEqualIsNotEqualWithServiceModelConversionWhenDisabled() {
             var r1 = CreateRegistration();
-            var m = r1.ToServiceModel();
+            var m = r1.ToServiceModel("etag");
             var r2 = m.ToEndpointRegistration(_serializer, true);
 
             Assert.NotEqual(r1, r2);
@@ -66,56 +66,14 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
         [Fact]
         public void TestEqualIsNotEqualWithServiceModelConversion() {
             var r1 = CreateRegistration();
-            var m = r1.ToServiceModel();
-            m.Registration.Endpoint.SecurityPolicy = "";
+            var m = r1.ToServiceModel("etag");
+            m.Endpoint.SecurityPolicy = "";
             var r2 = m.ToEndpointRegistration(_serializer);
 
             Assert.NotEqual(r1, r2);
             Assert.NotEqual(r1.GetHashCode(), r2.GetHashCode());
             Assert.True(r1 != r2);
             Assert.False(r1 == r2);
-        }
-
-        [Fact]
-        public void TestEqualIsNotEqualWithDeviceModel() {
-            var r1 = CreateRegistration();
-            var m = r1.ToDeviceTwin(_serializer);
-            m.Properties.Desired["SecurityPolicy"] = "babab";
-            var r2 = m.ToEntityRegistration();
-
-            Assert.NotEqual(r1, r2);
-            Assert.NotEqual(r1.GetHashCode(), r2.GetHashCode());
-            Assert.True(r1 != r2);
-            Assert.False(r1 == r2);
-        }
-
-
-        [Fact]
-        public void TestEqualIsEqualWithDeviceModel() {
-            var r1 = CreateRegistration();
-            var m = r1.ToDeviceTwin(_serializer);
-            var r2 = m.ToEntityRegistration();
-
-            Assert.Equal(r1, r2);
-            Assert.Equal(r1.GetHashCode(), r2.GetHashCode());
-            Assert.True(r1 == r2);
-            Assert.False(r1 != r2);
-        }
-
-        [Fact]
-        public void TestEqualIsEqualWithDeviceModelWhenDisabled() {
-            _ = new Fixture();
-
-            var r1 = CreateRegistration();
-            var r2 = r1.ToServiceModel().ToEndpointRegistration(_serializer, true);
-            var m1 = r1.Patch(r2, _serializer);
-            var r3 = r2.ToServiceModel().ToEndpointRegistration(_serializer, false);
-            var m2 = r2.Patch(r3, _serializer);
-
-            Assert.True((bool?)m1.Tags[nameof(EntityRegistration.IsDisabled)] ?? false);
-            Assert.NotNull((DateTime?)m1.Tags[nameof(EntityRegistration.NotSeenSince)]);
-            Assert.Null((bool?)m2.Tags[nameof(EntityRegistration.IsDisabled)]);
-            Assert.Null((DateTime?)m2.Tags[nameof(EntityRegistration.NotSeenSince)]);
         }
 
         /// <summary>

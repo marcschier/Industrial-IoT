@@ -112,6 +112,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
                 return null;
             }
             return new ApplicationInfoModel {
+                GenerationId = model.GenerationId,
                 ApplicationId = model.ApplicationId,
                 ApplicationName = model.ApplicationName,
                 Locale = model.Locale,
@@ -183,8 +184,9 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
                 Capabilities = request.Capabilities,
                 GatewayServerUri = request.GatewayServerUri,
                 SiteId = request.SiteId,
-                NotSeenSince = disabled ? DateTime.UtcNow : (DateTime?)null,
                 Created = context,
+                NotSeenSince = disabled ? DateTime.UtcNow : (DateTime?)null,
+                GenerationId = null,
                 Updated = null,
                 ApplicationId = null,
                 DiscovererId = null,
@@ -198,11 +200,12 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
         /// <param name="model"></param>
         /// <param name="context"></param>
         /// <returns></returns>
-        public static ApplicationRegistrationUpdateModel ToUpdateRequest(
+        public static ApplicationInfoUpdateModel ToUpdateRequest(
             this ApplicationInfoModel model, RegistryOperationContextModel context = null) {
-            return new ApplicationRegistrationUpdateModel {
+            return new ApplicationInfoUpdateModel {
                 ApplicationName = model.ApplicationName,
                 Capabilities = model.Capabilities,
+                GenerationId = model.GenerationId,
                 DiscoveryProfileUri = model.DiscoveryProfileUri,
                 DiscoveryUrls = model.DiscoveryUrls,
                 GatewayServerUri = model.GatewayServerUri,
@@ -237,48 +240,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
             application.Created = model.Created;
             application.Updated = model.Updated;
             application.Locale = model.Locale;
-            return application;
-        }
-
-        /// <summary>
-        /// Patch application
-        /// </summary>
-        /// <param name="application"></param>
-        /// <param name="request"></param>
-        public static ApplicationInfoModel Patch(this ApplicationInfoModel application,
-            ApplicationRegistrationUpdateModel request) {
-            // Update from update request
-            if (request.ApplicationName != null) {
-                application.ApplicationName = string.IsNullOrEmpty(request.ApplicationName) ?
-                    null : request.ApplicationName;
-            }
-            if (request.LocalizedNames != null) {
-                application.LocalizedNames = request.LocalizedNames;
-            }
-            if (request.ProductUri != null) {
-                application.ProductUri = string.IsNullOrEmpty(request.ProductUri) ?
-                    null : request.ProductUri;
-            }
-            if (request.GatewayServerUri != null) {
-                application.GatewayServerUri = string.IsNullOrEmpty(request.GatewayServerUri) ?
-                    null : request.GatewayServerUri;
-            }
-            if (request.Capabilities != null) {
-                application.Capabilities = request.Capabilities.Count == 0 ?
-                    null : request.Capabilities;
-            }
-            if (request.DiscoveryUrls != null) {
-                application.DiscoveryUrls = request.DiscoveryUrls.Count == 0 ?
-                    null : request.DiscoveryUrls;
-            }
-            if (request.Locale != null) {
-                application.Locale = string.IsNullOrEmpty(request.Locale) ?
-                    null : request.Locale;
-            }
-            if (request.DiscoveryProfileUri != null) {
-                application.DiscoveryProfileUri = string.IsNullOrEmpty(request.DiscoveryProfileUri) ?
-                    null : request.DiscoveryProfileUri;
-            }
             return application;
         }
 
@@ -329,14 +290,11 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
 
             /// <inheritdoc />
             public int GetHashCode(ApplicationInfoModel obj) {
-                var hashCode = 1200389859;
-                hashCode = (hashCode * -1521134295) +
-                    EqualityComparer<ApplicationType?>.Default.GetHashCode(obj.ApplicationType);
-                hashCode = (hashCode * -1521134295) +
-                    EqualityComparer<string>.Default.GetHashCode(obj.ApplicationUri?.ToLowerInvariant());
-                hashCode = (hashCode * -1521134295) +
-                    EqualityComparer<string>.Default.GetHashCode(obj.GetSiteOrGatewayId());
-                return hashCode;
+                var hash = new HashCode();
+                hash.Add(obj.ApplicationType);
+                hash.Add(obj.ApplicationUri?.ToLowerInvariant());
+                hash.Add(obj.GetSiteOrGatewayId());
+                return hash.ToHashCode();
             }
         }
 
@@ -365,22 +323,15 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
 
             /// <inheritdoc />
             public int GetHashCode(ApplicationInfoModel obj) {
-                var hashCode = 1200389859;
-                hashCode = (hashCode * -1521134295) +
-                    EqualityComparer<ApplicationType?>.Default.GetHashCode(obj.ApplicationType);
-                hashCode = (hashCode * -1521134295) +
-                   EqualityComparer<string>.Default.GetHashCode(obj.ApplicationUri?.ToLowerInvariant());
-                hashCode = (hashCode * -1521134295) +
-                    EqualityComparer<string>.Default.GetHashCode(obj.ProductUri);
-                hashCode = (hashCode * -1521134295) +
-                    EqualityComparer<string>.Default.GetHashCode(obj.Locale);
-                hashCode = (hashCode * -1521134295) +
-                    EqualityComparer<string>.Default.GetHashCode(obj.DiscoveryProfileUri);
-                hashCode = (hashCode * -1521134295) +
-                    EqualityComparer<string>.Default.GetHashCode(obj.GatewayServerUri);
-                hashCode = (hashCode * -1521134295) +
-                    EqualityComparer<string>.Default.GetHashCode(obj.ApplicationName);
-                return hashCode;
+                var hash = new HashCode();
+                hash.Add(obj.ApplicationType);
+                hash.Add(obj.ApplicationUri?.ToLowerInvariant());
+                hash.Add(obj.ProductUri);
+                hash.Add(obj.Locale);
+                hash.Add(obj.DiscoveryProfileUri);
+                hash.Add(obj.GatewayServerUri);
+                hash.Add(obj.ApplicationName);
+                return hash.ToHashCode();
             }
         }
     }

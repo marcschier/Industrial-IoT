@@ -126,18 +126,18 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Services {
             }
             var addresses = new HashSet<string>();
             var uris = new HashSet<string>();
-            var parsed = Opc.Ua.Utils.ParseUri(ep.Registration.Endpoint.Url);
+            var parsed = Opc.Ua.Utils.ParseUri(ep.Endpoint.Url);
             if (parsed != null) {
                 addresses.Add(parsed.DnsSafeHost);
-                uris.Add(ep.Registration.Endpoint.Url);
+                uris.Add(ep.Endpoint.Url);
             }
-            parsed = Opc.Ua.Utils.ParseUri(ep.Registration.EndpointUrl);
+            parsed = Opc.Ua.Utils.ParseUri(ep.EndpointUrl);
             if (parsed != null) {
                 addresses.Add(parsed.DnsSafeHost);
-                uris.Add(ep.Registration.EndpointUrl);
+                uris.Add(ep.EndpointUrl);
             }
-            if (ep.Registration.Endpoint.AlternativeUrls != null) {
-                foreach (var url in ep.Registration.Endpoint.AlternativeUrls) {
+            if (ep.Endpoint.AlternativeUrls != null) {
+                foreach (var url in ep.Endpoint.AlternativeUrls) {
                     parsed = Opc.Ua.Utils.ParseUri(url);
                     if (parsed != null) {
                         addresses.Add(parsed.DnsSafeHost);
@@ -146,7 +146,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Services {
                 }
             }
             return new EntityInfoModel {
-                Name = ep.Registration.Endpoint.Url,
+                Name = ep.Endpoint.Url,
                 Uris = uris.ToList(),
                 Id = endpointId,
                 Role = EntityRoleType.Server,

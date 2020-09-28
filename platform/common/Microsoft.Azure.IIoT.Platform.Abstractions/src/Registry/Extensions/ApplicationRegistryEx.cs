@@ -100,7 +100,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry {
             var apps = await service.ListAllApplicationsAsync(ct);
             foreach (var app in apps) {
                 await Try.Async(() => service.UnregisterApplicationAsync(
-                    app.ApplicationId, null, ct));
+                    app.ApplicationId, app.GenerationId, null, ct));
             }
         }
 

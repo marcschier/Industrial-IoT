@@ -30,11 +30,11 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Supervisor.StartStop {
                 ?? Try.Op(() => Dns.GetHostEntry("localhost"));
         }
 
-        private ReadArrayValueTests<EndpointRegistrationModel> GetTests(string hub,
+        private ReadArrayValueTests<EndpointInfoModel> GetTests(string hub,
             string deviceId, string moduleId, IContainer services) {
-            return new ReadArrayValueTests<EndpointRegistrationModel>(
-                () => services.Resolve<INodeServices<EndpointRegistrationModel>>(),
-                new EndpointRegistrationModel {
+            return new ReadArrayValueTests<EndpointInfoModel>(
+                () => services.Resolve<INodeServices<EndpointInfoModel>>(),
+                new EndpointInfoModel {
                     Endpoint = new EndpointModel {
                         Url = $"opc.tcp://{_hostEntry?.HostName ?? "localhost"}:{_server.Port}/UA/SampleServer",
                         AlternativeUrls = _hostEntry?.AddressList

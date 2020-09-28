@@ -1476,9 +1476,8 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
 
                 var registry = new Mock<IEndpointRegistry>();
                 registry
-                    .Setup(e => e.GetEndpointAsync(It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<CancellationToken>()))
+                    .Setup(e => e.GetEndpointAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
                     .Returns(Task.FromResult(new EndpointInfoModel {
-                        Registration = new EndpointRegistrationModel {
                             EndpointUrl = "fakeurl",
                             Id = "endpointfakeurl",
                             SiteId = "sitefakeurl",
@@ -1486,15 +1485,13 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                                 Url = "fakeurl",
                                 SecurityMode = SecurityMode.Sign
                             }
-                        }
                     }));
-                registry.Setup(e => e.QueryEndpointsAsync(It.IsNotNull<EndpointRegistrationQueryModel>(),
-                    It.IsAny<bool>(), It.IsAny<int>(), It.IsAny<CancellationToken>()))
-                    .Returns<EndpointRegistrationQueryModel, bool?, int?, CancellationToken>((q, b, i, c) =>
+                registry.Setup(e => e.QueryEndpointsAsync(It.IsNotNull<EndpointInfoQueryModel>(),
+                    It.IsAny<int>(), It.IsAny<CancellationToken>()))
+                    .Returns<EndpointInfoQueryModel, bool?, int?, CancellationToken>((q, b, i, c) =>
                         Task.FromResult(new EndpointInfoListModel {
                         Items = new List<EndpointInfoModel> {
                             new EndpointInfoModel {
-                                Registration = new EndpointRegistrationModel {
                                     EndpointUrl = q.Url,
                                     Id = "endpoint" + q.Url,
                                     SiteId = "site" + q.Url,
@@ -1504,7 +1501,6 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                                         SecurityPolicy = q.SecurityPolicy
                                     }
                                 }
-                            }
                         }
                     }));
                 builder.RegisterMock(registry);

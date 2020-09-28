@@ -436,16 +436,14 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
                 builder.RegisterType<MockConfig>().As<IItemContainerConfig>();
                 var registry = new Mock<IEndpointRegistry>();
                 registry
-                    .Setup(e => e.GetEndpointAsync(It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<CancellationToken>()))
+                    .Setup(e => e.GetEndpointAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
                     .Returns(Task.FromResult(new EndpointInfoModel {
-                        Registration = new EndpointRegistrationModel {
                             EndpointUrl = "fakeurl",
                             Id = "endpoint1",
                             SiteId = "fakesite",
                             Endpoint = new EndpointModel {
                                 Url = "fakeurl"
                             }
-                        }
                     }));
                 builder.RegisterMock(registry);
                 builder.RegisterType<DataSetEntityDatabase>().AsImplementedInterfaces();
@@ -468,7 +466,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
         public class MockRegistry : IEndpointRegistry {
 
             public Task<EndpointInfoModel> GetEndpointAsync(string endpointId,
-                bool onlyServerState = false, CancellationToken ct = default) {
+                CancellationToken ct = default) {
                 throw new NotImplementedException();
             }
 
@@ -478,13 +476,18 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
             }
 
             public Task<EndpointInfoListModel> ListEndpointsAsync(string continuation,
-                bool onlyServerState = false, int? pageSize = null, CancellationToken ct = default) {
+                int? pageSize = null, CancellationToken ct = default) {
                 throw new NotImplementedException();
             }
 
             public Task<EndpointInfoListModel> QueryEndpointsAsync(
-                EndpointRegistrationQueryModel query, bool onlyServerState = false,
+                EndpointInfoQueryModel query,
                 int? pageSize = null, CancellationToken ct = default) {
+                throw new NotImplementedException();
+            }
+
+            public Task UpdateEndpointAsync(string endpointId, EndpointInfoUpdateModel model,
+                CancellationToken ct = default) {
                 throw new NotImplementedException();
             }
         }
