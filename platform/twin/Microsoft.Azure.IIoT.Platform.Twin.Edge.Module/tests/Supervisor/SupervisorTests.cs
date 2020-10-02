@@ -27,7 +27,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Supervisor {
                     var registry = services.Resolve<ISupervisorRegistry>();
 
                     // Act
-                    var supervisors = await registry.ListAllSupervisorsAsync();
+                    var supervisors = await registry.ListAllSupervisorsAsync().ConfigureAwait(false);
 
                     // Assert
                     Assert.Single(supervisors);
@@ -37,7 +37,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Supervisor {
                         out var hub, out var moduleId));
                     Assert.Equal(hubName, hub);
                     Assert.Equal(module, moduleId);
-                });
+                }).ConfigureAwait(false);
             }
         }
 
@@ -51,12 +51,12 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Supervisor {
 
                     // Act
                     var supervisor = await registry.GetSupervisorAsync(
-                        HubResource.Format(hubName, device, module));
+                        HubResource.Format(hubName, device, module)).ConfigureAwait(false);
 
                     // Assert
                     Assert.True(supervisor.Connected.Value);
                     Assert.True(supervisor.OutOfSync.Value);
-                });
+                }).ConfigureAwait(false);
             }
         }
 
@@ -70,13 +70,13 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Supervisor {
 
                     // Act
                     var status = await diagnostics.GetSupervisorStatusAsync(
-                        HubResource.Format(hubName, device, module));
+                        HubResource.Format(hubName, device, module)).ConfigureAwait(false);
 
                     // Assert
                     Assert.Equal(status.DeviceId, device);
                     Assert.Equal(status.ModuleId, module);
                     Assert.Empty(status.Entities);
-                });
+                }).ConfigureAwait(false);
             }
         }
 
@@ -96,18 +96,18 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Supervisor {
                         SupervisorId = supervisorId,
                         ApplicationId = "ua326029342304923"
                     }.ToEndpointRegistration(_serializer).ToDeviceTwin(_serializer);
-                    await hub.CreateOrUpdateAsync(twin);
+                    await hub.CreateOrUpdateAsync(twin).ConfigureAwait(false);
                     var registry = services.Resolve<IEndpointRegistry>();
-                    var endpoints = await registry.ListAllEndpointsAsync();
+                    var endpoints = await registry.ListAllEndpointsAsync().ConfigureAwait(false);
                     var ep1 = endpoints.FirstOrDefault();
                     Assert.NotNull(ep1);
 
                     // Act
-                    await activation.ActivateEndpointAsync(ep1.Id);
-                    endpoints = await registry.ListAllEndpointsAsync();
+                    await activation.ActivateEndpointAsync(ep1.Id).ConfigureAwait(false);
+                    endpoints = await registry.ListAllEndpointsAsync().ConfigureAwait(false);
                     var ep2 = endpoints.FirstOrDefault();
                     var diagnostics = services.Resolve<ISupervisorDiagnostics>();
-                    var status = await diagnostics.GetSupervisorStatusAsync(supervisorId);
+                    var status = await diagnostics.GetSupervisorStatusAsync(supervisorId).ConfigureAwait(false);
 
                     // Assert
                     Assert.Equal(device, status.DeviceId);
@@ -119,7 +119,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Supervisor {
                     Assert.True(
                         ep2.EndpointState == EndpointConnectivityState.Connecting ||
                         ep2.EndpointState == EndpointConnectivityState.NotReachable);
-                });
+                }).ConfigureAwait(false);
             }
         }
 
@@ -140,21 +140,21 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Supervisor {
                         ApplicationId = "ua326029342304923"
                     }.ToEndpointRegistration(_serializer).ToDeviceTwin(_serializer);
 
-                    await hub.CreateOrUpdateAsync(twin);
+                    await hub.CreateOrUpdateAsync(twin).ConfigureAwait(false);
                     var registry = services.Resolve<IEndpointRegistry>();
-                    var endpoints = await registry.ListAllEndpointsAsync();
+                    var endpoints = await registry.ListAllEndpointsAsync().ConfigureAwait(false);
                     var ep1 = endpoints.FirstOrDefault();
                     Assert.NotNull(ep1);
 
                     // Act
-                    await activation.ActivateEndpointAsync(ep1.Id);
-                    endpoints = await registry.ListAllEndpointsAsync();
+                    await activation.ActivateEndpointAsync(ep1.Id).ConfigureAwait(false);
+                    endpoints = await registry.ListAllEndpointsAsync().ConfigureAwait(false);
                     var ep2 = endpoints.FirstOrDefault();
-                    await activation.DeactivateEndpointAsync(ep2.Id);
+                    await activation.DeactivateEndpointAsync(ep2.Id).ConfigureAwait(false);
                     var diagnostics = services.Resolve<ISupervisorDiagnostics>();
-                    endpoints = await registry.ListAllEndpointsAsync();
+                    endpoints = await registry.ListAllEndpointsAsync().ConfigureAwait(false);
                     var ep3 = endpoints.FirstOrDefault();
-                    var status = await diagnostics.GetSupervisorStatusAsync(supervisorId);
+                    var status = await diagnostics.GetSupervisorStatusAsync(supervisorId).ConfigureAwait(false);
 
                     // Assert
                     Assert.Equal(device, status.DeviceId);
@@ -162,7 +162,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Supervisor {
                     Assert.Empty(status.Entities);
                     Assert.Equal(EntityActivationState.Deactivated, ep3.ActivationState);
                     Assert.Equal(EndpointConnectivityState.Disconnected, ep3.EndpointState);
-                });
+                }).ConfigureAwait(false);
             }
         }
 
@@ -183,22 +183,22 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Supervisor {
                         ApplicationId = "ua326029342304923"
                     }.ToEndpointRegistration(_serializer).ToDeviceTwin(_serializer);
 
-                    await hub.CreateOrUpdateAsync(twin);
+                    await hub.CreateOrUpdateAsync(twin).ConfigureAwait(false);
                     var registry = services.Resolve<IEndpointRegistry>();
-                    var endpoints = await registry.ListAllEndpointsAsync();
+                    var endpoints = await registry.ListAllEndpointsAsync().ConfigureAwait(false);
                     var ep1 = endpoints.FirstOrDefault();
                     Assert.NotNull(ep1);
 
                     for (var i = 0; i < 20; i++) {
                         // Act
-                        await activation.ActivateEndpointAsync(ep1.Id);
-                        await activation.DeactivateEndpointAsync(ep1.Id);
+                        await activation.ActivateEndpointAsync(ep1.Id).ConfigureAwait(false);
+                        await activation.DeactivateEndpointAsync(ep1.Id).ConfigureAwait(false);
                     }
 
                     var diagnostics = services.Resolve<ISupervisorDiagnostics>();
-                    endpoints = await registry.ListAllEndpointsAsync();
+                    endpoints = await registry.ListAllEndpointsAsync().ConfigureAwait(false);
                     var ep3 = endpoints.FirstOrDefault();
-                    var status = await diagnostics.GetSupervisorStatusAsync(supervisorId);
+                    var status = await diagnostics.GetSupervisorStatusAsync(supervisorId).ConfigureAwait(false);
 
                     // Assert
                     Assert.Equal(device, status.DeviceId);
@@ -206,7 +206,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Supervisor {
                     Assert.Empty(status.Entities);
                     Assert.Equal(EntityActivationState.Deactivated, ep3.ActivationState);
                     Assert.Equal(EndpointConnectivityState.Disconnected, ep3.EndpointState);
-                });
+                }).ConfigureAwait(false);
             }
         }
 
@@ -228,20 +228,20 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Supervisor {
                             SupervisorId = supervisorId,
                             ApplicationId = "uas" + i
                         }.ToEndpointRegistration(_serializer).ToDeviceTwin(_serializer);
-                        await hub.CreateOrUpdateAsync(twin);
+                        await hub.CreateOrUpdateAsync(twin).ConfigureAwait(false);
                     }
 
                     var registry = services.Resolve<IEndpointRegistry>();
-                    var endpoints = await registry.ListAllEndpointsAsync();
+                    var endpoints = await registry.ListAllEndpointsAsync().ConfigureAwait(false);
 
                     for (var i = 0; i < 5; i++) {
-                        await Task.WhenAll(endpoints.Select(ep => activation.ActivateEndpointAsync(ep.Id)));
-                        await Task.WhenAll(endpoints.Select(ep => activation.DeactivateEndpointAsync(ep.Id)));
+                        await Task.WhenAll(endpoints.Select(ep => activation.ActivateEndpointAsync(ep.Id))).ConfigureAwait(false);
+                        await Task.WhenAll(endpoints.Select(ep => activation.DeactivateEndpointAsync(ep.Id))).ConfigureAwait(false);
                     }
 
                     var diagnostics = services.Resolve<ISupervisorDiagnostics>();
-                    endpoints = await registry.ListAllEndpointsAsync();
-                    var status = await diagnostics.GetSupervisorStatusAsync(supervisorId);
+                    endpoints = await registry.ListAllEndpointsAsync().ConfigureAwait(false);
+                    var status = await diagnostics.GetSupervisorStatusAsync(supervisorId).ConfigureAwait(false);
 
                     // Assert
                     Assert.Equal(device, status.DeviceId);
@@ -249,7 +249,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Supervisor {
                     Assert.Empty(status.Entities);
                     Assert.True(endpoints.All(ep => ep.ActivationState == EntityActivationState.Deactivated));
                     Assert.True(endpoints.All(ep => ep.EndpointState == EndpointConnectivityState.Disconnected));
-                });
+                }).ConfigureAwait(false);
             }
         }
 

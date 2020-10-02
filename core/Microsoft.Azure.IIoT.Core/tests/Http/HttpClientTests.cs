@@ -4,7 +4,7 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Http {
-    using Microsoft.Azure.IIoT.Http.Default;
+    using Microsoft.Azure.IIoT.Http.Clients;
     using Microsoft.Azure.IIoT.Diagnostics;
     using System;
     using System.Linq;
@@ -17,7 +17,8 @@ namespace Microsoft.Azure.IIoT.Http {
         [Fact]
         public void UnixDomainSocketHttpRequestTest1() {
             var logger = TraceLogger.Create();
-            IHttpClient client = new HttpClient(new HttpClientFactory(logger), logger);
+            using var factory = new HttpClientFactory(logger);
+            IHttpClient client = new HttpClient(factory, logger);
             var request = client.NewRequest(new Uri("unix:///var/test/unknown.sock/path/to/resource?query=36"));
 
             Assert.True(request.Headers.Contains(HttpHeader.UdsPath));
@@ -30,7 +31,8 @@ namespace Microsoft.Azure.IIoT.Http {
         [Fact]
         public void UnixDomainSocketHttpRequestTest2() {
             var logger = TraceLogger.Create();
-            IHttpClient client = new HttpClient(new HttpClientFactory(logger), logger);
+            using var factory = new HttpClientFactory(logger);
+            IHttpClient client = new HttpClient(factory, logger);
             var request = client.NewRequest(new Uri("unix:///var/test/unknown.sock:0/path/to/resource?query=36"));
 
             Assert.True(request.Headers.Contains(HttpHeader.UdsPath));
@@ -42,7 +44,8 @@ namespace Microsoft.Azure.IIoT.Http {
         [Fact]
         public void UnixDomainSocketHttpRequestTest2b() {
             var logger = TraceLogger.Create();
-            IHttpClient client = new HttpClient(new HttpClientFactory(logger), logger);
+            using var factory = new HttpClientFactory(logger);
+            IHttpClient client = new HttpClient(factory, logger);
             var request = client.NewRequest(new Uri("unix:///var/test/unknown.sock:0/path/to/resource"));
 
             Assert.True(request.Headers.Contains(HttpHeader.UdsPath));
@@ -54,7 +57,8 @@ namespace Microsoft.Azure.IIoT.Http {
         [Fact]
         public void UnixDomainSocketHttpRequestTest3() {
             var logger = TraceLogger.Create();
-            IHttpClient client = new HttpClient(new HttpClientFactory(logger), logger);
+            using var factory = new HttpClientFactory(logger);
+            IHttpClient client = new HttpClient(factory, logger);
             var request = client.NewRequest(new Uri("unix:///var/test/unknown:0/path/to/resource?query=36"));
 
             Assert.True(request.Headers.Contains(HttpHeader.UdsPath));
@@ -66,10 +70,11 @@ namespace Microsoft.Azure.IIoT.Http {
         [Fact]
         public async Task UnixDomainSocketHttpClientTestAsync() {
             var logger = TraceLogger.Create();
-            IHttpClient client = new HttpClient(new HttpClientFactory(logger), logger);
+            using var factory = new HttpClientFactory(logger);
+            IHttpClient client = new HttpClient(factory, logger);
             var request = client.NewRequest(new Uri("unix:///var/test/unknown.sock:0/path/to/resource?query=36"));
             try {
-                await client.GetAsync(request);
+                await client.GetAsync(request).ConfigureAwait(false);
                 Assert.True(false);
             }
             catch (SocketException ex) {

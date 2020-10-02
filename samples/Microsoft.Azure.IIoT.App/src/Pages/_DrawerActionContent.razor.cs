@@ -37,14 +37,14 @@ namespace Microsoft.Azure.IIoT.App.Pages {
             switch (action.Value) {
                 case "Read":
                     TypeOfAction = ActionType.Read;
-                    await ReadAsync(nodeId);
+                    await ReadAsync(nodeId).ConfigureAwait(false);
                     break;
                 case "Write":
                     TypeOfAction = ActionType.Write;
                     break;
                 case "Call":
                     TypeOfAction = ActionType.Call;
-                    await ParameterAsync();
+                    await ParameterAsync().ConfigureAwait(false);
                     break;
                 default:
                     break;
@@ -52,21 +52,21 @@ namespace Microsoft.Azure.IIoT.App.Pages {
         }
 
         private async Task ReadAsync(string nodeId) {
-            Response = await BrowseManager.ReadValueAsync(EndpointId, nodeId, Credential);
+            Response = await BrowseManager.ReadValueAsync(EndpointId, nodeId, Credential).ConfigureAwait(false);
             ResponseClass = "list-group-item text-left margin body-action-content visible";
         }
 
         private async Task WriteAsync(string nodeId, string value) {
-            Response = await BrowseManager.WriteValueAsync(EndpointId, nodeId, value, Credential);
+            Response = await BrowseManager.WriteValueAsync(EndpointId, nodeId, value, Credential).ConfigureAwait(false);
 
-            var newValue = await BrowseManager.ReadValueAsync(EndpointId, nodeId, Credential);
+            var newValue = await BrowseManager.ReadValueAsync(EndpointId, nodeId, Credential).ConfigureAwait(false);
             var index = PagedNodeList.Results.IndexOf(PagedNodeList.Results.SingleOrDefault(x => x.Id == nodeId));
             PagedNodeList.Results[index].Value = newValue;
             ResponseClass = "list-group-item margin body-action-content visible";
         }
 
         private async Task ParameterAsync() {
-            Response = await BrowseManager.GetParameterAsync(EndpointId, NodeData.Id, Credential);
+            Response = await BrowseManager.GetParameterAsync(EndpointId, NodeData.Id, Credential).ConfigureAwait(false);
             _parameters = BrowseManager.Parameter;
             if (_parameters.InputArguments != null) {
                 Values = new string[_parameters.InputArguments.Count];
@@ -74,7 +74,7 @@ namespace Microsoft.Azure.IIoT.App.Pages {
         }
 
         private async Task CallAsync(string nodeId, string[] values) {
-            Response = await BrowseManager.MethodCallAsync(_parameters, values, EndpointId, NodeData.Id, Credential);
+            Response = await BrowseManager.MethodCallAsync(_parameters, values, EndpointId, NodeData.Id, Credential).ConfigureAwait(false);
             ResponseClass = "list-group-item margin body-action-content visible";
         }
     }

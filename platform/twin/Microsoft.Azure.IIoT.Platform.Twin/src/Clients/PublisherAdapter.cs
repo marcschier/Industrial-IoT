@@ -63,7 +63,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Clients {
                             QueueSize = 1
                         }
                     }
-                });
+                }).ConfigureAwait(false);
 
             if (result.Results.Count != 1) {
                 throw new InvalidOperationException(
@@ -92,7 +92,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Clients {
                             PublishedVariableNodeId = n,
                         })
                         .ToList()
-                });
+                }).ConfigureAwait(false);
             var response = new PublishBulkResultModel {
                 NodesToRemove = remove.Results.Select(r => r.ErrorInfo).ToList()
             };
@@ -116,7 +116,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Clients {
                                 QueueSize = 1
                             })
                             .ToList()
-                    });
+                    }).ConfigureAwait(false);
                 response.NodesToAdd = add.Results.Select(r => r.ErrorInfo).ToList();
             }
             catch (Exception ex) {
@@ -151,7 +151,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Clients {
                             PublishedVariableNodeId = request.NodeId
                         }
                     }
-                });
+                }).ConfigureAwait(false);
 
             if (result.Results.Count != 1) {
                 throw new InvalidOperationException(
@@ -172,7 +172,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Clients {
                 throw new ArgumentNullException(nameof(request));
             }
             try {
-                var writer = await _writers.GetDataSetWriterAsync(endpointId);
+                var writer = await _writers.GetDataSetWriterAsync(endpointId).ConfigureAwait(false);
                 var dataset = writer.DataSet?.DataSetSource?.PublishedVariables?.PublishedData;
                 return new PublishedItemListResultModel {
                     Items = dataset?.Select(d => new PublishedItemModel {

@@ -5,6 +5,7 @@
 
 namespace Microsoft.Azure.IIoT.Platform.Core.Api.Models {
     using System.Runtime.Serialization;
+    using System.Collections.Generic;
 
     /// <summary>
     /// Simple attribute operand model
@@ -24,7 +25,7 @@ namespace Microsoft.Azure.IIoT.Platform.Core.Api.Models {
         /// </summary>
         [DataMember(Name = "browsePath", Order = 1,
             EmitDefaultValue = false)]
-        public string[] BrowsePath { get; set; }
+        public IReadOnlyList<string> BrowsePath { get; set; }
 
         /// <summary>
         /// Attribute id

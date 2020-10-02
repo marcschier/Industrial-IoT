@@ -29,8 +29,8 @@ namespace Microsoft.Azure.IIoT.Azure.ActiveDirectory.Utils {
 
         /// <inheritdoc/>
         public override async Task ClearCacheAsync() {
-            await _appTokenCache.ClearAsync();
-            await base.ClearCacheAsync();
+            await _appTokenCache.ClearAsync().ConfigureAwait(false);
+            await base.ClearCacheAsync().ConfigureAwait(false);
         }
 
         private readonly MsalTokenCacheDecorator _appTokenCache;

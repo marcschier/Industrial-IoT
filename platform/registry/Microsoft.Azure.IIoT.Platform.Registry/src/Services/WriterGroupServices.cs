@@ -54,9 +54,9 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
             var result = new List<DeviceTwinModel>();
             string continuation = null;
             do {
-                var devices = await _iothub.QueryDeviceTwinsAsync(query, null, null, ct);
+                var devices = await _iothub.QueryDeviceTwinsAsync(query, null, null, ct).ConfigureAwait(false);
                 foreach (var writerGroup in devices.Items.Select(d => d.ToWriterGroupRegistration(false))) {
-                    await PlaceWriterGroupAsync(writerGroup, ct);
+                    await PlaceWriterGroupAsync(writerGroup, ct).ConfigureAwait(false);
                 }
                 continuation = devices.ContinuationToken;
             }
@@ -79,7 +79,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                 writerGroup.State.State == WriterGroupState.Disabled;
 
             var twin = writerGroup.ToWriterGroupRegistration(disabled).ToDeviceTwin(_serializer);
-            twin = await _iothub.CreateOrUpdateAsync(twin, true, ct);
+            twin = await _iothub.CreateOrUpdateAsync(twin, true, ct).ConfigureAwait(false);
             var configuredWriters = new HashSet<string>();
             foreach (var prop in twin.Properties.Desired.Keys) {
                 if (PublisherRegistryEx.IsDataSetWriterProperty(prop)) {
@@ -91,14 +91,14 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                     // Should be added because it is not yet in the list
                     await AddRemoveWriterFromWriterGroupTwinAsync(
                         PublisherRegistryEx.ToDeviceId(writerGroup.WriterGroupId),
-                        dataSetWriterId, false);
+                        dataSetWriterId, false).ConfigureAwait(false);
                 }
             }
             foreach (var dataSetWriterId in configuredWriters) {
                 // The rest should be removed
                 await AddRemoveWriterFromWriterGroupTwinAsync(
                     PublisherRegistryEx.ToDeviceId(writerGroup.WriterGroupId),
-                    dataSetWriterId, true);
+                    dataSetWriterId, true).ConfigureAwait(false);
             }
         }
 
@@ -112,7 +112,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
             }
             await AddRemoveWriterFromWriterGroupTwinAsync(
                 PublisherRegistryEx.ToDeviceId(writerGroupId), dataSetWriter.DataSetWriterId,
-                dataSetWriter.IsDisabled ?? false);
+                dataSetWriter.IsDisabled ?? false).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
@@ -129,16 +129,16 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                 var twins = await _iothub.QueryAllDeviceTwinsAsync(
                     $"SELECT * FROM devices WHERE " +
                     $"IS_DEFINED(properties.desired.{IdentityType.DataSet}_{dataSetWriterId}) AND " +
-                    $"tags.{nameof(EntityRegistration.DeviceType)} = '{IdentityType.WriterGroup}' ");
+                    $"tags.{nameof(EntityRegistration.DeviceType)} = '{IdentityType.WriterGroup}' ").ConfigureAwait(false);
                 foreach (var twin in twins) {
                     await AddRemoveWriterFromWriterGroupTwinAsync(twin.Id, dataSetWriterId,
-                        dataSetWriter.IsDisabled ?? false);
+                        dataSetWriter.IsDisabled ?? false).ConfigureAwait(false);
                 }
             }
             else {
                 await AddRemoveWriterFromWriterGroupTwinAsync(
                     PublisherRegistryEx.ToDeviceId(writerGroupId), dataSetWriterId,
-                    dataSetWriter.IsDisabled != false);
+                    dataSetWriter.IsDisabled != false).ConfigureAwait(false);
             }
         }
 
@@ -158,7 +158,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
             }
             await AddRemoveWriterFromWriterGroupTwinAsync(
                 PublisherRegistryEx.ToDeviceId(dataSetWriter.WriterGroupId),
-                dataSetWriter.DataSetWriterId, true);
+                dataSetWriter.DataSetWriterId, true).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
@@ -180,7 +180,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
             _logger.Debug("Add group {id} event - Create disabled twin...",
                 writerGroup.WriterGroupId);
             var group = writerGroup.ToWriterGroupRegistration(true);
-            await _iothub.CreateOrUpdateAsync(group.ToDeviceTwin(_serializer), false);
+            await _iothub.CreateOrUpdateAsync(group.ToDeviceTwin(_serializer), false).ConfigureAwait(false);
             _logger.Debug("Add group {id} event - Disabled twin added...",
                 writerGroup.WriterGroupId);
         }
@@ -197,12 +197,12 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
             while (true) {
                 try {
                     var twin = await _iothub.FindAsync(
-                        PublisherRegistryEx.ToDeviceId(writerGroup.WriterGroupId));
+                        PublisherRegistryEx.ToDeviceId(writerGroup.WriterGroupId)).ConfigureAwait(false);
                     if (twin == null) {
                         _logger.Warning("Missed add group event - try recreating disabled twin...");
                         twin = await _iothub.CreateOrUpdateAsync(
                             writerGroup.ToWriterGroupRegistration(true).ToDeviceTwin(_serializer),
-                            false, CancellationToken.None);
+                            false, CancellationToken.None).ConfigureAwait(false);
                         return; // done
                     }
                     // Convert to writerGroup registration
@@ -212,7 +212,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                         return; // nothing else to do other than delete and recreate.
                     }
                     twin = await _iothub.PatchAsync(registration.Patch(
-                        writerGroup.ToWriterGroupRegistration(), _serializer));
+                        writerGroup.ToWriterGroupRegistration(), _serializer)).ConfigureAwait(false);
                     break;
                 }
                 catch (ResourceOutOfDateException ex) {
@@ -236,10 +236,10 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
             _logger.Debug("Activate group {id} event - Enable and place twin...",
                 writerGroup.WriterGroupId);
             var group = writerGroup.ToWriterGroupRegistration(false);
-            await _iothub.CreateOrUpdateAsync(group.ToDeviceTwin(_serializer), true);
+            await _iothub.CreateOrUpdateAsync(group.ToDeviceTwin(_serializer), true).ConfigureAwait(false);
 
             // Immediately try assign writer group to a publisher
-            await PlaceWriterGroupAsync(group, CancellationToken.None);
+            await PlaceWriterGroupAsync(group, CancellationToken.None).ConfigureAwait(false);
             _logger.Debug("Activate group {id} event - Twin placed.",
                 writerGroup.WriterGroupId);
         }
@@ -256,7 +256,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
             _logger.Debug("Deactivate group {id} event - Disable twin...",
                 writerGroup.WriterGroupId);
             var group = writerGroup.ToWriterGroupRegistration(true);
-            await _iothub.CreateOrUpdateAsync(group.ToDeviceTwin(_serializer), true);
+            await _iothub.CreateOrUpdateAsync(group.ToDeviceTwin(_serializer), true).ConfigureAwait(false);
             _logger.Debug("Deactivate group {id} event - Twin disabled.",
                 writerGroup.WriterGroupId);
         }
@@ -273,7 +273,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                 _logger.Debug("Remove group {id} event - Delete twin...",
                     writerGroupId);
                 await _iothub.DeleteAsync(
-                    PublisherRegistryEx.ToDeviceId(writerGroupId));
+                    PublisherRegistryEx.ToDeviceId(writerGroupId)).ConfigureAwait(false);
                 _logger.Debug("Remove group {id} event - Twin deleted.",
                     writerGroupId);
             }
@@ -304,7 +304,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                                 remove ? null : DateTime.UtcNow.ToString()
                         }
                     }
-                });
+                }).ConfigureAwait(false);
                 _logger.Debug("Added writer {writer} to writer table in writerGroup {id}.",
                     dataSetWriterId, deviceId);
             }
@@ -334,7 +334,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
 
                 // Get registration
                 var writerGroupDevice = await _iothub.GetRegistrationAsync(
-                    PublisherRegistryEx.ToDeviceId(writerGroup.WriterGroupId), null, ct);
+                    PublisherRegistryEx.ToDeviceId(writerGroup.WriterGroupId), null, ct).ConfigureAwait(false);
                 if (string.IsNullOrEmpty(writerGroupDevice?.Authentication?.PrimaryKey)) {
                     // No writer group registration
                     return false;
@@ -352,7 +352,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
 
                 // Get all gateways in site
                 var gatewaysInSite = await _gateways.QueryAllGatewaysAsync(
-                    new GatewayQueryModel { SiteId = writerGroup.SiteId, Connected = true });
+                    new GatewayQueryModel { SiteId = writerGroup.SiteId, Connected = true }).ConfigureAwait(false);
                 var candidateGateways = gatewaysInSite.Select(s => s.Id).ToList();
                 if (candidateGateways.Count == 0) {
                     // No candidates found to assign to
@@ -366,7 +366,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
 
                 // Loop through all randomly and try to take one that works.
                 foreach (var gatewayId in candidateGateways.Shuffle()) {
-                    var gateway = await _gateways.FindGatewayAsync(gatewayId, false, ct);
+                    var gateway = await _gateways.FindGatewayAsync(gatewayId, false, ct).ConfigureAwait(false);
                     var publisherId = gateway?.Modules?.Publisher?.Id;
                     if (string.IsNullOrEmpty(publisherId)) {
                         // No publisher in gateway
@@ -377,7 +377,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                             // Writer group device id
                             WriterGroupId = writerGroup.WriterGroupId,
                             PublisherId = publisherId,
-                        }, writerGroupDevice.Authentication.PrimaryKey, ct);
+                        }, writerGroupDevice.Authentication.PrimaryKey, ct).ConfigureAwait(false);
                         _logger.Information(
                             "Activated writer group {writerGroupId} on publisher {publisherId}!",
                              writerGroup.WriterGroupId, publisherId);

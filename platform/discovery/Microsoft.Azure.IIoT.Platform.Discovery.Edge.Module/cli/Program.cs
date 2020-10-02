@@ -124,7 +124,7 @@ Options:
             Console.WriteLine("Create or retrieve connection string...");
             var logger = ConsoleLogger.Create(LogEventLevel.Error);
             var cs = await Retry.WithExponentialBackoff(logger,
-                () => AddOrGetAsync(config, diagnostics, deviceId, moduleId));
+                () => AddOrGetAsync(config, diagnostics, deviceId, moduleId)).ConfigureAwait(false);
 
             // Hook event source
             using (var broker = new EventSourceBroker()) {
@@ -158,7 +158,7 @@ Options:
                     Capabilities = new DeviceCapabilitiesModel {
                         IotEdge = true
                     }
-                }, false, CancellationToken.None);
+                }, false, CancellationToken.None).ConfigureAwait(false);
             }
             catch (ResourceConflictException) {
                 logger.Information("Gateway {deviceId} exists.", deviceId);
@@ -173,12 +173,12 @@ Options:
                             [nameof(diagnostics.LogWorkspaceKey)] = diagnostics?.LogWorkspaceKey
                         }
                     }
-                }, true, CancellationToken.None);
+                }, true, CancellationToken.None).ConfigureAwait(false);
             }
             catch (ResourceConflictException) {
                 logger.Information("Module {moduleId} exists...", moduleId);
             }
-            var cs = await registry.GetConnectionStringAsync(deviceId, moduleId);
+            var cs = await registry.GetConnectionStringAsync(deviceId, moduleId).ConfigureAwait(false);
             return cs;
         }
 

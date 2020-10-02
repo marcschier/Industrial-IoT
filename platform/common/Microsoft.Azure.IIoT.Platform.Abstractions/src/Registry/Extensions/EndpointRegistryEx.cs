@@ -26,7 +26,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry {
             this IEndpointRegistry service, string endpointId,
             CancellationToken ct = default) {
             try {
-                return await service.GetEndpointAsync(endpointId, ct);
+                return await service.GetEndpointAsync(endpointId, ct).ConfigureAwait(false);
             }
             catch (ResourceNotFoundException) {
                 return null;
@@ -44,11 +44,11 @@ namespace Microsoft.Azure.IIoT.Platform.Registry {
             this IEndpointRegistry service, EndpointInfoQueryModel query,
             CancellationToken ct = default) {
             var registrations = new List<EndpointInfoModel>();
-            var result = await service.QueryEndpointsAsync(query, null, ct);
+            var result = await service.QueryEndpointsAsync(query, null, ct).ConfigureAwait(false);
             registrations.AddRange(result.Items);
             while (result.ContinuationToken != null) {
                 result = await service.ListEndpointsAsync(result.ContinuationToken,
-                    null, ct);
+                    null, ct).ConfigureAwait(false);
                 registrations.AddRange(result.Items);
             }
             return registrations;
@@ -63,11 +63,11 @@ namespace Microsoft.Azure.IIoT.Platform.Registry {
         public static async Task<List<EndpointInfoModel>> ListAllEndpointsAsync(
             this IEndpointRegistry service, CancellationToken ct = default) {
             var registrations = new List<EndpointInfoModel>();
-            var result = await service.ListEndpointsAsync(null, null, ct);
+            var result = await service.ListEndpointsAsync(null, null, ct).ConfigureAwait(false);
             registrations.AddRange(result.Items);
             while (result.ContinuationToken != null) {
                 result = await service.ListEndpointsAsync(result.ContinuationToken,
-                     null, ct);
+                     null, ct).ConfigureAwait(false);
                 registrations.AddRange(result.Items);
             }
             return registrations;
@@ -84,14 +84,14 @@ namespace Microsoft.Azure.IIoT.Platform.Registry {
         public static async Task DeactivateEndpointAsync(this IEndpointRegistry service,
             string endpointId, string generationId = null, CancellationToken ct = default) {
             if (string.IsNullOrEmpty(generationId)) {
-                var ep = await service.GetEndpointAsync(endpointId, ct);
+                var ep = await service.GetEndpointAsync(endpointId, ct).ConfigureAwait(false);
                 generationId = ep.GenerationId;
             }
             await service.UpdateEndpointAsync(endpointId,
                 new EndpointInfoUpdateModel {
                     GenerationId = generationId,
                     ActivationState = EntityActivationState.Deactivated
-                }, ct);
+                }, ct).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -105,14 +105,14 @@ namespace Microsoft.Azure.IIoT.Platform.Registry {
         public static async Task ActivateEndpointAsync(this IEndpointRegistry service,
             string endpointId, string generationId = null, CancellationToken ct = default) {
             if (string.IsNullOrEmpty(generationId)) {
-                var ep = await service.GetEndpointAsync(endpointId, ct);
+                var ep = await service.GetEndpointAsync(endpointId, ct).ConfigureAwait(false);
                 generationId = ep.GenerationId;
             }
             await service.UpdateEndpointAsync(endpointId,
                 new EndpointInfoUpdateModel {
                     GenerationId = generationId,
                     ActivationState = EntityActivationState.Activated
-                }, ct);
+                }, ct).ConfigureAwait(false);
         }
 
     }

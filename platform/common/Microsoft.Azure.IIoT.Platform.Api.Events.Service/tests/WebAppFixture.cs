@@ -21,7 +21,7 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service {
 
 
     /// <inheritdoc/>
-    public class WebAppFixture : IDisposable {
+    public sealed class WebAppFixture : IDisposable {
 
         /// <summary>
         /// Base address

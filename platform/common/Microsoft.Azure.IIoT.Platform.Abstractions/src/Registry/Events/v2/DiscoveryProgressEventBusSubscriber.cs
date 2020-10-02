@@ -27,7 +27,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Events.v2 {
         public async Task HandleAsync(DiscoveryProgressModel eventData) {
             await Task.WhenAll(_listeners
                 .Select(l => l.OnDiscoveryProgressAsync(eventData)
-                .ContinueWith(t => Task.CompletedTask)));
+                .ContinueWith(t => Task.CompletedTask))).ConfigureAwait(false);
         }
 
         private readonly List<IDiscoveryProgressProcessor> _listeners;

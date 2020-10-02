@@ -103,7 +103,7 @@ namespace PerfTest {
                         monitoredItems = _monitoredItems[index];
                     }
 
-                    monitoredItems[monitoredItems.Length - 1] = monitoredItem;
+                    monitoredItems[^1] = monitoredItem;
                 }
             }
         }

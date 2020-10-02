@@ -40,7 +40,7 @@ namespace Microsoft.Azure.IIoT.Platform.Subscriber.Handlers {
             IDictionary<string, string> properties, Func<Task> checkpoint) {
             try {
                 var message = _serializer.Deserialize<DataSetMessageModel>(payload);
-                await Task.WhenAll(_handlers.Select(h => h.HandleMessageAsync(message)));
+                await Task.WhenAll(_handlers.Select(h => h.HandleMessageAsync(message))).ConfigureAwait(false);
             }
             catch (Exception ex) {
                 _logger.Error(ex,

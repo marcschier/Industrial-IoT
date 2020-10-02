@@ -51,7 +51,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
                 throw new ArgumentNullException(nameof(endpoint));
             }
             if (string.IsNullOrEmpty(endpoint.Url)) {
-                throw new ArgumentNullException(nameof(endpoint.Url));
+                throw new ArgumentException("Missing url", nameof(endpoint));
             }
             if (request == null) {
                 throw new ArgumentNullException(nameof(request));
@@ -60,7 +60,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
                 "Browse_V2", _serializer.SerializeToString(new {
                     endpoint,
                     request
-                }), null, ct);
+                }), null, ct).ConfigureAwait(false);
             return _serializer.Deserialize<BrowseResponseApiModel>(response);
         }
 
@@ -71,19 +71,19 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
                 throw new ArgumentNullException(nameof(endpoint));
             }
             if (string.IsNullOrEmpty(endpoint.Url)) {
-                throw new ArgumentNullException(nameof(endpoint.Url));
+                throw new ArgumentException("Missing url", nameof(endpoint));
             }
             if (request == null) {
                 throw new ArgumentNullException(nameof(request));
             }
             if (request.ContinuationToken == null) {
-                throw new ArgumentNullException(nameof(request.ContinuationToken));
+                throw new ArgumentException("Missing continuation", nameof(endpoint));
             }
             var response = await _methodClient.CallMethodAsync(_target,
                 "BrowseNext_V2", _serializer.SerializeToString(new {
                     endpoint,
                     request
-                }), null, ct);
+                }), null, ct).ConfigureAwait(false);
             return _serializer.Deserialize<BrowseNextResponseApiModel>(response);
         }
 
@@ -94,20 +94,20 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
                 throw new ArgumentNullException(nameof(endpoint));
             }
             if (string.IsNullOrEmpty(endpoint.Url)) {
-                throw new ArgumentNullException(nameof(endpoint.Url));
+                throw new ArgumentException("Missing url", nameof(endpoint));
             }
             if (request == null) {
                 throw new ArgumentNullException(nameof(request));
             }
             if (request.BrowsePaths == null || request.BrowsePaths.Count == 0 ||
-                request.BrowsePaths.Any(p => p == null || p.Length == 0)) {
-                throw new ArgumentNullException(nameof(request.BrowsePaths));
+                request.BrowsePaths.Any(p => p == null || p.Count == 0)) {
+                throw new ArgumentException("Bad browse paths", nameof(request));
             }
             var response = await _methodClient.CallMethodAsync(_target,
                 "BrowsePath_V2", _serializer.SerializeToString(new {
                     endpoint,
                     request
-                }), null, ct);
+                }), null, ct).ConfigureAwait(false);
             return _serializer.Deserialize<BrowsePathResponseApiModel>(response);
         }
 
@@ -118,7 +118,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
                 throw new ArgumentNullException(nameof(endpoint));
             }
             if (string.IsNullOrEmpty(endpoint.Url)) {
-                throw new ArgumentNullException(nameof(endpoint.Url));
+                throw new ArgumentException("Missing url", nameof(endpoint));
             }
             if (request == null) {
                 throw new ArgumentNullException(nameof(request));
@@ -130,7 +130,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
                 "NodeRead_V2", _serializer.SerializeToString(new {
                     endpoint,
                     request
-                }), null, ct);
+                }), null, ct).ConfigureAwait(false);
             return _serializer.Deserialize<ReadResponseApiModel>(response);
         }
 
@@ -141,7 +141,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
                 throw new ArgumentNullException(nameof(endpoint));
             }
             if (string.IsNullOrEmpty(endpoint.Url)) {
-                throw new ArgumentNullException(nameof(endpoint.Url));
+                throw new ArgumentException("Missing url", nameof(endpoint));
             }
             if (request == null) {
                 throw new ArgumentNullException(nameof(request));
@@ -153,7 +153,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
                 "NodeWrite_V2", _serializer.SerializeToString(new {
                     endpoint,
                     request
-                }), null, ct);
+                }), null, ct).ConfigureAwait(false);
             return _serializer.Deserialize<WriteResponseApiModel>(response);
         }
 
@@ -164,7 +164,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
                 throw new ArgumentNullException(nameof(endpoint));
             }
             if (string.IsNullOrEmpty(endpoint.Url)) {
-                throw new ArgumentNullException(nameof(endpoint.Url));
+                throw new ArgumentException("Missing url", nameof(endpoint));
             }
             if (request == null) {
                 throw new ArgumentNullException(nameof(request));
@@ -173,7 +173,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
                 "ValueRead_V2", _serializer.SerializeToString(new {
                     endpoint,
                     request
-                }), null, ct);
+                }), null, ct).ConfigureAwait(false);
             return _serializer.Deserialize<ValueReadResponseApiModel>(response);
         }
 
@@ -184,19 +184,19 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
                 throw new ArgumentNullException(nameof(endpoint));
             }
             if (string.IsNullOrEmpty(endpoint.Url)) {
-                throw new ArgumentNullException(nameof(endpoint.Url));
+                throw new ArgumentException("Missing url", nameof(endpoint));
             }
             if (request == null) {
                 throw new ArgumentNullException(nameof(request));
             }
             if (request.Value is null) {
-                throw new ArgumentNullException(nameof(request.Value));
+                throw new ArgumentException("Missing value", nameof(endpoint));
             }
             var response = await _methodClient.CallMethodAsync(_target,
                 "ValueWrite_V2", _serializer.SerializeToString(new {
                     endpoint,
                     request
-                }), null, ct);
+                }), null, ct).ConfigureAwait(false);
             return _serializer.Deserialize<ValueWriteResponseApiModel>(response);
         }
 
@@ -207,7 +207,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
                 throw new ArgumentNullException(nameof(endpoint));
             }
             if (string.IsNullOrEmpty(endpoint.Url)) {
-                throw new ArgumentNullException(nameof(endpoint.Url));
+                throw new ArgumentException("Missing url", nameof(endpoint));
             }
             if (request == null) {
                 throw new ArgumentNullException(nameof(request));
@@ -216,7 +216,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
                 "MethodMetadata_V2", _serializer.SerializeToString(new {
                     endpoint,
                     request
-                }), null, ct);
+                }), null, ct).ConfigureAwait(false);
             return _serializer.Deserialize<MethodMetadataResponseApiModel>(response);
         }
 
@@ -227,7 +227,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
                 throw new ArgumentNullException(nameof(endpoint));
             }
             if (string.IsNullOrEmpty(endpoint.Url)) {
-                throw new ArgumentNullException(nameof(endpoint.Url));
+                throw new ArgumentException("Missing url", nameof(endpoint));
             }
             if (request == null) {
                 throw new ArgumentNullException(nameof(request));
@@ -236,7 +236,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
                 "MethodCall_V2", _serializer.SerializeToString(new {
                     endpoint,
                     request
-                }), null, ct);
+                }), null, ct).ConfigureAwait(false);
             return _serializer.Deserialize<MethodCallResponseApiModel>(response);
         }
 
@@ -247,7 +247,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
                 throw new ArgumentNullException(nameof(endpoint));
             }
             if (string.IsNullOrEmpty(endpoint.Url)) {
-                throw new ArgumentNullException(nameof(endpoint.Url));
+                throw new ArgumentException("Missing url", nameof(endpoint));
             }
             if (request == null) {
                 throw new ArgumentNullException(nameof(request));
@@ -256,7 +256,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
                 "UploadModel_V2", _serializer.SerializeToString(new {
                     endpoint,
                     request
-                }), null, ct);
+                }), null, ct).ConfigureAwait(false);
             return _serializer.Deserialize<ModelUploadStartResponseApiModel>(response);
         }
 
@@ -268,19 +268,19 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
                 throw new ArgumentNullException(nameof(endpoint));
             }
             if (string.IsNullOrEmpty(endpoint.Url)) {
-                throw new ArgumentNullException(nameof(endpoint.Url));
+                throw new ArgumentException("Missing url", nameof(endpoint));
             }
             if (request == null) {
                 throw new ArgumentNullException(nameof(request));
             }
             if (request.Details == null) {
-                throw new ArgumentNullException(nameof(request.Details));
+                throw new ArgumentException("Missing details", nameof(request));
             }
             var response = await _methodClient.CallMethodAsync(_target,
                 "HistoryRead_V2", _serializer.SerializeToString(new {
                     endpoint,
                     request
-                }), null, ct);
+                }), null, ct).ConfigureAwait(false);
             return _serializer.Deserialize<HistoryReadResponseApiModel<VariantValue>>(response);
         }
 
@@ -292,19 +292,19 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
                 throw new ArgumentNullException(nameof(endpoint));
             }
             if (string.IsNullOrEmpty(endpoint.Url)) {
-                throw new ArgumentNullException(nameof(endpoint.Url));
+                throw new ArgumentException("Missing url", nameof(endpoint));
             }
             if (request == null) {
                 throw new ArgumentNullException(nameof(request));
             }
             if (string.IsNullOrEmpty(request.ContinuationToken)) {
-                throw new ArgumentNullException(nameof(request.ContinuationToken));
+                throw new ArgumentException("Missing continuation", nameof(request));
             }
             var response = await _methodClient.CallMethodAsync(_target,
                 "HistoryReadNext_V2", _serializer.SerializeToString(new {
                     endpoint,
                     request
-                }), null, ct);
+                }), null, ct).ConfigureAwait(false);
             return _serializer.Deserialize<HistoryReadNextResponseApiModel<VariantValue>>(response);
         }
 
@@ -316,19 +316,19 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
                 throw new ArgumentNullException(nameof(endpoint));
             }
             if (string.IsNullOrEmpty(endpoint.Url)) {
-                throw new ArgumentNullException(nameof(endpoint.Url));
+                throw new ArgumentException("Missing url", nameof(endpoint));
             }
             if (request == null) {
                 throw new ArgumentNullException(nameof(request));
             }
             if (request.Details == null) {
-                throw new ArgumentNullException(nameof(request.Details));
+                throw new ArgumentException("Missing details", nameof(request));
             }
             var response = await _methodClient.CallMethodAsync(_target,
                 "HistoryUpdate_V2", _serializer.SerializeToString(new {
                     endpoint,
                     request
-                }), null, ct);
+                }), null, ct).ConfigureAwait(false);
             return _serializer.Deserialize<HistoryUpdateResponseApiModel>(response);
         }
 

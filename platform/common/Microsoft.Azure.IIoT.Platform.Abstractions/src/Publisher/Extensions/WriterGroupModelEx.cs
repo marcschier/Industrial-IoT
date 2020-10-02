@@ -112,7 +112,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Models {
                     }
                 }
             }
-            return sb.ToString().ToSha1Hash();
+            return sb.ToString().ToSha256Hash();
         }
     }
 }

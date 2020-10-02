@@ -52,7 +52,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Hosting {
 
         /// <inheritdoc/>
         public async Task StartAsync(string id, string secret, string type, CancellationToken ct) {
-            await _lock.WaitAsync();
+            await _lock.WaitAsync().ConfigureAwait(false);
             try {
                 if (_hosts.TryGetValue(id, out var host) && host.Running) {
                     _logger.Debug("{id} host already running.", id);
@@ -76,7 +76,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Hosting {
                 // represents the state of the actived and supervised hosts in the supervisor
                 // device host.
                 //
-                await host.Started;
+                await host.Started.ConfigureAwait(false);
                 _logger.Information("{id} host started.", id);
             }
             finally {
@@ -87,7 +87,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Hosting {
         /// <inheritdoc/>
         public async Task StopAsync(string id, CancellationToken ct) {
             IdentityHostProcess host;
-            await _lock.WaitAsync();
+            await _lock.WaitAsync().ConfigureAwait(false);
             try {
                 if (!_hosts.TryGetValue(id, out host)) {
                     _logger.Debug("{id} entity host not running.", id);
@@ -103,12 +103,12 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Hosting {
             // represents the state of the supervised hosts through the supervisor device
             // host.
             //
-            await StopOneTwinAsync(id, host);
+            await StopOneTwinAsync(id, host).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
         public async Task QueueStartAsync(string id, string type, string secret) {
-            await _lock.WaitAsync();
+            await _lock.WaitAsync().ConfigureAwait(false);
             try {
                 if (_hosts.TryGetValue(id, out var host)) {
                     _logger.Debug("{id} host already attached.", id);
@@ -128,7 +128,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Hosting {
         /// <inheritdoc/>
         public async Task QueueStopAsync(string id) {
             IdentityHostProcess host;
-            await _lock.WaitAsync();
+            await _lock.WaitAsync().ConfigureAwait(false);
             try {
                 if (!_hosts.TryGetValue(id, out host)) {
                     _logger.Debug("{id} host not attached.", id);
@@ -169,7 +169,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Hosting {
             _logger.Debug("{id} host is stopping...", id);
             try {
                 // Stop host async
-                await host.StopAsync();
+                await host.StopAsync().ConfigureAwait(false);
             }
             catch (Exception ex) {
                 // BUGBUG: IoT Hub client SDK throws general exceptions independent
@@ -191,7 +191,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Hosting {
         private async Task StopAllHostsAsync() {
             IList<KeyValuePair<string, IdentityHostProcess>> hosts;
             try {
-                await _lock.WaitAsync();
+                await _lock.WaitAsync().ConfigureAwait(false);
                 hosts = _hosts.ToList();
                 _hosts.Clear();
             }
@@ -200,7 +200,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Hosting {
             }
             await Task.WhenAll(hosts
                 .Select(kv => StopOneTwinAsync(kv.Key, kv.Value))
-                .ToArray());
+                .ToArray()).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -296,7 +296,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Hosting {
                         _logger.Information("Initiating identity host exit...");
                         // Cancel runner
                         _cts.Cancel();
-                        await _runner;
+                        await _runner.ConfigureAwait(false);
                     }
                     catch (OperationCanceledException) { }
                     finally {
@@ -321,13 +321,13 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Hosting {
                     // Wait until the module unloads or is cancelled
                     try {
                         var version = GetType().Assembly.GetReleaseVersion().ToString();
-                        await host.StartAsync(_type, version);
+                        await host.StartAsync(_type, version).ConfigureAwait(false);
                         Connected = true;
                         _started.TrySetResult(true);
                         _logger.Debug("Identity host (re-)started.");
                         // Reset retry counter on success
                         retryCount = 0;
-                        await Task.WhenAny(cancel.Task, _reset.Task);
+                        await Task.WhenAny(cancel.Task, _reset.Task).ConfigureAwait(false);
                         _reset = new TaskCompletionSource<bool>();
                         _logger.Debug("Twin reset requested...");
                     }
@@ -352,7 +352,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Hosting {
                         // Linearly delay on exception since we get these when
                         // the host was deleted.
                         await Try.Async(() =>
-                            Task.Delay(kRetryDelayMs * retryCount, _cts.Token));
+                            Task.Delay(kRetryDelayMs * retryCount, _cts.Token)).ConfigureAwait(false);
                         if (_cts.IsCancellationRequested) {
                             // Done.
                             break;
@@ -370,7 +370,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Hosting {
                     finally {
                         _logger.Debug("Stopping host...");
                         Connected = false;
-                        await host.StopAsync();
+                        await host.StopAsync().ConfigureAwait(false);
                         _logger.Information("Twin stopped.");
                         _started.TrySetResult(false); // Cancelled before started
                     }

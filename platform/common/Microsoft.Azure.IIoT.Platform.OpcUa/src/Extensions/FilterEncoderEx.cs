@@ -162,6 +162,10 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa {
         /// <returns></returns>
         public static FilterOperand Decode(this IVariantEncoder encoder,
             FilterOperandModel model, bool onlySimpleAttributeOperands = false) {
+            if (encoder is null) {
+                throw new ArgumentNullException(nameof(encoder));
+            }
+
             if (model == null) {
                 return null;
             }
@@ -180,7 +184,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa {
                     Alias = model.Alias,
                     NodeId = model.NodeId.ToNodeId(encoder.Context),
                     AttributeId = (uint)(model.AttributeId ?? NodeAttribute.Value),
-                    BrowsePath = model.BrowsePath.ToRelativePath(encoder.Context),
+                    BrowsePath = model.BrowsePath.ToArray().ToRelativePath(encoder.Context),
                     IndexRange = model.IndexRange
                 };
             }

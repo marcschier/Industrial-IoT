@@ -3,7 +3,7 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Http.Default {
+namespace Microsoft.Azure.IIoT.Http.Clients {
     using Microsoft.Azure.IIoT.Utils;
     using System;
     using System.Collections.Generic;
@@ -68,7 +68,7 @@ namespace Microsoft.Azure.IIoT.Http.Default {
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        private byte[] GetRequestBuffer(HttpRequestMessage request) {
+        private static byte[] GetRequestBuffer(HttpRequestMessage request) {
             if (request == null) {
                 throw new ArgumentNullException(nameof(request));
             }
@@ -116,7 +116,7 @@ namespace Microsoft.Azure.IIoT.Http.Default {
         /// <param name="bufferedStream"></param>
         /// <param name="ct"></param>
         /// <returns></returns>
-        private async Task<HttpResponseMessage> ReadResponseAsync(
+        private static async Task<HttpResponseMessage> ReadResponseAsync(
             HttpLineReader bufferedStream, CancellationToken ct) {
             var response = new HttpResponseMessage();
 

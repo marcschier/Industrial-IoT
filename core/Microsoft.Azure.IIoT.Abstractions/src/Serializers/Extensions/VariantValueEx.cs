@@ -29,7 +29,8 @@ namespace Microsoft.Azure.IIoT.Serializers {
         /// <param name="key"></param>
         /// <param name="defaultValue"></param>
         /// <returns></returns>
-        public static T GetValueOrDefault<T>(this Dictionary<string, VariantValue> dict,
+        public static T GetValueOrDefault<T>(
+            this IReadOnlyDictionary<string, VariantValue> dict,
             string key, T defaultValue) {
             if (dict != null && dict.TryGetValue(key, out var token) && token != null) {
                 try {
@@ -50,7 +51,8 @@ namespace Microsoft.Azure.IIoT.Serializers {
         /// <param name="key"></param>
         /// <param name="defaultValue"></param>
         /// <returns></returns>
-        public static T? GetValueOrDefault<T>(this Dictionary<string, VariantValue> dict,
+        public static T? GetValueOrDefault<T>(
+            this IReadOnlyDictionary<string, VariantValue> dict,
             string key, T? defaultValue) where T : struct {
             if (dict != null && dict.TryGetValue(key, out var token) && token != null) {
                 try {
@@ -108,15 +110,18 @@ namespace Microsoft.Azure.IIoT.Serializers {
         public static T GetValueOrDefault<T>(this VariantValue t,
             string key, Func<T> defaultValue,
             StringComparison compare = StringComparison.Ordinal) {
-            if (t.IsObject &&
-                t.TryGetProperty(key, out var value, compare) &&
-                !(value is null)) {
-                try {
-                    return value.ConvertTo<T>();
+            if (!IsNull(t)) {
+                if (t.IsObject && t.TryGetProperty(key, out var value, compare) &&
+                    !(value is null)) {
+                    try {
+                        return value.ConvertTo<T>();
+                    }
+                    catch {
+                    }
                 }
-                catch {
-                    return defaultValue();
-                }
+            }
+            if (defaultValue == null) {
+                return default;
             }
             return defaultValue();
         }
@@ -148,23 +153,23 @@ namespace Microsoft.Azure.IIoT.Serializers {
         public static T? GetValueOrDefault<T>(this VariantValue t,
             string key, Func<T?> defaultValue,
             StringComparison compare = StringComparison.Ordinal) where T : struct {
-            if (t.IsObject &&
-                t.TryGetProperty(key, out var value, compare) &&
-                !(value is null)) {
-                try {
-                    // Handle enumerations serialized as string
-                    if (typeof(T).IsEnum &&
-                        value.IsString &&
-                        Enum.TryParse<T>((string)value, out var result)) {
-                        return result;
+            if (!IsNull(t)) {
+                if (t.IsObject && t.TryGetProperty(key, out var value, compare) &&
+                    !(value is null)) {
+                    try {
+                        // Handle enumerations serialized as string
+                        if (typeof(T).IsEnum &&
+                            value.IsString &&
+                            Enum.TryParse<T>((string)value, out var result)) {
+                            return result;
+                        }
+                        return value.ConvertTo<T>();
                     }
-                    return value.ConvertTo<T>();
-                }
-                catch {
-                    return defaultValue();
+                    catch {
+                    }
                 }
             }
-            return defaultValue();
+            return defaultValue?.Invoke();
         }
 
         /// <summary>
@@ -173,6 +178,9 @@ namespace Microsoft.Azure.IIoT.Serializers {
         /// <param name="value"></param>
         /// <returns></returns>
         public static string SanitizePropertyName(string value) {
+            if (string.IsNullOrEmpty(value)) {
+                return string.Empty;
+            }
             var chars = new char[value.Length];
             for (var i = 0; i < value.Length; i++) {
                 chars[i] = !char.IsLetterOrDigit(value[i]) ? '_' : value[i];

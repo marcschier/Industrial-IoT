@@ -121,8 +121,8 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge {
                         _encoder.Context.UpdateFromSession(session);
                         var nodeId = _nodeId.ToNodeId(session.MessageContext);
                         return await RawNodeModel.ReadAsync(session, null,
-                            nodeId, true, _diagnostics, false);
-                    });
+                            nodeId, true, _diagnostics, false).ConfigureAwait(false);
+                    }).ConfigureAwait(false);
 
                 if (node.EventNotifier.HasValue &&
                     (node.EventNotifier.Value &
@@ -147,10 +147,10 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge {
             _logger.Verbose("Writing history for {nodeId}...", _nodeId);
             var sw = System.Diagnostics.Stopwatch.StartNew();
             if (eventSource) {
-                await EncodeHistoricEventsAsync(ct);
+                await EncodeHistoricEventsAsync(ct).ConfigureAwait(false);
             }
             else {
-                await EncodeHistoricValuesAsync(ct);
+                await EncodeHistoricValuesAsync(ct).ConfigureAwait(false);
             }
             _logger.Debug("Wrote {count} items for {nodeId} in {elapsed}.",
                 _count, _nodeId, sw.Elapsed);
@@ -181,7 +181,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge {
             while (true) {
                 ct.ThrowIfCancellationRequested();
                 try {
-                    var result = await ReadHistoryAsync<HistoryData>(details, ct);
+                    var result = await ReadHistoryAsync<HistoryData>(details, ct).ConfigureAwait(false);
                     if (result.history?.DataValues != null) {
                         _logger.Verbose("  {count} values...",
                             result.history.DataValues.Count);
@@ -209,7 +209,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge {
                 // Continue reading history
                 ct.ThrowIfCancellationRequested();
                 var result = await ReadHistoryAsync<HistoryData>(details, ct,
-                    continuationToken);
+                    continuationToken).ConfigureAwait(false);
                 if (result.history?.DataValues != null) {
                     _logger.Verbose("+ {count} values...",
                         result.history.DataValues.Count);
@@ -230,7 +230,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge {
         private async Task EncodeHistoricEventsAsync(CancellationToken ct) {
             EventFilter filter = null;
             try {
-                filter = await ReadEventFilterAsync(ct);
+                filter = await ReadEventFilterAsync(ct).ConfigureAwait(false);
             }
             catch (Exception ex) {
                 _logger.Error(ex, "Failed to retrieve event filter for {nodeId}", _nodeId);
@@ -258,7 +258,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge {
             while (true) {
                 ct.ThrowIfCancellationRequested();
                 try {
-                    var result = await ReadHistoryAsync<HistoryEvent>(details, ct);
+                    var result = await ReadHistoryAsync<HistoryEvent>(details, ct).ConfigureAwait(false);
                     if (result.history?.Events != null) {
                         _logger.Verbose("  {count} events...",
                             result.history.Events.Count);
@@ -284,7 +284,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge {
                 // Continue reading history
                 ct.ThrowIfCancellationRequested();
                 var result = await ReadHistoryAsync<HistoryEvent>(details, ct,
-                    continuationToken);
+                    continuationToken).ConfigureAwait(false);
                 if (result.history?.Events != null) {
                     _logger.Verbose("+ {count} events...",
                         result.history.Events.Count);
@@ -320,12 +320,12 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge {
                                 RelativePath = new RelativePath(
                                     BrowseNames.HistoricalEventFilter)
                             }
-                    });
+                    }).ConfigureAwait(false);
                     if (!filterNode.Results.Any() || !filterNode.Results[0].Targets.Any()) {
                         return null;
                     }
                     var read = await RawNodeModel.ReadValueAsync(session, null,
-                        (NodeId)filterNode.Results[0].Targets[0].TargetId, _diagnostics, false);
+                        (NodeId)filterNode.Results[0].Targets[0].TargetId, _diagnostics, false).ConfigureAwait(false);
                     if (ExtensionObject.ToEncodeable(read.Value.Value as ExtensionObject)
                         is EventFilter eventFilter) {
                         return eventFilter;
@@ -355,7 +355,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge {
                                 NodeId = nodeId,
                                 ContinuationPoint = continuationToken
                             }
-                        });
+                        }).ConfigureAwait(false);
                     SessionClientEx.Validate(response.Results, response.DiagnosticInfos);
                     OperationResultEx.Validate("HistoryRead_" + nodeId, _diagnostics,
                         response.Results.Select(r => r.StatusCode), null, false);

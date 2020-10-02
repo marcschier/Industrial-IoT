@@ -34,7 +34,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Storage {
             if (relationship == null) {
                 throw new ArgumentNullException(nameof(relationship));
             }
-            var result = await _relationships.AddAsync(relationship.ToDocumentModel(),ct);
+            var result = await _relationships.AddAsync(relationship.ToDocumentModel(), ct: ct).ConfigureAwait(false);
             return result.Value.ToServiceModel();
         }
 
@@ -47,7 +47,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Storage {
             var query = CreateQuery(_relationships.CreateQuery<TrustDocument>(), 
                 subjectId, direction, objectId);
             await query.ForEachAsync(
-                d => _relationships.DeleteAsync<TrustDocument>(d.Id, ct), ct);
+                d => _relationships.DeleteAsync<TrustDocument>(d.Id, ct: ct), ct).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
@@ -65,7 +65,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Storage {
                     entityId, direction, null);
 
             // Read results
-            var results = await query.ReadAsync(ct);
+            var results = await query.ReadAsync(ct).ConfigureAwait(false);
             return new TrustRelationshipListModel {
                 Relationships = results.Select(r => r.Value.ToServiceModel()).ToList(),
                 NextPageLink = query.ContinuationToken

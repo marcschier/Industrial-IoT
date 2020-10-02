@@ -3,7 +3,7 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Platform.Publisher.Storage.Default {
+namespace Microsoft.Azure.IIoT.Platform.Publisher.Storage.Services {
     using Microsoft.Azure.IIoT.Platform.Publisher.Models;
     using Microsoft.Azure.IIoT.Exceptions;
     using Microsoft.Azure.IIoT.Storage;
@@ -24,6 +24,12 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Storage.Default {
         /// <param name="databaseServer"></param>
         /// <param name="config"></param>
         public DataSetWriterDatabase(IDatabaseServer databaseServer, IItemContainerConfig config) {
+            if (databaseServer is null) {
+                throw new ArgumentNullException(nameof(databaseServer));
+            }
+            if (config is null) {
+                throw new ArgumentNullException(nameof(config));
+            }
             var dbs = databaseServer.OpenAsync(config.DatabaseName).Result;
             _documents = dbs.OpenContainerAsync(config.ContainerName ?? "publisher").Result;
         }
@@ -38,7 +44,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Storage.Default {
             while (true) {
                 if (!string.IsNullOrEmpty(writer.DataSetWriterId)) {
                     var document = await _documents.FindAsync<DataSetWriterDocument>(
-                        writer.DataSetWriterId, ct);
+                        writer.DataSetWriterId, ct: ct).ConfigureAwait(false);
                     if (document != null) {
                         throw new ResourceConflictException(
                             $"Dataset Writer {writer.DataSetWriterId} already exists.");
@@ -48,7 +54,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Storage.Default {
                     writer.DataSetWriterId = Guid.NewGuid().ToString();
                 }
                 try {
-                    var result = await _documents.AddAsync(writer.ToDocumentModel(), ct);
+                    var result = await _documents.AddAsync(writer.ToDocumentModel(), ct: ct).ConfigureAwait(false);
                     return result.Value.ToFrameworkModel();
                 }
                 catch (ResourceConflictException) {
@@ -69,9 +75,9 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Storage.Default {
                 throw new ArgumentNullException(nameof(writerId));
             }
             while (true) {
-                var document = await _documents.FindAsync<DataSetWriterDocument>(writerId, ct);
+                var document = await _documents.FindAsync<DataSetWriterDocument>(writerId, ct: ct).ConfigureAwait(false);
                 var updateOrAdd = document?.Value.ToFrameworkModel();
-                var writer = await predicate(updateOrAdd);
+                var writer = await predicate(updateOrAdd).ConfigureAwait(false);
                 if (writer == null) {
                     return updateOrAdd;
                 }
@@ -80,7 +86,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Storage.Default {
                 if (document == null) {
                     try {
                         // Add document
-                        var result = await _documents.AddAsync(updated, ct);
+                        var result = await _documents.AddAsync(updated, ct: ct).ConfigureAwait(false);
                         return result.Value.ToFrameworkModel();
                     }
                     catch (ResourceConflictException) {
@@ -90,7 +96,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Storage.Default {
                 }
                 // Try replacing
                 try {
-                    var result = await _documents.ReplaceAsync(document, updated, ct);
+                    var result = await _documents.ReplaceAsync(document, updated, ct: ct).ConfigureAwait(false);
                     return result.Value.ToFrameworkModel();
                 }
                 catch (ResourceOutOfDateException) {
@@ -107,18 +113,18 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Storage.Default {
                 throw new ArgumentNullException(nameof(writerId));
             }
             while (true) {
-                var document = await _documents.FindAsync<DataSetWriterDocument>(writerId, ct);
+                var document = await _documents.FindAsync<DataSetWriterDocument>(writerId, ct: ct).ConfigureAwait(false);
                 if (document == null) {
                     throw new ResourceNotFoundException("Dataset Writer not found");
                 }
                 var writer = document.Value.ToFrameworkModel();
-                if (!await predicate(writer)) {
+                if (!await predicate(writer).ConfigureAwait(false)) {
                     return writer;
                 }
                 writer.DataSetWriterId = writerId;
                 var updated = writer.ToDocumentModel();
                 try {
-                    var result = await _documents.ReplaceAsync(document, updated, ct);
+                    var result = await _documents.ReplaceAsync(document, updated, ct: ct).ConfigureAwait(false);
                     return result.Value.ToFrameworkModel();
                 }
                 catch (ResourceOutOfDateException) {
@@ -132,7 +138,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Storage.Default {
             if (string.IsNullOrEmpty(writerId)) {
                 throw new ArgumentNullException(nameof(writerId));
             }
-            var document = await _documents.FindAsync<DataSetWriterDocument>(writerId, ct);
+            var document = await _documents.FindAsync<DataSetWriterDocument>(writerId, ct: ct).ConfigureAwait(false);
             if (document == null) {
                 return null;
             }
@@ -150,7 +156,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Storage.Default {
                     DataSetWriters = new List<DataSetWriterInfoModel>()
                 };
             }
-            var documents = await results.ReadAsync(ct);
+            var documents = await results.ReadAsync(ct).ConfigureAwait(false);
             return new DataSetWriterInfoListModel {
                 ContinuationToken = results.ContinuationToken,
                 DataSetWriters = documents.Select(r => r.Value.ToFrameworkModel()).ToList()
@@ -165,16 +171,16 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Storage.Default {
             }
             while (true) {
                 var document = await _documents.FindAsync<DataSetWriterDocument>(
-                    writerId);
+                    writerId).ConfigureAwait(false);
                 if (document == null) {
                     return null;
                 }
                 var writer = document.Value.ToFrameworkModel();
-                if (!await predicate(writer)) {
+                if (!await predicate(writer).ConfigureAwait(false)) {
                     return writer;
                 }
                 try {
-                    await _documents.DeleteAsync(document, ct);
+                    await _documents.DeleteAsync(document, ct: ct).ConfigureAwait(false);
                 }
                 catch (ResourceOutOfDateException) {
                     continue;
@@ -192,7 +198,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Storage.Default {
             if (string.IsNullOrEmpty(generationId)) {
                 throw new ArgumentNullException(nameof(generationId));
             }
-            await _documents.DeleteAsync<DataSetWriterDocument>(writerId, ct, null, generationId);
+            await _documents.DeleteAsync<DataSetWriterDocument>(writerId, null, generationId, ct).ConfigureAwait(false);
         }
 
         /// <summary>

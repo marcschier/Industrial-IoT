@@ -49,7 +49,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Services {
                 throw new ArgumentNullException(nameof(request.GroupId));
             }
 
-            var entity = await _entities.FindEntityAsync(request.EntityId);
+            var entity = await _entities.FindEntityAsync(request.EntityId).ConfigureAwait(false);
             if (entity == null) {
                 throw new ResourceNotFoundException("Entity not found");
             }
@@ -99,10 +99,10 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Services {
                 },
                 Entity = entity.Validate(),
                 SigningRequest = signingRequest
-            }, ct);
+            }, ct).ConfigureAwait(false);
 
             await _broker.NotifyAllAsync(
-                l => l.OnCertificateRequestSubmittedAsync(result));
+                l => l.OnCertificateRequestSubmittedAsync(result)).ConfigureAwait(false);
             _logger.Information("New signing request submitted.");
             return new StartSigningRequestResultModel {
                 RequestId = result.Record.RequestId
@@ -115,12 +115,12 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Services {
             if (string.IsNullOrEmpty(requestId)) {
                 throw new ArgumentNullException(nameof(requestId));
             }
-            var request = await _repo.FindAsync(requestId, ct);
+            var request = await _repo.FindAsync(requestId, ct).ConfigureAwait(false);
             if (request == null) {
                 throw new ResourceNotFoundException("Request not found");
             }
             try {
-                var entity = await _entities.FindEntityAsync(request.Entity.Id);
+                var entity = await _entities.FindEntityAsync(request.Entity.Id).ConfigureAwait(false);
                 if (entity != null) {
                     throw new ResourceInvalidStateException("Entity removed.");
                 }
@@ -138,7 +138,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Services {
                 if (request.Record.State == CertificateRequestState.Completed) {
                     // Accept
                     await _broker.NotifyAllAsync(
-                        l => l.OnCertificateRequestAcceptedAsync(request));
+                        l => l.OnCertificateRequestAcceptedAsync(request)).ConfigureAwait(false);
                     _logger.Information("Signing response accepted and finished.");
                 }
             }

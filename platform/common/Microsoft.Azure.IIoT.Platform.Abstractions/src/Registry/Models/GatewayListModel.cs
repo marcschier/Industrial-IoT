@@ -19,6 +19,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
         /// <summary>
         /// Edge Gateways
         /// </summary>
-        public List<GatewayModel> Items { get; set; }
+        public IReadOnlyList<GatewayModel> Items { get; set; }
     }
 }

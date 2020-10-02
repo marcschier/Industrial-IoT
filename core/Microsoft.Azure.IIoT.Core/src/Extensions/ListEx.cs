@@ -49,5 +49,23 @@ namespace System.Collections.Generic {
                 list.Add(item);
             }
         }
+
+        /// <summary>
+        /// Foreach for list
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="list"></param>
+        /// <param name="predicate"></param>
+        public static void ForEach<T>(this IReadOnlyList<T> list, Action<T> predicate) {
+            if (list == null) {
+                throw new ArgumentNullException(nameof(list));
+            }
+            if (predicate == null) {
+                throw new ArgumentNullException(nameof(predicate));
+            }
+            foreach (var item in list) {
+                predicate(item);
+            }
+        }
     }
 }

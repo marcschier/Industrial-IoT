@@ -3,7 +3,7 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Crypto.Default {
+namespace Microsoft.Azure.IIoT.Crypto.Services {
     using Microsoft.Azure.IIoT.Crypto.Models;
     using Microsoft.Azure.IIoT.Utils;
     using Serilog;
@@ -39,7 +39,7 @@ namespace Microsoft.Azure.IIoT.Crypto.Default {
         public async Task<Certificate> NewIssuerCertificateAsync(string rootCertificate,
             string certificateName, X500DistinguishedName subjectName, DateTime? notBefore,
             CreateKeyParams keyParams, IssuerPolicies policies,
-            Func<byte[], IEnumerable<X509Extension>> extensions,
+            Func<IReadOnlyCollection<byte>, IEnumerable<X509Extension>> extensions,
             CancellationToken ct) {
 
             if (string.IsNullOrEmpty(certificateName)) {
@@ -47,7 +47,7 @@ namespace Microsoft.Azure.IIoT.Crypto.Default {
             }
 
             // Get CA certificate
-            var caCertificate = await _store.FindLatestCertificateAsync(rootCertificate, ct);
+            var caCertificate = await _store.FindLatestCertificateAsync(rootCertificate, ct).ConfigureAwait(false);
             if (caCertificate.IssuerPolicies == null) {
                 throw new ArgumentException("root certificate is not an issuer");
             }
@@ -59,28 +59,28 @@ namespace Microsoft.Azure.IIoT.Crypto.Default {
             var keyHandle = await _keys.CreateKeyAsync(Guid.NewGuid().ToString(),
                 keyParams, new KeyStoreProperties {
                     Exportable = false
-                }, ct);
+                }, ct).ConfigureAwait(false);
             try {
                 // Get public key for the key
-                var publicKey = await _keys.GetPublicKeyAsync(keyHandle, ct);
+                var publicKey = await _keys.GetPublicKeyAsync(keyHandle, ct).ConfigureAwait(false);
 
                 var signedcert = await _factory.CreateCertificateAsync(_keys, caCertificate,
                     subjectName, publicKey,
                     GetNotAfter(notBefore, caCertificate.IssuerPolicies.IssuedLifetime.Value,
                         caCertificate.NotAfterUtc, out var notAfter),
                     notAfter,
-                    caCertificate.IssuerPolicies.SignatureType.Value, true, extensions, ct);
+                    caCertificate.IssuerPolicies.SignatureType.Value, true, extensions, ct).ConfigureAwait(false);
 
                 using (signedcert) {
                     // Import new issued certificate
                     var result = signedcert.ToCertificate(policies, keyHandle);
-                    await _repo.AddCertificateAsync(certificateName, result, null, ct);
+                    await _repo.AddCertificateAsync(certificateName, result, null, ct).ConfigureAwait(false);
                     return result;
                 }
             }
             catch (Exception ex) {
                 _logger.Verbose(ex, "Failed to add certificate, delete key");
-                await Try.Async(() => _keys.DeleteKeyAsync(keyHandle, ct));
+                await Try.Async(() => _keys.DeleteKeyAsync(keyHandle, ct)).ConfigureAwait(false);
                 throw;
             }
         }
@@ -89,7 +89,7 @@ namespace Microsoft.Azure.IIoT.Crypto.Default {
         public async Task<Certificate> NewRootCertificateAsync(string certificateName,
             X500DistinguishedName subjectName, DateTime? notBefore, TimeSpan lifetime,
             CreateKeyParams keyParams, IssuerPolicies policies,
-            Func<byte[], IEnumerable<X509Extension>> extensions,
+            Func<IReadOnlyCollection<byte>, IEnumerable<X509Extension>> extensions,
             CancellationToken ct) {
 
             if (string.IsNullOrEmpty(certificateName)) {
@@ -103,26 +103,26 @@ namespace Microsoft.Azure.IIoT.Crypto.Default {
             var keyHandle = await _keys.CreateKeyAsync(Guid.NewGuid().ToString(), keyParams,
                 new KeyStoreProperties {
                     Exportable = false
-                }, ct);
+                }, ct).ConfigureAwait(false);
             try {
                 // Get public key
-                var publicKey = await _keys.GetPublicKeyAsync(keyHandle, ct);
+                var publicKey = await _keys.GetPublicKeyAsync(keyHandle, ct).ConfigureAwait(false);
 
                 // Create certificate
                 var certificate = await _factory.CreateCertificateAsync(_keys, keyHandle,
                     subjectName, publicKey,
                     GetNotAfter(notBefore, lifetime, DateTime.MaxValue, out var notAfter),
-                    notAfter, policies.SignatureType.Value, true, extensions, ct);
+                    notAfter, policies.SignatureType.Value, true, extensions, ct).ConfigureAwait(false);
                 using (certificate) {
                     // Import certificate
                     var result = certificate.ToCertificate(policies, keyHandle);
-                    await _repo.AddCertificateAsync(certificateName, result, null, ct);
+                    await _repo.AddCertificateAsync(certificateName, result, null, ct).ConfigureAwait(false);
                     return result;
                 }
             }
             catch (Exception ex) {
                 _logger.Verbose(ex, "Failed to add certificate, delete key");
-                await Try.Async(() => _keys.DeleteKeyAsync(keyHandle, ct));
+                await Try.Async(() => _keys.DeleteKeyAsync(keyHandle, ct)).ConfigureAwait(false);
                 throw;
             }
         }
@@ -130,7 +130,7 @@ namespace Microsoft.Azure.IIoT.Crypto.Default {
         /// <inheritdoc/>
         public async Task<Certificate> CreateSignedCertificateAsync(string rootCertificate,
             string certificateName, Key publicKey, X500DistinguishedName subjectName,
-            DateTime? notBefore, Func<byte[], IEnumerable<X509Extension>> extensions,
+            DateTime? notBefore, Func<IReadOnlyCollection<byte>, IEnumerable<X509Extension>> extensions,
             CancellationToken ct) {
 
             if (string.IsNullOrEmpty(certificateName)) {
@@ -141,7 +141,7 @@ namespace Microsoft.Azure.IIoT.Crypto.Default {
             }
 
             // Get CA certificate
-            var caCertificate = await _store.FindLatestCertificateAsync(rootCertificate, ct);
+            var caCertificate = await _store.FindLatestCertificateAsync(rootCertificate, ct).ConfigureAwait(false);
             if (caCertificate.IssuerPolicies == null) {
                 throw new ArgumentException("Specified isseur certificate is not an issuer");
             }
@@ -151,18 +151,18 @@ namespace Microsoft.Azure.IIoT.Crypto.Default {
                 GetNotAfter(notBefore, caCertificate.IssuerPolicies.IssuedLifetime.Value,
                     caCertificate.NotAfterUtc, out var notAfter),
                 notAfter,
-                caCertificate.IssuerPolicies.SignatureType.Value, false, extensions, ct);
+                caCertificate.IssuerPolicies.SignatureType.Value, false, extensions, ct).ConfigureAwait(false);
 
             // Import new issued certificate
             var result = signedcert.ToCertificate();
-            await _repo.AddCertificateAsync(certificateName, result, null, ct);
+            await _repo.AddCertificateAsync(certificateName, result, null, ct).ConfigureAwait(false);
             return result;
         }
 
         /// <inheritdoc/>
         public async Task<Certificate> CreateCertificateAndPrivateKeyAsync(string rootCertificate,
             string certificateName, X500DistinguishedName subjectName, DateTime? notBefore,
-            CreateKeyParams keyParams, Func<byte[], IEnumerable<X509Extension>> extensions,
+            CreateKeyParams keyParams, Func<IReadOnlyCollection<byte>, IEnumerable<X509Extension>> extensions,
             CancellationToken ct) {
 
             if (string.IsNullOrEmpty(certificateName)) {
@@ -170,7 +170,7 @@ namespace Microsoft.Azure.IIoT.Crypto.Default {
             }
 
             // Get CA certificate
-            var caCertificate = await _store.FindLatestCertificateAsync(rootCertificate, ct);
+            var caCertificate = await _store.FindLatestCertificateAsync(rootCertificate, ct).ConfigureAwait(false);
             if (caCertificate.IssuerPolicies == null) {
                 throw new ArgumentException("Specified issuer certificate is not an issuer");
             }
@@ -179,10 +179,10 @@ namespace Microsoft.Azure.IIoT.Crypto.Default {
             var keyHandle = await _keys.CreateKeyAsync(Guid.NewGuid().ToString(),
                 keyParams, new KeyStoreProperties {
                     Exportable = true
-                }, ct);
+                }, ct).ConfigureAwait(false);
             try {
                 // Get public key for the key
-                var publicKey = await _keys.GetPublicKeyAsync(keyHandle, ct);
+                var publicKey = await _keys.GetPublicKeyAsync(keyHandle, ct).ConfigureAwait(false);
 
                 // create new signed cert
                 var signedcert = await _factory.CreateCertificateAsync(_keys, caCertificate,
@@ -190,17 +190,17 @@ namespace Microsoft.Azure.IIoT.Crypto.Default {
                     GetNotAfter(notBefore, caCertificate.IssuerPolicies.IssuedLifetime.Value,
                         caCertificate.NotAfterUtc, out var notAfter),
                     notAfter,
-                    caCertificate.IssuerPolicies.SignatureType.Value, false, extensions, ct);
+                    caCertificate.IssuerPolicies.SignatureType.Value, false, extensions, ct).ConfigureAwait(false);
                 using (signedcert) {
                     // Import new issued certificate
                     var result = signedcert.ToCertificate(null, keyHandle);
-                    await _repo.AddCertificateAsync(certificateName, result, null, ct);
+                    await _repo.AddCertificateAsync(certificateName, result, null, ct).ConfigureAwait(false);
                     return result;
                 }
             }
             catch (Exception ex) {
                 _logger.Verbose(ex, "Failed to add certificate, delete key");
-                await Try.Async(() => _keys.DeleteKeyAsync(keyHandle, ct));
+                await Try.Async(() => _keys.DeleteKeyAsync(keyHandle, ct)).ConfigureAwait(false);
                 throw;
             }
         }
@@ -210,14 +210,14 @@ namespace Microsoft.Azure.IIoT.Crypto.Default {
             Certificate certificate, Key privateKey, CancellationToken ct) {
 
             if (certificate == null) {
-                throw new ArgumentException(nameof(certificate));
+                throw new ArgumentNullException(nameof(certificate));
             }
             certificate = certificate.Clone();
             certificate.KeyHandle = null;
             if (privateKey != null) {
                 // Store key
                 certificate.KeyHandle = await _keys.ImportKeyAsync(certificateName,
-                    privateKey, new KeyStoreProperties { Exportable = false }, ct);
+                    privateKey, new KeyStoreProperties { Exportable = false }, ct).ConfigureAwait(false);
             }
             else {
                 // Cannot issue certificates without private key
@@ -225,13 +225,13 @@ namespace Microsoft.Azure.IIoT.Crypto.Default {
             }
             try {
                 // Import certificate and optionally key handle
-                await _repo.AddCertificateAsync(certificateName, certificate, null, ct);
+                await _repo.AddCertificateAsync(certificateName, certificate, null, ct).ConfigureAwait(false);
                 return certificate;
             }
             catch (Exception ex) {
                 if (certificate.KeyHandle != null) {
                     _logger.Error(ex, "Failed to add certificate, delete key");
-                    await Try.Async(() => _keys.DeleteKeyAsync(certificate.KeyHandle, ct));
+                    await Try.Async(() => _keys.DeleteKeyAsync(certificate.KeyHandle, ct)).ConfigureAwait(false);
                 }
                 throw;
             }
@@ -240,13 +240,13 @@ namespace Microsoft.Azure.IIoT.Crypto.Default {
         /// <inheritdoc/>
         public async Task DisableCertificateAsync(Certificate certificate,
             CancellationToken ct) {
-            var id = await _repo.DisableCertificateAsync(certificate, ct);
+            var id = await _repo.DisableCertificateAsync(certificate, ct).ConfigureAwait(false);
             try {
-                var cert = await _repo.FindCertificateAsync(id);
+                var cert = await _repo.FindCertificateAsync(id).ConfigureAwait(false);
                 if (cert == null) {
                     return;
                 }
-                await _keys.DisableKeyAsync(cert.KeyHandle, ct);
+                await _keys.DisableKeyAsync(cert.KeyHandle, ct).ConfigureAwait(false);
             }
             catch (Exception ex) {
                 _logger.Error(ex, "Failed to disable key - but continue...");
@@ -264,8 +264,7 @@ namespace Microsoft.Azure.IIoT.Crypto.Default {
         private static DateTime GetNotAfter(
             DateTime? notBefore, TimeSpan lifetime,
             DateTime maxNotAfter, out DateTime notAfter) {
-            var now = DateTime.UtcNow;
-            notBefore = notBefore ?? now;
+            notBefore ??= DateTime.UtcNow;
             notAfter = notBefore.Value + lifetime;
             if (notAfter > maxNotAfter) {
                 notAfter = maxNotAfter;

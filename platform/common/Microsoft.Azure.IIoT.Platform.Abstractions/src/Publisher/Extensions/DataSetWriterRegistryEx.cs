@@ -25,11 +25,11 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher {
             this IDataSetWriterRegistry service, DataSetWriterInfoQueryModel query,
             CancellationToken ct = default) {
             var registrations = new List<DataSetWriterInfoModel>();
-            var result = await service.QueryDataSetWritersAsync(query, null, ct);
+            var result = await service.QueryDataSetWritersAsync(query, null, ct).ConfigureAwait(false);
             registrations.AddRange(result.DataSetWriters);
             while (result.ContinuationToken != null) {
                 result = await service.ListDataSetWritersAsync(result.ContinuationToken,
-                    null, ct);
+                    null, ct).ConfigureAwait(false);
                 registrations.AddRange(result.DataSetWriters);
             }
             return registrations;
@@ -44,11 +44,11 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher {
         public static async Task<List<DataSetWriterInfoModel>> ListAllDataSetWritersAsync(
             this IDataSetWriterRegistry service, CancellationToken ct = default) {
             var registrations = new List<DataSetWriterInfoModel>();
-            var result = await service.ListDataSetWritersAsync(null, null, ct);
+            var result = await service.ListDataSetWritersAsync(null, null, ct).ConfigureAwait(false);
             registrations.AddRange(result.DataSetWriters);
             while (result.ContinuationToken != null) {
                 result = await service.ListDataSetWritersAsync(result.ContinuationToken,
-                    null, ct);
+                    null, ct).ConfigureAwait(false);
                 registrations.AddRange(result.DataSetWriters);
             }
             return registrations;
@@ -66,11 +66,11 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher {
             this IDataSetWriterRegistry service, string dataSetWriterId,
             PublishedDataSetVariableQueryModel query, CancellationToken ct = default) {
             var registrations = new List<PublishedDataSetVariableModel>();
-            var result = await service.QueryDataSetVariablesAsync(dataSetWriterId, query, null, ct);
+            var result = await service.QueryDataSetVariablesAsync(dataSetWriterId, query, null, ct).ConfigureAwait(false);
             registrations.AddRange(result.Variables);
             while (result.ContinuationToken != null) {
                 result = await service.ListDataSetVariablesAsync(dataSetWriterId, result.ContinuationToken,
-                    null, ct);
+                    null, ct).ConfigureAwait(false);
                 registrations.AddRange(result.Variables);
             }
             return registrations;
@@ -86,11 +86,11 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher {
         public static async Task<List<PublishedDataSetVariableModel>> ListAllDataSetVariablesAsync(
             this IDataSetWriterRegistry service, string dataSetWriterId, CancellationToken ct = default) {
             var registrations = new List<PublishedDataSetVariableModel>();
-            var result = await service.ListDataSetVariablesAsync(dataSetWriterId, null, null, ct);
+            var result = await service.ListDataSetVariablesAsync(dataSetWriterId, null, null, ct).ConfigureAwait(false);
             registrations.AddRange(result.Variables);
             while (result.ContinuationToken != null) {
                 result = await service.ListDataSetVariablesAsync(dataSetWriterId,
-                    result.ContinuationToken, null, ct);
+                    result.ContinuationToken, null, ct).ConfigureAwait(false);
                 registrations.AddRange(result.Variables);
             }
             return registrations;

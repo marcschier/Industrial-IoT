@@ -5,6 +5,7 @@
 
 namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Models {
     using Microsoft.Azure.IIoT.Platform.Core.Api.Models;
+    using System.Collections.Generic;
     using System.Runtime.Serialization;
 
     /// <summary>
@@ -26,7 +27,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Models {
         /// </summary>
         [DataMember(Name = "browsePath", Order = 1,
             EmitDefaultValue = false)]
-        public string[] BrowsePath { get; set; }
+        public IReadOnlyList<string> BrowsePath { get; set; }
 
         /// <summary>
         /// Index range to read, e.g. 1:2,0:1 for 2 slices

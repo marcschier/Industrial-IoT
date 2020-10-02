@@ -45,9 +45,9 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Services {
                         throw new ResourceInvalidStateException(
                             $"Request in the wrong state ({request.Record.State}.");
                 }
-            }, ct);
+            }, ct).ConfigureAwait(false);
             await _broker.NotifyAllAsync(
-                l => l.OnCertificateRequestApprovedAsync(result));
+                l => l.OnCertificateRequestApprovedAsync(result)).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
@@ -65,9 +65,9 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Services {
                         throw new ResourceInvalidStateException(
                             $"Request in the wrong state ({request.Record.State}.");
                 }
-            }, ct);
+            }, ct).ConfigureAwait(false);
             await _broker.NotifyAllAsync(
-                l => l.OnCertificateRequestCompletedAsync(result));
+                l => l.OnCertificateRequestCompletedAsync(result)).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
@@ -89,9 +89,9 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Services {
                         throw new ResourceInvalidStateException(
                             $"Request in the wrong state ({request.Record.State}.");
                 }
-            }, ct);
+            }, ct).ConfigureAwait(false);
             await _broker.NotifyAllAsync(
-                l => l.OnCertificateRequestAcceptedAsync(result));
+                l => l.OnCertificateRequestAcceptedAsync(result)).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
@@ -110,9 +110,9 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Services {
                         throw new ResourceInvalidStateException(
                             $"Request in the wrong state ({request.Record.State}.");
                 }
-            }, ct);
+            }, ct).ConfigureAwait(false);
             await _broker.NotifyAllAsync(
-                l => l.OnCertificateRequestDeletedAsync(result));
+                l => l.OnCertificateRequestDeletedAsync(result)).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
@@ -134,9 +134,9 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Services {
                         throw new ResourceInvalidStateException(
                             $"Request in the wrong state ({request.Record.State}.");
                 }
-            }, ct);
+            }, ct).ConfigureAwait(false);
             await _broker.NotifyAllAsync(
-                l => l.OnCertificateRequestCompletedAsync(result));
+                l => l.OnCertificateRequestCompletedAsync(result)).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
@@ -158,9 +158,9 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Services {
                         throw new ResourceInvalidStateException(
                             $"Request in the wrong state ({request.Record.State}.");
                 }
-            }, ct);
+            }, ct).ConfigureAwait(false);
             await _broker.NotifyAllAsync(
-                l => l.OnCertificateRequestCompletedAsync(result));
+                l => l.OnCertificateRequestCompletedAsync(result)).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
@@ -170,7 +170,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Services {
                 throw new ArgumentNullException(nameof(requestId),
                     "The request id must be provided");
             }
-            var request = await _repo.FindAsync(requestId, ct);
+            var request = await _repo.FindAsync(requestId, ct).ConfigureAwait(false);
             if (request == null) {
                 throw new ResourceNotFoundException("Request not found");
             }
@@ -181,7 +181,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Services {
         public async Task<CertificateRequestQueryResultModel> QueryRequestsAsync(
             CertificateRequestQueryRequestModel query, int? maxResults,
             CancellationToken ct) {
-            var results = await _repo.QueryAsync(query, null, maxResults, ct);
+            var results = await _repo.QueryAsync(query, null, maxResults, ct).ConfigureAwait(false);
             return new CertificateRequestQueryResultModel {
                 Requests = results.Requests.Select(r => r.Record).ToList(),
                 NextPageLink = results.NextPageLink
@@ -192,7 +192,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Services {
         public async Task<CertificateRequestQueryResultModel> ListRequestsAsync(
             string nextPageLink, int? maxResults,
             CancellationToken ct) {
-            var results = await _repo.QueryAsync(null, nextPageLink, maxResults, ct);
+            var results = await _repo.QueryAsync(null, nextPageLink, maxResults, ct).ConfigureAwait(false);
             return new CertificateRequestQueryResultModel {
                 Requests = results.Requests.Select(r => r.Record).ToList(),
                 NextPageLink = results.NextPageLink

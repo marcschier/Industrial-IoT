@@ -55,13 +55,13 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Migration {
                 .GetResults();
             // Read results
             while (query.HasMore()) {
-                var results = await query.ReadAsync();
+                var results = await query.ReadAsync().ConfigureAwait(false);
                 foreach (var document in results) {
                     var application = ToServiceModel(document.Value);
                     try {
                         application.ApplicationId =
                             ApplicationInfoModelEx.CreateApplicationId(application);
-                        await _repo.AddAsync(application);
+                        await _repo.AddAsync(application).ConfigureAwait(false);
                     }
                     catch (ResourceConflictException ex) {
                         _logger.Error(ex,
@@ -75,7 +75,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Migration {
                         continue;
                     }
                     // Force delete now
-                    await _source.DeleteAsync<Application>(document.Id);
+                    await _source.DeleteAsync<Application>(document.Id).ConfigureAwait(false);
                 }
             }
         }

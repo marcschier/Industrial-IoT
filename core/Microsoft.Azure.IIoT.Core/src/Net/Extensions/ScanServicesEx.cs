@@ -26,7 +26,7 @@ namespace Microsoft.Azure.IIoT.Net {
         public static async Task<IEnumerable<PingReply>> ScanAsync(
             this IScanServices services, NetworkClass netclass, CancellationToken ct) {
             var result = new List<PingReply>();
-            await services.ScanAsync(reply => result.Add(reply), netclass, ct);
+            await services.ScanAsync(reply => result.Add(reply), netclass, ct).ConfigureAwait(false);
             return result;
         }
 
@@ -116,7 +116,7 @@ namespace Microsoft.Azure.IIoT.Net {
         public static async Task<IEnumerable<IPEndPoint>> ScanAsync(this IScanServices services,
             IEnumerable<IPEndPoint> range, IPortProbe probe, CancellationToken ct) {
             var result = new List<IPEndPoint>();
-            await ScanAsync(services, range, ep => result.Add(ep), probe, ct);
+            await ScanAsync(services, range, ep => result.Add(ep), probe, ct).ConfigureAwait(false);
             return result;
         }
 
@@ -130,7 +130,7 @@ namespace Microsoft.Azure.IIoT.Net {
         public static async Task<IEnumerable<IPEndPoint>> ScanAsync(this IScanServices services,
             IEnumerable<IPEndPoint> range, CancellationToken ct) {
             var result = new List<IPEndPoint>();
-            await ScanAsync(services, range, ep => result.Add(ep), null, ct);
+            await ScanAsync(services, range, ep => result.Add(ep), null, ct).ConfigureAwait(false);
             return result;
         }
     }

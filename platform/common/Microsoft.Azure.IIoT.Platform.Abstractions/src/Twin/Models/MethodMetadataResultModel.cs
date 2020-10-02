@@ -20,12 +20,12 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Models {
         /// <summary>
         /// Input arguments
         /// </summary>
-        public List<MethodMetadataArgumentModel> InputArguments { get; set; }
+        public IReadOnlyList<MethodMetadataArgumentModel> InputArguments { get; set; }
 
         /// <summary>
         /// Output arguments
         /// </summary>
-        public List<MethodMetadataArgumentModel> OutputArguments { get; set; }
+        public IReadOnlyList<MethodMetadataArgumentModel> OutputArguments { get; set; }
 
         /// <summary>
         /// Service result in case of error

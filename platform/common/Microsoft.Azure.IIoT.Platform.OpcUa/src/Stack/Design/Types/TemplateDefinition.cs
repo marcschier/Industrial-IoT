@@ -43,7 +43,7 @@ namespace Opc.Ua.Design.Schema {
         /// <summary>
         /// The targets that the template should be applied to.
         /// </summary>
-        public ICollection Targets { get; set; }
+        public ICollection Targets { get; internal set; }
 
         /// <summary>
         /// The callback to call when loading the template.

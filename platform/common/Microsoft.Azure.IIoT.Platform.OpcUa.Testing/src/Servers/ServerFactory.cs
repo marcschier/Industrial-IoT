@@ -318,7 +318,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Sample {
                         }
                         _lastEventTime = DateTime.UtcNow;
                     }
-                    await Try.Async(() => Task.Delay(1000, ct));
+                    await Try.Async(() => Task.Delay(1000, ct)).ConfigureAwait(false);
                 }
             }
 

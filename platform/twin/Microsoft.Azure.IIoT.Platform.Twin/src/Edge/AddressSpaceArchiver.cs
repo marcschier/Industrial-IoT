@@ -77,7 +77,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge {
             using (var stream = _archive.GetStream("_nodes", FileMode.CreateNew))
             using (var encoder = new BrowsedNodeStreamEncoder(_client, _endpoint, stream,
                 _contentType, null, _logger, _elevation)) {
-                await encoder.EncodeAsync(ct);
+                await encoder.EncodeAsync(ct).ConfigureAwait(false);
 
                 historyNodes = encoder.HistoryNodes;
                 diagnostics.AddRange(encoder.Diagnostics);
@@ -90,7 +90,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge {
                     using (var encoder = new HistoricValueStreamEncoder(_client, _endpoint,
                         stream, _contentType, nodeId, _logger, _elevation,
                         _startTime, _endTime, _maxValues)) {
-                        await encoder.EncodeAsync(ct);
+                        await encoder.EncodeAsync(ct).ConfigureAwait(false);
                         diagnostics.AddRange(encoder.Diagnostics);
                     }
                 }

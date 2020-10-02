@@ -3,7 +3,7 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Platform.Publisher.Storage.Default {
+namespace Microsoft.Azure.IIoT.Platform.Publisher.Storage.Services {
     using Microsoft.Azure.IIoT.Platform.Publisher.Models;
     using System.Runtime.Serialization;
     using System;
@@ -81,13 +81,13 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Storage.Default {
         /// Publishing offset for uadp messages
         /// </summary>
         [DataMember]
-        public List<double> PublishingOffset { get; set; }
+        public IReadOnlyList<double> PublishingOffset { get; set; }
 
         /// <summary>
         /// Locales to use
         /// </summary>
         [DataMember]
-        public List<string> LocaleIds { get; set; }
+        public IReadOnlyList<string> LocaleIds { get; set; }
 
         /// <summary>
         /// Header layout uri

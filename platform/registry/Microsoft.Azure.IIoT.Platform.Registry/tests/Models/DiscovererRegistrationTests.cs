@@ -8,6 +8,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
     using Microsoft.Azure.IIoT.Serializers;
     using Microsoft.Azure.IIoT.Serializers.NewtonSoft;
     using AutoFixture;
+    using System.Collections.Generic;
     using System;
     using System.Linq;
     using Xunit;
@@ -85,7 +86,9 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
         public void TestEqualIsNotEqualWithDeviceModel() {
             var r1 = CreateRegistration();
             var m = r1.ToDeviceTwin(_serializer);
-            m.Properties.Desired["AddressRangesToScan"] = null;
+            var properties = m.Properties.Desired.Clone();
+            properties["AddressRangesToScan"] = null;
+            m.Properties.Desired = properties;
             var r2 = m.ToEntityRegistration();
 
             Assert.NotEqual(r1, r2);

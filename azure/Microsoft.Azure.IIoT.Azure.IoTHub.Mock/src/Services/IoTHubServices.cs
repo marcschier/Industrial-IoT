@@ -20,12 +20,13 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub.Mock {
     using System.Text;
     using System.Threading.Tasks;
     using System.Threading;
+    using System.Globalization;
 
     /// <summary>
     /// Mock device registry
     /// </summary>
-    public class IoTHubServices : IDeviceTwinServices,
-        IIoTHub, IEventProcessingHost, IHostProcess {
+    public sealed class IoTHubServices : IDeviceTwinServices,
+        IIoTHub, IEventProcessingHost, IHostProcess, IDisposable {
 
         /// <inheritdoc/>
         public string HostName { get; }
@@ -39,7 +40,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub.Mock {
             _devices.Where(d => d.Device.ModuleId != null);
 
         /// <inheritdoc/>
-        public BlockingCollection<EventMessage> Events { get; } =
+        internal BlockingCollection<EventMessage> Events { get; } =
             new BlockingCollection<EventMessage>();
 
         /// <summary>
@@ -91,6 +92,12 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub.Mock {
         }
 
         /// <inheritdoc/>
+        public void Dispose() {
+            Events.Dispose();
+            _blobs.Dispose();
+        }
+
+        /// <inheritdoc/>
         public IIoTHubConnection Connect(string deviceId, string moduleId,
             IIoTClientCallback callback) {
             var model = GetModel(deviceId, moduleId);
@@ -107,6 +114,10 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub.Mock {
         /// <inheritdoc/>
         public Task<DeviceTwinModel> CreateOrUpdateAsync(DeviceTwinModel twin, bool force,
             CancellationToken ct) {
+            if (twin is null) {
+                throw new ArgumentNullException(nameof(twin));
+            }
+
             lock (_lock) {
                 var model = GetModel(twin.Id, twin.ModuleId);
                 if (model == null) {
@@ -126,6 +137,10 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub.Mock {
         /// <inheritdoc/>
         public Task<DeviceTwinModel> PatchAsync(DeviceTwinModel twin, bool force,
             CancellationToken ct) {
+            if (twin is null) {
+                throw new ArgumentNullException(nameof(twin));
+            }
+
             lock (_lock) {
                 var model = GetModel(twin.Id, twin.ModuleId);
                 if (model == null) {
@@ -139,6 +154,10 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub.Mock {
         /// <inheritdoc/>
         public Task<MethodResultModel> CallMethodAsync(string deviceId, string moduleId,
             MethodParameterModel parameters, CancellationToken ct) {
+            if (parameters is null) {
+                throw new ArgumentNullException(nameof(parameters));
+            }
+
             lock (_lock) {
                 var model = GetModel(deviceId, moduleId);
                 if (model == null) {
@@ -216,12 +235,13 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub.Mock {
                 if (pageSize == null) {
                     pageSize = int.MaxValue;
                 }
-
-                int.TryParse(continuation, out var index);
+                if (!int.TryParse(continuation, out var index)) {
+                    index = 0;
+                }
                 var count = Math.Max(0, Math.Min(pageSize.Value, result.Count - index));
-
                 return Task.FromResult(new QueryResultModel {
-                    ContinuationToken = count >= result.Count ? null : count.ToString(),
+                    ContinuationToken = count >= result.Count ?
+                        null : count.ToString(CultureInfo.InvariantCulture),
                     Result = _serializer.FromObject(result.Skip(index).Take(count)).Values.ToList()
                 });
             }
@@ -247,7 +267,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub.Mock {
         /// <summary>
         /// Storage record for device plus twin
         /// </summary>
-        public class IoTHubDeviceModel : IIoTHubDevice, IIoTHubConnection {
+        internal class IoTHubDeviceModel : IIoTHubDevice, IIoTHubConnection {
 
             /// <summary>
             /// Device
@@ -270,7 +290,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub.Mock {
             /// <param name="outer"></param>
             /// <param name="device"></param>
             /// <param name="twin"></param>
-            public IoTHubDeviceModel(IoTHubServices outer,
+            internal IoTHubDeviceModel(IoTHubServices outer,
                 DeviceModel device, DeviceTwinModel twin) {
                 _outer = outer;
 
@@ -317,6 +337,9 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub.Mock {
             /// <inheritdoc/>
             public MethodResponse Call(string deviceId, string moduleId,
                 MethodRequest methodRequest) {
+                if (methodRequest is null) {
+                    throw new ArgumentNullException(nameof(methodRequest));
+                }
                 var response = _outer.CallMethodAsync(deviceId, moduleId,
                     new MethodParameterModel {
                         JsonPayload = methodRequest.DataAsJson,
@@ -436,7 +459,8 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub.Mock {
                     }
                     var now = DateTime.UtcNow;
                     if (twin.Status != null) {
-                        Device.Status = Twin.Status = twin.Status.ToLowerInvariant();
+                        Device.Status = Twin.Status = twin.IsConnected() == true ?
+                            "connected" : "disconnected";
                         Twin.StatusUpdatedTime = now;
                         if (Device.IsDisabled() ?? false) {
                             Connection = null;
@@ -466,32 +490,30 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub.Mock {
             /// </summary>
             /// <param name="target"></param>
             /// <param name="source"></param>
-            private Dictionary<string, VariantValue> Merge(
-                Dictionary<string, VariantValue> target,
-                Dictionary<string, VariantValue> source) {
-
-                if (source == null) {
-                    return target;
-                }
+            private static Dictionary<string, VariantValue> Merge(
+                IReadOnlyDictionary<string, VariantValue> target,
+                IReadOnlyDictionary<string, VariantValue> source) {
 
                 if (target == null) {
-                    return source;
+                    return source.ToDictionary(k => k.Key, v => v.Value);
                 }
-
-                foreach (var item in source) {
-                    if (target.ContainsKey(item.Key)) {
-                        if (VariantValueEx.IsNull(item.Value) || VariantValueEx.IsNull(item.Value)) {
-                            target.Remove(item.Key);
+                var copy = target.ToDictionary(k => k.Key, v => v.Value);
+                if (source != null) {
+                    foreach (var item in source) {
+                        if (target.ContainsKey(item.Key)) {
+                            if (VariantValueEx.IsNull(item.Value) || VariantValueEx.IsNull(item.Value)) {
+                                copy.Remove(item.Key);
+                            }
+                            else {
+                                copy[item.Key] = item.Value;
+                            }
                         }
-                        else {
-                            target[item.Key] = item.Value;
+                        else if (!VariantValueEx.IsNull(item.Value)) {
+                            copy.Add(item.Key, item.Value);
                         }
                     }
-                    else if (!VariantValueEx.IsNull(item.Value)) {
-                        target.Add(item.Key, item.Value);
-                    }
                 }
-                return target;
+                return copy;
             }
 
             private readonly IoTHubServices _outer;
@@ -501,7 +523,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub.Mock {
         /// <summary>
         /// File notification
         /// </summary>
-        public class FileNotification {
+        internal class FileNotification {
             /// <summary/>
             public string DeviceId { get; set; }
             /// <summary/>
@@ -515,7 +537,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub.Mock {
         /// <summary>
         /// Event messages
         /// </summary>
-        public class EventMessage {
+        internal class EventMessage {
             /// <summary/>
             public string DeviceId { get; set; }
             /// <summary/>

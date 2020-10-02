@@ -210,7 +210,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                 Assert.True(records.Items.First().IsSameAs(endpoints.First()));
             }
         }
-        public AutoMock CreateMock(out string hubName, out string site, out string super,
+        public static AutoMock CreateMock(out string hubName, out string site, out string super,
             out List<EndpointInfoModel> endpoints, bool noSite = false, bool noAdd = false) {
             var fix = new Fixture();
             fix.Customizations.Add(new TypeRelay(typeof(VariantValue), typeof(VariantValue)));

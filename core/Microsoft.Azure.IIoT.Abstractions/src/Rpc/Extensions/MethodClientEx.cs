@@ -29,7 +29,7 @@ namespace Microsoft.Azure.IIoT.Rpc {
             TimeSpan? timeout = null, CancellationToken ct = default) {
             var response = await client.CallMethodAsync(target, method,
                 json == null ? null : Encoding.UTF8.GetBytes(json),
-                ContentMimeType.Json, timeout, ct);
+                ContentMimeType.Json, timeout, ct).ConfigureAwait(false);
             return response.Length == 0 ? null : Encoding.UTF8.GetString(response);
         }
     }

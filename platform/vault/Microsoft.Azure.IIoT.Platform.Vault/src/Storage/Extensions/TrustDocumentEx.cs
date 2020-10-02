@@ -37,7 +37,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Models {
             this TrustRelationshipModel model, string id = null, string etag = null) {
             if (string.IsNullOrEmpty(id)) {
                 // Assign unique id
-                id = "utr" + (model.TrustedId + model.TrustingId).ToSha1Hash();
+                id = "utr" + (model.TrustedId + model.TrustingId).ToSha256Hash();
             }
             var document = new TrustDocument {
                 ETag = etag,

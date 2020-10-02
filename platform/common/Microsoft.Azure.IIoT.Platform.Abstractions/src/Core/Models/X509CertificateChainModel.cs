@@ -14,12 +14,12 @@ namespace Microsoft.Azure.IIoT.Platform.Core.Models {
         /// <summary>
         /// Chain
         /// </summary>
-        public List<X509CertificateModel> Chain { get; set; }
+        public IReadOnlyList<X509CertificateModel> Chain { get; set; }
 
         /// <summary>
         /// Chain validation status if validated
         /// </summary>
-        public List<X509ChainStatus> Status { get; set; }
+        public IReadOnlyList<X509ChainStatus> Status { get; set; }
     }
 
 }

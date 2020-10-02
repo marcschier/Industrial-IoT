@@ -14,6 +14,6 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Models {
         /// <summary>
         /// All results of attribute reads
         /// </summary>
-        public List<AttributeReadResultModel> Results { set; get; }
+        public IReadOnlyList<AttributeReadResultModel> Results { set; get; }
     }
 }

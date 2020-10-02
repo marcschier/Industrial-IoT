@@ -14,15 +14,15 @@ namespace Microsoft.Azure.IIoT.App.Pages {
 
         public ApplicationInfoApiModel ApplicationData { get; set; }
 
-        protected override async Task GetItems(bool getNextPage) {
-            Items = await RegistryHelper.GetApplicationListAsync(Items, getNextPage);
+        protected override async Task LoadPageContentAsync(bool getNextPage) {
+            Items = await RegistryHelper.GetApplicationListAsync(Items, getNextPage).ConfigureAwait(false);
         }
 
-        protected override async Task SubscribeEvents() {
+        protected override async Task SubscribeContentEventsAsync() {
             _events = await RegistryServiceEvents.SubscribeApplicationEventsAsync(
                     async data => {
-                        await InvokeAsync(() => ApplicationEvent(data));
-                    });
+                        await InvokeAsync(() => ApplicationEvent(data)).ConfigureAwait(false);
+                    }).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -34,7 +34,7 @@ namespace Microsoft.Azure.IIoT.App.Pages {
             Items.Results.RemoveAt(index);
             StateHasChanged();
 
-            Status = await RegistryHelper.UnregisterApplicationAsync(applicationId);
+            Status = await RegistryHelper.UnregisterApplicationAsync(applicationId).ConfigureAwait(false);
         }
 
         // <summary>

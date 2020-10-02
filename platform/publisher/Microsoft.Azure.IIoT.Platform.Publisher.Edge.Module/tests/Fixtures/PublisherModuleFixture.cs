@@ -11,7 +11,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Module.Tests {
     using Microsoft.Azure.IIoT.Platform.OpcUa.Services;
     using Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Runtime;
     using Microsoft.Azure.IIoT.Platform.Twin.Api;
-    using Microsoft.Azure.IIoT.Http.Default;
+    using Microsoft.Azure.IIoT.Http.Clients;
     using Microsoft.Azure.IIoT.Hub;
     using Microsoft.Azure.IIoT.Hub.Models;
     using Microsoft.Azure.IIoT.Messaging;
@@ -32,7 +32,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Module.Tests {
     /// <summary>
     /// Harness for opc twin module
     /// </summary>
-    public class PublisherModuleFixture : IInjector, ITwinModuleConfig, IDisposable {
+    public sealed class PublisherModuleFixture : IInjector, ITwinModuleConfig, IDisposable {
 
         /// <summary>
         /// Hub
@@ -166,13 +166,17 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Module.Tests {
         /// <param name="test"></param>
         /// <returns></returns>
         public async Task RunTestAsync(Func<string, string, string, IContainer, Task> test) {
+            if (test is null) {
+                throw new ArgumentNullException(nameof(test));
+            }
+
             AssertRunning();
             try {
-                await test(Hub, DeviceId, ModuleId, HubContainer);
+                await test(Hub, DeviceId, ModuleId, HubContainer).ConfigureAwait(false);
             }
             finally {
                 _module.Exit(1);
-                var result = await _process;
+                var result = await _process.ConfigureAwait(false);
                 Assert.Equal(1, result);
                 _running = false;
             }
@@ -200,7 +204,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Module.Tests {
         }
 
         /// <inheritdoc/>
-        public class TestModuleConfig : IIoTEdgeClientConfig {
+        internal sealed class TestModuleConfig : IIoTEdgeClientConfig {
 
             /// <inheritdoc/>
             public TestModuleConfig(DeviceModel device) {
@@ -226,7 +230,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Module.Tests {
         }
 
         /// <inheritdoc/>
-        public class TestIoTHubConfig : IIoTHubConfig {
+        internal sealed class TestIoTHubConfig : IIoTHubConfig {
 
             /// <inheritdoc/>
             public string IoTHubConnString =>

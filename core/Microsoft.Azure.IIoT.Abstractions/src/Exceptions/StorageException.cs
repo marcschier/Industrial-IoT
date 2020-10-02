@@ -12,6 +12,11 @@ namespace Microsoft.Azure.IIoT.Exceptions {
     public class StorageException : ExternalDependencyException {
 
         /// <inheritdoc />
+        public StorageException() :
+            this("Failed a storage operation") {
+        }
+
+        /// <inheritdoc />
         public StorageException(string message) : base(message) {
         }
 

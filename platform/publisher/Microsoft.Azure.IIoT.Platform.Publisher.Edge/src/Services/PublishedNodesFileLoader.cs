@@ -19,7 +19,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Services {
     /// <summary>
     /// Loads published nodes file and configures the engine
     /// </summary>
-    public class PublishedNodesFileLoader : IHostProcess, IDisposable {
+    public sealed class PublishedNodesFileLoader : IHostProcess, IDisposable {
 
         /// <summary>
         /// Create published nodes file loader
@@ -45,7 +45,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Services {
             _file = new PublishedNodesFile(serializer, legacyCliModel,
                 logger, cryptoProvider);
             if (string.IsNullOrWhiteSpace(_file.FileName)) {
-                throw new ArgumentNullException(nameof(_file.FileName));
+                throw new ArgumentException("Filename is missing");
             }
 
             _diagnosticInterval =
@@ -110,10 +110,11 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Services {
                         _lastKnownFileHash = currentFileHash;
                         var group = _file.Read();
 
-                        group.DataSetWriters.ForEach(d => {
-                            d.DataSet.ExtensionFields ??= new Dictionary<string, string>();
-                            d.DataSet.ExtensionFields["DataSetWriterId"] = d.DataSetWriterId;
-                        });
+                        foreach (var writer in group.DataSetWriters) {
+                            var extensionFields = writer.DataSet.ExtensionFields.Clone();
+                            extensionFields["DataSetWriterId"] = writer.DataSetWriterId;
+                            writer.DataSet.ExtensionFields = extensionFields;
+                        };
 
                         // Update engine under lock
                         lock (_fileLock) {
@@ -182,8 +183,10 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Services {
         private readonly ILogger _logger;
         private readonly object _fileLock = new object();
         private readonly TimeSpan? _diagnosticInterval;
+#pragma warning disable IDE0052 // Remove unread private members
         private readonly MessageSchema _messagingMode;
         private readonly MessageEncoding _messageEncoding;
+#pragma warning restore IDE0052 // Remove unread private members
         private string _lastKnownFileHash;
         private HashSet<string> _lastSetOfWriterIds;
     }

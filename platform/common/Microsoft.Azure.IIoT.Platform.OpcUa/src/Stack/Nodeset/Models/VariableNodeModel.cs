@@ -49,7 +49,7 @@ namespace Opc.Ua.Nodeset {
         /// with one or more fixed dimensions.
         /// </summary>
         [DataMember]
-        public uint[] ArrayDimensions { get; set; }
+        public IReadOnlyList<uint> ArrayDimensions { get; set; }
 
         /// <summary>
         /// Extended access level

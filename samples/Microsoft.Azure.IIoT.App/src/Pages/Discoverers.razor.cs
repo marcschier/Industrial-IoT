@@ -11,7 +11,7 @@ namespace Microsoft.Azure.IIoT.App.Pages {
     using Microsoft.Azure.IIoT.Platform.Registry.Api;
     using Microsoft.Azure.IIoT.Platform.Registry.Api.Models;
 
-    public partial class Discoverers {
+    public sealed partial class Discoverers {
         public bool IsSearching { get; set; } = false;
         public DiscovererInfo DiscovererData { get; set; }
         private string EventResult { get; set; }
@@ -20,13 +20,13 @@ namespace Microsoft.Azure.IIoT.App.Pages {
         private IAsyncDisposable Discovery { get; set; }
         private bool IsDiscoveryEventSubscribed { get; set; } = false;
 
-        protected override async Task GetItems(bool getNextPage) {
-            Items = await RegistryHelper.GetDiscovererListAsync(Items, getNextPage);
+        protected override async Task LoadPageContentAsync(bool getNextPage) {
+            Items = await RegistryHelper.GetDiscovererListAsync(Items, getNextPage).ConfigureAwait(false);
         }
 
-        protected override async Task SubscribeEvents() {
+        protected override async Task SubscribeContentEventsAsync() {
            _events = await RegistryServiceEvents.SubscribeDiscovererEventsAsync(
-                   ev => InvokeAsync(() => DiscovererEvent(ev)));
+                   ev => InvokeAsync(() => DiscovererEvent(ev))).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -42,8 +42,8 @@ namespace Microsoft.Azure.IIoT.App.Pages {
                    if (!IsDiscoveryEventSubscribed) {
                        Discovery = await RegistryServiceEvents.SubscribeDiscoveryProgressByDiscovererIdAsync(
                            discoverer.DiscovererModel.Id, async data => {
-                               await InvokeAsync(() => ScanProgress(data));
-                           });
+                               await InvokeAsync(() => ScanProgress(data)).ConfigureAwait(false);
+                           }).ConfigureAwait(false);
                    }
 
                    IsDiscoveryEventSubscribed = true;
@@ -59,7 +59,7 @@ namespace Microsoft.Azure.IIoT.App.Pages {
                    }
                    IsDiscoveryEventSubscribed = false;
                }
-               Status = await RegistryHelper.SetDiscoveryAsync(discoverer);
+               Status = await RegistryHelper.SetDiscoveryAsync(discoverer).ConfigureAwait(false);
            }
            catch {
                if (Discovery != null) {
@@ -78,8 +78,8 @@ namespace Microsoft.Azure.IIoT.App.Pages {
                discoverer.DiscoveryRequestId = Guid.NewGuid().ToString();
                Discovery = await RegistryServiceEvents.SubscribeDiscoveryProgressByRequestIdAsync(
                discoverer.DiscoveryRequestId, async data => {
-                   await InvokeAsync(() => ScanProgress(data));
-               });
+                   await InvokeAsync(() => ScanProgress(data)).ConfigureAwait(false);
+               }).ConfigureAwait(false);
                IsDiscoveryEventSubscribed = true;
            }
 
@@ -89,7 +89,7 @@ namespace Microsoft.Azure.IIoT.App.Pages {
                discoverer.IsSearching = true;
                ScanResult = "displayBlock";
                DiscovererData = discoverer;
-               Status = await RegistryHelper.DiscoverServersAsync(discoverer);
+               Status = await RegistryHelper.DiscoverServersAsync(discoverer).ConfigureAwait(false);
            }
            catch {
                if (Discovery != null) {
@@ -189,10 +189,10 @@ namespace Microsoft.Azure.IIoT.App.Pages {
         async Task ClickHandlerAsync(DiscovererInfo discoverer) {
            CloseDrawer();
            if (discoverer.isAdHocDiscovery) {
-               await SetAdHocScanAsync(discoverer);
+               await SetAdHocScanAsync(discoverer).ConfigureAwait(false);
            }
            else {
-               await OnAfterRenderAsync(true);
+               await OnAfterRenderAsync(true).ConfigureAwait(false);
            }
         }
 
@@ -213,7 +213,7 @@ namespace Microsoft.Azure.IIoT.App.Pages {
            ScanResult = "displayNone";
         }
 
-        public async override void Dispose() {
+        public async override ValueTask DisposeAsync() {
            if (_events != null) {
                await _events.DisposeAsync();
            }

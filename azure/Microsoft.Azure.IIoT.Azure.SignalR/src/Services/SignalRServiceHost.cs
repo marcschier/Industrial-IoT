@@ -51,9 +51,9 @@ namespace Microsoft.Azure.IIoT.Azure.SignalR.Services {
             var hub = _hub;
             try {
                 if (hub == null) {
-                    hub = await _serviceManager.CreateHubContextAsync(Resource);
+                    hub = await _serviceManager.CreateHubContextAsync(Resource).ConfigureAwait(false);
                 }
-                await hub.Clients.All.SendCoreAsync("ping", new object[0], ct);
+                await hub.Clients.All.SendCoreAsync("ping", Array.Empty<object>(), ct).ConfigureAwait(false);
                 return HealthCheckResult.Healthy();
             }
             catch (Exception ex) {
@@ -62,7 +62,7 @@ namespace Microsoft.Azure.IIoT.Azure.SignalR.Services {
             }
             finally {
                 if (hub != _hub) {
-                    await hub.DisposeAsync();
+                    await hub.DisposeAsync().ConfigureAwait(false);
                 }
             }
         }
@@ -75,7 +75,7 @@ namespace Microsoft.Azure.IIoT.Azure.SignalR.Services {
                 }
                 else {
                     _logger.Debug("Starting SignalR service host...");
-                    _hub = await _serviceManager.CreateHubContextAsync(Resource);
+                    _hub = await _serviceManager.CreateHubContextAsync(Resource).ConfigureAwait(false);
                     _logger.Information("SignalR service host started.");
                 }
                 // (re)start the timer no matter what
@@ -95,7 +95,7 @@ namespace Microsoft.Azure.IIoT.Azure.SignalR.Services {
                     Timeout.InfiniteTimeSpan, Timeout.InfiniteTimeSpan);
                 if (_hub != null) {
                     _logger.Debug("Stopping SignalR service host...");
-                    await _hub.DisposeAsync();
+                    await _hub.DisposeAsync().ConfigureAwait(false);
                     _logger.Information("SignalR service host stopped.");
                 }
             }
@@ -115,7 +115,7 @@ namespace Microsoft.Azure.IIoT.Azure.SignalR.Services {
             }
             try {
                 await _hub.Clients.All.SendCoreAsync(method,
-                    arguments ?? new object[0], ct);
+                    arguments ?? Array.Empty<object>(), ct).ConfigureAwait(false);
             }
             catch (AzureSignalRNotConnectedException e) {
                 _logger.Verbose(e,
@@ -137,7 +137,7 @@ namespace Microsoft.Azure.IIoT.Azure.SignalR.Services {
             }
             try {
                 await _hub.Clients.User(target).SendCoreAsync(method,
-                    arguments ?? new object[0], ct);
+                    arguments ?? Array.Empty<object>(), ct).ConfigureAwait(false);
             }
             catch (AzureSignalRNotConnectedException e) {
                 _logger.Verbose(e,
@@ -159,7 +159,7 @@ namespace Microsoft.Azure.IIoT.Azure.SignalR.Services {
             }
             try {
                 await _hub.Clients.Group(group).SendCoreAsync(method,
-                    arguments ?? new object[0], ct);
+                    arguments ?? Array.Empty<object>(), ct).ConfigureAwait(false);
             }
             catch (AzureSignalRNotConnectedException e) {
                 _logger.Verbose(e,
@@ -203,11 +203,11 @@ namespace Microsoft.Azure.IIoT.Azure.SignalR.Services {
         private async void RenewHubTimer_ElapesedAsync(object sender) {
             var hub = _hub;
             try {
-                _hub = await _serviceManager.CreateHubContextAsync(Resource);
+                _hub = await _serviceManager.CreateHubContextAsync(Resource).ConfigureAwait(false);
             }
             finally {
                 if (hub != _hub) {
-                    await hub.DisposeAsync();
+                    await hub.DisposeAsync().ConfigureAwait(false);
                 }
                 Try.Op(() => _renewHubTimer.Change(
                     _renewHubInterval, Timeout.InfiniteTimeSpan));

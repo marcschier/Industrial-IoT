@@ -47,7 +47,7 @@ namespace Microsoft.Azure.IIoT.Utils {
         public static async Task<IAsyncDisposable> AsAsyncDisposable(
             params Task<IAsyncDisposable>[] tasks) {
 #pragma warning restore IDE1006 // Naming Styles
-            return new AsyncDisposable(await WhenAll(tasks));
+            return new AsyncDisposable(await WhenAll(tasks).ConfigureAwait(false));
         }
 
         /// <inheritdoc/>
@@ -56,7 +56,7 @@ namespace Microsoft.Azure.IIoT.Utils {
                 Try.Op(_disposable.Dispose);
             }
             if (_disposeAsync != null) {
-                await _disposeAsync.Invoke();
+                await _disposeAsync.Invoke().ConfigureAwait(false);
             }
         }
 
@@ -82,12 +82,12 @@ namespace Microsoft.Azure.IIoT.Utils {
             IEnumerable<Task<IAsyncDisposable>> tasks) {
 #pragma warning restore IDE1006 // Naming Styles
             try {
-                return await Task.WhenAll(tasks);
+                return await Task.WhenAll(tasks).ConfigureAwait(false);
             }
             catch {
                 foreach (var task in tasks) {
                     if (task.IsCompleted) {
-                        await Try.Async(() => task.Result.DisposeAsync().AsTask());
+                        await Try.Async(() => task.Result.DisposeAsync().AsTask()).ConfigureAwait(false);
                     }
                 }
                 throw;

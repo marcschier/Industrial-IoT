@@ -56,11 +56,11 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
             if (string.IsNullOrEmpty(applicationUri)) {
                 return null;
             }
-            applicationUri = applicationUri.ToLowerInvariant();
+            applicationUri = applicationUri.ToUpperInvariant();
             var type = applicationType ?? ApplicationType.Server;
             var id = $"{siteOrGatewayId ?? ""}-{type}-{applicationUri}";
             var prefix = applicationType == ApplicationType.Client ? "uac" : "uas";
-            return prefix + id.ToSha1Hash();
+            return prefix + id.ToSha256Hash();
         }
 
         /// <summary>
@@ -145,6 +145,9 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
         /// <returns></returns>
         public static ApplicationRegistrationRequestModel ToRegistrationRequest(
             this ApplicationInfoModel model, RegistryOperationContextModel context = null) {
+            if (model is null) {
+                return null;
+            }
             return new ApplicationRegistrationRequestModel {
                 ApplicationName = model.ApplicationName,
                 ApplicationType = model.ApplicationType,
@@ -172,6 +175,9 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
             this ApplicationRegistrationRequestModel request,
             RegistryOperationContextModel context,
             bool disabled = true) {
+            if (request is null) {
+                return null;
+            }
             return new ApplicationInfoModel {
                 ApplicationName = request.ApplicationName,
                 LocalizedNames = request.LocalizedNames,
@@ -202,6 +208,9 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
         /// <returns></returns>
         public static ApplicationInfoUpdateModel ToUpdateRequest(
             this ApplicationInfoModel model, RegistryOperationContextModel context = null) {
+            if (model is null) {
+                return null;
+            }
             return new ApplicationInfoUpdateModel {
                 ApplicationName = model.ApplicationName,
                 Capabilities = model.Capabilities,
@@ -223,6 +232,12 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
         /// <param name="model"></param>
         public static ApplicationInfoModel Patch(this ApplicationInfoModel application,
             ApplicationInfoModel model) {
+            if (model is null) {
+                return application;
+            }
+            if (application is null) {
+                return model;
+            }
             application.ApplicationId = model.ApplicationId;
             application.ApplicationName = model.ApplicationName;
             application.LocalizedNames = model.LocalizedNames;
@@ -249,6 +264,9 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
         /// </summary>
         /// <param name="model">The application model.</param>
         public static string GetApplicationName(this ApplicationInfoModel model) {
+            if (model is null) {
+                return null;
+            }
             if (!string.IsNullOrWhiteSpace(model.ApplicationName)) {
                 return model.ApplicationName;
             }
@@ -262,6 +280,9 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
         /// <param name="model"></param>
         /// <returns></returns>
         public static string GetSiteOrGatewayId(this ApplicationInfoModel model) {
+            if (model is null) {
+                return null;
+            }
             if (string.IsNullOrEmpty(model.SiteId)) {
                 return model.DiscovererId;
             }
@@ -292,7 +313,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
             public int GetHashCode(ApplicationInfoModel obj) {
                 var hash = new HashCode();
                 hash.Add(obj.ApplicationType);
-                hash.Add(obj.ApplicationUri?.ToLowerInvariant());
+                hash.Add(obj.ApplicationUri?.ToUpperInvariant());
                 hash.Add(obj.GetSiteOrGatewayId());
                 return hash.ToHashCode();
             }
@@ -325,7 +346,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
             public int GetHashCode(ApplicationInfoModel obj) {
                 var hash = new HashCode();
                 hash.Add(obj.ApplicationType);
-                hash.Add(obj.ApplicationUri?.ToLowerInvariant());
+                hash.Add(obj.ApplicationUri?.ToUpperInvariant());
                 hash.Add(obj.ProductUri);
                 hash.Add(obj.Locale);
                 hash.Add(obj.DiscoveryProfileUri);

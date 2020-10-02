@@ -14,7 +14,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Models {
         /// <summary>
         /// Relationships
         /// </summary>
-        public List<TrustRelationshipModel> Relationships { get; set; }
+        public IReadOnlyList<TrustRelationshipModel> Relationships { get; set; }
 
         /// <summary>
         /// Next link

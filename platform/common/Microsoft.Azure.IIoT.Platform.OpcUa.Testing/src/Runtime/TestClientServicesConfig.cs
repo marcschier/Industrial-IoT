@@ -15,7 +15,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Runtime {
     /// <summary>
     /// Client's application configuration implementation
     /// </summary>
-    public class TestClientServicesConfig : IClientServicesConfig, IDisposable {
+    public sealed class TestClientServicesConfig : IClientServicesConfig, IDisposable {
 
         /// <inheritdoc/>
         public string PkiRootPath { get; }
@@ -75,7 +75,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Runtime {
                 configuration = new ConfigurationBuilder()
                     .AddInMemoryCollection(new Dictionary<string, string> {
                         {"PkiRootPath", PkiRootPath},
-                        {"AutoAcceptUntrustedCertificates", autoAccept.ToString()}
+                        {"AutoAcceptUntrustedCertificates", autoAccept ? "True" : "False"}
                     })
                     .Build();
                 _opc = new ClientServicesConfig(configuration);

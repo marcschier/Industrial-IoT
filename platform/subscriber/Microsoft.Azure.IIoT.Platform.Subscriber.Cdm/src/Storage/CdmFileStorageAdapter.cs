@@ -66,9 +66,9 @@ namespace Microsoft.Azure.IIoT.Platform.Subscriber.Cdm.Storage {
         /// <inheritdoc/>
         public async Task<string> ReadAsync(string corpusPath) {
             try {
-                var file = await GetCorpusFileAsync(corpusPath);
+                var file = await GetCorpusFileAsync(corpusPath).ConfigureAwait(false);
                 using (var stream = new MemoryStream()) {
-                    await file.DownloadAsync(stream);
+                    await file.DownloadAsync(stream).ConfigureAwait(false);
                     return Encoding.UTF8.GetString(stream.ToArray());
                 }
             }
@@ -86,9 +86,9 @@ namespace Microsoft.Azure.IIoT.Platform.Subscriber.Cdm.Storage {
         /// <inheritdoc/>
         public async Task WriteAsync(string corpusPath, string data) {
             try {
-                var file = await GetCorpusFileAsync(corpusPath);
+                var file = await GetCorpusFileAsync(corpusPath).ConfigureAwait(false);
                 using (var stream = new MemoryStream(Encoding.UTF8.GetBytes(data))) {
-                    await file.UploadAsync(stream);
+                    await file.UploadAsync(stream).ConfigureAwait(false);
                 }
             }
             catch (Exception ex) {
@@ -100,7 +100,7 @@ namespace Microsoft.Azure.IIoT.Platform.Subscriber.Cdm.Storage {
         /// <inheritdoc/>
         public async Task UnlockAsync(string corpusPath) {
             if (_locks.TryRemove(FormatCorpusPath(corpusPath), out var locked)) {
-                var file = await locked;
+                var file = await locked.ConfigureAwait(false);
                 await file.DisposeAsync();
             }
         }
@@ -108,10 +108,10 @@ namespace Microsoft.Azure.IIoT.Platform.Subscriber.Cdm.Storage {
         /// <inheritdoc/>
         public async Task WriteAsync(string corpusPath, Func<bool, byte[]> encoder) {
             try {
-                var file = await GetCorpusFileAsync(corpusPath);
-                var size = await file.GetSizeAsync();
+                var file = await GetCorpusFileAsync(corpusPath).ConfigureAwait(false);
+                var size = await file.GetSizeAsync().ConfigureAwait(false);
                 var content = encoder(size == 0);
-                await file.AppendAsync(content, content.Length);
+                await file.AppendAsync(content, content.Length).ConfigureAwait(false);
             }
             catch (Exception ex) {
                 _logger.Error(ex, "Failed to write data to {corpus}", corpusPath);
@@ -122,8 +122,8 @@ namespace Microsoft.Azure.IIoT.Platform.Subscriber.Cdm.Storage {
         /// <inheritdoc />
         public async Task<List<string>> FetchAllFilesAsync(string folderCorpusPath) {
             try {
-                var folder = await GetCorpusFolderAsync(folderCorpusPath);
-                var result = await folder.GetAllFilesAsync();
+                var folder = await GetCorpusFolderAsync(folderCorpusPath).ConfigureAwait(false);
+                var result = await folder.GetAllFilesAsync().ConfigureAwait(false);
                 return result.ToList();
             }
             catch (Exception ex) {
@@ -153,8 +153,8 @@ namespace Microsoft.Azure.IIoT.Platform.Subscriber.Cdm.Storage {
         /// <inheritdoc />
         public async Task<DateTimeOffset?> ComputeLastModifiedTimeAsync(string corpusPath) {
             try {
-                var file = await GetCorpusFileAsync(corpusPath);
-                return await file.GetLastModifiedAsync();
+                var file = await GetCorpusFileAsync(corpusPath).ConfigureAwait(false);
+                return await file.GetLastModifiedAsync().ConfigureAwait(false);
             }
             catch (Exception ex) {
                 _logger.Error(ex, "Failed to get modified time from file.");
@@ -214,8 +214,8 @@ namespace Microsoft.Azure.IIoT.Platform.Subscriber.Cdm.Storage {
         /// <returns></returns>
         private async Task<IFolder> OpenRootFolderAsync(IFileStorage storage,
             string fileSystem, string folder) {
-            var fs = await storage.CreateOrOpenDriveAsync(fileSystem);
-            return await fs.CreateOrOpenSubFolderAsync(folder);
+            var fs = await storage.CreateOrOpenDriveAsync(fileSystem).ConfigureAwait(false);
+            return await fs.CreateOrOpenSubFolderAsync(folder).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -226,10 +226,10 @@ namespace Microsoft.Azure.IIoT.Platform.Subscriber.Cdm.Storage {
         /// <returns></returns>
         private async Task<IFile> GetCorpusFileAsync(string corpusPath) {
             if (_locks.TryGetValue(FormatCorpusPath(corpusPath), out var lockedFile)) {
-                var locked = await lockedFile;
+                var locked = await lockedFile.ConfigureAwait(false);
                 return locked.File;
             }
-            return await GetSharedCorpusFileAsync(corpusPath);
+            return await GetSharedCorpusFileAsync(corpusPath).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -242,11 +242,11 @@ namespace Microsoft.Azure.IIoT.Platform.Subscriber.Cdm.Storage {
             if (pathElements.Length == 0) {
                 throw new ArgumentException(nameof(corpusPath));
             }
-            var root = await _folder;
+            var root = await _folder.ConfigureAwait(false);
             for (var i = 0; i < pathElements.Length - 1; i++) {
-                root = await root.CreateOrOpenSubFolderAsync(pathElements[i]);
+                root = await root.CreateOrOpenSubFolderAsync(pathElements[i]).ConfigureAwait(false);
             }
-            return await root.CreateOrOpenFileAsync(pathElements.Last());
+            return await root.CreateOrOpenFileAsync(pathElements.Last()).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -259,12 +259,12 @@ namespace Microsoft.Azure.IIoT.Platform.Subscriber.Cdm.Storage {
             if (pathElements.Length == 0) {
                 throw new ArgumentException(nameof(corpusPath));
             }
-            var root = await _folder;
+            var root = await _folder.ConfigureAwait(false);
             for (var i = 0; i < pathElements.Length - 1; i++) {
-                root = await root.CreateOrOpenSubFolderAsync(pathElements[i]);
+                root = await root.CreateOrOpenSubFolderAsync(pathElements[i]).ConfigureAwait(false);
             }
             return await root.CreateOrOpenFileLockAsync(pathElements.Last(),
-                TimeSpan.FromSeconds(60));
+                TimeSpan.FromSeconds(60)).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -277,9 +277,9 @@ namespace Microsoft.Azure.IIoT.Platform.Subscriber.Cdm.Storage {
             if (pathElements.Length == 0) {
                 throw new ArgumentException(nameof(corpusPath));
             }
-            var root = await _folder;
+            var root = await _folder.ConfigureAwait(false);
             for (var i = 0; i < pathElements.Length - 1; i++) {
-                root = await root.CreateOrOpenSubFolderAsync(pathElements[i]);
+                root = await root.CreateOrOpenSubFolderAsync(pathElements[i]).ConfigureAwait(false);
             }
             return root;
         }

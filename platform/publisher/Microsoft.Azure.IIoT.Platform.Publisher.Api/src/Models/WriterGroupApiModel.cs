@@ -72,7 +72,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api.Models {
         /// <summary>
         /// Header layout uri
         /// </summary>
-        [DataMember(Name = "headerLayoutUri", Order = 8,
+        [DataMember(Name = "headerLayoutProfile", Order = 8,
             EmitDefaultValue = false)]
         public string HeaderLayoutUri { get; set; }
 

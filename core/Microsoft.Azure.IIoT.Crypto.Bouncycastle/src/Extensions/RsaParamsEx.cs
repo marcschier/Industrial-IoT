@@ -4,6 +4,7 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Crypto.Models {
+    using System.Linq;
     using System.Security.Cryptography;
     using System.Security.Cryptography.Asn1;
     using System.Security.Cryptography.X509Certificates;
@@ -20,10 +21,13 @@ namespace Microsoft.Azure.IIoT.Crypto.Models {
         /// <param name="rsa"></param>
         /// <returns></returns>
         public static PublicKey ToPublicKey(this RsaParams rsa) {
+            if (rsa is null) {
+                throw new System.ArgumentNullException(nameof(rsa));
+            }
             using (var writer = new AsnWriter(AsnEncodingRules.DER)) {
                 writer.PushSequence();
-                writer.WriteKeyParameterInteger(rsa.N);
-                writer.WriteKeyParameterInteger(rsa.E);
+                writer.WriteKeyParameterInteger(rsa.N.ToArray());
+                writer.WriteKeyParameterInteger(rsa.E.ToArray());
                 writer.PopSequence();
                 var key = writer.Encode();
 

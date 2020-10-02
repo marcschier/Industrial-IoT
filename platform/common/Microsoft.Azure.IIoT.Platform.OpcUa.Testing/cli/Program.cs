@@ -22,7 +22,7 @@ namespace Microsoft.Azure.IIoT.Platform.Cli {
     /// <summary>
     /// Test client for opc ua services
     /// </summary>
-    public class Program {
+    public static class Program {
         private enum Op {
             None,
             RunSampleServer,
@@ -33,6 +33,9 @@ namespace Microsoft.Azure.IIoT.Platform.Cli {
         /// Test client entry point
         /// </summary>
         public static void Main(string[] args) {
+            if (args is null) {
+                throw new ArgumentNullException(nameof(args));
+            }
             AppDomain.CurrentDomain.UnhandledException +=
                 (s, e) => Console.WriteLine("unhandled: " + e.ExceptionObject);
             var op = Op.None;
@@ -146,16 +149,16 @@ Operations (Mutually exclusive):
                     logger.Logger) {
                     AutoAccept = true
                 }) {
-                    await server.StartAsync(ports);
+                    await server.StartAsync(ports).ConfigureAwait(false);
 #if DEBUG
                     if (!Console.IsInputRedirected) {
                         Console.WriteLine("Press any key to exit...");
                         Console.TreatControlCAsInput = true;
-                        await Task.WhenAny(tcs.Task, Task.Run(() => Console.ReadKey()));
+                        await Task.WhenAny(tcs.Task, Task.Run(() => Console.ReadKey())).ConfigureAwait(false);
                         return;
                     }
 #endif
-                    await tcs.Task;
+                    await tcs.Task.ConfigureAwait(false);
                     logger.Logger.Information("Exiting.");
                 }
             }
@@ -167,7 +170,8 @@ Operations (Mutually exclusive):
         /// </summary>
         private static async Task TestOpcUaServerClientAsync(EndpointModel endpoint) {
             using (var logger = StackLogger.Create(ConsoleLogger.Create()))
-            using (var client = new ClientServices(logger.Logger, new TestClientServicesConfig()))
+            using (var config = new TestClientServicesConfig())
+            using (var client = new ClientServices(logger.Logger, config))
             using (var server = new ServerWrapper(endpoint, logger)) {
                 await client.ExecuteServiceAsync(endpoint, null, session => {
                     Console.WriteLine("Browse the OPC UA server namespace.");
@@ -196,7 +200,7 @@ Operations (Mutually exclusive):
                     }
                     Console.WriteLine($"   ....        took {w.ElapsedMilliseconds} ms...");
                     return Task.FromResult(true);
-                });
+                }).ConfigureAwait(false);
             }
         }
 
@@ -212,7 +216,7 @@ Operations (Mutually exclusive):
             public ServerWrapper(EndpointModel endpoint, StackLogger logger) {
                 _cts = new CancellationTokenSource();
                 if (endpoint.Url == null) {
-                    _server = RunSampleServerAsync(_cts.Token, logger.Logger);
+                    _server = RunSampleServerAsync(logger.Logger, _cts.Token);
                     endpoint.Url = "opc.tcp://" + Utils.GetHostName() +
                         ":51210/UA/SampleServer";
                 }
@@ -233,7 +237,7 @@ Operations (Mutually exclusive):
             /// </summary>
             /// <param name="ct"></param>
             /// <returns></returns>
-            private static async Task RunSampleServerAsync(CancellationToken ct, ILogger logger) {
+            private static async Task RunSampleServerAsync(ILogger logger, CancellationToken ct) {
                 var tcs = new TaskCompletionSource<bool>();
                 ct.Register(() => tcs.TrySetResult(true));
                 using (var server = new ServerConsoleHost(new ServerFactory(logger) {
@@ -241,8 +245,8 @@ Operations (Mutually exclusive):
                 }, logger) {
                     AutoAccept = true
                 }) {
-                    await server.StartAsync(new List<int> { 51210 });
-                    await tcs.Task;
+                    await server.StartAsync(new List<int> { 51210 }).ConfigureAwait(false);
+                    await tcs.Task.ConfigureAwait(false);
                 }
             }
 

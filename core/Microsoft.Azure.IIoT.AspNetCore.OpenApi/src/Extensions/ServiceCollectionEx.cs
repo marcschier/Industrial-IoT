@@ -75,7 +75,7 @@ namespace Microsoft.OpenApi.Models {
                     // If auth enabled, need to have bearer token to access any api
                     if (config.WithAuth) {
                         if (string.IsNullOrEmpty(config.OpenApiAppId) ||
-                            string.IsNullOrEmpty(config.OpenApiAuthorizationUrl)) {
+                            string.IsNullOrEmpty(config.OpenApiAuthorizationEndpoint)) {
                             options.AddSecurityDefinition("bearer", new OpenApiSecurityScheme {
                                 Description =
                                     "Authorization token in the form of 'bearer <token>'",
@@ -93,7 +93,7 @@ namespace Microsoft.OpenApi.Models {
                                 Flows = new OpenApiOAuthFlows {
                                     Implicit = new OpenApiOAuthFlow {
                                         AuthorizationUrl =
-                                            new Uri(config.OpenApiAuthorizationUrl),
+                                            new Uri(config.OpenApiAuthorizationEndpoint),
                                         Scopes = api.GetRequiredScopes(authOptions)
                                             .ToDictionary(k => k, k => $"Access {k} operations")
                                     }

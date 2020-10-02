@@ -38,7 +38,7 @@ namespace Microsoft.Azure.IIoT.Platform.Discovery.Edge.Module.Controllers {
             if (request == null) {
                 throw new ArgumentNullException(nameof(request));
             }
-            await _discover.DiscoverAsync(request.ToServiceModel());
+            await _discover.DiscoverAsync(request.ToServiceModel()).ConfigureAwait(false);
             return true;
         }
 
@@ -51,7 +51,7 @@ namespace Microsoft.Azure.IIoT.Platform.Discovery.Edge.Module.Controllers {
             if (request == null) {
                 throw new ArgumentNullException(nameof(request));
             }
-            await _discover.CancelAsync(request.ToServiceModel());
+            await _discover.CancelAsync(request.ToServiceModel()).ConfigureAwait(false);
             return true;
         }
 

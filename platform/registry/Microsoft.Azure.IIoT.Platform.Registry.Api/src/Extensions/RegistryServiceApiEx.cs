@@ -25,10 +25,10 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api {
             this IRegistryServiceApi service, EndpointInfoQueryApiModel query,
             CancellationToken ct = default) {
             var registrations = new List<EndpointInfoApiModel>();
-            var result = await service.QueryEndpointsAsync(query, null, ct);
+            var result = await service.QueryEndpointsAsync(query, null, ct).ConfigureAwait(false);
             registrations.AddRange(result.Items);
             while (result.ContinuationToken != null) {
-                result = await service.ListEndpointsAsync(result.ContinuationToken, null, ct);
+                result = await service.ListEndpointsAsync(result.ContinuationToken, null, ct).ConfigureAwait(false);
                 registrations.AddRange(result.Items);
             }
             return registrations;
@@ -43,10 +43,10 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api {
         public static async Task<IEnumerable<EndpointInfoApiModel>> ListAllEndpointsAsync(
             this IRegistryServiceApi service, CancellationToken ct = default) {
             var registrations = new List<EndpointInfoApiModel>();
-            var result = await service.ListEndpointsAsync(null, null, ct);
+            var result = await service.ListEndpointsAsync(null, null, ct).ConfigureAwait(false);
             registrations.AddRange(result.Items);
             while (result.ContinuationToken != null) {
-                result = await service.ListEndpointsAsync(result.ContinuationToken, null, ct);
+                result = await service.ListEndpointsAsync(result.ContinuationToken, null, ct).ConfigureAwait(false);
                 registrations.AddRange(result.Items);
             }
             return registrations;
@@ -63,14 +63,14 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api {
         public static async Task DeactivateEndpointAsync(this IRegistryServiceApi service,
             string endpointId, string generationId = null, CancellationToken ct = default) {
             if (string.IsNullOrEmpty(generationId)) {
-                var ep = await service.GetEndpointAsync(endpointId, ct);
+                var ep = await service.GetEndpointAsync(endpointId, ct).ConfigureAwait(false);
                 generationId = ep.GenerationId;
             }
             await service.UpdateEndpointAsync(endpointId,
                 new EndpointInfoUpdateApiModel {
                     GenerationId = generationId,
                     ActivationState = EntityActivationState.Deactivated
-                }, ct);
+                }, ct).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -84,14 +84,14 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api {
         public static async Task ActivateEndpointAsync(this IRegistryServiceApi service,
             string endpointId, string generationId = null, CancellationToken ct = default) {
             if (string.IsNullOrEmpty(generationId)) {
-                var ep = await service.GetEndpointAsync(endpointId, ct);
+                var ep = await service.GetEndpointAsync(endpointId, ct).ConfigureAwait(false);
                 generationId = ep.GenerationId;
             }
             await service.UpdateEndpointAsync(endpointId,
                 new EndpointInfoUpdateApiModel {
                     GenerationId = generationId,
                     ActivationState = EntityActivationState.Activated
-                }, ct);
+                }, ct).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -105,10 +105,10 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api {
             this IRegistryServiceApi service, ApplicationRegistrationQueryApiModel query,
             CancellationToken ct = default) {
             var registrations = new List<ApplicationInfoApiModel>();
-            var result = await service.QueryApplicationsAsync(query, null, ct);
+            var result = await service.QueryApplicationsAsync(query, null, ct).ConfigureAwait(false);
             registrations.AddRange(result.Items);
             while (result.ContinuationToken != null) {
-                result = await service.ListApplicationsAsync(result.ContinuationToken, null, ct);
+                result = await service.ListApplicationsAsync(result.ContinuationToken, null, ct).ConfigureAwait(false);
                 registrations.AddRange(result.Items);
             }
             return registrations;
@@ -123,10 +123,10 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api {
         public static async Task<IEnumerable<ApplicationInfoApiModel>> ListAllApplicationsAsync(
             this IRegistryServiceApi service, CancellationToken ct = default) {
             var registrations = new List<ApplicationInfoApiModel>();
-            var result = await service.ListApplicationsAsync(null, null, ct);
+            var result = await service.ListApplicationsAsync(null, null, ct).ConfigureAwait(false);
             registrations.AddRange(result.Items);
             while (result.ContinuationToken != null) {
-                result = await service.ListApplicationsAsync(result.ContinuationToken, null, ct);
+                result = await service.ListApplicationsAsync(result.ContinuationToken, null, ct).ConfigureAwait(false);
                 registrations.AddRange(result.Items);
             }
             return registrations;
@@ -141,10 +141,10 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api {
         public static async Task<IEnumerable<string>> ListAllSitesAsync(
             this IRegistryServiceApi service, CancellationToken ct = default) {
             var sites = new List<string>();
-            var result = await service.ListSitesAsync(null, null, ct);
+            var result = await service.ListSitesAsync(null, null, ct).ConfigureAwait(false);
             sites.AddRange(result.Sites);
             while (result.ContinuationToken != null) {
-                result = await service.ListSitesAsync(result.ContinuationToken, null, ct);
+                result = await service.ListSitesAsync(result.ContinuationToken, null, ct).ConfigureAwait(false);
                 sites.AddRange(result.Sites);
             }
             return sites;
@@ -159,11 +159,11 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api {
         public static async Task<IEnumerable<DiscovererApiModel>> ListAllDiscoverersAsync(
             this IRegistryServiceApi service, CancellationToken ct = default) {
             var registrations = new List<DiscovererApiModel>();
-            var result = await service.ListDiscoverersAsync(null, null, ct);
+            var result = await service.ListDiscoverersAsync(null, null, ct).ConfigureAwait(false);
             registrations.AddRange(result.Items);
             while (result.ContinuationToken != null) {
                 result = await service.ListDiscoverersAsync(result.ContinuationToken,
-                    null, ct);
+                    null, ct).ConfigureAwait(false);
                 registrations.AddRange(result.Items);
             }
             return registrations;
@@ -180,11 +180,11 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api {
             this IRegistryServiceApi service, DiscovererQueryApiModel query,
             CancellationToken ct = default) {
             var registrations = new List<DiscovererApiModel>();
-            var result = await service.QueryDiscoverersAsync(query, null, ct);
+            var result = await service.QueryDiscoverersAsync(query, null, ct).ConfigureAwait(false);
             registrations.AddRange(result.Items);
             while (result.ContinuationToken != null) {
                 result = await service.ListDiscoverersAsync(result.ContinuationToken,
-                    null, ct);
+                    null, ct).ConfigureAwait(false);
                 registrations.AddRange(result.Items);
             }
             return registrations;
@@ -199,10 +199,10 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api {
         public static async Task<IEnumerable<SupervisorApiModel>> ListAllSupervisorsAsync(
             this IRegistryServiceApi service, CancellationToken ct = default) {
             var registrations = new List<SupervisorApiModel>();
-            var result = await service.ListSupervisorsAsync(null, null, ct);
+            var result = await service.ListSupervisorsAsync(null, null, ct).ConfigureAwait(false);
             registrations.AddRange(result.Items);
             while (result.ContinuationToken != null) {
-                result = await service.ListSupervisorsAsync(result.ContinuationToken, null, ct);
+                result = await service.ListSupervisorsAsync(result.ContinuationToken, null, ct).ConfigureAwait(false);
                 registrations.AddRange(result.Items);
             }
             return registrations;
@@ -219,10 +219,10 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api {
             this IRegistryServiceApi service, SupervisorQueryApiModel query,
             CancellationToken ct = default) {
             var registrations = new List<SupervisorApiModel>();
-            var result = await service.QuerySupervisorsAsync(query, null, ct);
+            var result = await service.QuerySupervisorsAsync(query, null, ct).ConfigureAwait(false);
             registrations.AddRange(result.Items);
             while (result.ContinuationToken != null) {
-                result = await service.ListSupervisorsAsync(result.ContinuationToken, null, ct);
+                result = await service.ListSupervisorsAsync(result.ContinuationToken, null, ct).ConfigureAwait(false);
                 registrations.AddRange(result.Items);
             }
             return registrations;
@@ -237,11 +237,11 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api {
         public static async Task<IEnumerable<PublisherApiModel>> ListAllPublishersAsync(
             this IRegistryServiceApi service, CancellationToken ct = default) {
             var registrations = new List<PublisherApiModel>();
-            var result = await service.ListPublishersAsync(null, null, ct);
+            var result = await service.ListPublishersAsync(null, null, ct).ConfigureAwait(false);
             registrations.AddRange(result.Items);
             while (result.ContinuationToken != null) {
                 result = await service.ListPublishersAsync(result.ContinuationToken,
-                    null, ct);
+                    null, ct).ConfigureAwait(false);
                 registrations.AddRange(result.Items);
             }
             return registrations;
@@ -258,10 +258,10 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api {
             this IRegistryServiceApi service, PublisherQueryApiModel query,
             CancellationToken ct = default) {
             var registrations = new List<PublisherApiModel>();
-            var result = await service.QueryPublishersAsync(query, null, ct);
+            var result = await service.QueryPublishersAsync(query, null, ct).ConfigureAwait(false);
             registrations.AddRange(result.Items);
             while (result.ContinuationToken != null) {
-                result = await service.ListPublishersAsync(result.ContinuationToken, null, ct);
+                result = await service.ListPublishersAsync(result.ContinuationToken, null, ct).ConfigureAwait(false);
                 registrations.AddRange(result.Items);
             }
             return registrations;
@@ -277,10 +277,10 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api {
         public static async Task<IEnumerable<GatewayApiModel>> ListAllGatewaysAsync(
             this IRegistryServiceApi service, CancellationToken ct = default) {
             var registrations = new List<GatewayApiModel>();
-            var result = await service.ListGatewaysAsync(null, null, ct);
+            var result = await service.ListGatewaysAsync(null, null, ct).ConfigureAwait(false);
             registrations.AddRange(result.Items);
             while (result.ContinuationToken != null) {
-                result = await service.ListGatewaysAsync(result.ContinuationToken, null, ct);
+                result = await service.ListGatewaysAsync(result.ContinuationToken, null, ct).ConfigureAwait(false);
                 registrations.AddRange(result.Items);
             }
             return registrations;
@@ -297,10 +297,10 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api {
             this IRegistryServiceApi service, GatewayQueryApiModel query,
             CancellationToken ct = default) {
             var registrations = new List<GatewayApiModel>();
-            var result = await service.QueryGatewaysAsync(query, null, ct);
+            var result = await service.QueryGatewaysAsync(query, null, ct).ConfigureAwait(false);
             registrations.AddRange(result.Items);
             while (result.ContinuationToken != null) {
-                result = await service.ListGatewaysAsync(result.ContinuationToken, null, ct);
+                result = await service.ListGatewaysAsync(result.ContinuationToken, null, ct).ConfigureAwait(false);
                 registrations.AddRange(result.Items);
             }
             return registrations;

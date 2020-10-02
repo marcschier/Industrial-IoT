@@ -64,7 +64,7 @@ namespace Microsoft.Azure.IIoT.Azure.EventHub.Clients {
                     ev.Properties.Add(prop.Key, prop.Value);
                 }
             }
-            await _client.SendAsync(ev.YieldReturn(), GetPk(target, null, partitionKey), ct);
+            await _client.SendAsync(ev.YieldReturn(), GetPk(target, null, partitionKey), ct).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
@@ -99,7 +99,7 @@ namespace Microsoft.Azure.IIoT.Azure.EventHub.Clients {
                 throw new ArgumentNullException(nameof(payload));
             }
             var ev = CreateEvent(payload, target, contentType, eventSchema, contentEncoding);
-            await _client.SendAsync(ev.YieldReturn(), GetPk(target, eventSchema, null), ct);
+            await _client.SendAsync(ev.YieldReturn(), GetPk(target, eventSchema, null), ct).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
@@ -114,24 +114,30 @@ namespace Microsoft.Azure.IIoT.Azure.EventHub.Clients {
             }
             var pk = GetPk(target, eventSchema, null);
             var events = await _client.CreateBatchAsync(pk, ct);
-            foreach (var ev in batch
-                .Select(b =>
-                    CreateEvent(b, target, contentType, eventSchema, contentEncoding))) {
-                if (!events.TryAdd(ev)) {
-                    if (events.SizeInBytes == 0) {
-                        throw new MessageSizeLimitException(
-                            $"Max size of event is {events.MaximumSizeInBytes}");
-                    }
-                    await _client.SendAsync(events, ct);
-                    events = await _client.CreateBatchAsync(pk, ct); // next batch
+            try {
+                foreach (var ev in batch
+                    .Select(b =>
+                        CreateEvent(b, target, contentType, eventSchema, contentEncoding))) {
                     if (!events.TryAdd(ev)) {
-                        throw new MessageSizeLimitException(
-                            $"Max size of event is {events.MaximumSizeInBytes}");
+                        if (events.SizeInBytes == 0) {
+                            throw new MessageSizeLimitException(
+                                $"Max size of event is {events.MaximumSizeInBytes}");
+                        }
+                        await _client.SendAsync(events, ct).ConfigureAwait(false);
+                        events.Dispose();
+                        events = await _client.CreateBatchAsync(pk, ct); // next batch
+                        if (!events.TryAdd(ev)) {
+                            throw new MessageSizeLimitException(
+                                $"Max size of event is {events.MaximumSizeInBytes}");
+                        }
                     }
                 }
+                if (events.SizeInBytes != 0) {
+                    await _client.SendAsync(events, ct).ConfigureAwait(false);
+                }
             }
-            if (events.SizeInBytes != 0) {
-                await _client.SendAsync(events, ct);
+            finally {
+                events?.Dispose();
             }
         }
 
@@ -163,7 +169,7 @@ namespace Microsoft.Azure.IIoT.Azure.EventHub.Clients {
 
         /// <inheritdoc/>
         public async ValueTask DisposeAsync() {
-            await Try.Async(() => _client.CloseAsync());
+            await Try.Async(() => _client.CloseAsync()).ConfigureAwait(false);
             await _client.DisposeAsync();
         }
 
@@ -227,7 +233,7 @@ namespace Microsoft.Azure.IIoT.Azure.EventHub.Clients {
             /// <inheritdoc/>
             public override async ValueTask<AccessToken> GetTokenAsync(
                 TokenRequestContext requestContext, CancellationToken ct) {
-                var result = await _provider.GetTokenForAsync(Resource.EventHub);
+                var result = await _provider.GetTokenForAsync(Resource.EventHub).ConfigureAwait(false);
                 if (result == null) {
                     return default;
                 }

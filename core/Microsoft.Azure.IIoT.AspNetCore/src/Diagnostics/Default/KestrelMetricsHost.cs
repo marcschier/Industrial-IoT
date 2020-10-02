@@ -4,10 +4,11 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.AspNetCore.Diagnostics.Default {
-    using Microsoft.Azure.IIoT.Diagnostics.Default;
+    using Microsoft.Azure.IIoT.Diagnostics.Services;
     using Microsoft.Azure.IIoT.Diagnostics;
     using Prometheus;
     using Serilog;
+    using System;
     using System.Collections.Generic;
 
     /// <summary>
@@ -22,6 +23,9 @@ namespace Microsoft.Azure.IIoT.AspNetCore.Diagnostics.Default {
 
         /// <inheritdoc/>
         protected override IMetricServer CreateServer(IMetricServerConfig config) {
+            if (config is null) {
+                throw new ArgumentNullException(nameof(config));
+            }
             return new KestrelMetricServer(config.Port, config.Path ?? "/metrics");
         }
     }

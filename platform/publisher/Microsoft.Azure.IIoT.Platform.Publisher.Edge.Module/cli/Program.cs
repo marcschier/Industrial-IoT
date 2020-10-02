@@ -182,7 +182,7 @@ Options:
             Console.WriteLine("Create or retrieve connection string...");
 
             var cs = await Retry.WithExponentialBackoff(logger,
-                () => AddOrGetAsync(config, diagnostics, deviceId, moduleId));
+                () => AddOrGetAsync(config, diagnostics, deviceId, moduleId)).ConfigureAwait(false);
 
             // Hook event source
             using (var broker = new EventSourceBroker()) {
@@ -255,7 +255,7 @@ Options:
                     logger.Information("Server exiting - tear down publisher...");
                     cts.Cancel();
 
-                    await host;
+                    await host.ConfigureAwait(false);
                 }
             }
             catch (OperationCanceledException) { }
@@ -281,7 +281,7 @@ Options:
                     Capabilities = new DeviceCapabilitiesModel {
                         IotEdge = true
                     }
-                }, false, CancellationToken.None);
+                }, false, CancellationToken.None).ConfigureAwait(false);
             }
             catch (ResourceConflictException) {
                 logger.Information("Gateway {deviceId} exists.", deviceId);
@@ -296,12 +296,12 @@ Options:
                             [nameof(diagnostics.LogWorkspaceKey)] = diagnostics?.LogWorkspaceKey
                         }
                     }
-                }, true, CancellationToken.None);
+                }, true, CancellationToken.None).ConfigureAwait(false);
             }
             catch (ResourceConflictException) {
                 logger.Information("Module {moduleId} exists...", moduleId);
             }
-            var cs = await registry.GetConnectionStringAsync(deviceId, moduleId);
+            var cs = await registry.GetConnectionStringAsync(deviceId, moduleId).ConfigureAwait(false);
             return cs;
         }
 
@@ -341,9 +341,9 @@ Options:
                     AutoAccept = true
                 }) {
                     logger.Information("Starting server.");
-                    await server.StartAsync(new List<int> { 51210 });
+                    await server.StartAsync(new List<int> { 51210 }).ConfigureAwait(false);
                     logger.Information("Server started.");
-                    await tcs.Task;
+                    await tcs.Task.ConfigureAwait(false);
                     logger.Information("Server exited.");
                 }
             }

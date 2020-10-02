@@ -14,6 +14,6 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Models {
         /// <summary>
         /// Events to delete
         /// </summary>
-        public List<byte[]> EventIds { get; set; }
+        public IReadOnlyList<byte[]> EventIds { get; set; }
     }
 }

@@ -20,7 +20,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Models {
         /// <summary>
         /// References, if included, otherwise null.
         /// </summary>
-        public List<NodeReferenceModel> References { get; set; }
+        public IReadOnlyList<NodeReferenceModel> References { get; set; }
 
         /// <summary>
         /// Continuation token if more results pending.

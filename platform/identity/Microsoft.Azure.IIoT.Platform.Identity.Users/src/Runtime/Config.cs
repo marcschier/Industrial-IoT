@@ -57,7 +57,7 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Users.Runtime {
         /// <inheritdoc/>
         public string OpenApiServerHost => _openApi.OpenApiServerHost;
         /// <inheritdoc/>
-        public string OpenApiAuthorizationUrl => _openApi.OpenApiAuthorizationUrl;
+        public string OpenApiAuthorizationEndpoint => _openApi.OpenApiAuthorizationEndpoint;
 
         /// <inheritdoc/>
         public string DbConnectionString => _cosmos.DbConnectionString;

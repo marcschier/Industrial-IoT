@@ -75,7 +75,7 @@ namespace System.Net {
         /// <param name="address"></param>
         /// <returns></returns>
         public static async Task<string> ResolveAsync(this IPAddress address) {
-            var entry = await address.GetHostEntryAsync();
+            var entry = await address.GetHostEntryAsync().ConfigureAwait(false);
             return entry.HostName;
         }
 
@@ -108,7 +108,7 @@ namespace System.Net {
                 return null;
             }
             try {
-                return await address.ResolveAsync();
+                return await address.ResolveAsync().ConfigureAwait(false);
             }
             catch {
                 return address.ToString();

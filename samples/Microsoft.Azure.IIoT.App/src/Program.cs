@@ -14,7 +14,7 @@ namespace Microsoft.Azure.IIoT.App {
     using Microsoft.Extensions.Logging;
     using Microsoft.Extensions.Logging.ApplicationInsights;
 
-    public class Program {
+    public static class Program {
 
         /// <summary>
         /// Start application

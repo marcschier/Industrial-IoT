@@ -41,7 +41,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Hosting {
                      CreateMessage(ev, contentEncoding, contentType, eventSchema))
                 .ToList();
             try {
-                await _client.SendEventBatchAsync(target, messages);
+                await _client.SendEventBatchAsync(target, messages).ConfigureAwait(false);
             }
             finally {
                 messages.ForEach(m => m?.Dispose());
@@ -53,7 +53,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Hosting {
             string eventSchema, string contentEncoding, CancellationToken ct) {
             using (var msg = CreateMessage(data, contentEncoding, contentType,
                 eventSchema)) {
-                await _client.SendEventAsync(target, msg, ct);
+                await _client.SendEventAsync(target, msg, ct).ConfigureAwait(false);
             }
         }
 

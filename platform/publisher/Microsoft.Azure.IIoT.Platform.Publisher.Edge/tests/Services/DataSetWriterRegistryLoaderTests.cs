@@ -312,13 +312,17 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Services {
             public TimeSpan? KeepAliveTime { get; set; }
             public DataSetOrderingType? DataSetOrdering { get; set; }
             public double? SamplingOffset { get; set; }
-            public List<double> PublishingOffset { get; set; }
+            public IReadOnlyList<double> PublishingOffset { get; set; }
             public byte? Priority { get; set; }
             public TimeSpan? DiagnosticsInterval { get; set; }
             public HashSet<DataSetWriterModel> Writers { get; } = new HashSet<DataSetWriterModel>();
             public AutoResetEvent Changed { get; } = new AutoResetEvent(false);
 
             public void AddWriters(IEnumerable<DataSetWriterModel> dataSetWriters) {
+                if (dataSetWriters is null) {
+                    throw new ArgumentNullException(nameof(dataSetWriters));
+                }
+
                 foreach (var writer in dataSetWriters) {
                     Writers.Add(writer);
                 }

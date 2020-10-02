@@ -28,7 +28,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Module.Supervisor {
                     var registry = services.Resolve<IPublisherRegistry>();
 
                     // Act
-                    var supervisors = await registry.ListAllPublishersAsync();
+                    var supervisors = await registry.ListAllPublishersAsync().ConfigureAwait(false);
 
                     // Assert
                     Assert.Single(supervisors);
@@ -38,7 +38,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Module.Supervisor {
                         out var hub, out var moduleId));
                     Assert.Equal(hubName, hub);
                     Assert.Equal(module, moduleId);
-                });
+                }).ConfigureAwait(false);
             }
         }
 
@@ -52,12 +52,12 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Module.Supervisor {
 
                     // Act
                     var supervisor = await registry.GetPublisherAsync(
-                        HubResource.Format(hubName, device, module));
+                        HubResource.Format(hubName, device, module)).ConfigureAwait(false);
 
                     // Assert
                     Assert.True(supervisor.Connected.Value);
                     Assert.True(supervisor.OutOfSync.Value);
-                });
+                }).ConfigureAwait(false);
             }
         }
 
@@ -71,13 +71,13 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Module.Supervisor {
 
                     // Act
                     var status = await diagnostics.GetPublisherStatusAsync(
-                        HubResource.Format(hubName, device, module));
+                        HubResource.Format(hubName, device, module)).ConfigureAwait(false);
 
                     // Assert
                     Assert.Equal(status.DeviceId, device);
                     Assert.Equal(status.ModuleId, module);
                     Assert.Empty(status.Entities);
-                });
+                }).ConfigureAwait(false);
             }
         }
 
@@ -94,17 +94,17 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Module.Supervisor {
                         WriterGroupId = "ua326029342304923",
                         SiteId = device
                     }.ToWriterGroupRegistration().ToDeviceTwin(_serializer);
-                    await hub.CreateOrUpdateAsync(twin);
+                    await hub.CreateOrUpdateAsync(twin).ConfigureAwait(false);
                     var registry = services.Resolve<IWriterGroupStatus>();
-                    var activations = await registry.ListAllWriterGroupActivationsAsync();
+                    var activations = await registry.ListAllWriterGroupActivationsAsync().ConfigureAwait(false);
                     Assert.Empty(activations); // Nothing yet activated
 
                     // Act
-                    await activation.SynchronizeWriterGroupPlacementsAsync();
-                    activations = await registry.ListAllWriterGroupActivationsAsync();
+                    await activation.SynchronizeWriterGroupPlacementsAsync().ConfigureAwait(false);
+                    activations = await registry.ListAllWriterGroupActivationsAsync().ConfigureAwait(false);
                     var wg2 = activations.FirstOrDefault();
                     var diagnostics = services.Resolve<IPublisherDiagnostics>();
-                    var status = await diagnostics.GetPublisherStatusAsync(publisherId);
+                    var status = await diagnostics.GetPublisherStatusAsync(publisherId).ConfigureAwait(false);
 
                     // Assert
                     Assert.Equal(device, status.DeviceId);
@@ -113,7 +113,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Module.Supervisor {
                     Assert.Equal(wg2.Id, status.Entities.Single().Id);
                     Assert.Equal(EntityActivationState.ActivatedAndConnected, status.Entities.Single().ActivationState);
                     Assert.Equal(EntityActivationState.ActivatedAndConnected, wg2.ActivationState);
-                });
+                }).ConfigureAwait(false);
             }
         }
 
@@ -130,26 +130,26 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Module.Supervisor {
                         WriterGroupId = "ua260293423049231",
                         SiteId = device
                     }.ToWriterGroupRegistration().ToDeviceTwin(_serializer);
-                    await hub.CreateOrUpdateAsync(twin);
+                    await hub.CreateOrUpdateAsync(twin).ConfigureAwait(false);
                     twin = new WriterGroupInfoModel {
                         WriterGroupId = "ua260293423049232",
                         SiteId = device
                     }.ToWriterGroupRegistration().ToDeviceTwin(_serializer);
-                    await hub.CreateOrUpdateAsync(twin);
+                    await hub.CreateOrUpdateAsync(twin).ConfigureAwait(false);
                     twin = new WriterGroupInfoModel {
                         WriterGroupId = "ua260293423049233",
                         SiteId = device
                     }.ToWriterGroupRegistration().ToDeviceTwin(_serializer);
-                    await hub.CreateOrUpdateAsync(twin);
+                    await hub.CreateOrUpdateAsync(twin).ConfigureAwait(false);
                     var registry = services.Resolve<IWriterGroupStatus>();
-                    var activations = await registry.ListAllWriterGroupActivationsAsync();
+                    var activations = await registry.ListAllWriterGroupActivationsAsync().ConfigureAwait(false);
                     Assert.Empty(activations); // Nothing yet activated
 
                     // Act
-                    await activation.SynchronizeWriterGroupPlacementsAsync();
-                    activations = await registry.ListAllWriterGroupActivationsAsync();
+                    await activation.SynchronizeWriterGroupPlacementsAsync().ConfigureAwait(false);
+                    activations = await registry.ListAllWriterGroupActivationsAsync().ConfigureAwait(false);
                     var diagnostics = services.Resolve<IPublisherDiagnostics>();
-                    var status = await diagnostics.GetPublisherStatusAsync(publisherId);
+                    var status = await diagnostics.GetPublisherStatusAsync(publisherId).ConfigureAwait(false);
 
                     // Assert
                     Assert.Equal(device, status.DeviceId);
@@ -164,7 +164,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Module.Supervisor {
                         Assert.StartsWith("ua26029342304923", e.Id);
                         Assert.Equal(EntityActivationState.ActivatedAndConnected, e.ActivationState);
                     });
-                });
+                }).ConfigureAwait(false);
             }
         }
 
@@ -182,32 +182,32 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Module.Supervisor {
                         WriterGroupId = "ua260293423049231",
                         SiteId = device
                     }.ToWriterGroupRegistration().ToDeviceTwin(_serializer);
-                    await hub.CreateOrUpdateAsync(twin);
+                    await hub.CreateOrUpdateAsync(twin).ConfigureAwait(false);
                     twin = new WriterGroupInfoModel {
                         WriterGroupId = "ua260293423049232",
                         SiteId = device
                     }.ToWriterGroupRegistration().ToDeviceTwin(_serializer);
-                    await hub.CreateOrUpdateAsync(twin);
+                    await hub.CreateOrUpdateAsync(twin).ConfigureAwait(false);
                     twin = new WriterGroupInfoModel {
                         WriterGroupId = "ua260293423049233",
                         SiteId = device
                     }.ToWriterGroupRegistration().ToDeviceTwin(_serializer);
-                    await hub.CreateOrUpdateAsync(twin);
+                    await hub.CreateOrUpdateAsync(twin).ConfigureAwait(false);
                     twin = new WriterGroupInfoModel {
                         WriterGroupId = "ua260293423049234",
                         SiteId = "wrong"
                     }.ToWriterGroupRegistration().ToDeviceTwin(_serializer);
-                    await hub.CreateOrUpdateAsync(twin);
+                    await hub.CreateOrUpdateAsync(twin).ConfigureAwait(false);
                     var registry = services.Resolve<IWriterGroupStatus>();
-                    var activations = await registry.ListAllWriterGroupActivationsAsync();
+                    var activations = await registry.ListAllWriterGroupActivationsAsync().ConfigureAwait(false);
                     Assert.Empty(activations); // Nothing yet activated
 
                     // Act
-                    await activation.SynchronizeWriterGroupPlacementsAsync();
-                    activations = await registry.ListAllWriterGroupActivationsAsync();
+                    await activation.SynchronizeWriterGroupPlacementsAsync().ConfigureAwait(false);
+                    activations = await registry.ListAllWriterGroupActivationsAsync().ConfigureAwait(false);
                     var diagnostics = services.Resolve<IPublisherDiagnostics>();
-                    var status = await diagnostics.GetPublisherStatusAsync(publisherId);
-                    var includingNotConnected = await registry.ListAllWriterGroupActivationsAsync(false);
+                    var status = await diagnostics.GetPublisherStatusAsync(publisherId).ConfigureAwait(false);
+                    var includingNotConnected = await registry.ListAllWriterGroupActivationsAsync(false).ConfigureAwait(false);
 
                     // Assert
                     Assert.Equal(device, status.DeviceId);
@@ -224,7 +224,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Module.Supervisor {
                         Assert.StartsWith("ua26029342304923", e.Id);
                         Assert.Equal(EntityActivationState.ActivatedAndConnected, e.ActivationState);
                     });
-                });
+                }).ConfigureAwait(false);
             }
         }
 

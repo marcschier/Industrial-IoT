@@ -25,8 +25,8 @@ namespace Microsoft.Azure.IIoT.Platform.Identity {
             Client client, CancellationToken ct = default) {
             while (true) {
                 try {
-                    var (existing, etag) = await repo.GetAsync(client.ClientId, ct);
-                    await repo.UpdateAsync(client, etag, ct);
+                    var (existing, etag) = await repo.GetAsync(client.ClientId, ct).ConfigureAwait(false);
+                    await repo.UpdateAsync(client, etag, ct).ConfigureAwait(false);
                 }
                 catch (ResourceOutOfDateException) {
                     // Out of date get it again and update
@@ -34,7 +34,7 @@ namespace Microsoft.Azure.IIoT.Platform.Identity {
                 }
                 catch (ResourceNotFoundException) {
                     try {
-                        await repo.CreateAsync(client, ct);
+                        await repo.CreateAsync(client, ct).ConfigureAwait(false);
                     }
                     catch (ResourceConflictException) {
                         // Existing - try to update

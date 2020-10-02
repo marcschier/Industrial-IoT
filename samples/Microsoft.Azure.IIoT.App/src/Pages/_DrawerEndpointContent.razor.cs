@@ -29,7 +29,7 @@ namespace Microsoft.Azure.IIoT.App.Pages {
         /// <param name="firstRender"></param>
         protected override async Task OnAfterRenderAsync(bool firstRender) {
             if (firstRender) {
-                Application = await RegistryService.GetApplicationAsync(EndpointData.EndpointModel.ApplicationId);
+                Application = await RegistryService.GetApplicationAsync(EndpointData.EndpointModel.ApplicationId).ConfigureAwait(false);
                 IsLoading = false;
                 StateHasChanged();
             }

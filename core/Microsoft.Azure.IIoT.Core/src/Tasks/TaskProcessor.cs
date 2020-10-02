@@ -132,7 +132,7 @@ namespace Microsoft.Azure.IIoT.Tasks.Default {
                         item.Retries--;
                         _processor.TrySchedule(item);
                     }
-                    await Try.Async(item.Checkpoint);
+                    await Try.Async(item.Checkpoint).ConfigureAwait(false);
                 }
             }
 

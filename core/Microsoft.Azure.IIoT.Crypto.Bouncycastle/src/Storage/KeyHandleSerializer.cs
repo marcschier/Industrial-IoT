@@ -8,6 +8,8 @@ namespace Microsoft.Azure.IIoT.Crypto.Storage {
     using Microsoft.Azure.IIoT.Crypto.Models;
     using Microsoft.Azure.IIoT.Serializers;
     using System;
+    using System.Linq;
+    using System.Collections.Generic;
 
     /// <summary>
     /// Key document key handle serializer
@@ -23,7 +25,7 @@ namespace Microsoft.Azure.IIoT.Crypto.Storage {
         }
 
         /// <inheritdoc/>
-        public byte[] SerializeHandle(KeyHandle handle) {
+        public IReadOnlyCollection<byte> SerializeHandle(KeyHandle handle) {
             if (handle is KeyId id) {
                 return _serializer.SerializeToBytes(id).ToArray();
             }
@@ -31,11 +33,11 @@ namespace Microsoft.Azure.IIoT.Crypto.Storage {
         }
 
         /// <inheritdoc/>
-        public KeyHandle DeserializeHandle(byte[] token) {
+        public KeyHandle DeserializeHandle(IReadOnlyCollection<byte> token) {
             if (token == null) {
                 return null;
             }
-            return _serializer.Deserialize<KeyId>(token);
+            return _serializer.Deserialize<KeyId>(token.ToArray());
         }
 
         private readonly IJsonSerializer _serializer;

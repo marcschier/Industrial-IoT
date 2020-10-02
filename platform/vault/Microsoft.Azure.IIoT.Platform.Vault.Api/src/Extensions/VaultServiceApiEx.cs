@@ -24,11 +24,11 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Api {
         public static async Task<IEnumerable<string>> ListAllGroupsAsync(this IVaultServiceApi service,
             CancellationToken ct = default) {
             var groups = new List<string>();
-            var result = await service.ListGroupsAsync(null, null, ct);
+            var result = await service.ListGroupsAsync(null, null, ct).ConfigureAwait(false);
             groups.AddRange(result.Groups);
             while (result.NextPageLink != null) {
                 result = await service.ListGroupsAsync(result.NextPageLink,
-                    null, ct);
+                    null, ct).ConfigureAwait(false);
                 groups.AddRange(result.Groups);
             }
             return groups;
@@ -45,11 +45,11 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Api {
             this IVaultServiceApi service, CertificateRequestQueryRequestApiModel query,
             CancellationToken ct = default) {
             var requests = new List<CertificateRequestRecordApiModel>();
-            var result = await service.QueryRequestsAsync(query, null, ct);
+            var result = await service.QueryRequestsAsync(query, null, ct).ConfigureAwait(false);
             requests.AddRange(result.Requests);
             while (result.NextPageLink != null) {
                 result = await service.ListRequestsAsync(result.NextPageLink,
-                    null, ct);
+                    null, ct).ConfigureAwait(false);
                 requests.AddRange(result.Requests);
             }
             return requests;
@@ -64,11 +64,11 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Api {
         public static async Task<IEnumerable<CertificateRequestRecordApiModel>> ListAllRequestsAsync(
             this IVaultServiceApi service, CancellationToken ct = default) {
             var requests = new List<CertificateRequestRecordApiModel>();
-            var result = await service.ListRequestsAsync(null, null, ct);
+            var result = await service.ListRequestsAsync(null, null, ct).ConfigureAwait(false);
             requests.AddRange(result.Requests);
             while (result.NextPageLink != null) {
                 result = await service.ListRequestsAsync(result.NextPageLink,
-                    null, ct);
+                    null, ct).ConfigureAwait(false);
                 requests.AddRange(result.Requests);
             }
             return requests;
@@ -84,11 +84,11 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Api {
         public static async Task<IEnumerable<X509CertificateApiModel>> ListAllTrustedCertificatesAsync(
             this IVaultServiceApi service, string entityId, CancellationToken ct = default) {
             var certificates = new List<X509CertificateApiModel>();
-            var result = await service.ListTrustedCertificatesAsync(entityId, null, null, ct);
+            var result = await service.ListTrustedCertificatesAsync(entityId, null, null, ct).ConfigureAwait(false);
             certificates.AddRange(result.Certificates);
             while (result.NextPageLink != null) {
                 result = await service.ListTrustedCertificatesAsync(entityId, result.NextPageLink,
-                    null, ct);
+                    null, ct).ConfigureAwait(false);
                 certificates.AddRange(result.Certificates);
             }
             return certificates;

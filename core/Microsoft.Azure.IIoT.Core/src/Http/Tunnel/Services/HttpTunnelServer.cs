@@ -56,9 +56,9 @@ namespace Microsoft.Azure.IIoT.Http.Tunnel.Services {
         /// <inheritdoc/>
         public async Task HandleAsync(string source, byte[] payload,
             IDictionary<string, string> properties, Func<Task> checkpoint) {
-            var completed = await HandleEventAsync(source, payload, properties);
+            var completed = await HandleEventAsync(source, payload, properties).ConfigureAwait(false);
             if (completed) {
-                await Try.Async(() => checkpoint?.Invoke());
+                await Try.Async(() => checkpoint?.Invoke()).ConfigureAwait(false);
             }
         }
 
@@ -130,7 +130,7 @@ namespace Microsoft.Azure.IIoT.Http.Tunnel.Services {
 
             // Complete request
             try {
-                await processor.CompleteAsync();
+                await processor.CompleteAsync().ConfigureAwait(false);
             }
             catch (Exception ex) {
                 _logger.Error(ex, "Failed to complete request from {source} " +
@@ -224,7 +224,7 @@ namespace Microsoft.Azure.IIoT.Http.Tunnel.Services {
                 _request = request;
                 _chunks = chunks + 1;
                 _payload = new byte[_chunks][];
-                _payload[0] = chunk0 ?? new byte[0];
+                _payload[0] = chunk0 ?? Array.Empty<byte>();
             }
 
             /// <summary>
@@ -278,13 +278,13 @@ namespace Microsoft.Azure.IIoT.Http.Tunnel.Services {
 
                     // Perform request
                     var response = (_request.Method.ToLowerInvariant()) switch {
-                        "put" => await _outer._http.PutAsync(request),
-                        "get" => await _outer._http.GetAsync(request),
-                        "post" => await _outer._http.PostAsync(request),
-                        "delete" => await _outer._http.DeleteAsync(request),
-                        "patch" => await _outer._http.PatchAsync(request),
-                        "head" => await _outer._http.HeadAsync(request),
-                        "options" => await _outer._http.OptionsAsync(request),
+                        "put" => await _outer._http.PutAsync(request).ConfigureAwait(false),
+                        "get" => await _outer._http.GetAsync(request).ConfigureAwait(false),
+                        "post" => await _outer._http.PostAsync(request).ConfigureAwait(false),
+                        "delete" => await _outer._http.DeleteAsync(request).ConfigureAwait(false),
+                        "patch" => await _outer._http.PatchAsync(request).ConfigureAwait(false),
+                        "head" => await _outer._http.HeadAsync(request).ConfigureAwait(false),
+                        "options" => await _outer._http.OptionsAsync(request).ConfigureAwait(false),
                         _ => throw new ArgumentException(_request.Method, "Bad method"),
                     };
 
@@ -297,7 +297,7 @@ namespace Microsoft.Azure.IIoT.Http.Tunnel.Services {
                             RequestId = RequestId,
                             Status = (int)response.StatusCode,
                             Payload = response.Content
-                        }));
+                        })).ConfigureAwait(false);
                     return;
                 }
                 catch (Exception ex) {
@@ -308,7 +308,7 @@ namespace Microsoft.Azure.IIoT.Http.Tunnel.Services {
                             RequestId = RequestId,
                             Status = (int)HttpStatusCode.InternalServerError,
                             Payload = _outer._serializer.SerializeToBytes(ex).ToArray()
-                        }));
+                        })).ConfigureAwait(false);
                 }
             }
 

@@ -12,6 +12,8 @@ namespace Microsoft.Azure.IIoT.Crypto.BouncyCastle {
     using Org.BouncyCastle.Crypto.Parameters;
     using Org.BouncyCastle.Security;
     using System;
+    using System.Collections.Generic;
+    using System.Linq;
 
     /// <summary>
     /// Certificate request info extensions
@@ -24,7 +26,7 @@ namespace Microsoft.Azure.IIoT.Crypto.BouncyCastle {
         /// <param name="certificateRequest"></param>
         /// <returns></returns>
         internal static CertificationRequestInfo ToCertificationRequestInfo(
-            this byte[] certificateRequest) {
+            this IReadOnlyCollection<byte> certificateRequest) {
             if (certificateRequest == null) {
                 throw new ArgumentNullException(nameof(certificateRequest));
             }
@@ -69,12 +71,12 @@ namespace Microsoft.Azure.IIoT.Crypto.BouncyCastle {
         /// <param name="certificateRequest"></param>
         /// <returns></returns>
         internal static Pkcs10CertificationRequest ToPkcs10CertificationRequest(
-            this byte[] certificateRequest) {
+            this IReadOnlyCollection<byte> certificateRequest) {
             if (certificateRequest == null) {
                 throw new ArgumentNullException(nameof(certificateRequest));
             }
             var pkcs10CertificationRequest = new Pkcs10CertificationRequest(
-                certificateRequest);
+                certificateRequest.ToArray());
             if (!pkcs10CertificationRequest.Verify()) {
                 throw new FormatException("CSR signature invalid.");
             }

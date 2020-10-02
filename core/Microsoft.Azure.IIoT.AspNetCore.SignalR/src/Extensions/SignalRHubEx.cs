@@ -43,7 +43,7 @@ namespace Microsoft.Extensions.DependencyInjection {
                 .Select(m => m.MapTo.TrimStart('/'))
                 .ToList();
             if (!results.Any()) {
-                results.Add(HubNameAttribute.GetName(type));
+                results.Add(HubNameAttribute.GetHubName(type));
             }
             foreach (var map in results) {
                 var builder = endpoints.MapHub<THub>("/" + map, options => {

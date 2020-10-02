@@ -4,9 +4,11 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Platform.Twin {
+    using Microsoft.Azure.IIoT.Platform.Core.Models;
     using Microsoft.Azure.IIoT.Platform.Twin.Models;
     using Microsoft.Azure.IIoT.Utils;
     using System;
+    using System.Collections.Generic;
     using System.Threading.Tasks;
 
     /// <summary>
@@ -25,11 +27,21 @@ namespace Microsoft.Azure.IIoT.Platform.Twin {
         /// <returns></returns>
         public static async Task<BrowseResultModel> NodeBrowseAsync<T>(
             this IBrowseServices<T> service, T endpoint, BrowseRequestModel request) {
+            if (service is null) {
+                throw new ArgumentNullException(nameof(service));
+            }
+            if (request is null) {
+                throw new ArgumentNullException(nameof(request));
+            }
+
             if (request.MaxReferencesToReturn != null) {
-                return await service.NodeBrowseFirstAsync(endpoint, request);
+                return await service.NodeBrowseFirstAsync(endpoint,
+                    request).ConfigureAwait(false);
             }
             while (true) {
-                var result = await service.NodeBrowseFirstAsync(endpoint, request);
+                var result = await service.NodeBrowseFirstAsync(endpoint,
+                    request).ConfigureAwait(false);
+                var references = new List<NodeReferenceModel>(result.References);
                 while (result.ContinuationToken != null) {
                     try {
                         var next = await service.NodeBrowseNextAsync(endpoint,
@@ -39,8 +51,8 @@ namespace Microsoft.Azure.IIoT.Platform.Twin {
                                 NodeIdsOnly = request.NodeIdsOnly,
                                 ReadVariableValues = request.ReadVariableValues,
                                 TargetNodesOnly = request.TargetNodesOnly
-                            });
-                        result.References.AddRange(next.References);
+                            }).ConfigureAwait(false);
+                        references.AddRange(next.References);
                         result.ContinuationToken = next.ContinuationToken;
                     }
                     catch (Exception) {
@@ -48,10 +60,11 @@ namespace Microsoft.Azure.IIoT.Platform.Twin {
                             new BrowseNextRequestModel {
                                 ContinuationToken = result.ContinuationToken,
                                 Abort = true
-                            }));
+                            })).ConfigureAwait(false);
                         throw;
                     }
                 }
+                result.References = references;
                 return result;
             }
         }

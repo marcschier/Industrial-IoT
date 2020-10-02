@@ -28,6 +28,9 @@ namespace Microsoft.Azure.IIoT.Crypto.Storage {
         /// <param name="keys"></param>
         public CertificateDatabase(IItemContainerFactory container,
             IKeyHandleSerializer keys) {
+            if (container is null) {
+                throw new ArgumentNullException(nameof(container));
+            }
             _certificates = container.OpenAsync("certificates").Result;
             _keys = keys ?? throw new ArgumentNullException(nameof(keys));
         }
@@ -36,7 +39,7 @@ namespace Microsoft.Azure.IIoT.Crypto.Storage {
         public async Task AddCertificateAsync(string certificateName,
             Certificate certificate, string id, CancellationToken ct) {
             var document = certificate.ToDocument(certificateName, id, _keys);
-            _ = await _certificates.UpsertAsync(document, ct);
+            _ = await _certificates.UpsertAsync(document, ct: ct).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
@@ -48,7 +51,7 @@ namespace Microsoft.Azure.IIoT.Crypto.Storage {
                 .OrderByDescending(x => x.Version)
                 .Take(1)
                 .GetResults();
-            var documents = await result.ReadAsync(ct);
+            var documents = await result.ReadAsync(ct).ConfigureAwait(false);
             return DocumentToCertificate(documents.SingleOrDefault()?.Value);
         }
 
@@ -61,7 +64,7 @@ namespace Microsoft.Azure.IIoT.Crypto.Storage {
             var now = DateTime.UtcNow;
             while (true) {
                 var document = await _certificates.FindAsync<CertificateDocument>(
-                    certificate.GetSerialNumberAsString(), ct);
+                    certificate.GetSerialNumberAsString(), ct: ct).ConfigureAwait(false);
                 if (document == null) {
                     throw new ResourceNotFoundException("Certificate was not found");
                 }
@@ -73,7 +76,7 @@ namespace Microsoft.Azure.IIoT.Crypto.Storage {
                     var newDocument = document.Value.Clone();
                     newDocument.DisabledSince = now;
                     document = await _certificates.ReplaceAsync(document,
-                        newDocument, ct);
+                        newDocument, ct: ct).ConfigureAwait(false);
 
                     // TODO: Notify disabled certificate
                     return document.Value.CertificateId;
@@ -85,10 +88,11 @@ namespace Microsoft.Azure.IIoT.Crypto.Storage {
         }
 
         /// <inheritdoc/>
-        public async Task<Certificate> GetCertificateAsync(byte[] serialNumber,
-            CancellationToken ct) {
+        public async Task<Certificate> GetCertificateAsync(
+            IReadOnlyCollection<byte> serialNumber, CancellationToken ct) {
             var serial = new SerialNumber(serialNumber).ToString();
-            var document = await _certificates.GetAsync<CertificateDocument>(serial, ct);
+            var document = await _certificates.GetAsync<CertificateDocument>(serial,
+                ct: ct).ConfigureAwait(false);
             return DocumentToCertificate(document?.Value);
         }
 
@@ -101,7 +105,7 @@ namespace Microsoft.Azure.IIoT.Crypto.Storage {
                 .OrderByDescending(x => x.Version)
                 .Take(1)
                 .GetResults();
-            var documents = await result.ReadAsync(ct);
+            var documents = await result.ReadAsync(ct).ConfigureAwait(false);
             return DocumentToCertificate(documents.SingleOrDefault()?.Value);
         }
 
@@ -111,61 +115,62 @@ namespace Microsoft.Azure.IIoT.Crypto.Storage {
 
             var query = _certificates.CreateQuery<CertificateDocument>(pageSize)
                 .Where(x => x.Type == nameof(Certificate));
-
-            if (filter.NotBefore != null) {
-                query = query.Where(x => x.NotBefore <= filter.NotBefore.Value);
-            }
-            if (filter.NotAfter != null) {
-                query = query.Where(x => x.NotAfter >= filter.NotAfter.Value);
-            }
-            if (filter.IncludeDisabled && filter.ExcludeEnabled) {
-                query = query.Where(x => x.DisabledSince != null);
-            }
-            if (!filter.IncludeDisabled && !filter.ExcludeEnabled) {
-                query = query.Where(x => x.DisabledSince == null);
-            }
-            if (filter.CertificateName != null) {
-                query = query.Where(x => x.CertificateName == filter.CertificateName);
-            }
-            if (filter.Subject != null) {
-                var subject = filter.Subject.Name;
-                if (filter.IncludeAltNames) {
-                    query = query.Where(x => x.Subject == subject ||
-                        (x.SubjectAltNames != null && x.SubjectAltNames.Contains(subject)));
+            if (filter != null) {
+                if (filter.NotBefore != null) {
+                    query = query.Where(x => x.NotBefore <= filter.NotBefore.Value);
                 }
-                else {
-                    query = query.Where(x => x.Subject == subject);
+                if (filter.NotAfter != null) {
+                    query = query.Where(x => x.NotAfter >= filter.NotAfter.Value);
                 }
-            }
-            if (filter.Thumbprint != null) {
-                query = query.Where(x => x.Thumbprint == filter.Thumbprint);
-            }
-            if (filter.KeyId != null) {
-                query = query.Where(x => x.KeyId == filter.KeyId);
-            }
-            if (filter.IsIssuer != null) {
-                query = query.Where(x => x.IsIssuer == filter.IsIssuer.Value);
-            }
-            if (filter.Issuer != null) {
-                var issuer = filter.Issuer.Name;
-                if (filter.IncludeAltNames) {
-                    query = query.Where(x => x.Issuer == issuer ||
-                        (x.IssuerAltNames != null && x.IssuerAltNames.Contains(issuer)));
+                if (filter.IncludeDisabled && filter.ExcludeEnabled) {
+                    query = query.Where(x => x.DisabledSince != null);
                 }
-                else {
-                    query = query.Where(x => x.Issuer == issuer);
+                if (!filter.IncludeDisabled && !filter.ExcludeEnabled) {
+                    query = query.Where(x => x.DisabledSince == null);
                 }
-            }
-            if (filter.IssuerSerialNumber != null) {
-                var sn = new SerialNumber(filter.IssuerSerialNumber).ToString();
-                query = query.Where(x => x.IssuerSerialNumber == sn);
-            }
-            if (filter.IssuerKeyId != null) {
-                query = query.Where(x => x.IssuerKeyId == filter.IssuerKeyId);
+                if (filter.CertificateName != null) {
+                    query = query.Where(x => x.CertificateName == filter.CertificateName);
+                }
+                if (filter.Subject != null) {
+                    var subject = filter.Subject.Name;
+                    if (filter.IncludeAltNames) {
+                        query = query.Where(x => x.Subject == subject ||
+                            (x.SubjectAltNames != null && x.SubjectAltNames.Contains(subject)));
+                    }
+                    else {
+                        query = query.Where(x => x.Subject == subject);
+                    }
+                }
+                if (filter.Thumbprint != null) {
+                    query = query.Where(x => x.Thumbprint == filter.Thumbprint);
+                }
+                if (filter.KeyId != null) {
+                    query = query.Where(x => x.KeyId == filter.KeyId);
+                }
+                if (filter.IsIssuer != null) {
+                    query = query.Where(x => x.IsIssuer == filter.IsIssuer.Value);
+                }
+                if (filter.Issuer != null) {
+                    var issuer = filter.Issuer.Name;
+                    if (filter.IncludeAltNames) {
+                        query = query.Where(x => x.Issuer == issuer ||
+                            (x.IssuerAltNames != null && x.IssuerAltNames.Contains(issuer)));
+                    }
+                    else {
+                        query = query.Where(x => x.Issuer == issuer);
+                    }
+                }
+                if (filter.IssuerSerialNumber != null) {
+                    var sn = new SerialNumber(filter.IssuerSerialNumber).ToString();
+                    query = query.Where(x => x.IssuerSerialNumber == sn);
+                }
+                if (filter.IssuerKeyId != null) {
+                    query = query.Where(x => x.IssuerKeyId == filter.IssuerKeyId);
+                }
             }
             query = query.OrderByDescending(x => x.Version);
             var result = query.GetResults();
-            var documents = await result.ReadAsync(ct);
+            var documents = await result.ReadAsync(ct).ConfigureAwait(false);
             return new CertificateCollection {
                 Certificates = documents
                     .Select(c => DocumentToCertificate(c.Value))
@@ -180,7 +185,7 @@ namespace Microsoft.Azure.IIoT.Crypto.Storage {
             if (certificate?.RawData == null) {
                 throw new ArgumentNullException(nameof(certificate));
             }
-            var chain = await ListChainAsync(certificate, ct);
+            var chain = await ListChainAsync(certificate, ct).ConfigureAwait(false);
             return new CertificateCollection {
                 Certificates = chain.ToList()
             };
@@ -201,7 +206,7 @@ namespace Microsoft.Azure.IIoT.Crypto.Storage {
                     .OrderByDescending(x => x.Version)
                     .GetResults();
             }
-            var documents = await result.ReadAsync(ct);
+            var documents = await result.ReadAsync(ct).ConfigureAwait(false);
             return new CertificateCollection {
                 Certificates = documents
                     .Select(c => DocumentToCertificate(c.Value))
@@ -227,7 +232,7 @@ namespace Microsoft.Azure.IIoT.Crypto.Storage {
                 // Select top 1
                 .Take(1)
                 .GetResults();
-            var documents = await result.ReadAsync(ct);
+            var documents = await result.ReadAsync(ct).ConfigureAwait(false);
             return DocumentToCertificate(documents.SingleOrDefault()?.Value);
         }
 
@@ -241,11 +246,11 @@ namespace Microsoft.Azure.IIoT.Crypto.Storage {
             CancellationToken ct) {
             try {
                 // Try find chain using serial and issuer serial
-                return await GetChainBySerialAsync(certificate, ct);
+                return await GetChainBySerialAsync(certificate, ct).ConfigureAwait(false);
             }
             catch (ResourceNotFoundException) {
                 // Try traditional x500 name matching
-                return await GetChainByNameAsync(certificate, ct);
+                return await GetChainByNameAsync(certificate, ct).ConfigureAwait(false);
             }
         }
 
@@ -264,7 +269,7 @@ namespace Microsoft.Azure.IIoT.Crypto.Storage {
                 throw new ResourceNotFoundException("Issuer serial not found");
             }
             while (!certificate.IsSelfSigned()) {
-                certificate = await GetCertificateAsync(certificate.IssuerSerialNumber, ct);
+                certificate = await GetCertificateAsync(certificate.IssuerSerialNumber, ct).ConfigureAwait(false);
                 if (certificate?.RawData == null) {
                     throw new ResourceNotFoundException("Incomplete chain");
                 }
@@ -286,7 +291,8 @@ namespace Microsoft.Azure.IIoT.Crypto.Storage {
             var chain = new List<Certificate> { certificate };
             // Compare subject and issuer names
             while (!certificate.IsSelfSigned()) {
-                certificate = await GetCertificateBySubjectAsync(certificate.Issuer, ct);
+                certificate = await GetCertificateBySubjectAsync(certificate.Issuer,
+                    ct).ConfigureAwait(false);
                 if (certificate?.RawData == null) {
                     throw new ResourceNotFoundException("Incomplete chain");
                 }
@@ -301,7 +307,7 @@ namespace Microsoft.Azure.IIoT.Crypto.Storage {
         /// Validate the chain
         /// </summary>
         /// <param name="chain"></param>
-        private IEnumerable<Certificate> Validate(List<Certificate> chain) {
+        private static IEnumerable<Certificate> Validate(List<Certificate> chain) {
             if (!chain.First().IsValidChain(chain, out var status)) {
                 throw new CryptographicException(status.AsString("Chain invalid:"));
             }

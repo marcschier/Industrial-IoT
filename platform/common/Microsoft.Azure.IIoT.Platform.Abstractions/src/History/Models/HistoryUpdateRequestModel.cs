@@ -5,6 +5,7 @@
 
 namespace Microsoft.Azure.IIoT.Platform.Twin.Models {
     using Microsoft.Azure.IIoT.Platform.Core.Models;
+    using System.Collections.Generic;
 
     /// <summary>
     /// Request node history update
@@ -20,7 +21,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Models {
         /// An optional path from NodeId instance to
         /// the actual node.
         /// </summary>
-        public string[] BrowsePath { get; set; }
+        public IReadOnlyList<string> BrowsePath { get; set; }
 
         /// <summary>
         /// The HistoryUpdateDetailsType extension object

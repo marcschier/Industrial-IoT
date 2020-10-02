@@ -24,7 +24,7 @@ namespace Microsoft.Azure.IIoT.Azure.EventHub.Clients {
     using global::Azure.ResourceManager.EventHubs;
     using global::Azure.ResourceManager.EventHubs.Models;
 
-    public class EventHubQueueFixture : IDisposable {
+    public sealed class EventHubQueueFixture : IDisposable {
 
         public EventHubQueueFixture() {
             // Read connections string from keyvault
@@ -39,17 +39,19 @@ namespace Microsoft.Azure.IIoT.Azure.EventHub.Clients {
         /// </summary>
         /// <param name="path"></param>
         /// <returns></returns>
-        public EventHubQueueHarness GetHarness(string path) {
+        internal EventHubQueueHarness GetHarness(string path) {
             return GetHarnessAsync(path).Result;
         }
 
 
         /// <inheritdoc/>
-        public void Dispose() { }
+        public void Dispose() {
+            _limit.Dispose();
+        }
 
 
         private async Task<EventHubQueueHarness> GetHarnessAsync(string eventHub) {
-            await _limit.WaitAsync(); // Acquire
+            await _limit.WaitAsync().ConfigureAwait(false); // Acquire
             try {
                 var eventHubClient = CreateEventHubClient(out var resourceGroup, out var namespaceName);
                 await eventHubClient.EventHubs.CreateOrUpdateAsync(resourceGroup, namespaceName,
@@ -57,7 +59,7 @@ namespace Microsoft.Azure.IIoT.Azure.EventHub.Clients {
                         PartitionCount = 4,
                         MessageRetentionInDays = 1,
                         Status = EntityStatus.Active
-                    });
+                    }).ConfigureAwait(false);
 
                 var result = await eventHubClient.EventHubs.CreateOrUpdateAuthorizationRuleAsync(
                     resourceGroup, namespaceName, eventHub, eventHub + "-key",
@@ -65,13 +67,13 @@ namespace Microsoft.Azure.IIoT.Azure.EventHub.Clients {
                         Rights = new List<AccessRights> {
                             AccessRights.Listen, AccessRights.Send
                         }
-                    });
+                    }).ConfigureAwait(false);
                 var keys = await eventHubClient.EventHubs.ListKeysAsync(resourceGroup,
-                    namespaceName, eventHub, eventHub + "-key");
+                    namespaceName, eventHub, eventHub + "-key").ConfigureAwait(false);
                 return new EventHubQueueHarness(keys.Value.PrimaryConnectionString, async () => {
                     try {
                         await eventHubClient.EventHubs.DeleteAsync(resourceGroup, namespaceName,
-                            eventHub);
+                            eventHub).ConfigureAwait(false);
                     }
                     finally {
                         _limit.Release();
@@ -100,7 +102,8 @@ namespace Microsoft.Azure.IIoT.Azure.EventHub.Clients {
 
             var eh = new EventHubClientConfig(_config);
             namespaceName = ConnectionString.Parse(eh.EventHubConnString)?.Endpoint;
-            namespaceName = namespaceName?.Replace("sb://", "").Split('.')[0];
+            namespaceName = namespaceName?.Replace("sb://", "",
+                StringComparison.InvariantCulture).Split('.')[0];
 
             var tenantId = _config.GetValue<string>("PCS_AUTH_TENANT");
             var credentials = new DefaultAzureCredential(new DefaultAzureCredentialOptions {
@@ -142,15 +145,15 @@ namespace Microsoft.Azure.IIoT.Azure.EventHub.Clients {
         public string ConsumerGroup => _eh.ConsumerGroup;
     }
 
-    public class EventHubQueueHarness : IDisposable {
+    internal sealed class EventHubQueueHarness : IDisposable {
 
-        public event TelemetryEventHandler OnEvent;
-        public event EventHandler OnComplete;
+        internal event TelemetryEventHandler OnEvent;
+        internal event EventHandler OnComplete;
 
         /// <summary>
         /// Create fixture
         /// </summary>
-        public EventHubQueueHarness(string connectionString, Action dispose) {
+        internal EventHubQueueHarness(string connectionString, Action dispose) {
             if (dispose == null || connectionString == null) {
                 _dispose = null;
                 _container = null;
@@ -276,9 +279,9 @@ namespace Microsoft.Azure.IIoT.Azure.EventHub.Clients {
     }
 
 
-    public class TelemetryEventArgs : EventArgs {
+    internal class TelemetryEventArgs : EventArgs {
 
-        public TelemetryEventArgs(string schema, string source,
+        internal TelemetryEventArgs(string schema, string source,
             byte[] data, IDictionary<string, string> properties) {
             HandlerSchema = schema;
             Source = source;
@@ -288,13 +291,12 @@ namespace Microsoft.Azure.IIoT.Azure.EventHub.Clients {
                 ModuleId = moduleId;
             }
             catch {
-
             }
             Data = data;
             Target = properties.TryGetValue(EventProperties.Target, out var v) ? v : null;
             Properties = properties
                 .Where(k => k.Key != EventProperties.Target)
-                .Where(k => !k.Key.StartsWith("x-"))
+                .Where(k => !k.Key.StartsWith("x-", StringComparison.Ordinal))
                 .ToDictionary(k => k.Key, v => v.Value);
         }
 
@@ -304,9 +306,9 @@ namespace Microsoft.Azure.IIoT.Azure.EventHub.Clients {
         public string Hub { get; }
         public string DeviceId { get; }
         public string ModuleId { get; }
-        public byte[] Data { get; }
-        public IDictionary<string, string> Properties { get; }
+        public IReadOnlyCollection<byte> Data { get; }
+        public IReadOnlyDictionary<string, string> Properties { get; }
     }
 
-    public delegate void TelemetryEventHandler(object sender, TelemetryEventArgs args);
+    internal delegate void TelemetryEventHandler(object sender, TelemetryEventArgs args);
 }

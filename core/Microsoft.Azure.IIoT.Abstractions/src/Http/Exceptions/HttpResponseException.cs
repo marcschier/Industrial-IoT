@@ -12,21 +12,31 @@ namespace Microsoft.Azure.IIoT.Http.Exceptions {
     /// </summary>
     public class HttpResponseException : Exception {
 
-        /// <summary>
-        /// Create response exception
-        /// </summary>
-        /// <param name="statusCode"></param>
+        /// <inheritdoc/>
+        public HttpResponseException() {
+            StatusCode = HttpStatusCode.InternalServerError;
+        }
+
+        /// <inheritdoc/>
+        public HttpResponseException(string message) :
+            base(message) {
+            StatusCode = HttpStatusCode.InternalServerError;
+        }
+
+        /// <inheritdoc/>
+        public HttpResponseException(string message, Exception innerException) :
+            base(message, innerException) {
+            StatusCode = HttpStatusCode.InternalServerError;
+        }
+
+        /// <inheritdoc/>
         public HttpResponseException(HttpStatusCode statusCode) {
             StatusCode = statusCode;
         }
 
-        /// <summary>
-        /// Create response exception
-        /// </summary>
-        /// <param name="statusCode"></param>
-        /// <param name="message"></param>
+        /// <inheritdoc/>
         public HttpResponseException(HttpStatusCode statusCode, string message) :
-            base(message) {
+            this(message) {
             StatusCode = statusCode;
         }
 

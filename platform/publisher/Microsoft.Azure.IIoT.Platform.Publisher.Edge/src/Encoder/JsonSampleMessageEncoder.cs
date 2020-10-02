@@ -45,7 +45,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Services {
         /// <inheritdoc/>
         public IList<NetworkMessageModel> EncodeBatch(string writerGroupId,
             IList<DataSetWriterMessageModel> messages,
-            string headerLayoutUri, NetworkMessageContentMask? contentMask,
+            string headerLayoutProfile, NetworkMessageContentMask? contentMask,
             Publisher.Models.DataSetOrderingType? order, int maxMessageSize) {
             return EncodeBatch(messages, maxMessageSize).ToList();
         }
@@ -53,7 +53,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Services {
         /// <inheritdoc/>
         public IList<NetworkMessageModel> Encode(string writerGroupId,
             IList<DataSetWriterMessageModel> messages,
-            string headerLayoutUri, NetworkMessageContentMask? contentMask,
+            string headerLayoutProfile, NetworkMessageContentMask? contentMask,
             Publisher.Models.DataSetOrderingType? order, int maxMessageSize) {
             return Encode(messages, maxMessageSize).ToList();
         }
@@ -98,7 +98,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Services {
                     yield break;
                 }
                 Interlocked.Increment(ref _notificationsProcessedCount);
-                AvgMessageSize = (AvgMessageSize * MessagesProcessedCount + encoded.Body.Length) /
+                AvgMessageSize = ((AvgMessageSize * MessagesProcessedCount) + encoded.Body.Length) /
                     (MessagesProcessedCount + 1);
                 AvgNotificationsPerMessage = ((AvgNotificationsPerMessage * MessagesProcessedCount) + 1) /
                     (MessagesProcessedCount + 1);
@@ -188,9 +188,9 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Services {
                     MessageSchema = MessageSchemaTypes.MonitoredItemMessageJson
                 };
                 System.Diagnostics.Debug.Assert(encoded.Body.Length <= maxMessageSize);
-                AvgMessageSize = (AvgMessageSize * MessagesProcessedCount + encoded.Body.Length) /
+                AvgMessageSize = ((AvgMessageSize * MessagesProcessedCount) + encoded.Body.Length) /
                     (MessagesProcessedCount + 1);
-                AvgNotificationsPerMessage = (AvgNotificationsPerMessage * MessagesProcessedCount +
+                AvgNotificationsPerMessage = ((AvgNotificationsPerMessage * MessagesProcessedCount) +
                     values) / (MessagesProcessedCount + 1);
                 Interlocked.Increment(ref _messagesProcessedCount);
                 return encoded;
@@ -207,7 +207,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Services {
             if (context?.NamespaceUris == null) {
                 // declare all notifications in messages dropped
                 foreach (var message in messages) {
-                    Interlocked.Add(ref _notificationsDroppedCount, (message?.Notifications?.Count() ?? 0));
+                    Interlocked.Add(ref _notificationsDroppedCount, message?.Notifications?.Count() ?? 0);
                 }
                 yield break;
             }

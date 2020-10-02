@@ -4,6 +4,7 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Crypto {
+    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
 
@@ -19,7 +20,8 @@ namespace Microsoft.Azure.IIoT.Crypto {
         /// <param name="serialNumber"></param>
         /// <param name="ct"></param>
         /// <returns></returns>
-        Task RevokeCertificateAsync(byte[] serialNumber,
+        Task RevokeCertificateAsync(
+            IReadOnlyCollection<byte> serialNumber,
             CancellationToken ct = default);
     }
 }

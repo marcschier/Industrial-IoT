@@ -63,20 +63,21 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
         public async Task<DataSetAddVariableBatchResultModel> AddVariablesToDataSetWriterAsync(
             string dataSetWriterId, DataSetAddVariableBatchRequestModel request,
             PublisherOperationContextModel context, CancellationToken ct) {
+            if (request is null) {
+                throw new ArgumentNullException(nameof(request));
+            }
             if (string.IsNullOrEmpty(dataSetWriterId)) {
                 throw new ArgumentNullException(nameof(dataSetWriterId));
             }
-            if (request?.Variables == null) {
-                throw new ArgumentNullException(nameof(request));
-            }
-            if (request.Variables.Count == 0 || request.Variables.Count > kMaxBatchSize) {
-                throw new ArgumentException(nameof(request.Variables),
-                    "Number of variables in request is invalid.");
+            if (request.Variables == null||
+                request.Variables.Count == 0 || request.Variables.Count > kMaxBatchSize) {
+                throw new ArgumentException(
+                    "Number of variables in request is invalid.", nameof(request));
             }
             // Try to find writer
-            var writer = await _writers.FindAsync(dataSetWriterId, ct);
+            var writer = await _writers.FindAsync(dataSetWriterId, ct).ConfigureAwait(false);
             if (writer == null) {
-                throw new ArgumentException(nameof(dataSetWriterId), "Writer not found");
+                throw new ArgumentException("Writer not found", nameof(dataSetWriterId));
             }
             var results = new List<DataSetAddVariableResultModel>();
             try {
@@ -85,7 +86,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                     try {
                         var info = variable.AsDataSetVariable(context);
                         var result = await _dataSets.AddDataSetVariableAsync(
-                            writer.DataSetWriterId, info);
+                            writer.DataSetWriterId, info).ConfigureAwait(false);
                         results.Add(new DataSetAddVariableResultModel {
                             GenerationId = result.GenerationId,
                             Id = result.Id
@@ -103,7 +104,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
 
                 // If successful notify about dataset writer change
                 await _writerEvents.NotifyAllAsync(
-                    l => l.OnDataSetWriterUpdatedAsync(context, dataSetWriterId, writer));
+                    l => l.OnDataSetWriterUpdatedAsync(context, dataSetWriterId, writer)).ConfigureAwait(false);
                 return new DataSetAddVariableBatchResultModel {
                     Results = results
                 };
@@ -112,7 +113,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                 // Undo add
                 await Task.WhenAll(results.Select(item =>
                     Try.Async(() => _dataSets.DeleteDataSetVariableAsync(writer.DataSetWriterId,
-                        item.Id, item.GenerationId))));
+                        item.Id, item.GenerationId)))).ConfigureAwait(false);
                 throw;
             }
         }
@@ -124,12 +125,13 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
             if (string.IsNullOrEmpty(endpointId)) {
                 throw new ArgumentNullException(nameof(endpointId));
             }
-            if (request?.Variables == null) {
+            if (request is null) {
                 throw new ArgumentNullException(nameof(request));
             }
-            if (request.Variables.Count == 0 || request.Variables.Count > kMaxBatchSize) {
-                throw new ArgumentException(nameof(request.Variables),
-                    "Number of variables in request is invalid.");
+            if (request.Variables == null ||
+                request.Variables.Count == 0 || request.Variables.Count > kMaxBatchSize) {
+                throw new ArgumentException(
+                    "Number of variables in request is invalid.", nameof(request));
             }
             var results = new List<DataSetAddVariableResultModel>();
             try {
@@ -144,9 +146,9 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                         // is the node id, and all variables are also removed
                         // by the single node id.  See unit tests.
                         //
-                        dataSetVariable.Id = dataSetVariable.PublishedVariableNodeId.ToSha1Hash();
+                        dataSetVariable.Id = dataSetVariable.PublishedVariableNodeId.ToSha256Hash();
                         var result = await _dataSets.AddOrUpdateDataSetVariableAsync(
-                            endpointId, dataSetVariable.Id, _ => Task.FromResult(dataSetVariable));
+                            endpointId, dataSetVariable.Id, _ => Task.FromResult(dataSetVariable)).ConfigureAwait(false);
                         results.Add(new DataSetAddVariableResultModel {
                             GenerationId = result.GenerationId,
                             Id = result.Id
@@ -162,10 +164,10 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                     }
                 }
                 var writer = await EnsureDefaultDataSetWriterExistsAsync(endpointId,
-                    context, request.DataSetPublishingInterval, request.User, ct);
+                    context, request.DataSetPublishingInterval, request.User, ct).ConfigureAwait(false);
                 // If successful notify about dataset writer change
                 await _writerEvents.NotifyAllAsync(
-                    l => l.OnDataSetWriterUpdatedAsync(context, endpointId, writer));
+                    l => l.OnDataSetWriterUpdatedAsync(context, endpointId, writer)).ConfigureAwait(false);
                 return new DataSetAddVariableBatchResultModel {
                     Results = results
                 };
@@ -174,7 +176,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                 // Undo add
                 await Task.WhenAll(results.Select(item =>
                     Try.Async(() => _dataSets.DeleteDataSetVariableAsync(endpointId,
-                        item.Id, item.GenerationId))));
+                        item.Id, item.GenerationId)))).ConfigureAwait(false);
                 throw;
             }
         }
@@ -207,18 +209,18 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                         updated = true;
                     }
                     return Task.FromResult(group);
-                }, ct);
+                }, ct).ConfigureAwait(false);
             if (updated) {
                 if (!string.IsNullOrEmpty(group.SiteId)) {
                     // Notify update here - otherwise will update site id later and notify.
                     await _groupEvents.NotifyAllAsync(
-                        l => l.OnWriterGroupUpdatedAsync(context, group));
+                        l => l.OnWriterGroupUpdatedAsync(context, group)).ConfigureAwait(false);
                 }
             }
             else {
                 // Notify group was added
                 await _groupEvents.NotifyAllAsync(
-                    l => l.OnWriterGroupAddedAsync(context, group));
+                    l => l.OnWriterGroupAddedAsync(context, group)).ConfigureAwait(false);
             }
             groupsToActivate.Add(group.WriterGroupId);
 
@@ -238,7 +240,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                         Url = ep.Url,
                         SecurityMode = ep.SecurityMode,
                         SecurityPolicy = ep.SecurityPolicy,
-                    }, 1, ct);
+                    }, 1, ct).ConfigureAwait(false);
 
                 var endpoint = endpoints.Items?.FirstOrDefault(); // Pick the first returned.
                 if (string.IsNullOrEmpty(endpoint?.Id)) {
@@ -260,9 +262,9 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                         await _groups.UpdateAsync(group.WriterGroupId, existing => {
                             existing.SiteId = group.SiteId;
                             return Task.FromResult(true);
-                        });
+                        }).ConfigureAwait(false);
                         await _groupEvents.NotifyAllAsync(
-                            l => l.OnWriterGroupUpdatedAsync(context, group));
+                            l => l.OnWriterGroupUpdatedAsync(context, group)).ConfigureAwait(false);
 
                         _logger.Information("Updated group {group} to move to site {site}.",
                             groupOfWriter.WriterGroupId, group.SiteId);
@@ -276,10 +278,10 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                         groupOfWriter = group.Clone();
                         groupOfWriter.SiteId = endpoint.SiteId;
                         groupOfWriter.WriterGroupId = null;  // Assign
-                        groupOfWriter = await _groups.AddAsync(groupOfWriter, ct);
+                        groupOfWriter = await _groups.AddAsync(groupOfWriter, ct).ConfigureAwait(false);
 
                         await _groupEvents.NotifyAllAsync(
-                            l => l.OnWriterGroupAddedAsync(context, groupOfWriter));
+                            l => l.OnWriterGroupAddedAsync(context, groupOfWriter)).ConfigureAwait(false);
 
                         // Must also be activated at the end
                         groupsToActivate.Add(groupOfWriter.WriterGroupId);
@@ -298,11 +300,11 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                 writer = await _writers.AddOrUpdateAsync(writer.DataSetWriterId, existing => {
                     updated = existing != null;
                     return Task.FromResult(writer);
-                }, ct);
+                }, ct).ConfigureAwait(false);
                 if (!updated) {
                     // If added - notify, if updated, will be notified below.
                     await _writerEvents.NotifyAllAsync(
-                        l => l.OnDataSetWriterAddedAsync(context, writer));
+                        l => l.OnDataSetWriterAddedAsync(context, writer)).ConfigureAwait(false);
                 }
 
                 // Add variables to the writer if any
@@ -310,10 +312,10 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                     .PublishedVariables?.PublishedData;
                 if (variables != null) {
                     foreach (var dataSetVariable in variables) {
-                        dataSetVariable.Id = dataSetVariable.PublishedVariableNodeId.ToSha1Hash();
+                        dataSetVariable.Id = dataSetVariable.PublishedVariableNodeId.ToSha256Hash();
                         await _dataSets.AddOrUpdateDataSetVariableAsync(
                             writer.DataSetWriterId, dataSetVariable.Id,
-                            _ => Task.FromResult(dataSetVariable), ct);
+                            _ => Task.FromResult(dataSetVariable), ct).ConfigureAwait(false);
                     }
                 }
                 // Add events to the writer if any
@@ -322,17 +324,17 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                 if (events != null) {
                     await _dataSets.AddOrUpdateEventDataSetAsync(
                         writer.DataSetWriterId,
-                        _ => Task.FromResult(events), ct);
+                        _ => Task.FromResult(events), ct).ConfigureAwait(false);
                 }
 
                 // Now notify about dataset writer change
                 await _writerEvents.NotifyAllAsync(
-                    l => l.OnDataSetWriterUpdatedAsync(context, writer.DataSetWriterId, writer));
+                    l => l.OnDataSetWriterUpdatedAsync(context, writer.DataSetWriterId, writer)).ConfigureAwait(false);
             }
 
             // Now activate all groups we collected here
             foreach (var activate in groupsToActivate) {
-                await ActivateDeactivateWriterGroupAsync(activate, true, context, ct);
+                await ActivateDeactivateWriterGroupAsync(activate, true, context, ct).ConfigureAwait(false);
             }
         }
 
@@ -349,13 +351,13 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
 
             // This will fail if there is already a event dataset
             var result = await _dataSets.AddEventDataSetAsync(dataSetWriterId,
-                request.AsEventDataSet(context));
+                request.AsEventDataSet(context)).ConfigureAwait(false);
 
             // If successful notify about dataset writer change
             await _itemEvents.NotifyAllAsync(
-                l => l.OnPublishedDataSetEventsAddedAsync(context, dataSetWriterId, result));
+                l => l.OnPublishedDataSetEventsAddedAsync(context, dataSetWriterId, result)).ConfigureAwait(false);
             await _writerEvents.NotifyAllAsync(
-                l => l.OnDataSetWriterUpdatedAsync(context, dataSetWriterId));
+                l => l.OnDataSetWriterUpdatedAsync(context, dataSetWriterId)).ConfigureAwait(false);
 
             return new DataSetAddEventResultModel {
                 GenerationId = result.GenerationId
@@ -375,13 +377,13 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
 
             // This will succeed
             var result = await _dataSets.AddDataSetVariableAsync(dataSetWriterId,
-                request.AsDataSetVariable(context));
+                request.AsDataSetVariable(context)).ConfigureAwait(false);
 
             // If successful notify about dataset writer change
             await _itemEvents.NotifyAllAsync(
-                l => l.OnPublishedDataSetVariableAddedAsync(context, dataSetWriterId, result));
+                l => l.OnPublishedDataSetVariableAddedAsync(context, dataSetWriterId, result)).ConfigureAwait(false);
             await _writerEvents.NotifyAllAsync(
-                l => l.OnDataSetWriterUpdatedAsync(context, dataSetWriterId));
+                l => l.OnDataSetWriterUpdatedAsync(context, dataSetWriterId)).ConfigureAwait(false);
 
             return new DataSetAddVariableResultModel {
                 GenerationId = result.GenerationId,
@@ -397,28 +399,27 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                 throw new ArgumentNullException(nameof(request));
             }
             if (string.IsNullOrEmpty(request.EndpointId)) {
-                throw new ArgumentNullException(nameof(request.EndpointId));
+                throw new ArgumentException("Endpoint Id missing", nameof(request));
             }
 
             // Find the specified endpoint and fail if not exist
             var endpoint = await Try.Async(() => _endpoints.GetEndpointAsync(
-                request.EndpointId, ct));
+                request.EndpointId, ct)).ConfigureAwait(false);
             ct.ThrowIfCancellationRequested();
             if (endpoint == null) {
-                throw new ArgumentException(nameof(request.EndpointId),
-                    "Endpoint not found");
+                throw new ArgumentException("Endpoint not found", nameof(request));
             }
 
             // Check writer group in same site
             if (!string.IsNullOrEmpty(request.WriterGroupId)) {
-                var group = await _groups.FindAsync(request.WriterGroupId);
+                var group = await _groups.FindAsync(request.WriterGroupId).ConfigureAwait(false);
                 if (group == null) {
-                    throw new ArgumentException(nameof(request.WriterGroupId),
-                        "Dataset writer group not found.");
+                    throw new ArgumentException(
+                        "Dataset writer group not found.", nameof(request));
                 }
                 if (group.SiteId != endpoint.SiteId) {
-                    throw new ArgumentException(nameof(request.WriterGroupId),
-                        "Dataset writer group not in same site as endpoint");
+                    throw new ArgumentException(
+                        "Dataset writer group not in same site as endpoint", nameof(request));
                 }
             }
             else {
@@ -426,16 +427,17 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                 request.WriterGroupId = endpoint.SiteId;
             }
 
-            var result = await _writers.AddAsync(request.AsDataSetWriterInfo(context));
+            var result = await _writers.AddAsync(
+                request.AsDataSetWriterInfo(context)).ConfigureAwait(false);
 
             // If successful notify about dataset writer creation
             await _writerEvents.NotifyAllAsync(
-                l => l.OnDataSetWriterAddedAsync(context, result));
+                l => l.OnDataSetWriterAddedAsync(context, result)).ConfigureAwait(false);
 
             // Make sure the default group is created if it does not exist yet
             if (request.WriterGroupId == endpoint.SiteId) {
                 await Try.Async(() => EnsureDefaultWriterGroupExistsAsync(
-                     endpoint.SiteId, context, ct));
+                     endpoint.SiteId, context, ct)).ConfigureAwait(false);
             }
 
             return new DataSetWriterAddResultModel {
@@ -452,13 +454,14 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                 throw new ArgumentNullException(nameof(request));
             }
             if (string.IsNullOrEmpty(request.SiteId)) {
-                throw new ArgumentNullException(nameof(request.SiteId));
+                throw new ArgumentException("Site id missing", nameof(request));
             }
-            var result = await _groups.AddAsync(request.AsWriterGroupInfo(context));
+            var result = await _groups.AddAsync(
+                request.AsWriterGroupInfo(context)).ConfigureAwait(false);
 
             // If successful notify about group creation
             await _groupEvents.NotifyAllAsync(
-                l => l.OnWriterGroupAddedAsync(context, result));
+                l => l.OnWriterGroupAddedAsync(context, result)).ConfigureAwait(false);
 
             return new WriterGroupAddResultModel {
                 GenerationId = result.GenerationId,
@@ -484,11 +487,11 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
             if (string.IsNullOrEmpty(dataSetWriterId)) {
                 throw new ArgumentNullException(nameof(dataSetWriterId));
             }
-            var result = await _writers.FindAsync(dataSetWriterId, ct);
+            var result = await _writers.FindAsync(dataSetWriterId, ct).ConfigureAwait(false);
             if (result == null) {
                 throw new ResourceNotFoundException("Dataset Writer not found");
             }
-            return await GetDataSetWriterAsync(result, ct);
+            return await GetDataSetWriterAsync(result, ct).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
@@ -497,7 +500,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
             if (string.IsNullOrEmpty(dataSetWriterId)) {
                 throw new ArgumentNullException(nameof(dataSetWriterId));
             }
-            var result = await _dataSets.FindEventDataSetAsync(dataSetWriterId, ct);
+            var result = await _dataSets.FindEventDataSetAsync(dataSetWriterId, ct).ConfigureAwait(false);
             if (result == null) {
                 throw new ResourceNotFoundException("Event dataset not found");
             }
@@ -510,7 +513,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
             if (string.IsNullOrEmpty(writerGroupId)) {
                 throw new ArgumentNullException(nameof(writerGroupId));
             }
-            var result = await _groups.FindAsync(writerGroupId, ct);
+            var result = await _groups.FindAsync(writerGroupId, ct).ConfigureAwait(false);
             if (result == null) {
                 throw new ResourceNotFoundException("Writer group not found");
             }
@@ -522,10 +525,10 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                 var results = await _writers.QueryAsync(new DataSetWriterInfoQueryModel {
                     WriterGroupId = writerGroupId,
                     ExcludeDisabled = true
-                }, continuationToken, null, ct);
+                }, continuationToken, null, ct).ConfigureAwait(false);
                 continuationToken = results.ContinuationToken;
                 foreach (var writer in results.DataSetWriters) {
-                    var expanded = await GetDataSetWriterAsync(writer, ct);
+                    var expanded = await GetDataSetWriterAsync(writer, ct).ConfigureAwait(false);
                     writers.Add(expanded);
                 }
             }
@@ -536,20 +539,20 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
         /// <inheritdoc/>
         public async Task<DataSetWriterInfoListModel> ListDataSetWritersAsync(
             string continuation, int? pageSize, CancellationToken ct) {
-            return await _writers.QueryAsync(null, continuation, pageSize, ct);
+            return await _writers.QueryAsync(null, continuation, pageSize, ct).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
         public async Task<PublishedDataSetVariableListModel> ListDataSetVariablesAsync(
             string dataSetWriterId, string continuation, int? pageSize, CancellationToken ct) {
             return await _dataSets.QueryDataSetVariablesAsync(dataSetWriterId,
-                null, continuation, pageSize, ct);
+                null, continuation, pageSize, ct).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
         public async Task<WriterGroupInfoListModel> ListWriterGroupsAsync(
             string continuation, int? pageSize, CancellationToken ct) {
-            return await _groups.QueryAsync(null, continuation, pageSize, ct);
+            return await _groups.QueryAsync(null, continuation, pageSize, ct).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
@@ -557,19 +560,19 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
             string dataSetWriterId, PublishedDataSetVariableQueryModel query, int? pageSize,
             CancellationToken ct) {
             return await _dataSets.QueryDataSetVariablesAsync(dataSetWriterId,
-                query, null, pageSize, ct);
+                query, null, pageSize, ct).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
         public async Task<DataSetWriterInfoListModel> QueryDataSetWritersAsync(
             DataSetWriterInfoQueryModel query, int? pageSize, CancellationToken ct) {
-            return await _writers.QueryAsync(query, null, pageSize, ct);
+            return await _writers.QueryAsync(query, null, pageSize, ct).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
         public async Task<WriterGroupInfoListModel> QueryWriterGroupsAsync(
             WriterGroupInfoQueryModel query, int? pageSize, CancellationToken ct) {
-            return await _groups.QueryAsync(query, null, pageSize, ct);
+            return await _groups.QueryAsync(query, null, pageSize, ct).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
@@ -619,13 +622,13 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                     updated = true;
                 }
                 return Task.FromResult(updated);
-            }, ct);
+            }, ct).ConfigureAwait(false);
             if (updated) {
                 // If updated notify about dataset writer change
                 await _itemEvents.NotifyAllAsync(
-                    l => l.OnPublishedDataSetEventsUpdatedAsync(context, dataSetWriterId, result));
+                    l => l.OnPublishedDataSetEventsUpdatedAsync(context, dataSetWriterId, result)).ConfigureAwait(false);
                 await _writerEvents.NotifyAllAsync(
-                    l => l.OnDataSetWriterUpdatedAsync(context, dataSetWriterId));
+                    l => l.OnDataSetWriterUpdatedAsync(context, dataSetWriterId)).ConfigureAwait(false);
             }
         }
 
@@ -706,13 +709,13 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                     updated = true;
                 }
                 return Task.FromResult(updated);
-            }, ct);
+            }, ct).ConfigureAwait(false);
             if (updated) {
                 // If updated notify about dataset writer change
                 await _itemEvents.NotifyAllAsync(
-                    l => l.OnPublishedDataSetVariableUpdatedAsync(context, dataSetWriterId, result));
+                    l => l.OnPublishedDataSetVariableUpdatedAsync(context, dataSetWriterId, result)).ConfigureAwait(false);
                 await _writerEvents.NotifyAllAsync(
-                    l => l.OnDataSetWriterUpdatedAsync(context, dataSetWriterId));
+                    l => l.OnDataSetWriterUpdatedAsync(context, dataSetWriterId)).ConfigureAwait(false);
             }
         }
 
@@ -839,11 +842,11 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                     updated = true;
                 }
                 return Task.FromResult(updated);
-            }, ct);
+            }, ct).ConfigureAwait(false);
             if (updated) {
                 // If updated notify about dataset writer change
                 await _writerEvents.NotifyAllAsync(
-                    l => l.OnDataSetWriterUpdatedAsync(context, dataSetWriterId, writer));
+                    l => l.OnDataSetWriterUpdatedAsync(context, dataSetWriterId, writer)).ConfigureAwait(false);
             }
         }
 
@@ -941,11 +944,11 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                     updated = true;
                 }
                 return Task.FromResult(updated);
-            }, ct);
+            }, ct).ConfigureAwait(false);
             if (updated) {
                 // If updated notify about group change
                 await _groupEvents.NotifyAllAsync(
-                    l => l.OnWriterGroupUpdatedAsync(context, group));
+                    l => l.OnWriterGroupUpdatedAsync(context, group)).ConfigureAwait(false);
             }
         }
 
@@ -956,12 +959,13 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
             if (string.IsNullOrEmpty(dataSetWriterId)) {
                 throw new ArgumentNullException(nameof(dataSetWriterId));
             }
-            if (request?.Variables == null) {
+            if (request is null) {
                 throw new ArgumentNullException(nameof(request));
             }
-            if (request.Variables.Count == 0 || request.Variables.Count > kMaxBatchSize) {
-                throw new ArgumentException(nameof(request.Variables),
-                    "Number of variables in request is invalid.");
+            if (request?.Variables == null||
+                request.Variables.Count == 0 || request.Variables.Count > kMaxBatchSize) {
+                throw new ArgumentException(
+                    "Number of variables in request is invalid.", nameof(request));
             }
 
             // Todo - should we go case insensitive?
@@ -970,7 +974,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
             var updated = false;
             do {
                 var result = await _dataSets.QueryDataSetVariablesAsync(dataSetWriterId,
-                    null, continuation, null, ct);
+                    null, continuation, null, ct).ConfigureAwait(false);
                 continuation = result.ContinuationToken;
                 if (result.Variables == null) {
                     continue;
@@ -978,7 +982,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                 foreach (var variable in result.Variables) {
                     if (variable != null && set.ContainsKey(variable.PublishedVariableNodeId)) {
                         await _dataSets.DeleteDataSetVariableAsync(dataSetWriterId,
-                            variable.Id, variable.GenerationId, ct);
+                            variable.Id, variable.GenerationId, ct).ConfigureAwait(false);
                         set[variable.PublishedVariableNodeId]++;
                         updated = true;
                     }
@@ -988,7 +992,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
             if (updated) {
                 // If successful update notify about dataset writer change
                 await _writerEvents.NotifyAllAsync(
-                    l => l.OnDataSetWriterUpdatedAsync(context, dataSetWriterId));
+                    l => l.OnDataSetWriterUpdatedAsync(context, dataSetWriterId)).ConfigureAwait(false);
             }
 
             return new DataSetRemoveVariableBatchResultModel {
@@ -1007,12 +1011,14 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                 throw new ArgumentNullException(nameof(variableId));
             }
             await _dataSets.DeleteDataSetVariableAsync(dataSetWriterId,
-                variableId, generationId, ct);
+                variableId, generationId, ct).ConfigureAwait(false);
 
             await _itemEvents.NotifyAllAsync(
-                l => l.OnPublishedDataSetVariableRemovedAsync(context, dataSetWriterId, variableId));
+                l => l.OnPublishedDataSetVariableRemovedAsync(context,
+                    dataSetWriterId, variableId)).ConfigureAwait(false);
             await _writerEvents.NotifyAllAsync(
-                l => l.OnDataSetWriterUpdatedAsync(context, dataSetWriterId));
+                l => l.OnDataSetWriterUpdatedAsync(context,
+                    dataSetWriterId)).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
@@ -1022,12 +1028,15 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
             if (string.IsNullOrEmpty(dataSetWriterId)) {
                 throw new ArgumentNullException(nameof(dataSetWriterId));
             }
-            await _dataSets.DeleteEventDataSetAsync(dataSetWriterId, generationId, ct);
+            await _dataSets.DeleteEventDataSetAsync(dataSetWriterId,
+                generationId, ct).ConfigureAwait(false);
 
             await _itemEvents.NotifyAllAsync(
-                l => l.OnPublishedDataSetEventsRemovedAsync(context, dataSetWriterId));
+                l => l.OnPublishedDataSetEventsRemovedAsync(context,
+                    dataSetWriterId)).ConfigureAwait(false);
             await _writerEvents.NotifyAllAsync(
-                l => l.OnDataSetWriterUpdatedAsync(context, dataSetWriterId));
+                l => l.OnDataSetWriterUpdatedAsync(context,
+                    dataSetWriterId)).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
@@ -1042,14 +1051,16 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                     throw new ResourceOutOfDateException("Generation does not match.");
                 }
                 // Force delete all dataset entities
-                await Try.Async(() => _dataSets.DeleteDataSetAsync(dataSetWriterId));
+                await Try.Async(() => _dataSets.DeleteDataSetAsync(
+                    dataSetWriterId)).ConfigureAwait(false);
                 return true;
-            }, ct);
+            }, ct).ConfigureAwait(false);
             if (writer == null) {
                 throw new ResourceNotFoundException("Dataset writer not found");
             }
             await _writerEvents.NotifyAllAsync(
-                l => l.OnDataSetWriterRemovedAsync(context, writer));
+                l => l.OnDataSetWriterRemovedAsync(context,
+                    writer)).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
@@ -1062,14 +1073,14 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
             // If there are any writers in the group we fail removal
             var result = await _writers.QueryAsync(new DataSetWriterInfoQueryModel {
                 WriterGroupId = writerGroupId
-            }, null, 1, ct);
+            }, null, 1, ct).ConfigureAwait(false);
             if (result.DataSetWriters.Any()) {
                 throw new ResourceInvalidStateException(
                     "Remove all writers from the group before you remove the group.");
             }
-            await _groups.DeleteAsync(writerGroupId, generationId, ct);
+            await _groups.DeleteAsync(writerGroupId, generationId, ct).ConfigureAwait(false);
             await _groupEvents.NotifyAllAsync(
-                l => l.OnWriterGroupRemovedAsync(context, writerGroupId));
+                l => l.OnWriterGroupRemovedAsync(context, writerGroupId)).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -1081,14 +1092,14 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
         private async Task<DataSetWriterModel> GetDataSetWriterAsync(
             DataSetWriterInfoModel writerInfo, CancellationToken ct) {
             var endpoint = string.IsNullOrEmpty(writerInfo.DataSet.EndpointId) ? null :
-                await _endpoints.GetEndpointAsync(writerInfo.DataSet.EndpointId, ct);
+                await _endpoints.GetEndpointAsync(writerInfo.DataSet.EndpointId, ct).ConfigureAwait(false);
             var connection = endpoint?.Endpoint == null ? null :
                 new ConnectionModel {
                     Endpoint = endpoint.Endpoint.Clone(),
                     User = writerInfo.DataSet?.User.Clone()
                 };
             // Find event
-            var events = await _dataSets.FindEventDataSetAsync(writerInfo.DataSetWriterId, ct);
+            var events = await _dataSets.FindEventDataSetAsync(writerInfo.DataSetWriterId, ct).ConfigureAwait(false);
             if (events != null) {
                 return writerInfo.AsDataSetWriter(connection, null, events);
             }
@@ -1097,7 +1108,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
             string continuation = null;
             do {
                 var result = await _dataSets.QueryDataSetVariablesAsync(
-                    writerInfo.DataSetWriterId, null, continuation, null, ct);
+                    writerInfo.DataSetWriterId, null, continuation, null, ct).ConfigureAwait(false);
                 continuation = result.ContinuationToken;
                 if (result.Variables != null) {
                     publishedData.AddRange(result.Variables.Where(item => item != null));
@@ -1140,15 +1151,15 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                         };
                     }
                     return Task.FromResult(existing);
-                }, ct);
+                }, ct).ConfigureAwait(false);
 
             if (group != null) {
                 // Group added
                 await _groupEvents.NotifyAllAsync(
-                    l => l.OnWriterGroupAddedAsync(context, group));
+                    l => l.OnWriterGroupAddedAsync(context, group)).ConfigureAwait(false);
 
                 // Always auto-activate publishing of default groups.
-                await ActivateDeactivateWriterGroupAsync(siteId, true, context, ct);
+                await ActivateDeactivateWriterGroupAsync(siteId, true, context, ct).ConfigureAwait(false);
             }
             return group;
         }
@@ -1167,10 +1178,10 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
             TimeSpan? publishingInterval, CredentialModel user, CancellationToken ct) {
             // Find the specified endpoint and fail if not exist
             var endpoint = await Try.Async(() => _endpoints.GetEndpointAsync(
-                endpointId, ct));
+                endpointId, ct)).ConfigureAwait(false);
             ct.ThrowIfCancellationRequested();
             if (endpoint == null) {
-                throw new ArgumentException(nameof(endpointId), "Endpoint not found.");
+                throw new ArgumentException("Endpoint not found.", nameof(endpointId));
             }
             if (string.IsNullOrEmpty(endpoint?.SiteId)) {
                 throw new ResourceInvalidStateException("Endpoint has not site id.");
@@ -1221,21 +1232,21 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                         };
                     }
                     return Task.FromResult(writer);
-                }, ct);
+                }, ct).ConfigureAwait(false);
 
             var group = await EnsureDefaultWriterGroupExistsAsync(
-                endpoint.SiteId, context, ct);
+                endpoint.SiteId, context, ct).ConfigureAwait(false);
             if (writer != null) {
                 if (added) {
                     _logger.Information("Added default group for {endpointId}", endpointId);
                     // Writer added
                     await _writerEvents.NotifyAllAsync(
-                        l => l.OnDataSetWriterAddedAsync(context, writer));
+                        l => l.OnDataSetWriterAddedAsync(context, writer)).ConfigureAwait(false);
                 }
                 if (group != null) {
                     // and thus group changed
                     await _groupEvents.NotifyAllAsync(
-                        l => l.OnWriterGroupUpdatedAsync(context, group));
+                        l => l.OnWriterGroupUpdatedAsync(context, group)).ConfigureAwait(false);
                 }
             }
             return writer;
@@ -1276,19 +1287,19 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                     updated = true;
                 }
                 return Task.FromResult(updated);
-            }, ct);
+            }, ct).ConfigureAwait(false);
             if (updated) {
                 // If updated notify about activation or deactivation
                 if (activate) {
                     await _groupEvents.NotifyAllAsync(
-                        l => l.OnWriterGroupActivatedAsync(context, group));
+                        l => l.OnWriterGroupActivatedAsync(context, group)).ConfigureAwait(false);
                 }
                 else {
                     await _groupEvents.NotifyAllAsync(
-                        l => l.OnWriterGroupDeactivatedAsync(context, group));
+                        l => l.OnWriterGroupDeactivatedAsync(context, group)).ConfigureAwait(false);
                 }
                 await _groupEvents.NotifyAllAsync(
-                    l => l.OnWriterGroupStateChangeAsync(context, group));
+                    l => l.OnWriterGroupStateChangeAsync(context, group)).ConfigureAwait(false);
             }
         }
 

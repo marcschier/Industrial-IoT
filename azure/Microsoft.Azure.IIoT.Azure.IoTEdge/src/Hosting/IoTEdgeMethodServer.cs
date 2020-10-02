@@ -41,10 +41,10 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Hosting {
 
         /// <inheritdoc/>
         public async Task StopAsync() {
-            await _lock.WaitAsync();
+            await _lock.WaitAsync().ConfigureAwait(false);
             try {
                 if (_started) {
-                    await _client.SetMethodDefaultHandlerAsync(null, null);
+                    await _client.SetMethodDefaultHandlerAsync(null, null).ConfigureAwait(false);
                     _started = false;
                 }
             }
@@ -55,11 +55,11 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Hosting {
 
         /// <inheritdoc/>
         public async Task StartAsync() {
-            await _lock.WaitAsync();
+            await _lock.WaitAsync().ConfigureAwait(false);
             try {
                 if (!_started) {
                     await _client.SetMethodDefaultHandlerAsync((request, _) =>
-                        InvokeMethodAsync(request), null);
+                        InvokeMethodAsync(request), null).ConfigureAwait(false);
                     _started = true;
                 }
             }
@@ -84,7 +84,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Hosting {
             foreach (var router in _routers) {
                 try {
                     var result = await router.InvokeAsync(_identity.AsHubResource(),
-                        request.Name, request.Data, ContentMimeType.Json);
+                        request.Name, request.Data, ContentMimeType.Json).ConfigureAwait(false);
                     if (result.Length > kMaxMessageSize) {
                         _logger.Error("Result (Payload too large => {Length}", result.Length);
                         return new MethodResponse((int)HttpStatusCode.RequestEntityTooLarge);

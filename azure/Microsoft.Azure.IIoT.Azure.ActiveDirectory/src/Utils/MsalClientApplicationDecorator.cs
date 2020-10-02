@@ -34,7 +34,7 @@ namespace Microsoft.Azure.IIoT.Azure.ActiveDirectory.Utils {
         /// </summary>
         /// <returns></returns>
         public virtual async Task ClearCacheAsync() {
-            await _userTokenCache.ClearAsync();
+            await _userTokenCache.ClearAsync().ConfigureAwait(false);
         }
 
         /// <summary>
@@ -60,21 +60,21 @@ namespace Microsoft.Azure.IIoT.Azure.ActiveDirectory.Utils {
                 if (args.HasStateChanged) {
                     if (!string.IsNullOrWhiteSpace(_cacheKey)) {
                         await _cache.SetAsync(_cacheKey, args.TokenCache.SerializeMsalV3(),
-                            DateTimeOffset.UtcNow + TimeSpan.FromDays(1));
+                            DateTimeOffset.UtcNow + TimeSpan.FromDays(1)).ConfigureAwait(false);
                     }
                 }
             }
 
             private async Task OnBeforeAccessAsync(TokenCacheNotificationArgs args) {
                 if (!string.IsNullOrEmpty(_cacheKey)) {
-                    var tokenCacheBytes = await _cache.GetAsync(_cacheKey);
+                    var tokenCacheBytes = await _cache.GetAsync(_cacheKey).ConfigureAwait(false);
                     args.TokenCache.DeserializeMsalV3(tokenCacheBytes, shouldClearExistingCache: true);
                 }
             }
 
             /// <inheritdoc/>
             public async Task ClearAsync() {
-                await _cache.RemoveAsync(_cacheKey);
+                await _cache.RemoveAsync(_cacheKey).ConfigureAwait(false);
             }
 
             private readonly ICache _cache;

@@ -7,6 +7,7 @@ namespace Microsoft.Azure.IIoT.Crypto.Models {
     using Microsoft.Azure.IIoT.Crypto.BouncyCastle;
     using Microsoft.Azure.IIoT.Crypto.Utils;
     using System;
+    using System.Collections.Generic;
 
     /// <summary>
     /// Crl extensions
@@ -18,7 +19,7 @@ namespace Microsoft.Azure.IIoT.Crypto.Models {
         /// </summary>
         /// <param name="buffer"></param>
         /// <returns></returns>
-        public static Crl ToCrl(byte[] buffer) {
+        public static Crl ToCrl(IReadOnlyCollection<byte> buffer) {
             var parsed = X509CrlEx.ToX509Crl(buffer);
             return new Crl {
                 SerialNumber = parsed.GetCrlNumber(),
@@ -35,6 +36,12 @@ namespace Microsoft.Azure.IIoT.Crypto.Models {
         /// <param name="crl"></param>
         /// <param name="issuer"></param>
         public static void Verify(this Crl crl, Certificate issuer) {
+            if (crl is null) {
+                throw new ArgumentNullException(nameof(crl));
+            }
+            if (issuer is null) {
+                throw new ArgumentNullException(nameof(issuer));
+            }
             crl.ToX509Crl().Verify(issuer.ToX509Certificate().GetPublicKey());
         }
 
@@ -61,6 +68,12 @@ namespace Microsoft.Azure.IIoT.Crypto.Models {
         /// <param name="certificate"></param>
         /// <returns></returns>
         public static bool IsRevoked(this Crl crl, Certificate certificate) {
+            if (crl is null) {
+                throw new ArgumentNullException(nameof(crl));
+            }
+            if (certificate is null) {
+                throw new ArgumentNullException(nameof(certificate));
+            }
             return crl.ToX509Crl().IsRevoked(certificate.ToX509Certificate());
         }
 
@@ -70,8 +83,11 @@ namespace Microsoft.Azure.IIoT.Crypto.Models {
         /// <param name="issuerDN"></param>
         /// <returns></returns>
         private static string FixUpIssuer(string issuerDN) {
+            if (issuerDN is null) {
+                throw new ArgumentNullException(nameof(issuerDN));
+            }
             // replace state ST= with S=
-            issuerDN = issuerDN.Replace("ST=", "S=");
+            issuerDN = issuerDN.Replace("ST=", "S=", StringComparison.Ordinal);
             // reverse DN order
             var issuerList = CertUtils.ParseDistinguishedName(issuerDN);
             issuerList.Reverse();

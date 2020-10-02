@@ -17,7 +17,7 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
     using System.Linq;
     using Microsoft.Azure.IIoT.Services.RabbitMq.Services;
 
-    public class RabbitMqEventQueueFixture : IDisposable {
+    public sealed class RabbitMqEventQueueFixture : IDisposable {
 
         /// <summary>
         /// Create fixture
@@ -47,7 +47,7 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
         /// Create test harness
         /// </summary>
         /// <returns></returns>
-        public RabbitMqEventQueueHarness GetHarness(string queue) {
+        internal RabbitMqEventQueueHarness GetHarness(string queue) {
             return new RabbitMqEventQueueHarness(queue);
         }
 
@@ -68,10 +68,10 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
         public string Queue { get; }
     }
 
-    public class RabbitMqEventQueueHarness : IDisposable {
+    internal sealed class RabbitMqEventQueueHarness : IDisposable {
 
-        public event TelemetryEventHandler OnEvent;
-        public event EventHandler OnComplete;
+        internal event TelemetryEventHandler OnEvent;
+        internal event EventHandler OnComplete;
 
         /// <summary>
         /// Create fixture
@@ -178,9 +178,9 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
         private readonly IContainer _container;
     }
 
-    public class TelemetryEventArgs : EventArgs {
+    internal class TelemetryEventArgs : EventArgs {
 
-        public TelemetryEventArgs(string schema, string source,
+        internal TelemetryEventArgs(string schema, string source,
             byte[] data, IDictionary<string, string> properties) {
             HandlerSchema = schema;
             Source = source;
@@ -196,7 +196,7 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
             Target = properties.TryGetValue(EventProperties.Target, out var v) ? v : null;
             Properties = properties
                 .Where(k => k.Key != EventProperties.Target)
-                .Where(k => !k.Key.StartsWith("x-"))
+                .Where(k => !k.Key.StartsWith("x-", StringComparison.Ordinal))
                 .ToDictionary(k => k.Key, v => v.Value);
         }
 
@@ -207,8 +207,8 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
         public string DeviceId { get; }
         public string ModuleId { get; }
         public byte[] Data { get; }
-        public IDictionary<string, string> Properties { get; }
+        public IReadOnlyDictionary<string, string> Properties { get; }
     }
 
-    public delegate void TelemetryEventHandler(object sender, TelemetryEventArgs args);
+    internal delegate void TelemetryEventHandler(object sender, TelemetryEventArgs args);
 }

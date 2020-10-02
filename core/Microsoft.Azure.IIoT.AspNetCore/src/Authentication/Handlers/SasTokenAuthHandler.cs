@@ -44,7 +44,7 @@ namespace Microsoft.Azure.IIoT.AspNetCore.Authentication.Clients {
             }
             try {
                 var token = request.Headers["Authorization"][0].Trim();
-                var identity = await _validator.ValidateToken(token);
+                var identity = await _validator.ValidateToken(token).ConfigureAwait(false);
 
                 var principal = new ClaimsPrincipal(new ClaimsIdentity(
                     new[] { new Claim(ClaimTypes.NameIdentifier, identity) }, Scheme.Name));

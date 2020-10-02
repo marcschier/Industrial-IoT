@@ -32,7 +32,7 @@ namespace Microsoft.Azure.IIoT.Messaging.Default {
 
         /// <inheritdoc/>
         public async Task StartAsync() {
-            await _lock.WaitAsync();
+            await _lock.WaitAsync().ConfigureAwait(false);
             try {
                 if (_handlers.Any(h => h.Value != null)) {
                     throw new ResourceInvalidStateException("Event bus host already running.");
@@ -49,8 +49,8 @@ namespace Microsoft.Azure.IIoT.Messaging.Default {
                             var method = register.MakeGenericMethod(eventType);
                             _logger.Debug("Starting Event bus bridge for {type}...",
                                 type.Name);
-                            var token = await (Task<string>)method.Invoke(
-                                _client, new object[] { handler });
+                            var token = await ((Task<string>)method.Invoke(
+                                _client, new object[] { handler })).ConfigureAwait(false);
                             _handlers[handler] = token; // Store token to unregister
                             _logger.Information("Event bus bridge for {type} started.",
                                 type.Name);
@@ -71,12 +71,12 @@ namespace Microsoft.Azure.IIoT.Messaging.Default {
 
         /// <inheritdoc/>
         public async Task StopAsync() {
-            await _lock.WaitAsync();
+            await _lock.WaitAsync().ConfigureAwait(false);
             try {
                 foreach (var token in _handlers.Where(x => x.Value != null).ToList()) {
                     try {
                         // Unregister using stored token
-                        await _client.UnregisterAsync(token.Value);
+                        await _client.UnregisterAsync(token.Value).ConfigureAwait(false);
                         _handlers[token.Key] = null;
                     }
                     catch (Exception ex) {

@@ -6,6 +6,7 @@
 namespace Opc.Ua.Extensions {
     using Opc.Ua.Models;
     using System;
+    using System.Collections.Generic;
     using System.Linq;
 
     /// <summary>
@@ -19,7 +20,7 @@ namespace Opc.Ua.Extensions {
         /// <param name="path"></param>
         /// <param name="context"></param>
         /// <returns></returns>
-        public static RelativePath ToRelativePath(this string[] path,
+        public static RelativePath ToRelativePath(this IReadOnlyList<string> path,
             ServiceMessageContext context) {
             if (path == null) {
                 return new RelativePath();
@@ -37,14 +38,14 @@ namespace Opc.Ua.Extensions {
         /// <param name="path"></param>
         /// <param name="context"></param>
         /// <returns></returns>
-        public static string[] AsString(this RelativePath path,
+        public static IReadOnlyList<string> AsString(this RelativePath path,
             ServiceMessageContext context) {
             if (path == null) {
                 return null;
             }
             return path.Elements
                 .Select(p => FormatRelativePathElement(p, context))
-                .ToArray();
+                .ToList();
         }
 
         /// <summary>

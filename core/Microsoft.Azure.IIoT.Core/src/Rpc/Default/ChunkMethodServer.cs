@@ -65,7 +65,7 @@ namespace Microsoft.Azure.IIoT.Rpc.Default {
                         $"Adding handle {handle} failed.");
                 }
             }
-            var response = await processor.ProcessAsync(handler, request);
+            var response = await processor.ProcessAsync(handler, request).ConfigureAwait(false);
             return _serializer.SerializeToBytes(response).ToArray();
         }
 
@@ -151,7 +151,7 @@ namespace Microsoft.Azure.IIoT.Rpc.Default {
                     try {
                         // Process
                         var result = await handler.InvokeAsync(_target, _method,
-                            _payload.Unzip(), _contentType);
+                            _payload.Unzip(), _contentType).ConfigureAwait(false);
                         // Set response payload
                         _payload = result.Zip();
                     }

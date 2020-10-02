@@ -18,7 +18,7 @@ namespace Microsoft.Azure.IIoT.Crypto.Models {
         /// <summary>
         /// Serial number in big endian
         /// </summary>
-        public byte[] Value { get; }
+        public IReadOnlyCollection<byte> Value { get; }
 
         /// <summary>
         /// Create random serial number
@@ -37,7 +37,7 @@ namespace Microsoft.Azure.IIoT.Crypto.Models {
         /// </summary>
         /// <param name="serialNumber"></param>
         /// <param name="isBigEndian"></param>
-        public SerialNumber(byte[] serialNumber, bool isBigEndian = true) {
+        public SerialNumber(IReadOnlyCollection<byte> serialNumber, bool isBigEndian = true) {
             Value = NormalizeSerialNumber(serialNumber, isBigEndian);
         }
 
@@ -67,7 +67,7 @@ namespace Microsoft.Azure.IIoT.Crypto.Models {
         /// </summary>
         /// <returns></returns>
         public BigInteger ToBigInteger() {
-            return new BigInteger(Value, false, true);
+            return new BigInteger(Value.ToArray(), false, true);
         }
 
         /// <summary>
@@ -80,7 +80,7 @@ namespace Microsoft.Azure.IIoT.Crypto.Models {
             if (!asBigEndian) {
                 serialNumber = Value.Reverse().ToArray();
             }
-            return serialNumber.ToBase16String();
+            return serialNumber.ToArray().ToBase16String();
         }
 
         /// <inheritdoc/>
@@ -112,42 +112,42 @@ namespace Microsoft.Azure.IIoT.Crypto.Models {
         /// <param name="serialNumber"></param>
         /// <param name="isBigEndian"></param>
         /// <returns></returns>
-        private static byte[] NormalizeSerialNumber(byte[] serialNumber,
-            bool isBigEndian) {
+        private static IReadOnlyCollection<byte> NormalizeSerialNumber(
+            IReadOnlyCollection<byte> serialNumber, bool isBigEndian) {
             if (serialNumber == null) {
                 throw new ArgumentNullException(nameof(serialNumber));
             }
-            if (serialNumber.Length < 1) {
-                throw new ArgumentException(nameof(serialNumber));
+            if (serialNumber.Count < 1) {
+                throw new ArgumentException("serial number length", nameof(serialNumber));
             }
+            var sn = serialNumber.ToArray();
             if (!isBigEndian) {
-                serialNumber = serialNumber.ToArray();
-                Array.Reverse(serialNumber);
+                Array.Reverse(sn);
             }
-            if (serialNumber[0] >= 0x80) {
+            if (sn[0] >= 0x80) {
                 // Keep the serial number unsigned by prepending a zero.
-                var newSerialNumber = new byte[serialNumber.Length + 1];
+                var newSerialNumber = new byte[sn.Length + 1];
                 newSerialNumber[0] = 0;
-                serialNumber.CopyTo(newSerialNumber, 1);
+                sn.CopyTo(newSerialNumber, 1);
                 return newSerialNumber;
             }
             // Strip any unnecessary zeros from the beginning.
             var leadingZeros = 0;
-            while (leadingZeros < serialNumber.Length - 1 &&
-                serialNumber[leadingZeros] == 0 &&
-                serialNumber[leadingZeros + 1] < 0x80) {
+            while (leadingZeros < sn.Length - 1 &&
+                sn[leadingZeros] == 0 &&
+                sn[leadingZeros + 1] < 0x80) {
                 leadingZeros++;
             }
             if (leadingZeros != 0) {
-                var newSerialNumber = new byte[serialNumber.Length - leadingZeros];
-                Array.ConstrainedCopy(serialNumber, leadingZeros,
+                var newSerialNumber = new byte[sn.Length - leadingZeros];
+                Array.ConstrainedCopy(sn, leadingZeros,
                     newSerialNumber, 0, newSerialNumber.Length);
                 return newSerialNumber;
             }
             if (isBigEndian) {
-                return serialNumber.ToArray();
+                return sn.ToArray();
             }
-            return serialNumber;
+            return sn;
         }
     }
 }

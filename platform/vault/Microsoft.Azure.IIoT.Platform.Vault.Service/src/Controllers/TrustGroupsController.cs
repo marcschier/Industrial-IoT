@@ -9,8 +9,8 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Service.Controllers {
     using Microsoft.Azure.IIoT.Platform.Vault.Service.Models;
     using Microsoft.Azure.IIoT.Platform.Vault.Api.Models;
     using Microsoft.Azure.IIoT.Platform.Vault;
-    using Microsoft.Azure.IIoT.Http;
     using Microsoft.Azure.IIoT.AspNetCore.OpenApi;
+    using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using System.Threading.Tasks;
@@ -47,24 +47,18 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Service.Controllers {
         /// trust the root certificate and all entities that the root has
         /// issued certificates for.
         /// </remarks>
-        /// <param name="nextPageLink">optional, link to next page</param>
+        /// <param name="continuationToken">optional, continuation token</param>
         /// <param name="pageSize">optional, the maximum number of result per page</param>
         /// <returns>The configurations</returns>
         [HttpGet]
-        [AutoRestExtension(NextPageLinkName = "nextPageLink")]
+        [AutoRestExtension(NextPageLinkName = "continuationToken")]
         public async Task<TrustGroupRegistrationListApiModel> ListGroupsAsync(
-            [FromQuery] string nextPageLink, [FromQuery] int? pageSize) {
-            if (Request.Headers.ContainsKey(HttpHeader.ContinuationToken)) {
-                nextPageLink = Request.Headers[HttpHeader.ContinuationToken]
-                    .FirstOrDefault();
-            }
-            if (Request.Headers.ContainsKey(HttpHeader.MaxItemCount)) {
-                pageSize = int.Parse(Request.Headers[HttpHeader.MaxItemCount]
-                    .FirstOrDefault());
-            }
+            [FromQuery] string continuationToken, [FromQuery] int? pageSize) {
+            continuationToken = Request.GetContinuationToken(continuationToken);
+            pageSize = Request.GetPageSize(pageSize);
             // Use service principal
             HttpContext.User = null; // TODO Set sp
-            var config = await _groups.ListGroupsAsync(nextPageLink, pageSize);
+            var config = await _groups.ListGroupsAsync(continuationToken, pageSize).ConfigureAwait(false);
             return config.ToApiModel();
         }
 
@@ -82,7 +76,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Service.Controllers {
         [HttpGet("{groupId}")]
         public async Task<TrustGroupRegistrationApiModel> GetGroupAsync(
             string groupId) {
-            var group = await _groups.GetGroupAsync(groupId);
+            var group = await _groups.GetGroupAsync(groupId).ConfigureAwait(false);
             return group.ToApiModel();
         }
 
@@ -104,7 +98,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Service.Controllers {
             if (request == null) {
                 throw new ArgumentNullException(nameof(request));
             }
-            await _groups.UpdateGroupAsync(groupId, request.ToServiceModel());
+            await _groups.UpdateGroupAsync(groupId, request.ToServiceModel()).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -122,7 +116,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Service.Controllers {
             if (request == null) {
                 throw new ArgumentNullException(nameof(request));
             }
-            var result = await _groups.CreateRootAsync(request.ToServiceModel());
+            var result = await _groups.CreateRootAsync(request.ToServiceModel()).ConfigureAwait(false);
             return result.ToApiModel();
         }
 
@@ -141,7 +135,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Service.Controllers {
             if (request == null) {
                 throw new ArgumentNullException(nameof(request));
             }
-            var result = await _groups.CreateGroupAsync(request.ToServiceModel());
+            var result = await _groups.CreateGroupAsync(request.ToServiceModel()).ConfigureAwait(false);
             return result.ToApiModel();
         }
 
@@ -159,7 +153,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Service.Controllers {
         [HttpPost("{groupId}/renew")]
         [Authorize(Policy = Policies.CanManage)]
         public async Task RenewIssuerCertificateAsync(string groupId) {
-            await _services.RenewCertificateAsync(groupId);
+            await _services.RenewCertificateAsync(groupId).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -175,7 +169,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Service.Controllers {
         [HttpDelete("{groupId}")]
         [Authorize(Policy = Policies.CanManage)]
         public async Task DeleteGroupAsync(string groupId) {
-            await _groups.DeleteGroupAsync(groupId);
+            await _groups.DeleteGroupAsync(groupId).ConfigureAwait(false);
         }
 
         private readonly ITrustGroupStore _groups;

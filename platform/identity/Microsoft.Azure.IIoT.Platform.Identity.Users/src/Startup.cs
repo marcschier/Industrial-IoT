@@ -13,7 +13,7 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Users {
     using Microsoft.Azure.IIoT.AspNetCore.Correlation;
     using Microsoft.Azure.IIoT.AspNetCore.Authentication;
     using Microsoft.Azure.IIoT.AspNetCore.Authentication.Clients;
-    using Microsoft.Azure.IIoT.Http.Default;
+    using Microsoft.Azure.IIoT.Http.Clients;
     using Microsoft.Azure.IIoT.Utils;
     using Microsoft.Azure.IIoT.Serializers;
     using Microsoft.Azure.IIoT.Authentication;
@@ -86,6 +86,9 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Users {
         /// <param name="services"></param>
         /// <returns></returns>
         public void ConfigureServices(IServiceCollection services) {
+            if (services is null) {
+                throw new ArgumentNullException(nameof(services));
+            }
 
             // services.AddLogging(o => o.AddConsole().AddDebug());
 
@@ -123,6 +126,13 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Users {
         /// <param name="app"></param>
         /// <param name="appLifetime"></param>
         public void Configure(IApplicationBuilder app, IHostApplicationLifetime appLifetime) {
+            if (app is null) {
+                throw new ArgumentNullException(nameof(app));
+            }
+            if (appLifetime is null) {
+                throw new ArgumentNullException(nameof(appLifetime));
+            }
+
             var applicationContainer = app.ApplicationServices.GetAutofacRoot();
             var log = applicationContainer.Resolve<ILogger>();
 
@@ -160,6 +170,10 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Users {
         /// </summary>
         /// <param name="builder"></param>
         public virtual void ConfigureContainer(ContainerBuilder builder) {
+            if (builder is null) {
+                throw new ArgumentNullException(nameof(builder));
+            }
+
             // Register service info and configuration interfaces
             builder.RegisterInstance(ServiceInfo)
                 .AsImplementedInterfaces();

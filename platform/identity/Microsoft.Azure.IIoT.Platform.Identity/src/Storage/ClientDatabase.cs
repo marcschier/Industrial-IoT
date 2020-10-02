@@ -36,7 +36,7 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Storage {
                 throw new ArgumentNullException(nameof(client));
             }
             var document = client.ToDocumentModel();
-            await _documents.AddAsync(document, ct);
+            await _documents.AddAsync(document, ct: ct).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
@@ -45,11 +45,11 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Storage {
                 throw new ArgumentNullException(nameof(client));
             }
             var document = await _documents.GetAsync<ClientDocumentModel>(
-                client.ClientId, ct);
+                client.ClientId, ct: ct).ConfigureAwait(false);
             if (etag != null && document.Etag != etag) {
                 throw new ResourceOutOfDateException();
             }
-            await _documents.ReplaceAsync(document, client.ToDocumentModel(), ct);
+            await _documents.ReplaceAsync(document, client.ToDocumentModel(), ct: ct).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
@@ -57,19 +57,19 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Storage {
             if (string.IsNullOrEmpty(clientId)) {
                 throw new ArgumentNullException(nameof(clientId));
             }
-            var document = await _documents.GetAsync<ClientDocumentModel>(clientId, ct);
+            var document = await _documents.GetAsync<ClientDocumentModel>(clientId, ct: ct).ConfigureAwait(false);
             return (document.Value.ToServiceModel(), document.Etag);
         }
 
         /// <inheritdoc/>
         public async Task DeleteAsync(string clientId, string etag,
             CancellationToken ct) {
-            await _documents.DeleteAsync<ClientDocumentModel>(clientId, ct, null, etag);
+            await _documents.DeleteAsync<ClientDocumentModel>(clientId, null, etag, ct).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
         public async Task<Client> FindClientByIdAsync(string clientId) {
-            var document = await _documents.FindAsync<ClientDocumentModel>(clientId);
+            var document = await _documents.FindAsync<ClientDocumentModel>(clientId).ConfigureAwait(false);
             if (document?.Value == null) {
                 return null;
             }
@@ -85,7 +85,7 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Storage {
             var results = await _documents.CreateQuery<ClientDocumentModel>(1)
                 .Where(x => x.AllowedCorsOrigins != null)
                 .Where(x => x.AllowedCorsOrigins.Contains(origin))
-                .CountAsync();
+                .CountAsync().ConfigureAwait(false);
             return results != 0;
         }
 

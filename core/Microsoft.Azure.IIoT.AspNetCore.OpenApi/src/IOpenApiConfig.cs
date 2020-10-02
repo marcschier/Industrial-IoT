@@ -40,7 +40,7 @@ namespace Microsoft.Azure.IIoT.AspNetCore.OpenApi {
         /// Authorization Url
         /// (optional - if not set uses bearer)
         /// </summary>
-        string OpenApiAuthorizationUrl { get; }
+        string OpenApiAuthorizationEndpoint { get; }
 
         /// <summary>
         /// Server host for openapi (optional)

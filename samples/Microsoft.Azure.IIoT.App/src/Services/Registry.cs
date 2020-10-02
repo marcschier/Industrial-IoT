@@ -50,15 +50,15 @@ namespace Microsoft.Azure.IIoT.App.Services {
                 };
 
                 if (getNextPage && string.IsNullOrEmpty(previousPage?.ContinuationToken)) {
-                    endpoints = await _registryService.QueryEndpointsAsync(query, _commonHelper.PageLength);
+                    endpoints = await _registryService.QueryEndpointsAsync(query, _commonHelper.PageLength).ConfigureAwait(false);
                 }
                 else {
-                    endpoints = await _registryService.ListEndpointsAsync(previousPage.ContinuationToken, _commonHelper.PageLength);
+                    endpoints = await _registryService.ListEndpointsAsync(previousPage.ContinuationToken, _commonHelper.PageLength).ConfigureAwait(false);
                 }
 
                 foreach (var ep in endpoints.Items) {
                     // Get non cached version of endpoint
-                    var endpoint = await _registryService.GetEndpointAsync(ep.Id);
+                    var endpoint = await _registryService.GetEndpointAsync(ep.Id).ConfigureAwait(false);
                     pageResult.Results.Add(new EndpointInfo {
                         EndpointModel = endpoint
                     });
@@ -95,23 +95,23 @@ namespace Microsoft.Azure.IIoT.App.Services {
                 var discoverers = new DiscovererListApiModel();
 
                 if (!getNextPage || string.IsNullOrEmpty(previousPage?.ContinuationToken)) {
-                    discoverers = await _registryService.QueryDiscoverersAsync(discovererModel, _commonHelper.PageLengthSmall);
+                    discoverers = await _registryService.QueryDiscoverersAsync(discovererModel, _commonHelper.PageLengthSmall).ConfigureAwait(false);
                 }
                 else {
-                    discoverers = await _registryService.ListDiscoverersAsync(previousPage.ContinuationToken, _commonHelper.PageLengthSmall);
+                    discoverers = await _registryService.ListDiscoverersAsync(previousPage.ContinuationToken, _commonHelper.PageLengthSmall).ConfigureAwait(false);
                 }
 
                 if (discoverers != null) {
                     if (discoverers.Items != null && discoverers.Items.Any()) {
                         foreach (var disc in discoverers.Items) {
-                            var discoverer = await _registryService.GetDiscovererAsync(disc.Id);
+                            var discoverer = await _registryService.GetDiscovererAsync(disc.Id).ConfigureAwait(false);
                             var info = new DiscovererInfo {
                                 DiscovererModel = discoverer,
                                 HasApplication = false,
-                                ScanStatus = (discoverer.Discovery == DiscoveryMode.Off) || (discoverer.Discovery == null) ? false : true
+                                ScanStatus = discoverer.Discovery != DiscoveryMode.Off && discoverer.Discovery != null
                             };
                             applicationModel.DiscovererId = discoverer.Id;
-                            var applications = await _registryService.QueryApplicationsAsync(applicationModel, 1);
+                            var applications = await _registryService.QueryApplicationsAsync(applicationModel, 1).ConfigureAwait(false);
                             if (applications != null) {
                                 info.HasApplication = true;
                             }
@@ -156,16 +156,16 @@ namespace Microsoft.Azure.IIoT.App.Services {
                 var applications = new ApplicationInfoListApiModel();
 
                 if (getNextPage && string.IsNullOrEmpty(previousPage?.ContinuationToken)) {
-                    applications = await _registryService.QueryApplicationsAsync(query, _commonHelper.PageLength);
+                    applications = await _registryService.QueryApplicationsAsync(query, _commonHelper.PageLength).ConfigureAwait(false);
                 }
                 else
                 {
-                    applications = await _registryService.ListApplicationsAsync(previousPage.ContinuationToken, _commonHelper.PageLength);
+                    applications = await _registryService.ListApplicationsAsync(previousPage.ContinuationToken, _commonHelper.PageLength).ConfigureAwait(false);
                 }
 
                 if (applications != null) {
                     foreach (var app in applications.Items) {
-                        var application = (await _registryService.GetApplicationAsync(app.ApplicationId)).Application;
+                        var application = (await _registryService.GetApplicationAsync(app.ApplicationId).ConfigureAwait(false)).Application;
                         pageResult.Results.Add(application);
                     }
                 }
@@ -201,7 +201,7 @@ namespace Microsoft.Azure.IIoT.App.Services {
                 else {
                     discoveryMode = discoverer.ScanStatus ? DiscoveryMode.Fast : DiscoveryMode.Off;
                 }
-                await _registryService.SetDiscoveryModeAsync(discoverer.DiscovererModel.Id, discoveryMode, discoverer.Patch);
+                await _registryService.SetDiscoveryModeAsync(discoverer.DiscovererModel.Id, discoveryMode, discoverer.Patch).ConfigureAwait(false);
                 discoverer.Patch = new DiscoveryConfigApiModel();
             }
             catch (UnauthorizedAccessException) {
@@ -226,7 +226,7 @@ namespace Microsoft.Azure.IIoT.App.Services {
             try {
                 await _registryService.UpdateDiscovererAsync(discoverer.DiscovererModel.Id, new DiscovererUpdateApiModel {
                     DiscoveryConfig = discoverer.Patch
-                });
+                }).ConfigureAwait(false);
                 discoverer.Patch = new DiscoveryConfigApiModel();
             }
             catch (UnauthorizedAccessException) {
@@ -253,7 +253,7 @@ namespace Microsoft.Azure.IIoT.App.Services {
                         Id = discoverer.DiscoveryRequestId,
                         Discovery = DiscoveryMode.Fast,
                         Configuration = discoverer.Patch
-                    });
+                    }).ConfigureAwait(false);
                 discoverer.Patch = new DiscoveryConfigApiModel();
             }
             catch (UnauthorizedAccessException) {
@@ -281,15 +281,15 @@ namespace Microsoft.Azure.IIoT.App.Services {
                 var gateways = new GatewayListApiModel();
 
                 if (getNextPage && string.IsNullOrEmpty(previousPage?.ContinuationToken)) {
-                    gateways = await _registryService.QueryGatewaysAsync(gatewayModel, _commonHelper.PageLength);
+                    gateways = await _registryService.QueryGatewaysAsync(gatewayModel, _commonHelper.PageLength).ConfigureAwait(false);
                 }
                 else {
-                    gateways = await _registryService.ListGatewaysAsync(previousPage.ContinuationToken, _commonHelper.PageLength);
+                    gateways = await _registryService.ListGatewaysAsync(previousPage.ContinuationToken, _commonHelper.PageLength).ConfigureAwait(false);
                 }
 
                 if (gateways != null) {
                     foreach (var gw in gateways.Items) {
-                        var gateway = (await _registryService.GetGatewayAsync(gw.Id)).Gateway;
+                        var gateway = (await _registryService.GetGatewayAsync(gw.Id).ConfigureAwait(false)).Gateway;
                         pageResult.Results.Add(gateway);
                     }
                 }
@@ -324,15 +324,15 @@ namespace Microsoft.Azure.IIoT.App.Services {
                 var publishers = new PublisherListApiModel();
 
                 if (getNextPage && string.IsNullOrEmpty(previousPage?.ContinuationToken)) {
-                    publishers = await _registryService.QueryPublishersAsync(publisherModel, _commonHelper.PageLengthSmall);
+                    publishers = await _registryService.QueryPublishersAsync(publisherModel, _commonHelper.PageLengthSmall).ConfigureAwait(false);
                 }
                 else {
-                    publishers = await _registryService.ListPublishersAsync(previousPage.ContinuationToken, _commonHelper.PageLengthSmall);
+                    publishers = await _registryService.ListPublishersAsync(previousPage.ContinuationToken, _commonHelper.PageLengthSmall).ConfigureAwait(false);
                 }
 
                 if (publishers != null) {
                     foreach (var pub in publishers.Items) {
-                        var publisher = await _registryService.GetPublisherAsync(pub.Id);
+                        var publisher = await _registryService.GetPublisherAsync(pub.Id).ConfigureAwait(false);
                         pageResult.Results.Add(publisher);
                     }
                 }
@@ -363,7 +363,7 @@ namespace Microsoft.Azure.IIoT.App.Services {
             try {
                 await _registryService.UpdatePublisherAsync(publisher.PublisherModel.Id, new PublisherUpdateApiModel {
                     LogLevel = publisher.PublisherModel.LogLevel
-                });
+                }).ConfigureAwait(false);
             }
             catch (UnauthorizedAccessException) {
                 return "Unauthorized access: Bad User Access Denied.";
@@ -385,9 +385,9 @@ namespace Microsoft.Azure.IIoT.App.Services {
         public async Task<string> UnregisterApplicationAsync(string applicationId) {
 
             try {
-                var application = await _registryService.GetApplicationAsync(applicationId);
+                var application = await _registryService.GetApplicationAsync(applicationId).ConfigureAwait(false);
                 await _registryService.UnregisterApplicationAsync(applicationId,
-                    application.Application.GenerationId);
+                    application.Application.GenerationId).ConfigureAwait(false);
             }
             catch (UnauthorizedAccessException) {
                 return "Unauthorized access: Bad User Access Denied.";
@@ -414,15 +414,15 @@ namespace Microsoft.Azure.IIoT.App.Services {
                 var supervisors = new SupervisorListApiModel();
 
                 if (getNextPage && string.IsNullOrEmpty(previousPage?.ContinuationToken)) {
-                    supervisors = await _registryService.QuerySupervisorsAsync(model, _commonHelper.PageLength);
+                    supervisors = await _registryService.QuerySupervisorsAsync(model, _commonHelper.PageLength).ConfigureAwait(false);
                 }
                 else {
-                    supervisors = await _registryService.ListSupervisorsAsync(previousPage.ContinuationToken, _commonHelper.PageLengthSmall);
+                    supervisors = await _registryService.ListSupervisorsAsync(previousPage.ContinuationToken, _commonHelper.PageLengthSmall).ConfigureAwait(false);
                 }
 
                 if (supervisors != null) {
                     foreach (var sup in supervisors.Items) {
-                        var supervisor = await _registryService.GetSupervisorAsync(sup.Id);
+                        var supervisor = await _registryService.GetSupervisorAsync(sup.Id).ConfigureAwait(false);
                         pageResult.Results.Add(supervisor);
                     }
                 }
@@ -452,7 +452,7 @@ namespace Microsoft.Azure.IIoT.App.Services {
             var supervisorStatus = new SupervisorStatusApiModel();
 
             try {
-                supervisorStatus = await _registryService.GetSupervisorStatusAsync(supervisorId);
+                supervisorStatus = await _registryService.GetSupervisorStatusAsync(supervisorId).ConfigureAwait(false);
             }
             catch (Exception exception) {
                 _logger.Error(exception, "Failed to get status");
@@ -470,7 +470,7 @@ namespace Microsoft.Azure.IIoT.App.Services {
             _ = new SupervisorStatusApiModel();
 
             try {
-                await _registryService.ResetSupervisorAsync(supervisorId);
+                await _registryService.ResetSupervisorAsync(supervisorId).ConfigureAwait(false);
                 return string.Empty;
             }
             catch (Exception exception) {

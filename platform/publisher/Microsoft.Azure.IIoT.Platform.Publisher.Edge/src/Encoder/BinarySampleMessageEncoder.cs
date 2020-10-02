@@ -43,7 +43,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Services {
         /// <inheritdoc/>
         public IList<NetworkMessageModel> EncodeBatch(string writerGroupId,
             IList<DataSetWriterMessageModel> messages,
-            string headerLayoutUri, NetworkMessageContentMask? contentMask,
+            string headerLayoutProfile, NetworkMessageContentMask? contentMask,
             Publisher.Models.DataSetOrderingType? order, int maxMessageSize) {
             return EncodeBatch(messages, maxMessageSize).ToList();
         }
@@ -51,7 +51,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Services {
         /// <inheritdoc/>
         public IList<NetworkMessageModel> Encode(string writerGroupId,
             IList<DataSetWriterMessageModel> messages,
-            string headerLayoutUri, NetworkMessageContentMask? contentMask,
+            string headerLayoutProfile, NetworkMessageContentMask? contentMask,
             Publisher.Models.DataSetOrderingType? order, int maxMessageSize) {
             return Encode(messages, maxMessageSize).ToList();
         }
@@ -62,8 +62,11 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Services {
         /// <param name="messages"></param>
         /// <param name="maxMessageSize"></param>
         /// <returns></returns>
-        public IEnumerable<NetworkMessageModel> EncodeBatch(IEnumerable<DataSetWriterMessageModel> messages,
-            int maxMessageSize) {
+        public IEnumerable<NetworkMessageModel> EncodeBatch(
+            IEnumerable<DataSetWriterMessageModel> messages, int maxMessageSize) {
+            if (messages is null) {
+                throw new ArgumentNullException(nameof(messages));
+            }
 
             // by design all messages are generated in the same session context,
             // therefore it is safe to get the first message's context
@@ -82,7 +85,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Services {
                 var notification = current.Current;
                 var messageCompleted = false;
                 if (notification != null) {
-                    var helperEncoder = new BinaryEncoder(encodingContext);
+                    using var helperEncoder = new BinaryEncoder(encodingContext);
                     helperEncoder.WriteEncodeable(null, notification);
                     var notificationSize = helperEncoder.CloseAndReturnBuffer().Length;
                     if (notificationSize > maxMessageSize) {
@@ -103,7 +106,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Services {
                     }
                 }
                 if (!processing || messageCompleted) {
-                    var encoder = new BinaryEncoder(encodingContext);
+                    using var encoder = new BinaryEncoder(encodingContext);
                     encoder.WriteBoolean(null, true); // is Batch
                     encoder.WriteEncodeableArray(null, chunk);
                     var encoded = new NetworkMessageModel {
@@ -130,8 +133,11 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Services {
         /// <param name="messages"></param>
         /// <param name="maxMessageSize"></param>
         /// <returns></returns>
-        public IEnumerable<NetworkMessageModel> Encode(IEnumerable<DataSetWriterMessageModel> messages,
-            int maxMessageSize) {
+        public IEnumerable<NetworkMessageModel> Encode(
+            IEnumerable<DataSetWriterMessageModel> messages, int maxMessageSize) {
+            if (messages is null) {
+                throw new ArgumentNullException(nameof(messages));
+            }
 
             // by design all messages are generated in the same session context,
             // therefore it is safe to get the first message's context
@@ -142,7 +148,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Services {
                 yield break;
             }
             foreach (var networkMessage in notifications) {
-                var encoder = new BinaryEncoder(encodingContext);
+                using var encoder = new BinaryEncoder(encodingContext);
                 encoder.WriteBoolean(null, false); // is not Batch
                 encoder.WriteEncodeable(null, networkMessage);
                 networkMessage.Encode(encoder);
@@ -178,7 +184,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Services {
             if (context?.NamespaceUris == null) {
                 // declare all notifications in messages dropped
                 foreach (var message in messages) {
-                    Interlocked.Add(ref _notificationsDroppedCount, (message?.Notifications?.Count() ?? 0));
+                    Interlocked.Add(ref _notificationsDroppedCount, message?.Notifications?.Count() ?? 0);
                 }
                 yield break;
             }

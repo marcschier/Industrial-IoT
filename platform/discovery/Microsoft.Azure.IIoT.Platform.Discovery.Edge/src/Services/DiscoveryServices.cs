@@ -32,7 +32,7 @@ namespace Microsoft.Azure.IIoT.Platform.Discovery.Edge.Services {
     /// <summary>
     /// Provides discovery services
     /// </summary>
-    public class DiscoveryServices : IDiscoveryServices, IScannerServices, IDisposable {
+    public sealed class DiscoveryServices : IDiscoveryServices, IScannerServices, IDisposable {
 
         /// <inheritdoc/>
         public DiscoveryMode Mode => _request.Mode;
@@ -83,7 +83,7 @@ namespace Microsoft.Azure.IIoT.Platform.Discovery.Edge.Services {
                 _progress.OnDiscoveryError(request, ex);
                 throw ex;
             }
-            await _lock.WaitAsync();
+            await _lock.WaitAsync().ConfigureAwait(false);
             try {
                 if (_pending.Count != 0) {
                     _progress.OnDiscoveryPending(task.Request, _pending.Count);
@@ -101,7 +101,7 @@ namespace Microsoft.Azure.IIoT.Platform.Discovery.Edge.Services {
             if (request == null) {
                 throw new ArgumentNullException(nameof(request));
             }
-            await _lock.WaitAsync();
+            await _lock.WaitAsync().ConfigureAwait(false);
             try {
                 foreach (var task in _pending.Where(r => r.Request.Id == request.Id)) {
                     // Cancel the task
@@ -167,7 +167,7 @@ namespace Microsoft.Azure.IIoT.Platform.Discovery.Edge.Services {
         private async Task StopDiscoveryRequestProcessingAsync() {
             _queue.CompleteAdding();
             _timer.Change(Timeout.InfiniteTimeSpan, Timeout.InfiniteTimeSpan);
-            await _lock.WaitAsync();
+            await _lock.WaitAsync().ConfigureAwait(false);
             try {
                 // Cancel all requests first
                 foreach (var request in _pending) {
@@ -181,7 +181,7 @@ namespace Microsoft.Azure.IIoT.Platform.Discovery.Edge.Services {
             // Try cancel discovery and wait for completion of runner
             Try.Op(() => _cts?.Cancel());
             try {
-                await _runner;
+                await _runner.ConfigureAwait(false);
             }
             catch (OperationCanceledException) { }
             catch (Exception ex) {
@@ -202,8 +202,8 @@ namespace Microsoft.Azure.IIoT.Platform.Discovery.Edge.Services {
                     var request = _queue.Take(ct);
                     try {
                         // Update pending queue size
-                        await ReportPendingRequestsAsync();
-                        await ProcessDiscoveryRequestAsync(request);
+                        await ReportPendingRequestsAsync().ConfigureAwait(false);
+                        await ProcessDiscoveryRequestAsync(request).ConfigureAwait(false);
                     }
                     finally {
                         // If the request is scan request, schedule next one
@@ -222,7 +222,7 @@ namespace Microsoft.Azure.IIoT.Platform.Discovery.Edge.Services {
                 }
             }
             // Send cancellation for all pending items
-            await CancelPendingRequestsAsync();
+            await CancelPendingRequestsAsync().ConfigureAwait(false);
             _logger.Information("Stopped discovery processor.");
         }
 
@@ -240,13 +240,13 @@ namespace Microsoft.Azure.IIoT.Platform.Discovery.Edge.Services {
             //
             List<ApplicationRegistrationModel> discovered;
             try {
-                discovered = await DiscoverServersAsync(request);
+                discovered = await DiscoverServersAsync(request).ConfigureAwait(false);
                 request.Token.ThrowIfCancellationRequested();
                 //
                 // Upload results
                 //
                 await SendDiscoveryResultsAsync(request, discovered, DateTime.UtcNow,
-                    diagnostics, request.Token);
+                    diagnostics, request.Token).ConfigureAwait(false);
 
                 _progress.OnDiscoveryFinished(request.Request);
             }
@@ -258,7 +258,7 @@ namespace Microsoft.Azure.IIoT.Platform.Discovery.Edge.Services {
             }
             finally {
                 if (request != null) {
-                    await _lock.WaitAsync();
+                    await _lock.WaitAsync().ConfigureAwait(false);
                     try {
                         _pending.Remove(request);
                         Try.Op(() => request.Dispose());
@@ -277,14 +277,14 @@ namespace Microsoft.Azure.IIoT.Platform.Discovery.Edge.Services {
         /// <returns></returns>
         private async Task<List<ApplicationRegistrationModel>> DiscoverServersAsync(
             DiscoveryRequest request) {
-            var discoveryUrls = await GetDiscoveryUrlsAsync(request.DiscoveryUrls);
+            var discoveryUrls = await GetDiscoveryUrlsAsync(request.DiscoveryUrls).ConfigureAwait(false);
 
             _logger.Information("Start {mode} discovery run...", request.Mode);
             var watch = Stopwatch.StartNew();
 
             if (request.Mode == DiscoveryMode.Url) {
                 var discoveredUrl = await DiscoverServersAsync(request, discoveryUrls,
-                    request.Configuration.Locales);
+                    request.Configuration.Locales).ConfigureAwait(false);
 
                 _logger.Information("Discovery took {elapsed} and found {count} servers.",
                 watch.Elapsed, discoveredUrl.Count);
@@ -313,14 +313,14 @@ namespace Microsoft.Azure.IIoT.Platform.Discovery.Edge.Services {
                     () => _progress.OnNetScanProgress(request.Request, netscanner.ActiveProbes,
                         netscanner.ScanCount, request.TotalAddresses, addresses.Count)),
                     null, kProgressInterval, kProgressInterval)) {
-                    await netscanner.Completion;
+                    await netscanner.Completion.ConfigureAwait(false);
                 }
                 _progress.OnNetScanFinished(request.Request, netscanner.ActiveProbes,
                     netscanner.ScanCount, request.TotalAddresses, addresses.Count);
             }
             request.Token.ThrowIfCancellationRequested();
 
-            await AddLoopbackAddressesAsync(addresses);
+            await AddLoopbackAddressesAsync(addresses).ConfigureAwait(false);
             if (addresses.Count == 0) {
                 return new List<ApplicationRegistrationModel>();
             }
@@ -348,7 +348,7 @@ namespace Microsoft.Azure.IIoT.Platform.Discovery.Edge.Services {
                     () => _progress.OnPortScanProgress(request.Request, portscan.ActiveProbes,
                         portscan.ScanCount, totalPorts, ports.Count)),
                     null, kProgressInterval, kProgressInterval)) {
-                    await portscan.Completion;
+                    await portscan.Completion.ConfigureAwait(false);
                 }
                 _progress.OnPortScanFinished(request.Request, portscan.ActiveProbes,
                     portscan.ScanCount, totalPorts, ports.Count);
@@ -363,7 +363,7 @@ namespace Microsoft.Azure.IIoT.Platform.Discovery.Edge.Services {
             //
             foreach (var ep in ports) {
                 request.Token.ThrowIfCancellationRequested();
-                var resolved = await ep.TryResolveAsync();
+                var resolved = await ep.TryResolveAsync().ConfigureAwait(false);
                 var url = new Uri($"opc.tcp://" + resolved);
                 discoveryUrls.Add(ep, url);
             }
@@ -373,7 +373,7 @@ namespace Microsoft.Azure.IIoT.Platform.Discovery.Edge.Services {
             // Create application model list from discovered endpoints...
             //
             var discovered = await DiscoverServersAsync(request, discoveryUrls,
-                request.Configuration.Locales);
+                request.Configuration.Locales).ConfigureAwait(false);
 
             _logger.Information("Discovery took {elapsed} and found {count} servers.",
                 watch.Elapsed, discovered.Count);
@@ -388,8 +388,8 @@ namespace Microsoft.Azure.IIoT.Platform.Discovery.Edge.Services {
         /// <param name="locales"></param>
         /// <returns></returns>
         private async Task<List<ApplicationRegistrationModel>> DiscoverServersAsync(
-            DiscoveryRequest request, Dictionary<IPEndPoint, Uri> discoveryUrls,
-            List<string> locales) {
+            DiscoveryRequest request, IReadOnlyDictionary<IPEndPoint, Uri> discoveryUrls,
+            IReadOnlyList<string> locales) {
             kDiscoverServersAsync.Inc();
             var discovered = new List<ApplicationRegistrationModel>();
             var count = 0;
@@ -432,7 +432,7 @@ namespace Microsoft.Azure.IIoT.Platform.Discovery.Edge.Services {
             if (discoveryUrls?.Any() ?? false) {
                 var results = await Task.WhenAll(discoveryUrls
                     .Select(GetHostEntryAsync)
-                    .ToArray());
+                    .ToArray()).ConfigureAwait(false);
                 return results
                     .SelectMany(v => v)
                     .Where(a => a.Item2 != null)
@@ -468,7 +468,7 @@ namespace Microsoft.Azure.IIoT.Platform.Discovery.Edge.Services {
 
                 while (!string.IsNullOrEmpty(host)) {
                     try {
-                        var entry = await Dns.GetHostEntryAsync(host);
+                        var entry = await Dns.GetHostEntryAsync(host).ConfigureAwait(false);
                         // only pick-up the IPV4 addresses
                         var foundIpv4 = false;
                         foreach (var address in entry.AddressList
@@ -515,7 +515,7 @@ namespace Microsoft.Azure.IIoT.Platform.Discovery.Edge.Services {
             try {
                 if (Host.IsContainer) {
                     // Resolve docker host since we are running in a container
-                    var entry = await Dns.GetHostEntryAsync(kDockerHostName);
+                    var entry = await Dns.GetHostEntryAsync(kDockerHostName).ConfigureAwait(false);
                     foreach (var address in entry.AddressList
                                 .Where(a => a.AddressFamily == AddressFamily.InterNetwork)
                                 .Where(a => !addresses.Any(b => a.Equals(b)))) {
@@ -571,7 +571,7 @@ namespace Microsoft.Azure.IIoT.Platform.Discovery.Edge.Services {
                 });
             await Task.Run(() => _events.SendEventAsync(null,
                 messages.Select(message => _serializer.SerializeToBytes(message).ToArray()),
-                    ContentMimeType.Json, MessageSchemaTypes.DiscoveryEvents, "utf-8"), ct);
+                    ContentMimeType.Json, MessageSchemaTypes.DiscoveryEvents, "utf-8"), ct).ConfigureAwait(false);
             _logger.Information("{count} results uploaded.", discovered.Count);
         }
 
@@ -581,7 +581,7 @@ namespace Microsoft.Azure.IIoT.Platform.Discovery.Edge.Services {
         /// <returns></returns>
         private async Task CancelPendingRequestsAsync() {
             _logger.Information("Cancelling all pending requests...");
-            await _lock.WaitAsync();
+            await _lock.WaitAsync().ConfigureAwait(false);
             try {
                 foreach (var request in _pending) {
                     _progress.OnDiscoveryCancelled(request.Request);
@@ -601,7 +601,7 @@ namespace Microsoft.Azure.IIoT.Platform.Discovery.Edge.Services {
         /// <returns></returns>
         private async Task ReportPendingRequestsAsync() {
             // Notify all listeners about the request's place in queue
-            await _lock.WaitAsync();
+            await _lock.WaitAsync().ConfigureAwait(false);
             try {
                 for (var pos = 0; pos < _pending.Count; pos++) {
                     var item = _pending[pos];
@@ -659,14 +659,15 @@ namespace Microsoft.Azure.IIoT.Platform.Discovery.Edge.Services {
         private readonly SemaphoreSlim _lock = new SemaphoreSlim(1, 1);
         private readonly List<DiscoveryRequest> _pending =
             new List<DiscoveryRequest>();
+#pragma warning disable CA2213 // Disposable fields should be disposed
 #pragma warning disable IDE0069 // Disposable fields should be disposed
         private readonly BlockingCollection<DiscoveryRequest> _queue =
             new BlockingCollection<DiscoveryRequest>();
-        private readonly CancellationTokenSource _cts =
-            new CancellationTokenSource();
+        private readonly CancellationTokenSource _cts = new CancellationTokenSource();
         private DiscoveryRequest _request = new DiscoveryRequest();
 #pragma warning restore IDE0069 // Disposable fields should be disposed
-        private static readonly string kDiscoveryMetricsPrefix = "iiot_edge_discovery_";
+#pragma warning restore CA2213 // Disposable fields should be disposed
+        private const string kDiscoveryMetricsPrefix = "iiot_edge_discovery_";
 
         private static readonly Counter kDiscoverAsync = Metrics
             .CreateCounter(kDiscoveryMetricsPrefix + "discover", "call to discover");

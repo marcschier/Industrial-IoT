@@ -48,7 +48,7 @@ namespace Microsoft.Azure.IIoT.Net.Scanner {
         /// <returns></returns>
         public async Task<IPEndPoint> ExistsAsync(IPEndPoint ep) {
             try {
-                return await ProbeAsync(ep) ? ep : null;
+                return await ProbeAsync(ep).ConfigureAwait(false) ? ep : null;
             }
             catch {
                 return null;
@@ -56,7 +56,7 @@ namespace Microsoft.Azure.IIoT.Net.Scanner {
         }
 
         /// <inheritdoc/>
-        protected override bool Next(out IPEndPoint ep, out int timeout) {
+        protected override bool GetNext(out IPEndPoint ep, out int timeout) {
             timeout = _timeout;
             return _queue.TryTake(out ep);
         }
@@ -83,9 +83,11 @@ namespace Microsoft.Azure.IIoT.Net.Scanner {
         }
 
         /// <inheritdoc/>
-        public override void Dispose() {
-            base.Dispose();
-            _queue.Dispose();
+        protected override void Dispose(bool disposing) {
+            base.Dispose(disposing);
+            if (disposing) {
+                _queue.Dispose();
+            }
         }
 
         private class NullProbe : IAsyncProbe {

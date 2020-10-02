@@ -10,13 +10,13 @@ namespace Microsoft.Azure.IIoT.App.Pages {
     using Microsoft.Azure.IIoT.Platform.Registry.Api;
 
     public partial class Gateways {
-        protected override async Task GetItems(bool getNextPage) {
-            Items = await RegistryHelper.GetGatewayListAsync(Items, getNextPage);
+        protected override async Task LoadPageContentAsync(bool getNextPage) {
+            Items = await RegistryHelper.GetGatewayListAsync(Items, getNextPage).ConfigureAwait(false);
         }
 
-        protected override async Task SubscribeEvents() {
+        protected override async Task SubscribeContentEventsAsync() {
             _events = await RegistryServiceEvents.SubscribeGatewayEventsAsync(
-                    ev => InvokeAsync(() => GatewayEvent(ev)));
+                    ev => InvokeAsync(() => GatewayEvent(ev))).ConfigureAwait(false);
         }
 
         private Task GatewayEvent(GatewayEventApiModel ev) {

@@ -32,20 +32,31 @@ namespace Microsoft.Azure.IIoT.Net.Scanner {
             _arg = new AsyncConnect(this);
         }
 
+        /// <inheritdoc/>
+        public void Dispose() {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
         /// <summary>
         /// Dispose probe
         /// </summary>
-        public virtual void Dispose() {
-            _lock.Wait();
-            try {
-                _cts.Cancel();
-                _probe?.Dispose();
-                DisposeArgsNoLock();
-            }
-            finally {
-                _cts.Dispose();
-                _lock.Release();
-                _lock.Dispose();
+        protected virtual void Dispose(bool disposing) {
+            if (!_disposedValue) {
+                if (disposing) {
+                    _lock.Wait();
+                    try {
+                        _cts.Cancel();
+                        _probe?.Dispose();
+                        DisposeArgsNoLock();
+                    }
+                    finally {
+                        _cts.Dispose();
+                        _lock.Release();
+                        _lock.Dispose();
+                    }
+                }
+                _disposedValue = true;
             }
         }
 
@@ -62,7 +73,7 @@ namespace Microsoft.Azure.IIoT.Net.Scanner {
         /// <param name="ep"></param>
         /// <param name="timeout"></param>
         /// <returns></returns>
-        protected abstract bool Next(out IPEndPoint ep, out int timeout);
+        protected abstract bool GetNext(out IPEndPoint ep, out int timeout);
 
         /// <summary>
         /// Whether the probe should give up or retry after
@@ -107,7 +118,7 @@ namespace Microsoft.Azure.IIoT.Net.Scanner {
                     IPEndPoint ep = null;
                     var timeout = 3000;
                     try {
-                        if (!Next(out ep, out timeout)) {
+                        if (!GetNext(out ep, out timeout)) {
                             exit = true;
                             break;
                         }
@@ -458,9 +469,11 @@ namespace Microsoft.Azure.IIoT.Net.Scanner {
             private readonly SemaphoreSlim _lock;
             private readonly BaseConnectProbe _outer;
             private State _state;
+#pragma warning disable CA2213 // Disposable fields should be disposed
 #pragma warning disable IDE0069 // Disposable fields should be disposed
             private Socket _socket;
 #pragma warning restore IDE0069 // Disposable fields should be disposed
+#pragma warning restore CA2213 // Disposable fields should be disposed
         }
 
         private readonly CancellationTokenSource _cts = new CancellationTokenSource();
@@ -469,5 +482,6 @@ namespace Microsoft.Azure.IIoT.Net.Scanner {
         private readonly IAsyncProbe _probe;
         private readonly ILogger _logger;
         private AsyncConnect _arg;
+        private bool _disposedValue;
     }
 }

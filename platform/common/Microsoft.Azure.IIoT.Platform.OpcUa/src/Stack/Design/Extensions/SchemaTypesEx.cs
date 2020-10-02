@@ -29,6 +29,7 @@
 
 namespace Opc.Ua.Design.Schema {
     using System;
+    using System.Globalization;
 
     /// <summary>
     /// Schema type extensions
@@ -108,7 +109,7 @@ namespace Opc.Ua.Design.Schema {
                     var dimensions = new UInt32Collection();
                     foreach (var dim in tokens) {
                         try {
-                            dimensions.Add(Convert.ToUInt32(dim));
+                            dimensions.Add(Convert.ToUInt32(dim, CultureInfo.InvariantCulture));
                         }
                         catch {
                             dimensions.Add(0);

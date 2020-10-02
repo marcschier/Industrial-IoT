@@ -88,7 +88,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry {
             this IPublisherRegistry service, string publisherId,
             CancellationToken ct = default) {
             try {
-                return await service.GetPublisherAsync(publisherId, ct);
+                return await service.GetPublisherAsync(publisherId, ct).ConfigureAwait(false);
             }
             catch (ResourceNotFoundException) {
                 return null;
@@ -104,10 +104,10 @@ namespace Microsoft.Azure.IIoT.Platform.Registry {
         public static async Task<List<PublisherModel>> ListAllPublishersAsync(
             this IPublisherRegistry service, CancellationToken ct = default) {
             var publishers = new List<PublisherModel>();
-            var result = await service.ListPublishersAsync(null, null, ct);
+            var result = await service.ListPublishersAsync(null, null, ct).ConfigureAwait(false);
             publishers.AddRange(result.Items);
             while (result.ContinuationToken != null) {
-                result = await service.ListPublishersAsync(result.ContinuationToken, null, ct);
+                result = await service.ListPublishersAsync(result.ContinuationToken, null, ct).ConfigureAwait(false);
                 publishers.AddRange(result.Items);
             }
             return publishers;
@@ -124,10 +124,10 @@ namespace Microsoft.Azure.IIoT.Platform.Registry {
             this IPublisherRegistry service, PublisherQueryModel query,
             CancellationToken ct = default) {
             var supervisors = new List<PublisherModel>();
-            var result = await service.QueryPublishersAsync(query, null, ct);
+            var result = await service.QueryPublishersAsync(query, null, ct).ConfigureAwait(false);
             supervisors.AddRange(result.Items);
             while (result.ContinuationToken != null) {
-                result = await service.ListPublishersAsync(result.ContinuationToken, null, ct);
+                result = await service.ListPublishersAsync(result.ContinuationToken, null, ct).ConfigureAwait(false);
                 supervisors.AddRange(result.Items);
             }
             return supervisors;

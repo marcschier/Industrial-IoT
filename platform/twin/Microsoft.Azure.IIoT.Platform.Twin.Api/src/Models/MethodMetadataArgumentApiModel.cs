@@ -6,6 +6,7 @@
 namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Models {
     using Microsoft.Azure.IIoT.Platform.Core.Api.Models;
     using Microsoft.Azure.IIoT.Serializers;
+    using System.Collections.Generic;
     using System.Runtime.Serialization;
 
     /// <summary>
@@ -52,6 +53,6 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Models {
         /// </summary>
         [DataMember(Name = "arrayDimensions", Order = 5,
             EmitDefaultValue = false)]
-        public uint[] ArrayDimensions { get; set; }
+        public IReadOnlyList<uint> ArrayDimensions { get; set; }
     }
 }

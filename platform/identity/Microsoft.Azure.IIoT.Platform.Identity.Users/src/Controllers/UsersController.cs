@@ -51,7 +51,7 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Users {
             if (user == null) {
                 throw new ArgumentNullException(nameof(user));
             }
-            var result = await _manager.CreateAsync(user.ToServiceModel());
+            var result = await _manager.CreateAsync(user.ToServiceModel()).ConfigureAwait(false);
             result.Validate();
         }
 
@@ -66,7 +66,7 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Users {
             if (string.IsNullOrWhiteSpace(name)) {
                 throw new ArgumentNullException(nameof(name));
             }
-            var user = await _manager.FindByNameAsync(name);
+            var user = await _manager.FindByNameAsync(name).ConfigureAwait(false);
             return user.ToApiModel();
         }
 
@@ -81,7 +81,7 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Users {
             if (string.IsNullOrWhiteSpace(email)) {
                 throw new ArgumentNullException(nameof(email));
             }
-            var user = await _manager.FindByEmailAsync(email);
+            var user = await _manager.FindByEmailAsync(email).ConfigureAwait(false);
             return user.ToApiModel();
         }
 
@@ -95,7 +95,7 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Users {
             if (string.IsNullOrWhiteSpace(userId)) {
                 throw new ArgumentNullException(nameof(userId));
             }
-            var user = await _manager.FindByIdAsync(userId);
+            var user = await _manager.FindByIdAsync(userId).ConfigureAwait(false);
             return user.ToApiModel();
         }
 
@@ -110,8 +110,8 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Users {
                 throw new ArgumentNullException(nameof(userId));
             }
 
-            var user = await _manager.FindByIdAsync(userId);
-            var result = await _manager.DeleteAsync(user);
+            var user = await _manager.FindByIdAsync(userId).ConfigureAwait(false);
+            var result = await _manager.DeleteAsync(user).ConfigureAwait(false);
             result.Validate();
         }
 
@@ -133,8 +133,8 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Users {
             if (model == null) {
                 throw new ArgumentNullException(nameof(model));
             }
-            var user = await _manager.FindByIdAsync(userId);
-            var result = await _manager.AddClaimAsync(user, model.ToClaim());
+            var user = await _manager.FindByIdAsync(userId).ConfigureAwait(false);
+            var result = await _manager.AddClaimAsync(user, model.ToClaim()).ConfigureAwait(false);
             result.Validate();
         }
 
@@ -159,8 +159,8 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Users {
             if (string.IsNullOrWhiteSpace(value)) {
                 throw new ArgumentNullException(nameof(value));
             }
-            var user = await _manager.FindByIdAsync(userId);
-            var result = await _manager.RemoveClaimAsync(user, new Claim(type, value));
+            var user = await _manager.FindByIdAsync(userId).ConfigureAwait(false);
+            var result = await _manager.RemoveClaimAsync(user, new Claim(type, value)).ConfigureAwait(false);
             result.Validate();
         }
 
@@ -178,8 +178,8 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Users {
             if (string.IsNullOrWhiteSpace(userId)) {
                 throw new ArgumentNullException(nameof(userId));
             }
-            var user = await _manager.FindByIdAsync(userId);
-            var result = await _manager.AddToRoleAsync(user, role);
+            var user = await _manager.FindByIdAsync(userId).ConfigureAwait(false);
+            var result = await _manager.AddToRoleAsync(user, role).ConfigureAwait(false);
             result.Validate();
         }
 
@@ -191,7 +191,7 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Users {
         [HttpGet("/roles/{role}")]
         public async Task<IEnumerable<UserApiModel>> GetUsersInRoleAsync(
             string role) {
-            var result = await _manager.GetUsersInRoleAsync(role);
+            var result = await _manager.GetUsersInRoleAsync(role).ConfigureAwait(false);
             return result?.Select(u => u.ToApiModel());
         }
 
@@ -209,8 +209,8 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Users {
             if (string.IsNullOrWhiteSpace(userId)) {
                 throw new ArgumentNullException(nameof(userId));
             }
-            var user = await _manager.FindByIdAsync(userId);
-            var result = await _manager.RemoveFromRoleAsync(user, role);
+            var user = await _manager.FindByIdAsync(userId).ConfigureAwait(false);
+            var result = await _manager.RemoveFromRoleAsync(user, role).ConfigureAwait(false);
             result.Validate();
         }
 

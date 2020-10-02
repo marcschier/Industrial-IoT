@@ -78,13 +78,13 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Clients {
                 $"{ModuleWorkloadUri}/certificate/server?api-version={ApiVersion}", Resource.Local);
             _serializer.SerializeToRequest(request, new { commonName, expiration });
             return await Retry.WithExponentialBackoff(_logger, ct, async () => {
-                var response = await _client.PostAsync(request, ct);
+                var response = await _client.PostAsync(request, ct).ConfigureAwait(false);
                 response.Validate();
                 var result = _serializer.DeserializeResponse<EdgeletCertificateResponse>(response);
                 // TODO add private key
                 return new X509Certificate2Collection(
                     X509Certificate2Ex.ParsePemCerts(result.Certificate).ToArray());
-            }, kMaxRetryCount);
+            }, kMaxRetryCount).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
@@ -95,10 +95,10 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Clients {
                 $"{ModuleWorkloadUri}/encrypt?api-version={ApiVersion}", Resource.Local);
             _serializer.SerializeToRequest(request, new { initializationVector, plaintext });
             return await Retry.WithExponentialBackoff(_logger, ct, async () => {
-                var response = await _client.PostAsync(request, ct);
+                var response = await _client.PostAsync(request, ct).ConfigureAwait(false);
                 response.Validate();
                 return _serializer.DeserializeResponse<EncryptResponse>(response).CipherText;
-            }, kMaxRetryCount);
+            }, kMaxRetryCount).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
@@ -109,10 +109,10 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Clients {
                 $"{ModuleWorkloadUri}/decrypt?api-version={ApiVersion}", Resource.Local);
             _serializer.SerializeToRequest(request, new { initializationVector, ciphertext });
             return await Retry.WithExponentialBackoff(_logger, ct, async () => {
-                var response = await _client.PostAsync(request, ct);
+                var response = await _client.PostAsync(request, ct).ConfigureAwait(false);
                 response.Validate();
                 return _serializer.DeserializeResponse<DecryptResponse>(response).Plaintext;
-            }, kMaxRetryCount);
+            }, kMaxRetryCount).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
@@ -129,10 +129,10 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Clients {
                 $"{ModuleWorkloadUri}/sign?api-version={ApiVersion}", Resource.Local);
             _serializer.SerializeToRequest(request, new { keyId, algo, data });
             return await Retry.WithExponentialBackoff(_logger, ct, async () => {
-                var response = await _client.PostAsync(request, ct);
+                var response = await _client.PostAsync(request, ct).ConfigureAwait(false);
                 response.Validate();
                 return _serializer.DeserializeResponse<SignResponse>(response).Digest;
-            }, kMaxRetryCount);
+            }, kMaxRetryCount).ConfigureAwait(false);
         }
 
         /// <summary>

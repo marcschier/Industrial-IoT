@@ -50,7 +50,7 @@ namespace Microsoft.Azure.IIoT.AspNetCore.Correlation {
             context.Response.Headers.Append("Request-Id", correlationId);
 
             using (LogContext.PushProperty("XCorrelationId", correlationId)) {
-                await _next.Invoke(context);
+                await _next.Invoke(context).ConfigureAwait(false);
             }
         }
     }

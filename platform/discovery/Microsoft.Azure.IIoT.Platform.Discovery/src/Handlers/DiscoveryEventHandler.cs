@@ -54,7 +54,7 @@ namespace Microsoft.Azure.IIoT.Platform.Discovery.Handlers {
             }
             try {
                 await ProcessServerEndpointDiscoveryAsync(source,
-                    discovery, checkpoint);
+                    discovery, checkpoint).ConfigureAwait(false);
             }
             catch (Exception ex) {
                 _logger.Error(ex, "Handling discovery event failed with exception - skip");
@@ -64,7 +64,7 @@ namespace Microsoft.Azure.IIoT.Platform.Discovery.Handlers {
         /// <inheritdoc/>
         public async Task OnBatchCompleteAsync() {
             try {
-                await _queueLock.WaitAsync();
+                await _queueLock.WaitAsync().ConfigureAwait(false);
                 var old = DateTime.UtcNow - TimeSpan.FromHours(1);
 
                 var removed = new List<KeyValuePair<DateTime, DiscovererDiscoveryResult>>();
@@ -86,7 +86,7 @@ namespace Microsoft.Azure.IIoT.Platform.Discovery.Handlers {
                     .OrderByDescending(x => x.Created).FirstOrDefault();
                 if (newest != null) {
                     try {
-                        await newest.Checkpoint();
+                        await newest.Checkpoint().ConfigureAwait(false);
                     }
                     catch {
                         return;
@@ -109,7 +109,7 @@ namespace Microsoft.Azure.IIoT.Platform.Discovery.Handlers {
         private async Task ProcessServerEndpointDiscoveryAsync(
             string discovererId, DiscoveryEventModel model, Func<Task> checkpoint) {
             try {
-                await _queueLock.WaitAsync();
+                await _queueLock.WaitAsync().ConfigureAwait(false);
 
                 if (!_discovererQueues.TryGetValue(discovererId, out var backlog)) {
                     backlog = new Dictionary<DateTime, DiscovererDiscoveryResult>();
@@ -125,7 +125,7 @@ namespace Microsoft.Azure.IIoT.Platform.Discovery.Handlers {
                         // Process discoveries
                         await Task.WhenAll(
                             _processors.Select(p => p.ProcessDiscoveryResultsAsync(
-                                discovererId, queue.Result, queue.Events)));
+                                discovererId, queue.Result, queue.Events))).ConfigureAwait(false);
                     }
                     catch (Exception ex) {
                         _logger.Error(ex,
@@ -139,7 +139,7 @@ namespace Microsoft.Azure.IIoT.Platform.Discovery.Handlers {
                     //
                     if (!_discovererQueues.Any(d => d.Value
                             .Any(x => x.Value.Created <= queue.Created))) {
-                        await queue.Checkpoint();
+                        await queue.Checkpoint().ConfigureAwait(false);
                     }
                 }
                 if (backlog.Count == 0) {

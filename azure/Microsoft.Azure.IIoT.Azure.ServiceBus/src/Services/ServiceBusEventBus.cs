@@ -57,7 +57,7 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Services {
             }
             var body = _serializer.SerializeToBytes(message).ToArray();
             try {
-                var client = await _factory.CreateOrGetTopicClientAsync(_config?.Topic);
+                var client = await _factory.CreateOrGetTopicClientAsync(_config?.Topic).ConfigureAwait(false);
 
                 var moniker = typeof(T).GetMoniker();
                 await client.SendAsync(new Message {
@@ -65,7 +65,7 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Services {
                     Body = body,
                     PartitionKey = moniker,
                     Label = moniker,
-                });
+                }).ConfigureAwait(false);
 
                 _logger.Verbose("----->  {@message} sent...", message);
             }
@@ -77,12 +77,12 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Services {
 
         /// <inheritdoc/>
         public async Task CloseAsync() {
-            await _lock.WaitAsync();
+            await _lock.WaitAsync().ConfigureAwait(false);
             try {
                 foreach (var handlers in _handlers) {
                     var eventName = handlers.Key;
                     try {
-                        await _subscriptionClient.RemoveRuleAsync(eventName);
+                        await _subscriptionClient.RemoveRuleAsync(eventName).ConfigureAwait(false);
                     }
                     catch (MessagingEntityNotFoundException) {
                         _logger.Warning("The messaging entity {eventName} could not be found.",
@@ -93,7 +93,7 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Services {
                 if (_subscriptionClient.IsClosedOrClosing) {
                     return;
                 }
-                await _subscriptionClient.CloseAsync();
+                await _subscriptionClient.CloseAsync().ConfigureAwait(false);
             }
             finally {
                 _lock.Release();
@@ -112,14 +112,14 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Services {
                 throw new ArgumentNullException(nameof(handler));
             }
             var eventName = typeof(T).GetMoniker();
-            await _lock.WaitAsync();
+            await _lock.WaitAsync().ConfigureAwait(false);
             try {
                 if (!_handlers.TryGetValue(eventName, out var handlers)) {
                     try {
                         await _subscriptionClient.AddRuleAsync(new RuleDescription {
                             Filter = new CorrelationFilter { Label = eventName },
                             Name = eventName
-                        });
+                        }).ConfigureAwait(false);
                     }
                     catch (ServiceBusException ex) {
                         if (ex.Message.Contains("already exists")) {
@@ -150,7 +150,7 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Services {
             if (string.IsNullOrEmpty(token)) {
                 throw new ArgumentNullException(nameof(token));
             }
-            await _lock.WaitAsync();
+            await _lock.WaitAsync().ConfigureAwait(false);
             try {
                 string eventName = null;
                 var found = false;
@@ -173,7 +173,7 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Services {
                     return; // No more action
                 }
                 try {
-                    await _subscriptionClient.RemoveRuleAsync(eventName);
+                    await _subscriptionClient.RemoveRuleAsync(eventName).ConfigureAwait(false);
                 }
                 catch (ServiceBusException) {
                     _logger.Warning("The messaging entity {eventName} does not exist.",
@@ -208,7 +208,7 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Services {
         /// <returns></returns>
         private async Task ProcessEventAsync(Message message, CancellationToken token) {
             IEnumerable<Subscription> subscriptions = null;
-            await _lock.WaitAsync();
+            await _lock.WaitAsync().ConfigureAwait(false);
             try {
                 if (!_handlers.TryGetValue(message.Label, out var handlers)) {
                     return;
@@ -221,11 +221,11 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Services {
             foreach (var handler in subscriptions) {
                 // Do for now every time to pass brand new objects
                 var evt = _serializer.Deserialize(message.Body, handler.Type);
-                await handler.HandleAsync(evt);
+                await handler.HandleAsync(evt).ConfigureAwait(false);
                 _logger.Verbose("<-----  {@message} received and handled! ", evt);
             }
             // Complete the message so that it is not received again.
-            await _subscriptionClient.CompleteAsync(message.SystemProperties.LockToken);
+            await _subscriptionClient.CompleteAsync(message.SystemProperties.LockToken).ConfigureAwait(false);
         }
 
         /// <summary>

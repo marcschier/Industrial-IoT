@@ -19,6 +19,6 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Models {
         /// <summary>
         /// Writer groups
         /// </summary>
-        public List<WriterGroupInfoModel> WriterGroups { get; set; }
+        public IReadOnlyList<WriterGroupInfoModel> WriterGroups { get; set; }
     }
 }

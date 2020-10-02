@@ -48,7 +48,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Services {
                 FindEndpointAsync(entityId, ct),
                 FindSupervisorAsync(entityId, ct),
                 FindGroupAsync(entityId, ct),
-                FindPublisherAsync(entityId, ct));
+                FindPublisherAsync(entityId, ct)).ConfigureAwait(false);
 
             if (!entities.Any()) {
                 return null;
@@ -75,7 +75,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Services {
         /// <returns></returns>
         private async Task<EntityInfoModel> FindApplicationAsync(string applicationId,
             CancellationToken ct) {
-            var application = await _applications.FindApplicationAsync(applicationId, ct);
+            var application = await _applications.FindApplicationAsync(applicationId, ct).ConfigureAwait(false);
             if (application?.Application == null) {
                 return null;
             }
@@ -120,7 +120,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Services {
         /// <returns></returns>
         private async Task<EntityInfoModel> FindEndpointAsync(string endpointId,
             CancellationToken ct) {
-            var ep = await _endpoints.FindEndpointAsync(endpointId, ct);
+            var ep = await _endpoints.FindEndpointAsync(endpointId, ct).ConfigureAwait(false);
             if (ep == null) {
                 return null;
             }
@@ -164,7 +164,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Services {
         /// <returns></returns>
         private async Task<EntityInfoModel> FindSupervisorAsync(string supervisorId,
             CancellationToken ct) {
-            var twinModule = await _supervisors.FindSupervisorAsync(supervisorId, ct);
+            var twinModule = await _supervisors.FindSupervisorAsync(supervisorId, ct).ConfigureAwait(false);
             if (twinModule == null) {
                 return null;
             }
@@ -187,7 +187,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Services {
         /// <returns></returns>
         private async Task<EntityInfoModel> FindPublisherAsync(string publisherId,
             CancellationToken ct) {
-            var publisher = await _publishers.FindPublisherAsync(publisherId, ct);
+            var publisher = await _publishers.FindPublisherAsync(publisherId, ct).ConfigureAwait(false);
             if (publisher == null) {
                 return null;
             }
@@ -210,7 +210,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Services {
         /// <returns></returns>
         private async Task<EntityInfoModel> FindGroupAsync(string groupId,
             CancellationToken ct) {
-            var group = await _groups.FindAsync(groupId, ct);
+            var group = await _groups.FindAsync(groupId, ct).ConfigureAwait(false);
             if (group == null) {
                 return null;
             }

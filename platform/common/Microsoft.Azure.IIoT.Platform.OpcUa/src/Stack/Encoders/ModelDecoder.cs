@@ -10,9 +10,9 @@ namespace Opc.Ua.Encoders {
     using Microsoft.Azure.IIoT;
 
     /// <summary>
-    /// Encoder wrapper to encode model
+    /// Decoder wrapper to decode model
     /// </summary>
-    public class ModelDecoder : IDecoder, IDisposable {
+    public sealed class ModelDecoder : IDecoder, IDisposable {
 
         /// <inheritdoc />
         public EncodingType EncodingType => _wrapped.EncodingType;
@@ -28,7 +28,9 @@ namespace Opc.Ua.Encoders {
         /// <param name="context"></param>
         public ModelDecoder(Stream stream, string contentType,
             ServiceMessageContext context = null) :
+#pragma warning disable CA2000 // Dispose objects before losing scope
             this(CreateDecoder(contentType, stream, context)) {
+#pragma warning restore CA2000 // Dispose objects before losing scope
         }
 
         /// <summary>
@@ -46,8 +48,8 @@ namespace Opc.Ua.Encoders {
         }
 
         /// <inheritdoc />
-        public void PushNamespace(string namespaceUri) {
-            _wrapped.PushNamespace(namespaceUri);
+        public void PushNamespace(string ns) {
+            _wrapped.PushNamespace(ns ?? "");
         }
 
         /// <inheritdoc />
@@ -344,7 +346,7 @@ namespace Opc.Ua.Encoders {
             if (stream == null) {
                 throw new ArgumentNullException(nameof(stream));
             }
-            switch (contentType.ToLowerInvariant()) {
+            switch (contentType?.ToUpperInvariant()) {
                 case ContentMimeType.Json:
                 case ContentMimeType.UaJson:
                     return new JsonDecoderEx(stream, context);
@@ -352,10 +354,13 @@ namespace Opc.Ua.Encoders {
                     return new BinaryDecoder(stream,
                         context ?? new ServiceMessageContext());
                 case ContentMimeType.UaXml:
+#pragma warning disable CA2000 // Dispose objects before losing scope
                     return new XmlDecoder(null, XmlReader.Create(stream),
                         context ?? new ServiceMessageContext());
+#pragma warning restore CA2000 // Dispose objects before losing scope
                 default:
-                    throw new ArgumentException(nameof(contentType));
+                    throw new ArgumentException("unknown content type",
+                        nameof(contentType));
             }
         }
 

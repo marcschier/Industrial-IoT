@@ -11,7 +11,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Service.Controllers {
     using Microsoft.Azure.IIoT.Platform.OpcUa.Services;
     using Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Fixtures;
     using Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests;
-    using Microsoft.Azure.IIoT.Http.Default;
+    using Microsoft.Azure.IIoT.Http.Clients;
     using Microsoft.Azure.IIoT.Serializers;
     using Microsoft.Azure.IIoT.Utils;
     using Opc.Ua;
@@ -60,22 +60,22 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Service.Controllers {
 
         [Fact]
         public async Task HistoryReadInt64ValuesTest1Async() {
-            await GetTests().HistoryReadInt64ValuesTest1Async();
+            await GetTests().HistoryReadInt64ValuesTest1Async().ConfigureAwait(false);
         }
 
         [Fact]
         public async Task HistoryReadInt64ValuesTest2Async() {
-            await GetTests().HistoryReadInt64ValuesTest2Async();
+            await GetTests().HistoryReadInt64ValuesTest2Async().ConfigureAwait(false);
         }
 
         [Fact]
         public async Task HistoryReadInt64ValuesTest3Async() {
-            await GetTests().HistoryReadInt64ValuesTest3Async();
+            await GetTests().HistoryReadInt64ValuesTest3Async().ConfigureAwait(false);
         }
 
         [Fact]
         public async Task HistoryReadInt64ValuesTest4Async() {
-            await GetTests().HistoryReadInt64ValuesTest4Async();
+            await GetTests().HistoryReadInt64ValuesTest4Async().ConfigureAwait(false);
         }
     }
 }

@@ -40,6 +40,10 @@ namespace Opc.Ua.Nodeset {
 
         /// <inheritdoc/>
         public virtual void Decode(IDecoder decoder) {
+            if (decoder is null) {
+                throw new ArgumentNullException(nameof(decoder));
+            }
+
             decoder.PushNamespace(Namespaces.OpcUa);
             decoder.PushNamespace(Namespaces.OpcUaXsd);
             Node = CreateModel(decoder.ReadString(kTypeFieldName));
@@ -146,6 +150,10 @@ namespace Opc.Ua.Nodeset {
 
         /// <inheritdoc/>
         public virtual void Encode(IEncoder encoder) {
+            if (encoder is null) {
+                throw new ArgumentNullException(nameof(encoder));
+            }
+
             encoder.PushNamespace(Namespaces.OpcUa);
             encoder.PushNamespace(Namespaces.OpcUaXsd);
             encoder.WriteString(kTypeFieldName, Node.GetType().Name);
@@ -181,7 +189,7 @@ namespace Opc.Ua.Nodeset {
                             encoder.WriteInt32(nameof(variableState.ValueRank),
                                 variableState.ValueRank ?? -1);
                             encoder.WriteUInt32Array(nameof(variableState.ArrayDimensions),
-                                variableState.ArrayDimensions);
+                                variableState.ArrayDimensions?.ToArray());
                             encoder.WriteByte(nameof(variableState.AccessLevel),
                                 variableState.AccessLevel ?? 0);
                             encoder.WriteUInt32(nameof(variableState.AccessLevelEx),
@@ -215,7 +223,7 @@ namespace Opc.Ua.Nodeset {
                             encoder.WriteInt32(nameof(variableTypeState.ValueRank),
                                 variableTypeState.ValueRank ?? -1);
                             encoder.WriteUInt32Array(nameof(variableTypeState.ArrayDimensions),
-                                variableTypeState.ArrayDimensions);
+                                variableTypeState.ArrayDimensions?.ToArray());
                             break;
                         case ReferenceTypeNodeModel refTypeState:
                             encoder.WriteBoolean(nameof(refTypeState.Symmetric),

@@ -40,20 +40,20 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Storage {
             if (request == null) {
                 throw new ArgumentNullException(nameof(request));
             }
-            var recordId = await _index.AllocateAsync();
+            var recordId = await _index.AllocateAsync().ConfigureAwait(false);
             while (true) {
                 request.Index = recordId;
                 request.Record.State = CertificateRequestState.New;
                 request.Record.RequestId = "req" + Guid.NewGuid();
                 try {
-                    var result = await _requests.AddAsync(request.ToDocument(), ct);
+                    var result = await _requests.AddAsync(request.ToDocument(), ct: ct).ConfigureAwait(false);
                     return result.Value.ToServiceModel();
                 }
                 catch (ResourceConflictException) {
                     continue;
                 }
                 catch {
-                    await Try.Async(() => _index.FreeAsync(recordId));
+                    await Try.Async(() => _index.FreeAsync(recordId)).ConfigureAwait(false);
                     throw;
                 }
             }
@@ -67,7 +67,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Storage {
             }
             while (true) {
                 var document = await _requests.FindAsync<RequestDocument>(
-                    requestId);
+                    requestId).ConfigureAwait(false);
                 if (document == null) {
                     throw new ResourceNotFoundException("Request not found");
                 }
@@ -77,7 +77,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Storage {
                 }
                 var updated = request.ToDocument(document.Value.ETag);
                 try {
-                    var result = await _requests.ReplaceAsync(document, updated, ct);
+                    var result = await _requests.ReplaceAsync(document, updated, ct: ct).ConfigureAwait(false);
                     return result.Value.ToServiceModel();
                 }
                 catch (ResourceOutOfDateException) {
@@ -94,7 +94,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Storage {
             }
             while (true) {
                 var document = await _requests.FindAsync<RequestDocument>(
-                    requestId);
+                    requestId).ConfigureAwait(false);
                 if (document == null) {
                     return null;
                 }
@@ -103,8 +103,8 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Storage {
                     return request;
                 }
                 try {
-                    await _requests.DeleteAsync(document, ct);
-                    await Try.Async(() => _index.FreeAsync(document.Value.Index));
+                    await _requests.DeleteAsync(document, ct: ct).ConfigureAwait(false);
+                    await Try.Async(() => _index.FreeAsync(document.Value.Index)).ConfigureAwait(false);
                 }
                 catch (ResourceOutOfDateException) {
                     continue;
@@ -120,7 +120,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Storage {
                 throw new ArgumentNullException(nameof(requestId));
             }
             var document = await _requests.FindAsync<RequestDocument>(
-                requestId, ct);
+                requestId, ct: ct).ConfigureAwait(false);
             if (document == null) {
                 throw new ResourceNotFoundException("Request not found");
             }
@@ -139,7 +139,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Storage {
                     Requests = new List<CertificateRequestModel>()
                 };
             }
-            var documents = await results.ReadAsync(ct);
+            var documents = await results.ReadAsync(ct).ConfigureAwait(false);
             return new CertificateRequestListModel {
                 NextPageLink = results.ContinuationToken,
                 Requests = documents.Select(r => r.Value.ToServiceModel()).ToList()

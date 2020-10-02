@@ -16,13 +16,13 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Clients {
     using System.Runtime.Serialization;
     using Autofac;
 
-    public class ServiceBusEventBusFixture : IDisposable {
+    public sealed class ServiceBusEventBusFixture : IDisposable {
 
         /// <summary>
         /// Create test harness
         /// </summary>
         /// <returns></returns>
-        public ServiceBusEventBusHarness GetHarness(string bus,
+        internal ServiceBusEventBusHarness GetHarness(string bus,
             Action<ContainerBuilder> configure = null) {
             return new ServiceBusEventBusHarness(bus, configure);
         }
@@ -46,7 +46,7 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Clients {
         public string Topic { get; }
     }
 
-    public class ServiceBusEventBusHarness : IDisposable {
+    internal sealed class ServiceBusEventBusHarness : IDisposable {
 
         /// <summary>
         /// Create fixture
@@ -124,7 +124,7 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Clients {
     }
 
     [DataContract]
-    public sealed class Parent {
+    internal sealed class Parent {
         [DataMember]
         public string FamilyName { get; set; }
         [DataMember]
@@ -134,7 +134,7 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Clients {
     }
 
     [DataContract]
-    public sealed class Child {
+    internal sealed class Child {
         [DataMember]
         public string FamilyName { get; set; }
         [DataMember]
@@ -150,7 +150,7 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Clients {
     }
 
     [DataContract]
-    public sealed class Pet {
+    internal sealed class Pet {
         [DataMember]
         public string GivenName { get; set; }
         [DataMember]
@@ -158,7 +158,7 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Clients {
     }
 
     [DataContract]
-    public sealed class Address {
+    internal sealed class Address {
         [DataMember]
         public string State { get; set; }
         [DataMember]
@@ -170,7 +170,7 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Clients {
     }
 
     [DataContract]
-    public sealed class Family {
+    internal sealed class Family {
         [DataMember(Name = "id")]
         public string Id { get; set; }
         [DataMember]

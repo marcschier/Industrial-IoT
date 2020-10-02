@@ -31,6 +31,7 @@ namespace Opc.Ua.Design {
     using Opc.Ua.Design.Schema;
     using System;
     using System.Collections.Generic;
+    using System.Globalization;
     using System.IO;
     using System.Xml;
 
@@ -104,7 +105,7 @@ namespace Opc.Ua.Design {
                         line.StartsWith("#", StringComparison.Ordinal)) {
                         continue;
                     }
-                    var index = line.IndexOf(',');
+                    var index = line.IndexOf(',', StringComparison.InvariantCulture);
                     if (index == -1) {
                         continue;
                     }
@@ -117,10 +118,10 @@ namespace Opc.Ua.Design {
                         var name = line.Substring(0, index).Trim();
                         var id = line.Substring(index + 1).Trim();
                         if (id.StartsWith("\"", StringComparison.Ordinal)) {
-                            identifiers[name] = id.Substring(1, id.Length - 2);
+                            identifiers[name] = id[1..^1];
                         }
                         else {
-                            var numericId = Convert.ToUInt32(id);
+                            var numericId = Convert.ToUInt32(id, CultureInfo.InvariantCulture);
                             identifiers[name] = numericId;
                         }
                     }

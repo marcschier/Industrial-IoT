@@ -55,11 +55,11 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
         /// <summary>
         /// List of preset discovery urls to use
         /// </summary>
-        public List<string> DiscoveryUrls { get; set; }
+        public IReadOnlyList<string> DiscoveryUrls { get; set; }
 
         /// <summary>
         /// Only retrieve information for the provided locales
         /// </summary>
-        public List<string> Locales { get; set; }
+        public IReadOnlyList<string> Locales { get; set; }
     }
 }

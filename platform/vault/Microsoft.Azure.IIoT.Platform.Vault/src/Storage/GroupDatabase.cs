@@ -38,7 +38,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Storage {
             while (true) {
                 group.Id = "grp" + Guid.NewGuid();
                 try {
-                    var result = await _groups.AddAsync(group.ToDocumentModel(), ct);
+                    var result = await _groups.AddAsync(group.ToDocumentModel(), ct: ct).ConfigureAwait(false);
                     return result.Value.ToServiceModel();
                 }
                 catch (ResourceConflictException) {
@@ -53,7 +53,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Storage {
             if (string.IsNullOrEmpty(groupId)) {
                 throw new ArgumentNullException(nameof(groupId));
             }
-            var document = await _groups.FindAsync<GroupDocument>(groupId, ct);
+            var document = await _groups.FindAsync<GroupDocument>(groupId, ct: ct).ConfigureAwait(false);
             if (document == null) {
                 throw new ResourceNotFoundException("No such group");
             }
@@ -69,7 +69,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Storage {
             }
             while (true) {
                 var document = await _groups.FindAsync<GroupDocument>(
-                    groupId, ct);
+                    groupId, ct: ct).ConfigureAwait(false);
                 if (document == null) {
                     throw new ResourceNotFoundException("Group does not exist");
                 }
@@ -79,7 +79,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Storage {
                 }
                 try {
                     var result = await _groups.ReplaceAsync(document,
-                        group.ToDocumentModel(), ct);
+                        group.ToDocumentModel(), ct: ct).ConfigureAwait(false);
                     return result.Value.ToServiceModel();
                 }
                 catch (ResourceOutOfDateException) {
@@ -98,7 +98,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Storage {
             }
             while (true) {
                 var document = await _groups.FindAsync<GroupDocument>(
-                    groupId, ct);
+                    groupId, ct: ct).ConfigureAwait(false);
                 if (document == null) {
                     return null;
                 }
@@ -108,7 +108,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Storage {
                 }
                 try {
                     // Try delete
-                    await _groups.DeleteAsync(document, ct);
+                    await _groups.DeleteAsync(document, ct: ct).ConfigureAwait(false);
                     return group;
                 }
                 catch (ResourceOutOfDateException) {
@@ -127,7 +127,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Storage {
                 CreateQuery(_groups.CreateQuery<GroupDocument>(pageSize), filter);
 
             // Read results
-            var results = await query.ReadAsync(ct);
+            var results = await query.ReadAsync(ct).ConfigureAwait(false);
             return new TrustGroupRegistrationListModel {
                 Registrations = results.Select(r => r.Value.ToServiceModel()).ToList(),
                 NextPageLink = query.ContinuationToken

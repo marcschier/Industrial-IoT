@@ -40,10 +40,10 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
                     NodeId = node,
                     Value = expected,
                     DataType = "Boolean"
-                });
+                }).ConfigureAwait(false);
 
             // Assert
-            await AssertResultAsync(node, expected, result);
+            await AssertResultAsync(node, expected, result).ConfigureAwait(false);
 
             expected = true;
 
@@ -53,10 +53,10 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
                     NodeId = "ns=2;i=10216",
                     Value = expected,
                     DataType = "Boolean"
-                });
+                }).ConfigureAwait(false);
 
             // Assert
-            await AssertResultAsync(node, expected, result);
+            await AssertResultAsync(node, expected, result).ConfigureAwait(false);
         }
 
 
@@ -77,10 +77,10 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
                     BrowsePath = path,
                     Value = expected,
                     DataType = "Boolean"
-                });
+                }).ConfigureAwait(false);
 
             // Assert
-            await AssertResultAsync("http://test.org/UA/Data/#i=10216", expected, result);
+            await AssertResultAsync("http://test.org/UA/Data/#i=10216", expected, result).ConfigureAwait(false);
 
             expected = true;
 
@@ -91,10 +91,10 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
                     BrowsePath = path,
                     Value = expected,
                     DataType = "Boolean"
-                });
+                }).ConfigureAwait(false);
 
             // Assert
-            await AssertResultAsync("http://test.org/UA/Data/#i=10216", expected, result);
+            await AssertResultAsync("http://test.org/UA/Data/#i=10216", expected, result).ConfigureAwait(false);
         }
 
 
@@ -115,10 +115,10 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
                     BrowsePath = path,
                     Value = expected,
                     DataType = "Boolean"
-                });
+                }).ConfigureAwait(false);
 
             // Assert
-            await AssertResultAsync("http://test.org/UA/Data/#i=10216", expected, result);
+            await AssertResultAsync("http://test.org/UA/Data/#i=10216", expected, result).ConfigureAwait(false);
 
             expected = true;
 
@@ -129,10 +129,10 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
                     BrowsePath = path,
                     Value = expected,
                     DataType = "Boolean"
-                });
+                }).ConfigureAwait(false);
 
             // Assert
-            await AssertResultAsync("http://test.org/UA/Data/#i=10216", expected, result);
+            await AssertResultAsync("http://test.org/UA/Data/#i=10216", expected, result).ConfigureAwait(false);
         }
 
 
@@ -155,10 +155,10 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
                     BrowsePath = path,
                     Value = expected,
                     DataType = "Boolean"
-                });
+                }).ConfigureAwait(false);
 
             // Assert
-            await AssertResultAsync("http://test.org/UA/Data/#i=10216", expected, result);
+            await AssertResultAsync("http://test.org/UA/Data/#i=10216", expected, result).ConfigureAwait(false);
 
             expected = true;
 
@@ -168,10 +168,10 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
                     BrowsePath = path,
                     Value = expected,
                     DataType = "Boolean"
-                });
+                }).ConfigureAwait(false);
 
             // Assert
-            await AssertResultAsync("http://test.org/UA/Data/#i=10216", expected, result);
+            await AssertResultAsync("http://test.org/UA/Data/#i=10216", expected, result).ConfigureAwait(false);
         }
 
 
@@ -188,10 +188,10 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
                     NodeId = node,
                     Value = expected,
                     DataType = "SByte"
-                });
+                }).ConfigureAwait(false);
 
             // Assert
-            await AssertResultAsync(node, expected, result);
+            await AssertResultAsync(node, expected, result).ConfigureAwait(false);
         }
 
 
@@ -208,10 +208,10 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
                     NodeId = node,
                     Value = expected,
                     DataType = "Byte"
-                });
+                }).ConfigureAwait(false);
 
             // Assert
-            await AssertResultAsync(node, expected, result);
+            await AssertResultAsync(node, expected, result).ConfigureAwait(false);
         }
 
 
@@ -228,10 +228,10 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
                     NodeId = node,
                     Value = expected,
                     DataType = "Int16"
-                });
+                }).ConfigureAwait(false);
 
             // Assert
-            await AssertResultAsync(node, expected, result);
+            await AssertResultAsync(node, expected, result).ConfigureAwait(false);
         }
 
 
@@ -248,10 +248,10 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
                     NodeId = node,
                     Value = expected,
                     DataType = "UInt16"
-                });
+                }).ConfigureAwait(false);
 
             // Assert
-            await AssertResultAsync(node, expected, result);
+            await AssertResultAsync(node, expected, result).ConfigureAwait(false);
         }
 
 
@@ -269,10 +269,10 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
                     NodeId = node,
                     Value = expected,
                     DataType = "Int32"
-                });
+                }).ConfigureAwait(false);
 
             // Assert
-            await AssertResultAsync(node, expected, result);
+            await AssertResultAsync(node, expected, result).ConfigureAwait(false);
         }
 
 
@@ -289,10 +289,10 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
                     NodeId = node,
                     Value = expected,
                     DataType = "UInt32"
-                });
+                }).ConfigureAwait(false);
 
             // Assert
-            await AssertResultAsync(node, expected, result);
+            await AssertResultAsync(node, expected, result).ConfigureAwait(false);
         }
 
 
@@ -309,10 +309,10 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
                     NodeId = node,
                     Value = expected,
                     DataType = "Int64"
-                });
+                }).ConfigureAwait(false);
 
             // Assert
-            await AssertResultAsync(node, expected, result);
+            await AssertResultAsync(node, expected, result).ConfigureAwait(false);
         }
 
 
@@ -329,10 +329,10 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
                     NodeId = node,
                     Value = expected,
                     DataType = "UInt64"
-                });
+                }).ConfigureAwait(false);
 
             // Assert
-            await AssertResultAsync(node, expected, result);
+            await AssertResultAsync(node, expected, result).ConfigureAwait(false);
         }
 
 
@@ -350,10 +350,10 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
                     NodeId = node,
                     Value = expected,
                     DataType = "Float"
-                });
+                }).ConfigureAwait(false);
 
             // Assert
-            await AssertResultAsync(node, expected, result);
+            await AssertResultAsync(node, expected, result).ConfigureAwait(false);
         }
 
 
@@ -370,10 +370,10 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
                     NodeId = node,
                     Value = expected,
                     DataType = "Double"
-                });
+                }).ConfigureAwait(false);
 
             // Assert
-            await AssertResultAsync(node, expected, result);
+            await AssertResultAsync(node, expected, result).ConfigureAwait(false);
         }
 
 
@@ -391,10 +391,10 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
                     NodeId = node,
                     Value = expected,
                     DataType = "String"
-                });
+                }).ConfigureAwait(false);
 
             // Assert
-            await AssertResultAsync(node, expected, result);
+            await AssertResultAsync(node, expected, result).ConfigureAwait(false);
         }
 
 
@@ -411,10 +411,10 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
                     NodeId = node,
                     Value = expected,
                     DataType = "DateTime"
-                });
+                }).ConfigureAwait(false);
 
             // Assert
-            await AssertResultAsync(node, expected, result);
+            await AssertResultAsync(node, expected, result).ConfigureAwait(false);
         }
 
 
@@ -431,10 +431,10 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
                     NodeId = node,
                     Value = expected,
                     DataType = "Guid"
-                });
+                }).ConfigureAwait(false);
 
             // Assert
-            await AssertResultAsync(node, expected, result);
+            await AssertResultAsync(node, expected, result).ConfigureAwait(false);
         }
 
 
@@ -453,10 +453,10 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
                     NodeId = node,
                     Value = expected,
                     DataType = "ByteString"
-                });
+                }).ConfigureAwait(false);
 
             // Assert
-            await AssertResultAsync(node, expected, result);
+            await AssertResultAsync(node, expected, result).ConfigureAwait(false);
         }
 
 
@@ -478,10 +478,10 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
                     NodeId = node,
                     Value = expected,
                     DataType = "XmlElement"
-                });
+                }).ConfigureAwait(false);
 
             // Assert
-            await AssertResultAsync(node, expected, result);
+            await AssertResultAsync(node, expected, result).ConfigureAwait(false);
         }
 
 
@@ -498,10 +498,10 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
                     NodeId = node,
                     Value = expected,
                     DataType = "NodeId"
-                });
+                }).ConfigureAwait(false);
 
             // Assert
-            await AssertResultAsync(node, expected, result);
+            await AssertResultAsync(node, expected, result).ConfigureAwait(false);
         }
 
 
@@ -518,10 +518,10 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
                     NodeId = node,
                     Value = expected,
                     DataType = "ExpandedNodeId"
-                });
+                }).ConfigureAwait(false);
 
             // Assert
-            await AssertResultAsync(node, expected, result);
+            await AssertResultAsync(node, expected, result).ConfigureAwait(false);
         }
 
 
@@ -539,10 +539,10 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
                     NodeId = node,
                     Value = expected,
                     DataType = "QualifiedName"
-                });
+                }).ConfigureAwait(false);
 
             // Assert
-            await AssertResultAsync(node, expected, result);
+            await AssertResultAsync(node, expected, result).ConfigureAwait(false);
         }
 
 
@@ -560,10 +560,10 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
                     NodeId = node,
                     Value = expected,
                     DataType = "LocalizedText"
-                });
+                }).ConfigureAwait(false);
 
             // Assert
-            await AssertResultAsync(node, expected, result);
+            await AssertResultAsync(node, expected, result).ConfigureAwait(false);
         }
 
 
@@ -580,10 +580,10 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
                     NodeId = node,
                     Value = expected,
                     DataType = "StatusCode"
-                });
+                }).ConfigureAwait(false);
 
             // Assert
-            await AssertResultAsync(node, expected, result);
+            await AssertResultAsync(node, expected, result).ConfigureAwait(false);
         }
 
 
@@ -600,10 +600,10 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
                     NodeId = node,
                     Value = expected,
                     DataType = "BaseDataType"
-                });
+                }).ConfigureAwait(false);
 
             // Assert
-            await AssertResultAsync(node, expected, result);
+            await AssertResultAsync(node, expected, result).ConfigureAwait(false);
         }
 
 
@@ -621,10 +621,10 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
                     Value = expected,
                     DataType = "Int32"
                     // TODO: Assert.Equal("Enumeration", result.DataType);
-                });
+                }).ConfigureAwait(false);
 
             // Assert
-            await AssertResultAsync(node, expected, result);
+            await AssertResultAsync(node, expected, result).ConfigureAwait(false);
         }
 
 
@@ -710,10 +710,10 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
                     NodeId = node,
                     Value = expected,
                     DataType = "ExtensionObject"
-                });
+                }).ConfigureAwait(false);
 
             // Assert
-            await AssertResultAsync(node, expected, result);
+            await AssertResultAsync(node, expected, result).ConfigureAwait(false);
         }
 
 
@@ -731,10 +731,10 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
                     Value = expected,
                     DataType = "SByte"
                     // Assert.Equal("Number", result.DataType);
-                });
+                }).ConfigureAwait(false);
 
             // Assert
-            await AssertResultAsync(node, expected, result);
+            await AssertResultAsync(node, expected, result).ConfigureAwait(false);
         }
 
 
@@ -752,10 +752,10 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
                     Value = expected,
                     DataType = "Int32"
                     // Assert.Equal("Integer", result.DataType);
-                });
+                }).ConfigureAwait(false);
 
             // Assert
-            await AssertResultAsync(node, expected, result);
+            await AssertResultAsync(node, expected, result).ConfigureAwait(false);
         }
 
 
@@ -773,15 +773,15 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
                     Value = expected,
                     DataType = "UInt32"
                     // Assert.Equal("UInteger", result.DataType);
-                });
+                }).ConfigureAwait(false);
 
             // Assert
-            await AssertResultAsync(node, expected, result);
+            await AssertResultAsync(node, expected, result).ConfigureAwait(false);
         }
 
         private async Task AssertResultAsync(string node, VariantValue expected,
             ValueWriteResultModel result) {
-            var value = await _readExpected(_endpoint, node);
+            var value = await _readExpected(_endpoint, node).ConfigureAwait(false);
             Assert.NotNull(value);
             Assert.Null(result.ErrorInfo);
 

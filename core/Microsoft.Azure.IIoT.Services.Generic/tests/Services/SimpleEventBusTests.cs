@@ -32,16 +32,16 @@ namespace Microsoft.Azure.IIoT.Services.Generic.Services {
                 var token = await bus.RegisterAsync<Family>(f => {
                     tcs.SetResult(f);
                     return Task.CompletedTask;
-                });
+                }).ConfigureAwait(false);
 
-                await bus.PublishAsync(family);
+                await bus.PublishAsync(family).ConfigureAwait(false);
 
-                var f = await tcs.Task.With1MinuteTimeout();
+                var f = await tcs.Task.With1MinuteTimeout().ConfigureAwait(false);
                 Assert.Equal(family.Id, f.Id);
                 Assert.Equal(family.LastName, f.LastName);
                 Assert.Equal(family.RegistrationDate, f.RegistrationDate);
 
-                await bus.UnregisterAsync(token);
+                await bus.UnregisterAsync(token).ConfigureAwait(false);
             }
         }
 
@@ -63,19 +63,19 @@ namespace Microsoft.Azure.IIoT.Services.Generic.Services {
                         tcs.TrySetResult(f);
                     }
                     return Task.CompletedTask;
-                });
+                }).ConfigureAwait(false);
 
-                await bus.PublishAsync(family2);
-                await bus.PublishAsync(family2);
-                await bus.PublishAsync(family2);
-                await bus.PublishAsync(family);
+                await bus.PublishAsync(family2).ConfigureAwait(false);
+                await bus.PublishAsync(family2).ConfigureAwait(false);
+                await bus.PublishAsync(family2).ConfigureAwait(false);
+                await bus.PublishAsync(family).ConfigureAwait(false);
 
-                var f = await tcs.Task.With1MinuteTimeout();
+                var f = await tcs.Task.With1MinuteTimeout().ConfigureAwait(false);
                 Assert.Equal(family.Id, f.Id);
                 Assert.Equal(family.LastName, f.LastName);
                 Assert.Equal(family.RegistrationDate, f.RegistrationDate);
 
-                await bus.UnregisterAsync(token);
+                await bus.UnregisterAsync(token).ConfigureAwait(false);
             }
         }
 
@@ -94,20 +94,20 @@ namespace Microsoft.Azure.IIoT.Services.Generic.Services {
                 var token1 = await bus.RegisterAsync<Family>(f => {
                     tcs1.TrySetResult(f);
                     return Task.CompletedTask;
-                });
+                }).ConfigureAwait(false);
                 var tcs2 = new TaskCompletionSource<Family>();
                 var token2 = await bus.RegisterAsync<Family>(f => {
                     tcs2.TrySetResult(f);
                     return Task.CompletedTask;
-                });
+                }).ConfigureAwait(false);
 
-                await bus.PublishAsync(family);
-                await bus.PublishAsync(family2);
-                await bus.PublishAsync(family2);
-                await bus.PublishAsync(family2);
+                await bus.PublishAsync(family).ConfigureAwait(false);
+                await bus.PublishAsync(family2).ConfigureAwait(false);
+                await bus.PublishAsync(family2).ConfigureAwait(false);
+                await bus.PublishAsync(family2).ConfigureAwait(false);
 
-                var f1 = await tcs1.Task.With1MinuteTimeout();
-                var f2 = await tcs2.Task.With1MinuteTimeout();
+                var f1 = await tcs1.Task.With1MinuteTimeout().ConfigureAwait(false);
+                var f2 = await tcs2.Task.With1MinuteTimeout().ConfigureAwait(false);
 
                 Assert.Equal(family.Id, f1.Id);
                 Assert.Equal(family.LastName, f1.LastName);
@@ -116,8 +116,8 @@ namespace Microsoft.Azure.IIoT.Services.Generic.Services {
                 Assert.Equal(family.LastName, f2.LastName);
                 Assert.Equal(family.RegistrationDate, f2.RegistrationDate);
 
-                await bus.UnregisterAsync(token1);
-                await bus.UnregisterAsync(token2);
+                await bus.UnregisterAsync(token1).ConfigureAwait(false);
+                await bus.UnregisterAsync(token2).ConfigureAwait(false);
             }
         }
 
@@ -135,22 +135,22 @@ namespace Microsoft.Azure.IIoT.Services.Generic.Services {
                 var token2 = await bus.RegisterAsync<Family>(f => {
                     tcs2.TrySetResult(f);
                     return Task.CompletedTask;
-                });
+                }).ConfigureAwait(false);
                 var tcs1 = new TaskCompletionSource<Family>();
                 var token1 = await bus.RegisterAsync<Family>(f => {
                     tcs1.TrySetResult(f);
                     return Task.CompletedTask;
-                });
-                await bus.UnregisterAsync(token2);
+                }).ConfigureAwait(false);
+                await bus.UnregisterAsync(token2).ConfigureAwait(false);
 
-                await bus.PublishAsync(family);
+                await bus.PublishAsync(family).ConfigureAwait(false);
 
-                var f = await tcs1.Task.With1MinuteTimeout();
+                var f = await tcs1.Task.With1MinuteTimeout().ConfigureAwait(false);
                 Assert.Equal(family.Id, f.Id);
                 Assert.Equal(family.LastName, f.LastName);
                 Assert.Equal(family.RegistrationDate, f.RegistrationDate);
 
-                await bus.UnregisterAsync(token1);
+                await bus.UnregisterAsync(token1).ConfigureAwait(false);
             }
         }
 
@@ -163,20 +163,20 @@ namespace Microsoft.Azure.IIoT.Services.Generic.Services {
                 Skip.If(bus == null);
 
                 await Assert.ThrowsAsync<ArgumentNullException>(
-                    () => bus.PublishAsync<Family>(null));
+                    () => bus.PublishAsync<Family>(null)).ConfigureAwait(false);
                 await Assert.ThrowsAsync<ArgumentNullException>(
-                    () => bus.RegisterAsync<Family>(null));
+                    () => bus.RegisterAsync<Family>(null)).ConfigureAwait(false);
                 await Assert.ThrowsAsync<ArgumentNullException>(
-                    () => bus.UnregisterAsync(null));
+                    () => bus.UnregisterAsync(null)).ConfigureAwait(false);
                 await Assert.ThrowsAsync<ArgumentNullException>(
-                    () => bus.UnregisterAsync(string.Empty));
+                    () => bus.UnregisterAsync(string.Empty)).ConfigureAwait(false);
                 await Assert.ThrowsAsync<ResourceInvalidStateException>(
-                    () => bus.UnregisterAsync("bad"));
+                    () => bus.UnregisterAsync("bad")).ConfigureAwait(false);
 
-                var token = await bus.RegisterAsync<Family>(f => default);
-                await bus.UnregisterAsync(token);
+                var token = await bus.RegisterAsync<Family>(f => default).ConfigureAwait(false);
+                await bus.UnregisterAsync(token).ConfigureAwait(false);
                 await Assert.ThrowsAsync<ResourceInvalidStateException>(
-                    () => bus.UnregisterAsync(token));
+                    () => bus.UnregisterAsync(token)).ConfigureAwait(false);
             }
         }
     }

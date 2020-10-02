@@ -39,7 +39,7 @@ namespace Microsoft.Azure.IIoT.Crypto {
                     IsIssuer = isIssuer,
                     IncludeDisabled = disabled,
                     ExcludeEnabled = disabled
-                }, ct);
+                }, ct).ConfigureAwait(false);
         }
     }
 }

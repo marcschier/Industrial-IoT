@@ -30,31 +30,31 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Events.v2 {
                     await Task.WhenAll(_listeners
                         .Select(l => l.OnCertificateRequestSubmittedAsync(
                             eventData.Request)
-                        .ContinueWith(t => Task.CompletedTask)));
+                        .ContinueWith(t => Task.CompletedTask))).ConfigureAwait(false);
                     break;
                 case CertificateRequestEventType.Approved:
                     await Task.WhenAll(_listeners
                         .Select(l => l.OnCertificateRequestApprovedAsync(
                             eventData.Request)
-                        .ContinueWith(t => Task.CompletedTask)));
+                        .ContinueWith(t => Task.CompletedTask))).ConfigureAwait(false);
                     break;
                 case CertificateRequestEventType.Completed:
                     await Task.WhenAll(_listeners
                         .Select(l => l.OnCertificateRequestCompletedAsync(
                             eventData.Request)
-                        .ContinueWith(t => Task.CompletedTask)));
+                        .ContinueWith(t => Task.CompletedTask))).ConfigureAwait(false);
                     break;
                 case CertificateRequestEventType.Accepted:
                     await Task.WhenAll(_listeners
                         .Select(l => l.OnCertificateRequestAcceptedAsync(
                             eventData.Request)
-                        .ContinueWith(t => Task.CompletedTask)));
+                        .ContinueWith(t => Task.CompletedTask))).ConfigureAwait(false);
                     break;
                 case CertificateRequestEventType.Deleted:
                     await Task.WhenAll(_listeners
                         .Select(l => l.OnCertificateRequestDeletedAsync(
                             eventData.Request)
-                        .ContinueWith(t => Task.CompletedTask)));
+                        .ContinueWith(t => Task.CompletedTask))).ConfigureAwait(false);
                     break;
             }
         }

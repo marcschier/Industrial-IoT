@@ -5,6 +5,7 @@
 
 namespace Microsoft.Azure.KeyVault.WebKey {
     using Microsoft.Azure.IIoT.Crypto.Models;
+    using System.Linq;
     using System;
 
     /// <summary>
@@ -18,6 +19,9 @@ namespace Microsoft.Azure.KeyVault.WebKey {
         /// <param name="key"></param>
         /// <returns></returns>
         public static Key ToKey(this JsonWebKey key) {
+            if (key is null) {
+                throw new ArgumentNullException(nameof(key));
+            }
             switch (key.Kty) {
                 case JsonWebKeyType.Rsa:
                 case JsonWebKeyType.RsaHsm:
@@ -66,40 +70,43 @@ namespace Microsoft.Azure.KeyVault.WebKey {
         /// <param name="key"></param>
         /// <returns></returns>
         public static JsonWebKey ToJsonWebKey(this Key key) {
+            if (key is null) {
+                throw new ArgumentNullException(nameof(key));
+            }
             switch (key.Type) {
                 case KeyType.RSA:
                     var rsa = key.Parameters as RsaParams;
                     return new JsonWebKey {
                         Kty = rsa.T == null ?
                             JsonWebKeyType.Rsa : JsonWebKeyType.RsaHsm,
-                        D = rsa.D,
-                        DP = rsa.DP,
-                        DQ = rsa.DQ,
-                        E = rsa.E,
-                        N = rsa.N,
-                        P = rsa.P,
-                        Q = rsa.Q,
-                        QI = rsa.QI,
-                        T = rsa.T
+                        D = rsa.D?.ToArray(),
+                        DP = rsa.DP?.ToArray(),
+                        DQ = rsa.DQ?.ToArray(),
+                        E = rsa.E?.ToArray(),
+                        N = rsa.N?.ToArray(),
+                        P = rsa.P?.ToArray(),
+                        Q = rsa.Q?.ToArray(),
+                        QI = rsa.QI?.ToArray(),
+                        T = rsa.T?.ToArray()
                     };
                 case KeyType.ECC:
                     var ecc = key.Parameters as EccParams;
                     return new JsonWebKey {
                         Kty = ecc.T == null ?
                             JsonWebKeyType.EllipticCurve : JsonWebKeyType.EllipticCurveHsm,
-                        D = ecc.D,
+                        D = ecc.D?.ToArray(),
                         CurveName = ToJsonWebKeyCurveName(ecc.Curve),
-                        X = ecc.X,
-                        Y = ecc.Y,
-                        T = ecc.T
+                        X = ecc.X?.ToArray(),
+                        Y = ecc.Y?.ToArray(),
+                        T = ecc.T?.ToArray()
                     };
                 case KeyType.AES:
                     var aes = key.Parameters as AesParams;
                     return new JsonWebKey {
                         Kty =
                             JsonWebKeyType.Octet,
-                        K = aes.K,
-                        T = aes.T
+                        K = aes.K?.ToArray(),
+                        T = aes.T?.ToArray()
                     };
                 default:
                     throw new NotSupportedException($"{key.Type} is unknown");
@@ -142,20 +149,20 @@ namespace Microsoft.Azure.KeyVault.WebKey {
                     return "P-521";
                 case CurveType.P256K:
                     return "P-256K";
-                case CurveType.Brainpool_P160r1:
-                case CurveType.Brainpool_P160t1:
-                case CurveType.Brainpool_P192r1:
-                case CurveType.Brainpool_P192t1:
-                case CurveType.Brainpool_P224r1:
-                case CurveType.Brainpool_P224t1:
-                case CurveType.Brainpool_P256r1:
-                case CurveType.Brainpool_P256t1:
-                case CurveType.Brainpool_P320r1:
-                case CurveType.Brainpool_P320t1:
-                case CurveType.Brainpool_P384r1:
-                case CurveType.Brainpool_P384t1:
-                case CurveType.Brainpool_P512r1:
-                case CurveType.Brainpool_P512t1:
+                case CurveType.BrainpoolP160r1:
+                case CurveType.BrainpoolP160t1:
+                case CurveType.BrainpoolP192r1:
+                case CurveType.BrainpoolP192t1:
+                case CurveType.BrainpoolP224r1:
+                case CurveType.BrainpoolP224t1:
+                case CurveType.BrainpoolP256r1:
+                case CurveType.BrainpoolP256t1:
+                case CurveType.BrainpoolP320r1:
+                case CurveType.BrainpoolP320t1:
+                case CurveType.BrainpoolP384r1:
+                case CurveType.BrainpoolP384t1:
+                case CurveType.BrainpoolP512r1:
+                case CurveType.BrainpoolP512t1:
                     throw new NotSupportedException("Curve not supported");
                 default:
                     throw new ArgumentOutOfRangeException(nameof(curve));
@@ -181,7 +188,7 @@ namespace Microsoft.Azure.KeyVault.WebKey {
                 case "P-256K":
                     return CurveType.P256K;
                 default:
-                    throw new ArgumentException(nameof(curveName));
+                    throw new ArgumentException("Unknown curve", nameof(curveName));
             }
         }
     }

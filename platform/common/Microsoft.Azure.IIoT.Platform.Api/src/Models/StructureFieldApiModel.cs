@@ -44,7 +44,7 @@ namespace Microsoft.Azure.IIoT.Platform.Core.Api.Models {
         /// </summary>
         [DataMember(Name = "arrayDimensions", Order = 4,
             EmitDefaultValue = false)]
-        public List<uint> ArrayDimensions { get; set; }
+        public IReadOnlyList<uint> ArrayDimensions { get; set; }
 
         /// <summary>
         /// Max length of a byte or character string

@@ -40,9 +40,9 @@ namespace Microsoft.Azure.IIoT.Hosting.Services {
                 var twin = await services.CreateOrUpdateAsync(new DeviceTwinModel {
                     Id = "TestDevice",
                     ModuleId = "TestModule"
-                });
+                }).ConfigureAwait(false);
                 var etag = twin.Etag;
-                var device = await services.GetRegistrationAsync(twin.Id, twin.ModuleId);
+                var device = await services.GetRegistrationAsync(twin.Id, twin.ModuleId).ConfigureAwait(false);
 
                 // Create module host with controller
                 using (var moduleContainer = CreateModuleContainer(services, device,
@@ -50,8 +50,8 @@ namespace Microsoft.Azure.IIoT.Hosting.Services {
                     var edge = moduleContainer.Resolve<IModuleHost>();
 
                     // Act
-                    await edge.StartAsync("testType", "1.2.3");
-                    twin = await services.GetAsync(deviceId, moduleId);
+                    await edge.StartAsync("testType", "1.2.3").ConfigureAwait(false);
+                    twin = await services.GetAsync(deviceId, moduleId).ConfigureAwait(false);
 
                     // Assert
                     Assert.NotEqual(etag, twin.Etag);
@@ -59,15 +59,15 @@ namespace Microsoft.Azure.IIoT.Hosting.Services {
                     Assert.Equal("testType", twin.Properties.Reported[TwinProperty.Type]);
                     etag = twin.Etag;
 
-                    await test(deviceId, moduleId, hubContainer);
+                    await test(deviceId, moduleId, hubContainer).ConfigureAwait(false);
 
-                    twin = await services.GetAsync(deviceId, moduleId);
+                    twin = await services.GetAsync(deviceId, moduleId).ConfigureAwait(false);
                     Assert.True(twin.Properties.Reported[TwinProperty.Type] == "testType");
                     etag = twin.Etag;
 
                     // Act
-                    await edge.StopAsync();
-                    twin = await services.GetAsync(deviceId, moduleId);
+                    await edge.StopAsync().ConfigureAwait(false);
+                    twin = await services.GetAsync(deviceId, moduleId).ConfigureAwait(false);
 
                     // TODO : Fix cleanup!!!
 

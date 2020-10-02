@@ -11,6 +11,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service.Controllers {
     using Microsoft.Azure.IIoT.Platform.Registry.Models;
     using Microsoft.Azure.IIoT.Http;
     using Microsoft.Azure.IIoT.AspNetCore.OpenApi;
+    using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using System.Threading.Tasks;
@@ -47,7 +48,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service.Controllers {
         /// <returns>Discoverer registration</returns>
         [HttpGet("{discovererId}")]
         public async Task<DiscovererApiModel> GetDiscovererAsync(string discovererId) {
-            var result = await _discoverers.GetDiscovererAsync(discovererId);
+            var result = await _discoverers.GetDiscovererAsync(discovererId).ConfigureAwait(false);
             return result.ToApiModel();
         }
 
@@ -68,7 +69,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service.Controllers {
                 throw new ArgumentNullException(nameof(request));
             }
             await _discoverers.UpdateDiscovererAsync(discovererId,
-                request.ToServiceModel());
+                request.ToServiceModel()).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -91,16 +92,10 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service.Controllers {
         public async Task<DiscovererListApiModel> GetListOfDiscoverersAsync(
             [FromQuery] string continuationToken,
             [FromQuery] int? pageSize) {
-            if (Request.Headers.ContainsKey(HttpHeader.ContinuationToken)) {
-                continuationToken = Request.Headers[HttpHeader.ContinuationToken]
-                    .FirstOrDefault();
-            }
-            if (Request.Headers.ContainsKey(HttpHeader.MaxItemCount)) {
-                pageSize = int.Parse(Request.Headers[HttpHeader.MaxItemCount]
-                    .FirstOrDefault());
-            }
+            continuationToken = Request.GetContinuationToken(continuationToken);
+            pageSize = Request.GetPageSize(pageSize);
             var result = await _discoverers.ListDiscoverersAsync(
-                continuationToken, pageSize);
+                continuationToken, pageSize).ConfigureAwait(false);
             return result.ToApiModel();
         }
 
@@ -124,12 +119,9 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service.Controllers {
             if (query == null) {
                 throw new ArgumentNullException(nameof(query));
             }
-            if (Request.Headers.ContainsKey(HttpHeader.MaxItemCount)) {
-                pageSize = int.Parse(Request.Headers[HttpHeader.MaxItemCount]
-                    .FirstOrDefault());
-            }
+            pageSize = Request.GetPageSize(pageSize);
             var result = await _discoverers.QueryDiscoverersAsync(
-                query.ToServiceModel(), pageSize);
+                query.ToServiceModel(), pageSize).ConfigureAwait(false);
 
             return result.ToApiModel();
         }
@@ -155,12 +147,9 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service.Controllers {
             if (query == null) {
                 throw new ArgumentNullException(nameof(query));
             }
-            if (Request.Headers.ContainsKey(HttpHeader.MaxItemCount)) {
-                pageSize = int.Parse(Request.Headers[HttpHeader.MaxItemCount]
-                    .FirstOrDefault());
-            }
+            pageSize = Request.GetPageSize(pageSize);
             var result = await _discoverers.QueryDiscoverersAsync(
-                query.ToServiceModel(), pageSize);
+                query.ToServiceModel(), pageSize).ConfigureAwait(false);
 
             return result.ToApiModel();
         }
@@ -185,7 +174,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service.Controllers {
                 DiscoveryConfig = config
             };
             await _discoverers.UpdateDiscovererAsync(discovererId,
-                request.ToServiceModel());
+                request.ToServiceModel()).ConfigureAwait(false);
         }
 
         private readonly IDiscovererRegistry _discoverers;

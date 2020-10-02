@@ -301,15 +301,15 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                 IApplicationRegistry service = mock.Create<ApplicationRegistry>();
 
                 await Assert.ThrowsAsync<ArgumentNullException>(
-                    () => service.RegisterApplicationAsync(null));
+                    () => service.RegisterApplicationAsync(null)).ConfigureAwait(false);
                 await Assert.ThrowsAsync<ArgumentNullException>(
-                    () => service.GetApplicationAsync(null, false));
+                    () => service.GetApplicationAsync(null, false)).ConfigureAwait(false);
                 await Assert.ThrowsAsync<ArgumentNullException>(
-                    () => service.GetApplicationAsync("", false));
+                    () => service.GetApplicationAsync("", false)).ConfigureAwait(false);
                 await Assert.ThrowsAsync<ResourceNotFoundException>(
-                    () => service.GetApplicationAsync("abc", false));
+                    () => service.GetApplicationAsync("abc", false)).ConfigureAwait(false);
                 await Assert.ThrowsAsync<ResourceNotFoundException>(
-                    () => service.GetApplicationAsync(Guid.NewGuid().ToString(), false));
+                    () => service.GetApplicationAsync(Guid.NewGuid().ToString(), false)).ConfigureAwait(false);
             }
         }
 
@@ -349,7 +349,5 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
             }
             return mock;
         }
-
-        private readonly IJsonSerializer _serializer = new NewtonSoftJsonSerializer();
     }
 }

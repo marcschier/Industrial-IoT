@@ -34,6 +34,6 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Models {
         /// <summary>
         /// Publishing offset for uadp messages
         /// </summary>
-        public List<double> PublishingOffset { get; set; }
+        public IReadOnlyList<double> PublishingOffset { get; set; }
     }
 }

@@ -66,7 +66,7 @@ namespace Microsoft.Azure.IIoT.Utils {
                 CultureInfo.InvariantCulture);
             var expiry = Convert.ToString(seconds, CultureInfo.InvariantCulture);
 
-            var signature = await signatureFactory(keyName, encodedAudience + "\n" + expiry, ct);
+            var signature = await signatureFactory(keyName, encodedAudience + "\n" + expiry, ct).ConfigureAwait(false);
             return new SasToken(signature, expiresOn, expiry, keyName, encodedAudience);
         }
 
@@ -210,7 +210,7 @@ namespace Microsoft.Azure.IIoT.Utils {
         public string ParseIdentities(out string deviceId, out string moduleId) {
             var elements = Audience.Split("/devices/", StringSplitOptions.RemoveEmptyEntries);
             if (elements.Length > 1) {
-                var elements2 = elements[elements.Length - 1].Split("/modules/",
+                var elements2 = elements[^1].Split("/modules/",
                     StringSplitOptions.RemoveEmptyEntries);
                 deviceId = elements2[0];
                 if (elements.Length == 2) {

@@ -76,7 +76,7 @@ namespace Microsoft.Azure.IIoT.Rpc.Default {
                                 Handle = handle,
                                 Payload = chunk
                             }),
-                        timeout, ct);
+                        timeout, ct).ConfigureAwait(false);
                     var response = _serializer.Deserialize<MethodChunkModel>(result);
                     if (response.Payload != null) {
                         received.Write(response.Payload);
@@ -91,7 +91,7 @@ namespace Microsoft.Azure.IIoT.Rpc.Default {
                     var result = await _client.CallMethodAsync(target,
                         MethodNames.Call, _serializer.SerializeToString(new MethodChunkModel {
                             Handle = handle,
-                        }), timeout, ct);
+                        }), timeout, ct).ConfigureAwait(false);
                     var response = _serializer.Deserialize<MethodChunkModel>(result);
                     if (response.Payload != null) {
                         received.Write(response.Payload);

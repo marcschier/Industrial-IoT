@@ -40,8 +40,8 @@ namespace Microsoft.Azure.IIoT.Services.LiteDb.Clients {
         }
 
         /// <inheritdoc/>
-        public Task<IDocumentInfo<T>> FindAsync<T>(string id, CancellationToken ct,
-            OperationOptions options) {
+        public Task<IDocumentInfo<T>> FindAsync<T>(string id, OperationOptions options,
+            CancellationToken ct) {
             if (string.IsNullOrEmpty(id)) {
                 throw new ArgumentNullException(nameof(id));
             }
@@ -57,7 +57,7 @@ namespace Microsoft.Azure.IIoT.Services.LiteDb.Clients {
 
         /// <inheritdoc/>
         public Task<IDocumentInfo<T>> UpsertAsync<T>(T newItem,
-            CancellationToken ct, string id, OperationOptions options, string etag) {
+            string id, OperationOptions options, string etag, CancellationToken ct) {
             if (newItem == null) {
                 throw new ArgumentNullException(nameof(newItem));
             }
@@ -105,7 +105,7 @@ namespace Microsoft.Azure.IIoT.Services.LiteDb.Clients {
 
         /// <inheritdoc/>
         public Task<IDocumentInfo<T>> ReplaceAsync<T>(IDocumentInfo<T> existing,
-            T newItem, CancellationToken ct, OperationOptions options) {
+            T newItem, OperationOptions options, CancellationToken ct) {
             if (newItem == null) {
                 throw new ArgumentNullException(nameof(newItem));
             }
@@ -152,8 +152,8 @@ namespace Microsoft.Azure.IIoT.Services.LiteDb.Clients {
         }
 
         /// <inheritdoc/>
-        public Task<IDocumentInfo<T>> AddAsync<T>(T newItem, CancellationToken ct,
-            string id, OperationOptions options) {
+        public Task<IDocumentInfo<T>> AddAsync<T>(T newItem, string id,
+            OperationOptions options, CancellationToken ct) {
             if (newItem == null) {
                 throw new ArgumentNullException(nameof(newItem));
             }
@@ -173,8 +173,8 @@ namespace Microsoft.Azure.IIoT.Services.LiteDb.Clients {
         }
 
         /// <inheritdoc/>
-        public Task DeleteAsync<T>(IDocumentInfo<T> item, CancellationToken ct,
-            OperationOptions options) {
+        public Task DeleteAsync<T>(IDocumentInfo<T> item, OperationOptions options,
+            CancellationToken ct) {
             if (item == null) {
                 throw new ArgumentNullException(nameof(item));
             }
@@ -184,12 +184,12 @@ namespace Microsoft.Azure.IIoT.Services.LiteDb.Clients {
             if (typeof(T).IsValueType) {
                 throw new NotSupportedException(typeof(T).Name);
             }
-            return DeleteAsync<T>(item.Id, ct, options, item.Etag);
+            return DeleteAsync<T>(item.Id, options, item.Etag, ct);
         }
 
         /// <inheritdoc/>
-        public Task DeleteAsync<T>(string id, CancellationToken ct,
-            OperationOptions options, string etag) {
+        public Task DeleteAsync<T>(string id, OperationOptions options,
+            string etag, CancellationToken ct) {
             if (string.IsNullOrEmpty(id)) {
                 throw new ArgumentNullException(nameof(id));
             }

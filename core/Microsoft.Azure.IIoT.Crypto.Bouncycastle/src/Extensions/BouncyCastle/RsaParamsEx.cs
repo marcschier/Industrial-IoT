@@ -7,6 +7,7 @@ namespace Microsoft.Azure.IIoT.Crypto.BouncyCastle {
     using Microsoft.Azure.IIoT.Crypto.Models;
     using Org.BouncyCastle.Crypto.Parameters;
     using Org.BouncyCastle.Math;
+    using System.Linq;
 
     /// <summary>
     /// Rsa param ex
@@ -21,8 +22,8 @@ namespace Microsoft.Azure.IIoT.Crypto.BouncyCastle {
                 return rsaParams.ToRsaPrivateCrtKeyParameters();
             }
             return new RsaKeyParameters(false,
-                new BigInteger(1, rsaParams.N),
-                new BigInteger(1, rsaParams.E));
+                new BigInteger(1, rsaParams.N.ToArray()),
+                new BigInteger(1, rsaParams.E.ToArray()));
         }
 
         /// <summary>
@@ -44,14 +45,14 @@ namespace Microsoft.Azure.IIoT.Crypto.BouncyCastle {
         internal static RsaPrivateCrtKeyParameters ToRsaPrivateCrtKeyParameters(
             this RsaParams rsaParams) {
             return new RsaPrivateCrtKeyParameters(
-                new BigInteger(1, rsaParams.N),
-                new BigInteger(1, rsaParams.E),
-                new BigInteger(1, rsaParams.D),
-                new BigInteger(1, rsaParams.P),
-                new BigInteger(1, rsaParams.Q),
-                new BigInteger(1, rsaParams.DP),
-                new BigInteger(1, rsaParams.DQ),
-                new BigInteger(1, rsaParams.QI));
+                new BigInteger(1, rsaParams.N.ToArray()),
+                new BigInteger(1, rsaParams.E.ToArray()),
+                new BigInteger(1, rsaParams.D.ToArray()),
+                new BigInteger(1, rsaParams.P.ToArray()),
+                new BigInteger(1, rsaParams.Q.ToArray()),
+                new BigInteger(1, rsaParams.DP.ToArray()),
+                new BigInteger(1, rsaParams.DQ.ToArray()),
+                new BigInteger(1, rsaParams.QI.ToArray()));
         }
 
         /// <summary>

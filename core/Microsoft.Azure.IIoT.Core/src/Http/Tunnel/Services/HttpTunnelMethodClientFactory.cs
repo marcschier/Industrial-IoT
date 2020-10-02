@@ -7,7 +7,7 @@ namespace Microsoft.Azure.IIoT.Http.Tunnel.Services {
     using Microsoft.Azure.IIoT.Http.Tunnel.Models;
     using Microsoft.Azure.IIoT.Rpc;
     using Microsoft.Azure.IIoT.Http;
-    using Microsoft.Azure.IIoT.Http.Default;
+    using Microsoft.Azure.IIoT.Http.Clients;
     using Microsoft.Azure.IIoT.Serializers;
     using Serilog;
     using System;
@@ -43,15 +43,12 @@ namespace Microsoft.Azure.IIoT.Http.Tunnel.Services {
         }
 
         /// <inheritdoc/>
-        public void Dispose() {
-            // noop
-        }
-
-        /// <inheritdoc/>
         public TimeSpan Create(string name, out HttpMessageHandler handler) {
             var resource = name == HttpHandlerFactory.DefaultResourceId ? null : name;
 #pragma warning disable IDE0067 // Dispose objects before losing scope
+#pragma warning disable CA2000 // Dispose objects before losing scope
             var del = new HttpHandlerDelegate(new HttpTunnelClientHandler(this),
+#pragma warning restore CA2000 // Dispose objects before losing scope
 #pragma warning restore IDE0067 // Dispose objects before losing scope
                 resource, _handlers.Where(h => h.IsFor?.Invoke(resource) ?? true),
                 null, _logger);
@@ -62,7 +59,7 @@ namespace Microsoft.Azure.IIoT.Http.Tunnel.Services {
         /// <summary>
         /// Http client handler for the tunnels
         /// </summary>
-        private sealed class HttpTunnelClientHandler : Http.Default.HttpClientHandler {
+        private sealed class HttpTunnelClientHandler : Http.Clients.HttpClientHandler {
 
             /// <inheritdoc/>
             public override bool SupportsAutomaticDecompression => true;
@@ -103,7 +100,7 @@ namespace Microsoft.Azure.IIoT.Http.Tunnel.Services {
                 // Get content
                 byte[] payload = null;
                 if (request.Content != null) {
-                    payload = await request.Content.ReadAsByteArrayAsync();
+                    payload = await request.Content.ReadAsByteArrayAsync().ConfigureAwait(false);
                     trequest.Body = payload;
                     trequest.ContentHeaders = request.Content.Headers?
                         .ToDictionary(h => h.Key, h => h.Value.ToList());
@@ -112,7 +109,7 @@ namespace Microsoft.Azure.IIoT.Http.Tunnel.Services {
                 var input = _outer._serializer.SerializeToBytes(trequest).ToArray();
                 var output = await _outer._client.CallMethodAsync(target,
                     "$tunnel", input, HttpTunnelRequestModel.SchemaName,
-                    kDefaultTimeout, ct);
+                    kDefaultTimeout, ct).ConfigureAwait(false);
                 var tResponse = _outer._serializer
                     .Deserialize<HttpTunnelResponseModel>(output);
                 var response = new HttpResponseMessage((HttpStatusCode)tResponse.Status) {

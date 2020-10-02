@@ -15,12 +15,12 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Models {
         /// <summary>
         /// Node to add
         /// </summary>
-        public List<PublishedItemModel> NodesToAdd { get; set; }
+        public IReadOnlyList<PublishedItemModel> NodesToAdd { get; set; }
 
         /// <summary>
         /// Node to remove
         /// </summary>
-        public List<string> NodesToRemove { get; set; }
+        public IReadOnlyList<string> NodesToRemove { get; set; }
 
         /// <summary>
         /// Optional request header

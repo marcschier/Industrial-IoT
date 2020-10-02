@@ -36,7 +36,7 @@ namespace Microsoft.Azure.IIoT.App.Pages {
         /// <param name="discoverer"></param>
         private async Task UpdatePublishedNodeConfigAsync() {
             NodeData.TryUpdateData(InputData);
-            await Onclick.InvokeAsync(NodeData);
+            await Onclick.InvokeAsync(NodeData).ConfigureAwait(false);
         }
     }
 }

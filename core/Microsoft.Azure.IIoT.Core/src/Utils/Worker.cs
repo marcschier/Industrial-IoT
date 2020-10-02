@@ -38,7 +38,7 @@ namespace Microsoft.Azure.IIoT.Utils {
                     return;
                 }
                 _cts.Cancel();
-                await _runner;
+                await _runner.ConfigureAwait(false);
             }
             catch { }
             finally {

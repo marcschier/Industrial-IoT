@@ -25,11 +25,11 @@ namespace Microsoft.Azure.IIoT.Platform.Registry {
         public static async Task<List<EntityActivationStatusModel>> ListAllWriterGroupActivationsAsync(
             this IWriterGroupStatus service, bool onlyConnected = true, CancellationToken ct = default) {
             var supervisors = new List<EntityActivationStatusModel>();
-            var result = await service.ListWriterGroupActivationsAsync(null, onlyConnected, null, ct);
+            var result = await service.ListWriterGroupActivationsAsync(null, onlyConnected, null, ct).ConfigureAwait(false);
             supervisors.AddRange(result.Items);
             while (result.ContinuationToken != null) {
                 result = await service.ListWriterGroupActivationsAsync(result.ContinuationToken,
-                    onlyConnected, null, ct);
+                    onlyConnected, null, ct).ConfigureAwait(false);
                 supervisors.AddRange(result.Items);
             }
             return supervisors;

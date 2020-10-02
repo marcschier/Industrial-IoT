@@ -62,7 +62,7 @@ namespace System.Net {
         /// <param name="endpoint"></param>
         /// <returns></returns>
         public static async Task<string> ResolveAsync(this EndPoint endpoint) {
-            var entry = await endpoint.GetIPAddress().GetHostEntryAsync();
+            var entry = await endpoint.GetIPAddress().GetHostEntryAsync().ConfigureAwait(false);
             return $"{entry.HostName}:{endpoint.GetPort()}";
         }
 
@@ -95,7 +95,7 @@ namespace System.Net {
                 return null;
             }
             try {
-                return await endpoint.ResolveAsync();
+                return await endpoint.ResolveAsync().ConfigureAwait(false);
             }
             catch {
                 return $"{endpoint.GetIPAddress(true)}:{endpoint.GetPort()}";

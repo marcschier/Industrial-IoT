@@ -164,13 +164,13 @@ Operations (Mutually exclusive):
         /// </summary>
         private static async Task TestPortScannerAsync(string host, bool opc) {
             var logger = ConsoleOutLogger.Create();
-            var addresses = await Dns.GetHostAddressesAsync(host);
+            var addresses = await Dns.GetHostAddressesAsync(host).ConfigureAwait(false);
             using (var cts = new CancellationTokenSource(TimeSpan.FromMinutes(10))) {
                 var watch = Stopwatch.StartNew();
                 var scanning = new ScanServices(logger);
                 var results = await scanning.ScanAsync(
                     PortRange.All.SelectMany(r => r.GetEndpoints(addresses.First())),
-                    opc ? new ServerProbe(logger) : null, cts.Token);
+                    opc ? new ServerProbe(logger) : null, cts.Token).ConfigureAwait(false);
                 foreach (var result in results) {
                     Console.WriteLine($"Found {result} open.");
                 }
@@ -186,7 +186,7 @@ Operations (Mutually exclusive):
             using (var cts = new CancellationTokenSource(TimeSpan.FromMinutes(10))) {
                 var watch = Stopwatch.StartNew();
                 var scanning = new ScanServices(logger);
-                var results = await scanning.ScanAsync(NetworkClass.Wired, cts.Token);
+                var results = await scanning.ScanAsync(NetworkClass.Wired, cts.Token).ConfigureAwait(false);
                 foreach (var result in results) {
                     Console.WriteLine($"Found {result.Address}...");
                 }
@@ -200,7 +200,8 @@ Operations (Mutually exclusive):
         private static async Task TestOpcUaDiscoveryServiceAsync(string addressRanges,
             bool stress) {
             using (var logger = StackLogger.Create(ConsoleLogger.Create()))
-            using (var client = new ClientServices(logger.Logger, new TestClientServicesConfig()))
+            using (var config = new TestClientServicesConfig())
+            using (var client = new ClientServices(logger.Logger, config))
             using (var scanner = new DiscoveryServices(client, new ConsoleEmitter(),
                 new NewtonSoftJsonSerializer(), logger.Logger)) {
                 var rand = new Random();
@@ -209,13 +210,13 @@ Operations (Mutually exclusive):
                         IdleTimeBetweenScans = TimeSpan.FromMilliseconds(1),
                         AddressRangesToScan = addressRanges
                     };
-                    await scanner.ConfigureAsync(DiscoveryMode.Scan, configuration);
-                    await scanner.ScanAsync();
+                    await scanner.ConfigureAsync(DiscoveryMode.Scan, configuration).ConfigureAwait(false);
+                    await scanner.ScanAsync().ConfigureAwait(false);
                     await Task.Delay(!stress ? TimeSpan.FromMinutes(10) :
-                        TimeSpan.FromMilliseconds(rand.Next(0, 120000)));
+                        TimeSpan.FromMilliseconds(rand.Next(0, 120000))).ConfigureAwait(false);
                     logger.Logger.Information("Stopping discovery!");
-                    await scanner.ConfigureAsync(DiscoveryMode.Off, null);
-                    await scanner.ScanAsync();
+                    await scanner.ConfigureAsync(DiscoveryMode.Off, null).ConfigureAwait(false);
+                    await scanner.ScanAsync().ConfigureAwait(false);
                     if (!stress) {
                         break;
                     }
@@ -252,7 +253,7 @@ Operations (Mutually exclusive):
             public async Task SendEventAsync(string target, IEnumerable<byte[]> batch, string contentType,
                 string eventSchema, string contentEncoding, CancellationToken ct) {
                 foreach (var data in batch) {
-                    await SendEventAsync(target, data, contentType, contentType, contentEncoding, ct);
+                    await SendEventAsync(target, data, contentType, contentType, contentEncoding, ct).ConfigureAwait(false);
                 }
             }
 

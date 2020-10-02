@@ -7,6 +7,7 @@ namespace Microsoft.Azure.IIoT.Utils {
     using Microsoft.Azure.IIoT.Serializers;
     using System;
     using System.Collections.Generic;
+    using System.Globalization;
     using System.Linq;
     using System.Text;
 
@@ -24,7 +25,8 @@ namespace Microsoft.Azure.IIoT.Utils {
         /// </summary>
         /// <param name="list"></param>
         /// <returns></returns>
-        public static Dictionary<string, T> EncodeAsDictionary<T>(this List<T> list) {
+        public static Dictionary<string, T> EncodeAsDictionary<T>(
+            this IReadOnlyCollection<T> list) {
             return EncodeAsDictionary(list, t => t);
         }
 
@@ -34,14 +36,17 @@ namespace Microsoft.Azure.IIoT.Utils {
         /// <param name="list"></param>
         /// <param name="converter"></param>
         /// <returns></returns>
-        public static Dictionary<string, V> EncodeAsDictionary<T, V>(this List<T> list,
-            Func<T, V> converter) {
+        public static Dictionary<string, TValue> EncodeAsDictionary<T, TValue>(
+            this IReadOnlyCollection<T> list, Func<T, TValue> converter) {
             if (list == null) {
                 return null;
             }
-            var result = new Dictionary<string, V>();
-            for (var i = 0; i < list.Count; i++) {
-                result.Add(i.ToString(), converter(list[i]));
+            var result = new Dictionary<string, TValue>();
+            var i = 0;
+            foreach ( var item in list) {
+                result.Add(i.ToString(CultureInfo.InvariantCulture),
+                    converter(item));
+                i++;
             }
             return result;
         }
@@ -51,7 +56,8 @@ namespace Microsoft.Azure.IIoT.Utils {
         /// </summary>
         /// <param name="dictionary"></param>
         /// <returns></returns>
-        public static List<T> DecodeAsList<T>(this Dictionary<string, T> dictionary) {
+        public static List<T> DecodeAsList<T>(
+            this IReadOnlyDictionary<string, T> dictionary) {
             return DecodeAsList(dictionary, t => t);
         }
 
@@ -61,14 +67,15 @@ namespace Microsoft.Azure.IIoT.Utils {
         /// <param name="dictionary"></param>
         /// <param name="converter"></param>
         /// <returns></returns>
-        public static List<T> DecodeAsList<T, V>(this Dictionary<string, V> dictionary,
-            Func<V, T> converter) {
+        public static List<T> DecodeAsList<T, TValue>(
+            this IReadOnlyDictionary<string, TValue> dictionary,
+            Func<TValue, T> converter) {
             if (dictionary == null) {
                 return null;
             }
             var result = Enumerable.Repeat(default(T), dictionary.Count).ToList();
             foreach (var kv in dictionary) {
-                result[int.Parse(kv.Key)] = converter(kv.Value);
+                result[int.Parse(kv.Key, CultureInfo.InvariantCulture)] = converter(kv.Value);
             }
             return result;
         }
@@ -78,7 +85,8 @@ namespace Microsoft.Azure.IIoT.Utils {
         /// </summary>
         /// <param name="dictionary"></param>
         /// <returns></returns>
-        public static HashSet<string> DecodeAsSet(this Dictionary<string, bool> dictionary) {
+        public static HashSet<string> DecodeAsSet(
+            this IReadOnlyDictionary<string, bool> dictionary) {
             if (dictionary == null) {
                 return null;
             }
@@ -90,11 +98,12 @@ namespace Microsoft.Azure.IIoT.Utils {
         /// </summary>
         /// <param name="buffer"></param>
         /// <returns></returns>
-        public static Dictionary<string, string> EncodeAsDictionary(this byte[] buffer) {
+        public static Dictionary<string, string> EncodeAsDictionary(
+            this IReadOnlyCollection<byte> buffer) {
             if (buffer == null) {
                 return null;
             }
-            var str = buffer.ToBase64String() ?? string.Empty;
+            var str = buffer.ToArray().ToBase64String() ?? string.Empty;
             var result = new Dictionary<string, string>();
             for (var i = 0; ; i++) {
                 if (str.Length < 512) {
@@ -113,7 +122,8 @@ namespace Microsoft.Azure.IIoT.Utils {
         /// </summary>
         /// <param name="dictionary"></param>
         /// <returns></returns>
-        public static byte[] DecodeAsByteArray(this Dictionary<string, string> dictionary) {
+        public static byte[] DecodeAsByteArray(
+            this IReadOnlyDictionary<string, string> dictionary) {
             if (dictionary == null) {
                 return null;
             }
@@ -134,20 +144,16 @@ namespace Microsoft.Azure.IIoT.Utils {
         /// Convert string set to queryable dictionary
         /// </summary>
         /// <param name="set"></param>
-        /// <param name="upperCase"></param>
         /// <returns></returns>
-        public static Dictionary<string, bool> EncodeAsDictionary(this ISet<string> set,
-            bool? upperCase = null) {
+        public static Dictionary<string, bool> EncodeSetAsDictionary(
+            this IReadOnlyCollection<string> set) {
             if (set == null) {
                 return null;
             }
             var result = new Dictionary<string, bool>();
             foreach (var s in set) {
                 var add = VariantValueEx.SanitizePropertyName(s);
-                if (upperCase != null) {
-                    add = (bool)upperCase ? add.ToUpperInvariant() : add.ToLowerInvariant();
-                }
-                result.Add(add, true);
+                result.Add(add.ToUpperInvariant(), true);
             }
             return result;
         }

@@ -11,6 +11,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service.Controllers {
     using Microsoft.Azure.IIoT.Platform.Registry;
     using Microsoft.Azure.IIoT.Http;
     using Microsoft.Azure.IIoT.AspNetCore.OpenApi;
+    using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using System;
@@ -50,7 +51,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service.Controllers {
             if (string.IsNullOrEmpty(endpointId)) {
                 throw new ArgumentNullException(nameof(endpointId));
             }
-            var result = await _endpoints.GetEndpointCertificateAsync(endpointId);
+            var result = await _endpoints.GetEndpointCertificateAsync(endpointId).ConfigureAwait(false);
             return result.ToApiModel();
         }
 
@@ -76,7 +77,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service.Controllers {
             }
             var model = request.ToServiceModel();
             // TODO: model.AuthorityId = User.Identity.Name;
-            await _endpoints.UpdateEndpointAsync(endpointId, model);
+            await _endpoints.UpdateEndpointAsync(endpointId, model).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -92,7 +93,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service.Controllers {
             if (string.IsNullOrEmpty(endpointId)) {
                 throw new ArgumentNullException(nameof(endpointId));
             }
-            var result = await _endpoints.GetEndpointAsync(endpointId);
+            var result = await _endpoints.GetEndpointAsync(endpointId).ConfigureAwait(false);
             return result.ToApiModel();
         }
 
@@ -113,16 +114,10 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service.Controllers {
         public async Task<EndpointInfoListApiModel> GetListOfEndpointsAsync(
             [FromQuery] string continuationToken,
             [FromQuery] int? pageSize) {
-            if (Request.Headers.ContainsKey(HttpHeader.ContinuationToken)) {
-                continuationToken = Request.Headers[HttpHeader.ContinuationToken]
-                    .FirstOrDefault();
-            }
-            if (Request.Headers.ContainsKey(HttpHeader.MaxItemCount)) {
-                pageSize = int.Parse(Request.Headers[HttpHeader.MaxItemCount]
-                    .FirstOrDefault());
-            }
+            continuationToken = Request.GetContinuationToken(continuationToken);
+            pageSize = Request.GetPageSize(pageSize);
             var result = await _endpoints.ListEndpointsAsync(continuationToken,
-                pageSize);
+                pageSize).ConfigureAwait(false);
 
             // TODO: Redact username/token based on policy/permission
 
@@ -149,12 +144,9 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service.Controllers {
             if (query == null) {
                 throw new ArgumentNullException(nameof(query));
             }
-            if (Request.Headers.ContainsKey(HttpHeader.MaxItemCount)) {
-                pageSize = int.Parse(Request.Headers[HttpHeader.MaxItemCount]
-                    .FirstOrDefault());
-            }
+            pageSize = Request.GetPageSize(pageSize);
             var result = await _endpoints.QueryEndpointsAsync(query.ToServiceModel(),
-                pageSize);
+                pageSize).ConfigureAwait(false);
 
             return result.ToApiModel();
         }
@@ -180,12 +172,9 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service.Controllers {
             if (query == null) {
                 throw new ArgumentNullException(nameof(query));
             }
-            if (Request.Headers.ContainsKey(HttpHeader.MaxItemCount)) {
-                pageSize = int.Parse(Request.Headers[HttpHeader.MaxItemCount]
-                    .FirstOrDefault());
-            }
+            pageSize = Request.GetPageSize(pageSize);
             var result = await _endpoints.QueryEndpointsAsync(query.ToServiceModel(),
-                pageSize);
+                pageSize).ConfigureAwait(false);
 
             return result.ToApiModel();
         }

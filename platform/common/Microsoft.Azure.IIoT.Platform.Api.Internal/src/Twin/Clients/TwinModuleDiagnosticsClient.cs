@@ -40,7 +40,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
             }
             var sw = Stopwatch.StartNew();
             var result = await _client.CallMethodAsync(supervisorId, "GetStatus_V2",
-                    null, null, ct);
+                    null, null, ct).ConfigureAwait(false);
             _logger.Debug("Get twin supervisor {supervisorId} status took " +
                 "{elapsed} ms.", supervisorId, sw.ElapsedMilliseconds);
             return _serializer.Deserialize<SupervisorStatusModel>(
@@ -54,7 +54,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
                 throw new ArgumentNullException(nameof(supervisorId));
             }
             var sw = Stopwatch.StartNew();
-            _ = await _client.CallMethodAsync(supervisorId, "Reset_V2", null, null, ct);
+            _ = await _client.CallMethodAsync(supervisorId, "Reset_V2", null, null, ct).ConfigureAwait(false);
             _logger.Debug("Reset twin supervisor {supervisorId} took " +
                 "{elapsed} ms.", supervisorId, sw.ElapsedMilliseconds);
         }

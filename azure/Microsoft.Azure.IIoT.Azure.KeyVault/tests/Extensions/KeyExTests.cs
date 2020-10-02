@@ -68,8 +68,8 @@ namespace Microsoft.Azure.KeyVault.WebKey {
         [Fact]
         public void ArgumentThrowTests2() {
 
-            Assert.Throws<NotSupportedException>(() => CurveType.Brainpool_P160r1.ToJsonWebKeyCurveName());
-            Assert.Throws<NotSupportedException>(() => CurveType.Brainpool_P224r1.ToJsonWebKeyCurveName());
+            Assert.Throws<NotSupportedException>(() => CurveType.BrainpoolP160r1.ToJsonWebKeyCurveName());
+            Assert.Throws<NotSupportedException>(() => CurveType.BrainpoolP224r1.ToJsonWebKeyCurveName());
             Assert.Throws<ArgumentOutOfRangeException>(() => ((CurveType)2342).ToJsonWebKeyCurveName());
             Assert.Throws<ArgumentException>(() => KeyEx.FromJsonWebKeyCurveName("53234"));
             Assert.Throws<ArgumentNullException>(() => KeyEx.FromJsonWebKeyCurveName(null));

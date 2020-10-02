@@ -15,7 +15,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Sync.Service {
     using Microsoft.Azure.IIoT.Azure.AppInsights;
     using Microsoft.Azure.IIoT.Azure.IoTHub;
     using Microsoft.Azure.IIoT.Azure.ActiveDirectory.Clients;
-    using Microsoft.Azure.IIoT.Http.Default;
+    using Microsoft.Azure.IIoT.Http.Clients;
     using Microsoft.Azure.IIoT.Serializers;
     using Microsoft.Azure.IIoT.Rpc.Default;
     using Microsoft.Azure.IIoT.AspNetCore.Diagnostics.Default;

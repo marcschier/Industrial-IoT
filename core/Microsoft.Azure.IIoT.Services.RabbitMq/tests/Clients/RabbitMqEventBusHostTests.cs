@@ -51,24 +51,24 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
                 var pet2 = fix.Create<Pet>();
                 var pet3 = fix.Create<Pet>();
 
-                await bus.PublishAsync(family1);
-                await bus.PublishAsync(child1);
-                await bus.PublishAsync(pet2);
-                await bus.PublishAsync(child2);
-                await bus.PublishAsync(family2);
-                await bus.PublishAsync(child3);
-                await bus.PublishAsync(pet1);
-                await bus.PublishAsync(child4);
-                await bus.PublishAsync(child1);
-                await bus.PublishAsync(family1);
-                await bus.PublishAsync(family2);
-                await bus.PublishAsync(pet3);
-                await bus.PublishAsync(pet3);
+                await bus.PublishAsync(family1).ConfigureAwait(false);
+                await bus.PublishAsync(child1).ConfigureAwait(false);
+                await bus.PublishAsync(pet2).ConfigureAwait(false);
+                await bus.PublishAsync(child2).ConfigureAwait(false);
+                await bus.PublishAsync(family2).ConfigureAwait(false);
+                await bus.PublishAsync(child3).ConfigureAwait(false);
+                await bus.PublishAsync(pet1).ConfigureAwait(false);
+                await bus.PublishAsync(child4).ConfigureAwait(false);
+                await bus.PublishAsync(child1).ConfigureAwait(false);
+                await bus.PublishAsync(family1).ConfigureAwait(false);
+                await bus.PublishAsync(family2).ConfigureAwait(false);
+                await bus.PublishAsync(pet3).ConfigureAwait(false);
+                await bus.PublishAsync(pet3).ConfigureAwait(false);
 
-                var f = await families.Complete;
-                var c1 = await children1.Complete;
-                var c2 = await children2.Complete;
-                var p = await pets.Complete;
+                var f = await families.Complete.ConfigureAwait(false);
+                var c1 = await children1.Complete.ConfigureAwait(false);
+                var c2 = await children2.Complete.ConfigureAwait(false);
+                var p = await pets.Complete.ConfigureAwait(false);
 
                 Assert.True(f.SetEqualsSafe(family1.YieldReturn().Append(family2)));
                 Assert.True(p.SetEqualsSafe(pet1.YieldReturn().Append(pet2).Append(pet3)));
@@ -95,14 +95,14 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
                 Skip.If(bus == null);
 
                 var senders = Enumerable.Range(0, count).Select(async i => {
-                    await bus.PublishAsync(fix.Create<Family>());
-                    await bus.PublishAsync(fix.Create<Pet>());
+                    await bus.PublishAsync(fix.Create<Family>()).ConfigureAwait(false);
+                    await bus.PublishAsync(fix.Create<Pet>()).ConfigureAwait(false);
                 });
 
-                await Task.WhenAll(senders).With1MinuteTimeout();
+                await Task.WhenAll(senders).With1MinuteTimeout().ConfigureAwait(false);
 
-                var f = await families.Complete;
-                var p = await pets.Complete;
+                var f = await families.Complete.ConfigureAwait(false);
+                var p = await pets.Complete.ConfigureAwait(false);
 
                 Assert.Equal(count, f.Count);
                 Assert.Equal(count, p.Count);
@@ -122,18 +122,18 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
                 var host = harness.GetEventBusHost();
                 Skip.If(host == null);
 
-                await host.StopAsync();
-                await host.StartAsync();
+                await host.StopAsync().ConfigureAwait(false);
+                await host.StartAsync().ConfigureAwait(false);
 
                 // Already running - should throw
-                await Assert.ThrowsAsync<ResourceInvalidStateException>(host.StartAsync);
+                await Assert.ThrowsAsync<ResourceInvalidStateException>(host.StartAsync).ConfigureAwait(false);
 
-                await host.StopAsync();
-                await host.StopAsync();
-                await host.StartAsync();
+                await host.StopAsync().ConfigureAwait(false);
+                await host.StopAsync().ConfigureAwait(false);
+                await host.StartAsync().ConfigureAwait(false);
 
                 // Should throw
-                await Assert.ThrowsAsync<ResourceInvalidStateException>(host.StartAsync);
+                await Assert.ThrowsAsync<ResourceInvalidStateException>(host.StartAsync).ConfigureAwait(false);
             }
         }
 
@@ -141,18 +141,20 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
         public async Task BadArgumentsAndInvalidStateTests2Async() {
             var fix = new Fixture();
             var prefix = fix.Create<string>();
+#pragma warning disable CA2000 // Dispose objects before losing scope
             var harness = _fixture.GetHarness(prefix);
+#pragma warning restore CA2000 // Dispose objects before losing scope
             try {
                 var host = harness.GetEventBusHost();
                 Skip.If(host == null);
 
-                await host.StopAsync();
-                await host.StartAsync();
-                await host.StartAsync();
-                await host.StopAsync();
-                await host.StopAsync();
-                await host.StartAsync();
-                await host.StartAsync();
+                await host.StopAsync().ConfigureAwait(false);
+                await host.StartAsync().ConfigureAwait(false);
+                await host.StartAsync().ConfigureAwait(false);
+                await host.StopAsync().ConfigureAwait(false);
+                await host.StopAsync().ConfigureAwait(false);
+                await host.StartAsync().ConfigureAwait(false);
+                await host.StartAsync().ConfigureAwait(false);
 
                 host.Dispose();
                 Assert.True(true);
@@ -166,7 +168,7 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
             }
         }
 
-        public class FamilyHandler : IEventHandler<Family> {
+        internal class FamilyHandler : IEventHandler<Family> {
             private readonly int _count;
             private readonly TaskCompletionSource<HashSet<Family>> _complete =
                 new TaskCompletionSource<HashSet<Family>>();
@@ -186,7 +188,7 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
                 Compare.Using<Family>((x, y) => x.Id == y.Id));
         }
 
-        public class ChildHandler : IEventHandler<Child> {
+        internal class ChildHandler : IEventHandler<Child> {
             private readonly int _count;
             private readonly TaskCompletionSource<HashSet<Child>> _complete =
                 new TaskCompletionSource<HashSet<Child>>();
@@ -205,7 +207,7 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
                 Compare.Using<Child>((x, y) => x.FirstName == y.FirstName));
         }
 
-        public class PetHandler : IEventHandler<Pet> {
+        internal class PetHandler : IEventHandler<Pet> {
             private readonly int _count;
             private readonly TaskCompletionSource<HashSet<Pet>> _complete =
                 new TaskCompletionSource<HashSet<Pet>>();

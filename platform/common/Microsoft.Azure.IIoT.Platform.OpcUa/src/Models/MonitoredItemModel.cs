@@ -7,6 +7,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Models {
     using Microsoft.Azure.IIoT.Platform.Publisher.Models;
     using Microsoft.Azure.IIoT.Platform.Core.Models;
     using System;
+    using System.Collections.Generic;
 
     /// <summary>
     /// Monitored item
@@ -31,7 +32,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Models {
         /// <summary>
         /// Path from node
         /// </summary>
-        public string[] RelativePath { get; set; }
+        public IReadOnlyList<string> RelativePath { get; set; }
 
         /// <summary>
         /// Attribute

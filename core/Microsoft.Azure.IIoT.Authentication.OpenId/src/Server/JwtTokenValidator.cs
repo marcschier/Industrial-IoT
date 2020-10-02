@@ -43,7 +43,7 @@ namespace Microsoft.Azure.IIoT.Authentication.Server.Default {
                 throw new ArgumentNullException(nameof(jwtToken));
             }
             foreach(var validator in _validators.Values) {
-                var token = await validator.ValidateAsync(jwtToken, ct);
+                var token = await validator.ValidateAsync(jwtToken, ct).ConfigureAwait(false);
                 if (token != null) {
                     return token;
                 }
@@ -78,7 +78,7 @@ namespace Microsoft.Azure.IIoT.Authentication.Server.Default {
                 if (jwtToken == null) {
                     throw new ArgumentNullException(nameof(jwtToken));
                 }
-                await RefreshSigningKeysAsync(ct);
+                await RefreshSigningKeysAsync(ct).ConfigureAwait(false);
                 var issuer = _issuer;
                 var signingKeys = _signingKeys;
                 if (string.IsNullOrEmpty(issuer)) {
@@ -116,10 +116,10 @@ namespace Microsoft.Azure.IIoT.Authentication.Server.Default {
 
                     // Get tenant information that's used to validate incoming jwt tokens
                     var configManager = new ConfigurationManager<OpenIdConnectConfiguration>(
-                        $"{_config.GetAuthorityUrl()}/.well-known/openid-configuration",
+                        $"{_config.GetAuthority()}/.well-known/openid-configuration",
                         new OpenIdConnectConfigurationRetriever());
 
-                    var config = await configManager.GetConfigurationAsync(ct);
+                    var config = await configManager.GetConfigurationAsync(ct).ConfigureAwait(false);
                     _issuer = config.Issuer;
                     _signingKeys = config.SigningKeys;
                     _stsMetadataRetrievalTime = DateTime.UtcNow;

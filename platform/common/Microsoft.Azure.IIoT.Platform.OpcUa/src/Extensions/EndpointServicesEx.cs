@@ -43,7 +43,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa {
             ConnectionModel connection, CancellationToken ct, Func<Session, Task<T>> service,
             Func<Exception, bool> handler) {
             return client.ExecuteServiceAsync(connection, null, 0, service,
-                null, ct, handler);
+                null, handler, ct);
         }
 
         /// <summary>
@@ -64,7 +64,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa {
             Task<T>> service, TimeSpan? timeout, CancellationToken ct,
             Func<Exception, bool> exceptionHandler) {
             return client.ExecuteServiceAsync(new ConnectionModel { Endpoint = endpoint },
-                elevation, priority, service, timeout, ct, exceptionHandler);
+                elevation, priority, service, timeout, exceptionHandler, ct);
         }
 
         /// <summary>

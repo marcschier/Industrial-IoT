@@ -153,7 +153,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge {
 
 
                             // Otherwise browse model
-                            await BrowseEncodeModelAsync(id.Connection.Endpoint, diagnostics, stream, ct);
+                            await BrowseEncodeModelAsync(id.Connection.Endpoint, diagnostics, stream, ct).ConfigureAwait(false);
                         }
 
                         // Rewind
@@ -166,11 +166,11 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge {
                         }
                         else {
                             // Otherwise set shared access token
-                            var token = await _outer._tokens.GenerateTokenAsync(request.Uri.ToString());
+                            var token = await _outer._tokens.GenerateTokenAsync(request.Uri.ToString()).ConfigureAwait(false);
                             request.Headers.Authorization = AuthenticationHeaderValue.Parse(token);
                         }
                         request.SetStreamContent(file, MimeType);
-                        await _outer._http.PutAsync(request, ct);
+                        await _outer._http.PutAsync(request, ct).ConfigureAwait(false);
                         _logger.Information("Model uploaded");
                     }
                 }
@@ -200,7 +200,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge {
                 DiagnosticsModel diagnostics, Stream stream, CancellationToken ct) {
                 using (var encoder = new BrowsedNodeStreamEncoder(_outer._client, endpoint,
                     stream, MimeType, diagnostics, _logger, null)) {
-                    await encoder.EncodeAsync(ct);
+                    await encoder.EncodeAsync(ct).ConfigureAwait(false);
                 }
             }
 

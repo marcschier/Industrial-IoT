@@ -29,6 +29,6 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Models {
         /// <summary>
         /// Additional domain names to use in certificate
         /// </summary>
-        public List<string> DomainNames { get; set; }
+        public IReadOnlyList<string> DomainNames { get; set; }
     }
 }

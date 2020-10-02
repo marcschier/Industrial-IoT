@@ -28,21 +28,21 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api {
         /// <inheritdoc/>
         public async Task<HistoryReadResultModel<VariantValue>> HistoryReadAsync(
             EndpointApiModel endpoint, HistoryReadRequestModel<VariantValue> request) {
-            var result = await _client.HistoryReadRawAsync(endpoint, request.ToApiModel());
+            var result = await _client.HistoryReadRawAsync(endpoint, request.ToApiModel()).ConfigureAwait(false);
             return result.ToServiceModel();
         }
 
         /// <inheritdoc/>
         public async Task<HistoryReadNextResultModel<VariantValue>> HistoryReadNextAsync(
             EndpointApiModel endpoint, HistoryReadNextRequestModel request) {
-            var result = await _client.HistoryReadRawNextAsync(endpoint, request.ToApiModel());
+            var result = await _client.HistoryReadRawNextAsync(endpoint, request.ToApiModel()).ConfigureAwait(false);
             return result.ToServiceModel();
         }
 
         /// <inheritdoc/>
         public async Task<HistoryUpdateResultModel> HistoryUpdateAsync(
             EndpointApiModel endpoint, HistoryUpdateRequestModel<VariantValue> request) {
-            var result = await _client.HistoryUpdateRawAsync(endpoint, request.ToApiModel());
+            var result = await _client.HistoryUpdateRawAsync(endpoint, request.ToApiModel()).ConfigureAwait(false);
             return result.ToServiceModel();
         }
 

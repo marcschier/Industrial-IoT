@@ -60,5 +60,10 @@ namespace Microsoft.Azure.IIoT.Exceptions {
             Exception innerException) :
             this(message, -1, -1, innerException) {
         }
+
+        /// <inheritdoc />
+        public ResourceTooLargeException() :
+            this("Too large") {
+        }
     }
 }

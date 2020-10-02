@@ -20,7 +20,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Models {
         /// <summary>
         /// Fields to select
         /// </summary>
-        public List<SimpleAttributeOperandModel> SelectedFields { get; set; }
+        public IReadOnlyList<SimpleAttributeOperandModel> SelectedFields { get; set; }
 
         /// <summary>
         /// Filter to use

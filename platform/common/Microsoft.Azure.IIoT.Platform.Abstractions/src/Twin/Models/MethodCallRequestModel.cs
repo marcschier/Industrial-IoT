@@ -5,6 +5,7 @@
 
 namespace Microsoft.Azure.IIoT.Platform.Twin.Models {
     using Microsoft.Azure.IIoT.Platform.Core.Models;
+    using System;
     using System.Collections.Generic;
 
     /// <summary>
@@ -28,21 +29,21 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Models {
         /// <summary>
         /// Input Arguments
         /// </summary>
-        public List<MethodCallArgumentModel> Arguments { get; set; }
+        public IReadOnlyList<MethodCallArgumentModel> Arguments { get; set; }
 
         /// <summary>
         /// An optional component path from the node identified by
         /// MethodId or from a resolved objectId to the actual
         /// method node.
         /// </summary>
-        public string[] MethodBrowsePath { get; set; }
+        public IReadOnlyList<string> MethodBrowsePath { get; set; }
 
         /// <summary>
         /// An optional component path from the node identified by
         /// ObjectId to the actual object or objectType node.
         /// If ObjectId is null, the root node (i=84) is used
         /// </summary>
-        public string[] ObjectBrowsePath { get; set; }
+        public IReadOnlyList<string> ObjectBrowsePath { get; set; }
 
         /// <summary>
         /// Optional header

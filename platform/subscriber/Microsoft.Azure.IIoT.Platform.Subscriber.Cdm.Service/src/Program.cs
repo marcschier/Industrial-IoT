@@ -15,7 +15,7 @@ namespace Microsoft.Azure.IIoT.Platform.Subscriber.Cdm.Service {
     using Microsoft.Azure.IIoT.Azure.Datalake;
     using Microsoft.Azure.IIoT.AspNetCore.Diagnostics.Default;
     using Microsoft.Azure.IIoT.Messaging.Handlers;
-    using Microsoft.Azure.IIoT.Http.Default;
+    using Microsoft.Azure.IIoT.Http.Clients;
     using Microsoft.Azure.IIoT.Serializers;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;

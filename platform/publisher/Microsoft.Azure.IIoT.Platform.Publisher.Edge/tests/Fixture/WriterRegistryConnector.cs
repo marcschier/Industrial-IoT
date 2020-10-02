@@ -38,7 +38,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Services {
             DataSetWriterInfoModel dataSetWriter) {
             // Same as what the edge module does remotely
             if (_twins.TryGetValue(dataSetWriter.WriterGroupId, out var writerGroupTwin)) {
-                var writer = await _registry.GetDataSetWriterAsync(dataSetWriter.DataSetWriterId);
+                var writer = await _registry.GetDataSetWriterAsync(dataSetWriter.DataSetWriterId).ConfigureAwait(false);
                 writerGroupTwin.AddWriter(writer);
             }
         }
@@ -61,7 +61,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Services {
         public async Task OnDataSetWriterUpdatedAsync(PublisherOperationContextModel context,
             string dataSetWriterId, DataSetWriterInfoModel dataSetWriter) {
             // Same as what the edge module does remotely
-            var writer = await _registry.GetDataSetWriterAsync(dataSetWriterId);
+            var writer = await _registry.GetDataSetWriterAsync(dataSetWriterId).ConfigureAwait(false);
             foreach (var writerGroupTwin in _twins.Values
                 .Where(v => v.Writers.Any(w => w.DataSetWriterId == dataSetWriterId))) {
                 writerGroupTwin.AddWriter(writer);

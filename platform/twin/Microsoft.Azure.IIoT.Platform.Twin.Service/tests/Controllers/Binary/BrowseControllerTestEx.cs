@@ -5,7 +5,7 @@
 
 namespace Microsoft.Azure.IIoT.Platform.Twin.Service.Controllers.Binary {
     using Microsoft.Azure.IIoT.Platform.Twin.Service.Controllers.Test;
-    using Microsoft.Azure.IIoT.Http.Default;
+    using Microsoft.Azure.IIoT.Http.Clients;
     using Microsoft.Azure.IIoT.Platform.Core.Models;
     using Microsoft.Azure.IIoT.Platform.Twin.Api.Clients;
     using Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Fixtures;
@@ -57,52 +57,52 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Service.Controllers.Binary {
 
         [Fact]
         public async Task NodeBrowseInRootTest2Async() {
-            await GetTests().NodeBrowseInRootTest2Async();
+            await GetTests().NodeBrowseInRootTest2Async().ConfigureAwait(false);
         }
 
         [Fact]
         public async Task NodeBrowseBoilersObjectsTest1Async() {
-            await GetTests().NodeBrowseBoilersObjectsTest1Async();
+            await GetTests().NodeBrowseBoilersObjectsTest1Async().ConfigureAwait(false);
         }
 
         [Fact]
         public async Task NodeBrowseDataAccessObjectsTest3Async() {
-            await GetTests().NodeBrowseDataAccessObjectsTest3Async();
+            await GetTests().NodeBrowseDataAccessObjectsTest3Async().ConfigureAwait(false);
         }
 
         [Fact]
         public async Task NodeBrowseDataAccessObjectsTest4Async() {
-            await GetTests().NodeBrowseDataAccessObjectsTest4Async();
+            await GetTests().NodeBrowseDataAccessObjectsTest4Async().ConfigureAwait(false);
         }
 
         [Fact]
         public async Task NodeBrowseDataAccessFC1001Test2Async() {
-            await GetTests().NodeBrowseDataAccessFC1001Test2Async();
+            await GetTests().NodeBrowseDataAccessFC1001Test2Async().ConfigureAwait(false);
         }
 
         [Fact]
         public async Task NodeBrowseStaticScalarVariablesTestAsync() {
-            await GetTests().NodeBrowseStaticScalarVariablesTestAsync();
+            await GetTests().NodeBrowseStaticScalarVariablesTestAsync().ConfigureAwait(false);
         }
 
         [Fact]
         public async Task NodeBrowseStaticArrayVariablesTestAsync() {
-            await GetTests().NodeBrowseStaticArrayVariablesTestAsync();
+            await GetTests().NodeBrowseStaticArrayVariablesTestAsync().ConfigureAwait(false);
         }
 
         [Fact]
         public async Task NodeBrowseStaticArrayVariablesWithValuesTestAsync() {
-            await GetTests().NodeBrowseStaticArrayVariablesWithValuesTestAsync();
+            await GetTests().NodeBrowseStaticArrayVariablesWithValuesTestAsync().ConfigureAwait(false);
         }
 
         [Fact]
         public async Task NodeBrowseDiagnosticsStatusTestAsync() {
-            await GetTests().NodeBrowseDiagnosticsStatusTestAsync();
+            await GetTests().NodeBrowseDiagnosticsStatusTestAsync().ConfigureAwait(false);
         }
 
         [Fact]
         public async Task NodeBrowseDiagnosticsVerboseTestAsync() {
-            await GetTests().NodeBrowseDiagnosticsVerboseTestAsync();
+            await GetTests().NodeBrowseDiagnosticsVerboseTestAsync().ConfigureAwait(false);
         }
     }
 }

@@ -28,7 +28,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
         public async Task<BrowseResultModel> NodeBrowseFirstAsync(
             string endpoint, BrowseRequestModel request) {
             var result = await _client.NodeBrowseFirstAsync(endpoint,
-                request.ToApiModel());
+                request.ToApiModel()).ConfigureAwait(false);
             return result.ToServiceModel();
         }
 
@@ -36,7 +36,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
         public async Task<BrowseNextResultModel> NodeBrowseNextAsync(
             string endpoint, BrowseNextRequestModel request) {
             var result = await _client.NodeBrowseNextAsync(endpoint,
-                request.ToApiModel());
+                request.ToApiModel()).ConfigureAwait(false);
             return result.ToServiceModel();
         }
 
@@ -44,7 +44,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
         public async Task<BrowsePathResultModel> NodeBrowsePathAsync(
             string endpoint, BrowsePathRequestModel request) {
             var result = await _client.NodeBrowsePathAsync(endpoint,
-                request.ToApiModel());
+                request.ToApiModel()).ConfigureAwait(false);
             return result.ToServiceModel();
         }
 
@@ -52,7 +52,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
         public async Task<ValueReadResultModel> NodeValueReadAsync(
             string endpoint, ValueReadRequestModel request) {
             var result = await _client.NodeValueReadAsync(endpoint,
-                request.ToApiModel());
+                request.ToApiModel()).ConfigureAwait(false);
             return result.ToServiceModel();
         }
 
@@ -60,7 +60,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
         public async Task<ValueWriteResultModel> NodeValueWriteAsync(
             string endpoint, ValueWriteRequestModel request) {
             var result = await _client.NodeValueWriteAsync(endpoint,
-                request.ToApiModel());
+                request.ToApiModel()).ConfigureAwait(false);
             return result.ToServiceModel();
         }
 
@@ -68,7 +68,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
         public async Task<MethodMetadataResultModel> NodeMethodGetMetadataAsync(
             string endpoint, MethodMetadataRequestModel request) {
             var result = await _client.NodeMethodGetMetadataAsync(endpoint,
-                request.ToApiModel());
+                request.ToApiModel()).ConfigureAwait(false);
             return result.ToServiceModel();
         }
 
@@ -76,7 +76,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
         public async Task<MethodCallResultModel> NodeMethodCallAsync(
             string endpoint, MethodCallRequestModel request) {
             var result = await _client.NodeMethodCallAsync(endpoint,
-                request.ToApiModel());
+                request.ToApiModel()).ConfigureAwait(false);
             return result.ToServiceModel();
         }
 
@@ -84,7 +84,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
         public async Task<ReadResultModel> NodeReadAsync(
             string endpoint, ReadRequestModel request) {
             var result = await _client.NodeReadAsync(endpoint,
-                request.ToApiModel());
+                request.ToApiModel()).ConfigureAwait(false);
             return result.ToServiceModel();
         }
 
@@ -92,7 +92,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
         public async Task<WriteResultModel> NodeWriteAsync(
             string endpoint, WriteRequestModel request) {
             var result = await _client.NodeWriteAsync(endpoint,
-                request.ToApiModel());
+                request.ToApiModel()).ConfigureAwait(false);
             return result.ToServiceModel();
         }
 
@@ -100,7 +100,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
         public async Task<ModelUploadStartResultModel> ModelUploadStartAsync(
             string endpoint, ModelUploadStartRequestModel request) {
             var result = await _client.ModelUploadStartAsync(endpoint,
-                request.ToApiModel());
+                request.ToApiModel()).ConfigureAwait(false);
             return result.ToServiceModel();
         }
 
@@ -108,7 +108,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
         public async Task<PublishStartResultModel> NodePublishStartAsync(
             string endpoint, PublishStartRequestModel request) {
             var result = await _client.NodePublishStartAsync(endpoint,
-                request.ToApiModel());
+                request.ToApiModel()).ConfigureAwait(false);
             return result.ToServiceModel();
         }
 
@@ -116,7 +116,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
         public async Task<PublishStopResultModel> NodePublishStopAsync(
             string endpoint, PublishStopRequestModel request) {
             var result = await _client.NodePublishStopAsync(endpoint,
-                request.ToApiModel());
+                request.ToApiModel()).ConfigureAwait(false);
             return result.ToServiceModel();
         }
 
@@ -124,7 +124,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
         public async Task<PublishBulkResultModel> NodePublishBulkAsync(
             string endpoint, PublishBulkRequestModel request) {
             var result = await _client.NodePublishBulkAsync(endpoint,
-                request.ToApiModel());
+                request.ToApiModel()).ConfigureAwait(false);
             return result.ToServiceModel();
         }
 
@@ -132,7 +132,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
         public async Task<PublishedItemListResultModel> NodePublishListAsync(
             string endpoint, PublishedItemListRequestModel request) {
             var result = await _client.NodePublishListAsync(endpoint,
-                request.ToApiModel());
+                request.ToApiModel()).ConfigureAwait(false);
             return result.ToServiceModel();
         }
 

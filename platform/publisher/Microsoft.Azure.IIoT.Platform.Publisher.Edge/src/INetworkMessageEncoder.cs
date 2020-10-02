@@ -48,21 +48,21 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge {
         /// </summary>
         /// <param name="writerGroupId"></param>
         /// <param name="message"></param>
-        /// <param name="headerLayoutUri"></param>
+        /// <param name="headerLayoutProfile"></param>
         /// <param name="contentMask"></param>
         /// <param name="order"></param>
         /// <param name="maxMessageSize"></param>
         /// <returns></returns>
         IList<NetworkMessageModel> Encode(string writerGroupId,
             IList<DataSetWriterMessageModel> message,
-            string headerLayoutUri, NetworkMessageContentMask? contentMask,
+            string headerLayoutProfile, NetworkMessageContentMask? contentMask,
             DataSetOrderingType? order, int maxMessageSize);
 
         /// <summary>
         /// Encodes the list of messages into batched message list
         /// </summary>
         /// <param name="writerGroupId"></param>
-        /// <param name="headerLayoutUri"></param>
+        /// <param name="headerLayoutProfile"></param>
         /// <param name="contentMask"></param>
         /// <param name="order"></param>
         /// <param name="messages"></param>
@@ -70,7 +70,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge {
         /// <returns></returns>
         IList<NetworkMessageModel> EncodeBatch(string writerGroupId,
             IList<DataSetWriterMessageModel> messages,
-            string headerLayoutUri, NetworkMessageContentMask? contentMask,
+            string headerLayoutProfile, NetworkMessageContentMask? contentMask,
             DataSetOrderingType? order, int maxMessageSize);
     }
 }

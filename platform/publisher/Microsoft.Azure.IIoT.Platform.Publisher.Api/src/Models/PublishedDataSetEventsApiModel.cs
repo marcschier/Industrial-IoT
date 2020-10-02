@@ -32,7 +32,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api.Models {
         /// </summary>
         [DataMember(Name = "browsePath", Order = 2,
             EmitDefaultValue = false)]
-        public string[] BrowsePath { get; set; }
+        public IReadOnlyList<string> BrowsePath { get; set; }
 
         /// <summary>
         /// Event fields to select

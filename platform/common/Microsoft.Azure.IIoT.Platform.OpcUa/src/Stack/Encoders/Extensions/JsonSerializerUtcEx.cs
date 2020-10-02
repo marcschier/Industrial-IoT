@@ -16,17 +16,17 @@ namespace Opc.Ua.Extensions {
         /// <summary>
         /// Constant for OpcUa JSON encoded DateTime.MinValue.
         /// </summary>
-        public static string OpcUaDateTimeMinValue = "0001-01-01T00:00:00Z";
+        public const string OpcUaDateTimeMinValue = "0001-01-01T00:00:00Z";
 
         /// <summary>
         /// Constant for OpcUa JSON encoded DateTime.MaxValue.
         /// </summary>
-        public static string OpcUaDateTimeMaxValue = "9999-12-31T23:59:59Z";
+        public const string OpcUaDateTimeMaxValue = "9999-12-31T23:59:59Z";
 
         /// <summary>
         /// DateTime value of: “9999-12-31T23:59:59Z”
         /// </summary>
-        private static readonly DateTime kDateTimeMaxJsonValue = new DateTime((long)3155378975990000000);
+        private static readonly DateTime kDateTimeMaxJsonValue = new DateTime(3155378975990000000);
 
         /// <summary>
         /// Convert to OpcUa JSON Encoded Utc string.
@@ -39,7 +39,7 @@ namespace Opc.Ua.Extensions {
                 return OpcUaDateTimeMaxValue;
             }
             else {
-                return dateTime.ToUniversalTime().ToString("yyyy-MM-dd'T'HH:mm:ss.FFFFFFFK", 
+                return dateTime.ToUniversalTime().ToString("yyyy-MM-dd'T'HH:mm:ss.FFFFFFFK",
                     CultureInfo.InvariantCulture);
             }
         }
@@ -48,6 +48,10 @@ namespace Opc.Ua.Extensions {
         /// Convert DataValue timestamps to OpcUa Encoded Utc.
         /// </summary>
         public static DataValue ToOpcUaUniversalTime(this DataValue dataValue) {
+            if (dataValue is null) {
+                throw new ArgumentNullException(nameof(dataValue));
+            }
+
             dataValue.SourceTimestamp = dataValue.SourceTimestamp.ToOpcUaUniversalTime();
             dataValue.ServerTimestamp = dataValue.ServerTimestamp.ToOpcUaUniversalTime();
             return dataValue;
@@ -55,11 +59,11 @@ namespace Opc.Ua.Extensions {
 
         /// <summary>
         /// Converter from OpcUa encoded Utc to DateTime.
-        /// The result is DateTime.MinValue, DateTime.MaxValue or 
+        /// The result is DateTime.MinValue, DateTime.MaxValue or
         /// the Utc kind.
         /// </summary>
         public static DateTime ToOpcUaUniversalTime(this DateTime dateTime) {
-            if (dateTime <= DateTime.MinValue) {        
+            if (dateTime <= DateTime.MinValue) {
                 return DateTime.MinValue;
             }
             else if (dateTime >= kDateTimeMaxJsonValue) {

@@ -30,31 +30,31 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Events.v2 {
                     await Task.WhenAll(_listeners
                         .Select(l => l.OnEndpointNewAsync(
                             eventData.Context, eventData.Endpoint)
-                        .ContinueWith(t => Task.CompletedTask)));
+                        .ContinueWith(t => Task.CompletedTask))).ConfigureAwait(false);
                     break;
                 case EndpointEventType.Deactivated:
                     await Task.WhenAll(_listeners
                         .Select(l => l.OnEndpointDeactivatedAsync(
                             eventData.Context, eventData.Endpoint)
-                        .ContinueWith(t => Task.CompletedTask)));
+                        .ContinueWith(t => Task.CompletedTask))).ConfigureAwait(false);
                     break;
                 case EndpointEventType.Activated:
                     await Task.WhenAll(_listeners
                         .Select(l => l.OnEndpointActivatedAsync(
                             eventData.Context, eventData.Endpoint)
-                        .ContinueWith(t => Task.CompletedTask)));
+                        .ContinueWith(t => Task.CompletedTask))).ConfigureAwait(false);
                     break;
                 case EndpointEventType.Updated:
                     await Task.WhenAll(_listeners
                         .Select(l => l.OnEndpointUpdatedAsync(
                             eventData.Context, eventData.Endpoint)
-                        .ContinueWith(t => Task.CompletedTask)));
+                        .ContinueWith(t => Task.CompletedTask))).ConfigureAwait(false);
                     break;
                 case EndpointEventType.Deleted:
                     await Task.WhenAll(_listeners
                         .Select(l => l.OnEndpointDeletedAsync(
                             eventData.Context, eventData.Id, eventData.Endpoint)
-                        .ContinueWith(t => Task.CompletedTask)));
+                        .ContinueWith(t => Task.CompletedTask))).ConfigureAwait(false);
                     break;
             }
         }

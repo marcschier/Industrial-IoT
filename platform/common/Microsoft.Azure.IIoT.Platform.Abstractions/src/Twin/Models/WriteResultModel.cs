@@ -14,6 +14,6 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Models {
         /// <summary>
         /// All results of attribute writes
         /// </summary>
-        public List<AttributeWriteResultModel> Results { set; get; }
+        public IReadOnlyList<AttributeWriteResultModel> Results { set; get; }
     }
 }

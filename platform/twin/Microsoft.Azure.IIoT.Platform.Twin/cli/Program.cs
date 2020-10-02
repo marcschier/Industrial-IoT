@@ -30,14 +30,13 @@ namespace Microsoft.Azure.IIoT.Platform.Cli {
     using System.IO;
     using System.IO.Compression;
     using System.Linq;
-    using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
 
     /// <summary>
     /// Test client for opc ua services
     /// </summary>
-    public class Program {
+    public static class Program {
         private enum Op {
             None,
             TestOpcUaModelBrowseEncoder,
@@ -52,6 +51,9 @@ namespace Microsoft.Azure.IIoT.Platform.Cli {
         /// Test client entry point
         /// </summary>
         public static void Main(string[] args) {
+            if (args is null) {
+                throw new ArgumentNullException(nameof(args));
+            }
             AppDomain.CurrentDomain.UnhandledException +=
                 (s, e) => Console.WriteLine("unhandled: " + e.ExceptionObject);
             var op = Op.None;
@@ -205,92 +207,13 @@ Operations (Mutually exclusive):
             Console.ReadKey();
         }
 
-        /// <inheritdoc/>
-        private class ModelWriter : ISettingsReporter, IEventClient {
-
-            public ModelWriter(ClientServices client, ILogger logger) {
-                _logger = logger;
-                _client = client;
-            }
-
-            /// <inheritdoc/>
-            public string Gateway => Utils.GetHostName();
-
-            /// <inheritdoc/>
-            public string DeviceId => Gateway;
-
-            /// <inheritdoc/>
-            public string ModuleId { get; } = "";
-
-            /// <inheritdoc/>
-            public async Task SendEventAsync(string target, byte[] data, string contentType,
-                string eventSchema, string contentEncoding, CancellationToken ct) {
-                var ev = JsonConvert.DeserializeObject<DiscoveryEventModel>(
-                    Encoding.UTF8.GetString(data));
-                var endpoint = ev.Endpoint?.Endpoint;
-                if (endpoint == null) {
-                    return;
-                }
-                try {
-                    var id = endpoint.Url.ToSha1Hash();
-                    _logger.Information("Writing {id}.json for {@ev}", id, ev);
-                    using (var writer = File.CreateText($"iop_{id}.json"))
-                    using (var json = new JsonTextWriter(writer) {
-                        AutoCompleteOnClose = true,
-                        Formatting = Formatting.Indented,
-                        DateFormatHandling = DateFormatHandling.IsoDateFormat
-                    })
-                    using (var encoder = new JsonEncoderEx(json, null,
-                        JsonEncoderEx.JsonEncoding.Array) {
-                        IgnoreDefaultValues = true,
-                        UseAdvancedEncoding = true
-                    })
-                    using (var browser = new BrowsedNodeStreamEncoder(_client, endpoint, encoder,
-                        null, _logger, null)) {
-                        await browser.EncodeAsync(CancellationToken.None);
-                    }
-                }
-                catch (Exception ex) {
-                    _logger.Error(ex, "Failed to browse");
-                }
-            }
-
-            /// <inheritdoc/>
-            public async Task SendEventAsync(string target, IEnumerable<byte[]> batch, string contentType,
-                string eventSchema, string contentEncoding, CancellationToken ct) {
-                foreach (var item in batch) {
-                    await SendEventAsync(target, item, contentType, eventSchema, contentEncoding, ct);
-                }
-            }
-
-            /// <inheritdoc/>
-            public void SendEvent<T>(string target, byte[] data, string contentType, string eventSchema,
-                string contentEncoding, T token, Action<T, Exception> complete) {
-                SendEventAsync(target, data, contentType, eventSchema, contentEncoding, default)
-                    .ContinueWith(task => complete(token, task.Exception));
-            }
-
-            /// <inheritdoc/>
-            public Task ReportAsync(string propertyId, VariantValue value, CancellationToken ct) {
-                return Task.CompletedTask;
-            }
-
-            /// <inheritdoc/>
-            public Task ReportAsync(IEnumerable<KeyValuePair<string, VariantValue>> properties,
-                CancellationToken ct) {
-                return Task.CompletedTask;
-            }
-
-            private readonly ILogger _logger;
-            private readonly ClientServices _client;
-        }
-
         /// <summary>
         /// Test model browse encoder
         /// </summary>
         private static async Task TestOpcUaModelExportServiceAsync(EndpointModel endpoint) {
             using (var logger = StackLogger.Create(ConsoleLogger.Create()))
-            using (var client = new ClientServices(logger.Logger, new TestClientServicesConfig()))
+            using (var config = new TestClientServicesConfig())
+            using (var client = new ClientServices(logger.Logger, config))
             using (var server = new ServerWrapper(endpoint, logger))
             using (var stream = Console.OpenStandardOutput())
             using (var writer = new StreamWriter(stream))
@@ -306,7 +229,7 @@ Operations (Mutually exclusive):
             })
             using (var browser = new BrowsedNodeStreamEncoder(client, endpoint, encoder,
                 null, logger.Logger, null)) {
-                await browser.EncodeAsync(CancellationToken.None);
+                await browser.EncodeAsync(CancellationToken.None).ConfigureAwait(false);
             }
         }
 
@@ -317,12 +240,13 @@ Operations (Mutually exclusive):
             using (var logger = StackLogger.Create(ConsoleLogger.Create())) {
                 var storage = new ZipArchiveStorage();
                 var fileName = "tmp.zip";
-                using (var client = new ClientServices(logger.Logger, new TestClientServicesConfig()))
+                using (var config = new TestClientServicesConfig())
+                using (var client = new ClientServices(logger.Logger, config))
                 using (var server = new ServerWrapper(endpoint, logger)) {
                     var sw = Stopwatch.StartNew();
-                    using (var archive = await storage.OpenAsync(fileName, FileMode.Create, FileAccess.Write))
+                    using (var archive = await storage.OpenAsync(fileName, FileMode.Create, FileAccess.Write).ConfigureAwait(false))
                     using (var archiver = new AddressSpaceArchiver(client, endpoint, archive, logger.Logger)) {
-                        await archiver.ArchiveAsync(CancellationToken.None);
+                        await archiver.ArchiveAsync(CancellationToken.None).ConfigureAwait(false);
                     }
                     var elapsed = sw.Elapsed;
                     using (var file = File.Open(fileName, FileMode.OpenOrCreate)) {
@@ -351,7 +275,8 @@ Operations (Mutually exclusive):
                     // ["bin2.gzip"] = ContentEncodings.MimeTypeUaBinary
                 };
 
-                using (var client = new ClientServices(logger.Logger, new TestClientServicesConfig()))
+                using (var config = new TestClientServicesConfig())
+                using (var client = new ClientServices(logger.Logger, config))
                 using (var server = new ServerWrapper(endpoint, logger)) {
                     foreach (var run in runs) {
                         var zip = Path.GetExtension(run.Key) == ".zip";
@@ -363,7 +288,7 @@ Operations (Mutually exclusive):
                                 (Stream)new GZipStream(stream, CompressionLevel.Optimal))
                             using (var browser = new BrowsedNodeStreamEncoder(client, endpoint, zipped,
                                 run.Value, null, logger.Logger, null)) {
-                                await browser.EncodeAsync(CancellationToken.None);
+                                await browser.EncodeAsync(CancellationToken.None).ConfigureAwait(false);
                             }
                         }
                         var elapsed = sw.Elapsed;
@@ -389,7 +314,7 @@ Operations (Mutually exclusive):
                             using (var zipped = new DeflateStream(stream, CompressionLevel.Optimal))
                             using (var browser = new BrowsedNodeStreamEncoder(client, endpoint, zipped,
                                 ContentMimeType.UaJson, null, logger.Logger, null)) {
-                                await browser.EncodeAsync(CancellationToken.None);
+                                await browser.EncodeAsync(CancellationToken.None).ConfigureAwait(false);
                             }
                         }
                     }
@@ -422,7 +347,7 @@ Operations (Mutually exclusive):
         /// <returns></returns>
         private static Task TestOpcUaModelDesignAsync(string designFile) {
             if (string.IsNullOrEmpty(designFile)) {
-                throw new ArgumentException(nameof(designFile));
+                throw new ArgumentException("Design name invalid", nameof(designFile));
             }
             var design = Model.Load(designFile, new CompositeModelResolver());
             design.Save(Path.GetDirectoryName(designFile));
@@ -443,7 +368,8 @@ Operations (Mutually exclusive):
                     ObjectIds.RootFolder.ToString()
                 };
 
-                using (var client = new ClientServices(logger.Logger, new TestClientServicesConfig())) {
+                using (var config = new TestClientServicesConfig())
+                using (var client = new ClientServices(logger.Logger, config)) {
                     var service = new AddressSpaceServices(client, new VariantEncoderFactory(), logger.Logger);
                     using (var server = new ServerWrapper(endpoint, logger)) {
                         var visited = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
@@ -458,7 +384,7 @@ Operations (Mutually exclusive):
                                     Console.WriteLine($"Browsing {request.NodeId}");
                                     Console.WriteLine($"====================");
                                 }
-                                var result = await service.NodeBrowseAsync(endpoint, request);
+                                var result = await service.NodeBrowseAsync(endpoint, request).ConfigureAwait(false);
                                 visited.Add(request.NodeId);
                                 if (!silent) {
                                     Console.WriteLine(JsonConvert.SerializeObject(result,
@@ -489,7 +415,7 @@ Operations (Mutually exclusive):
                                         var read = await service.NodeValueReadAsync(endpoint,
                                             new ValueReadRequestModel {
                                                 NodeId = r.Target.NodeId
-                                            });
+                                            }).ConfigureAwait(false);
                                         if (!silent) {
                                             Console.WriteLine(JsonConvert.SerializeObject(result,
                                                 Formatting.Indented));
@@ -525,7 +451,7 @@ Operations (Mutually exclusive):
             public ServerWrapper(EndpointModel endpoint, StackLogger logger) {
                 _cts = new CancellationTokenSource();
                 if (endpoint.Url == null) {
-                    _server = RunSampleServerAsync(_cts.Token, logger.Logger);
+                    _server = RunSampleServerAsync(logger.Logger, _cts.Token);
                     endpoint.Url = "opc.tcp://" + Utils.GetHostName() +
                         ":51210/UA/SampleServer";
                 }
@@ -546,7 +472,7 @@ Operations (Mutually exclusive):
             /// </summary>
             /// <param name="ct"></param>
             /// <returns></returns>
-            private static async Task RunSampleServerAsync(CancellationToken ct, ILogger logger) {
+            private static async Task RunSampleServerAsync(ILogger logger, CancellationToken ct) {
                 var tcs = new TaskCompletionSource<bool>();
                 ct.Register(() => tcs.TrySetResult(true));
                 using (var server = new ServerConsoleHost(new ServerFactory(logger) {
@@ -554,8 +480,8 @@ Operations (Mutually exclusive):
                 }, logger) {
                     AutoAccept = true
                 }) {
-                    await server.StartAsync(new List<int> { 51210 });
-                    await tcs.Task;
+                    await server.StartAsync(new List<int> { 51210 }).ConfigureAwait(false);
+                    await tcs.Task.ConfigureAwait(false);
                 }
             }
 

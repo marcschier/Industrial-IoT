@@ -32,12 +32,12 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api {
             this ITwinServiceApi service, string endpoint, BrowseRequestApiModel request,
             CancellationToken ct = default) {
             if (request.MaxReferencesToReturn != null) {
-                return await service.NodeBrowseFirstAsync(endpoint, request, ct);
+                return await service.NodeBrowseFirstAsync(endpoint, request, ct).ConfigureAwait(false);
             }
             while (true) {
                 // Limit size of batches to a reasonable default to avoid communication timeouts.
                 request.MaxReferencesToReturn = 500;
-                var result = await service.NodeBrowseFirstAsync(endpoint, request, ct);
+                var result = await service.NodeBrowseFirstAsync(endpoint, request, ct).ConfigureAwait(false);
                 while (result.ContinuationToken != null) {
                     try {
                         var next = await service.NodeBrowseNextAsync(endpoint,
@@ -46,7 +46,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api {
                                 Header = request.Header,
                                 ReadVariableValues = request.ReadVariableValues,
                                 TargetNodesOnly = request.TargetNodesOnly
-                            }, ct);
+                            }, ct).ConfigureAwait(false);
                         result.References.AddRange(next.References);
                         result.ContinuationToken = next.ContinuationToken;
                     }
@@ -55,7 +55,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api {
                             new BrowseNextRequestApiModel {
                                 ContinuationToken = result.ContinuationToken,
                                 Abort = true
-                            }));
+                            })).ConfigureAwait(false);
                         throw;
                     }
                 }
@@ -72,11 +72,11 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api {
         public static async Task<IEnumerable<PublishedItemApiModel>> NodePublishListAllAsync(
             this ITwinServiceApi service, string endpointId) {
             var nodes = new List<PublishedItemApiModel>();
-            var result = await service.NodePublishListAsync(endpointId);
+            var result = await service.NodePublishListAsync(endpointId).ConfigureAwait(false);
             nodes.AddRange(result.Items);
             while (result.ContinuationToken != null) {
                 result = await service.NodePublishListAsync(endpointId,
-                    result.ContinuationToken);
+                    result.ContinuationToken).ConfigureAwait(false);
                 nodes.AddRange(result.Items);
             }
             return nodes;
@@ -105,9 +105,9 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api {
         public static async Task<IEnumerable<HistoricValueApiModel>> HistoryReadAllValuesAsync(
             this IHistoryServiceApi client, string endpointId,
             HistoryReadRequestApiModel<ReadValuesDetailsApiModel> request) {
-            var result = await client.HistoryReadValuesAsync(endpointId, request);
+            var result = await client.HistoryReadValuesAsync(endpointId, request).ConfigureAwait(false);
             return await HistoryReadAllRemainingValuesAsync(client, endpointId, request.Header,
-                result.ContinuationToken, result.History.AsEnumerable());
+                result.ContinuationToken, result.History.AsEnumerable()).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -120,9 +120,9 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api {
         public static async Task<IEnumerable<HistoricValueApiModel>> HistoryReadAllModifiedValuesAsync(
             this IHistoryServiceApi client, string endpointId,
             HistoryReadRequestApiModel<ReadModifiedValuesDetailsApiModel> request) {
-            var result = await client.HistoryReadModifiedValuesAsync(endpointId, request);
+            var result = await client.HistoryReadModifiedValuesAsync(endpointId, request).ConfigureAwait(false);
             return await HistoryReadAllRemainingValuesAsync(client, endpointId, request.Header,
-                result.ContinuationToken, result.History.AsEnumerable());
+                result.ContinuationToken, result.History.AsEnumerable()).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -135,9 +135,9 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api {
         public static async Task<IEnumerable<HistoricValueApiModel>> HistoryReadAllValuesAtTimesAsync(
             this IHistoryServiceApi client, string endpointId,
             HistoryReadRequestApiModel<ReadValuesAtTimesDetailsApiModel> request) {
-            var result = await client.HistoryReadValuesAtTimesAsync(endpointId, request);
+            var result = await client.HistoryReadValuesAtTimesAsync(endpointId, request).ConfigureAwait(false);
             return await HistoryReadAllRemainingValuesAsync(client, endpointId, request.Header,
-                result.ContinuationToken, result.History.AsEnumerable());
+                result.ContinuationToken, result.History.AsEnumerable()).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -150,9 +150,9 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api {
         public static async Task<IEnumerable<HistoricValueApiModel>> HistoryReadAllProcessedValuesAsync(
             this IHistoryServiceApi client, string endpointId,
             HistoryReadRequestApiModel<ReadProcessedValuesDetailsApiModel> request) {
-            var result = await client.HistoryReadProcessedValuesAsync(endpointId, request);
+            var result = await client.HistoryReadProcessedValuesAsync(endpointId, request).ConfigureAwait(false);
             return await HistoryReadAllRemainingValuesAsync(client, endpointId, request.Header,
-                result.ContinuationToken, result.History.AsEnumerable());
+                result.ContinuationToken, result.History.AsEnumerable()).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -165,9 +165,9 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api {
         public static async Task<IEnumerable<HistoricEventApiModel>> HistoryReadAllEventsAsync(
             this IHistoryServiceApi client, string endpointId,
             HistoryReadRequestApiModel<ReadEventsDetailsApiModel> request) {
-            var result = await client.HistoryReadEventsAsync(endpointId, request);
+            var result = await client.HistoryReadEventsAsync(endpointId, request).ConfigureAwait(false);
             return await HistoryReadAllRemainingEventsAsync(client, endpointId, request.Header,
-                result.ContinuationToken, result.History.AsEnumerable());
+                result.ContinuationToken, result.History.AsEnumerable()).ConfigureAwait(false);
         }
 
 
@@ -187,7 +187,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api {
                 var response = await client.HistoryReadValuesNextAsync(endpointId, new HistoryReadNextRequestApiModel {
                     ContinuationToken = continuationToken,
                     Header = header
-                });
+                }).ConfigureAwait(false);
                 continuationToken = response.ContinuationToken;
                 returning = returning.Concat(response.History);
             }
@@ -210,7 +210,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api {
                 var response = await client.HistoryReadEventsNextAsync(endpointId, new HistoryReadNextRequestApiModel {
                     ContinuationToken = continuationToken,
                     Header = header
-                });
+                }).ConfigureAwait(false);
                 continuationToken = response.ContinuationToken;
                 returning = returning.Concat(response.History);
             }

@@ -28,7 +28,7 @@ namespace Microsoft.Azure.IIoT.Hub {
         public static async Task<DeviceTwinModel> FindAsync(this IDeviceTwinServices service,
             string deviceId, string moduleId = null, CancellationToken ct = default) {
             try {
-                return await service.GetAsync(deviceId, moduleId, ct);
+                return await service.GetAsync(deviceId, moduleId, ct).ConfigureAwait(false);
             }
             catch (ResourceNotFoundException) {
                 return null;
@@ -46,7 +46,7 @@ namespace Microsoft.Azure.IIoT.Hub {
         public static async Task<string> GetPrimaryKeyAsync(
             this IDeviceTwinServices service, string deviceId, string moduleId = null,
             CancellationToken ct = default) {
-            var model = await service.GetRegistrationAsync(deviceId, moduleId, ct);
+            var model = await service.GetRegistrationAsync(deviceId, moduleId, ct).ConfigureAwait(false);
             if (model == null) {
                 throw new ResourceNotFoundException("Could not find " + deviceId);
             }
@@ -64,7 +64,7 @@ namespace Microsoft.Azure.IIoT.Hub {
         public static async Task<string> GetSecondaryKeyAsync(
             this IDeviceTwinServices service, string deviceId, string moduleId = null,
             CancellationToken ct = default) {
-            var model = await service.GetRegistrationAsync(deviceId, moduleId, ct);
+            var model = await service.GetRegistrationAsync(deviceId, moduleId, ct).ConfigureAwait(false);
             if (model == null) {
                 throw new ResourceNotFoundException("Could not find " + deviceId);
             }
@@ -83,7 +83,7 @@ namespace Microsoft.Azure.IIoT.Hub {
         public static async Task<DeviceTwinListModel> QueryDeviceTwinsAsync(
             this IDeviceTwinServices service, string query, string continuation,
             int? pageSize = null, CancellationToken ct = default) {
-            var response = await service.QueryAsync(query, continuation, pageSize, ct);
+            var response = await service.QueryAsync(query, continuation, pageSize, ct).ConfigureAwait(false);
             return new DeviceTwinListModel {
                 ContinuationToken = response.ContinuationToken,
                 Items = response.Result
@@ -104,7 +104,7 @@ namespace Microsoft.Azure.IIoT.Hub {
             var result = new List<DeviceTwinModel>();
             string continuation = null;
             do {
-                var response = await service.QueryDeviceTwinsAsync(query, continuation, null, ct);
+                var response = await service.QueryDeviceTwinsAsync(query, continuation, null, ct).ConfigureAwait(false);
                 result.AddRange(response.Items);
                 continuation = response.ContinuationToken;
             }

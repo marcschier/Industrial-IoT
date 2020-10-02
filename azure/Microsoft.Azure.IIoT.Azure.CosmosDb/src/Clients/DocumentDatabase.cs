@@ -35,7 +35,7 @@ namespace Microsoft.Azure.IIoT.Azure.CosmosDb.Clients {
         /// <inheritdoc/>
         public async Task<IItemContainer> OpenContainerAsync(string id,
             ContainerOptions options) {
-            return await OpenOrCreateCollectionAsync(id, options);
+            return await OpenOrCreateCollectionAsync(id, options).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
@@ -43,7 +43,7 @@ namespace Microsoft.Azure.IIoT.Azure.CosmosDb.Clients {
             var result = new List<string>();
             var resultSetIterator = _database.GetContainerQueryIterator<ContainerProperties>();
             while (resultSetIterator.HasMoreResults) {
-                foreach (var container in await resultSetIterator.ReadNextAsync()) {
+                foreach (var container in await resultSetIterator.ReadNextAsync().ConfigureAwait(false)) {
                     result.Add(container.Id);
                 }
             }
@@ -57,7 +57,7 @@ namespace Microsoft.Azure.IIoT.Azure.CosmosDb.Clients {
             }
             try {
                 var container = _database.GetContainer(id);
-                await container.DeleteContainerAsync();
+                await container.DeleteContainerAsync().ConfigureAwait(false);
             }
             catch { }
             finally {
@@ -82,7 +82,7 @@ namespace Microsoft.Azure.IIoT.Azure.CosmosDb.Clients {
                 id = "default";
             }
             if (!_collections.TryGetValue(id, out var collection)) {
-                var container = await EnsureCollectionExistsAsync(id, options);
+                var container = await EnsureCollectionExistsAsync(id, options).ConfigureAwait(false);
                 collection = _collections.GetOrAdd(id, k => new DocumentCollection(container,
                     _serializer, !string.IsNullOrEmpty(options?.PartitionKey), _logger));
             }
@@ -112,7 +112,7 @@ namespace Microsoft.Azure.IIoT.Azure.CosmosDb.Clients {
                 containerProperties.PartitionKeyPath = "/" + options.PartitionKey;
             }
             var container = await _database.CreateContainerIfNotExistsAsync(
-                containerProperties);
+                containerProperties).ConfigureAwait(false);
 
             return container.Container;
         }

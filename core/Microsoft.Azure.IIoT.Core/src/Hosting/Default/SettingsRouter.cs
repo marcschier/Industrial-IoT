@@ -24,7 +24,13 @@ namespace Microsoft.Azure.IIoT.Hosting.Services {
         /// Property Di to prevent circular dependency between host and controller
         /// </summary>
         public IEnumerable<ISettingsController> Controllers {
+            get {
+                return Enumerable.Empty<ISettingsController>();
+            }
             set {
+                if (value is null) {
+                    return;
+                }
                 foreach (var controller in value) {
                     AddToCallTable(controller);
                 }
@@ -51,6 +57,10 @@ namespace Microsoft.Azure.IIoT.Hosting.Services {
         /// <inheritdoc/>
         public async Task<IDictionary<string, VariantValue>> ProcessSettingsAsync(
             IDictionary<string, VariantValue> settings) {
+            if (settings is null) {
+                throw new ArgumentNullException(nameof(settings));
+            }
+
             var controllers = new List<Controller>();
 
             // Set all properties
@@ -77,9 +87,9 @@ namespace Microsoft.Azure.IIoT.Hosting.Services {
             var reported = new Dictionary<string, VariantValue>();
             if (controllers.Any()) {
                 var sw = Stopwatch.StartNew();
-                await _lock.WaitAsync();
+                await _lock.WaitAsync().ConfigureAwait(false);
                 try {
-                    await Task.WhenAll(controllers.Select(c => c.SafeApplyAsync()));
+                    await Task.WhenAll(controllers.Select(c => c.SafeApplyAsync())).ConfigureAwait(false);
                     var invokers = controllers.SelectMany(c => c.Invokers).Distinct();
                     CollectSettingsFromControllers(reported, invokers);
                     _logger.Debug("Applying new settings took {elapsed}...", sw.Elapsed);
@@ -93,7 +103,7 @@ namespace Microsoft.Azure.IIoT.Hosting.Services {
 
         /// <inheritdoc/>
         public async Task<IDictionary<string, VariantValue>> GetSettingsStateAsync() {
-            await _lock.WaitAsync();
+            await _lock.WaitAsync().ConfigureAwait(false);
             try {
                 var reported = new Dictionary<string, VariantValue>();
                 CollectSettingsFromControllers(reported, _calltable.Values);
@@ -111,7 +121,7 @@ namespace Microsoft.Azure.IIoT.Hosting.Services {
         /// <param name="invoker"></param>
         /// <returns></returns>
         private bool TryGetInvoker(string key, out CascadingInvoker invoker) {
-            return _calltable.TryGetValue(key.ToLowerInvariant(), out invoker) ||
+            return _calltable.TryGetValue(key.ToUpperInvariant(), out invoker) ||
                    _calltable.TryGetValue(kDefaultProp, out invoker);
         }
 
@@ -176,7 +186,7 @@ namespace Microsoft.Azure.IIoT.Hosting.Services {
                         // Should be ignored
                         continue;
                     }
-                    var name = propInfo.Name.ToLowerInvariant();
+                    var name = propInfo.Name.ToUpperInvariant();
                     var indexers = propInfo.GetIndexParameters();
                     var indexed = false;
                     MethodInfo indexer = null;
@@ -248,7 +258,7 @@ namespace Microsoft.Azure.IIoT.Hosting.Services {
             /// <returns></returns>
             public async Task SafeApplyAsync() {
                 try {
-                    await ApplyInternalAsync();
+                    await ApplyInternalAsync().ConfigureAwait(false);
                 }
                 catch (Exception e) {
                     _logger.Error(e, "Exception applying changes! Continue...",
@@ -265,7 +275,7 @@ namespace Microsoft.Azure.IIoT.Hosting.Services {
                     if (_applyMethod == null) {
                         return Task.CompletedTask;
                     }
-                    return (Task)_applyMethod.Invoke(Target, new object[] { });
+                    return (Task)_applyMethod.Invoke(Target, Array.Empty<object>());
                 }
                 catch (Exception e) {
                     return Task.FromException(e);
@@ -444,7 +454,7 @@ namespace Microsoft.Azure.IIoT.Hosting.Services {
                     _logger.Warning(e,
                         "Exception during setter {controller} {name} invocation",
                         _controller.Target.GetType().Name, _property.Name);
-                    throw e;
+                    throw;
                 }
             }
 
@@ -475,7 +485,7 @@ namespace Microsoft.Azure.IIoT.Hosting.Services {
                     _logger.Warning(e,
                         "Exception during getter {controller} {name} invocation",
                         _controller.Target.GetType().Name, _property.Name);
-                    throw e;
+                    throw;
                 }
             }
 
@@ -488,7 +498,7 @@ namespace Microsoft.Azure.IIoT.Hosting.Services {
                 try {
                     if (_property.CanRead && _indexed && _indexer != null) {
                         // Get property names
-                        var indexes = _indexer.Invoke(_controller.Target, new object[0]);
+                        var indexes = _indexer.Invoke(_controller.Target, Array.Empty<object>());
                         if (indexes is IEnumerable<string> properties) {
                             var results = new Dictionary<string, VariantValue>();
 
@@ -508,7 +518,7 @@ namespace Microsoft.Azure.IIoT.Hosting.Services {
                     _logger.Warning(e,
                         "Exception collecting all indexed values on {controller}.",
                         _controller.Target.GetType().Name);
-                    throw e;
+                    throw;
                 }
             }
 

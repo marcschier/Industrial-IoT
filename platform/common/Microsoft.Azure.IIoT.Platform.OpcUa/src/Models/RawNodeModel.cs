@@ -38,7 +38,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Models {
             RequestHeader requestHeader, NodeId nodeId, bool skipValue,
             List<OperationResultModel> operations, bool traceOnly) {
             var node = new RawNodeModel(nodeId, session.NamespaceUris);
-            await node.ReadAsync(session, requestHeader, skipValue, operations, traceOnly);
+            await node.ReadAsync(session, requestHeader, skipValue, operations, traceOnly).ConfigureAwait(false);
             return node;
         }
 
@@ -55,7 +55,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Models {
             RequestHeader requestHeader, NodeId nodeId,
             List<OperationResultModel> operations, bool traceOnly) {
             var node = new RawNodeModel(nodeId, session.NamespaceUris);
-            await node.ReadValueAsync(session, requestHeader, operations, false, traceOnly);
+            await node.ReadValueAsync(session, requestHeader, operations, false, traceOnly).ConfigureAwait(false);
             return node.Value;
         }
 
@@ -78,10 +78,10 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Models {
                     AttributeId = a
                 }));
             await ReadAsync(session, requestHeader, readValueCollection, operations,
-                true, traceOnly);
+                true, traceOnly).ConfigureAwait(false);
             if (skipValue && NodeClass == NodeClass.VariableType) {
                 // Read default value
-                await ReadValueAsync(session, requestHeader, operations, true, traceOnly);
+                await ReadValueAsync(session, requestHeader, operations, true, traceOnly).ConfigureAwait(false);
             }
         }
 
@@ -111,7 +111,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Models {
             }
             // Update value
             await ReadAsync(session, requestHeader, readValueCollection, operations,
-                skipAttributeIdInvalid, traceOnly);
+                skipAttributeIdInvalid, traceOnly).ConfigureAwait(false);
             if (operations == null &&
                 NodeClass != NodeClass.VariableType && NodeClass != NodeClass.Variable) {
                 throw new InvalidOperationException(
@@ -135,7 +135,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Models {
             bool skipAttributeIdInvalid, bool traceOnly) {
 
             var readResponse = await session.ReadAsync(requestHeader, 0,
-                TimestampsToReturn.Both, readValueCollection);
+                TimestampsToReturn.Both, readValueCollection).ConfigureAwait(false);
 
             OperationResultEx.Validate("Read_" + LocalId, operations,
                 readResponse.Results
@@ -173,7 +173,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Models {
                 }));
 
             var writeResponse = await session.WriteAsync(requestHeader,
-                writeValueCollection);
+                writeValueCollection).ConfigureAwait(false);
             OperationResultEx.Validate("Write_" + LocalId, operations, writeResponse.Results
                     .Select(code => skipAttributeIdInvalid &&
                         code == StatusCodes.BadAttributeIdInvalid ? StatusCodes.Good : code),

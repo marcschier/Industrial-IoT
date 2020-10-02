@@ -46,7 +46,7 @@ namespace Microsoft.Azure.IIoT.Azure.ActiveDirectory.Clients {
                     _prompt.Prompt(deviceCodeCallback.DeviceCode, deviceCodeCallback.ExpiresOn,
                         deviceCodeCallback.Message);
                     return Task.CompletedTask;
-                }).ExecuteAsync();
+                }).ExecuteAsync().ConfigureAwait(false);
             return result.ToTokenResult();
         }
 

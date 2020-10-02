@@ -193,7 +193,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
                 _logger.Error(ex, "Unexpected exception stopping processor thread");
             }
             finally {
-                await Task.WhenAll(processingTasks);
+                await Task.WhenAll(processingTasks).ConfigureAwait(false);
             }
         }
 

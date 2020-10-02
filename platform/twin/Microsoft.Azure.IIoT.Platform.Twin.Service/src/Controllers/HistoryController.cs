@@ -51,7 +51,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Service.Controllers {
                 throw new ArgumentNullException(nameof(request));
             }
             var readresult = await _client.HistoryReadAsync(
-                endpointId, request.ToServiceModel(d => d));
+                endpointId, request.ToServiceModel(d => d)).ConfigureAwait(false);
             return readresult.ToApiModel(d => d);
         }
 
@@ -73,7 +73,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Service.Controllers {
                 throw new ArgumentNullException(nameof(request));
             }
             var readresult = await _client.HistoryReadNextAsync(
-                endpointId, request.ToServiceModel());
+                endpointId, request.ToServiceModel()).ConfigureAwait(false);
             return readresult.ToApiModel(d => d);
         }
 
@@ -96,7 +96,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Service.Controllers {
                 throw new ArgumentNullException(nameof(request));
             }
             var writeResult = await _client.HistoryUpdateAsync(
-                endpointId, request.ToServiceModel(d => d));
+                endpointId, request.ToServiceModel(d => d)).ConfigureAwait(false);
             return writeResult.ToApiModel();
         }
 

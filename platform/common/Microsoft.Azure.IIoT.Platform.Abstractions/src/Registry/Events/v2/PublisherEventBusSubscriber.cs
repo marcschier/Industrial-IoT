@@ -30,19 +30,19 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Events.v2 {
                     await Task.WhenAll(_listeners
                         .Select(l => l.OnPublisherNewAsync(
                             eventData.Context, eventData.Publisher)
-                        .ContinueWith(t => Task.CompletedTask)));
+                        .ContinueWith(t => Task.CompletedTask))).ConfigureAwait(false);
                     break;
                 case PublisherEventType.Updated:
                     await Task.WhenAll(_listeners
                         .Select(l => l.OnPublisherUpdatedAsync(
                             eventData.Context, eventData.Publisher)
-                        .ContinueWith(t => Task.CompletedTask)));
+                        .ContinueWith(t => Task.CompletedTask))).ConfigureAwait(false);
                     break;
                 case PublisherEventType.Deleted:
                     await Task.WhenAll(_listeners
                         .Select(l => l.OnPublisherDeletedAsync(
                             eventData.Context, eventData.Id)
-                        .ContinueWith(t => Task.CompletedTask)));
+                        .ContinueWith(t => Task.CompletedTask))).ConfigureAwait(false);
                     break;
             }
         }

@@ -39,7 +39,7 @@ namespace Opc.Ua.PubSub {
         public string DisplayName { get; set; }
 
         /// <summary>
-        /// Timestamp assigned by publisher 
+        /// Timestamp assigned by publisher
         /// </summary>
         public DateTime Timestamp { get; set; }
 
@@ -56,7 +56,7 @@ namespace Opc.Ua.PubSub {
         /// <summary>
         /// Extension fields
         /// </summary>
-        public Dictionary<string, string> ExtensionFields { get; set; }
+        public IReadOnlyDictionary<string, string> ExtensionFields { get; set; }
 
         /// <inheritdoc/>
         public ExpandedNodeId TypeId => ExpandedNodeId.Null;
@@ -69,6 +69,9 @@ namespace Opc.Ua.PubSub {
 
         /// <inheritdoc/>
         public void Decode(IDecoder decoder) {
+            if (decoder is null) {
+                throw new ArgumentNullException(nameof(decoder));
+            }
             switch (decoder.EncodingType) {
                 case EncodingType.Binary:
                     DecodeBinary(decoder);
@@ -86,6 +89,9 @@ namespace Opc.Ua.PubSub {
 
         /// <inheritdoc/>
         public void Encode(IEncoder encoder) {
+            if (encoder is null) {
+                throw new ArgumentNullException(nameof(encoder));
+            }
             ApplyEncodeMask();
             switch (encoder.EncodingType) {
                 case EncodingType.Binary:
@@ -206,11 +212,13 @@ namespace Opc.Ua.PubSub {
                 SequenceNumber = decoder.ReadUInt32(nameof(MonitoredItemMessageContentMask.SequenceNumber));
             }
             if ((MessageContentMask & (uint)MonitoredItemMessageContentMask.ExtensionFields) != 0) {
-                var dictionary = (KeyValuePairCollection)decoder.ReadEncodeableArray("ExtensionFields", typeof(Ua.KeyValuePair));
-                ExtensionFields = new Dictionary<string, string>(dictionary.Count);
+                var dictionary = (KeyValuePairCollection)decoder.ReadEncodeableArray(
+                    "ExtensionFields", typeof(Ua.KeyValuePair));
+                var extensionFields = new Dictionary<string, string>(dictionary.Count);
                 foreach (var item in dictionary) {
-                    ExtensionFields[item.Key.Name] = item.Value.ToString();
+                    extensionFields.AddOrUpdate(item.Key.Name, item.Value.ToString());
                 }
+                ExtensionFields = extensionFields;
             }
         }
 

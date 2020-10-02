@@ -25,7 +25,7 @@ namespace Microsoft.Azure.IIoT.App.Services {
         /// <summary>
         /// Current path
         /// </summary>
-        public List<string> Path { get; set; }
+        public List<string> Path { get; internal set; }
         public MethodMetadataResponseApiModel Parameter { get; set; }
         public MethodCallResponseApiModel MethodCallResponse { get; set; }
 
@@ -57,6 +57,9 @@ namespace Microsoft.Azure.IIoT.App.Services {
         public async Task<PagedResult<ListNode>> GetTreeAsync(string endpointId, string id,
             List<string> parentId, string discovererId, BrowseDirection direction, int index,
             CredentialModel credential = null) {
+            if (parentId is null) {
+                throw new ArgumentNullException(nameof(parentId));
+            }
 
             var pageResult = new PagedResult<ListNode>();
             var header = Elevate(new RequestHeaderApiModel(), credential);
@@ -69,7 +72,7 @@ namespace Microsoft.Azure.IIoT.App.Services {
 
             if (direction == BrowseDirection.Forward) {
                 model.NodeId = id;
-                if (id == string.Empty) {
+                if (string.IsNullOrEmpty(id)) {
                     Path = new List<string>();
                 }
             }
@@ -79,7 +82,7 @@ namespace Microsoft.Azure.IIoT.App.Services {
             model.Header = header;
 
             try {
-                var browseData = await _twinService.NodeBrowseAsync(endpointId, model);
+                var browseData = await _twinService.NodeBrowseAsync(endpointId, model).ConfigureAwait(false);
 
                 _displayName = browseData.Node.DisplayName;
 
@@ -98,9 +101,9 @@ namespace Microsoft.Azure.IIoT.App.Services {
                 if (browseData.References != null) {
                     foreach (var nodeReference in browseData.References) {
                         previousPage.Results.Add(new ListNode {
-                            Id = nodeReference.Target.NodeId.ToString(),
+                            Id = nodeReference.Target.NodeId,
                             NodeClass = nodeReference.Target.NodeClass ?? 0,
-                            NodeName = nodeReference.Target.DisplayName.ToString(),
+                            NodeName = nodeReference.Target.DisplayName,
                             Children = (bool)nodeReference.Target.Children,
                             ParentIdList = parentId,
                             DiscovererId = discovererId,
@@ -139,6 +142,9 @@ namespace Microsoft.Azure.IIoT.App.Services {
         /// <returns>ListNode</returns>
         public async Task<PagedResult<ListNode>> GetTreeNextAsync(string endpointId, List<string> parentId, string discovererId,
             CredentialModel credential = null, PagedResult<ListNode> previousPage = null) {
+            if (previousPage is null) {
+                throw new ArgumentNullException(nameof(previousPage));
+            }
 
             var pageResult = new PagedResult<ListNode>();
             var header = Elevate(new RequestHeaderApiModel(), credential);
@@ -150,14 +156,14 @@ namespace Microsoft.Azure.IIoT.App.Services {
             modelNext.Header = header;
 
             try {
-                var browseDataNext = await _twinService.NodeBrowseNextAsync(endpointId, modelNext);
+                var browseDataNext = await _twinService.NodeBrowseNextAsync(endpointId, modelNext).ConfigureAwait(false);
 
                 if (browseDataNext.References != null) {
                     foreach (var nodeReference in browseDataNext.References) {
                         previousPage.Results.Add(new ListNode {
-                            Id = nodeReference.Target.NodeId.ToString(),
+                            Id = nodeReference.Target.NodeId,
                             NodeClass = nodeReference.Target.NodeClass ?? 0,
-                            NodeName = nodeReference.Target.DisplayName.ToString(),
+                            NodeName = nodeReference.Target.DisplayName,
                             Children = (bool)nodeReference.Target.Children,
                             ParentIdList = parentId,
                             DiscovererId = discovererId,
@@ -200,7 +206,7 @@ namespace Microsoft.Azure.IIoT.App.Services {
             model.Header = Elevate(new RequestHeaderApiModel(), credential);
 
             try {
-                var value = await _twinService.NodeValueReadAsync(endpointId, model);
+                var value = await _twinService.NodeValueReadAsync(endpointId, model).ConfigureAwait(false);
 
                 if (value.ErrorInfo == null) {
                     return value.Value?.ToJson()?.TrimQuotes();
@@ -236,14 +242,14 @@ namespace Microsoft.Azure.IIoT.App.Services {
             model.Header = Elevate(new RequestHeaderApiModel(), credential);
 
             try {
-                var response = await _twinService.NodeValueWriteAsync(endpointId, model);
+                var response = await _twinService.NodeValueWriteAsync(endpointId, model).ConfigureAwait(false);
 
                 if (response.ErrorInfo == null) {
-                    return string.Format("value successfully written to node '{0}'", nodeId);
+                    return $"value successfully written to node '{nodeId}'";
                 }
                 else {
                     if (response.ErrorInfo.Diagnostics != null) {
-                        return response.ErrorInfo.Diagnostics.ToString();
+                        return response.ErrorInfo.Diagnostics.ToJson();
                     }
                     else {
                         return response.ErrorInfo.ToString();
@@ -275,14 +281,14 @@ namespace Microsoft.Azure.IIoT.App.Services {
             model.Header = Elevate(new RequestHeaderApiModel(), credential);
 
             try {
-                Parameter = await _twinService.NodeMethodGetMetadataAsync(endpointId, model);
+                Parameter = await _twinService.NodeMethodGetMetadataAsync(endpointId, model).ConfigureAwait(false);
 
                 if (Parameter.ErrorInfo == null) {
                     return null;
                 }
                 else {
                     if (Parameter.ErrorInfo.Diagnostics != null) {
-                        return Parameter.ErrorInfo.Diagnostics.ToString();
+                        return Parameter.ErrorInfo.Diagnostics.ToJson();
                     }
                     else {
                         return Parameter.ErrorInfo.ToString();
@@ -307,6 +313,13 @@ namespace Microsoft.Azure.IIoT.App.Services {
         /// <returns>Status</returns>
         public async Task<string> MethodCallAsync(MethodMetadataResponseApiModel parameters, string[] parameterValues,
             string endpointId, string nodeId, CredentialModel credential = null) {
+            if (parameters is null) {
+                throw new ArgumentNullException(nameof(parameters));
+            }
+
+            if (parameterValues is null) {
+                throw new ArgumentNullException(nameof(parameterValues));
+            }
 
             var argumentsList = new List<MethodCallArgumentApiModel>();
             var model = new MethodCallRequestApiModel() {
@@ -329,14 +342,14 @@ namespace Microsoft.Azure.IIoT.App.Services {
                     }
                     model.Arguments = argumentsList;
                 }
-                MethodCallResponse = await _twinService.NodeMethodCallAsync(endpointId, model);
+                MethodCallResponse = await _twinService.NodeMethodCallAsync(endpointId, model).ConfigureAwait(false);
 
                 if (MethodCallResponse.ErrorInfo == null) {
                     return null;
                 }
                 else {
                     if (MethodCallResponse.ErrorInfo.Diagnostics != null) {
-                        return MethodCallResponse.ErrorInfo.Diagnostics.ToString();
+                        return MethodCallResponse.ErrorInfo.Diagnostics.ToJson();
                     }
                     else {
                         return MethodCallResponse.ErrorInfo.ToString();

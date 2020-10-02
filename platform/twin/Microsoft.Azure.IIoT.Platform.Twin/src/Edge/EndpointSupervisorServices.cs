@@ -36,22 +36,22 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge {
 
         /// <inheritdoc/>
         public async Task ActivateAsync(string id, string secret, CancellationToken ct) {
-            await _hosts.StartAsync(id, secret, IdentityType.Endpoint, ct);
+            await _hosts.StartAsync(id, secret, IdentityType.Endpoint, ct).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
         public async Task DeactivateAsync(string id, CancellationToken ct) {
-            await _hosts.StopAsync(id, ct);
+            await _hosts.StopAsync(id, ct).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
         public async Task AttachAsync(string id, string secret) {
-            await _hosts.QueueStartAsync(id, IdentityType.Endpoint, secret);
+            await _hosts.QueueStartAsync(id, IdentityType.Endpoint, secret).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
         public async Task DetachAsync(string id) {
-            await _hosts.QueueStopAsync(id);
+            await _hosts.QueueStopAsync(id).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>

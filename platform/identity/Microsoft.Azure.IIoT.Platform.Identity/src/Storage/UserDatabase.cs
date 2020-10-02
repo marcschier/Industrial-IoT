@@ -50,7 +50,7 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Storage {
             }
             try {
                 var document = user.ToDocumentModel();
-                await _documents.AddAsync(document, ct);
+                await _documents.AddAsync(document, ct: ct).ConfigureAwait(false);
                 return IdentityResult.Success;
             }
             catch {
@@ -66,14 +66,14 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Storage {
             }
             while (true) {
                 var document = await _documents.FindAsync<UserDocumentModel>(
-                    user.Id, ct);
+                    user.Id, ct: ct).ConfigureAwait(false);
                 if (document == null) {
                     return IdentityResult.Failed();
                 }
                 try {
                     var newDocument = document.Value.UpdateFrom(user);
                     document = await _documents.ReplaceAsync(
-                        document, newDocument, ct);
+                        document, newDocument, ct: ct).ConfigureAwait(false);
                     return IdentityResult.Success;
                 }
                 catch (ResourceOutOfDateException) {
@@ -86,8 +86,8 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Storage {
         public async Task<IdentityResult> DeleteAsync(UserModel user,
             CancellationToken ct) {
             try {
-                await _documents.DeleteAsync<UserDocumentModel>(user.Id, ct, null,
-                    user.ConcurrencyStamp);
+                await _documents.DeleteAsync<UserDocumentModel>(user.Id, null, user.ConcurrencyStamp,
+                    ct).ConfigureAwait(false);
                 return IdentityResult.Success;
             }
             catch {
@@ -98,7 +98,7 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Storage {
         /// <inheritdoc/>
         public async Task<UserModel> FindByIdAsync(string userId,
             CancellationToken ct) {
-            var user = await _documents.FindAsync<UserDocumentModel>(userId, ct);
+            var user = await _documents.FindAsync<UserDocumentModel>(userId, ct: ct).ConfigureAwait(false);
             if (user?.Value == null) {
                 return null;
             }
@@ -116,7 +116,7 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Storage {
                 .Where(x => x.NormalizedUserName == normalizedUserName)
                 .GetResults();
             if (results.HasMore()) {
-                var documents = await results.ReadAsync();
+                var documents = await results.ReadAsync().ConfigureAwait(false);
                 return documents.FirstOrDefault().Value.ToServiceModel();
             }
             return null;
@@ -136,7 +136,7 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Storage {
                 //   .Where(x => x.ProviderKey == providerKey) // TODO
                 .GetResults();
             if (results.HasMore()) {
-                var documents = await results.ReadAsync();
+                var documents = await results.ReadAsync().ConfigureAwait(false);
                 return documents.FirstOrDefault().Value.ToServiceModel();
             }
             return null;
@@ -153,7 +153,7 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Storage {
                 .Where(x => x.NormalizedEmail == normalizedEmail)
                 .GetResults();
             if (results.HasMore()) {
-                var documents = await results.ReadAsync();
+                var documents = await results.ReadAsync().ConfigureAwait(false);
                 return documents.FirstOrDefault().Value.ToServiceModel();
             }
             return null;
@@ -172,7 +172,7 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Storage {
                 .GetResults();
             var users = new List<UserModel>();
             if (results.HasMore()) {
-                var documents = await results.ReadAsync();
+                var documents = await results.ReadAsync().ConfigureAwait(false);
                 users.AddRange(documents.Select(d => d.Value.ToServiceModel()));
             }
             return users;
@@ -186,7 +186,7 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Storage {
             }
             // Check if the given role name exists
             var foundRole = await _roleStore.FindByNameAsync(
-                normalizedRoleName, ct);
+                normalizedRoleName, ct).ConfigureAwait(false);
             if (foundRole == null) {
                 throw new ArgumentException(nameof(normalizedRoleName),
                     $"The role {normalizedRoleName} does not exist");
@@ -194,7 +194,7 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Storage {
             await UpdateUserDocumentAsync(user, document => {
                 document.Roles.Add(normalizedRoleName);
                 return document;
-            }, ct);
+            }, ct).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
@@ -337,7 +337,7 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Storage {
                 .GetResults();
             var users = new List<UserModel>();
             if (results.HasMore()) {
-                var documents = await results.ReadAsync();
+                var documents = await results.ReadAsync().ConfigureAwait(false);
                 users.AddRange(documents.Select(d => d.Value.ToServiceModel()));
             }
             return users;
@@ -678,7 +678,7 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Storage {
             }
             while (true) {
                 var document = await _documents.FindAsync<UserDocumentModel>(
-                    user.Id, ct);
+                    user.Id, ct: ct).ConfigureAwait(false);
                 if (document == null) {
                     throw new ResourceNotFoundException("User was not found");
                 }
@@ -689,7 +689,7 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Storage {
                     var newDocument = document.Value.Clone();
                     var result = update(newDocument);
                     document = await _documents.ReplaceAsync(document,
-                        newDocument, ct);
+                        newDocument, ct: ct).ConfigureAwait(false);
                     return result;
                 }
                 catch (ResourceOutOfDateException) {
@@ -714,7 +714,7 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Storage {
                 throw new ArgumentNullException(nameof(extract));
             }
             var document = await _documents.GetAsync<UserDocumentModel>(
-                user.Id, ct);
+                user.Id, ct: ct).ConfigureAwait(false);
             if (document.Etag != user.ConcurrencyStamp) {
                 throw new ResourceOutOfDateException("User was out of date");
             }

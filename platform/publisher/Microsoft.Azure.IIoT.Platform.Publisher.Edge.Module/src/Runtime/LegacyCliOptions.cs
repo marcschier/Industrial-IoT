@@ -18,17 +18,24 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Module.Runtime {
     using System;
     using System.Collections.Generic;
     using System.ComponentModel;
+    using System.Globalization;
 
     /// <summary>
     /// Class that represents a dictionary with all command line arguments from the legacy version of the OPC Publisher
     /// </summary>
+#pragma warning disable CA1710 // Identifiers should have correct suffix
     public class LegacyCliOptions : Dictionary<string, string>, ILegacyCliModelProvider {
+#pragma warning restore CA1710 // Identifiers should have correct suffix
 
         /// <summary>
         /// Creates a new instance of the the legacy CLI options based on existing configuration values.
         /// </summary>
         /// <param name="config"></param>
         public LegacyCliOptions(IConfiguration config) {
+            if (config is null) {
+                throw new ArgumentNullException(nameof(config));
+            }
+
             foreach (var item in config.GetChildren()) {
                 this[item.Key] = item.Value;
             }
@@ -71,11 +78,11 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Module.Runtime {
                         (int i) => this[LegacyCliConfigKeys.HeartbeatIntervalDefault] = TimeSpan.FromSeconds(i).ToString() },
                     { "sf|skipfirstevent=", "The publisher is using this as default value for the skip first " +
                         "event setting of nodes without a skip first event setting.",
-                        (bool b) => this[LegacyCliConfigKeys.SkipFirstDefault] = b.ToString() },
+                        (bool b) => this[LegacyCliConfigKeys.SkipFirstDefault] = b.ToString(CultureInfo.InvariantCulture) },
 
                     { "fm|fullfeaturedmessage=", "The full featured mode for messages (all fields filled in)." +
                         "Default is 'true', for legacy compatibility use 'false'",
-                        (bool b) => this[LegacyCliConfigKeys.FullFeaturedMessage] = b.ToString() },
+                        (bool b) => this[LegacyCliConfigKeys.FullFeaturedMessage] = b.ToString(CultureInfo.InvariantCulture) },
 
                     // Client settings
                     { "ot|operationtimeout=", "The operation timeout of the publisher OPC UA client in ms.",
@@ -93,20 +100,20 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Module.Runtime {
                         (int i) => this[LegacyCliConfigKeys.OpcKeepAliveIntervalInSec] = TimeSpan.FromSeconds(i).ToString() },
                     { "kt|keepalivethreshold=", "Specify the number of keep alive packets a server can miss, " +
                         "before the session is disconneced.",
-                        (uint u) => this[LegacyCliConfigKeys.OpcKeepAliveDisconnectThreshold] = u.ToString() },
+                        (uint u) => this[LegacyCliConfigKeys.OpcKeepAliveDisconnectThreshold] = u.ToString(CultureInfo.InvariantCulture) },
                     { "fd|fetchdisplayname=", "Fetches the displayname for the monitored items subscribed.",
-                        (bool b) => this[LegacyCliConfigKeys.FetchOpcNodeDisplayName] = b.ToString() },
+                        (bool b) => this[LegacyCliConfigKeys.FetchOpcNodeDisplayName] = b.ToString(CultureInfo.InvariantCulture) },
                     { "sw|sessionconnectwait=", "Wait time in seconds publisher is trying to connect " +
                         "to disconnected endpoints and starts monitoring unmonitored items.",
                         (int s) => this[LegacyCliConfigKeys.SessionConnectWaitSec] = TimeSpan.FromSeconds(s).ToString() },
                     { "mq|monitoreditemqueuecapacity=", "Default queue size for monitored items.",
-                        (uint u) => this[LegacyCliConfigKeys.DefaultQueueSize] = u.ToString() },
+                        (uint u) => this[LegacyCliConfigKeys.DefaultQueueSize] = u.ToString(CultureInfo.InvariantCulture) },
 
                     // cert store option
                     { "aa|autoaccept", "The publisher trusts all servers it is establishing a connection to.",
-                          b => this[LegacyCliConfigKeys.AutoAcceptCerts] = (b != null).ToString() },
+                          b => this[LegacyCliConfigKeys.AutoAcceptCerts] = (b != null).ToString(CultureInfo.InvariantCulture) },
                     { "tm|trustmyself", "The publisher certificate is put into the trusted store automatically.",
-                        t => this[LegacyCliConfigKeys.TrustMyself] = (t != null).ToString() },
+                        t => this[LegacyCliConfigKeys.TrustMyself] = (t != null).ToString(CultureInfo.InvariantCulture) },
                     { "at|appcertstoretype=", "The own application cert store type (allowed: Directory, X509Store).",
                         s => {
                             if (s.Equals(CertificateStoreType.X509Store, StringComparison.OrdinalIgnoreCase) ||
@@ -129,15 +136,15 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Module.Runtime {
                         s => this[LegacyCliConfigKeys.OpcIssuerCertStorePath] = s },
                     { "it|issuercertstoretype=", "Legacy - do not use.", _ => {} },
                     { "bs|batchsize=", "The size of message batching buffer.",
-                        (int i) => this[LegacyCliConfigKeys.BatchSize] = i.ToString() },
+                        (int i) => this[LegacyCliConfigKeys.BatchSize] = i.ToString(CultureInfo.InvariantCulture) },
                     { "si|iothubsendinterval=", "The trigger batching interval in seconds.",
                         (int k) => this[LegacyCliConfigKeys.BatchTriggerInterval] = TimeSpan.FromSeconds(k).ToString() },
                     { "ms|iothubmessagesize=", "The maximum size of the (IoT D2C) message.",
-                        (int i) => this[LegacyCliConfigKeys.MaxMessageSize] = i.ToString() },
+                        (int i) => this[LegacyCliConfigKeys.MaxMessageSize] = i.ToString(CultureInfo.InvariantCulture) },
 
                     // testing purposes
                     { "sc|scaletestcount=", "The number of monitored item clones in scale tests.",
-                        (int i) => this[LegacyCliConfigKeys.ScaleTestCount] = i.ToString() },
+                        (int i) => this[LegacyCliConfigKeys.ScaleTestCount] = i.ToString(CultureInfo.InvariantCulture) },
                     { "mm|messagingmode=", "The messaging scheme " +
                         $"(allowed values: {string.Join(", ", Enum.GetNames(typeof(MessageSchema)))}).",
                         (MessageSchema m) => this[LegacyCliConfigKeys.Schema] = m.ToString() },

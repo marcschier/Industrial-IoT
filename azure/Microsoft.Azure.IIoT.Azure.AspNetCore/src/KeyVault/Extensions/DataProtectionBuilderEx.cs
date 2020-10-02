@@ -59,7 +59,7 @@ namespace Microsoft.Extensions.DependencyInjection {
                     "for dataprotection to be able to store the root key.");
             }
             var keyName = config.KeyVaultKeyDataProtection;
-            var keyVault = new KeyVaultClientBootstrap(configuration);
+            using var keyVault = new KeyVaultClientBootstrap(configuration);
             if (!TryInititalizeKeyAsync(keyVault.Client, config.KeyVaultBaseUrl, keyName).Result) {
                 throw new UnauthorizedAccessException("Cannot access keyvault");
             }
@@ -103,7 +103,7 @@ namespace Microsoft.Extensions.DependencyInjection {
             KeyVaultClient keyVaultClient, string vaultUri, string keyName) {
             try {
                 try {
-                    var key = await keyVaultClient.GetKeyAsync(vaultUri, keyName);
+                    var key = await keyVaultClient.GetKeyAsync(vaultUri, keyName).ConfigureAwait(false);
                 }
                 catch {
                     // Try create key
@@ -113,7 +113,7 @@ namespace Microsoft.Extensions.DependencyInjection {
                         KeyOps = new List<string> {
                             JsonWebKeyOperation.Wrap, JsonWebKeyOperation.Unwrap
                         }
-                    });
+                    }).ConfigureAwait(false);
                 }
                 // Worked - we have a working keyvault client.
                 return true;

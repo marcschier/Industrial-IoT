@@ -5,6 +5,7 @@
 
 namespace Microsoft.Azure.IIoT.Platform.Vault.Models {
     using Microsoft.Azure.IIoT.Platform.Core.Models;
+    using System.Collections.Generic;
 
     /// <summary>
     /// Certificate request model
@@ -29,7 +30,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Models {
         /// <summary>
         /// Signing request
         /// </summary>
-        public byte[] SigningRequest { get; set; }
+        public IReadOnlyCollection<byte> SigningRequest { get; set; }
 
         /// <summary>
         /// Resulting certificate
@@ -39,6 +40,6 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Models {
         /// <summary>
         /// Optional private key handle
         /// </summary>
-        public byte[] KeyHandle { get; set; }
+        public IReadOnlyCollection<byte> KeyHandle { get; set; }
     }
 }

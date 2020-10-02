@@ -32,8 +32,8 @@ namespace Microsoft.Azure.IIoT.Crypto {
         /// <returns></returns>
         Task<X509Certificate2> CreateCertificateAsync(IDigestSigner signer,
             Certificate issuer, X500DistinguishedName subjectName, Key publicKey,
-            DateTime notBefore, DateTime notAfter, SignatureType signatureType,
-            bool canIssue, Func<byte[], IEnumerable<X509Extension>> extensions = null,
+            DateTime notBefore, DateTime notAfter, SignatureType signatureType, bool canIssue,
+            Func<IReadOnlyCollection<byte>, IEnumerable<X509Extension>> extensions = null,
             CancellationToken ct = default);
 
         /// <summary>
@@ -52,8 +52,8 @@ namespace Microsoft.Azure.IIoT.Crypto {
         /// <returns></returns>
         Task<X509Certificate2> CreateCertificateAsync(IDigestSigner signer,
             KeyHandle signingKey, X500DistinguishedName subjectName, Key publicKey,
-            DateTime notBefore, DateTime notAfter, SignatureType signatureType,
-            bool canIssue, Func<byte[], IEnumerable<X509Extension>> extensions = null,
+            DateTime notBefore, DateTime notAfter, SignatureType signatureType, bool canIssue,
+            Func<IReadOnlyCollection<byte>, IEnumerable<X509Extension>> extensions = null,
             CancellationToken ct = default);
     }
 }

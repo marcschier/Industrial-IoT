@@ -9,7 +9,9 @@ namespace Opc.Ua.PubSub {
     /// <summary>
     /// Encodable dataset message payload
     /// </summary>
+#pragma warning disable CA1710 // Identifiers should have correct suffix
     public class DataSet : Dictionary<string, DataValue> {
+#pragma warning restore CA1710 // Identifiers should have correct suffix
 
         /// <summary>
         /// Create payload
@@ -17,10 +19,12 @@ namespace Opc.Ua.PubSub {
         /// <param name="values"></param>
         /// <param name="fieldContentMask"></param>
         public DataSet(IDictionary<string, DataValue> values, uint fieldContentMask) : this() {
-            FieldContentMask = fieldContentMask;
-            foreach (var value in values) {
-                this[value.Key] = value.Value;
+            if (values != null) {
+                foreach (var value in values) {
+                    this[value.Key] = value.Value;
+                }
             }
+            FieldContentMask = fieldContentMask;
         }
 
         /// <summary>

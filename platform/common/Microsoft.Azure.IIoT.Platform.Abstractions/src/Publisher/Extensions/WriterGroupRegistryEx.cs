@@ -25,11 +25,11 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher {
             this IWriterGroupRegistry service, WriterGroupInfoQueryModel query,
             CancellationToken ct = default) {
             var registrations = new List<WriterGroupInfoModel>();
-            var result = await service.QueryWriterGroupsAsync(query, null, ct);
+            var result = await service.QueryWriterGroupsAsync(query, null, ct).ConfigureAwait(false);
             registrations.AddRange(result.WriterGroups);
             while (result.ContinuationToken != null) {
                 result = await service.ListWriterGroupsAsync(result.ContinuationToken,
-                    null, ct);
+                    null, ct).ConfigureAwait(false);
                 registrations.AddRange(result.WriterGroups);
             }
             return registrations;
@@ -44,11 +44,11 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher {
         public static async Task<List<WriterGroupInfoModel>> ListAllWriterGroupsAsync(
             this IWriterGroupRegistry service, CancellationToken ct = default) {
             var registrations = new List<WriterGroupInfoModel>();
-            var result = await service.ListWriterGroupsAsync(null, null, ct);
+            var result = await service.ListWriterGroupsAsync(null, null, ct).ConfigureAwait(false);
             registrations.AddRange(result.WriterGroups);
             while (result.ContinuationToken != null) {
                 result = await service.ListWriterGroupsAsync(result.ContinuationToken,
-                    null, ct);
+                    null, ct).ConfigureAwait(false);
                 registrations.AddRange(result.WriterGroups);
             }
             return registrations;

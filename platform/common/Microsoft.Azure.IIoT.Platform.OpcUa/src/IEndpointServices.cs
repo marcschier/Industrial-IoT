@@ -24,13 +24,14 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa {
         /// <param name="priority"></param>
         /// <param name="service"></param>
         /// <param name="timeout"></param>
-        /// <param name="ct"></param>
         /// <param name="exceptionHandler"></param>
+        /// <param name="ct"></param>
         /// <returns></returns>
         Task<T> ExecuteServiceAsync<T>(ConnectionModel connection,
-            CredentialModel elevation, int priority, Func<Session,
-            Task<T>> service, TimeSpan? timeout, CancellationToken ct,
-            Func<Exception, bool> exceptionHandler);
+            CredentialModel elevation, int priority,
+            Func<Session, Task<T>> service, TimeSpan? timeout,
+            Func<Exception, bool> exceptionHandler,
+            CancellationToken ct = default);
 
         /// <summary>
         /// Get or create session handle

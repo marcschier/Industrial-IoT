@@ -19,6 +19,6 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Models {
         /// </summary>
         [DataMember(Name = "eventFields", Order = 0,
             EmitDefaultValue = false)]
-        public List<VariantValue> EventFields { get; set; }
+        public IReadOnlyList<VariantValue> EventFields { get; set; }
     }
 }

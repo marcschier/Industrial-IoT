@@ -41,7 +41,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                 throw new ArgumentException(nameof(gatewayId));
             }
             var deviceId = gatewayId;
-            var device = await _iothub.GetAsync(deviceId, null, ct);
+            var device = await _iothub.GetAsync(deviceId, null, ct).ConfigureAwait(false);
             var registration = device.ToEntityRegistration()
                 as GatewayRegistration;
             if (registration == null) {
@@ -50,7 +50,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
             }
 
             var modules = await _iothub.QueryAllDeviceTwinsAsync(
-                $"SELECT * FROM devices.modules WHERE deviceId = '{device.Id}'", ct);
+                $"SELECT * FROM devices.modules WHERE deviceId = '{device.Id}'", ct).ConfigureAwait(false);
             var gatewayModules = new GatewayModulesModel();
             foreach (var module in modules) {
                 var entity = module.ToEntityRegistration(onlyServerState);
@@ -90,7 +90,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
 
             while (true) {
                 try {
-                    var twin = await _iothub.GetAsync(deviceId, null, ct);
+                    var twin = await _iothub.GetAsync(deviceId, null, ct).ConfigureAwait(false);
                     if (twin.Id != deviceId) {
                         throw new ArgumentException("Id must be same as twin to patch",
                             nameof(gatewayId));
@@ -111,12 +111,12 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                     }
                     // Patch
                     twin = await _iothub.PatchAsync(registration.Patch(
-                        patched.ToGatewayRegistration()), false, ct);
+                        patched.ToGatewayRegistration()), false, ct).ConfigureAwait(false);
 
                     // Send update to through broker
                     registration = twin.ToEntityRegistration(true) as GatewayRegistration;
                     await _broker.NotifyAllAsync(l => l.OnGatewayUpdatedAsync(null,
-                        registration.ToServiceModel()));
+                        registration.ToServiceModel())).ConfigureAwait(false);
                     return;
                 }
                 catch (ResourceOutOfDateException ex) {
@@ -132,7 +132,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
             var query = "SELECT * FROM devices WHERE " +
                 $"tags.{TwinProperty.Type} = '{IdentityType.Gateway}' " +
                 $"AND NOT IS_DEFINED(tags.{nameof(EntityRegistration.NotSeenSince)})";
-            var devices = await _iothub.QueryDeviceTwinsAsync(query, continuation, pageSize, ct);
+            var devices = await _iothub.QueryDeviceTwinsAsync(query, continuation, pageSize, ct).ConfigureAwait(false);
             return new GatewayListModel {
                 ContinuationToken = devices.ContinuationToken,
                 Items = devices.Items
@@ -164,7 +164,7 @@ $"AND (tags.{TwinProperty.SiteId} = '{model.SiteId}' OR deviceId = '{model.SiteI
                 }
             }
 
-            var queryResult = await _iothub.QueryDeviceTwinsAsync(query, null, pageSize, ct);
+            var queryResult = await _iothub.QueryDeviceTwinsAsync(query, null, pageSize, ct).ConfigureAwait(false);
             return new GatewayListModel {
                 ContinuationToken = queryResult.ContinuationToken,
                 Items = queryResult.Items

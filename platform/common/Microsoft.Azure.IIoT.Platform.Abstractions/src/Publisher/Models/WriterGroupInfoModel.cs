@@ -61,7 +61,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Models {
         /// <summary>
         /// Locales to use
         /// </summary>
-        public List<string> LocaleIds { get; set; }
+        public IReadOnlyList<string> LocaleIds { get; set; }
 
         /// <summary>
         /// Security mode
@@ -76,7 +76,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Models {
         /// <summary>
         /// Security key services to use
         /// </summary>
-        public List<ConnectionModel> SecurityKeyServices { get; set; }
+        public IReadOnlyList<ConnectionModel> SecurityKeyServices { get; set; }
 
         /// <summary>
         /// Max network message size

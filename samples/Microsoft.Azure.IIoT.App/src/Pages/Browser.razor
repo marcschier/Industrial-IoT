@@ -29,7 +29,7 @@
 @inject SecureData secureData
 @inject IRegistryServiceApi registryService
 
-@inherits IIoTItemsCollection<ListNode>
+@inherits ItemsCollection<ListNode>
 
 <h1>Endpoint Control</h1>
 
@@ -40,7 +40,7 @@
         Discoverer: @EndpointModel.DiscovererId
         Site: @EndpointModel.SiteId
         Security Mode: @EndpointModel.Endpoint.SecurityMode
-        Security Policy: @CommonHelper.ExtractSecurityPolicy(EndpointModel.Endpoint.SecurityPolicy)
+        Security Policy: @UICommon.ExtractSecurityPolicy(EndpointModel.Endpoint.SecurityPolicy)
         Security Level: @EndpointModel.SecurityLevel
     </div>
 }

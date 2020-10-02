@@ -20,6 +20,9 @@ namespace Microsoft.Azure.IIoT.Hub.Models {
         /// <param name="twin"></param>
         /// <returns></returns>
         public static bool? IsConnected(this DeviceTwinModel twin) {
+            if (twin == null) {
+                return null;
+            }
             return twin.ConnectionState?.Equals("Connected",
                 StringComparison.InvariantCultureIgnoreCase);
         }
@@ -30,6 +33,9 @@ namespace Microsoft.Azure.IIoT.Hub.Models {
         /// <param name="twin"></param>
         /// <returns></returns>
         public static bool? IsEnabled(this DeviceTwinModel twin) {
+            if (twin == null) {
+                return null;
+            }
             return twin.Status?.Equals("enabled",
                 StringComparison.InvariantCultureIgnoreCase);
         }
@@ -40,6 +46,9 @@ namespace Microsoft.Azure.IIoT.Hub.Models {
         /// <param name="twin"></param>
         /// <returns></returns>
         public static bool? IsDisabled(this DeviceTwinModel twin) {
+            if (twin == null) {
+                return null;
+            }
             return twin.Status?.Equals("disabled",
                 StringComparison.InvariantCultureIgnoreCase);
         }
@@ -81,11 +90,14 @@ namespace Microsoft.Azure.IIoT.Hub.Models {
         /// <returns></returns>
         public static Dictionary<string, VariantValue> GetConsolidatedProperties(
             this DeviceTwinModel model) {
+            if (model is null) {
+                throw new ArgumentNullException(nameof(model));
+            }
 
             var desired = model.Properties?.Desired;
             var reported = model.Properties?.Reported;
             if (reported == null || desired == null) {
-                return (reported ?? desired) ??
+                return (reported ?? desired)?.ToDictionary(k => k.Key, v => v.Value) ??
                     new Dictionary<string, VariantValue>();
             }
 

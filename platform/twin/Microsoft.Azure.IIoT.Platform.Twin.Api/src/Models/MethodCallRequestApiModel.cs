@@ -49,7 +49,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Models {
         /// </summary>
         [DataMember(Name = "arguments", Order = 2,
             EmitDefaultValue = false)]
-        public List<MethodCallArgumentApiModel> Arguments { get; set; }
+        public IReadOnlyList<MethodCallArgumentApiModel> Arguments { get; set; }
 
         /// <summary>
         /// An optional component path from the node identified by
@@ -58,7 +58,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Models {
         /// </summary>
         [DataMember(Name = "methodBrowsePath", Order = 3,
             EmitDefaultValue = false)]
-        public string[] MethodBrowsePath { get; set; }
+        public IReadOnlyList<string> MethodBrowsePath { get; set; }
 
         /// <summary>
         /// An optional component path from the node identified by
@@ -67,7 +67,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Models {
         /// </summary>
         [DataMember(Name = "objectBrowsePath", Order = 4,
             EmitDefaultValue = false)]
-        public string[] ObjectBrowsePath { get; set; }
+        public IReadOnlyList<string> ObjectBrowsePath { get; set; }
 
         /// <summary>
         /// Optional request header

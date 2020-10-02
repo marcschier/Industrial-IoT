@@ -42,7 +42,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
             _logger.Information("Synchronizing publisher registry with databases...");
             string continuation = null;
             do {
-                var result = await _groups.ListWriterGroupsAsync(continuation, null, ct);
+                var result = await _groups.ListWriterGroupsAsync(continuation, null, ct).ConfigureAwait(false);
                 continuation = result.ContinuationToken;
                 foreach (var group in result.WriterGroups) {
 
@@ -50,11 +50,11 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                     var writers = await _writers.QueryAllDataSetWritersAsync(
                         new DataSetWriterInfoQueryModel {
                             WriterGroupId = group.WriterGroupId
-                        }, ct);
+                        }, ct).ConfigureAwait(false);
 
                     _logger.Information("Synchronizing writer group {group}...",
                         group.WriterGroupId);
-                    await _publisher.SynchronizeWriterGroupAsync(group, writers, ct);
+                    await _publisher.SynchronizeWriterGroupAsync(group, writers, ct).ConfigureAwait(false);
                     _logger.Information("Writer group {group} synchronized.",
                         group.WriterGroupId);
                 }

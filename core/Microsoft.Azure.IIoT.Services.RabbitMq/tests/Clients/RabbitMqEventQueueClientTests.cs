@@ -33,9 +33,9 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
                     tcs.TrySetResult(a);
                 };
 
-                await queue.SendAsync(target, data);
+                await queue.SendAsync(target, data).ConfigureAwait(false);
 
-                var result = await tcs.Task.With1MinuteTimeout();
+                var result = await tcs.Task.With1MinuteTimeout().ConfigureAwait(false);
                 Assert.True(data.SequenceEqualsSafe(result.Data));
                 Assert.Null(result.DeviceId);
                 Assert.Null(result.ModuleId);
@@ -52,16 +52,16 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
                 Skip.If(queue == null);
 
                 var data = fix.CreateMany<byte>().ToArray();
-                var properties = fix.Create<IDictionary<string, string>>();
+                var properties = fix.Create<Dictionary<string, string>>();
 
                 var tcs = new TaskCompletionSource<TelemetryEventArgs>();
                 harness.OnEvent += (_, a) => {
                     tcs.TrySetResult(a);
                 };
 
-                await queue.SendAsync(target, data, properties);
+                await queue.SendAsync(target, data, properties).ConfigureAwait(false);
 
-                var result = await tcs.Task.With1MinuteTimeout();
+                var result = await tcs.Task.With1MinuteTimeout().ConfigureAwait(false);
                 Assert.True(data.SequenceEqualsSafe(result.Data));
                 Assert.Null(result.DeviceId);
                 Assert.Null(result.ModuleId);
@@ -78,7 +78,7 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
                 Skip.If(queue == null);
 
                 var data = fix.CreateMany<byte>().ToArray();
-                var properties = fix.Create<IDictionary<string, string>>();
+                var properties = fix.Create<Dictionary<string, string>>();
 
                 var count = 0;
                 var tcs = new TaskCompletionSource<TelemetryEventArgs>();
@@ -88,14 +88,14 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
                     }
                 };
 
-                await queue.SendAsync(target, fix.CreateMany<byte>().ToArray(), properties);
-                await queue.SendAsync(target, fix.CreateMany<byte>().ToArray(), properties);
-                await queue.SendAsync(target, fix.CreateMany<byte>().ToArray(), properties);
-                await queue.SendAsync(target, data, properties);
-                await queue.SendAsync(target, fix.CreateMany<byte>().ToArray(), properties);
-                await queue.SendAsync(target, fix.CreateMany<byte>().ToArray(), properties);
+                await queue.SendAsync(target, fix.CreateMany<byte>().ToArray(), properties).ConfigureAwait(false);
+                await queue.SendAsync(target, fix.CreateMany<byte>().ToArray(), properties).ConfigureAwait(false);
+                await queue.SendAsync(target, fix.CreateMany<byte>().ToArray(), properties).ConfigureAwait(false);
+                await queue.SendAsync(target, data, properties).ConfigureAwait(false);
+                await queue.SendAsync(target, fix.CreateMany<byte>().ToArray(), properties).ConfigureAwait(false);
+                await queue.SendAsync(target, fix.CreateMany<byte>().ToArray(), properties).ConfigureAwait(false);
 
-                var result = await tcs.Task.With1MinuteTimeout();
+                var result = await tcs.Task.With1MinuteTimeout().ConfigureAwait(false);
                 Assert.True(data.SequenceEqualsSafe(result.Data));
                 Assert.Null(result.DeviceId);
                 Assert.Null(result.ModuleId);
@@ -117,7 +117,7 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
                 Skip.If(queue == null);
 
                 var data = fix.CreateMany<byte>().ToArray();
-                var properties = fix.Create<IDictionary<string, string>>();
+                var properties = fix.Create<Dictionary<string, string>>();
                 var count = 0;
                 var tcs = new TaskCompletionSource<TelemetryEventArgs>();
                 harness.OnEvent += (_, a) => {
@@ -129,9 +129,9 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
                 var rand = new Random();
                 var senders = Enumerable.Range(0, max)
                     .Select(i => queue.SendAsync(target + "/" + rand.Next(0, 10), data, properties));
-                await Task.WhenAll(senders);
+                await Task.WhenAll(senders).ConfigureAwait(false);
 
-                var result = await tcs.Task.With1MinuteTimeout();
+                var result = await tcs.Task.With1MinuteTimeout().ConfigureAwait(false);
                 Assert.True(data.SequenceEqualsSafe(result.Data));
                 Assert.Null(result.DeviceId);
                 Assert.Null(result.ModuleId);
@@ -165,8 +165,8 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
                     }
                 });
 
-                var result = await tcs.Task.With1MinuteTimeout();
-                Assert.Equal(expected, await actual.Task);
+                var result = await tcs.Task.With1MinuteTimeout().ConfigureAwait(false);
+                Assert.Equal(expected, await actual.Task.ConfigureAwait(false));
                 Assert.True(data.SequenceEqualsSafe(result.Data));
                 Assert.Null(result.DeviceId);
                 Assert.Null(result.ModuleId);
@@ -183,7 +183,7 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
                 Skip.If(queue == null);
 
                 var data = fix.CreateMany<byte>().ToArray();
-                var properties = fix.Create<IDictionary<string, string>>();
+                var properties = fix.Create<Dictionary<string, string>>();
 
                 var tcs = new TaskCompletionSource<TelemetryEventArgs>();
                 harness.OnEvent += (_, a) => {
@@ -201,8 +201,8 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
                     }
                 }, properties);
 
-                var result = await tcs.Task.With1MinuteTimeout();
-                Assert.Equal(expected, await actual.Task);
+                var result = await tcs.Task.With1MinuteTimeout().ConfigureAwait(false);
+                Assert.Equal(expected, await actual.Task.ConfigureAwait(false));
                 Assert.True(data.SequenceEqualsSafe(result.Data));
                 Assert.Null(result.DeviceId);
                 Assert.Null(result.ModuleId);
@@ -219,7 +219,7 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
                 Skip.If(queue == null);
 
                 var data = fix.CreateMany<byte>().ToArray();
-                var properties = fix.Create<IDictionary<string, string>>();
+                var properties = fix.Create<Dictionary<string, string>>();
 
                 var count = 0;
                 var tcs = new TaskCompletionSource<TelemetryEventArgs>();
@@ -244,8 +244,8 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
                 }, properties);
                 queue.Send(target, fix.CreateMany<byte>().ToArray(), 5, (t, e) => { }, properties);
 
-                var result = await tcs.Task.With1MinuteTimeout();
-                Assert.Equal(expected, await actual.Task);
+                var result = await tcs.Task.With1MinuteTimeout().ConfigureAwait(false);
+                Assert.Equal(expected, await actual.Task.ConfigureAwait(false));
                 Assert.True(data.SequenceEqualsSafe(result.Data));
                 Assert.Null(result.DeviceId);
                 Assert.Null(result.ModuleId);
@@ -267,7 +267,7 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
                 Skip.If(queue == null);
 
                 var data = fix.CreateMany<byte>().ToArray();
-                var properties = fix.Create<IDictionary<string, string>>();
+                var properties = fix.Create<Dictionary<string, string>>();
                 var count = 0;
                 var tcs = new TaskCompletionSource<TelemetryEventArgs>();
                 harness.OnEvent += (_, a) => {
@@ -283,7 +283,7 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
                     .ForEach(i => queue.Send(target + "/" + rand.Next(0, 100), data, i,
                         (t, e) => hashSet.Add(t), properties));
 
-                var result = await tcs.Task.With1MinuteTimeout();
+                var result = await tcs.Task.With1MinuteTimeout().ConfigureAwait(false);
                 Assert.True(data.SequenceEqualsSafe(result.Data));
                 Assert.Null(result.DeviceId);
                 Assert.Null(result.ModuleId);
@@ -300,9 +300,9 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
                 Skip.If(queue == null);
 
                 await Assert.ThrowsAsync<ArgumentNullException>(
-                    () => queue.SendAsync(target, null));
+                    () => queue.SendAsync(target, null)).ConfigureAwait(false);
                 await Assert.ThrowsAsync<ArgumentNullException>(
-                    () => queue.SendAsync(null, new byte[4]));
+                    () => queue.SendAsync(null, new byte[4])).ConfigureAwait(false);
                 Assert.Throws<ArgumentNullException>(
                     () => queue.Send(target, null, "test", (t, e) => { }));
                 Assert.Throws<ArgumentNullException>(

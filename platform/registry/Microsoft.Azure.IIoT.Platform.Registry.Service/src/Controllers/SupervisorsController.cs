@@ -10,6 +10,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service.Controllers {
     using Microsoft.Azure.IIoT.Platform.Registry;
     using Microsoft.Azure.IIoT.Http;
     using Microsoft.Azure.IIoT.AspNetCore.OpenApi;
+    using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using System.Linq;
@@ -49,7 +50,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service.Controllers {
         /// <returns>Supervisor registration</returns>
         [HttpGet("{supervisorId}")]
         public async Task<SupervisorApiModel> GetSupervisorAsync(string supervisorId) {
-            var result = await _supervisors.GetSupervisorAsync(supervisorId);
+            var result = await _supervisors.GetSupervisorAsync(supervisorId).ConfigureAwait(false);
             return result.ToApiModel();
         }
 
@@ -64,7 +65,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service.Controllers {
         [HttpGet("{supervisorId}/status")]
         public async Task<SupervisorStatusApiModel> GetSupervisorStatusAsync(
             string supervisorId) {
-            var result = await _diagnostics.GetSupervisorStatusAsync(supervisorId);
+            var result = await _diagnostics.GetSupervisorStatusAsync(supervisorId).ConfigureAwait(false);
             return result.ToApiModel();
         }
 
@@ -86,7 +87,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service.Controllers {
                 throw new ArgumentNullException(nameof(request));
             }
             await _supervisors.UpdateSupervisorAsync(supervisorId,
-                request.ToServiceModel());
+                request.ToServiceModel()).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -123,16 +124,10 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service.Controllers {
         [AutoRestExtension(NextPageLinkName = "continuationToken")]
         public async Task<SupervisorListApiModel> GetListOfSupervisorsAsync(
             [FromQuery] string continuationToken, [FromQuery] int? pageSize) {
-            if (Request.Headers.ContainsKey(HttpHeader.ContinuationToken)) {
-                continuationToken = Request.Headers[HttpHeader.ContinuationToken]
-                    .FirstOrDefault();
-            }
-            if (Request.Headers.ContainsKey(HttpHeader.MaxItemCount)) {
-                pageSize = int.Parse(Request.Headers[HttpHeader.MaxItemCount]
-                    .FirstOrDefault());
-            }
+            continuationToken = Request.GetContinuationToken(continuationToken);
+            pageSize = Request.GetPageSize(pageSize);
             var result = await _supervisors.ListSupervisorsAsync(
-                continuationToken, pageSize);
+                continuationToken, pageSize).ConfigureAwait(false);
             return result.ToApiModel();
         }
 
@@ -156,12 +151,9 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service.Controllers {
             if (query == null) {
                 throw new ArgumentNullException(nameof(query));
             }
-            if (Request.Headers.ContainsKey(HttpHeader.MaxItemCount)) {
-                pageSize = int.Parse(Request.Headers[HttpHeader.MaxItemCount]
-                    .FirstOrDefault());
-            }
+            pageSize = Request.GetPageSize(pageSize);
             var result = await _supervisors.QuerySupervisorsAsync(
-                query.ToServiceModel(), pageSize);
+                query.ToServiceModel(), pageSize).ConfigureAwait(false);
 
             // TODO: Filter results based on RBAC
 
@@ -189,12 +181,9 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service.Controllers {
             if (query == null) {
                 throw new ArgumentNullException(nameof(query));
             }
-            if (Request.Headers.ContainsKey(HttpHeader.MaxItemCount)) {
-                pageSize = int.Parse(Request.Headers[HttpHeader.MaxItemCount]
-                    .FirstOrDefault());
-            }
+            pageSize = Request.GetPageSize(pageSize);
             var result = await _supervisors.QuerySupervisorsAsync(
-                query.ToServiceModel(),  pageSize);
+                query.ToServiceModel(),  pageSize).ConfigureAwait(false);
 
             // TODO: Filter results based on RBAC
 

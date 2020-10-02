@@ -39,7 +39,7 @@ namespace System.Collections.Generic {
         /// <param name="b"></param>
         /// <returns></returns>
         public static HashSet<T> MergeWith<T>(this HashSet<T> a, IEnumerable<T> b) {
-            if (b?.Any() ?? false) {
+            if (b != null && b.Any()) {
                 if (a == null) {
                     a = b.ToHashSetSafe();
                 }

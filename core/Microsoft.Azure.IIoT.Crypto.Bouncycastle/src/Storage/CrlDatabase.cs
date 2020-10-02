@@ -19,7 +19,7 @@ namespace Microsoft.Azure.IIoT.Crypto.Storage {
     /// <summary>
     /// Crl database acting as a cache and endpoint for crl objects.
     /// </summary>
-    public class CrlDatabase : ICrlEndpoint, ICrlRepository, IHostProcess, IDisposable {
+    public sealed class CrlDatabase : ICrlEndpoint, ICrlRepository, IHostProcess, IDisposable {
 
         /// <summary>
         /// Create database
@@ -30,6 +30,10 @@ namespace Microsoft.Azure.IIoT.Crypto.Storage {
         /// <param name="logger"></param>
         public CrlDatabase(IItemContainerFactory container, ICertificateStore certificates,
             ICrlFactory factory, ILogger logger) {
+            if (container is null) {
+                throw new ArgumentNullException(nameof(container));
+            }
+
             _certificates = certificates ?? throw new ArgumentNullException(nameof(certificates));
             _factory = factory ?? throw new ArgumentNullException(nameof(factory));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -37,10 +41,10 @@ namespace Microsoft.Azure.IIoT.Crypto.Storage {
         }
 
         /// <inheritdoc/>
-        public async Task<IEnumerable<Crl>> GetCrlChainAsync(byte[] serial,
+        public async Task<IEnumerable<Crl>> GetCrlChainAsync(IReadOnlyCollection<byte> serial,
             CancellationToken ct) {
             var serialNumber = new SerialNumber(serial);
-            var document = await TryGetOrAddCrlAsync(serialNumber, TimeSpan.Zero, ct);
+            var document = await TryGetOrAddCrlAsync(serialNumber, TimeSpan.Zero, ct).ConfigureAwait(false);
             if (document == null) {
                 throw new ResourceNotFoundException("Cert for serial number not found.");
             }
@@ -56,7 +60,7 @@ namespace Microsoft.Azure.IIoT.Crypto.Storage {
                 !document.IssuerSerialNumber.EqualsIgnoreCase(serialNumber.ToString())) {
 
                 serialNumber = SerialNumber.Parse(document.IssuerSerialNumber);
-                document = await TryGetOrAddCrlAsync(serialNumber, TimeSpan.Zero, ct);
+                document = await TryGetOrAddCrlAsync(serialNumber, TimeSpan.Zero, ct).ConfigureAwait(false);
                 if (document == null) {
                     throw new ResourceNotFoundException("Cert chain is broken.");
                 }
@@ -73,14 +77,14 @@ namespace Microsoft.Azure.IIoT.Crypto.Storage {
 
 
         /// <inheritdoc/>
-        public async Task InvalidateAsync(byte[] serial, CancellationToken ct) {
+        public async Task InvalidateAsync(IReadOnlyCollection<byte> serial, CancellationToken ct) {
             var serialNumber = new SerialNumber(serial).ToString();
-            await Try.Async(() => _crls.DeleteAsync<CrlDocument>(serialNumber, ct));
+            await Try.Async(() => _crls.DeleteAsync<CrlDocument>(serialNumber, ct: ct)).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
         public async Task StartAsync() {
-            await _lock.WaitAsync();
+            await _lock.WaitAsync().ConfigureAwait(false);
             try {
                 if (_cacheManager != null) {
                     _logger.Debug("Cache manager host already running.");
@@ -92,7 +96,7 @@ namespace Microsoft.Azure.IIoT.Crypto.Storage {
             }
             catch (Exception ex) {
                 _logger.Error(ex, "Failed to start cache manager host.");
-                throw ex;
+                throw;
             }
             finally {
                 _lock.Release();
@@ -101,12 +105,12 @@ namespace Microsoft.Azure.IIoT.Crypto.Storage {
 
         /// <inheritdoc/>
         public async Task StopAsync() {
-            await _lock.WaitAsync();
+            await _lock.WaitAsync().ConfigureAwait(false);
             try {
                 _cts?.Cancel();
                 if (_cacheManager != null) {
                     _logger.Debug("Stopping cache manager host...");
-                    await Try.Async(() => _cacheManager);
+                    await Try.Async(() => _cacheManager).ConfigureAwait(false);
                     _logger.Information("Cache manager host stopped.");
                 }
             }
@@ -138,19 +142,23 @@ namespace Microsoft.Azure.IIoT.Crypto.Storage {
         /// <returns></returns>
         public async Task<CrlDocument> TryGetOrAddCrlAsync(SerialNumber serialNumber,
             TimeSpan validatyPeriod, CancellationToken ct) {
+            if (serialNumber is null) {
+                throw new ArgumentNullException(nameof(serialNumber));
+            }
+
             while (true) {
-                var crl = await _crls.FindAsync<CrlDocument>(serialNumber.ToString(), ct);
+                var crl = await _crls.FindAsync<CrlDocument>(serialNumber.ToString(), ct: ct).ConfigureAwait(false);
                 if (crl != null &&
                     crl.Value.NextUpdate > (DateTime.UtcNow - validatyPeriod)) {
                     return crl.Value;
                 }
 
                 // Find issuer certificate.
-                var issuer = await _certificates.FindCertificateAsync(serialNumber.Value, ct);
+                var issuer = await _certificates.FindCertificateAsync(serialNumber.Value, ct).ConfigureAwait(false);
                 if (issuer?.IssuerPolicies == null || issuer.Revoked != null) {
                     if (crl != null) {
                         // Get rid of crl
-                        await Try.Async(() => _crls.DeleteAsync(crl, ct));
+                        await Try.Async(() => _crls.DeleteAsync(crl, ct: ct)).ConfigureAwait(false);
                     }
                     if (issuer == null) {
                         return null;  // Unknown certificate
@@ -164,18 +172,18 @@ namespace Microsoft.Azure.IIoT.Crypto.Storage {
 
                 // Get all revoked but still valid certificates issued by issuer
                 var revoked = await _certificates.GetIssuedCertificatesAsync(
-                    issuer, null, true, true, ct);
+                    issuer, null, true, true, ct).ConfigureAwait(false);
                 System.Diagnostics.Debug.Assert(revoked.All(r => r.Revoked != null));
 
                 // Build crl
 
                 var result = await _factory.CreateCrlAsync(issuer,
-                    issuer.IssuerPolicies.SignatureType.Value, revoked, null, ct);
+                    issuer.IssuerPolicies.SignatureType.Value, revoked, null, ct).ConfigureAwait(false);
                 var document = result.ToDocument(
                     issuer.GetSerialNumberAsString(), issuer.GetIssuerSerialNumberAsString());
                 try {
                     // Add crl
-                    crl = await _crls.UpsertAsync(document, ct, null, null, crl?.Etag);
+                    crl = await _crls.UpsertAsync(document, null, null, crl?.Etag, ct).ConfigureAwait(false);
                     return crl.Value;
                 }
                 catch (ResourceOutOfDateException) {
@@ -196,25 +204,25 @@ namespace Microsoft.Azure.IIoT.Crypto.Storage {
                     var issuers = await _certificates.QueryCertificatesAsync(
                         new CertificateFilter {
                             IsIssuer = true
-                        }, null, ct);
+                        }, null, ct).ConfigureAwait(false);
 
                     while (!ct.IsCancellationRequested) {
                         foreach (var issuer in issuers.Certificates) {
                             // Renew 1 minute before expiration or if it was invalidated
                             await TryGetOrAddCrlAsync(new SerialNumber(issuer.SerialNumber),
-                                TimeSpan.FromMinutes(1), ct);
+                                TimeSpan.FromMinutes(1), ct).ConfigureAwait(false);
                         }
                         if (issuers.ContinuationToken == null) {
                             break;
                         }
                         issuers = await _certificates.ListCertificatesAsync(
-                            issuers.ContinuationToken, null, ct);
+                            issuers.ContinuationToken, null, ct).ConfigureAwait(false);
                     }
                 }
                 catch (Exception ex) {
                     _logger.Error(ex, "Exception occurred during crl cache management");
                 }
-                await Task.Delay(TimeSpan.FromMinutes(2), ct);
+                await Task.Delay(TimeSpan.FromMinutes(2), ct).ConfigureAwait(false);
             }
         }
 

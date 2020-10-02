@@ -36,7 +36,7 @@ namespace Opc.Ua.Nodeset {
         /// The number of dimensions for an array values with one or more fixed dimensions.
         /// </summary>
         [DataMember]
-        public uint[] ArrayDimensions { get; set; }
+        public IReadOnlyList<uint> ArrayDimensions { get; set; }
 
         /// <summary>
         /// Initializes the instance with its defalt attribute values.

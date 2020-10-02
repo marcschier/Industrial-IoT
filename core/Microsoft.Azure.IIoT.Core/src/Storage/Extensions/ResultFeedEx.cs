@@ -25,9 +25,9 @@ namespace Microsoft.Azure.IIoT.Storage {
             Func<T, Task> callback,
             CancellationToken ct = default) {
             while (feed.HasMore()) {
-                var results = await feed.ReadAsync(ct);
+                var results = await feed.ReadAsync(ct).ConfigureAwait(false);
                 foreach (var item in results.ToList()) {
-                    await callback(item);
+                    await callback(item).ConfigureAwait(false);
                 }
             }
         }
@@ -42,7 +42,7 @@ namespace Microsoft.Azure.IIoT.Storage {
             CancellationToken ct = default) {
             var count = 0;
             while (feed.HasMore()) {
-                var results = await feed.ReadAsync(ct);
+                var results = await feed.ReadAsync(ct).ConfigureAwait(false);
                 count += results.Count();
             }
             return count;

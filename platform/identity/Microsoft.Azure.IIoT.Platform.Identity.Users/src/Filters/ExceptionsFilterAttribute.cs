@@ -27,7 +27,7 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Users.Filters {
 
         /// <inheritdoc />
         public override void OnException(ExceptionContext context) {
-            if (context.Exception == null) {
+            if (context == null || context.Exception == null) {
                 base.OnException(context);
                 return;
             }
@@ -128,7 +128,7 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Users.Filters {
                 OnException(context);
                 return Task.CompletedTask;
             }
-            catch (Exception) {
+            catch {
                 return base.OnExceptionAsync(context);
             }
         }

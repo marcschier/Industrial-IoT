@@ -53,7 +53,9 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Fixtures {
         /// <summary>
         /// Start port
         /// </summary>
-        public static int StartPort { set => _nextPort = value; }
+        public static void SetStartPort(int value) {
+            _nextPort = value;
+        }
 
         /// <summary>
         /// Create fixture
@@ -95,24 +97,43 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Fixtures {
 
         /// <inheritdoc/>
         public void Dispose() {
-            Logger.Information("Disposing server and client fixture...");
-            _serverHost.Dispose();
-            // Clean up all created certificates
-            if (Directory.Exists(PkiRootPath)) {
-                Logger.Information("Server disposed - cleaning up server certificates...");
-                Try.Op(() => Directory.Delete(PkiRootPath, true));
+            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Override to dispose
+        /// </summary>
+        /// <param name="disposing"></param>
+        protected virtual void Dispose(bool disposing) {
+            if (!_disposedValue) {
+                if (disposing) {
+                    Logger.Information("Disposing server and client fixture...");
+                    _serverHost.Dispose();
+                    // Clean up all created certificates
+                    if (Directory.Exists(PkiRootPath)) {
+                        Logger.Information("Server disposed - cleaning up server certificates...");
+                        Try.Op(() => Directory.Delete(PkiRootPath, true));
+                    }
+                    if (_client.IsValueCreated) {
+                        Logger.Information("Disposing client...");
+                        Task.Run(() => _client.Value.Dispose()).Wait();
+                    }
+                    Logger.Information("Client disposed - cleaning up client certificates...");
+                    _config?.Dispose();
+                    Logger.Information("Server and client fixture disposed.");
+                }
+
+                // TODO: free unmanaged resources (unmanaged objects) and override finalizer
+                // TODO: set large fields to null
+                _disposedValue = true;
             }
-            if (_client.IsValueCreated) {
-                Logger.Information("Disposing client...");
-                Task.Run(() => _client.Value.Dispose()).Wait();
-            }
-            Logger.Information("Client disposed - cleaning up client certificates...");
-            _config?.Dispose();
-            Logger.Information("Server and client fixture disposed.");
         }
 
         private static readonly Random kRand = new Random();
         private static volatile int _nextPort = kRand.Next(53000, 58000);
+        private bool _disposedValue;
         private readonly IServerHost _serverHost;
         private readonly TestClientServicesConfig _config;
         private readonly Lazy<ClientServices> _client;

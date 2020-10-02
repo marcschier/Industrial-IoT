@@ -3,6 +3,8 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
+using Org.BouncyCastle.Crypto.Tls;
+
 namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Services {
     using Microsoft.Azure.IIoT.Platform.Publisher.Edge.Models;
     using Microsoft.Azure.IIoT.Platform.Publisher.Models;
@@ -121,6 +123,12 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Services {
         /// <param name="writer"></param>
         /// <returns></returns>
         public void Write(WriterGroupModel writerGroup, TextWriter writer) {
+            if (writerGroup is null) {
+                throw new ArgumentNullException(nameof(writerGroup));
+            }
+            if (writer is null) {
+                throw new ArgumentNullException(nameof(writer));
+            }
             var sw = Stopwatch.StartNew();
             var nodes = FromDataSetWriters(writerGroup.DataSetWriters);
             _logger.Information("Converted writer group to published nodes in {elapsed}",
@@ -141,7 +149,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Services {
         /// <param name="dataSetWriters"></param>
         /// <returns></returns>
         private IEnumerable<PublishedNodesEntryModel> FromDataSetWriters(
-            List<DataSetWriterModel> dataSetWriters) {
+            IReadOnlyList<DataSetWriterModel> dataSetWriters) {
             if (dataSetWriters == null) {
                 return Enumerable.Empty<PublishedNodesEntryModel>();
             }
@@ -284,18 +292,26 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Services {
         /// <param name="model"></param>
         /// <returns></returns>
         public static string Hash(PublishedDataSetSourceModel model) {
+            if (model is null) {
+                throw new ArgumentNullException(nameof(model));
+            }
             var id = model.Connection?.Endpoint?.Url +
                 model.Connection?.Endpoint?.SecurityMode.ToString() +
                 model.Connection?.Endpoint?.SecurityPolicy +
                 model.Connection?.User?.Type.ToString() +
                 model.Connection?.User?.Value.ToJson() +
-                model.SubscriptionSettings?.PublishingInterval.ToString() +
-                model.PublishedVariables.PublishedData.First()?.Id +
-                model.PublishedVariables.PublishedData.First()?.PublishedVariableNodeId +
-                model.PublishedVariables.PublishedData.First()?.PublishedVariableDisplayName +
-                model.PublishedVariables.PublishedData.First()?.SamplingInterval +
-                model.PublishedVariables.PublishedData.First()?.HeartbeatInterval;
-            return id.ToSha1Hash();
+                model.SubscriptionSettings?.PublishingInterval.ToString();
+
+            var variables = model.PublishedVariables.PublishedData;
+            if (variables.Count > 0) {
+                id +=
+                    variables[0].Id +
+                    variables[0].PublishedVariableNodeId +
+                    variables[0].PublishedVariableDisplayName +
+                    variables[0].SamplingInterval +
+                    variables[0].HeartbeatInterval;
+            }
+            return id.ToSha256Hash();
         }
 
         /// <summary>
@@ -304,7 +320,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Services {
         /// <param name="item"></param>
         /// <param name="scaleTestCount"></param>
         /// <returns></returns>
-        private IEnumerable<OpcNodeModel> GetNodeModels(PublishedNodesEntryModel item,
+        private static IEnumerable<OpcNodeModel> GetNodeModels(PublishedNodesEntryModel item,
             int scaleTestCount = 1) {
 
             if (item.OpcNodes != null) {
@@ -370,11 +386,11 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Services {
 
                 const string kInitializationVector = "alKGJdfsgidfasdO"; // See previous publisher
                 var userBytes = await _cryptoProvider.DecryptAsync(kInitializationVector,
-                    Convert.FromBase64String(entry.EncryptedAuthUsername));
+                    Convert.FromBase64String(entry.EncryptedAuthUsername)).ConfigureAwait(false);
                 user = Encoding.UTF8.GetString(userBytes);
                 if (entry.EncryptedAuthPassword != null) {
                     var passwordBytes = await _cryptoProvider.DecryptAsync(kInitializationVector,
-                        Convert.FromBase64String(entry.EncryptedAuthPassword));
+                        Convert.FromBase64String(entry.EncryptedAuthPassword)).ConfigureAwait(false);
                     password = Encoding.UTF8.GetString(passwordBytes);
                 }
             }

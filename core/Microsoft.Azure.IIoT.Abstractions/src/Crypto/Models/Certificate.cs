@@ -31,7 +31,7 @@ namespace Microsoft.Azure.IIoT.Crypto.Models {
         /// <summary>
         /// Get raw asn1 data
         /// </summary>
-        public byte[] RawData { get; set; }
+        public IReadOnlyCollection<byte> RawData { get; set; }
 
         /// <summary>
         /// Not valid after in Utc
@@ -56,17 +56,17 @@ namespace Microsoft.Azure.IIoT.Crypto.Models {
         /// <summary>
         /// Big endian Serial number
         /// </summary>
-        public byte[] SerialNumber { get; set; }
+        public IReadOnlyCollection<byte> SerialNumber { get; set; }
 
         /// <summary>
         /// Big endian Issuer serial
         /// </summary>
-        public byte[] IssuerSerialNumber { get; set; }
+        public IReadOnlyCollection<byte> IssuerSerialNumber { get; set; }
 
         /// <summary>
         /// Extensions
         /// </summary>
-        public List<X509Extension> Extensions { get; set; }
+        public IReadOnlyList<X509Extension> Extensions { get; set; }
 
         /// <summary>
         /// Get thumprint

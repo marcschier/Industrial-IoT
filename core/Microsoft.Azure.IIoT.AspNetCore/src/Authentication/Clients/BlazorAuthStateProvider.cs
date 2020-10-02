@@ -15,12 +15,14 @@ namespace Microsoft.Azure.IIoT.AspNetCore.Authentication.Clients {
     using System.Threading.Tasks;
     using System.Threading;
     using System.Security.Claims;
+    using Microsoft.Azure.IIoT.Utils;
+    using Microsoft.AspNetCore.Connections.Features;
 
     /// <summary>
     /// Revalidate all user token providers
     /// </summary>
-    public class BlazorAuthStateProvider : ServerAuthenticationStateProvider, ITokenClient,
-        IDisposable {
+    public sealed class BlazorAuthStateProvider : ServerAuthenticationStateProvider,
+        ITokenClient, IDisposable {
 
         /// <summary>
         /// Create auth state provider
@@ -36,7 +38,10 @@ namespace Microsoft.Azure.IIoT.AspNetCore.Authentication.Clients {
             // Whenever we receive notification of a new authentication state, cancel any
             // existing revalidation loop and start a new one
             AuthenticationStateChanged += authenticationStateTask => {
-                _cts?.Cancel();
+                if (_cts != null) {
+                    _cts.Cancel();
+                    _cts.Dispose();
+                }
                 _cts = new CancellationTokenSource();
                 _ = RevalidationLoopAsync(authenticationStateTask, _cts.Token);
             };
@@ -44,7 +49,10 @@ namespace Microsoft.Azure.IIoT.AspNetCore.Authentication.Clients {
 
         /// <inheritdoc/>
         public void Dispose() {
-            _cts?.Cancel();
+            if (_cts != null) {
+                _cts.Cancel();
+                _cts.Dispose();
+            }
             _logger.Debug("Token revalidation loop exit.");
         }
 
@@ -60,7 +68,7 @@ namespace Microsoft.Azure.IIoT.AspNetCore.Authentication.Clients {
 
         /// <inheritdoc/>
         public async Task<TokenResultModel> GetTokenForAsync(string resource, IEnumerable<string> scopes) {
-            var authenticationState = await GetAuthenticationStateAsync();
+            var authenticationState = await GetAuthenticationStateAsync().ConfigureAwait(false);
             if (authenticationState?.User == null || !authenticationState.User.Identity.IsAuthenticated) {
                 return null;
             }
@@ -68,7 +76,7 @@ namespace Microsoft.Azure.IIoT.AspNetCore.Authentication.Clients {
             foreach (var client in _clients) {
                 try {
                     // TODO: Compare provider name and identity and only check those that match.
-                    var result = await client.GetUserTokenAsync(authenticationState.User, scopes);
+                    var result = await client.GetUserTokenAsync(authenticationState.User, scopes).ConfigureAwait(false);
                     if (result?.RawToken != null) {
                         return result;
                     }
@@ -86,21 +94,16 @@ namespace Microsoft.Azure.IIoT.AspNetCore.Authentication.Clients {
         /// <inheritdoc/>
         public async Task InvalidateAsync(string resource) {
             try {
-                var authenticationState = await GetAuthenticationStateAsync();
+                var authenticationState = await Try.Async(() =>
+                    GetAuthenticationStateAsync()).ConfigureAwait(false);
                 if (authenticationState?.User == null) {
                     return;
                 }
                 foreach (var client in _clients) {
-                    try {
-                        // TODO: Compare provider name and identity and only check those that match.
-                        await client.SignOutUserAsync(authenticationState.User);
-                    }
-                    catch {
-                        continue;
-                    }
+                    // TODO: Compare provider name and identity and only check those that match.
+                    await Try.Async(() =>
+                        client.SignOutUserAsync(authenticationState.User)).ConfigureAwait(false);
                 }
-            }
-            catch {
             }
             finally {
                 ForceSignOut();
@@ -116,15 +119,16 @@ namespace Microsoft.Azure.IIoT.AspNetCore.Authentication.Clients {
         private async Task RevalidationLoopAsync(Task<AuthenticationState> authenticationStateTask,
             CancellationToken ct) {
             try {
-                var authenticationState = await authenticationStateTask;
+                var authenticationState = await authenticationStateTask.ConfigureAwait(false);
                 _logger.Debug("Starting token revalidation loop");
                 if (authenticationState.User.Identity.IsAuthenticated) {
                     while (!ct.IsCancellationRequested) {
                         bool isValid;
                         try {
-                            await Task.Delay(_config?.RevalidateInterval ?? TimeSpan.FromSeconds(10), ct);
+                            await Task.Delay(_config?.RevalidateInterval ?? TimeSpan.FromSeconds(10),
+                                ct).ConfigureAwait(false);
                             _logger.Debug("Testing token still valid...");
-                            isValid = await ValidateAuthenticationStateAsync(authenticationState, ct);
+                            isValid = await ValidateAuthenticationStateAsync(authenticationState).ConfigureAwait(false);
                         }
                         catch (TaskCanceledException tce) {
                             // If it was our cancellation token, then this revalidation loop gracefully completes
@@ -160,22 +164,15 @@ namespace Microsoft.Azure.IIoT.AspNetCore.Authentication.Clients {
         /// Validate state
         /// </summary>
         /// <param name="authenticationState"></param>
-        /// <param name="cancellationToken"></param>
         /// <returns></returns>
         private async Task<bool> ValidateAuthenticationStateAsync(
-            AuthenticationState authenticationState, CancellationToken cancellationToken) {
+            AuthenticationState authenticationState) {
             foreach (var client in _clients) {
-                try {
-                    // TODO: Compare provider name and identity and only check those that match.
-
-                    var result = await client.GetUserTokenAsync(
-                        authenticationState.User, string.Empty.YieldReturn());
-                    if (result?.RawToken != null) {
-                        return true;
-                    }
-                }
-                catch {
-                    continue;
+                // TODO: Compare provider name and identity and only check those that match.
+                var result = await Try.Async(() => client.GetUserTokenAsync(
+                    authenticationState.User, string.Empty.YieldReturn())).ConfigureAwait(false);
+                if (result?.RawToken != null) {
+                    return true;
                 }
             }
             return false;

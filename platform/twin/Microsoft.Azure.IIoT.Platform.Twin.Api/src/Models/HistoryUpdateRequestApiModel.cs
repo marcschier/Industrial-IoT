@@ -6,6 +6,7 @@
 namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Models {
     using Microsoft.Azure.IIoT.Platform.Core.Api.Models;
     using System.Runtime.Serialization;
+    using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
 
     /// <summary>
@@ -26,7 +27,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Models {
         /// </summary>
         [DataMember(Name = "browsePath", Order = 1,
             EmitDefaultValue = false)]
-        public string[] BrowsePath { get; set; }
+        public IReadOnlyList<string> BrowsePath { get; set; }
 
         /// <summary>
         /// The HistoryUpdateDetailsType extension object

@@ -3,7 +3,7 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Http.Default {
+namespace Microsoft.Azure.IIoT.Http.Clients {
     using Serilog;
     using System;
     using System.Diagnostics;
@@ -107,13 +107,13 @@ namespace Microsoft.Azure.IIoT.Http.Default {
                     httpRequest.Uri);
                 try {
                     wrapper.Request.Method = httpMethod;
-                    using (var response = await client.SendAsync(wrapper.Request, ct)) {
+                    using (var response = await client.SendAsync(wrapper.Request, ct).ConfigureAwait(false)) {
                         var result = new HttpResponse {
                             ResourceId = httpRequest.ResourceId,
                             StatusCode = response.StatusCode,
                             Headers = response.Headers,
                             ContentHeaders = response.Content.Headers,
-                            Content = await response.Content.ReadAsByteArrayAsync()
+                            Content = await response.Content.ReadAsByteArrayAsync().ConfigureAwait(false)
                         };
                         if (result.IsError()) {
                             _logger.Warning("{method} to {uri} returned {code} (took {elapsed}).",

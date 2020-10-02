@@ -12,6 +12,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service.Controllers {
     using Microsoft.Azure.IIoT.Http;
     using Microsoft.Azure.IIoT.AspNetCore.OpenApi;
     using Microsoft.AspNetCore.Authorization;
+    using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
     using System;
     using System.Linq;
@@ -56,7 +57,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service.Controllers {
             if (request == null) {
                 throw new ArgumentNullException(nameof(request));
             }
-            await _onboarding.RegisterAsync(request.ToServiceModel());
+            await _onboarding.RegisterAsync(request.ToServiceModel()).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -75,7 +76,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service.Controllers {
             if (request == null) {
                 throw new ArgumentNullException(nameof(request));
             }
-            await _onboarding.DiscoverAsync(request.ToServiceModel());
+            await _onboarding.DiscoverAsync(request.ToServiceModel()).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -95,7 +96,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service.Controllers {
             await _onboarding.CancelAsync(new DiscoveryCancelModel {
                 Id = requestId
                 // TODO: AuthorityId = User.Identity.Name;
-            });
+            }).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -118,7 +119,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service.Controllers {
             }
             var model = request.ToServiceModel();
             // TODO: model.Context.AuthorityId = User.Identity.Name;
-            var result = await _applications.RegisterApplicationAsync(model);
+            var result = await _applications.RegisterApplicationAsync(model).ConfigureAwait(false);
             return result.ToApiModel();
         }
 
@@ -133,7 +134,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service.Controllers {
             if (string.IsNullOrEmpty(applicationId)) {
                 throw new ArgumentNullException(nameof(applicationId));
             }
-            var result = await _applications.GetApplicationAsync(applicationId);
+            var result = await _applications.GetApplicationAsync(applicationId).ConfigureAwait(false);
             return result.ToApiModel();
         }
 
@@ -159,7 +160,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service.Controllers {
             }
             var model = request.ToServiceModel();
             // TODO: model.Context.AuthorityId = User.Identity.Name;
-            await _applications.UpdateApplicationAsync(applicationId, model);
+            await _applications.UpdateApplicationAsync(applicationId, model).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -183,7 +184,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service.Controllers {
             var context = (RegistryOperationContextModel)null;
             // TODO: context.AuthorityId = User.Identity.Name;
             await _applications.UnregisterApplicationAsync(applicationId, generationId,
-                context);
+                context).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -201,7 +202,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service.Controllers {
             var context = (RegistryOperationContextModel)null;
             // TODO: context.AuthorityId = User.Identity.Name;
             await _applications.PurgeDisabledApplicationsAsync(
-                notSeenFor ?? TimeSpan.FromTicks(0), context);
+                notSeenFor ?? TimeSpan.FromTicks(0), context).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -220,16 +221,10 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service.Controllers {
         public async Task<ApplicationSiteListApiModel> GetListOfSitesAsync(
             [FromQuery] string continuationToken, [FromQuery] int? pageSize) {
 
-            if (Request.Headers.ContainsKey(HttpHeader.ContinuationToken)) {
-                continuationToken = Request.Headers[HttpHeader.ContinuationToken]
-                    .FirstOrDefault();
-            }
-            if (Request.Headers.ContainsKey(HttpHeader.MaxItemCount)) {
-                pageSize = int.Parse(Request.Headers[HttpHeader.MaxItemCount]
-                    .FirstOrDefault());
-            }
+            continuationToken = Request.GetContinuationToken(continuationToken);
+            pageSize = Request.GetPageSize(pageSize);
             var result = await _applications.ListSitesAsync(
-                continuationToken, pageSize);
+                continuationToken, pageSize).ConfigureAwait(false);
             return result.ToApiModel();
         }
 
@@ -254,16 +249,10 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service.Controllers {
         [AutoRestExtension(NextPageLinkName = "continuationToken")]
         public async Task<ApplicationInfoListApiModel> GetListOfApplicationsAsync(
             [FromQuery] string continuationToken, [FromQuery] int? pageSize) {
-            if (Request.Headers.ContainsKey(HttpHeader.ContinuationToken)) {
-                continuationToken = Request.Headers[HttpHeader.ContinuationToken]
-                    .FirstOrDefault();
-            }
-            if (Request.Headers.ContainsKey(HttpHeader.MaxItemCount)) {
-                pageSize = int.Parse(Request.Headers[HttpHeader.MaxItemCount]
-                    .FirstOrDefault());
-            }
+            continuationToken = Request.GetContinuationToken(continuationToken);
+            pageSize = Request.GetPageSize(pageSize);
             var result = await _applications.ListApplicationsAsync(
-                continuationToken, pageSize);
+                continuationToken, pageSize).ConfigureAwait(false);
 
             return result.ToApiModel();
         }
@@ -290,12 +279,9 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service.Controllers {
             if (query == null) {
                 throw new ArgumentNullException(nameof(query));
             }
-            if (Request.Headers.ContainsKey(HttpHeader.MaxItemCount)) {
-                pageSize = int.Parse(Request.Headers[HttpHeader.MaxItemCount]
-                    .FirstOrDefault());
-            }
+            pageSize = Request.GetPageSize(pageSize);
             var result = await _applications.QueryApplicationsAsync(
-                query.ToServiceModel(), pageSize);
+                query.ToServiceModel(), pageSize).ConfigureAwait(false);
 
             return result.ToApiModel();
         }
@@ -321,12 +307,9 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service.Controllers {
             if (query == null) {
                 throw new ArgumentNullException(nameof(query));
             }
-            if (Request.Headers.ContainsKey(HttpHeader.MaxItemCount)) {
-                pageSize = int.Parse(Request.Headers[HttpHeader.MaxItemCount]
-                    .FirstOrDefault());
-            }
+            pageSize = Request.GetPageSize(pageSize);
             var result = await _applications.QueryApplicationsAsync(
-                query.ToServiceModel(), pageSize);
+                query.ToServiceModel(), pageSize).ConfigureAwait(false);
 
             return result.ToApiModel();
         }

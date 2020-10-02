@@ -39,10 +39,10 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service.Api {
             await using (await client.SubscribePublisherEventsAsync(ev => {
                 result.SetResult(ev);
                 return Task.CompletedTask;
-            })) {
+            }).ConfigureAwait(false)) {
 
-                await bus.PublishAsync(expected);
-                await Task.WhenAny(result.Task, Task.Delay(5000));
+                await bus.PublishAsync(expected).ConfigureAwait(false);
+                await Task.WhenAny(result.Task, Task.Delay(5000)).ConfigureAwait(false);
 
                 Assert.True(result.Task.IsCompleted);
                 var received = result.Task.Result;
@@ -74,13 +74,13 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service.Api {
                     result.SetResult(true);
                 }
                 return Task.CompletedTask;
-            })) {
+            }).ConfigureAwait(false)) {
 
                 for (var i = 0; i < total; i++) {
-                    await bus.PublishAsync(expected);
+                    await bus.PublishAsync(expected).ConfigureAwait(false);
                 }
 
-                await Task.WhenAny(result.Task, Task.Delay(5000));
+                await Task.WhenAny(result.Task, Task.Delay(5000)).ConfigureAwait(false);
                 Assert.True(result.Task.IsCompleted);
             }
         }
@@ -105,10 +105,10 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service.Api {
             await using (await client.SubscribeDiscovererEventsAsync(ev => {
                 result.SetResult(ev);
                 return Task.CompletedTask;
-            })) {
+            }).ConfigureAwait(false)) {
 
-                await bus.PublishAsync(expected);
-                await Task.WhenAny(result.Task, Task.Delay(5000));
+                await bus.PublishAsync(expected).ConfigureAwait(false);
+                await Task.WhenAny(result.Task, Task.Delay(5000)).ConfigureAwait(false);
 
                 Assert.True(result.Task.IsCompleted);
                 var received = result.Task.Result;
@@ -143,13 +143,13 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service.Api {
                     result.SetResult(true);
                 }
                 return Task.CompletedTask;
-            })) {
+            }).ConfigureAwait(false)) {
 
                 for (var i = 0; i < total; i++) {
-                    await bus.PublishAsync(expected);
+                    await bus.PublishAsync(expected).ConfigureAwait(false);
                 }
 
-                await Task.WhenAny(result.Task, Task.Delay(5000));
+                await Task.WhenAny(result.Task, Task.Delay(5000)).ConfigureAwait(false);
                 Assert.True(result.Task.IsCompleted);
             }
         }
@@ -171,10 +171,10 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service.Api {
             await using (await client.SubscribeSupervisorEventsAsync(ev => {
                 result.SetResult(ev);
                 return Task.CompletedTask;
-            })) {
+            }).ConfigureAwait(false)) {
 
-                await bus.PublishAsync(expected);
-                await Task.WhenAny(result.Task, Task.Delay(5000));
+                await bus.PublishAsync(expected).ConfigureAwait(false);
+                await Task.WhenAny(result.Task, Task.Delay(5000)).ConfigureAwait(false);
 
                 Assert.True(result.Task.IsCompleted);
                 var received = result.Task.Result;
@@ -207,13 +207,13 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service.Api {
                     result.SetResult(true);
                 }
                 return Task.CompletedTask;
-            })) {
+            }).ConfigureAwait(false)) {
 
                 for (var i = 0; i < total; i++) {
-                    await bus.PublishAsync(expected);
+                    await bus.PublishAsync(expected).ConfigureAwait(false);
                 }
 
-                await Task.WhenAny(result.Task, Task.Delay(5000));
+                await Task.WhenAny(result.Task, Task.Delay(5000)).ConfigureAwait(false);
                 Assert.True(result.Task.IsCompleted);
             }
         }
@@ -237,10 +237,10 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service.Api {
             await using (await client.SubscribeApplicationEventsAsync(ev => {
                 result.SetResult(ev);
                 return Task.CompletedTask;
-            })) {
+            }).ConfigureAwait(false)) {
 
-                await bus.PublishAsync(expected);
-                await Task.WhenAny(result.Task, Task.Delay(5000));
+                await bus.PublishAsync(expected).ConfigureAwait(false);
+                await Task.WhenAny(result.Task, Task.Delay(5000)).ConfigureAwait(false);
 
                 Assert.True(result.Task.IsCompleted);
                 var received = result.Task.Result;
@@ -279,13 +279,13 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service.Api {
                     result.SetResult(true);
                 }
                 return Task.CompletedTask;
-            })) {
+            }).ConfigureAwait(false)) {
 
                 for (var i = 0; i < total; i++) {
-                    await bus.PublishAsync(expected);
+                    await bus.PublishAsync(expected).ConfigureAwait(false);
                 }
 
-                await Task.WhenAny(result.Task, Task.Delay(5000));
+                await Task.WhenAny(result.Task, Task.Delay(5000)).ConfigureAwait(false);
                 Assert.True(result.Task.IsCompleted);
             }
         }
@@ -307,10 +307,10 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service.Api {
             await using (await client.SubscribeEndpointEventsAsync(ev => {
                 result.SetResult(ev);
                 return Task.CompletedTask;
-            })) {
+            }).ConfigureAwait(false)) {
 
-                await bus.PublishAsync(expected);
-                await Task.WhenAny(result.Task, Task.Delay(5000));
+                await bus.PublishAsync(expected).ConfigureAwait(false);
+                await Task.WhenAny(result.Task, Task.Delay(5000)).ConfigureAwait(false);
 
                 Assert.True(result.Task.IsCompleted);
                 var received = result.Task.Result;
@@ -346,13 +346,13 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service.Api {
                     result.SetResult(true);
                 }
                 return Task.CompletedTask;
-            })) {
+            }).ConfigureAwait(false)) {
 
                 for (var i = 0; i < total; i++) {
-                    await bus.PublishAsync(expected);
+                    await bus.PublishAsync(expected).ConfigureAwait(false);
                 }
 
-                await Task.WhenAny(result.Task, Task.Delay(5000));
+                await Task.WhenAny(result.Task, Task.Delay(5000)).ConfigureAwait(false);
                 Assert.True(result.Task.IsCompleted);
             }
         }
@@ -373,10 +373,10 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service.Api {
             await using (await client.SubscribeGatewayEventsAsync(ev => {
                 result.SetResult(ev);
                 return Task.CompletedTask;
-            })) {
+            }).ConfigureAwait(false)) {
 
-                await bus.PublishAsync(expected);
-                await Task.WhenAny(result.Task, Task.Delay(5000));
+                await bus.PublishAsync(expected).ConfigureAwait(false);
+                await Task.WhenAny(result.Task, Task.Delay(5000)).ConfigureAwait(false);
 
                 Assert.True(result.Task.IsCompleted);
                 var received = result.Task.Result;
@@ -408,13 +408,13 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service.Api {
                     result.SetResult(true);
                 }
                 return Task.CompletedTask;
-            })) {
+            }).ConfigureAwait(false)) {
 
                 for (var i = 0; i < total; i++) {
-                    await bus.PublishAsync(expected);
+                    await bus.PublishAsync(expected).ConfigureAwait(false);
                 }
 
-                await Task.WhenAny(result.Task, Task.Delay(5000));
+                await Task.WhenAny(result.Task, Task.Delay(5000)).ConfigureAwait(false);
                 Assert.True(result.Task.IsCompleted);
             }
         }
@@ -438,10 +438,10 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service.Api {
                 discovererId, ev => {
                     result.SetResult(ev);
                     return Task.CompletedTask;
-                })) {
+                }).ConfigureAwait(false)) {
 
-                await bus.PublishAsync(expected);
-                await Task.WhenAny(result.Task, Task.Delay(5000));
+                await bus.PublishAsync(expected).ConfigureAwait(false);
+                await Task.WhenAny(result.Task, Task.Delay(5000)).ConfigureAwait(false);
 
                 Assert.True(result.Task.IsCompleted);
                 var received = result.Task.Result;
@@ -480,10 +480,10 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service.Api {
                 requestId, ev => {
                     result.SetResult(ev);
                     return Task.CompletedTask;
-                })) {
+                }).ConfigureAwait(false)) {
 
-                await bus.PublishAsync(expected);
-                await Task.WhenAny(result.Task, Task.Delay(5000));
+                await bus.PublishAsync(expected).ConfigureAwait(false);
+                await Task.WhenAny(result.Task, Task.Delay(5000)).ConfigureAwait(false);
 
                 Assert.True(result.Task.IsCompleted);
                 var received = result.Task.Result;
@@ -522,13 +522,13 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service.Api {
                         result.SetResult(true);
                     }
                     return Task.CompletedTask;
-                })) {
+                }).ConfigureAwait(false)) {
 
                 for (var i = 0; i < total; i++) {
-                    await bus.PublishAsync(expected);
+                    await bus.PublishAsync(expected).ConfigureAwait(false);
                 }
 
-                await Task.WhenAny(result.Task, Task.Delay(5000));
+                await Task.WhenAny(result.Task, Task.Delay(5000)).ConfigureAwait(false);
                 Assert.True(result.Task.IsCompleted);
             }
         }

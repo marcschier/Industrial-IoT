@@ -34,7 +34,7 @@ namespace Microsoft.Azure.IIoT.Services.Zookeeper.Server {
 
         /// <inheritdoc/>
         public async Task StartAsync() {
-            await _lock.WaitAsync();
+            await _lock.WaitAsync().ConfigureAwait(false);
             try {
                 if (_containerId != null) {
                     return;
@@ -44,16 +44,16 @@ namespace Microsoft.Azure.IIoT.Services.Zookeeper.Server {
                 var param = GetContainerParameters(_port);
                 var name = $"zookeeper_{_port}";
                 (_containerId, _owner) = await CreateAndStartContainerAsync(
-                    param, name, "bitnami/zookeeper:latest");
+                    param, name, "bitnami/zookeeper:latest").ConfigureAwait(false);
 
                 try {
                     // Check running
-                    await WaitForContainerStartedAsync(_port);
+                    await WaitForContainerStartedAsync(_port).ConfigureAwait(false);
                     _logger.Information("Zookeeper node running.");
                 }
                 catch {
                     // Stop and retry
-                    await StopAndRemoveContainerAsync(_containerId);
+                    await StopAndRemoveContainerAsync(_containerId).ConfigureAwait(false);
                     _containerId = null;
                     throw;
                 }
@@ -65,10 +65,10 @@ namespace Microsoft.Azure.IIoT.Services.Zookeeper.Server {
 
         /// <inheritdoc/>
         public async Task StopAsync() {
-            await _lock.WaitAsync();
+            await _lock.WaitAsync().ConfigureAwait(false);
             try {
                 if (_containerId != null && _owner) {
-                    await StopAndRemoveContainerAsync(_containerId);
+                    await StopAndRemoveContainerAsync(_containerId).ConfigureAwait(false);
                     _logger.Information("Stopped Zookeeper node...");
                 }
             }

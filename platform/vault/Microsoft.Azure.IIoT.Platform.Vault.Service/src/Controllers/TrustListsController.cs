@@ -10,7 +10,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Service.Controllers {
     using Microsoft.Azure.IIoT.Platform.Vault.Api.Models;
     using Microsoft.Azure.IIoT.Platform.Vault;
     using Microsoft.Azure.IIoT.AspNetCore.OpenApi;
-    using Microsoft.Azure.IIoT.Http;
+    using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using System.Threading.Tasks;
@@ -59,26 +59,19 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Service.Controllers {
         /// applied trust configuration.
         /// </remarks>
         /// <param name="entityId"></param>
-        /// <param name="nextPageLink">optional, link to next page</param>
+        /// <param name="continuationToken">optional, continuation token</param>
         /// <param name="pageSize">optional, the maximum number of result per page</param>
         [HttpGet("{entityId}")]
-        [AutoRestExtension(NextPageLinkName = "nextPageLink")]
+        [AutoRestExtension(NextPageLinkName = "continuationToken")]
         public async Task<X509CertificateListApiModel> ListTrustedCertificatesAsync(string entityId,
-            [FromQuery] string nextPageLink, [FromQuery] int? pageSize) {
-
-            if (Request.Headers.ContainsKey(HttpHeader.ContinuationToken)) {
-                nextPageLink = Request.Headers[HttpHeader.ContinuationToken]
-                    .FirstOrDefault();
-            }
-            if (Request.Headers.ContainsKey(HttpHeader.MaxItemCount)) {
-                pageSize = int.Parse(Request.Headers[HttpHeader.MaxItemCount]
-                    .FirstOrDefault());
-            }
+            [FromQuery] string continuationToken, [FromQuery] int? pageSize) {
+            continuationToken = Request.GetContinuationToken(continuationToken);
+            pageSize = Request.GetPageSize(pageSize);
             // Use service principal
             HttpContext.User = null; // TODO Set up
 
-            var result = await _services.ListTrustedCertificatesAsync(entityId, nextPageLink,
-                pageSize);
+            var result = await _services.ListTrustedCertificatesAsync(entityId, continuationToken,
+                pageSize).ConfigureAwait(false);
             return result.ToApiModel();
         }
 

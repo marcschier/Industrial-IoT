@@ -15,7 +15,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Models {
         /// <summary>
         /// List of results from the update operation
         /// </summary>
-        public List<ServiceResultModel> Results { get; set; }
+        public IReadOnlyList<ServiceResultModel> Results { get; set; }
 
         /// <summary>
         /// Service result in case of service call error

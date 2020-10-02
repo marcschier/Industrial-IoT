@@ -4,6 +4,8 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Exceptions {
+    using System;
+
     /// <summary>
     /// Host has not been initialized
     /// </summary>
@@ -15,6 +17,11 @@ namespace Microsoft.Azure.IIoT.Exceptions {
 
         /// <inheritdoc/>
         public NotInitializedException(string message) : base(message) {
+        }
+
+        /// <inheritdoc/>
+        public NotInitializedException(string message, Exception innerException) :
+            base(message, innerException) {
         }
     }
 }

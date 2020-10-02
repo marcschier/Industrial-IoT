@@ -34,7 +34,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
             await _transfer.ModelUploadStartAsync(endpoint, new ModelUploadStartRequestModel {
                 UploadEndpointUrl = _service.ServiceEndpoint + "/endpoints", // TODO
                 AuthorizationHeader = null
-            });
+            }).ConfigureAwait(false);
         }
 
         private readonly ITransferServices<T> _transfer;

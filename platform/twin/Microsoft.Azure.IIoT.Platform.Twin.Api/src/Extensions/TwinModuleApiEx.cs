@@ -180,10 +180,10 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api {
             this ITwinModuleApi service, EndpointApiModel endpoint,
             BrowseRequestApiModel request, CancellationToken ct = default) {
             if (request.MaxReferencesToReturn != null) {
-                return await service.NodeBrowseFirstAsync(endpoint, request);
+                return await service.NodeBrowseFirstAsync(endpoint, request).ConfigureAwait(false);
             }
             while (true) {
-                var result = await service.NodeBrowseFirstAsync(endpoint, request, ct);
+                var result = await service.NodeBrowseFirstAsync(endpoint, request, ct).ConfigureAwait(false);
                 while (result.ContinuationToken != null) {
                     try {
                         var next = await service.NodeBrowseNextAsync(endpoint,
@@ -192,7 +192,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api {
                                 Header = request.Header,
                                 ReadVariableValues = request.ReadVariableValues,
                                 TargetNodesOnly = request.TargetNodesOnly
-                            }, ct);
+                            }, ct).ConfigureAwait(false);
                         result.References.AddRange(next.References);
                         result.ContinuationToken = next.ContinuationToken;
                     }
@@ -201,7 +201,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api {
                             new BrowseNextRequestApiModel {
                                 ContinuationToken = result.ContinuationToken,
                                 Abort = true
-                            }));
+                            })).ConfigureAwait(false);
                         throw;
                     }
                 }

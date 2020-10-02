@@ -55,7 +55,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Service.Controllers {
                 request.ToServiceModel(), new PublisherOperationContextModel {
                     Time = DateTime.UtcNow,
                     AuthorityId = HttpContext.User.Identity.Name
-                });
+                }).ConfigureAwait(false);
             return result.ToApiModel();
         }
 
@@ -83,7 +83,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Service.Controllers {
                 request.ToServiceModel(), new PublisherOperationContextModel {
                     Time = DateTime.UtcNow,
                     AuthorityId = HttpContext.User.Identity.Name
-                });
+                }).ConfigureAwait(false);
             return result.ToApiModel();
         }
 
@@ -111,7 +111,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Service.Controllers {
                 request.ToServiceModel(), new PublisherOperationContextModel {
                     Time = DateTime.UtcNow,
                     AuthorityId = HttpContext.User.Identity.Name
-                });
+                }).ConfigureAwait(false);
             return result.ToApiModel();
         }
 

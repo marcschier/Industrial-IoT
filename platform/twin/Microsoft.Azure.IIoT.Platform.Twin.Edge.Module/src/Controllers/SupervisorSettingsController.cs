@@ -104,7 +104,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Controllers {
             foreach (var item in _endpoints.ToList()) {
                 if (string.IsNullOrEmpty((string)item.Value)) {
                     try {
-                        await _supervisor.DetachAsync(item.Key);
+                        await _supervisor.DetachAsync(item.Key).ConfigureAwait(false);
                     }
                     catch (Exception ex) {
                         _logger.Error(ex, "Error detaching twin {Key}", item.Key);
@@ -112,7 +112,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Controllers {
                 }
                 else {
                     try {
-                        await _supervisor.AttachAsync(item.Key, (string)item.Value);
+                        await _supervisor.AttachAsync(item.Key, (string)item.Value).ConfigureAwait(false);
                     }
                     catch (Exception ex) {
                         _logger.Error(ex, "Error attaching twin {Key}", item.Key);

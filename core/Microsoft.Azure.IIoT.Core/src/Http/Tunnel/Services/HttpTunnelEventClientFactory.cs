@@ -9,7 +9,7 @@ namespace Microsoft.Azure.IIoT.Http.Tunnel.Services {
     using Microsoft.Azure.IIoT.Messaging;
     using Microsoft.Azure.IIoT.Hub;
     using Microsoft.Azure.IIoT.Http;
-    using Microsoft.Azure.IIoT.Http.Default;
+    using Microsoft.Azure.IIoT.Http.Clients;
     using Microsoft.Azure.IIoT.Serializers;
     using Serilog;
     using System;
@@ -61,7 +61,9 @@ namespace Microsoft.Azure.IIoT.Http.Tunnel.Services {
         public TimeSpan Create(string name, out HttpMessageHandler handler) {
             var resource = name == HttpHandlerFactory.DefaultResourceId ? null : name;
 #pragma warning disable IDE0067 // Dispose objects before losing scope
+#pragma warning disable CA2000 // Dispose objects before losing scope
             var del = new HttpHandlerDelegate(new HttpTunnelClientHandler(this),
+#pragma warning restore CA2000 // Dispose objects before losing scope
 #pragma warning restore IDE0067 // Dispose objects before losing scope
                 resource, _handlers.Where(h => h.IsFor?.Invoke(resource) ?? true),
                 null, _logger);
@@ -75,7 +77,7 @@ namespace Microsoft.Azure.IIoT.Http.Tunnel.Services {
             // Handle response from device method
             var response = _serializer.Deserialize<HttpTunnelResponseModel>(payload);
             if (_outstanding.TryRemove(response.RequestId, out var request)) {
-                var httpResponse = new HttpResponseMessage((HttpStatusCode)response.Status) {
+                using var httpResponse = new HttpResponseMessage((HttpStatusCode)response.Status) {
                     Content = response.Payload == null ? null :
                         new ByteArrayContent(response.Payload)
                 };
@@ -87,13 +89,13 @@ namespace Microsoft.Azure.IIoT.Http.Tunnel.Services {
                 request.Completion.TrySetResult(httpResponse);
                 request.Dispose();
             }
-            return Task.FromResult(new byte[0]);
+            return Task.FromResult(Array.Empty<byte>());
         }
 
         /// <summary>
         /// Http client handler for the tunnels
         /// </summary>
-        private sealed class HttpTunnelClientHandler : Http.Default.HttpClientHandler {
+        private sealed class HttpTunnelClientHandler : Http.Clients.HttpClientHandler {
 
             /// <inheritdoc/>
             public override bool SupportsAutomaticDecompression => true;
@@ -125,7 +127,7 @@ namespace Microsoft.Azure.IIoT.Http.Tunnel.Services {
                 HttpRequestMessage request, CancellationToken ct) {
                 if (request.Headers.TryGetValues(HttpHeader.UdsPath, out var paths)) {
                     // On edge we must still support unix sockets to talk to edgelet
-                    return await base.SendAsync(request, ct);
+                    return await base.SendAsync(request, ct).ConfigureAwait(false);
                 }
 
                 // Create tunnel request
@@ -140,7 +142,7 @@ namespace Microsoft.Azure.IIoT.Http.Tunnel.Services {
                 // Get content
                 byte[] payload = null;
                 if (request.Content != null) {
-                    payload = await request.Content.ReadAsByteArrayAsync();
+                    payload = await request.Content.ReadAsByteArrayAsync().ConfigureAwait(false);
                     payload = payload.Zip();
 
                     tunnelRequest.ContentHeaders = request.Content.Headers?
@@ -151,7 +153,9 @@ namespace Microsoft.Azure.IIoT.Http.Tunnel.Services {
                 var buffers = SerializeRequest(tunnelRequest, payload);
 
                 var requestId = Guid.NewGuid().ToString();
+#pragma warning disable CA2000 // Dispose objects before losing scope
                 var requestTask = new RequestTask(kDefaultTimeout, ct);
+#pragma warning restore CA2000 // Dispose objects before losing scope
                 if (!_outer._outstanding.TryAdd(requestId, requestTask)) {
                     throw new InvalidOperationException("Could not add completion.");
                 }
@@ -160,12 +164,13 @@ namespace Microsoft.Azure.IIoT.Http.Tunnel.Services {
                 for (var messageId = 0; messageId < buffers.Count; messageId++) {
                     await _outer._client.SendEventAsync(_outer._identity.AsHubResource(),
                         buffers[messageId], requestId + "_" + messageId.ToString(),
-                        HttpTunnelRequestModel.SchemaName, ContentMimeType.Binary);
+                        HttpTunnelRequestModel.SchemaName,
+                            ContentMimeType.Binary).ConfigureAwait(false);
                 }
 
                 // Wait for completion
                 try {
-                    return await requestTask.Completion.Task;
+                    return await requestTask.Completion.Task.ConfigureAwait(false);
                 }
                 catch {
                     // If thrown remove and dispose first

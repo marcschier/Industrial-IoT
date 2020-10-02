@@ -40,7 +40,7 @@ namespace Microsoft.Azure.IIoT.Serializers {
                     // Fall back to use array elements
                     result = Values.Skip(index).FirstOrDefault();
                     if (result == null) {
-                        throw new IndexOutOfRangeException($"{index} out of range");
+                        return Null;
                     }
                 }
                 return result;
@@ -214,6 +214,8 @@ namespace Microsoft.Azure.IIoT.Serializers {
             return TypeCode.String;
         }
 
+#pragma warning disable CA1062 // Validate arguments of public methods
+#pragma warning disable CA2225 // Operator overloads have named alternates
         /// <inheritdoc/>
         public bool ToBoolean(IFormatProvider provider) {
             if (TryGetBoolean(out var value, false, provider)) {
@@ -221,6 +223,7 @@ namespace Microsoft.Azure.IIoT.Serializers {
             }
             return ConvertTo<bool>();
         }
+
         /// <inheritdoc/>
         public static explicit operator bool(VariantValue value) =>
             VariantValueEx.IsNull(value) ? throw new NullReferenceException() :
@@ -617,9 +620,15 @@ namespace Microsoft.Azure.IIoT.Serializers {
         /// <inheritdoc/>
         public static implicit operator VariantValue(TimeSpan? value) =>
             new PrimitiveValue(value);
+#pragma warning restore CA2225 // Operator overloads have named alternates
+#pragma warning restore CA1062 // Validate arguments of public methods
 
         /// <inheritdoc/>
         public virtual object ToType(Type conversionType, IFormatProvider provider) {
+            if (conversionType is null) {
+                throw new ArgumentNullException(nameof(conversionType));
+            }
+
             if (GetRawValue() == null || IsNull) {
                 if (conversionType.IsValueType) {
                     return Activator.CreateInstance(conversionType);
@@ -727,7 +736,9 @@ namespace Microsoft.Azure.IIoT.Serializers {
             if (o is VariantValue v) {
                 return Comparer.Equals(this, v);
             }
+#pragma warning disable CA1062 // Validate arguments of public methods
             return VariantValueComparer.EqualValues(this, o);
+#pragma warning restore CA1062 // Validate arguments of public methods
         }
 
         /// <inheritdoc/>
@@ -1987,6 +1998,10 @@ namespace Microsoft.Azure.IIoT.Serializers {
         /// <returns></returns>
         public virtual VariantValue GetByPath(string path,
             StringComparison compare = StringComparison.InvariantCultureIgnoreCase) {
+            if (path is null) {
+                throw new ArgumentNullException(nameof(path));
+            }
+
             var leaf = this;
             var elements = path.Split('.', StringSplitOptions.RemoveEmptyEntries);
             foreach (var elem in elements) {
@@ -1994,7 +2009,7 @@ namespace Microsoft.Azure.IIoT.Serializers {
                 var index = -1;
                 var offset = elem.Split('[', StringSplitOptions.RemoveEmptyEntries);
                 if (offset.Length > 1) {
-                    var end = offset[1].IndexOf(']');
+                    var end = offset[1].IndexOf(']', StringComparison.InvariantCulture);
                     if (end != -1 &&
                         int.TryParse(offset[1].Substring(0, end), out index)) {
                         key = offset[0];
@@ -2022,7 +2037,9 @@ namespace Microsoft.Azure.IIoT.Serializers {
             new VariantValueComparer();
 
         /// <inheritdoc/>
+#pragma warning disable CA1034 // Nested types should not be visible
         public class VariantValueComparer : IEqualityComparer<VariantValue>,
+#pragma warning restore CA1034 // Nested types should not be visible
             IComparer<VariantValue> {
 
             /// <inheritdoc/>
@@ -2139,17 +2156,19 @@ namespace Microsoft.Azure.IIoT.Serializers {
                             if (xt == VariantValueType.Values || yt == VariantValueType.Values) {
                                 // Compare as bytes
                                 if (x.TryGetBytes(out var bufx) && y.TryGetBytes(out var bufy)) {
-                                    return Convert.ToBase64String(bufx)
-                                        .CompareTo(Convert.ToBase64String(bufy));
+                                    return string.Compare(
+                                        Convert.ToBase64String(bufx),
+                                        Convert.ToBase64String(bufy),
+                                        StringComparison.InvariantCulture);
                                 }
                             }
 
                             // Values or object compare to string
                             if (xt == VariantValueType.Primitive && x.TryGetString(out var sx)) {
-                                return sx.CompareTo(y.ToJson());
+                                return string.Compare(sx, y.ToJson(), StringComparison.InvariantCulture);
                             }
                             if (yt == VariantValueType.Primitive && y.TryGetString(out var sy)) {
-                                return x.ToJson().CompareTo(sy);
+                                return string.Compare(x.ToJson(), sy, StringComparison.InvariantCulture);
                             }
                         }
                     }
@@ -2206,15 +2225,15 @@ namespace Microsoft.Azure.IIoT.Serializers {
                     }
                     if (x.TryGetString(out var sx) &&
                         y.TryGetString(out var sy)) {
-                        return sx.CompareTo(sy);
+                        return string.Compare(sx, sy, StringComparison.InvariantCulture);
                     }
                 }
 
                 // Use string comparison
-                var osx = x.ToJson().ToLowerInvariant();
-                var osy = y.ToJson().ToLowerInvariant();
+                var osx = x.ToJson().ToUpperInvariant();
+                var osy = y.ToJson().ToUpperInvariant();
 
-                return osx.CompareTo(osy);
+                return string.Compare(osx, osy, StringComparison.InvariantCulture);
             }
 
             /// <inheritdoc/>
@@ -2332,14 +2351,14 @@ namespace Microsoft.Azure.IIoT.Serializers {
 
                 if (v.GetValueType() != VariantValueType.Primitive) {
                     if (y is string s) {
-                        result = v.ToJson().CompareTo(s);
+                        result = string.Compare(v.ToJson(), s, StringComparison.InvariantCulture);
                         return true;
                     }
                     if (y is byte[] boy && v.GetValueType() == VariantValueType.Values) {
                         if (v.TryGetBytes(out var box)) {
                             var box64 = Convert.ToBase64String(box);
                             var boy64 = Convert.ToBase64String(boy);
-                            result = box64.CompareTo(boy64);
+                            result = string.Compare(box64, boy64, StringComparison.InvariantCulture);
                             return true;
                         }
                     }
@@ -2367,7 +2386,7 @@ namespace Microsoft.Azure.IIoT.Serializers {
                 // Compare stringified version
                 var s1 = x?.ToString() ?? "null";
                 var s2 = y?.ToString() ?? "null";
-                result = s1.CompareTo(s2);
+                result = string.Compare(s1, s2, StringComparison.InvariantCulture);
                 return true;
             }
 
@@ -2652,7 +2671,7 @@ namespace Microsoft.Azure.IIoT.Serializers {
             }
 
             /// <inheritdoc/>
-            protected override VariantValue AddProperty(string property) {
+            protected override VariantValue AddProperty(string prop) {
                 throw new NotSupportedException("Not an object");
             }
 
@@ -2664,7 +2683,7 @@ namespace Microsoft.Azure.IIoT.Serializers {
         /// Create value which is set to null.
         /// </summary>
         /// <returns></returns>
-        protected abstract VariantValue AddProperty(string property);
+        protected abstract VariantValue AddProperty(string prop);
 
         /// <summary>
         /// Get type of value
@@ -2725,10 +2744,10 @@ namespace Microsoft.Azure.IIoT.Serializers {
         /// <summary>
         /// Compare value
         /// </summary>
-        /// <param name="obj"></param>
+        /// <param name="v"></param>
         /// <param name="result"></param>
         /// <returns></returns>
-        protected virtual bool TryCompareToValue(object obj, out int result) {
+        protected virtual bool TryCompareToValue(object v, out int result) {
             result = 0;
             return false;
         }
@@ -2750,6 +2769,9 @@ namespace Microsoft.Azure.IIoT.Serializers {
         /// </summary>
         /// <returns></returns>
         protected virtual void AppendTo(StringBuilder builder) {
+            if (builder is null) {
+                throw new ArgumentNullException(nameof(builder));
+            }
             string s;
             switch (GetValueType()) {
                 case VariantValueType.Null:
@@ -2854,7 +2876,7 @@ namespace Microsoft.Azure.IIoT.Serializers {
                     builder.Append(i.ToString("G", CultureInfo.InvariantCulture));
                     return;
                 case bool _:
-                    builder.Append(GetRawValue().ToString().ToLowerInvariant());
+                    builder.Append(GetRawValue().ToString().ToUpperInvariant());
                     return;
                 case char _:
                 default:

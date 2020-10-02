@@ -53,11 +53,11 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Handler {
         public async Task OnCertificateRequestApprovedAsync(CertificateRequestModel request) {
             try {
                 if (request.Record.Type == CertificateRequestType.SigningRequest) {
-                    await ProcessSigningRequestAsync(request);
+                    await ProcessSigningRequestAsync(request).ConfigureAwait(false);
                 }
             }
             catch (Exception ex) {
-                await Try.Async(() => _workflow.FailRequestAsync(request.Record.RequestId, ex));
+                await Try.Async(() => _workflow.FailRequestAsync(request.Record.RequestId, ex)).ConfigureAwait(false);
             }
         }
 
@@ -69,6 +69,9 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Handler {
         /// <returns></returns>
         public async Task ProcessSigningRequestAsync(CertificateRequestModel request,
             CancellationToken ct = default) {
+            if (request is null) {
+                throw new ArgumentNullException(nameof(request));
+            }
 
             var csr = request.SigningRequest.ToCertificationRequest();
             var extensions = request.Entity.ToX509Extensions();
@@ -87,11 +90,11 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Handler {
             var certKeyPair = await _issuer.CreateSignedCertificateAsync(
                 request.Record.GroupId /* issuer cert */,
                 request.Entity.Id /* issued cert name == entity id */,
-                csr.PublicKey, subject, notBefore, sn => extensions, ct);
+                csr.PublicKey, subject, notBefore, sn => extensions, ct).ConfigureAwait(false);
 
             await _workflow.CompleteRequestAsync(request.Record.RequestId, record => {
                 record.Certificate = certKeyPair.ToServiceModel();
-            }, ct);
+            }, ct).ConfigureAwait(false);
         }
 
         private readonly IRequestWorkflow _workflow;

@@ -54,7 +54,7 @@ namespace Microsoft.Azure.IIoT.Azure.EventHub.Processor.Services {
 
         /// <inheritdoc/>
         public async Task StartAsync() {
-            await _lock.WaitAsync();
+            await _lock.WaitAsync().ConfigureAwait(false);
             try {
                 if (_host != null) {
                     _logger.Debug("Event processor host already running.");
@@ -80,7 +80,7 @@ namespace Microsoft.Azure.IIoT.Azure.EventHub.Processor.Services {
                             GetEventHubConnectionString(out var eventHub),
                             blobConnectionString,
                             !string.IsNullOrEmpty(_config.LeaseContainerName) ?
-                                _config.LeaseContainerName : eventHub.ToSha1Hash());
+                                _config.LeaseContainerName : eventHub.ToSha256Hash());
                     }
                     else {
                         throw new InvalidConfigurationException(
@@ -96,7 +96,7 @@ namespace Microsoft.Azure.IIoT.Azure.EventHub.Processor.Services {
                         MaxBatchSize = _config.ReceiveBatchSize,
                         ReceiveTimeout = _config.ReceiveTimeout,
                         InvokeProcessorAfterReceiveTimeout = true
-                    });
+                    }).ConfigureAwait(false);
                 _logger.Information("Event processor host started.");
             }
             catch (Exception ex) {
@@ -111,11 +111,11 @@ namespace Microsoft.Azure.IIoT.Azure.EventHub.Processor.Services {
 
         /// <inheritdoc/>
         public async Task StopAsync() {
-            await _lock.WaitAsync();
+            await _lock.WaitAsync().ConfigureAwait(false);
             try {
                 if (_host != null) {
                     _logger.Debug("Stopping event processor host...");
-                    await _host.UnregisterEventProcessorAsync();
+                    await _host.UnregisterEventProcessorAsync().ConfigureAwait(false);
                     _host = null;
                     _logger.Information("Event processor host stopped.");
                 }

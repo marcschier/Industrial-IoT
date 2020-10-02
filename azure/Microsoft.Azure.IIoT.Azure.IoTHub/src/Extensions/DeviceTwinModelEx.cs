@@ -73,7 +73,7 @@ namespace Microsoft.Azure.IIoT.Hub.Models {
         /// </summary>
         /// <param name="props"></param>
         /// <returns></returns>
-        public static Twin ToTwin(this Dictionary<string, VariantValue> props) {
+        public static Twin ToTwin(this IReadOnlyDictionary<string, VariantValue> props) {
             return new Twin {
                 Properties = new TwinProperties {
                     Desired = props?.ToTwinCollection()
@@ -87,7 +87,7 @@ namespace Microsoft.Azure.IIoT.Hub.Models {
         /// <param name="props"></param>
         /// <returns></returns>
         private static TwinCollection ToTwinCollection(
-            this Dictionary<string, VariantValue> props) {
+            this IReadOnlyDictionary<string, VariantValue> props) {
             var collection = new TwinCollection();
             foreach (var item in props) {
                 collection[item.Key] = item.Value.IsListOfValues ? item.Value.Values : item.Value.Value;

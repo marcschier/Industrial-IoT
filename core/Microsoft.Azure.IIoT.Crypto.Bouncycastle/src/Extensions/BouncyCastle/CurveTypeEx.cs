@@ -29,33 +29,33 @@ namespace Microsoft.Azure.IIoT.Crypto.BouncyCastle {
                     return ECNamedCurveTable.GetByName("P-521");
                 case CurveType.P256K:
                     return ECNamedCurveTable.GetByName("K-283");
-                case CurveType.Brainpool_P160r1:
+                case CurveType.BrainpoolP160r1:
                     return ECNamedCurveTable.GetByName("brainpoolP160r1");
-                case CurveType.Brainpool_P160t1:
+                case CurveType.BrainpoolP160t1:
                     return ECNamedCurveTable.GetByName("brainpoolP160t1");
-                case CurveType.Brainpool_P192r1:
+                case CurveType.BrainpoolP192r1:
                     return ECNamedCurveTable.GetByName("brainpoolP192r1");
-                case CurveType.Brainpool_P192t1:
+                case CurveType.BrainpoolP192t1:
                     return ECNamedCurveTable.GetByName("brainpoolP192t1");
-                case CurveType.Brainpool_P224r1:
+                case CurveType.BrainpoolP224r1:
                     return ECNamedCurveTable.GetByName("brainpoolP224r1");
-                case CurveType.Brainpool_P224t1:
+                case CurveType.BrainpoolP224t1:
                     return ECNamedCurveTable.GetByName("brainpoolP224t1");
-                case CurveType.Brainpool_P256r1:
+                case CurveType.BrainpoolP256r1:
                     return ECNamedCurveTable.GetByName("brainpoolP256r1");
-                case CurveType.Brainpool_P256t1:
+                case CurveType.BrainpoolP256t1:
                     return ECNamedCurveTable.GetByName("brainpoolP256t1");
-                case CurveType.Brainpool_P320r1:
+                case CurveType.BrainpoolP320r1:
                     return ECNamedCurveTable.GetByName("brainpoolP320r1");
-                case CurveType.Brainpool_P320t1:
+                case CurveType.BrainpoolP320t1:
                     return ECNamedCurveTable.GetByName("brainpoolP320t1");
-                case CurveType.Brainpool_P384r1:
+                case CurveType.BrainpoolP384r1:
                     return ECNamedCurveTable.GetByName("brainpoolP384r1");
-                case CurveType.Brainpool_P384t1:
+                case CurveType.BrainpoolP384t1:
                     return ECNamedCurveTable.GetByName("brainpoolP384t1");
-                case CurveType.Brainpool_P512r1:
+                case CurveType.BrainpoolP512r1:
                     return ECNamedCurveTable.GetByName("brainpoolP512r1");
-                case CurveType.Brainpool_P512t1:
+                case CurveType.BrainpoolP512t1:
                     return ECNamedCurveTable.GetByName("brainpoolP512t1");
             }
             throw new ArgumentException($"Unknown curve {type}");
@@ -110,33 +110,33 @@ namespace Microsoft.Azure.IIoT.Crypto.BouncyCastle {
                 case "secp256t1": // TODO
                     return CurveType.P256K;
                 case "brainpoolP160r1":
-                    return CurveType.Brainpool_P160r1;
+                    return CurveType.BrainpoolP160r1;
                 case "brainpoolP160t1":
-                    return CurveType.Brainpool_P160t1;
+                    return CurveType.BrainpoolP160t1;
                 case "brainpoolP192r1":
-                    return CurveType.Brainpool_P192r1;
+                    return CurveType.BrainpoolP192r1;
                 case "brainpoolP192t1":
-                    return CurveType.Brainpool_P192t1;
+                    return CurveType.BrainpoolP192t1;
                 case "brainpoolP224r1":
-                    return CurveType.Brainpool_P224r1;
+                    return CurveType.BrainpoolP224r1;
                 case "brainpoolP224t1":
-                    return CurveType.Brainpool_P224t1;
+                    return CurveType.BrainpoolP224t1;
                 case "brainpoolP256r1":
-                    return CurveType.Brainpool_P256r1;
+                    return CurveType.BrainpoolP256r1;
                 case "brainpoolP256t1":
-                    return CurveType.Brainpool_P256t1;
+                    return CurveType.BrainpoolP256t1;
                 case "brainpoolP320r1":
-                    return CurveType.Brainpool_P320r1;
+                    return CurveType.BrainpoolP320r1;
                 case "brainpoolP320t1":
-                    return CurveType.Brainpool_P320t1;
+                    return CurveType.BrainpoolP320t1;
                 case "brainpoolP384r1":
-                    return CurveType.Brainpool_P384r1;
+                    return CurveType.BrainpoolP384r1;
                 case "brainpoolP384t1":
-                    return CurveType.Brainpool_P384t1;
+                    return CurveType.BrainpoolP384t1;
                 case "brainpoolP512r1":
-                    return CurveType.Brainpool_P512r1;
+                    return CurveType.BrainpoolP512r1;
                 case "brainpoolP512t1":
-                    return CurveType.Brainpool_P512t1;
+                    return CurveType.BrainpoolP512t1;
             }
             throw new ArgumentException($"Unsupported curve {name}.");
         }

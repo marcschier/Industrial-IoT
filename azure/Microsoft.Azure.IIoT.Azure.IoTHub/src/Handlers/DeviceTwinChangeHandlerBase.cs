@@ -77,7 +77,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub.Handlers {
                 Timestamp = timestamp
             };
             foreach (var handler in _handlers) {
-                await handler.HandleDeviceTwinEventAsync(ev);
+                await handler.HandleDeviceTwinEventAsync(ev).ConfigureAwait(false);
             }
         }
 

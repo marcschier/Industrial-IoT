@@ -45,7 +45,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
             securityPolicy = securityPolicy?.ToLowerInvariant() ?? "";
 
             var id = $"{url}-{applicationId}-{mode}-{securityPolicy}";
-            return "uat" + id.ToSha1Hash();
+            return "uat" + id.ToSha256Hash();
         }
 
         /// <summary>

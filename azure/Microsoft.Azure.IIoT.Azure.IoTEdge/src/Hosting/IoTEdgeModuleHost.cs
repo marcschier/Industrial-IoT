@@ -41,18 +41,18 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Hosting {
 
         /// <inheritdoc/>
         public async Task StartAsync(string type, string version) {
-            await _lock.WaitAsync();
+            await _lock.WaitAsync().ConfigureAwait(false);
             try {
                 if (_started) {
                     throw new InvalidOperationException("Already started");
                 }
 
                 _logger.Debug("Starting Module Host...");
-                await InitializeTwinAsync();
+                await InitializeTwinAsync().ConfigureAwait(false);
 
                 // Register callback to be called when settings change ...
                 await _client.SetDesiredPropertyUpdateCallbackAsync(
-                    (settings, _) => ProcessSettingsAsync(settings), null);
+                    (settings, _) => ProcessSettingsAsync(settings), null).ConfigureAwait(false);
 
                 // Report type of service, chosen site, and connection state
                 var twinSettings = new TwinCollection {
@@ -61,7 +61,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Hosting {
 
                 // Set version information
                 twinSettings[TwinProperty.Version] = version;
-                await _client.UpdateReportedPropertiesAsync(twinSettings);
+                await _client.UpdateReportedPropertiesAsync(twinSettings).ConfigureAwait(false);
 
                 _logger.Information("Module Host started.");
                 _started = true;
@@ -77,11 +77,11 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Hosting {
 
         /// <inheritdoc/>
         public async Task StopAsync() {
-            await _lock.WaitAsync();
+            await _lock.WaitAsync().ConfigureAwait(false);
             try {
                 if (_started) {
                     await _client.SetDesiredPropertyUpdateCallbackAsync(
-                        null, null);
+                        null, null).ConfigureAwait(false);
                 }
             }
             finally {
@@ -93,14 +93,14 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Hosting {
         /// <inheritdoc/>
         public async Task ReportAsync(IEnumerable<KeyValuePair<string, VariantValue>> properties,
             CancellationToken ct) {
-            await _lock.WaitAsync();
+            await _lock.WaitAsync().ConfigureAwait(false);
             try {
                 if (_client != null) {
                     var collection = new TwinCollection();
                     foreach (var property in properties) {
                         collection[property.Key] = property.Value?.ConvertTo<object>();
                     }
-                    await _client.UpdateReportedPropertiesAsync(collection, ct);
+                    await _client.UpdateReportedPropertiesAsync(collection, ct).ConfigureAwait(false);
                 }
             }
             finally {
@@ -110,13 +110,13 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Hosting {
 
         /// <inheritdoc/>
         public async Task ReportAsync(string propertyId, VariantValue value, CancellationToken ct) {
-            await _lock.WaitAsync();
+            await _lock.WaitAsync().ConfigureAwait(false);
             try {
                 if (_client != null) {
                     var collection = new TwinCollection {
                         [propertyId] = value?.ConvertTo<object>()
                     };
-                    await _client.UpdateReportedPropertiesAsync(collection, ct);
+                    await _client.UpdateReportedPropertiesAsync(collection, ct).ConfigureAwait(false);
                 }
             }
             finally {
@@ -143,7 +143,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Hosting {
             System.Diagnostics.Debug.Assert(_lock.CurrentCount == 0);
 
             // Process initial setting snapshot from twin
-            var twin = await _client.GetTwinAsync();
+            var twin = await _client.GetTwinAsync().ConfigureAwait(false);
             var desired = new Dictionary<string, VariantValue>();
             var reported = new Dictionary<string, VariantValue>();
 
@@ -167,11 +167,11 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Hosting {
 
             // Process settings on controllers
             _logger.Information("Applying initial desired state.");
-            await _settings.ProcessSettingsAsync(desired);
+            await _settings.ProcessSettingsAsync(desired).ConfigureAwait(false);
 
             // Synchronize all controllers with reported
             _logger.Information("Reporting currently initial state.");
-            await ReportControllerStateAsync(twin, reported);
+            await ReportControllerStateAsync(twin, reported).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -182,7 +182,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Hosting {
         /// <returns></returns>
         private async Task ReportControllerStateAsync(Twin twin,
             Dictionary<string, VariantValue> reported) {
-            var processed = await _settings.GetSettingsStateAsync();
+            var processed = await _settings.GetSettingsStateAsync().ConfigureAwait(false);
 
             // If there are changes, update what should be reported back.
             foreach (var property in processed) {
@@ -216,7 +216,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Hosting {
                 foreach (var item in reported) {
                     collection[item.Key] = item.Value?.ConvertTo<object>();
                 }
-                await _client.UpdateReportedPropertiesAsync(collection);
+                await _client.UpdateReportedPropertiesAsync(collection).ConfigureAwait(false);
                 _logger.Debug("Complete controller state reported (properties: {@settings}).",
                     reported.Keys);
             }
@@ -230,7 +230,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Hosting {
         private async Task ProcessSettingsAsync(TwinCollection settings) {
             if (settings.Count > 0) {
                 try {
-                    await _lock.WaitAsync();
+                    await _lock.WaitAsync().ConfigureAwait(false);
 
                     // Patch existing reported properties
                     var desired = new Dictionary<string, VariantValue>();
@@ -248,7 +248,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Hosting {
                         foreach (var item in reporting) {
                             collection[item.Key] = item.Value?.ConvertTo<object>();
                         }
-                        await _client.UpdateReportedPropertiesAsync(collection);
+                        await _client.UpdateReportedPropertiesAsync(collection).ConfigureAwait(false);
                         _logger.Debug("Internal state updated...", reporting);
                     }
 
@@ -258,7 +258,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Hosting {
                     }
 
                     _logger.Debug("Processing new settings...");
-                    var reported = await _settings.ProcessSettingsAsync(desired);
+                    var reported = await _settings.ProcessSettingsAsync(desired).ConfigureAwait(false);
 
                     if (reported != null && reported.Count != 0) {
                         _logger.Debug("Reporting setting results...");
@@ -266,7 +266,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Hosting {
                         foreach (var item in reported) {
                             collection[item.Key] = item.Value?.ConvertTo<object>();
                         }
-                        await _client.UpdateReportedPropertiesAsync(collection);
+                        await _client.UpdateReportedPropertiesAsync(collection).ConfigureAwait(false);
                     }
                     _logger.Information("New settings processed.");
                 }

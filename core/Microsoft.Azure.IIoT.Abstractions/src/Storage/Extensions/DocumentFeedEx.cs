@@ -24,7 +24,7 @@ namespace Microsoft.Azure.IIoT.Storage {
             CancellationToken ct = default) {
             var results = new List<T>();
             while (feed.HasMore()) {
-                var result = await feed.ReadAsync(ct);
+                var result = await feed.ReadAsync(ct).ConfigureAwait(false);
                 results.AddRange(result);
             }
             return results;

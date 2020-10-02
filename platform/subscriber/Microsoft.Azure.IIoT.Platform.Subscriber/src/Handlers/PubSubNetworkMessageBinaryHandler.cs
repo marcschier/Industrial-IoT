@@ -44,7 +44,8 @@ namespace Microsoft.Azure.IIoT.Platform.Subscriber.Handlers {
 
             try {
                 var context = new ServiceMessageContext();
-                var decoder = new BinaryDecoder(new MemoryStream(payload), context);
+                using var stream = new MemoryStream(payload);
+                using var decoder = new BinaryDecoder(stream, context);
                 var messages = decoder.ReadBoolean(null) // is Batch?
                     ? decoder.ReadEncodeableArray(null, typeof(NetworkMessage))
                         as NetworkMessage[]
@@ -85,7 +86,7 @@ namespace Microsoft.Azure.IIoT.Platform.Subscriber.Handlers {
                                     ? null : datapoint.Value?.ServerPicoseconds
                             };
                         }
-                        await Task.WhenAll(_handlers.Select(h => h.HandleMessageAsync(dataset)));
+                        await Task.WhenAll(_handlers.Select(h => h.HandleMessageAsync(dataset))).ConfigureAwait(false);
                     }
                 }
             }

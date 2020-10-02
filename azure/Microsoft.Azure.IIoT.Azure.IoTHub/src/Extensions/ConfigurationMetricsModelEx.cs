@@ -5,6 +5,8 @@
 
 namespace Microsoft.Azure.IIoT.Hub.Models {
     using Microsoft.Azure.Devices;
+    using System.Collections.Generic;
+    using System;
 
     /// <summary>
     /// Configuration metrics model extensions
@@ -18,9 +20,12 @@ namespace Microsoft.Azure.IIoT.Hub.Models {
         /// <param name="model"></param>
         /// <returns></returns>
         public static ConfigurationMetrics ToContent(this ConfigurationMetricsModel model) {
+            if (model is null) {
+                throw new ArgumentNullException(nameof(model));
+            }
             return new ConfigurationMetrics {
-                Queries = model.Queries,
-                Results = model.Results
+                Queries = model.Queries.Clone(),
+                Results = model.Results.Clone()
             };
         }
 
@@ -30,9 +35,12 @@ namespace Microsoft.Azure.IIoT.Hub.Models {
         /// <param name="content"></param>
         /// <returns></returns>
         public static ConfigurationMetricsModel ToModel(this ConfigurationMetrics content) {
+            if (content is null) {
+                throw new ArgumentNullException(nameof(content));
+            }
             return new ConfigurationMetricsModel {
-                Queries = content.Queries,
-                Results = content.Results
+                Queries = content.Queries.Clone(),
+                Results = content.Results.Clone()
             };
         }
     }

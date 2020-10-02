@@ -42,7 +42,7 @@ namespace Microsoft.Azure.IIoT.Azure.ActiveDirectory.Clients {
             if (!string.IsNullOrEmpty(config.TenantId)) {
                 cs += $";TenantId={config.TenantId}";
             }
-            var provider = new AzureServiceTokenProvider(cs, config.GetAuthorityUrl(true));
+            var provider = new AzureServiceTokenProvider(cs, config.GetAuthority(true));
             logger.Information("Managed service identity {clientId} in {tenant} registered.",
                 config.ClientId, config.TenantId);
             return KeyValuePair.Create(config.Resource ?? Http.Resource.Platform, (config, provider));

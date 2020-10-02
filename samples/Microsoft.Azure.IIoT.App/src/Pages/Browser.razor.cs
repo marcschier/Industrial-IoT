@@ -6,6 +6,7 @@
 namespace Microsoft.Azure.IIoT.App.Pages {
     using System;
     using System.Collections.Generic;
+    using System.Globalization;
     using System.Threading.Tasks;
     using Microsoft.Azure.IIoT.App.Services;
     using Microsoft.Azure.IIoT.App.Data;
@@ -43,15 +44,17 @@ namespace Microsoft.Azure.IIoT.App.Pages {
         }
         private Drawer DrawerType { get; set; }
 
-        protected override async Task GetItems(bool getNextPage) {
-            EndpointModel = await registryService.GetEndpointAsync(EndpointId);
-            Credential = await GetSecureItemAsync<CredentialModel>(CommonHelper.CredentialKey);
-            await BrowseTreeAsync(BrowseDirection.Forward, 0, getNextPage, string.Empty, new List<string>());
+#pragma warning disable CA1721 // Property names should not match get methods
+        protected override async Task LoadPageContentAsync(bool getNextPage) {
+#pragma warning restore CA1721 // Property names should not match get methods
+            EndpointModel = await registryService.GetEndpointAsync(EndpointId).ConfigureAwait(false);
+            Credential = await GetSecureItemAsync<CredentialModel>(CommonHelper.CredentialKey).ConfigureAwait(false);
+            await BrowseTreeAsync(BrowseDirection.Forward, 0, getNextPage, string.Empty, new List<string>()).ConfigureAwait(false);
         }
 
-        protected override async Task SubscribeEvents() {
+        protected override async Task SubscribeContentEventsAsync() {
             _events = await PublisherServiceEvents.NodePublishSubscribeByEndpointAsync(EndpointId,
-                    samples => InvokeAsync(() => GetPublishedNodeData(samples)));
+                    samples => InvokeAsync(() => GetPublishedNodeData(samples))).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -60,7 +63,7 @@ namespace Microsoft.Azure.IIoT.App.Pages {
         /// <param name="id"></param>
         /// <param name="parentId"></param>
         private async Task GetTreeAsync(string id, List<string> parentId) {
-            await BrowseTreeAsync(BrowseDirection.Forward, 0, false, id, parentId);
+            await BrowseTreeAsync(BrowseDirection.Forward, 0, false, id, parentId).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -69,7 +72,7 @@ namespace Microsoft.Azure.IIoT.App.Pages {
         /// <param name="id"></param>
         /// <param name="parentId"></param>
         private async Task GetTreeBackAsync(string id, List<string> parentId, int index) {
-            await BrowseTreeAsync(BrowseDirection.Backward, index, false, id, parentId);
+            await BrowseTreeAsync(BrowseDirection.Backward, index, false, id, parentId).ConfigureAwait(false);
             NavigationManager.NavigateTo(NavigationManager.BaseUri + "browser/" + DiscovererId + "/" + ApplicationId + "/" + SupervisorId + "/" + EndpointId);
         }
 
@@ -90,21 +93,21 @@ namespace Microsoft.Azure.IIoT.App.Pages {
                                             DiscovererId,
                                             direction,
                                             index,
-                                            Credential);
+                                            Credential).ConfigureAwait(false);
             }
             else {
                 Items = await BrowseManager.GetTreeNextAsync(EndpointId,
                                                 ParentId,
                                                 DiscovererId,
                                                 Credential,
-                                                Items);
+                                                Items).ConfigureAwait(false);
             }
 
-            PublishedNodes = await Publisher.PublishedAsync(EndpointId, false);
+            PublishedNodes = await Publisher.PublishedAsync(EndpointId, false).ConfigureAwait(false);
 
             foreach (var node in Items.Results) {
                 if (node.NodeClass == NodeClass.Variable) {
-                    node.Value = await BrowseManager.ReadValueAsync(EndpointId, node.Id, Credential);
+                    node.Value = await BrowseManager.ReadValueAsync(EndpointId, node.Id, Credential).ConfigureAwait(false);
                     // check if publishing enabled
                     foreach (var publishedNode in PublishedNodes.Results) {
                         if (node.Id == publishedNode.PublishedItem.NodeId) {
@@ -132,10 +135,10 @@ namespace Microsoft.Azure.IIoT.App.Pages {
         /// <param name="node"></param>
         private async Task SetPublishingAsync(string endpointId, ListNode node) {
             if (!node.Publishing) {
-                await PublishNodeAsync(endpointId, node);
+                await PublishNodeAsync(endpointId, node).ConfigureAwait(false);
             }
             else {
-                await UnPublishNodeAsync(endpointId, node);
+                await UnPublishNodeAsync(endpointId, node).ConfigureAwait(false);
             }
         }
 
@@ -150,7 +153,7 @@ namespace Microsoft.Azure.IIoT.App.Pages {
             var publishingInterval = IsTimeIntervalSet(item?.PublishingInterval) ? item.PublishingInterval : TimeSpan.FromMilliseconds(1000);
             var samplingInterval = IsTimeIntervalSet(item?.SamplingInterval) ? item.SamplingInterval : TimeSpan.FromMilliseconds(1000);
             var heartbeatInterval = IsTimeIntervalSet(item?.HeartbeatInterval) ? item.HeartbeatInterval : null;
-            var result = await Publisher.StartPublishingAsync(endpointId, node.Id, node.NodeName, samplingInterval, publishingInterval, heartbeatInterval, Credential);
+            var result = await Publisher.StartPublishingAsync(endpointId, node.Id, node.NodeName, samplingInterval, publishingInterval, heartbeatInterval, Credential).ConfigureAwait(false);
             if (result) {
                 node.PublishedItem = new PublishedItemApiModel() {
                     NodeId = node.Id,
@@ -160,7 +163,7 @@ namespace Microsoft.Azure.IIoT.App.Pages {
                 };
                 if (_events == null) {
                     _events = Task.Run(async () => await PublisherServiceEvents.NodePublishSubscribeByEndpointAsync(EndpointId,
-                        samples => InvokeAsync(() => GetPublishedNodeData(samples)))).Result;
+                        samples => InvokeAsync(() => GetPublishedNodeData(samples))).ConfigureAwait(false)).Result;
                 }
             }
             else {
@@ -174,7 +177,7 @@ namespace Microsoft.Azure.IIoT.App.Pages {
         /// <param name="endpointId"></param>
         /// <param name="node"></param>
         private async Task UnPublishNodeAsync(string endpointId, ListNode node) {
-            var result = await Publisher.StopPublishingAsync(endpointId, node.Id, Credential);
+            var result = await Publisher.StopPublishingAsync(endpointId, node.Id, Credential).ConfigureAwait(false);
             if (result) {
                 node.Publishing = false;
             }
@@ -208,7 +211,7 @@ namespace Microsoft.Azure.IIoT.App.Pages {
                 if (node.Id == samples.NodeId) {
                     node.Value = samples.Value?.ToJson()?.TrimQuotes();
                     node.Status = string.IsNullOrEmpty(samples.Status) ? "Good" : samples.Status;
-                    node.Timestamp = samples.Timestamp.Value.ToLocalTime().ToString();
+                    node.Timestamp = samples.Timestamp.Value.ToLocalTime().ToString(CultureInfo.CurrentCulture);
                     StateHasChanged();
                 }
             }
@@ -220,7 +223,7 @@ namespace Microsoft.Azure.IIoT.App.Pages {
         /// </summary>
         async Task ClickHandlerAsync(ListNode node) {
             CloseDrawer();
-            await PublishNodeAsync(EndpointId, node);
+            await PublishNodeAsync(EndpointId, node).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -228,7 +231,7 @@ namespace Microsoft.Azure.IIoT.App.Pages {
         /// </summary>
         /// <param name="key"></param>
         private async Task<T> GetSecureItemAsync<T>(string key) {
-            var serializedProtectedData = await sessionStorage.GetItemAsync<string>(key);
+            var serializedProtectedData = await sessionStorage.GetItemAsync<string>(key).ConfigureAwait(false);
             return secureData.UnprotectDeserialize<T>(serializedProtectedData);
         }
 
@@ -237,7 +240,7 @@ namespace Microsoft.Azure.IIoT.App.Pages {
         /// </summary>
         /// <param name="interval"></param>
         /// <returns>True when the interval is set, false otherwise</returns>
-        private bool IsTimeIntervalSet(TimeSpan? interval) {
+        private static bool IsTimeIntervalSet(TimeSpan? interval) {
             return interval != null && interval.Value != TimeSpan.MinValue;
         }
     }

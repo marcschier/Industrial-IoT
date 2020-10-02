@@ -38,7 +38,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Services {
             if (string.IsNullOrEmpty(serialNumber)) {
                 throw new ArgumentNullException(nameof(serialNumber));
             }
-            var crl = await _crls.GetCrlChainAsync(SerialNumber.Parse(serialNumber).Value, ct);
+            var crl = await _crls.GetCrlChainAsync(SerialNumber.Parse(serialNumber).Value, ct).ConfigureAwait(false);
             if (!crl.Any()) {
                 throw new ResourceNotFoundException(
                     "Crl chain for serial number not found");
@@ -57,7 +57,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Services {
                 throw new ArgumentNullException(nameof(serialNumber));
             }
             var issuerCertChain = await _store.ListCompleteCertificateChainAsync(
-                SerialNumber.Parse(serialNumber).Value, ct);
+                SerialNumber.Parse(serialNumber).Value, ct).ConfigureAwait(false);
             if (!issuerCertChain.Any()) {
                 throw new ResourceNotFoundException(
                     "Certificate chain for serial number not found");
@@ -73,7 +73,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Services {
         public async Task RevokeCertificateAsync(X509CertificateModel certificate,
             CancellationToken ct) {
             var serialNumber = certificate.ToStackModel().SerialNumber;
-            await _revoker.RevokeCertificateAsync(serialNumber, ct);
+            await _revoker.RevokeCertificateAsync(serialNumber, ct).ConfigureAwait(false);
         }
 
         private readonly ICertificateRevoker _revoker;

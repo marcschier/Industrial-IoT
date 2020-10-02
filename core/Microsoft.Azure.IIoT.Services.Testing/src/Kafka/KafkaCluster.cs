@@ -37,13 +37,13 @@ namespace Microsoft.Azure.IIoT.Services.Kafka.Server {
 
         /// <inheritdoc/>
         public async Task StartAsync() {
-            await _lock.WaitAsync();
+            await _lock.WaitAsync().ConfigureAwait(false);
             try {
                 if (_nodes.Count == _kafkaNodes) {
                     return; // Running
                 }
 
-                await _zookeeper.StartAsync();
+                await _zookeeper.StartAsync().ConfigureAwait(false);
 
                 _logger.Information("Starting Kafka cluster...");
                 for (var i = _nodes.Count; i < _kafkaNodes; i++) {
@@ -51,12 +51,12 @@ namespace Microsoft.Azure.IIoT.Services.Kafka.Server {
                         $"{_zookeeper.ContainerName}:2181", 9092 + i, _networkName);
                     _nodes.Add(node);
                 }
-                await Task.WhenAll(_nodes.Select(n => n.StartAsync()));
-                await WaitForClusterHealthAsync();
+                await Task.WhenAll(_nodes.Select(n => n.StartAsync())).ConfigureAwait(false);
+                await WaitForClusterHealthAsync().ConfigureAwait(false);
                 _logger.Information("Kafka cluster running.");
             }
             catch {
-                await _zookeeper.StopAsync();
+                await _zookeeper.StopAsync().ConfigureAwait(false);
                 throw;
             }
             finally {
@@ -66,18 +66,18 @@ namespace Microsoft.Azure.IIoT.Services.Kafka.Server {
 
         /// <inheritdoc/>
         public async Task StopAsync() {
-            await _lock.WaitAsync();
+            await _lock.WaitAsync().ConfigureAwait(false);
             try {
                 if (_nodes.Count == 0) {
                     // Stopped
                     return;
                 }
                 try {
-                    await Task.WhenAll(_nodes.Select(n => n.StopAsync()));
+                    await Task.WhenAll(_nodes.Select(n => n.StopAsync())).ConfigureAwait(false);
                 }
                 finally {
                     _nodes.Clear();
-                    await _zookeeper.StopAsync();
+                    await _zookeeper.StopAsync().ConfigureAwait(false);
                 }
             }
             finally {
@@ -98,7 +98,7 @@ namespace Microsoft.Azure.IIoT.Services.Kafka.Server {
             for (var attempt = 0; attempt < 10; attempt ++){
                 var up = true;
                 foreach (var check in _checks) {
-                    var result = await check.CheckHealthAsync(null);
+                    var result = await check.CheckHealthAsync(null).ConfigureAwait(false);
                     if (result.Status != HealthStatus.Healthy) {
                         up = false;
                         break;
@@ -108,7 +108,7 @@ namespace Microsoft.Azure.IIoT.Services.Kafka.Server {
                     // Up and running
                     return;
                 }
-                await Task.Delay(1000);
+                await Task.Delay(1000).ConfigureAwait(false);
             }
             throw new ExternalDependencyException("Cluster not available.");
         }

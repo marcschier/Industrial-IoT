@@ -294,7 +294,7 @@ namespace System.Collections.Concurrent {
                 // A reheapify will be required for the removal
                 else {
                     // Remove the first item and move the last item to the front.
-                    Items[0] = Items[Items.Count - 1];
+                    Items[0] = Items[^1];
                     Items.RemoveAt(Items.Count - 1);
 
                     // Start reheapify

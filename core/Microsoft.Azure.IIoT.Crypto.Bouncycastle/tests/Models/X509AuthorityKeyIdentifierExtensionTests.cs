@@ -142,7 +142,8 @@ namespace Microsoft.Azure.IIoT.Crypto.Models {
                         .YieldReturn());
                 var cert = request.Create(new X500DistinguishedName("CN=test"),
                     X509SignatureGenerator.CreateForRSA(rsa, RSASignaturePadding.Pkcs1),
-                    DateTime.UtcNow, DateTime.UtcNow + TimeSpan.FromDays(1), serialNumber.Value);
+                    DateTime.UtcNow, DateTime.UtcNow + TimeSpan.FromDays(1),
+                    serialNumber.Value?.ToArray());
 
                 var aki = cert.GetAuthorityKeyIdentifierExtension();
 
@@ -173,7 +174,8 @@ namespace Microsoft.Azure.IIoT.Crypto.Models {
                         .YieldReturn());
                 var cert = request.Create(new X500DistinguishedName("CN=test"),
                     X509SignatureGenerator.CreateForRSA(rsa, RSASignaturePadding.Pkcs1),
-                    DateTime.UtcNow, DateTime.UtcNow + TimeSpan.FromDays(1), serialNumber.Value);
+                    DateTime.UtcNow, DateTime.UtcNow + TimeSpan.FromDays(1),
+                    serialNumber.Value?.ToArray());
 
                 var aki = cert.GetAuthorityKeyIdentifierExtension();
 

@@ -7,6 +7,7 @@ namespace Microsoft.Azure.IIoT.Crypto.Storage.Models {
     using Microsoft.Azure.IIoT.Crypto.Models;
     using System.Runtime.Serialization;
     using System;
+    using System.Collections.Generic;
 
     /// <summary>
     /// Crl document
@@ -48,13 +49,13 @@ namespace Microsoft.Azure.IIoT.Crypto.Storage.Models {
         /// Raw crl for the certificate
         /// </summary>
         [DataMember]
-        public byte[] RawData { get; set; }
+        public IReadOnlyCollection<byte> RawData { get; set; }
 
         /// <summary>
         /// Type
         /// </summary>
         [DataMember]
-        public string Type => nameof(Crl);
+        public string Type { get; } = nameof(Crl);
 
         /// <summary>
         /// Expiration in seconds

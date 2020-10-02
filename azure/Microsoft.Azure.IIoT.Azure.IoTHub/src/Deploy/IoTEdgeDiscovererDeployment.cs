@@ -49,7 +49,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub.Deploy {
                 TargetCondition = IoTEdgeBaseDeployment.TargetCondition +
                     " AND tags.os = 'Linux'",
                 Priority = 1
-            }, true);
+            }, true).ConfigureAwait(false);
 
             await _service.CreateOrUpdateConfigurationAsync(new ConfigurationModel {
                 Id = "__default-discoverer-windows",
@@ -60,7 +60,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub.Deploy {
                 TargetCondition = IoTEdgeBaseDeployment.TargetCondition +
                     " AND tags.os = 'Windows'",
                 Priority = 1
-            }, true);
+            }, true).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
@@ -73,7 +73,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub.Deploy {
         /// </summary>
         /// <param name="isLinux"></param>
         /// <returns></returns>
-        private IDictionary<string, IDictionary<string, object>> CreateLayeredDeployment(
+        private IReadOnlyDictionary<string, IReadOnlyDictionary<string, object>> CreateLayeredDeployment(
             bool isLinux) {
 
             var registryCredentials = "";
@@ -111,7 +111,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub.Deploy {
                 // Windows
                 createOptions = "{}";
             }
-            createOptions = createOptions.Replace("\"", "\\\"");
+            createOptions = createOptions.Replace("\"", "\\\"", StringComparison.Ordinal);
 
             var server = string.IsNullOrEmpty(_config.DockerServer) ?
                 "mcr.microsoft.com" : _config.DockerServer;
@@ -149,7 +149,8 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub.Deploy {
                     }
                 }
             }";
-            return _serializer.Deserialize<IDictionary<string, IDictionary<string, object>>>(content);
+            return _serializer
+                .Deserialize<IReadOnlyDictionary<string, IReadOnlyDictionary<string, object>>>(content);
         }
 
         private const string kDefaultSchemaVersion = "1.0";

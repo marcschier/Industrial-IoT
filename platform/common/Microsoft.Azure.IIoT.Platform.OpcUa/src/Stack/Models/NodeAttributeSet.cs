@@ -65,6 +65,9 @@ namespace Opc.Ua.Models {
         /// <param name="attributes"></param>
         protected NodeAttributeSet(ExpandedNodeId nodeId, NamespaceTable namespaces,
             SortedDictionary<uint, DataValue> attributes) : this(nodeId, namespaces) {
+            if (attributes is null) {
+                throw new ArgumentNullException(nameof(attributes));
+            }
             foreach (var item in attributes) {
                 _attributes[item.Key] = (DataValue)item.Value.MemberwiseClone();
             }
@@ -267,7 +270,7 @@ namespace Opc.Ua.Models {
         }
 
         /// <inheritdoc/>
-        public uint[] ArrayDimensions {
+        public IReadOnlyList<uint> ArrayDimensions {
             get => this.GetAttribute<uint[]>(
                 Attributes.ArrayDimensions, null);
             set => SetAttribute(
@@ -311,7 +314,7 @@ namespace Opc.Ua.Models {
             get => this.GetAttribute<ExtensionObject[]>(
                 Attributes.RolePermissions, null)?.Select(ex => ex.Body).OfType<RolePermissionType>();
             set => SetAttribute(Attributes.RolePermissions,
-                value?.Select(r => new ExtensionObject(r)).ToArray() ?? new ExtensionObject[0]);
+                value?.Select(r => new ExtensionObject(r)).ToArray() ?? Array.Empty<ExtensionObject>());
         }
 
         /// <inheritdoc/>
@@ -319,7 +322,7 @@ namespace Opc.Ua.Models {
             get => this.GetAttribute<ExtensionObject[]>(
                 Attributes.UserRolePermissions, null)?.Select(ex => ex.Body).OfType<RolePermissionType>();
             set => SetAttribute(Attributes.UserRolePermissions,
-                value?.Select(r => new ExtensionObject(r)).ToArray() ?? new ExtensionObject[0]);
+                value?.Select(r => new ExtensionObject(r)).ToArray() ?? Array.Empty<ExtensionObject>());
         }
 
         /// <inheritdoc/>
@@ -353,6 +356,9 @@ namespace Opc.Ua.Models {
 
         /// <inheritdoc/>
         public virtual void Decode(IDecoder decoder) {
+            if (decoder is null) {
+                throw new ArgumentNullException(nameof(decoder));
+            }
             decoder.PushNamespace(Namespaces.OpcUa);
             // now read node class
             var nodeClass = (NodeClass)_attributeMap.Decode(decoder, Attributes.NodeClass);
@@ -382,6 +388,9 @@ namespace Opc.Ua.Models {
 
         /// <inheritdoc/>
         public virtual void Encode(IEncoder encoder) {
+            if (encoder is null) {
+                throw new ArgumentNullException(nameof(encoder));
+            }
             encoder.PushNamespace(Namespaces.OpcUa);
             // Write node class as first element since we need to look it up on decode.
             _attributeMap.Encode(encoder, Attributes.NodeClass, NodeClass);
@@ -502,7 +511,7 @@ namespace Opc.Ua.Models {
 
         /// <inheritdoc/>
         public override int GetHashCode() {
-            return NodeId.ToString().GetHashCode();
+            return NodeId.ToString().GetHashCode(StringComparison.Ordinal);
         }
 
         /// <inheritdoc/>
@@ -511,10 +520,12 @@ namespace Opc.Ua.Models {
         }
 
 
+#pragma warning disable CA1051 // Do not declare visible instance fields
         /// <summary>Namespaces to use in derived classes</summary>
         protected readonly NamespaceTable _namespaces;
         /// <summary>Attributes to use in derived classes</summary>
         protected SortedDictionary<uint, DataValue> _attributes;
+#pragma warning restore CA1051 // Do not declare visible instance fields
         private static readonly AttributeMap _attributeMap = new AttributeMap();
     }
 }

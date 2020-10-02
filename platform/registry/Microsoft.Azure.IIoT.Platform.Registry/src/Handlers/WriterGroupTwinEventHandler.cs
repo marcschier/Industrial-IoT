@@ -53,12 +53,12 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Handlers {
                         var state = ev.Twin.IsConnected() ?? false ?
                                 WriterGroupState.Pending : WriterGroupState.Publishing;
                         await _registry.UpdateWriterGroupStateAsync(writerGroupId,
-                            state, context);
+                            state, context).ConfigureAwait(false);
                         break;
                     case DeviceTwinEventType.Delete:
                         // Writer group identity deleted - disable group state
                         await _registry.UpdateWriterGroupStateAsync(writerGroupId,
-                            WriterGroupState.Disabled, context);
+                            WriterGroupState.Disabled, context).ConfigureAwait(false);
                         break;
                 }
                 ev.Handled = true;

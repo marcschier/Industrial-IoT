@@ -17,6 +17,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Services {
     using System.Collections.ObjectModel;
     using System.Linq;
     using System.Threading;
+    using System.Globalization;
 
     /// <summary>
     /// Creates pub/sub encoded messages
@@ -44,7 +45,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Services {
         /// <inheritdoc/>
         public IList<NetworkMessageModel> EncodeBatch(string writerGroupId,
             IList<DataSetWriterMessageModel> messages,
-            string headerLayoutUri, NetworkMessageContentMask? contentMask,
+            string headerLayoutProfile, NetworkMessageContentMask? contentMask,
             Publisher.Models.DataSetOrderingType? order, int maxMessageSize) {
             return EncodeBatch(writerGroupId, messages, contentMask, maxMessageSize).ToList();
         }
@@ -52,7 +53,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Services {
         /// <inheritdoc/>
         public IList<NetworkMessageModel> Encode(string writerGroupId,
             IList<DataSetWriterMessageModel> messages,
-            string headerLayoutUri, NetworkMessageContentMask? contentMask,
+            string headerLayoutProfile, NetworkMessageContentMask? contentMask,
             Publisher.Models.DataSetOrderingType? order, int maxMessageSize) {
             return Encode(writerGroupId, messages, contentMask, maxMessageSize).ToList();
         }
@@ -86,7 +87,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Services {
                 var notification = current.Current;
                 var messageCompleted = false;
                 if (notification != null) {
-                    var helperEncoder = new BinaryEncoder(encodingContext);
+                    using var helperEncoder = new BinaryEncoder(encodingContext);
                     helperEncoder.WriteEncodeable(null, notification);
                     var notificationSize = helperEncoder.CloseAndReturnBuffer().Length;
                     if (notificationSize > maxMessageSize) {
@@ -107,7 +108,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Services {
                     }
                 }
                 if (!processing || messageCompleted) {
-                    var encoder = new BinaryEncoder(encodingContext);
+                    using var encoder = new BinaryEncoder(encodingContext);
                     encoder.WriteBoolean(null, true); // is Batch
                     encoder.WriteEncodeableArray(null, chunk);
                     var encoded = new NetworkMessageModel {
@@ -148,7 +149,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Services {
                 yield break;
             }
             foreach (var networkMessage in notifications) {
-                var encoder = new BinaryEncoder(encodingContext);
+                using var encoder = new BinaryEncoder(encodingContext);
                 encoder.WriteBoolean(null, false); // is not Batch
                 encoder.WriteEncodeable(null, networkMessage);
                 networkMessage.Encode(encoder);
@@ -188,7 +189,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Services {
             if (context?.NamespaceUris == null) {
                 // declare all notifications in messages dropped
                 foreach (var message in messages) {
-                    Interlocked.Add(ref _notificationsDroppedCount, (message?.Notifications?.Count() ?? 0));
+                    Interlocked.Add(ref _notificationsDroppedCount, message?.Notifications?.Count() ?? 0);
                 }
                 yield break;
             }
@@ -196,13 +197,14 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Services {
             // TODO: Honor single message
             // TODO: Group by writer
             foreach (var message in messages) {
-                var networkMessage = new NetworkMessage() {
+                var networkMessage = new NetworkMessage {
                     MessageContentMask = contentMask.ToStackType(MessageEncoding.Uadp),
                     PublisherId = writerGroupId,
                     DataSetClassId = message.Writer?.DataSet?
                         .DataSetMetaData?.DataSetClassId.ToString(),
-                    MessageId = message.SequenceNumber.ToString()
+                    MessageId = message.SequenceNumber.ToString(CultureInfo.InvariantCulture)
                 };
+                var dataSetMessages = new List<DataSetMessage>();
                 var notificationQueues = message.Notifications.GroupBy(m => m.NodeId)
                     .Select(c => new Queue<MonitoredItemNotificationModel>(c.ToArray())).ToArray();
                 while (notificationQueues.Where(q => q.Any()).Any()) {
@@ -213,7 +215,8 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Services {
                                     s => s.NodeId.ToExpandedNodeId(context.NamespaceUris)
                                         .AsString(message.ServiceMessageContext),
                                     s => s.Value);
-                    var dataSetMessage = new DataSetMessage {
+                    var dataSetMessage = new DataSetMessage(
+                        new DataSet(payload, (uint)message.Writer?.DataSetFieldContentMask.ToStackType())) {
                         DataSetWriterId = message.Writer.DataSetWriterId,
                         MetaDataVersion = new ConfigurationVersionDataType {
                             MajorVersion = message.Writer?.DataSet?.DataSetMetaData?
@@ -227,10 +230,10 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Services {
                         SequenceNumber = message.SequenceNumber,
                         Status = payload.Values.Any(s => StatusCode.IsNotGood(s.StatusCode)) ?
                             StatusCodes.Bad : StatusCodes.Good,
-                        Payload = new DataSet(payload, (uint)message.Writer?.DataSetFieldContentMask.ToStackType())
                     };
-                    networkMessage.Messages.Add(dataSetMessage);
+                    dataSetMessages.Add(dataSetMessage);
                 }
+                networkMessage.Messages = dataSetMessages;
                 yield return networkMessage;
             }
         }

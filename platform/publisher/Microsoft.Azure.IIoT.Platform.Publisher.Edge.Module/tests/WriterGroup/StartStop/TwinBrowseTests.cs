@@ -21,17 +21,6 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Module.Twin.StartStop {
             _server = server;
         }
 
-        private EndpointModel Endpoint => new EndpointModel {
-            Url = $"opc.tcp://{Dns.GetHostName()}:{_server.Port}/UA/SampleServer",
-            Certificate = _server.Certificate?.RawData?.ToThumbprint()
-        };
-
-        private BrowseServicesTests<string> GetTests(EndpointInfoModel endpoint,
-            IContainer services) {
-            return new BrowseServicesTests<string>(
-                () => services.Resolve<IBrowseServices<string>>(), endpoint.Id);
-        }
-
         private readonly TestServerFixture _server;
 #if TEST_ALL
         private readonly bool _runAll = true;

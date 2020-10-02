@@ -131,7 +131,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
                 // Unblock keep alives and retries.
                 _enqueueEvent.TrySetResult(true);
                 // Wait for processor to finish
-                await Try.Async(() => _processor);
+                await Try.Async(() => _processor).ConfigureAwait(false);
                 _logger.Verbose("Processor closed.");
             }
             // Clear queue and cancel all remaining outstanding operations
@@ -148,8 +148,10 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
 
             if (!_cts.IsCancellationRequested) {
                 _lastActivity = DateTime.UtcNow;
+#pragma warning disable CA2000 // Dispose objects before losing scope
                 var op = new ScheduledOperation<T>(serviceCall, handler, elevation,
                     timeout ?? _opTimeout, ct);
+#pragma warning restore CA2000 // Dispose objects before losing scope
                 _queue.Enqueue(priority, op);
                 // Notify of new operation enqueued.
                 _enqueueEvent.TrySetResult(true);
@@ -202,7 +204,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
                                 var identity = _curOperation?.Identity ?? defaultIdentity;
                                 _logger.Debug("Creating new session via {endpoint} using {identity}...",
                                     _endpointUrl, identity.DisplayName);
-                                _session = await CreateSessionAsync(identity);
+                                _session = await CreateSessionAsync(identity).ConfigureAwait(false);
                                 _logger.Debug("Session via {endpoint} created.", _endpointUrl);
                             }
                             catch (ServiceResultException sre) {
@@ -229,7 +231,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
                         try {
                             _logger.Debug("Recreating session via {endpoint}...",
                                 _endpointUrl);
-                            var session = await Task.Run(() => Session.Recreate(_session), _cts.Token);
+                            var session = await Task.Run(() => Session.Recreate(_session), _cts.Token).ConfigureAwait(false);
                             _logger.Debug("Session recreated via {endpoint}.",
                                 _endpointUrl);
 
@@ -253,7 +255,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
                             _logger.Debug("Reconnecting session via {endpoint}...",
                                 _endpointUrl);
 #pragma warning disable RECS0002 // Convert anonymous method to method group
-                            await Task.Run(() => _session.Reconnect(), _cts.Token);
+                            await Task.Run(() => _session.Reconnect(), _cts.Token).ConfigureAwait(false);
 #pragma warning restore RECS0002 // Convert anonymous method to method group
                             _logger.Debug("Session reconnected via {endpoint}.",
                                 _endpointUrl);
@@ -285,7 +287,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
 
                     // Failed to connect
                     if (recreate || reconnect || _session == null) {
-                        await NotifyConnectivityStateChangeAsync(ToConnectivityState(ex));
+                        await NotifyConnectivityStateChangeAsync(ToConnectivityState(ex)).ConfigureAwait(false);
                         if (ex is ServiceResultException sre) {
                             ex = sre.ToTypedException();
                         }
@@ -323,7 +325,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
                         _logger.Information("Try to connect via {endpoint} in {delay} ms...",
                             _endpointUrl, delay);
                         // Wait for either the retry delay to pass or until new operation is added
-                        await WaitForNewlyEnqueuedOperationAsync(delay);
+                        await WaitForNewlyEnqueuedOperationAsync(delay).ConfigureAwait(false);
                         continue;
                     }
 
@@ -337,7 +339,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
                         if (!_queue.TryDequeue(out var next)) {
                             // Wait for enqueue or keep alive timeout
                             var timeout = await WaitForNewlyEnqueuedOperationAsync(
-                                (int)_keepAlive.TotalMilliseconds);
+                                (int)_keepAlive.TotalMilliseconds).ConfigureAwait(false);
                             // Check cancellation
                             if (_cts.Token.IsCancellationRequested) {
                                 continue;
@@ -365,13 +367,13 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
                                 try {
                                     _logger.Verbose("Updating session user identity...");
                                     await Task.Run(() => _session.UpdateSession(_curOperation.Identity,
-                                        _session.PreferredLocales));
+                                        _session.PreferredLocales)).ConfigureAwait(false);
                                     _logger.Debug("Updated session user identity.");
                                 }
                                 catch (ServiceResultException sre) {
                                     if (StatusCodeEx.IsSecurityError(sre.StatusCode)) {
                                         _logger.Debug(sre, "Failed updating session identity");
-                                        await NotifyConnectivityStateChangeAsync(ToConnectivityState(sre));
+                                        await NotifyConnectivityStateChangeAsync(ToConnectivityState(sre)).ConfigureAwait(false);
                                         _curOperation.Fail(sre.ToTypedException());
                                         _curOperation = null;
                                         continue;
@@ -380,10 +382,10 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
                                 }
                             }
                         }
-                        await Task.Run(() => _curOperation.Complete(_session), _cts.Token);
+                        await Task.Run(() => _curOperation.Complete(_session), _cts.Token).ConfigureAwait(false);
                         _lastActivity = DateTime.UtcNow;
                         if (!(_curOperation is KeepAlive) || _lastState != EndpointConnectivityState.Unauthorized) {
-                            await NotifyConnectivityStateChangeAsync(EndpointConnectivityState.Ready);
+                            await NotifyConnectivityStateChangeAsync(EndpointConnectivityState.Ready).ConfigureAwait(false);
                         }
                         _logger.Verbose("Session operation completed.");
                         _curOperation = null;
@@ -459,7 +461,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
                                 break;
                         }
                         if (reconnect) {
-                            await NotifyConnectivityStateChangeAsync(ToConnectivityState(oex, false));
+                            await NotifyConnectivityStateChangeAsync(ToConnectivityState(oex, false)).ConfigureAwait(false);
                         }
                     }
                 } // end while
@@ -595,7 +597,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
                 "Connecting to {endpoint} changed from {previous} to {state}",
                 _endpointUrl, previous, state);
             try {
-                await _statusCb?.Invoke(_connection, state);
+                await (_statusCb?.Invoke(_connection, state)).ConfigureAwait(false);
             }
             catch (Exception ex) {
                 _logger.Error(ex, "Exception during state callback");
@@ -632,7 +634,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
             }
             var selectedEndpoint = await DiscoverEndpointsAsync(_config,
                 _connection.Endpoint, new Uri(_endpointUrl), (server, endpoints, channel) =>
-                    SelectServerEndpoint(server, endpoints, channel, true));
+                    SelectServerEndpoint(server, endpoints, channel, true)).ConfigureAwait(false);
             if (selectedEndpoint == null) {
                 throw new ConnectionException(
                     $"Unable to select secure endpoint on {_connection.Endpoint.Url} via {_endpointUrl}");
@@ -643,7 +645,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
             configuredEndpoint.Update(selectedEndpoint);
 
             var session = await Session.Create(_config, configuredEndpoint, true, false,
-                _sessionName, (uint)(_timeout.TotalMilliseconds * 1.2), identity, null);
+                _sessionName, (uint)(_timeout.TotalMilliseconds * 1.2), identity, null).ConfigureAwait(false);
             if (session == null) {
                 throw new ExternalDependencyException(
                     $"Cannot establish session to {_connection.Endpoint.Url} via {_endpointUrl}.");
@@ -654,7 +656,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
 
             try {
                 var complexTypeSystem = new ComplexTypeSystem(session);
-                await complexTypeSystem.Load();
+                await complexTypeSystem.Load().ConfigureAwait(false);
             }
             catch (Exception ex){
                 _logger.Error(ex, "Failed to load complex type system");
@@ -736,7 +738,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
 
             using (var client = DiscoveryClient.Create(discoveryUrl, configuration)) {
                 var response = await client.GetEndpointsAsync(null,
-                    client.Endpoint.EndpointUrl, null /*TODO: Locale support*/, null);
+                    client.Endpoint.EndpointUrl, null /*TODO: Locale support*/, null).ConfigureAwait(false);
 
                 var endpoints = response?.Endpoints ??
                     new EndpointDescriptionCollection();
@@ -832,7 +834,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
                                 NodeId = Variables.Server_ServerStatus_State,
                                 AttributeId = Attributes.Value
                             }
-                        });
+                        }).ConfigureAwait(false);
                     _failures = 0;
                 }
                 catch {

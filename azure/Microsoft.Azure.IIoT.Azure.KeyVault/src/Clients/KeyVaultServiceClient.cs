@@ -28,7 +28,7 @@ namespace Microsoft.Azure.IIoT.Azure.KeyVault.Clients {
     /// <summary>
     /// A KeyVault service client.
     /// </summary>
-    public class KeyVaultServiceClient : IKeyValueStore, ICertificateIssuer, IKeyStore,
+    public sealed class KeyVaultServiceClient : IKeyValueStore, ICertificateIssuer, IKeyStore,
         IHealthCheck, IDisposable {
 
         /// <summary>
@@ -48,7 +48,7 @@ namespace Microsoft.Azure.IIoT.Azure.KeyVault.Clients {
                         scope = resource + "/" + scope;
                     }
                     var token = await provider.GetTokenForAsync(
-                        Resource.KeyVault, scope.YieldReturn());
+                        Resource.KeyVault, scope.YieldReturn()).ConfigureAwait(false);
                     return token.RawToken;
                 })) {
             if (provider?.Supports(Resource.KeyVault) != true) {
@@ -90,15 +90,14 @@ namespace Microsoft.Azure.IIoT.Azure.KeyVault.Clients {
             HealthCheckContext context, CancellationToken ct) {
             try {
                 var secret = await _keyVaultClient.GetSecretsAsync(_vaultBaseUrl,
-                    1, ct);
+                    1, ct).ConfigureAwait(false);
 
                 // TODO: Check certificates in sync with keyvault
 
                 return HealthCheckResult.Healthy();
             }
             catch (Exception ex) {
-                return new HealthCheckResult(context.Registration.FailureStatus,
-                    exception: ex);
+                return HealthCheckResult.Unhealthy(exception: ex);
             }
         }
 
@@ -110,7 +109,7 @@ namespace Microsoft.Azure.IIoT.Azure.KeyVault.Clients {
             }
             try {
                 var secret = await _keyVaultClient.GetSecretAsync(_vaultBaseUrl,
-                    key, ct);
+                    key, ct).ConfigureAwait(false);
                 if (contentType != null) {
                     if (secret.ContentType == null ||
                         !secret.ContentType.EqualsIgnoreCase(contentType)) {
@@ -140,7 +139,7 @@ namespace Microsoft.Azure.IIoT.Azure.KeyVault.Clients {
                     Expires = notAfter
                 };
                 var secret = await _keyVaultClient.SetSecretAsync(_vaultBaseUrl,
-                    key, value, null, contentType, secretAttributes, ct);
+                    key, value, null, contentType, secretAttributes, ct).ConfigureAwait(false);
             }
             catch (KeyVaultErrorException ex) {
                 throw new ExternalDependencyException("Failed to set secret", ex);
@@ -153,7 +152,7 @@ namespace Microsoft.Azure.IIoT.Azure.KeyVault.Clients {
                 throw new ArgumentNullException(nameof(key));
             }
             try {
-                await _keyVaultClient.DeleteSecretAsync(_vaultBaseUrl, key, ct);
+                await _keyVaultClient.DeleteSecretAsync(_vaultBaseUrl, key, ct).ConfigureAwait(false);
             }
             catch (KeyVaultErrorException ex) {
                 throw new ExternalDependencyException("Failed to delete secret", ex);
@@ -172,7 +171,7 @@ namespace Microsoft.Azure.IIoT.Azure.KeyVault.Clients {
             if (privateKey == null) {
                 certificate = certificate.Clone();
                 certificate.IssuerPolicies = null;
-                await _certificates.AddCertificateAsync(certificateName, certificate, null, ct);
+                await _certificates.AddCertificateAsync(certificateName, certificate, null, ct).ConfigureAwait(false);
                 return certificate;
             }
             try {
@@ -184,17 +183,17 @@ namespace Microsoft.Azure.IIoT.Azure.KeyVault.Clients {
                     CreateCertificatePolicy(certificate, true, _keyStoreIsHsm),
                     CreateCertificateAttributes(certificate.NotBeforeUtc,
                         certificate.NotAfterUtc - certificate.NotBeforeUtc, certificate.NotAfterUtc),
-                    null, ct);
+                    null, ct).ConfigureAwait(false);
                 try {
                     var result = CertificateEx.Create(bundle.Cer,
                         KeyVaultKeyHandle.Create(bundle), certificate.IssuerPolicies);
                     await _certificates.AddCertificateAsync(
-                        certificateName, result, bundle.CertificateIdentifier.Identifier, ct);
+                        certificateName, result, bundle.CertificateIdentifier.Identifier, ct).ConfigureAwait(false);
                     return result;
                 }
                 catch {
                     await Try.Async(() => _keyVaultClient.DeleteCertificateAsync(
-                        _vaultBaseUrl, certificateName, ct));
+                        _vaultBaseUrl, certificateName, ct)).ConfigureAwait(false);
                     throw;
                 }
             }
@@ -207,11 +206,17 @@ namespace Microsoft.Azure.IIoT.Azure.KeyVault.Clients {
         public async Task<Certificate> NewRootCertificateAsync(string certificateName,
             X500DistinguishedName subjectName, DateTime? notBefore, TimeSpan lifetime,
             CreateKeyParams keyParams, IssuerPolicies policies,
-            Func<byte[], IEnumerable<X509Extension>> extensions,
+            Func<IReadOnlyCollection<byte>, IEnumerable<X509Extension>> extensions,
             CancellationToken ct) {
 
             if (string.IsNullOrEmpty(certificateName)) {
                 throw new ArgumentNullException(nameof(certificateName));
+            }
+            if (subjectName is null) {
+                throw new ArgumentNullException(nameof(subjectName));
+            }
+            if (keyParams is null) {
+                throw new ArgumentNullException(nameof(keyParams));
             }
 
             // Validate policies
@@ -228,11 +233,11 @@ namespace Microsoft.Azure.IIoT.Azure.KeyVault.Clients {
                     DateTime.MaxValue);
 
                 await CreateCertificateAsync(certificateName, policySelfSignedNewKey,
-                    tempAttributes, null, ct);
+                    tempAttributes, null, ct).ConfigureAwait(false);
 
                 // We have the cert - get it and key identifier to do the signing
                 var createdCertificateBundle = await _keyVaultClient.GetCertificateAsync(
-                    _vaultBaseUrl, certificateName, ct);
+                    _vaultBaseUrl, certificateName, ct).ConfigureAwait(false);
                 caTempCertIdentifier =
                     createdCertificateBundle.CertificateIdentifier.Identifier;
 
@@ -244,7 +249,7 @@ namespace Microsoft.Azure.IIoT.Azure.KeyVault.Clients {
 
                 // create the CSR
                 var createResult = await CreateCertificateAsync(certificateName,
-                    policyUnknownReuse, attributes, null, ct);
+                    policyUnknownReuse, attributes, null, ct).ConfigureAwait(false);
                 if (createResult.Csr == null) {
                     throw new CryptographicUnexpectedOperationException(
                         "Failed to read CSR from CreateCertificate.");
@@ -255,26 +260,26 @@ namespace Microsoft.Azure.IIoT.Azure.KeyVault.Clients {
 
                 // (2) - Issue root X509 Certificate with the csr.
 
-                var signedcert = await _factory.CreateCertificateAsync(this,
+                using var signedcert = await _factory.CreateCertificateAsync(this,
                     KeyVaultKeyHandle.Create(createdCertificateBundle), subjectName,
                     info.PublicKey,
                     attributes.NotBefore.Value, attributes.Expires.Value,
-                    policies.SignatureType.Value, true, extensions, ct);
+                    policies.SignatureType.Value, true, extensions, ct).ConfigureAwait(false);
 
                 // (3) - Complete certificate creation with merger of X509 Certificate.
 
                 var mergeResult = await _keyVaultClient.MergeCertificateAsync(
                     _vaultBaseUrl, certificateName,
-                    new X509Certificate2Collection(signedcert), null, null, ct);
+                    new X509Certificate2Collection(signedcert), null, null, ct).ConfigureAwait(false);
 
                 // (4) - Get merged certificate and key identifier
 
                 var mergedCert = await _keyVaultClient.GetCertificateAsync(
-                    mergeResult.CertificateIdentifier.Identifier, ct);
+                    mergeResult.CertificateIdentifier.Identifier, ct).ConfigureAwait(false);
                 var cert = CertificateEx.Create(mergedCert.Cer,
                     KeyVaultKeyHandle.Create(mergedCert), policies);
                 await _certificates.AddCertificateAsync(certificateName, cert,
-                    mergedCert.CertificateIdentifier.Identifier, ct);
+                    mergedCert.CertificateIdentifier.Identifier, ct).ConfigureAwait(false);
                 return cert;
             }
             catch (KeyVaultErrorException kex) {
@@ -288,7 +293,7 @@ namespace Microsoft.Azure.IIoT.Azure.KeyVault.Clients {
                         Enabled = false
                     };
                     await Try.Async(() => _keyVaultClient.UpdateCertificateAsync(
-                        caTempCertIdentifier, null, attr));
+                        caTempCertIdentifier, null, attr)).ConfigureAwait(false);
                 }
             }
         }
@@ -296,9 +301,9 @@ namespace Microsoft.Azure.IIoT.Azure.KeyVault.Clients {
         /// <inheritdoc/>
         public async Task DisableCertificateAsync(Certificate certificate,
             CancellationToken ct) {
-            var id = await _certificates.DisableCertificateAsync(certificate, ct);
+            var id = await _certificates.DisableCertificateAsync(certificate, ct).ConfigureAwait(false);
             try {
-                var cert = await _keyVaultClient.GetCertificateAsync(id, ct);
+                var cert = await _keyVaultClient.GetCertificateAsync(id, ct).ConfigureAwait(false);
                 if (cert == null) {
                     return;
                 }
@@ -308,7 +313,7 @@ namespace Microsoft.Azure.IIoT.Azure.KeyVault.Clients {
                     return;
                 }
                 await _keyVaultClient.UpdateCertificateAsync(
-                    id, null, new CertificateAttributes { Enabled = false });
+                    id, null, new CertificateAttributes { Enabled = false }).ConfigureAwait(false);
             }
             catch (KeyVaultErrorException ex) {
                 throw new ExternalDependencyException(
@@ -320,18 +325,26 @@ namespace Microsoft.Azure.IIoT.Azure.KeyVault.Clients {
         public async Task<Certificate> NewIssuerCertificateAsync(string rootCertificate,
             string certificateName, X500DistinguishedName subjectName,
             DateTime? notBefore, CreateKeyParams keyParams, IssuerPolicies policies,
-            Func<byte[], IEnumerable<X509Extension>> extensions,
+            Func<IReadOnlyCollection<byte>, IEnumerable<X509Extension>> extensions,
             CancellationToken ct) {
+            if (subjectName is null) {
+                throw new ArgumentNullException(nameof(subjectName));
+            }
+
+            if (keyParams is null) {
+                throw new ArgumentNullException(nameof(keyParams));
+            }
+
             try {
                 // (0) Retrieve issuer certificate
 
                 var caCertBundle = await _keyVaultClient.GetCertificateAsync(
-                    _vaultBaseUrl, rootCertificate, ct);
+                    _vaultBaseUrl, rootCertificate, ct).ConfigureAwait(false);
                 if (caCertBundle == null) {
                     throw new ResourceNotFoundException("Issuer cert not found.");
                 }
                 var caCert = await _certificates.FindCertificateAsync(
-                    caCertBundle.CertificateIdentifier.Identifier);
+                    caCertBundle.CertificateIdentifier.Identifier).ConfigureAwait(false);
                 if (caCert?.IssuerPolicies == null) {
                     throw new ArgumentException("Certificate cannot issue.");
                 }
@@ -349,7 +362,7 @@ namespace Microsoft.Azure.IIoT.Azure.KeyVault.Clients {
                 var attributes = CreateCertificateAttributes(notBefore,
                     caCert.IssuerPolicies.IssuedLifetime.Value, caCert.NotAfterUtc);
                 var createResult = await CreateCertificateAsync(certificateName,
-                    policyUnknownNewExportable, attributes, null, ct);
+                    policyUnknownNewExportable, attributes, null, ct).ConfigureAwait(false);
 
                 if (createResult.Csr == null) {
                     throw new CryptographicUnexpectedOperationException(
@@ -361,21 +374,21 @@ namespace Microsoft.Azure.IIoT.Azure.KeyVault.Clients {
                 try {
                     // (2) - Issue X509 Certificate with csr and root certificate.
 
-                    var signedcert = await _factory.CreateCertificateAsync(this,
+                    using var signedcert = await _factory.CreateCertificateAsync(this,
                         caCert, subjectName, info.PublicKey,
                         attributes.NotBefore.Value, attributes.Expires.Value,
-                        caCert.IssuerPolicies.SignatureType.Value, true, extensions, ct);
+                        caCert.IssuerPolicies.SignatureType.Value, true, extensions, ct).ConfigureAwait(false);
 
                     // (3) - Complete certificate creation with merger of X509 Certificate.
 
                     var mergeResult = await _keyVaultClient.MergeCertificateAsync(
                         _vaultBaseUrl, certificateName,
-                        new X509Certificate2Collection(signedcert), null, null, ct);
+                        new X509Certificate2Collection(signedcert), null, null, ct).ConfigureAwait(false);
 
                     // (4) - Get merged certificate and key identifier
 
                     var mergedCert = await _keyVaultClient.GetCertificateAsync(
-                        mergeResult.CertificateIdentifier.Identifier, ct);
+                        mergeResult.CertificateIdentifier.Identifier, ct).ConfigureAwait(false);
 
                     var cert = CertificateEx.Create(mergedCert.Cer,
                         KeyVaultKeyHandle.Create(mergedCert), policies);
@@ -383,14 +396,14 @@ namespace Microsoft.Azure.IIoT.Azure.KeyVault.Clients {
                         throw new ArgumentException("Certifcate created is not issuer.");
                     }
                     await _certificates.AddCertificateAsync(certificateName, cert,
-                        mergedCert.CertificateIdentifier.Identifier, ct);
+                        mergedCert.CertificateIdentifier.Identifier, ct).ConfigureAwait(false);
                     return cert;
                 }
                 catch {
                     await Try.Async(() => _keyVaultClient.DeleteCertificateAsync(
-                        _vaultBaseUrl, certificateName, ct));
+                        _vaultBaseUrl, certificateName, ct)).ConfigureAwait(false);
                     await Try.Async(() => _keyVaultClient.PurgeDeletedCertificateAsync(
-                        _vaultBaseUrl, certificateName, ct));
+                        _vaultBaseUrl, certificateName, ct)).ConfigureAwait(false);
                     throw;
                 }
             }
@@ -404,7 +417,7 @@ namespace Microsoft.Azure.IIoT.Azure.KeyVault.Clients {
         public async Task<Certificate> CreateSignedCertificateAsync(
             string rootCertificate, string certificateName, Key publicKey,
             X500DistinguishedName subjectName, DateTime? notBefore,
-            Func<byte[], IEnumerable<X509Extension>> extensions,
+            Func<IReadOnlyCollection<byte>, IEnumerable<X509Extension>> extensions,
             CancellationToken ct) {
 
             if (string.IsNullOrEmpty(certificateName)) {
@@ -416,12 +429,12 @@ namespace Microsoft.Azure.IIoT.Azure.KeyVault.Clients {
 
             // (0) Retrieve issuer certificate
             var caCertBundle = await _keyVaultClient.GetCertificateAsync(
-                _vaultBaseUrl, rootCertificate, ct);
+                _vaultBaseUrl, rootCertificate, ct).ConfigureAwait(false);
             if (caCertBundle == null) {
                 throw new ResourceNotFoundException("Issuer cert not found.");
             }
             var caCert = await _certificates.FindCertificateAsync(
-                caCertBundle.CertificateIdentifier.Identifier);
+                caCertBundle.CertificateIdentifier.Identifier).ConfigureAwait(false);
             if (caCert?.IssuerPolicies == null) {
                 throw new ArgumentException("Certificate cannot issue.");
             }
@@ -432,7 +445,7 @@ namespace Microsoft.Azure.IIoT.Azure.KeyVault.Clients {
             var signedcert = await _factory.CreateCertificateAsync(this,
                 caCert, subjectName, publicKey.GetPublicKey(),
                 attributes.NotBefore.Value, attributes.Expires.Value,
-                caCert.IssuerPolicies.SignatureType.Value, false, extensions, ct);
+                caCert.IssuerPolicies.SignatureType.Value, false, extensions, ct).ConfigureAwait(false);
 
             using (signedcert) {
                 // (3) Import new signed certificate
@@ -440,25 +453,33 @@ namespace Microsoft.Azure.IIoT.Azure.KeyVault.Clients {
                 if (result.IsIssuer()) {
                     throw new ArgumentException("Factory created issuer certifcate.");
                 }
-                await _certificates.AddCertificateAsync(certificateName, result, null, ct);
+                await _certificates.AddCertificateAsync(certificateName, result, null, ct).ConfigureAwait(false);
                 return result;
             }
         }
 
         /// <inheritdoc/>
         public async Task<Certificate> CreateCertificateAndPrivateKeyAsync(string rootCertificate,
-            string certificateName, X500DistinguishedName subjectName, DateTime? notBefore,
-            CreateKeyParams keyParams, Func<byte[], IEnumerable<X509Extension>> extensions,
+            string certificateName, X500DistinguishedName subjectName,
+            DateTime? notBefore, CreateKeyParams keyParams,
+            Func<IReadOnlyCollection<byte>, IEnumerable<X509Extension>> extensions,
             CancellationToken ct) {
+            if (subjectName is null) {
+                throw new ArgumentNullException(nameof(subjectName));
+            }
+            if (keyParams is null) {
+                throw new ArgumentNullException(nameof(keyParams));
+            }
+
             try {
                 // (0) Retrieve issuer certificate
                 var caCertBundle = await _keyVaultClient.GetCertificateAsync(
-                    _vaultBaseUrl, rootCertificate, ct);
+                    _vaultBaseUrl, rootCertificate, ct).ConfigureAwait(false);
                 if (caCertBundle == null) {
                     throw new ResourceNotFoundException("Issuer cert not found.");
                 }
                 var caCert = await _certificates.FindCertificateAsync(
-                    caCertBundle.CertificateIdentifier.Identifier);
+                    caCertBundle.CertificateIdentifier.Identifier).ConfigureAwait(false);
                 if (caCert?.IssuerPolicies == null) {
                     throw new ArgumentException("Certificate cannot issue.");
                 }
@@ -472,7 +493,7 @@ namespace Microsoft.Azure.IIoT.Azure.KeyVault.Clients {
                 var attributes = CreateCertificateAttributes(notBefore,
                     caCert.IssuerPolicies.IssuedLifetime.Value, caCert.NotAfterUtc);
                 var createResult = await CreateCertificateAsync(certificateName,
-                    policyUnknownNewExportable, attributes, null, ct);
+                    policyUnknownNewExportable, attributes, null, ct).ConfigureAwait(false);
                 if (createResult.Csr == null) {
                     throw new CryptographicUnexpectedOperationException(
                         "Failed to read CSR from CreateCertificate.");
@@ -484,34 +505,34 @@ namespace Microsoft.Azure.IIoT.Azure.KeyVault.Clients {
                     // (2) - Issue X509 Certificate with csr and root certificate.
 
                     // create signed cert
-                    var signedcert = await _factory.CreateCertificateAsync(this,
+                    using var signedcert = await _factory.CreateCertificateAsync(this,
                         caCert, subjectName, info.PublicKey,
                         attributes.NotBefore.Value, attributes.Expires.Value,
-                        caCert.IssuerPolicies.SignatureType.Value, false, extensions, ct);
+                        caCert.IssuerPolicies.SignatureType.Value, false, extensions, ct).ConfigureAwait(false);
 
                     // (3) - Complete certificate creation with merger of X509 Certificate.
 
                     var mergeResult = await _keyVaultClient.MergeCertificateAsync(
                         _vaultBaseUrl, certificateName,
-                        new X509Certificate2Collection(signedcert), null, null, ct);
+                        new X509Certificate2Collection(signedcert), null, null, ct).ConfigureAwait(false);
 
                     // (4) - Get merged certificate and key identifier
 
                     var mergedCert = await _keyVaultClient.GetCertificateAsync(
-                        mergeResult.CertificateIdentifier.Identifier, ct);
+                        mergeResult.CertificateIdentifier.Identifier, ct).ConfigureAwait(false);
 
                     var cert = CertificateEx.Create(mergedCert.Cer,
                         KeyVaultKeyHandle.Create(mergedCert));
                     System.Diagnostics.Debug.Assert(!cert.IsIssuer());
                     await _certificates.AddCertificateAsync(certificateName,
-                        cert, mergedCert.CertificateIdentifier.Identifier, ct);
+                        cert, mergedCert.CertificateIdentifier.Identifier, ct).ConfigureAwait(false);
                     return cert;
                 }
                 catch {
                     await _keyVaultClient.DeleteCertificateAsync(
-                        _vaultBaseUrl, certificateName, ct);
+                        _vaultBaseUrl, certificateName, ct).ConfigureAwait(false);
                     await Try.Async(() => _keyVaultClient.PurgeDeletedCertificateAsync(
-                        _vaultBaseUrl, certificateName, ct));
+                        _vaultBaseUrl, certificateName, ct)).ConfigureAwait(false);
                     throw;
                 }
             }
@@ -542,13 +563,13 @@ namespace Microsoft.Azure.IIoT.Azure.KeyVault.Clients {
                                 NotBefore = DateTime.UtcNow
                             },
                             Kty = keyParams.Type.ToKty(_keyStoreIsHsm)
-                        }, ct);
+                        }, ct).ConfigureAwait(false);
 
                     return KeyVaultKeyHandle.Create(result);
                 }
                 // Create key outside and import
                 return await ImportKeyAsync(name, keyParams.CreateKey(),
-                    new KeyStoreProperties { Exportable = true }, ct);
+                    new KeyStoreProperties { Exportable = true }, ct).ConfigureAwait(false);
             }
             catch (KeyVaultErrorException kex) {
                 throw new ExternalDependencyException("Failed to create key", kex);
@@ -570,7 +591,7 @@ namespace Microsoft.Azure.IIoT.Azure.KeyVault.Clients {
                     key.ToJsonWebKey(), null, new KeyAttributes {
                         Enabled = true,
                         NotBefore = DateTime.UtcNow
-                    }, null, ct);
+                    }, null, ct).ConfigureAwait(false);
 
                 if (store?.Exportable ?? false) {
                     // Store key as json web key secret so we can export it
@@ -580,7 +601,7 @@ namespace Microsoft.Azure.IIoT.Azure.KeyVault.Clients {
                         new SecretAttributes {
                             Enabled = true,
                             NotBefore = DateTime.UtcNow
-                        }, ct);
+                        }, ct).ConfigureAwait(false);
                     return KeyVaultKeyHandle.Create(keyBundle, secretBundle);
                 }
                 return KeyVaultKeyHandle.Create(keyBundle);
@@ -596,17 +617,17 @@ namespace Microsoft.Azure.IIoT.Azure.KeyVault.Clients {
                 throw new ArgumentNullException(nameof(name));
             }
             // Get key first
-            var keyBundle = await Try.Async(() => _keyVaultClient.GetKeyAsync(name, ct));
+            var keyBundle = await Try.Async(() => _keyVaultClient.GetKeyAsync(name, ct)).ConfigureAwait(false);
             if (keyBundle == null) {
                 // If no key - then try getting cert bundle instead
                 var certBundle = await Try.Async(
-                    () => _keyVaultClient.GetCertificateAsync(_vaultBaseUrl, name, ct));
+                    () => _keyVaultClient.GetCertificateAsync(_vaultBaseUrl, name, ct)).ConfigureAwait(false);
                 if (certBundle != null) {
                     return KeyVaultKeyHandle.Create(certBundle);
                 }
                 throw new ResourceNotFoundException("Key with name not found");
             }
-            var secretBundle = await Try.Async(() => _keyVaultClient.GetSecretAsync(name, ct));
+            var secretBundle = await Try.Async(() => _keyVaultClient.GetSecretAsync(name, ct)).ConfigureAwait(false);
             return KeyVaultKeyHandle.Create(keyBundle, secretBundle);
         }
 
@@ -618,7 +639,7 @@ namespace Microsoft.Azure.IIoT.Azure.KeyVault.Clients {
             }
             try {
                 var secretBundle = await _keyVaultClient.GetSecretAsync(
-                    bundle.SecretIdentifier, ct);
+                    bundle.SecretIdentifier, ct).ConfigureAwait(false);
 
                 // Check whether this is an imported key
                 if (secretBundle.ContentType.EqualsIgnoreCase(ContentMimeType.Json)) {
@@ -647,7 +668,7 @@ namespace Microsoft.Azure.IIoT.Azure.KeyVault.Clients {
         /// <inheritdoc/>
         public async Task<Key> GetPublicKeyAsync(KeyHandle handle, CancellationToken ct) {
             var bundle = await _keyVaultClient.GetKeyAsync(_vaultBaseUrl,
-                KeyVaultKeyHandle.GetBundle(handle).KeyIdentifier, ct);
+                KeyVaultKeyHandle.GetBundle(handle).KeyIdentifier, ct).ConfigureAwait(false);
             return bundle.Key.ToKey();
         }
 
@@ -660,7 +681,7 @@ namespace Microsoft.Azure.IIoT.Azure.KeyVault.Clients {
                         new KeyAttributes {
                             Enabled = false,
                             Expires = DateTime.UtcNow
-                        }, null, ct);
+                        }, null, ct).ConfigureAwait(false);
                 }
                 if (!string.IsNullOrEmpty(bundle.SecretIdentifier)) {
                     // Delete private key secret also
@@ -668,7 +689,7 @@ namespace Microsoft.Azure.IIoT.Azure.KeyVault.Clients {
                         ContentMimeType.Json, new SecretAttributes {
                             Enabled = false,
                             Expires = DateTime.UtcNow
-                        }, null, ct);
+                        }, null, ct).ConfigureAwait(false);
 
                 }
             }
@@ -683,11 +704,11 @@ namespace Microsoft.Azure.IIoT.Azure.KeyVault.Clients {
             try {
                 if (!string.IsNullOrEmpty(bundle.KeyIdentifier)) {
                     await _keyVaultClient.DeleteKeyAsync(
-                        _vaultBaseUrl, bundle.KeyIdentifier, ct);
+                        _vaultBaseUrl, bundle.KeyIdentifier, ct).ConfigureAwait(false);
                 }
                 if (!string.IsNullOrEmpty(bundle.SecretIdentifier)) {
                     await _keyVaultClient.DeleteSecretAsync(
-                        _vaultBaseUrl, bundle.SecretIdentifier, ct);
+                        _vaultBaseUrl, bundle.SecretIdentifier, ct).ConfigureAwait(false);
                 }
             }
             catch (KeyVaultErrorException kex) {
@@ -701,7 +722,7 @@ namespace Microsoft.Azure.IIoT.Azure.KeyVault.Clients {
             var signingKey = KeyVaultKeyHandle.GetBundle(handle).KeyIdentifier;
             try {
                 var result = await _keyVaultClient.SignAsync(signingKey,
-                    algorithm.ToJsonWebKeySignatureAlgorithm(), digest, ct);
+                    algorithm.ToJsonWebKeySignatureAlgorithm(), digest, ct).ConfigureAwait(false);
                 return result.Result;
             }
             catch (KeyVaultErrorException kex) {
@@ -715,7 +736,7 @@ namespace Microsoft.Azure.IIoT.Azure.KeyVault.Clients {
             var signingKey = KeyVaultKeyHandle.GetBundle(handle).KeyIdentifier;
             try {
                 return await _keyVaultClient.VerifyAsync(signingKey,
-                    algorithm.ToJsonWebKeySignatureAlgorithm(), digest, signature, ct);
+                    algorithm.ToJsonWebKeySignatureAlgorithm(), digest, signature, ct).ConfigureAwait(false);
             }
             catch (KeyVaultErrorException kex) {
                 throw new ExternalDependencyException("Failed to Sign", kex);
@@ -736,12 +757,12 @@ namespace Microsoft.Azure.IIoT.Azure.KeyVault.Clients {
             CertificateAttributes attributes, IDictionary<string, string> tags,
             CancellationToken ct) {
             var operation = await _keyVaultClient.CreateCertificateAsync(
-                _vaultBaseUrl, certificateName, policy, attributes, tags, ct);
+                _vaultBaseUrl, certificateName, policy, attributes, tags, ct).ConfigureAwait(false);
             while (operation.Status.EqualsIgnoreCase("inprogress")) {
-                await Task.Delay(1000, ct);
+                await Task.Delay(1000, ct).ConfigureAwait(false);
                 ct.ThrowIfCancellationRequested();
                 operation = await _keyVaultClient.GetCertificateOperationAsync(
-                    _vaultBaseUrl, certificateName, ct);
+                    _vaultBaseUrl, certificateName, ct).ConfigureAwait(false);
             }
             if (!operation.Status.EqualsIgnoreCase("completed")) {
                 throw new CryptographicUnexpectedOperationException(

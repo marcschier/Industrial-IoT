@@ -56,23 +56,27 @@ namespace Microsoft.Azure.IIoT.Services.Docker {
         protected async Task<(string, bool)> CreateAndStartContainerAsync(
             CreateContainerParameters containerParameters, string containerName,
             string imageName, CancellationToken ct = default) {
-            using (var dockerClient = GetDockerClient()) {
+            if (containerParameters is null) {
+                throw new ArgumentNullException(nameof(containerParameters));
+            }
+
+            using (var dockerClient = CreateDockerClient()) {
                 ContainerName = containerName;
                 containerParameters.Image = imageName;
-                await CreateNetworkIfNotExistsAsync(dockerClient);
+                await CreateNetworkIfNotExistsAsync(dockerClient).ConfigureAwait(false);
 
                 var containers = await dockerClient.Containers.ListContainersAsync(
-                    new ContainersListParameters { All = true }, ct);
+                    new ContainersListParameters { All = true }, ct).ConfigureAwait(false);
                 var existingContainer = containers
                     .SingleOrDefault(c => c.Names.Contains("/" + containerName));
                 if (existingContainer != null) {
                     // Remove existing container
                     await StopAndRemoveContainerAsync(
-                        dockerClient, existingContainer.ID, ct);
+                        dockerClient, existingContainer.ID, ct).ConfigureAwait(false);
                 }
 
                 var images = await dockerClient.Images.ListImagesAsync(
-                    new ImagesListParameters { MatchName = imageName }, ct);
+                    new ImagesListParameters { MatchName = imageName }, ct).ConfigureAwait(false);
                 if (!images.Any()) {
                     var tag = imageName.Split(':').Last();
                     var imagesCreateParameters = new ImagesCreateParameters {
@@ -88,7 +92,7 @@ namespace Microsoft.Azure.IIoT.Services.Docker {
                                 else {
                                     _logger.Information("{@message}", m);
                                 }
-                            }), ct);
+                            }), ct).ConfigureAwait(false);
                 }
                 containerParameters.Name = containerName;
                 if (!string.IsNullOrEmpty(NetworkName)) {
@@ -96,10 +100,10 @@ namespace Microsoft.Azure.IIoT.Services.Docker {
                     containerParameters.HostConfig.NetworkMode = NetworkName;
                 }
                 var container = await dockerClient.Containers.CreateContainerAsync(
-                    containerParameters, ct);
+                    containerParameters, ct).ConfigureAwait(false);
                 var containerId = container.ID;
                 await dockerClient.Containers.StartContainerAsync(containerId,
-                    new ContainerStartParameters(), ct);
+                    new ContainerStartParameters(), ct).ConfigureAwait(false);
                 return (containerId, true);
             }
         }
@@ -114,10 +118,10 @@ namespace Microsoft.Azure.IIoT.Services.Docker {
             var sw = Stopwatch.StartNew();
             var ep = new IPEndPoint(IPAddress.Loopback, port);
             do {
-                if (await CheckAvailabilityAsync(ep)) {
+                if (await CheckAvailabilityAsync(ep).ConfigureAwait(false)) {
                     return;
                 }
-                await Task.Delay(1000);
+                await Task.Delay(1000).ConfigureAwait(false);
             } while (attempts++ <= 60);
             sw.Stop();
             throw new TimeoutException($"Container failed to start after {sw.Elapsed}.)");
@@ -131,8 +135,8 @@ namespace Microsoft.Azure.IIoT.Services.Docker {
         /// <returns></returns>
         protected async Task StopAndRemoveContainerAsync(string containerId,
             CancellationToken ct = default) {
-            using (var dockerClient = GetDockerClient()) {
-                await StopAndRemoveContainerAsync(dockerClient, containerId, ct);
+            using (var dockerClient = CreateDockerClient()) {
+                await StopAndRemoveContainerAsync(dockerClient, containerId, ct).ConfigureAwait(false);
                 ContainerName = null;
             }
         }
@@ -147,13 +151,13 @@ namespace Microsoft.Azure.IIoT.Services.Docker {
         private static async Task StopAndRemoveContainerAsync(DockerClient dockerClient,
             string containerId, CancellationToken ct) {
             var container = await dockerClient.Containers.InspectContainerAsync(
-                containerId, ct);
+                containerId, ct).ConfigureAwait(false);
             if (container.State.Running) {
                 await dockerClient.Containers.StopContainerAsync(containerId,
-                    new ContainerStopParameters { WaitBeforeKillSeconds = 1 }, ct);
+                    new ContainerStopParameters { WaitBeforeKillSeconds = 1 }, ct).ConfigureAwait(false);
             }
             await dockerClient.Containers.RemoveContainerAsync(containerId,
-                new ContainerRemoveParameters { Force = true }, ct);
+                new ContainerRemoveParameters { Force = true }, ct).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -165,13 +169,13 @@ namespace Microsoft.Azure.IIoT.Services.Docker {
             try {
                 if (_check != null) {
                     // Run health check against container
-                    var result = await _check.CheckHealthAsync(null);
+                    var result = await _check.CheckHealthAsync(null).ConfigureAwait(false);
                     return result.Status == HealthStatus.Healthy;
                 }
 
                 using (var sender = new Socket(IPAddress.Loopback.AddressFamily,
                     SocketType.Stream, ProtocolType.Tcp)) {
-                    await sender.ConnectAsync(ep);
+                    await sender.ConnectAsync(ep).ConfigureAwait(false);
                     return true;
                 }
             }
@@ -189,13 +193,13 @@ namespace Microsoft.Azure.IIoT.Services.Docker {
             if (string.IsNullOrEmpty(NetworkName)) {
                 return;
             }
-            await _lock.WaitAsync();
+            await _lock.WaitAsync().ConfigureAwait(false);
             try {
                 var networks = await dockerClient.Networks.ListNetworksAsync(
-                    new NetworksListParameters());
+                    new NetworksListParameters()).ConfigureAwait(false);
                 if (!networks.Any(n => n.Name == NetworkName)) {
                     await dockerClient.Networks.CreateNetworkAsync(
-                        new NetworksCreateParameters { Name = NetworkName });
+                        new NetworksCreateParameters { Name = NetworkName }).ConfigureAwait(false);
                 }
             }
             finally {
@@ -207,12 +211,14 @@ namespace Microsoft.Azure.IIoT.Services.Docker {
         /// Create docker client
         /// </summary>
         /// <returns></returns>
-        private DockerClient GetDockerClient() {
+        private static DockerClient CreateDockerClient() {
+#pragma warning disable CA2000 // Dispose objects before losing scope
             return new DockerClientConfiguration(new Uri(
                 RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
                     ? "npipe://./pipe/docker_engine"
                     : "unix:///var/run/docker.sock"
             )).CreateClient();
+#pragma warning restore CA2000 // Dispose objects before losing scope
         }
 
 #pragma warning disable IDE0052 // Remove unread private members

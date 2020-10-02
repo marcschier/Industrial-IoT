@@ -9,6 +9,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
     using Microsoft.Azure.IIoT.Utils;
     using AutoFixture;
     using System;
+    using System.Collections.Generic;
     using System.Linq;
     using Xunit;
 
@@ -78,7 +79,9 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
         public void TestEqualIsNotEqualWithDeviceModel() {
             var r1 = CreateRegistration();
             var m = r1.ToDeviceTwin(_serializer);
-            m.Tags["DiscoveryProfileUri"] = null;
+            var tags = m.Tags.Clone();
+            tags["DiscoveryProfileUri"] = null;
+            m.Tags = tags;
             var r2 = m.ToEntityRegistration();
 
             Assert.NotEqual(r1, r2);
@@ -123,7 +126,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
             var fix = new Fixture();
             var r1 = fix.Build<ApplicationRegistration>()
                 .With(x => x.Capabilities, fix.CreateMany<string>().ToHashSet()
-                    .EncodeAsDictionary(true))
+                    .EncodeSetAsDictionary())
                 .With(x => x.DiscoveryUrls, fix.CreateMany<string>().ToList()
                     .EncodeAsDictionary())
                 .With(x => x.HostAddresses, fix.CreateMany<string>().ToList()

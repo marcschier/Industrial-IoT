@@ -24,13 +24,13 @@ namespace Microsoft.Azure.IIoT.App.Pages {
 
         private const string _valueGood = "Good";
 
-        protected override async Task GetItems(bool getNextPage) {
-            Items = await PublisherHelper.PublishedAsync(EndpointId, true);
+        protected override async Task LoadPageContentAsync(bool getNextPage) {
+            Items = await PublisherHelper.PublishedAsync(EndpointId, true).ConfigureAwait(false);
         }
 
-        protected override async Task SubscribeEvents() {
+        protected override async Task SubscribeContentEventsAsync() {
             _events = await PublisherServiceEvents.NodePublishSubscribeByEndpointAsync(EndpointId,
-                samples => InvokeAsync(() => GetPublishedNodeData(samples)));
+                samples => InvokeAsync(() => GetPublishedNodeData(samples))).ConfigureAwait(false);
         }
 
         private bool IsIdGiven(string id) {

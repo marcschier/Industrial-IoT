@@ -10,6 +10,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Services {
     using Microsoft.Azure.IIoT.Utils;
     using Serilog;
     using System;
+    using System.Collections.Generic;
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
@@ -49,16 +50,16 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Services {
                 throw new ArgumentNullException(nameof(request));
             }
             if (string.IsNullOrEmpty(request.EntityId)) {
-                throw new ArgumentNullException(nameof(request.EntityId));
+                throw new ArgumentException("Missing entity id", nameof(request));
             }
             if (string.IsNullOrEmpty(request.GroupId)) {
-                throw new ArgumentNullException(nameof(request.GroupId));
+                throw new ArgumentException("Missing group id", nameof(request));
             }
             if (string.IsNullOrEmpty(request.SubjectName)) {
-                throw new ArgumentNullException(nameof(request.SubjectName));
+                throw new ArgumentException("Missing subject", nameof(request));
             }
             // Get entity
-            var entity = await _entities.FindEntityAsync(request.EntityId);
+            var entity = await _entities.FindEntityAsync(request.EntityId).ConfigureAwait(false);
             if (entity == null) {
                 throw new ResourceNotFoundException("Entity not found");
             }
@@ -67,11 +68,11 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Services {
             var subjectList = Opc.Ua.Utils.ParseDistinguishedName(request.SubjectName);
             if (subjectList == null ||
                 subjectList.Count == 0) {
-                throw new ArgumentException("Invalid Subject", nameof(request.SubjectName));
+                throw new ArgumentException("Invalid Subject", nameof(request));
             }
             if (!subjectList.Any(c => c.StartsWith("CN=", StringComparison.InvariantCulture))) {
                 throw new ArgumentException("Invalid Subject, must have a common name (CN=).",
-                    nameof(request.SubjectName));
+                    nameof(request));
             }
             entity.SubjectName = string.Join(", ", subjectList);
 
@@ -81,7 +82,8 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Services {
                     entity.Addresses = request.DomainNames;
                 }
                 else {
-                    entity.Addresses.AddRange(request.DomainNames);
+                    entity.Addresses = new HashSet<string>(
+                        entity.Addresses.Concat(request.DomainNames)).ToList();
                 }
             }
 
@@ -93,9 +95,9 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Services {
                     Submitted = context.Validate(),
                 },
                 Entity = entity
-            }, ct);
+            }, ct).ConfigureAwait(false);
             await _broker.NotifyAllAsync(
-                l => l.OnCertificateRequestSubmittedAsync(result));
+                l => l.OnCertificateRequestSubmittedAsync(result)).ConfigureAwait(false);
 
             _logger.Information("New Key pair request submitted.");
             return new StartNewKeyPairRequestResultModel {
@@ -109,12 +111,12 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Services {
             if (string.IsNullOrEmpty(requestId)) {
                 throw new ArgumentNullException(nameof(requestId));
             }
-            var request = await _repo.FindAsync(requestId, ct);
+            var request = await _repo.FindAsync(requestId, ct).ConfigureAwait(false);
             if (request == null) {
                 throw new ResourceNotFoundException("Request not found");
             }
             try {
-                var entity = await _entities.FindEntityAsync(request.Entity.Id);
+                var entity = await _entities.FindEntityAsync(request.Entity.Id).ConfigureAwait(false);
                 if (entity != null) {
                     throw new ResourceInvalidStateException("Entity removed.");
                 }
@@ -129,10 +131,10 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Services {
                             () => _serializer.DeserializeHandle(request.KeyHandle));
                         if (handle != null) {
                             var privateKey = await Try.Async(
-                                () => _keys.ExportKeyAsync(handle, ct));
+                                () => _keys.ExportKeyAsync(handle, ct)).ConfigureAwait(false);
                             result.PrivateKey = privateKey.ToServiceModel();
                             await Try.Async(
-                                () => _keys.DeleteKeyAsync(handle, ct));
+                                () => _keys.DeleteKeyAsync(handle, ct)).ConfigureAwait(false);
                         }
                     }
                 }
@@ -142,7 +144,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Services {
                 if (request.Record.State == CertificateRequestState.Completed) {
                     // Accept
                     await _broker.NotifyAllAsync(
-                        l => l.OnCertificateRequestAcceptedAsync(request));
+                        l => l.OnCertificateRequestAcceptedAsync(request)).ConfigureAwait(false);
                     _logger.Information("Key pair response accepted and finished.");
                 }
             }

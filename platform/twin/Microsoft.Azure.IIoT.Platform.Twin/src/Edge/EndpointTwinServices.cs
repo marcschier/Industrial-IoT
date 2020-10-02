@@ -20,7 +20,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge {
     /// Manages the endpoint identity information in the twin and reports
     /// the endpoint's status back to the hub.
     /// </summary>
-    public class EndpointTwinServices : ITwinServices, IDisposable {
+    public sealed class EndpointTwinServices : ITwinServices, IDisposable {
 
         /// <inheritdoc/>
         public EndpointConnectivityState State { get; private set; }
@@ -47,7 +47,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge {
 
         /// <inheritdoc/>
         public async Task SetEndpointAsync(EndpointModel endpoint) {
-            await _lock.WaitAsync();
+            await _lock.WaitAsync().ConfigureAwait(false);
             try {
                 var previous = _endpoint.Task.IsCompleted ? _endpoint.Task.Result : null;
                 if (!endpoint.IsSameAs(previous)) {
@@ -106,12 +106,12 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge {
         /// <inheritdoc/>
         public async Task<EndpointModel> GetEndpointAsync(CancellationToken ct) {
             Task<EndpointModel> waiter;
-            await _lock.WaitAsync(ct);
+            await _lock.WaitAsync(ct).ConfigureAwait(false);
             try {
                 waiter = _endpoint.Task;
                 if (waiter.IsCompleted) {
                     // Got endpoint - return waiter
-                    return await waiter;
+                    return await waiter.ConfigureAwait(false);
                 }
 
                 // wait below ...
@@ -127,7 +127,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge {
                 }
                 // Wait with cancellation
                 try {
-                    return await Task.Run(() => waiter, ct);
+                    return await Task.Run(() => waiter, ct).ConfigureAwait(false);
                 }
                 catch (OperationCanceledException) {
                     _logger.Error("Failed to get endpoint for twin {device} - " +

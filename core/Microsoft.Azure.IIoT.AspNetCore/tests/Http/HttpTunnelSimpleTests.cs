@@ -28,7 +28,7 @@ namespace Microsoft.Azure.IIoT.AspNetCore.Http.Tunnel {
                 Input = "this is a test"
             };
             var result = await router.InvokeAsync("target", "v2/path/test/1245",
-                serializer.SerializeToBytes(expected).ToArray(), null);
+                serializer.SerializeToBytes(expected).ToArray(), null).ConfigureAwait(false);
 
             var response = serializer.Deserialize<TestResponseModel>(result);
 
@@ -46,7 +46,7 @@ namespace Microsoft.Azure.IIoT.AspNetCore.Http.Tunnel {
                 Input = null
             };
             var result = await router.InvokeAsync("target", "v2/path/test/hahahaha",
-                serializer.SerializeToBytes(expected).ToArray(), null);
+                serializer.SerializeToBytes(expected).ToArray(), null).ConfigureAwait(false);
 
             var response = serializer.Deserialize<TestResponseModel>(result);
 
@@ -65,11 +65,11 @@ namespace Microsoft.Azure.IIoT.AspNetCore.Http.Tunnel {
 
             await Assert.ThrowsAsync<MethodCallStatusException>(
                 () => router.InvokeAsync("target", "v2/path/test",
-                    serializer.SerializeToBytes(expected).ToArray(), null));
+                    serializer.SerializeToBytes(expected).ToArray(), null)).ConfigureAwait(false);
 
             await Assert.ThrowsAsync<MethodCallStatusException>(
                 () => router.InvokeAsync("target", "v2/path/test",
-                    null, null));
+                    null, null)).ConfigureAwait(false);
         }
     }
 }

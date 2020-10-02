@@ -37,7 +37,7 @@ namespace Microsoft.Azure.IIoT.AspNetCore.Http.Tunnel {
     /// Not to be confused with the cloud side HttpTunnelServer
     /// that unpacks http tunnel requests from edge.
     /// </remarks>
-    public class HttpTunnelServer : IAppServer, IMethodRouter {
+    public sealed class HttpTunnelServer : IAppServer, IMethodRouter {
 
         /// <inheritdoc/>
         public HttpTunnelServer(IJsonSerializer serializer, ILogger logger) {
@@ -63,7 +63,7 @@ namespace Microsoft.Azure.IIoT.AspNetCore.Http.Tunnel {
                 throw new MethodCallException("Tunnel not yet started.");
             }
             return await _tunnel.InvokeAsync(target, method, payload,
-                contentType);
+                contentType).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
@@ -98,7 +98,7 @@ namespace Microsoft.Azure.IIoT.AspNetCore.Http.Tunnel {
                 byte[] payload, string contentType) {
                 if (method == _chunks.MethodName) {
                     // Pass to chunk server
-                    return await _chunks.InvokeAsync(target, payload, contentType, this);
+                    return await _chunks.InvokeAsync(target, payload, contentType, this).ConfigureAwait(false);
                 }
 
                 var isSimpleCall = contentType != HttpTunnelRequestModel.SchemaName;
@@ -160,8 +160,21 @@ namespace Microsoft.Azure.IIoT.AspNetCore.Http.Tunnel {
                         ContentMimeType.Json);
                 }
 
+                // Create context
+                var factory = _services.GetService<IHttpContextFactory>();
+                using var buffer = new MemoryStream();
+                var response = new HttpTunnelResponse(buffer);
+                var features = new FeatureCollection();
+                features.Set<IHttpRequestFeature>(request);
+                features.Set<IHttpRequestIdentifierFeature>(request);
+                features.Set<IHttpResponseFeature>(response);
+                features.Set<IHttpResponseBodyFeature>(response);
+                features.Set<IHttpBodyControlFeature>(response);
+                var context = factory.Create(features);
+
                 // Handle
-                var response = await HandleRequestAsync(request);
+                await _delegate(context).ConfigureAwait(false);
+
                 if (!isSimpleCall) {
                     // Serialize http back
                     var outbound = new HttpTunnelResponseModel {
@@ -181,36 +194,12 @@ namespace Microsoft.Azure.IIoT.AspNetCore.Http.Tunnel {
                 return response.Payload;
             }
 
-            /// <summary>
-            /// process request
-            /// </summary>
-            /// <param name="request"></param>
-            /// <returns></returns>
-            private async Task<HttpTunnelResponse> HandleRequestAsync(
-                HttpTunnelRequest request) {
-
-                // Create context
-                var factory = _services.GetService<IHttpContextFactory>();
-                var response = new HttpTunnelResponse();
-                var features = new FeatureCollection();
-                features.Set<IHttpRequestFeature>(request);
-                features.Set<IHttpRequestIdentifierFeature>(request);
-                features.Set<IHttpResponseFeature>(response);
-                features.Set<IHttpResponseBodyFeature>(response);
-                features.Set<IHttpBodyControlFeature>(response);
-                var context = factory.Create(features);
-
-                // Handle
-                await _delegate(context);
-                return response;
-            }
-
             /// <inheritdoc/>
             public void Dispose() {
                 _chunks.Dispose();
             }
 
-            private static readonly byte[] kEmptyPayload = new byte[0];
+            private static readonly byte[] kEmptyPayload = Array.Empty<byte>();
             private readonly IJsonSerializer _serializer;
             private readonly ChunkMethodServer _chunks;
             private readonly IServiceProvider _services;
@@ -264,7 +253,8 @@ namespace Microsoft.Azure.IIoT.AspNetCore.Http.Tunnel {
             IHttpBodyControlFeature {
 
             /// <inheritdoc/>
-            public HttpTunnelResponse() : base(new MemoryStream()) {
+            public HttpTunnelResponse(Stream stream)
+                : base(stream) {
             }
 
             /// <inheritdoc/>

@@ -5,7 +5,7 @@
 
 namespace Microsoft.Azure.IIoT.Azure.KeyVault.Clients {
     using Microsoft.Azure.IIoT.Azure.KeyVault.Models;
-    using Microsoft.Azure.IIoT.Crypto.Default;
+    using Microsoft.Azure.IIoT.Crypto.Services;
     using Microsoft.Azure.IIoT.Crypto.Models;
     using Microsoft.Azure.IIoT.Crypto.Storage;
     using Microsoft.Azure.IIoT.Crypto;
@@ -48,9 +48,9 @@ namespace Microsoft.Azure.IIoT.Azure.KeyVault.Clients {
                         cert.ToCertificate(new IssuerPolicies {
                             SignatureType = SignatureType.RS256,
                             IssuedLifetime = TimeSpan.FromHours(1)
-                        }));
+                        })).ConfigureAwait(false);
 
-                    var found = await store.FindLatestCertificateAsync("rootca");
+                    var found = await store.FindLatestCertificateAsync("rootca").ConfigureAwait(false);
 
                     // Assert
                     Assert.NotNull(rootca);
@@ -86,7 +86,7 @@ namespace Microsoft.Azure.IIoT.Azure.KeyVault.Clients {
                 ICertificateStore store = mock.Create<CertificateDatabase>();
 
                 var now = DateTime.UtcNow;
-                var rkey = SignatureType.RS256.CreateCsr("CN=me", true, out var request);
+                using var rkey = SignatureType.RS256.CreateCsr("CN=me", true, out var request);
                 var cert = request.CreateSelfSigned(now, now + TimeSpan.FromDays(5));
 
                 client.Setup(o => o.ImportCertificateWithHttpMessagesAsync(
@@ -115,9 +115,9 @@ namespace Microsoft.Azure.IIoT.Azure.KeyVault.Clients {
                     cert.ToCertificate(new IssuerPolicies {
                         SignatureType = SignatureType.RS256,
                         IssuedLifetime = TimeSpan.FromHours(1)
-                    }), rkey.ToKey());
+                    }), rkey.ToKey()).ConfigureAwait(false);
 
-                var found = await store.FindLatestCertificateAsync("rootca");
+                var found = await store.FindLatestCertificateAsync("rootca").ConfigureAwait(false);
                 Assert.NotNull(found);
                 var export = ((IKeyStore)service).ExportKeyAsync(found.KeyHandle);
 
@@ -125,7 +125,7 @@ namespace Microsoft.Azure.IIoT.Azure.KeyVault.Clients {
                 Assert.NotNull(rootca);
                 Assert.NotNull(rootca.IssuerPolicies);
                 Assert.NotNull(rootca.KeyHandle);
-                await Assert.ThrowsAsync<InvalidOperationException>(() => export);
+                await Assert.ThrowsAsync<InvalidOperationException>(() => export).ConfigureAwait(false);
                 Assert.Null(rootca.Revoked);
                 Assert.Equal(TimeSpan.FromDays(5), rootca.NotAfterUtc - rootca.NotBeforeUtc);
                 Assert.Equal(TimeSpan.FromHours(1), rootca.IssuerPolicies.IssuedLifetime);
@@ -249,9 +249,9 @@ namespace Microsoft.Azure.IIoT.Azure.KeyVault.Clients {
                         new IssuerPolicies {
                             SignatureType = SignatureType.RS256,
                             IssuedLifetime = TimeSpan.FromHours(1)
-                        });
+                        }).ConfigureAwait(false);
 
-                    var found = await store.FindLatestCertificateAsync("rootca");
+                    var found = await store.FindLatestCertificateAsync("rootca").ConfigureAwait(false);
                     var export = ((IKeyStore)service).ExportKeyAsync(found.KeyHandle);
 
                     // Assert
@@ -259,7 +259,7 @@ namespace Microsoft.Azure.IIoT.Azure.KeyVault.Clients {
                     Assert.NotNull(found);
                     Assert.NotNull(rootca.IssuerPolicies);
                     Assert.NotNull(rootca.KeyHandle);
-                    await Assert.ThrowsAsync<InvalidOperationException>(() => export);
+                    await Assert.ThrowsAsync<InvalidOperationException>(() => export).ConfigureAwait(false);
                     Assert.Null(rootca.Revoked);
                     Assert.Equal(TimeSpan.FromDays(5), rootca.NotAfterUtc - rootca.NotBeforeUtc);
                     Assert.Equal(TimeSpan.FromHours(1), rootca.IssuerPolicies.IssuedLifetime);
@@ -302,7 +302,7 @@ namespace Microsoft.Azure.IIoT.Azure.KeyVault.Clients {
                             IssuedLifetime = TimeSpan.FromHours(3)
                         },
                         KeyVaultKeyHandle.Create(kTestVaultUri + "/keys/rkid", null)),
-                        kTestVaultUri + "/certificates/rootca");
+                        kTestVaultUri + "/certificates/rootca").ConfigureAwait(false);
 
                     client.Setup(o => o.GetCertificateWithHttpMessagesAsync(
                         It.Is<string>(a => a == kTestVaultUri),
@@ -410,9 +410,9 @@ namespace Microsoft.Azure.IIoT.Azure.KeyVault.Clients {
                     var footca = await service.NewIssuerCertificateAsync("rootca", "footca",
                         X500DistinguishedNameEx.Create("CN=me"), DateTime.UtcNow,
                         new CreateKeyParams { KeySize = 2048, Type = KeyType.RSA },
-                        new IssuerPolicies { IssuedLifetime = TimeSpan.FromHours(1) });
+                        new IssuerPolicies { IssuedLifetime = TimeSpan.FromHours(1) }).ConfigureAwait(false);
 
-                    var found = await store.FindLatestCertificateAsync("footca");
+                    var found = await store.FindLatestCertificateAsync("footca").ConfigureAwait(false);
 
                     // Assert
                     Assert.NotNull(footca);

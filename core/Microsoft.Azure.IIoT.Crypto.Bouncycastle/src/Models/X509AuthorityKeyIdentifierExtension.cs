@@ -80,7 +80,7 @@ namespace Microsoft.Azure.IIoT.Crypto.Models {
 
         /// <inheritdoc/>
         public X509AuthorityKeyIdentifierExtension(AsnEncodedData encodedExtension,
-            bool critical) : this(encodedExtension.Oid, encodedExtension.RawData,
+            bool critical) : this(encodedExtension?.Oid, encodedExtension?.RawData,
                 critical) {
         }
 
@@ -108,7 +108,7 @@ namespace Microsoft.Azure.IIoT.Crypto.Models {
                     buffer.AddSeperator(multiLine).Append(name);
                 }
             }
-            if (SerialNumber != null && SerialNumber.Value.Length > 0) {
+            if (SerialNumber != null && SerialNumber.Value.Count > 0) {
                 buffer.AddSeperator(multiLine).Append("serialnumber=")
                     .Append(SerialNumber);
             }
@@ -162,6 +162,12 @@ namespace Microsoft.Azure.IIoT.Crypto.Models {
         /// <param name="keyId">The subject key identifier to use</param>
         private static byte[] BuildAuthorityKeyIdentifier(
             IEnumerable<string> authorityNames, SerialNumber serialNumber, string keyId) {
+            if (authorityNames is null) {
+                throw new ArgumentNullException(nameof(authorityNames));
+            }
+            if (serialNumber is null) {
+                throw new ArgumentNullException(nameof(serialNumber));
+            }
             using (var writer = new AsnWriter(AsnEncodingRules.DER)) {
                 writer.PushSequence();
                 if (keyId != null) {
@@ -194,6 +200,9 @@ namespace Microsoft.Azure.IIoT.Crypto.Models {
         /// <param name="issuerCaCertificate">The issuer CA certificate</param>
         private static byte[] BuildAuthorityKeyIdentifier(
             X509Certificate2 issuerCaCertificate) {
+            if (issuerCaCertificate is null) {
+                throw new ArgumentNullException(nameof(issuerCaCertificate));
+            }
             // force exception if SKI is not present
             var ski = issuerCaCertificate.Extensions
                 .OfType<X509SubjectKeyIdentifierExtension>()

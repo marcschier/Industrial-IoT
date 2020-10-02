@@ -47,7 +47,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub.Deploy {
                 SchemaVersion = kDefaultSchemaVersion,
                 TargetCondition = IoTEdgeBaseDeployment.TargetCondition,
                 Priority = 1
-            }, true);
+            }, true).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
@@ -59,7 +59,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub.Deploy {
         /// Get base edge configuration
         /// </summary>
         /// <returns></returns>
-        private IDictionary<string, IDictionary<string, object>> CreateLayeredDeployment() {
+        private IReadOnlyDictionary<string, IReadOnlyDictionary<string, object>> CreateLayeredDeployment() {
 
             var registryCredentials = "";
             if (!string.IsNullOrEmpty(_config.DockerServer) &&
@@ -110,7 +110,8 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub.Deploy {
                     }
                 }
             }";
-            return _serializer.Deserialize<IDictionary<string, IDictionary<string, object>>>(content);
+            return _serializer
+                .Deserialize<IReadOnlyDictionary<string, IReadOnlyDictionary<string, object>>>(content);
         }
 
         private const string kDefaultSchemaVersion = "1.0";

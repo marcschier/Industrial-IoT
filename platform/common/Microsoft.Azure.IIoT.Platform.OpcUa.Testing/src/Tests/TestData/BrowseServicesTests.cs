@@ -32,7 +32,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
 
             // Act
             var results = await browser.NodeBrowseAsync(_endpoint,
-                new BrowseRequestModel());
+                new BrowseRequestModel()).ConfigureAwait(false);
 
             // Assert
             Assert.Equal("i=84", results.Node.NodeId);
@@ -80,7 +80,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
                 new BrowseRequestModel {
                     TargetNodesOnly = true,
                     ReadVariableValues = true
-                });
+                }).ConfigureAwait(false);
 
             // Assert
             Assert.Equal("i=84", results.Node.NodeId);
@@ -129,7 +129,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
                 new BrowseRequestModel {
                     TargetNodesOnly = false,
                     MaxReferencesToReturn = 1
-                });
+                }).ConfigureAwait(false);
 
             // Assert
             Assert.Equal("i=84", results.Node.NodeId);
@@ -161,7 +161,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
                 new BrowseRequestModel {
                     TargetNodesOnly = false,
                     MaxReferencesToReturn = 2
-                });
+                }).ConfigureAwait(false);
 
             // Assert
             Assert.Equal("i=84", results.Node.NodeId);
@@ -201,7 +201,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
                 new BrowseRequestModel {
                     NodeId = "http://opcfoundation.org/UA/Boiler/#i=1240",
                     TargetNodesOnly = true
-                });
+                }).ConfigureAwait(false);
 
             // Assert
             Assert.Equal("http://opcfoundation.org/UA/Boiler/#i=1240", results.Node.NodeId);
@@ -244,7 +244,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
                 new BrowseRequestModel {
                     NodeId = "nsu=DataAccess;s=0:TestData/Static",
                     TargetNodesOnly = false
-                });
+                }).ConfigureAwait(false);
 
             // Assert
 
@@ -327,7 +327,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
                 new BrowseRequestModel {
                     NodeId = "DataAccess#s=0:TestData/Static",
                     TargetNodesOnly = false
-                });
+                }).ConfigureAwait(false);
 
             // Assert
 
@@ -411,7 +411,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
                     NodeId = "nsu=DataAccess;s=0:TestData/Static",
                     TargetNodesOnly = true,
                     ReadVariableValues = true
-                });
+                }).ConfigureAwait(false);
 
             // Assert
 
@@ -501,7 +501,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
                     NodeId = "DataAccess#s=0:TestData/Static",
                     TargetNodesOnly = true,
                     ReadVariableValues = true
-                });
+                }).ConfigureAwait(false);
 
             // Assert
 
@@ -591,7 +591,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
                 new BrowseRequestModel {
                     NodeId = "nsu=DataAccess;s=1:FC1001",
                     TargetNodesOnly = false
-                });
+                }).ConfigureAwait(false);
 
             // Assert
 
@@ -661,7 +661,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
                     NodeId = "nsu=DataAccess;s=1:FC1001",
                     TargetNodesOnly = true,
                     ReadVariableValues = true
-                });
+                }).ConfigureAwait(false);
 
             // Assert
 
@@ -734,7 +734,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
                 new BrowseRequestModel {
                     NodeId = "http://opcfoundation.org/UA/Boiler/#i=1240",
                     TargetNodesOnly = false
-                });
+                }).ConfigureAwait(false);
 
             // Assert
 
@@ -794,7 +794,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
                 new BrowseRequestModel {
                     NodeId = "http://test.org/UA/Data/#i=10159",
                     TargetNodesOnly = true
-                });
+                }).ConfigureAwait(false);
 
             // Assert
             Assert.Null(results.ContinuationToken);
@@ -1199,7 +1199,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
                         NodeClass.Method,
                         NodeClass.Object
                     }
-                });
+                }).ConfigureAwait(false);
 
             // Assert
             Assert.Null(results.ContinuationToken);
@@ -1240,7 +1240,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
                     NodeClassFilter = new List<NodeClass> {
                         NodeClass.Method
                     }
-                });
+                }).ConfigureAwait(false);
 
             // Assert
             Assert.Null(results.ContinuationToken);
@@ -1269,7 +1269,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
                 new BrowseRequestModel {
                     NodeId = "http://test.org/UA/Data/#i=10243",
                     TargetNodesOnly = true
-                });
+                }).ConfigureAwait(false);
 
             // Assert
             Assert.Null(results.ContinuationToken);
@@ -1758,7 +1758,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
                     NodeId = "http://test.org/UA/Data/#i=10243",
                     TargetNodesOnly = true,
                     ReadVariableValues = true
-                });
+                }).ConfigureAwait(false);
 
             // Assert
             Assert.Null(results.ContinuationToken);
@@ -2048,7 +2048,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
                 new BrowseRequestModel {
                     NodeId = "http://opcfoundation.org/UA/Boiler/#i=1240",
                     NodeIdsOnly = true
-                });
+                }).ConfigureAwait(false);
 
             // Assert
             Assert.Equal("http://opcfoundation.org/UA/Boiler/#i=1240", results.Node.NodeId);
@@ -2110,7 +2110,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
                 new BrowseRequestModel {
                     NodeId = "http://samples.org/UA/memorybuffer/Instance#s=UInt32",
                     MaxReferencesToReturn = 5
-                });
+                }).ConfigureAwait(false);
 
             Assert.Null(results.ErrorInfo);
             Assert.NotNull(results.ContinuationToken);
@@ -2120,7 +2120,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
             _ = await browser.NodeBrowseNextAsync(_endpoint,
                 new BrowseNextRequestModel {
                     ContinuationToken = results.ContinuationToken
-                });
+                }).ConfigureAwait(false);
 
             Assert.Null(results.ErrorInfo);
             Assert.NotNull(results.ContinuationToken);
@@ -2137,7 +2137,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
                 new BrowseRequestModel {
                     NodeId = "http://samples.org/UA/memorybuffer/Instance#s=UInt32",
                     MaxReferencesToReturn = 200
-                });
+                }).ConfigureAwait(false);
 
             Assert.Null(results.ErrorInfo);
             Assert.NotNull(results.ContinuationToken);
@@ -2147,7 +2147,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
             _ = await browser.NodeBrowseNextAsync(_endpoint,
                 new BrowseNextRequestModel {
                     ContinuationToken = results.ContinuationToken
-                });
+                }).ConfigureAwait(false);
 
             Assert.Null(results.ErrorInfo);
             Assert.NotNull(results.ContinuationToken);
@@ -2164,7 +2164,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
                     NodeId = "http://samples.org/UA/memorybuffer/Instance#s=UInt32",
                     MaxReferencesToReturn = 1,
                     NodeIdsOnly = true
-                });
+                }).ConfigureAwait(false);
 
             Assert.NotNull(results.ContinuationToken);
             Assert.Single(results.References);
@@ -2191,7 +2191,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
                     },
                     NodeId = nodeId,
                     BrowsePaths = new List<string[]> { pathElements }
-                });
+                }).ConfigureAwait(false);
 
             // Assert
             Assert.Null(results.ErrorInfo);
@@ -2225,7 +2225,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
                     },
                     NodeId = nodeId,
                     BrowsePaths = new List<string[]> { pathElements }
-                });
+                }).ConfigureAwait(false);
 
             // Assert
             Assert.Null(results.ErrorInfo);
@@ -2259,7 +2259,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
                     },
                     NodeId = nodeId,
                     BrowsePaths = new List<string[]> { pathElements }
-                });
+                }).ConfigureAwait(false);
 
             // Assert
             Assert.Null(results.ErrorInfo);
@@ -2298,7 +2298,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
                     },
                     NodeId = nodeId,
                     BrowsePaths = new List<string[]> { pathElements3, pathElements2 }
-                });
+                }).ConfigureAwait(false);
 
             // Assert
             Assert.Null(results.ErrorInfo);
@@ -2332,7 +2332,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
                     },
                     NodeId = "http://opcfoundation.org/UA/Boiler/#s=unknown",
                     TargetNodesOnly = true
-                });
+                }).ConfigureAwait(false);
 
             // Assert
             Assert.NotNull(results.ErrorInfo);
@@ -2358,7 +2358,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
                     },
                     NodeId = "http://opcfoundation.org/UA/Boiler/#s=unknown",
                     TargetNodesOnly = true
-                });
+                }).ConfigureAwait(false);
 
             // Assert
             Assert.NotNull(results.ErrorInfo.Diagnostics);
@@ -2384,7 +2384,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
                     },
                     NodeId = "http://opcfoundation.org/UA/Boiler/#s=unknown",
                     TargetNodesOnly = true
-                });
+                }).ConfigureAwait(false);
 
             // Assert
             Assert.NotNull(results.ErrorInfo.Diagnostics);
@@ -2412,7 +2412,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
                     },
                     NodeId = "http://opcfoundation.org/UA/Boiler/#s=unknown",
                     TargetNodesOnly = true
-                });
+                }).ConfigureAwait(false);
 
             // Assert
             Assert.NotNull(results.ErrorInfo.Diagnostics);

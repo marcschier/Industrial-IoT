@@ -19,6 +19,6 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Models {
         /// <summary>
         /// Applications
         /// </summary>
-        public List<DataSetWriterInfoModel> DataSetWriters { get; set; }
+        public IReadOnlyList<DataSetWriterInfoModel> DataSetWriters { get; set; }
     }
 }

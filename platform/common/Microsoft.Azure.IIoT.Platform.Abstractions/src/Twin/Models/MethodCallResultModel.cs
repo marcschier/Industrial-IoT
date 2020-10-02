@@ -15,7 +15,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Models {
         /// <summary>
         /// Resulting output values of method call
         /// </summary>
-        public List<MethodCallArgumentModel> Results { get; set; }
+        public IReadOnlyList<MethodCallArgumentModel> Results { get; set; }
 
         /// <summary>
         /// Service result in case of error

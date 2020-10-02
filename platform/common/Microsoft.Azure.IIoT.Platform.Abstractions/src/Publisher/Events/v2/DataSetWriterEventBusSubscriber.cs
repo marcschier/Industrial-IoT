@@ -30,25 +30,25 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Events.v2 {
                     await Task.WhenAll(_listeners
                         .Select(l => l.OnDataSetWriterAddedAsync(
                             eventData.Context, eventData.DataSetWriter)
-                        .ContinueWith(t => Task.CompletedTask)));
+                        .ContinueWith(t => Task.CompletedTask))).ConfigureAwait(false);
                     break;
                 case DataSetWriterEventType.Updated:
                     await Task.WhenAll(_listeners
                         .Select(l => l.OnDataSetWriterUpdatedAsync(
                             eventData.Context, eventData.Id, eventData.DataSetWriter)
-                        .ContinueWith(t => Task.CompletedTask)));
+                        .ContinueWith(t => Task.CompletedTask))).ConfigureAwait(false);
                     break;
                 case DataSetWriterEventType.StateChange:
                     await Task.WhenAll(_listeners
                         .Select(l => l.OnDataSetWriterStateChangeAsync(
                             eventData.Context, eventData.Id, eventData.DataSetWriter)
-                        .ContinueWith(t => Task.CompletedTask)));
+                        .ContinueWith(t => Task.CompletedTask))).ConfigureAwait(false);
                     break;
                 case DataSetWriterEventType.Removed:
                     await Task.WhenAll(_listeners
                         .Select(l => l.OnDataSetWriterRemovedAsync(
                             eventData.Context, eventData.DataSetWriter)
-                        .ContinueWith(t => Task.CompletedTask)));
+                        .ContinueWith(t => Task.CompletedTask))).ConfigureAwait(false);
                     break;
             }
         }

@@ -50,7 +50,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Service.Controllers {
                 throw new ArgumentNullException(nameof(request));
             }
             var writeResult = await _nodes.NodeValueWriteAsync(
-                endpointId, request.ToServiceModel());
+                endpointId, request.ToServiceModel()).ConfigureAwait(false);
             return writeResult.ToApiModel();
         }
 
@@ -72,7 +72,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Service.Controllers {
                 throw new ArgumentNullException(nameof(request));
             }
             var writeResult = await _nodes.NodeWriteAsync(
-                endpointId, request.ToServiceModel());
+                endpointId, request.ToServiceModel()).ConfigureAwait(false);
             return writeResult.ToApiModel();
         }
 

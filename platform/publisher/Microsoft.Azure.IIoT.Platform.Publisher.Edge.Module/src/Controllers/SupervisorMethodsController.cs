@@ -37,7 +37,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Module.Controllers {
         /// </summary>
         /// <returns></returns>
         public async Task<bool> ResetAsync() {
-            await _supervisor.ResetAsync();
+            await _supervisor.ResetAsync().ConfigureAwait(false);
             return true;
         }
 
@@ -46,7 +46,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Module.Controllers {
         /// </summary>
         /// <returns></returns>
         public async Task<SupervisorStatusApiModel> GetStatusAsync() {
-            var result = await _supervisor.GetStatusAsync();
+            var result = await _supervisor.GetStatusAsync().ConfigureAwait(false);
             var response = result.ToApiModel();
 
             // Fix up raw device identities back to writer group identities
@@ -74,7 +74,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Module.Controllers {
             }
             // Convert to device id
             var deviceId = PublisherRegistryEx.ToDeviceId(writerGroupId);
-            await _activator.ActivateAsync(deviceId, secret);
+            await _activator.ActivateAsync(deviceId, secret).ConfigureAwait(false);
             return true;
         }
 
@@ -89,7 +89,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Module.Controllers {
             }
             // Convert to device id
             var deviceId = PublisherRegistryEx.ToDeviceId(writerGroupId);
-            await _activator.DeactivateAsync(deviceId);
+            await _activator.DeactivateAsync(deviceId).ConfigureAwait(false);
             return true;
         }
 

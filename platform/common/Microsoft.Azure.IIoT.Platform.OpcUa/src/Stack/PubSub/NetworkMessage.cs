@@ -5,6 +5,7 @@
 
 namespace Opc.Ua.PubSub {
     using System;
+    using System.Linq;
     using System.Collections.Generic;
 
     /// <summary>
@@ -40,7 +41,7 @@ namespace Opc.Ua.PubSub {
         /// <summary>
         /// DataSet Messages
         /// </summary>
-        public List<DataSetMessage> Messages { get; set; } = new List<DataSetMessage>();
+        public IReadOnlyList<DataSetMessage> Messages { get; set; } = new List<DataSetMessage>();
 
         /// <inheritdoc/>
         public ExpandedNodeId TypeId => ExpandedNodeId.Null;
@@ -53,6 +54,9 @@ namespace Opc.Ua.PubSub {
 
         /// <inheritdoc/>
         public void Decode(IDecoder decoder) {
+            if (decoder is null) {
+                throw new ArgumentNullException(nameof(decoder));
+            }
             switch (decoder.EncodingType) {
                 case EncodingType.Binary:
                     DecodeBinary(decoder);
@@ -70,6 +74,9 @@ namespace Opc.Ua.PubSub {
 
         /// <inheritdoc/>
         public void Encode(IEncoder encoder) {
+            if (encoder is null) {
+                throw new ArgumentNullException(nameof(encoder));
+            }
             switch (encoder.EncodingType) {
                 case EncodingType.Binary:
                     EncodeBinary(encoder);
@@ -86,7 +93,7 @@ namespace Opc.Ua.PubSub {
         }
 
         /// <inheritdoc/>
-        public override bool Equals(Object value) {
+        public override bool Equals(object value) {
             return IsEqual(value as IEncodeable);
         }
 
@@ -140,10 +147,11 @@ namespace Opc.Ua.PubSub {
                 DataSetClassId = decoder.ReadString(nameof(DataSetClassId));
             }
             var messagesArray = decoder.ReadEncodeableArray("Messages", typeof(DataSetMessage));
-            Messages = new List<DataSetMessage>();
+            var messages = new List<DataSetMessage>();
             foreach (var value in messagesArray) {
-                Messages.Add(value as DataSetMessage);
+                messages.Add(value as DataSetMessage);
             }
+            Messages = messages;
         }
 
         /// <inheritdoc/>
@@ -154,7 +162,7 @@ namespace Opc.Ua.PubSub {
                 MessageContentMask |= (uint)JsonNetworkMessageContentMask.NetworkMessageHeader;
             }
             MessageType = decoder.ReadString(nameof(MessageType));
-            if (MessageType != "ua-data"){
+            if (MessageType != "ua-data") {
                 // todo throw incorrect message format
             }
             PublisherId = decoder.ReadString(nameof(PublisherId));
@@ -162,14 +170,15 @@ namespace Opc.Ua.PubSub {
                 MessageContentMask |= (uint)JsonNetworkMessageContentMask.PublisherId;
             }
             DataSetClassId = decoder.ReadString(nameof(DataSetClassId));
-            if(DataSetClassId != null){
+            if (DataSetClassId != null) {
                 MessageContentMask |= (uint)JsonNetworkMessageContentMask.DataSetClassId;
             }
             var messagesArray = decoder.ReadEncodeableArray("Messages", typeof(DataSetMessage));
-            Messages = new List<DataSetMessage>();
+            var messages = new List<DataSetMessage>();
             foreach (var value in messagesArray) {
-                Messages.Add(value as DataSetMessage);
+                messages.Add(value as DataSetMessage);
             }
+            Messages = messages;
             if (Messages.Count == 1) {
                 MessageContentMask |= (uint)JsonNetworkMessageContentMask.SingleDataSetMessage;
             }

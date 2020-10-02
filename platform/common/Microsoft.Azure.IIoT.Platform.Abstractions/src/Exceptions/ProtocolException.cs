@@ -13,6 +13,10 @@ namespace Microsoft.Azure.IIoT.Platform.Exceptions {
     public class ProtocolException : CommunicationException {
 
         /// <inheritdoc/>
+        public ProtocolException() {
+        }
+
+        /// <inheritdoc/>
         public ProtocolException(string message) :
             base(message) {
         }

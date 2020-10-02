@@ -45,9 +45,8 @@ namespace Microsoft.Azure.IIoT.Crypto {
         /// <returns></returns>
         Task<Certificate> NewRootCertificateAsync(string certificateName,
             X500DistinguishedName subjectName, DateTime? notBefore,
-            TimeSpan lifetime, CreateKeyParams keyParams,
-            IssuerPolicies policies,
-            Func<byte[], IEnumerable<X509Extension>> extensions = null,
+            TimeSpan lifetime, CreateKeyParams keyParams, IssuerPolicies policies,
+            Func<IReadOnlyCollection<byte>, IEnumerable<X509Extension>> extensions = null,
             CancellationToken ct = default);
 
         /// <summary>
@@ -66,7 +65,7 @@ namespace Microsoft.Azure.IIoT.Crypto {
         Task<Certificate> NewIssuerCertificateAsync(string issuerCertificate,
             string certificateName, X500DistinguishedName subjectName,
             DateTime? notBefore, CreateKeyParams keyParams, IssuerPolicies policies,
-            Func<byte[], IEnumerable<X509Extension>> extensions = null,
+            Func<IReadOnlyCollection<byte>, IEnumerable<X509Extension>> extensions = null,
             CancellationToken ct = default);
 
         /// <summary>
@@ -84,7 +83,7 @@ namespace Microsoft.Azure.IIoT.Crypto {
         Task<Certificate> CreateSignedCertificateAsync(
             string issuerCertificate, string certificateName, Key publicKey,
             X500DistinguishedName subjectName, DateTime? notBefore,
-            Func<byte[], IEnumerable<X509Extension>> extensions = null,
+            Func<IReadOnlyCollection<byte>, IEnumerable<X509Extension>> extensions = null,
             CancellationToken ct = default);
 
         /// <summary>
@@ -103,7 +102,7 @@ namespace Microsoft.Azure.IIoT.Crypto {
             string issuerCertificate, string certificateName,
             X500DistinguishedName subjectName, DateTime? notBefore,
             CreateKeyParams keyParams,
-            Func<byte[], IEnumerable<X509Extension>> extensions = null,
+            Func<IReadOnlyCollection<byte>, IEnumerable<X509Extension>> extensions = null,
             CancellationToken ct = default);
 
         /// <summary>

@@ -54,7 +54,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Controllers {
                 throw new ArgumentNullException(nameof(request));
             }
             var result = await _upload.ModelUploadStartAsync(
-                await _twin.GetEndpointAsync(), request.ToServiceModel());
+                await _twin.GetEndpointAsync().ConfigureAwait(false), request.ToServiceModel()).ConfigureAwait(false);
             return result.ToApiModel();
         }
 
@@ -72,7 +72,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Controllers {
                     throw new ArgumentNullException(nameof(request));
                 }
                 var result = await _browse.NodeBrowseFirstAsync(
-                    await _twin.GetEndpointAsync(), request.ToServiceModel());
+                    await _twin.GetEndpointAsync().ConfigureAwait(false), request.ToServiceModel()).ConfigureAwait(false);
                 model = result.ToApiModel();
             }
             return model;
@@ -90,7 +90,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Controllers {
                 throw new ArgumentNullException(nameof(request));
             }
             var result = await _browse.NodeBrowseNextAsync(
-                await _twin.GetEndpointAsync(), request.ToServiceModel());
+                await _twin.GetEndpointAsync().ConfigureAwait(false), request.ToServiceModel()).ConfigureAwait(false);
             return result.ToApiModel();
         }
 
@@ -106,7 +106,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Controllers {
                 throw new ArgumentNullException(nameof(request));
             }
             var result = await _browse.NodeBrowsePathAsync(
-                await _twin.GetEndpointAsync(), request.ToServiceModel());
+                await _twin.GetEndpointAsync().ConfigureAwait(false), request.ToServiceModel()).ConfigureAwait(false);
             return result.ToApiModel();
         }
 
@@ -124,7 +124,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Controllers {
                     throw new ArgumentNullException(nameof(request));
                 }
                 var result = await _nodes.NodeValueReadAsync(
-                    await _twin.GetEndpointAsync(), request.ToServiceModel());
+                    await _twin.GetEndpointAsync().ConfigureAwait(false), request.ToServiceModel()).ConfigureAwait(false);
                 model = result.ToApiModel();
             }
             return model;
@@ -142,7 +142,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Controllers {
                 throw new ArgumentNullException(nameof(request));
             }
             var result = await _nodes.NodeValueWriteAsync(
-                await _twin.GetEndpointAsync(), request.ToServiceModel());
+                await _twin.GetEndpointAsync().ConfigureAwait(false), request.ToServiceModel()).ConfigureAwait(false);
             return result.ToApiModel();
         }
 
@@ -158,7 +158,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Controllers {
                 throw new ArgumentNullException(nameof(request));
             }
             var result = await _nodes.NodeMethodGetMetadataAsync(
-                await _twin.GetEndpointAsync(), request.ToServiceModel());
+                await _twin.GetEndpointAsync().ConfigureAwait(false), request.ToServiceModel()).ConfigureAwait(false);
             return result.ToApiModel();
         }
 
@@ -174,7 +174,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Controllers {
                 throw new ArgumentNullException(nameof(request));
             }
             var result = await _nodes.NodeMethodCallAsync(
-                await _twin.GetEndpointAsync(), request.ToServiceModel());
+                await _twin.GetEndpointAsync().ConfigureAwait(false), request.ToServiceModel()).ConfigureAwait(false);
             return result.ToApiModel();
         }
 
@@ -190,7 +190,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Controllers {
                 throw new ArgumentNullException(nameof(request));
             }
             var result = await _nodes.NodeReadAsync(
-                await _twin.GetEndpointAsync(), request.ToServiceModel());
+                await _twin.GetEndpointAsync().ConfigureAwait(false), request.ToServiceModel()).ConfigureAwait(false);
             return result.ToApiModel();
         }
 
@@ -206,7 +206,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Controllers {
                 throw new ArgumentNullException(nameof(request));
             }
             var result = await _nodes.NodeWriteAsync(
-                await _twin.GetEndpointAsync(), request.ToServiceModel());
+                await _twin.GetEndpointAsync().ConfigureAwait(false), request.ToServiceModel()).ConfigureAwait(false);
             return result.ToApiModel();
         }
 
@@ -222,7 +222,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Controllers {
                 throw new ArgumentNullException(nameof(request));
             }
             var result = await _historian.HistoryReadAsync(
-               await _twin.GetEndpointAsync(), request.ToServiceModel());
+               await _twin.GetEndpointAsync().ConfigureAwait(false), request.ToServiceModel()).ConfigureAwait(false);
             return result.ToApiModel();
         }
 
@@ -237,7 +237,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Controllers {
                 throw new ArgumentNullException(nameof(request));
             }
             var result = await _historian.HistoryReadNextAsync(
-               await _twin.GetEndpointAsync(), request.ToServiceModel());
+               await _twin.GetEndpointAsync().ConfigureAwait(false), request.ToServiceModel()).ConfigureAwait(false);
             return result.ToApiModel();
         }
 
@@ -253,7 +253,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Controllers {
                 throw new ArgumentNullException(nameof(request));
             }
             var result = await _historian.HistoryUpdateAsync(
-               await _twin.GetEndpointAsync(), request.ToServiceModel());
+               await _twin.GetEndpointAsync().ConfigureAwait(false), request.ToServiceModel()).ConfigureAwait(false);
             return result.ToApiModel();
         }
 

@@ -47,7 +47,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Models {
                 throw new ArgumentNullException(nameof(certificate));
             }
             if (certificate.RawData == null) {
-                throw new ArgumentNullException(nameof(certificate.RawData));
+                throw new ArgumentException("Certificate data missing", nameof(certificate));
             }
             return new X509CertificateModel {
                 Certificate = withCertificate ? certificate.RawData : null,

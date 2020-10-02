@@ -6,7 +6,7 @@
 namespace Microsoft.Azure.IIoT.Platform.Publisher {
     using Microsoft.Azure.IIoT.Platform.Publisher.Services;
     using Microsoft.Azure.IIoT.Platform.Publisher.Default;
-    using Microsoft.Azure.IIoT.Platform.Publisher.Storage.Default;
+    using Microsoft.Azure.IIoT.Platform.Publisher.Storage.Services;
     using Autofac;
 
     /// <summary>

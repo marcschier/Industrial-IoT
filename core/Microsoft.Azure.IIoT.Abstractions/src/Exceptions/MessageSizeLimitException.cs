@@ -22,6 +22,22 @@ namespace Microsoft.Azure.IIoT.Exceptions {
         /// </summary>
         public int MaxMessageSize { get; set; }
 
+        /// <inheritdoc />
+        public MessageSizeLimitException() :
+            this("Message size limit exceeded.") {
+        }
+
+        /// <inheritdoc />
+        public MessageSizeLimitException(string message) :
+            this(message, -1, -1) {
+        }
+
+        /// <inheritdoc />
+        public MessageSizeLimitException(string message,
+            Exception innerException) :
+            this(message, -1, -1, innerException) {
+        }
+
         /// <summary>
         /// Create exception
         /// </summary>
@@ -48,17 +64,6 @@ namespace Microsoft.Azure.IIoT.Exceptions {
 
             MessageSize = messageSize;
             MaxMessageSize = maxMessageSize;
-        }
-
-        /// <inheritdoc />
-        public MessageSizeLimitException(string message) :
-            this(message, -1, -1) {
-        }
-
-        /// <inheritdoc />
-        public MessageSizeLimitException(string message,
-            Exception innerException) :
-            this(message, -1, -1, innerException) {
         }
     }
 }

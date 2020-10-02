@@ -22,75 +22,75 @@ namespace Microsoft.Azure.IIoT.Storage {
         /// Add new item
         /// </summary>
         /// <param name="newItem"></param>
-        /// <param name="ct"></param>
         /// <param name="id"></param>
         /// <param name="options"></param>
+        /// <param name="ct"></param>
         /// <returns></returns>
         Task<IDocumentInfo<T>> AddAsync<T>(T newItem,
-            CancellationToken ct = default,
-            string id = null, OperationOptions options = null);
+            string id = null, OperationOptions options = null,
+            CancellationToken ct = default);
 
         /// <summary>
         /// Finds an item.
         /// </summary>
         /// <param name="id"></param>
-        /// <param name="ct"></param>
         /// <param name="options"></param>
+        /// <param name="ct"></param>
         /// <returns></returns>
         Task<IDocumentInfo<T>> FindAsync<T>(string id,
-            CancellationToken ct = default,
-            OperationOptions options = null);
+            OperationOptions options = null,
+            CancellationToken ct = default);
 
         /// <summary>
         /// Replace item
         /// </summary>
         /// <param name="existing"></param>
         /// <param name="value"></param>
-        /// <param name="ct"></param>
         /// <param name="options"></param>
+        /// <param name="ct"></param>
         /// <returns></returns>
         Task<IDocumentInfo<T>> ReplaceAsync<T>(IDocumentInfo<T> existing,
-            T value, CancellationToken ct = default,
-            OperationOptions options = null);
+            T value, OperationOptions options = null,
+            CancellationToken ct = default);
 
         /// <summary>
         /// Adds or updates an item.
         /// </summary>
         /// <exception cref="ResourceOutOfDateException"/>
         /// <param name="newItem"></param>
-        /// <param name="ct"></param>
         /// <param name="id"></param>
         /// <param name="options"></param>
         /// <param name="etag"></param>
+        /// <param name="ct"></param>
         /// <returns></returns>
         Task<IDocumentInfo<T>> UpsertAsync<T>(T newItem,
-            CancellationToken ct = default,
-            string id = null, OperationOptions options = null,
-            string etag = null);
+            string id = null,
+            OperationOptions options = null, string etag = null,
+            CancellationToken ct = default);
 
         /// <summary>
         /// Removes the item.
         /// </summary>
         /// <exception cref="ResourceOutOfDateException"/>
         /// <param name="item"></param>
-        /// <param name="ct"></param>
         /// <param name="options"></param>
+        /// <param name="ct"></param>
         /// <returns></returns>
         Task DeleteAsync<T>(IDocumentInfo<T> item,
-            CancellationToken ct = default,
-            OperationOptions options = null);
+            OperationOptions options = null,
+            CancellationToken ct = default);
 
         /// <summary>
         /// Delete an item by id.
         /// </summary>
         /// <param name="id"></param>
-        /// <param name="ct"></param>
         /// <param name="options"></param>
         /// <param name="etag"></param>
+        /// <param name="ct"></param>
         /// <returns></returns>
         Task DeleteAsync<T>(string id,
-            CancellationToken ct = default,
-            OperationOptions options = null, string etag = null);
+            OperationOptions options = null, string etag = null,
+            CancellationToken ct = default);
 
         /// <summary>
         /// Create Query

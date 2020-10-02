@@ -67,7 +67,7 @@ namespace Microsoft.Azure.IIoT.Authentication.Clients {
                 _logger.Debug("Try acquiring token for {resource} using {client}.",
                     Resource, client.GetType());
                 try {
-                    var token = await client.GetTokenForAsync(Resource, scopes);
+                    var token = await client.GetTokenForAsync(Resource, scopes).ConfigureAwait(false);
                     if (token != null) {
                         _logger.Debug("Successfully acquired token for {resource} using {client}.",
                             Resource, client.GetType());

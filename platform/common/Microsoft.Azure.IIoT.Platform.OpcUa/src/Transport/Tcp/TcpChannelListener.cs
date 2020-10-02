@@ -18,7 +18,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Transport {
     /// <summary>
     /// Manages the raw tcp connections for a UA TCP server.
     /// </summary>
-    public class TcpChannelListener : ITcpChannelListener, IStartable, IDisposable {
+    public sealed class TcpChannelListener : ITcpChannelListener, IStartable, IDisposable {
 
         /// <inheritdoc/>
         public Uri EndpointUrl { get; }
@@ -100,13 +100,15 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Transport {
         }
 
         /// <inheritdoc/>
-        public bool TransferListenerChannel(uint channelId, string serverUri, Uri endpointUrl) {
+        public bool TransferListenerChannel(uint channelId, string server, Uri endpointUrl) {
             throw new NotImplementedException();
         }
 
         /// <inheritdoc/>
         public void ChannelClosed(uint channelId) {
+#pragma warning disable CA2000 // Dispose objects before losing scope
             if (_channels.TryRemove(channelId, out var channel)) {
+#pragma warning restore CA2000 // Dispose objects before losing scope
                 Utils.SilentDispose(channel);
                 _logger.Information("Channel {channelId} closed", channelId);
             }
@@ -123,7 +125,9 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Transport {
                 var endpoint = new IPEndPoint(address, port);
                 var socket = new Socket(endpoint.AddressFamily,
                     SocketType.Stream, ProtocolType.Tcp);
+#pragma warning disable CA2000 // Dispose objects before losing scope
                 var args = new SocketAsyncEventArgs();
+#pragma warning restore CA2000 // Dispose objects before losing scope
                 args.Completed += OnAccept;
                 args.UserToken = socket;
                 socket.Bind(endpoint);
@@ -144,6 +148,8 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Transport {
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
+#pragma warning disable IDE0068 // Use recommended dispose pattern
+#pragma warning disable CA2000 // Dispose objects before losing scope
         private void OnAccept(object sender, SocketAsyncEventArgs e) {
             SecureChannel channel = null;
             while (true) {
@@ -162,10 +168,8 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Transport {
                         channel.SetRequestReceivedCallback(OnRequestReceived);
 
                         var channelId = (uint)Interlocked.Increment(ref _lastChannelId);
-#pragma warning disable IDE0068 // Use recommended dispose pattern
                         var socket = new TcpMessageSocket(channel, e.AcceptSocket,
                             _bufferManager, _quotas.MaxBufferSize);
-#pragma warning restore IDE0068 // Use recommended dispose pattern
                         channel.Attach(channelId, socket);
 
                         _channels.TryAdd(channelId, channel);
@@ -196,6 +200,8 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Transport {
                 break;
             }
         }
+#pragma warning restore CA2000 // Dispose objects before losing scope
+#pragma warning restore IDE0068 // Use recommended dispose pattern
 
         /// <summary>
         /// Handles requests arriving from a channel.
@@ -272,10 +278,12 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Transport {
         private readonly ChannelQuotas _quotas;
         private readonly X509Certificate2 _serverCertificate;
         private readonly X509Certificate2Collection _serverCertificateChain;
+#pragma warning disable CA2213 // Disposable fields should be disposed
 #pragma warning disable IDE0069 // Disposable fields should be disposed
         private readonly Socket _listeningSocket;
         private readonly Socket _listeningSocketIPv6;
 #pragma warning restore IDE0069 // Disposable fields should be disposed
+#pragma warning restore CA2213 // Disposable fields should be disposed
         private readonly ILogger _logger;
         private readonly ConcurrentDictionary<uint, SecureChannel> _channels =
             new ConcurrentDictionary<uint, SecureChannel>();

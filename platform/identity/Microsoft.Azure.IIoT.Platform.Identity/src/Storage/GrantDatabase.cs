@@ -31,7 +31,7 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Storage {
 
         /// <inheritdoc/>
         public async Task<PersistedGrant> GetAsync(string key) {
-            var grant = await _documents.FindAsync<GrantDocumentModel>(key);
+            var grant = await _documents.FindAsync<GrantDocumentModel>(key).ConfigureAwait(false);
             if (grant?.Value == null) {
                 return null;
             }
@@ -46,7 +46,7 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Storage {
             var results = CreateQuery(_documents.CreateQuery<GrantDocumentModel>(), filter);
             var grants = new List<PersistedGrant>();
             while (results.HasMore()) {
-                var documents = await results.ReadAsync();
+                var documents = await results.ReadAsync().ConfigureAwait(false);
                 grants.AddRange(
                     documents.Select(d => d.Value.ToServiceModel()));
             }
@@ -56,12 +56,12 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Storage {
         /// <inheritdoc/>
         public async Task StoreAsync(PersistedGrant token) {
             var document = token.ToDocumentModel();
-            await _documents.UpsertAsync(document);
+            await _documents.UpsertAsync(document).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
         public async Task RemoveAsync(string key) {
-            await _documents.DeleteAsync<GrantDocumentModel>(key);
+            await _documents.DeleteAsync<GrantDocumentModel>(key).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
@@ -72,7 +72,7 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Storage {
             var results = CreateQuery(_documents.CreateQuery<GrantDocumentModel>(), 
                 filter);
             await results.ForEachAsync(d =>
-                _documents.DeleteAsync<GrantDocumentModel>(d.Id));
+                _documents.DeleteAsync<GrantDocumentModel>(d.Id)).ConfigureAwait(false);
         }
 
         /// <summary>

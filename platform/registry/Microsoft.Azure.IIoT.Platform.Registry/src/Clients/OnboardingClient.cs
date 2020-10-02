@@ -40,7 +40,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Clients {
                 },
                 Id = request.Id,
                 Context = request.Context.Clone()
-            });
+            }).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
@@ -48,7 +48,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Clients {
             if (request == null) {
                 throw new ArgumentNullException(nameof(request));
             }
-            await _events.PublishAsync(request);
+            await _events.PublishAsync(request).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
@@ -56,7 +56,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Clients {
             if (request == null) {
                 throw new ArgumentNullException(nameof(request));
             }
-            await _events.PublishAsync(request);
+            await _events.PublishAsync(request).ConfigureAwait(false);
         }
 
         private readonly IEventBus _events;

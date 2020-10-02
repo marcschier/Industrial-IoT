@@ -5,6 +5,7 @@
 
 namespace Microsoft.Azure.IIoT.Platform.Core.Models {
     using Microsoft.Azure.IIoT.Serializers;
+    using System.Collections.Generic;
 
     /// <summary>
     /// Filter operand
@@ -20,7 +21,7 @@ namespace Microsoft.Azure.IIoT.Platform.Core.Models {
         /// <summary>
         /// Browse path of attribute operand
         /// </summary>
-        public string[] BrowsePath { get; set; }
+        public IReadOnlyList<string> BrowsePath { get; set; }
 
         /// <summary>
         /// Attribute id

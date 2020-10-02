@@ -17,7 +17,7 @@ namespace Microsoft.Azure.IIoT.Test.Scenarios.Cli {
     using Microsoft.Azure.IIoT.Platform.Twin.Api.Models;
     using Microsoft.Azure.IIoT.Platform.Vault.Api;
     using Microsoft.Azure.IIoT.Platform.Vault.Api.Clients;
-    using Microsoft.Azure.IIoT.Http.Default;
+    using Microsoft.Azure.IIoT.Http.Clients;
     using Microsoft.Azure.IIoT.Http.SignalR;
     using Microsoft.Azure.IIoT.Utils;
     using Microsoft.Azure.IIoT.Authentication.Runtime;
@@ -36,7 +36,7 @@ namespace Microsoft.Azure.IIoT.Test.Scenarios.Cli {
     /// <summary>
     /// Api command line interface
     /// </summary>
-    public class Program : IDisposable {
+    public sealed class Program : IDisposable {
 
         /// <summary>
         /// Configure Dependency injection
@@ -121,7 +121,9 @@ namespace Microsoft.Azure.IIoT.Test.Scenarios.Cli {
             _registry = _scope.Resolve<IRegistryServiceApi>();
             _publisher = _scope.Resolve<IPublisherServiceApi>();
             _vault = _scope.Resolve<IVaultServiceApi>();
+#pragma warning disable CA2000 // Dispose objects before losing scope
             if (_scope.TryResolve(out _metrics)) {
+#pragma warning restore CA2000 // Dispose objects before losing scope
                 _metrics.Start();
             }
         }
@@ -136,6 +138,10 @@ namespace Microsoft.Azure.IIoT.Test.Scenarios.Cli {
         /// Run client
         /// </summary>
         public async Task RunAsync(string[] args) {
+            if (args is null) {
+                throw new ArgumentNullException(nameof(args));
+            }
+
             var interactive = false;
             do {
                 if (interactive) {
@@ -148,7 +154,7 @@ namespace Microsoft.Azure.IIoT.Test.Scenarios.Cli {
                     }
 
                     CliOptions options;
-                    var command = args[0].ToLowerInvariant();
+                    var command = args[0];
                     switch (command) {
                         case "exit":
                             interactive = false;
@@ -165,15 +171,15 @@ namespace Microsoft.Azure.IIoT.Test.Scenarios.Cli {
                             break;
                         case "activation":
                             options = new CliOptions(args, 1);
-                            await TestActivationAsync(options);
+                            await TestActivationAsync(options).ConfigureAwait(false);
                             break;
                         case "browse":
                             options = new CliOptions(args, 1);
-                            await TestBrowseAsync(options);
+                            await TestBrowseAsync(options).ConfigureAwait(false);
                             break;
                         case "publish":
                             options = new CliOptions(args, 1);
-                            await TestPublishAsync(options);
+                            await TestPublishAsync(options).ConfigureAwait(false);
                             break;
 
                         case "-?":
@@ -209,20 +215,20 @@ namespace Microsoft.Azure.IIoT.Test.Scenarios.Cli {
             IEnumerable<EndpointInfoApiModel> endpoints;
             if (!options.IsSet("-a", "--all")) {
                 if (options.IsSet("-e", "--endpoint")) {
-                    var id = await SelectEndpointAsync();
-                    var ep = await _registry.GetEndpointAsync(id);
+                    var id = await SelectEndpointAsync().ConfigureAwait(false);
+                    var ep = await _registry.GetEndpointAsync(id).ConfigureAwait(false);
                     endpoints = ep.YieldReturn();
                 }
                 else {
                     var id = options.GetValueOrDefault<string>("-i", "--id", null);
                     if (id == null) {
-                        id = await SelectApplicationAsync();
+                        id = await SelectApplicationAsync().ConfigureAwait(false);
                         if (id == null) {
                             throw new ArgumentException("Needs an id");
                         }
                     }
 
-                    var app = await _registry.GetApplicationAsync(id);
+                    var app = await _registry.GetApplicationAsync(id).ConfigureAwait(false);
                     if (app.Endpoints.Count == 0) {
                         return;
                     }
@@ -230,9 +236,9 @@ namespace Microsoft.Azure.IIoT.Test.Scenarios.Cli {
                 }
             }
             else {
-                endpoints = await _registry.ListAllEndpointsAsync();
+                endpoints = await _registry.ListAllEndpointsAsync().ConfigureAwait(false);
             }
-            await Task.WhenAll(endpoints.Select(e => TestActivationAsync(e, options)));
+            await Task.WhenAll(endpoints.Select(e => TestActivationAsync(e, options))).ConfigureAwait(false);
             Console.WriteLine("Success!");
         }
 
@@ -243,20 +249,20 @@ namespace Microsoft.Azure.IIoT.Test.Scenarios.Cli {
             IEnumerable<EndpointInfoApiModel> endpoints;
             if (!options.IsSet("-a", "--all")) {
                 if (options.IsSet("-e", "--endpoint")) {
-                    var id = await SelectEndpointAsync();
-                    var ep = await _registry.GetEndpointAsync(id);
+                    var id = await SelectEndpointAsync().ConfigureAwait(false);
+                    var ep = await _registry.GetEndpointAsync(id).ConfigureAwait(false);
                     endpoints = ep.YieldReturn();
                 }
                 else {
                     var id = options.GetValueOrDefault<string>("-i", "--id", null);
                     if (id == null) {
-                        id = await SelectApplicationAsync();
+                        id = await SelectApplicationAsync().ConfigureAwait(false);
                         if (id == null) {
                             throw new ArgumentException("Needs an id");
                         }
                     }
 
-                    var app = await _registry.GetApplicationAsync(id);
+                    var app = await _registry.GetApplicationAsync(id).ConfigureAwait(false);
                     if (app.Endpoints.Count == 0) {
                         return;
                     }
@@ -264,9 +270,9 @@ namespace Microsoft.Azure.IIoT.Test.Scenarios.Cli {
                 }
             }
             else {
-                endpoints = await _registry.ListAllEndpointsAsync();
+                endpoints = await _registry.ListAllEndpointsAsync().ConfigureAwait(false);
             }
-            await Task.WhenAll(endpoints.Select(e => TestBrowseAsync(e, options)));
+            await Task.WhenAll(endpoints.Select(e => TestBrowseAsync(e, options))).ConfigureAwait(false);
             Console.WriteLine("Success!");
         }
 
@@ -277,20 +283,20 @@ namespace Microsoft.Azure.IIoT.Test.Scenarios.Cli {
             IEnumerable<EndpointInfoApiModel> endpoints;
             if (!options.IsSet("-a", "--all")) {
                 if (options.IsSet("-e", "--endpoint")) {
-                    var id = await SelectEndpointAsync();
-                    var ep = await _registry.GetEndpointAsync(id);
+                    var id = await SelectEndpointAsync().ConfigureAwait(false);
+                    var ep = await _registry.GetEndpointAsync(id).ConfigureAwait(false);
                     endpoints = ep.YieldReturn();
                 }
                 else {
                     var id = options.GetValueOrDefault<string>("-i", "--id", null);
                     if (id == null) {
-                        id = await SelectApplicationAsync();
+                        id = await SelectApplicationAsync().ConfigureAwait(false);
                         if (id == null) {
                             throw new ArgumentException("Needs an id");
                         }
                     }
 
-                    var app = await _registry.GetApplicationAsync(id);
+                    var app = await _registry.GetApplicationAsync(id).ConfigureAwait(false);
                     if (app.Endpoints.Count == 0) {
                         return;
                     }
@@ -298,9 +304,9 @@ namespace Microsoft.Azure.IIoT.Test.Scenarios.Cli {
                 }
             }
             else {
-                endpoints = await _registry.ListAllEndpointsAsync();
+                endpoints = await _registry.ListAllEndpointsAsync().ConfigureAwait(false);
             }
-            await Task.WhenAll(endpoints.Select(e => TestPublishAsync(e, options)));
+            await Task.WhenAll(endpoints.Select(e => TestPublishAsync(e, options))).ConfigureAwait(false);
             Console.WriteLine("Success!");
         }
 
@@ -315,10 +321,10 @@ namespace Microsoft.Azure.IIoT.Test.Scenarios.Cli {
             EndpointInfoApiModel ep;
             var repeats = options.GetValueOrDefault("-r", "--repeat", 10); // 10 times
             for (var i = 0; i < repeats; i++) {
-                await _registry.ActivateEndpointAsync(endpoint.Id);
+                await _registry.ActivateEndpointAsync(endpoint.Id).ConfigureAwait(false);
                 var sw = Stopwatch.StartNew();
                 while (true) {
-                    ep = await _registry.GetEndpointAsync(endpoint.Id);
+                    ep = await _registry.GetEndpointAsync(endpoint.Id).ConfigureAwait(false);
                     if (ep.ActivationState == EntityActivationState.ActivatedAndConnected) {
                         break;
                     }
@@ -337,7 +343,7 @@ namespace Microsoft.Azure.IIoT.Test.Scenarios.Cli {
                     if (sw.ElapsedMilliseconds > 60000) {
                         throw new Exception($"{endpoint.Id} failed to get endpoint state!");
                     }
-                    ep = await _registry.GetEndpointAsync(endpoint.Id);
+                    ep = await _registry.GetEndpointAsync(endpoint.Id).ConfigureAwait(false);
                 }
                 if (ep.EndpointState == EndpointConnectivityState.Ready &&
                     options.IsSet("-b", "--browse")) {
@@ -351,18 +357,18 @@ namespace Microsoft.Azure.IIoT.Test.Scenarios.Cli {
                     var direction = options.GetValueOrDefault<BrowseDirection>("-d", "--direction", null);
 
                     await BrowseAsync(0, endpoint.Id, silent, recursive, readDuringBrowse, node,
-                        targetNodesOnly, maxReferencesToReturn, direction, options);
+                        targetNodesOnly, maxReferencesToReturn, direction, options).ConfigureAwait(false);
                 }
                 else {
                     await Task.Delay(_rand.Next(
                         options.GetValueOrDefault("-l", "--min-wait", 1000), // 1 seconds
-                        options.GetValueOrDefault("-h", "--max-wait", 20000)));  // 20 seconds
+                        options.GetValueOrDefault("-h", "--max-wait", 20000))).ConfigureAwait(false);  // 20 seconds
                 }
 
-                await _registry.DeactivateEndpointAsync(endpoint.Id);
+                await _registry.DeactivateEndpointAsync(endpoint.Id).ConfigureAwait(false);
                 sw.Restart();
                 while (true) {
-                    ep = await _registry.GetEndpointAsync(endpoint.Id);
+                    ep = await _registry.GetEndpointAsync(endpoint.Id).ConfigureAwait(false);
                     if (ep.ActivationState == EntityActivationState.Deactivated) {
                         break;
                     }
@@ -385,10 +391,10 @@ namespace Microsoft.Azure.IIoT.Test.Scenarios.Cli {
             EndpointInfoApiModel ep;
 
             Console.WriteLine($"Activating {endpoint.Id} for publishing ...");
-            await _registry.ActivateEndpointAsync(endpoint.Id, endpoint.GenerationId);
+            await _registry.ActivateEndpointAsync(endpoint.Id, endpoint.GenerationId).ConfigureAwait(false);
             var sw = Stopwatch.StartNew();
             while (true) {
-                ep = await _registry.GetEndpointAsync(endpoint.Id);
+                ep = await _registry.GetEndpointAsync(endpoint.Id).ConfigureAwait(false);
                 if (ep.ActivationState == EntityActivationState.ActivatedAndConnected &&
                     ep.EndpointState == EndpointConnectivityState.Ready) {
                     break;
@@ -402,7 +408,7 @@ namespace Microsoft.Azure.IIoT.Test.Scenarios.Cli {
 
             var nodes = new List<string>();
             await BrowseAsync(0, endpoint.Id, true, true, false, null,
-                true, 1000, null, options, nodes);
+                true, 1000, null, options, nodes).ConfigureAwait(false);
 
             Console.WriteLine($"{endpoint.Id} has {nodes.Count} variables.");
             sw.Restart();
@@ -410,19 +416,19 @@ namespace Microsoft.Azure.IIoT.Test.Scenarios.Cli {
                 NodesToAdd = nodes.Select(n => new PublishedItemApiModel {
                     NodeId = n
                 }).ToList()
-            });
+            }).ConfigureAwait(false);
             Console.WriteLine($"{endpoint.Id} Publishing {nodes.Count} variables took {sw.Elapsed}.");
 
             sw.Restart();
             await _twin.NodePublishBulkAsync(endpoint.Id, new PublishBulkRequestApiModel {
                 NodesToRemove = nodes.ToList()
-            });
+            }).ConfigureAwait(false);
             Console.WriteLine($"{endpoint.Id} Unpublishing {nodes.Count} variables took {sw.Elapsed}.");
 
-            await _registry.DeactivateEndpointAsync(endpoint.Id, endpoint.GenerationId);
+            await _registry.DeactivateEndpointAsync(endpoint.Id, endpoint.GenerationId).ConfigureAwait(false);
             sw.Restart();
             while (true) {
-                ep = await _registry.GetEndpointAsync(endpoint.Id);
+                ep = await _registry.GetEndpointAsync(endpoint.Id).ConfigureAwait(false);
                 if (ep.ActivationState == EntityActivationState.Deactivated) {
                     break;
                 }
@@ -444,10 +450,10 @@ namespace Microsoft.Azure.IIoT.Test.Scenarios.Cli {
             EndpointInfoApiModel ep;
 
             Console.WriteLine($"Activating {endpoint.Id} for recursive browse...");
-            await _registry.ActivateEndpointAsync(endpoint.Id);
+            await _registry.ActivateEndpointAsync(endpoint.Id).ConfigureAwait(false);
             var sw = Stopwatch.StartNew();
             while (true) {
-                ep = await _registry.GetEndpointAsync(endpoint.Id);
+                ep = await _registry.GetEndpointAsync(endpoint.Id).ConfigureAwait(false);
                 if (ep.ActivationState == EntityActivationState.ActivatedAndConnected &&
                     ep.EndpointState == EndpointConnectivityState.Ready) {
                     break;
@@ -467,12 +473,12 @@ namespace Microsoft.Azure.IIoT.Test.Scenarios.Cli {
             var workers = options.GetValueOrDefault("-w", "--workers", 1);  // 1 worker per endpoint
             await Task.WhenAll(Enumerable.Range(0, workers).Select(i =>
                 BrowseAsync(i, endpoint.Id, silent, true, readDuringBrowse, null,
-                    targetNodesOnly, maxReferencesToReturn, null, options)));
+                    targetNodesOnly, maxReferencesToReturn, null, options))).ConfigureAwait(false);
 
-            await _registry.DeactivateEndpointAsync(endpoint.Id);
+            await _registry.DeactivateEndpointAsync(endpoint.Id).ConfigureAwait(false);
             sw.Restart();
             while (true) {
-                ep = await _registry.GetEndpointAsync(endpoint.Id);
+                ep = await _registry.GetEndpointAsync(endpoint.Id).ConfigureAwait(false);
                 if (ep.ActivationState == EntityActivationState.Deactivated) {
                     break;
                 }
@@ -506,7 +512,7 @@ namespace Microsoft.Azure.IIoT.Test.Scenarios.Cli {
                 request.NodeId = nodes.First();
                 nodes.Remove(request.NodeId);
                 try {
-                    var result = await NodeBrowseAsync(_twin, id, request);
+                    var result = await NodeBrowseAsync(_twin, id, request).ConfigureAwait(false);
                     visited.Add(request.NodeId);
                     if (!silent) {
                         PrintResult(options, result);
@@ -542,7 +548,7 @@ namespace Microsoft.Azure.IIoT.Test.Scenarios.Cli {
                                 var read = await _twin.NodeValueReadAsync(id,
                                     new ValueReadRequestApiModel {
                                         NodeId = r.Target.NodeId
-                                    });
+                                    }).ConfigureAwait(false);
                                 if (!silent) {
                                     PrintResult(options, read);
                                 }
@@ -569,7 +575,7 @@ namespace Microsoft.Azure.IIoT.Test.Scenarios.Cli {
         private static async Task<BrowseResponseApiModel> NodeBrowseAsync(
             ITwinServiceApi service, string endpoint, BrowseRequestApiModel request) {
             while (true) {
-                var result = await service.NodeBrowseFirstAsync(endpoint, request);
+                var result = await service.NodeBrowseFirstAsync(endpoint, request).ConfigureAwait(false);
                 while (result.ContinuationToken != null) {
                     try {
                         var next = await service.NodeBrowseNextAsync(endpoint,
@@ -578,7 +584,7 @@ namespace Microsoft.Azure.IIoT.Test.Scenarios.Cli {
                                 Header = request.Header,
                                 ReadVariableValues = request.ReadVariableValues,
                                 TargetNodesOnly = request.TargetNodesOnly
-                            });
+                            }).ConfigureAwait(false);
                         result.References.AddRange(next.References);
                         result.ContinuationToken = next.ContinuationToken;
                     }
@@ -587,7 +593,7 @@ namespace Microsoft.Azure.IIoT.Test.Scenarios.Cli {
                             new BrowseNextRequestApiModel {
                                 ContinuationToken = result.ContinuationToken,
                                 Abort = true
-                            }));
+                            })).ConfigureAwait(false);
                         throw;
                     }
                 }
@@ -599,7 +605,7 @@ namespace Microsoft.Azure.IIoT.Test.Scenarios.Cli {
         /// Select application registration
         /// </summary>
         private async Task<string> SelectApplicationAsync() {
-            var result = await _registry.ListAllApplicationsAsync();
+            var result = await _registry.ListAllApplicationsAsync().ConfigureAwait(false);
             var applicationId = ConsoleEx.Select(result.Select(r => r.ApplicationId));
             if (string.IsNullOrEmpty(applicationId)) {
                 Console.WriteLine("Nothing selected - application selection cleared.");
@@ -614,7 +620,7 @@ namespace Microsoft.Azure.IIoT.Test.Scenarios.Cli {
         /// Select endpoint registration
         /// </summary>
         private async Task<string> SelectEndpointAsync() {
-            var result = await _registry.ListAllEndpointsAsync();
+            var result = await _registry.ListAllEndpointsAsync().ConfigureAwait(false);
             var endpointId = ConsoleEx.Select(result.Select(r => r.Id));
             if (string.IsNullOrEmpty(endpointId)) {
                 Console.WriteLine("Nothing selected - application selection cleared.");
@@ -638,7 +644,7 @@ namespace Microsoft.Azure.IIoT.Test.Scenarios.Cli {
         /// <summary>
         /// Print help
         /// </summary>
-        private void PrintHelp() {
+        private static void PrintHelp() {
             Console.WriteLine(
                 @"
 aziiottest  Allows to excercise integration scenarios.
@@ -696,8 +702,10 @@ Commands and Options
         private readonly IMetricServer _metrics;
         private readonly ILifetimeScope _scope;
         private readonly ITwinServiceApi _twin;
-        private readonly IPublisherServiceApi _publisher;
         private readonly IRegistryServiceApi _registry;
+#pragma warning disable IDE0052 // Remove unread private members
+        private readonly IPublisherServiceApi _publisher;
         private readonly IVaultServiceApi _vault;
+#pragma warning restore IDE0052 // Remove unread private members
     }
 }

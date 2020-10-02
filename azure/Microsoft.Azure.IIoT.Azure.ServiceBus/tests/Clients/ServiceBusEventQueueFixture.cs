@@ -18,13 +18,13 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Clients {
     using System.Threading.Tasks;
     using System.Linq;
 
-    public class ServiceBusEventQueueFixture : IDisposable {
+    public sealed class ServiceBusEventQueueFixture : IDisposable {
 
         /// <summary>
         /// Create test harness
         /// </summary>
         /// <returns></returns>
-        public ServiceBusEventQueueHarness GetHarness(string queue) {
+        internal ServiceBusEventQueueHarness GetHarness(string queue) {
             return new ServiceBusEventQueueHarness(queue);
         }
 
@@ -40,15 +40,15 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Clients {
         public string Queue { get; }
     }
 
-    public class ServiceBusEventQueueHarness : IDisposable {
+    internal sealed class ServiceBusEventQueueHarness : IDisposable {
 
-        public event TelemetryEventHandler OnEvent;
-        public event EventHandler OnComplete;
+        internal event TelemetryEventHandler OnEvent;
+        internal event EventHandler OnComplete;
 
         /// <summary>
         /// Create fixture
         /// </summary>
-        public ServiceBusEventQueueHarness(string queue) {
+        internal ServiceBusEventQueueHarness(string queue) {
             try {
                 var builder = new ContainerBuilder();
 
@@ -171,9 +171,9 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Clients {
         private readonly string _queue;
     }
 
-    public class TelemetryEventArgs : EventArgs {
+    internal class TelemetryEventArgs : EventArgs {
 
-        public TelemetryEventArgs(string schema, string source,
+        internal TelemetryEventArgs(string schema, string source,
             byte[] data, IDictionary<string, string> properties) {
             HandlerSchema = schema;
             Source = source;
@@ -189,7 +189,7 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Clients {
             Target = properties.TryGetValue(EventProperties.Target, out var v) ? v : null;
             Properties = properties
                 .Where(k => k.Key != EventProperties.Target)
-                .Where(k => !k.Key.StartsWith("x-"))
+                .Where(k => !k.Key.StartsWith("x-", StringComparison.Ordinal))
                 .ToDictionary(k => k.Key, v => v.Value);
         }
 
@@ -200,8 +200,8 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Clients {
         public string DeviceId { get; }
         public string ModuleId { get; }
         public byte[] Data { get; }
-        public IDictionary<string, string> Properties { get; }
+        public IReadOnlyDictionary<string, string> Properties { get; }
     }
 
-    public delegate void TelemetryEventHandler(object sender, TelemetryEventArgs args);
+    internal delegate void TelemetryEventHandler(object sender, TelemetryEventArgs args);
 }

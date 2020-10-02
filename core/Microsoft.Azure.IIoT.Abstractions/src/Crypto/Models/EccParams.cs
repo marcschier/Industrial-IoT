@@ -4,6 +4,7 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Crypto.Models {
+    using System.Collections.Generic;
 
     /// <summary>
     /// Ecc parameters
@@ -19,16 +20,16 @@ namespace Microsoft.Azure.IIoT.Crypto.Models {
         /// Represents the private key D
         /// stored in big-endian format.
         /// </summary>
-        public byte[] D { get; set; }
+        public IReadOnlyCollection<byte> D { get; set; }
 
         /// <summary>
         /// Represents the public key X-Coord.
         /// </summary>
-        public byte[] X { get; set; }
+        public IReadOnlyCollection<byte> X { get; set; }
 
         /// <summary>
         /// Represents the public key Y-Coord.
         /// </summary>
-        public byte[] Y { get; set; }
+        public IReadOnlyCollection<byte> Y { get; set; }
     }
 }

@@ -87,7 +87,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Transport {
                 (callback, state) => _controller.Callback.BeginProcessRequest(
                     _listenerId, ep, request, callback, state),
                 _controller.Callback.EndProcessRequest,
-                TaskCreationOptions.DenyChildAttach);
+                TaskCreationOptions.DenyChildAttach).ConfigureAwait(false);
         }
 
         /// <summary>

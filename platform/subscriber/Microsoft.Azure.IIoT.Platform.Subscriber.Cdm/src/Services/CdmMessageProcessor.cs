@@ -50,8 +50,8 @@ namespace Microsoft.Azure.IIoT.Platform.Subscriber.Cdm.Services {
                 Invoke = (level, msg) => LogCdm(cdmLogger, level, msg)
             });
             _cdmCorpus.Storage.Mount("adls", _storage.Adapter);
-            var gitAdapter = new GithubAdapter();
-            _cdmCorpus.Storage.Mount("cdm", gitAdapter);
+            _gitAdapter = new GithubAdapter();
+            _cdmCorpus.Storage.Mount("cdm", _gitAdapter);
             _cdmCorpus.Storage.DefaultNamespace = "adls";
             _cdmCorpus.AppId = "Azure Industrial IoT";
             _manifestResolved = null;
@@ -75,6 +75,7 @@ namespace Microsoft.Azure.IIoT.Platform.Subscriber.Cdm.Services {
             _cacheUploadTimer.Dispose();
             PerformWriteCacheAsync().Wait();
             _lock.Dispose();
+            _gitAdapter.Dispose();
         }
 
         /// <summary>
@@ -89,9 +90,9 @@ namespace Microsoft.Azure.IIoT.Platform.Subscriber.Cdm.Services {
             var writeManifest = false;
             try {
                 while (true) {
-                    await _storage.LockAsync(kManifestFileName);
+                    await _storage.LockAsync(kManifestFileName).ConfigureAwait(false);
                     try {
-                        var manifest = await CreateOrOpenManifestAsync(kManifestFileName);
+                        var manifest = await CreateOrOpenManifestAsync(kManifestFileName).ConfigureAwait(false);
 
                         var sw = Stopwatch.StartNew();
                         _logger.Debug("Writing processed CDM data ...");
@@ -100,7 +101,7 @@ namespace Microsoft.Azure.IIoT.Platform.Subscriber.Cdm.Services {
                                 continue;
                             }
                             writeManifest |= await WriteRecordToPartitionAsync(
-                                manifest, record.Key, record.Value);
+                                manifest, record.Key, record.Value).ConfigureAwait(false);
                             record.Value.Clear();
                         }
                         foreach (var record in _dataSetsCache) {
@@ -108,11 +109,11 @@ namespace Microsoft.Azure.IIoT.Platform.Subscriber.Cdm.Services {
                                 continue;
                             }
                             writeManifest |= await WriteRecordToPartitionAsync(
-                                manifest, record.Key, record.Value);
+                                manifest, record.Key, record.Value).ConfigureAwait(false);
                             record.Value.Clear();
                         }
                         if (writeManifest) {
-                            await manifest.SaveAsAsync(kManifestFileName, true);
+                            await manifest.SaveAsAsync(kManifestFileName, true).ConfigureAwait(false);
                         }
 
                         _logger.Information("Finished writing CDM data records - took {elapsed}).",
@@ -124,7 +125,7 @@ namespace Microsoft.Azure.IIoT.Platform.Subscriber.Cdm.Services {
                         continue;
                     }
                     finally {
-                        await _storage.UnlockAsync(kManifestFileName);
+                        await _storage.UnlockAsync(kManifestFileName).ConfigureAwait(false);
                     }
                 }
             }
@@ -161,11 +162,11 @@ namespace Microsoft.Azure.IIoT.Platform.Subscriber.Cdm.Services {
             var partitionDelimitor = csvTrait?.Arguments?.FetchValue("delimiter") ?? kCsvPartitionsDelimiter;
             if (dataSetRecordList != null) {
                 await _storage.WriteAsync(partition.Location, first =>
-                    _encoder.Encode<DataSetMessageModel>(dataSetRecordList, partitionDelimitor, first));
+                    _encoder.Encode<DataSetMessageModel>(dataSetRecordList, partitionDelimitor, first)).ConfigureAwait(false);
             }
             else {
                 await _storage.WriteAsync(partition.Location, first =>
-                    _encoder.Encode<MonitoredItemMessageModel>(samplesRecordList, partitionDelimitor, first));
+                    _encoder.Encode<MonitoredItemMessageModel>(samplesRecordList, partitionDelimitor, first)).ConfigureAwait(false);
             }
             _logger.Information("successfully processed {count} records and written as CDM.", record.Count);
             return persist;
@@ -491,7 +492,7 @@ namespace Microsoft.Azure.IIoT.Platform.Subscriber.Cdm.Services {
             var sw = Stopwatch.StartNew();
             _logger.Information("Fetching manifest ...");
             var manifest = await _cdmCorpus.FetchObjectAsync<CdmManifestDefinition>(
-                "adls:/" + fileName, _manifestResolved, true);
+                "adls:/" + fileName, _manifestResolved, true).ConfigureAwait(false);
 
             if (manifest == null) {
                 _logger.Information("Could not find manifest after {elapsed}", sw.Elapsed);
@@ -521,7 +522,7 @@ namespace Microsoft.Azure.IIoT.Platform.Subscriber.Cdm.Services {
                     }
 
                     sw.Restart();
-                    await manifest.SaveAsAsync(fileName, true);
+                    await manifest.SaveAsAsync(fileName, true).ConfigureAwait(false);
                     _logger.Information("Saving manifest took {elapsed}", sw.Elapsed);
                     _manifestResolved = manifest;
                 }
@@ -538,10 +539,10 @@ namespace Microsoft.Azure.IIoT.Platform.Subscriber.Cdm.Services {
         /// </summary>
         /// <param name="sender"></param>
         private async void CacheTimer_ElapsedAsync(object sender) {
-            await _lock.WaitAsync();
+            await _lock.WaitAsync().ConfigureAwait(false);
             try {
                 _cacheUploadTriggered = true;
-                await PerformWriteCacheAsync();
+                await PerformWriteCacheAsync().ConfigureAwait(false);
             }
             finally {
                 Try.Op(() => _cacheUploadTimer.Change(_cacheUploadInterval, Timeout.InfiniteTimeSpan));
@@ -557,7 +558,7 @@ namespace Microsoft.Azure.IIoT.Platform.Subscriber.Cdm.Services {
         /// <param name="payload"></param>
         /// <returns></returns>
         private async Task ProcessCdmSampleAsync<T>(T payload) {
-            await _lock.WaitAsync();
+            await _lock.WaitAsync().ConfigureAwait(false);
             try {
                 if (payload is MonitoredItemMessageModel sample) {
 
@@ -628,7 +629,7 @@ namespace Microsoft.Azure.IIoT.Platform.Subscriber.Cdm.Services {
         private int _samplesCacheSize;
         private readonly Dictionary<string, List<MonitoredItemMessageModel>> _samplesCache;
         private readonly Dictionary<string, List<DataSetMessageModel>> _dataSetsCache;
-
+        private readonly GithubAdapter _gitAdapter;
         private const int kSamplesCacheMaxSize = 5000;
         private const string kManifestFileName = "model.json";
         private const string kPublisherDataSetEntityName = "OpcUaPubSubDataSet";

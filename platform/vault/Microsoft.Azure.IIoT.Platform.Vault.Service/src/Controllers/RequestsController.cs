@@ -11,7 +11,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Service.Controllers {
     using Microsoft.Azure.IIoT.Platform.Vault;
     using Microsoft.Azure.IIoT.Platform.Vault.Models;
     using Microsoft.Azure.IIoT.AspNetCore.OpenApi;
-    using Microsoft.Azure.IIoT.Http;
+    using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using System;
@@ -63,7 +63,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Service.Controllers {
                 signingRequest.ToServiceModel(), new VaultOperationContextModel {
                     AuthorityId = User.Identity.Name,
                     Time = DateTime.UtcNow
-                });
+                }).ConfigureAwait(false);
             return result.ToApiModel();
         }
 
@@ -89,7 +89,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Service.Controllers {
                 new VaultOperationContextModel {
                     AuthorityId = User.Identity.Name,
                     Time = DateTime.UtcNow
-                });
+                }).ConfigureAwait(false);
             return result.ToApiModel();
         }
 
@@ -116,7 +116,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Service.Controllers {
                 new VaultOperationContextModel {
                     AuthorityId = User.Identity.Name,
                     Time = DateTime.UtcNow
-                });
+                }).ConfigureAwait(false);
             return result.ToApiModel();
         }
 
@@ -143,7 +143,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Service.Controllers {
                 new VaultOperationContextModel {
                     AuthorityId = User.Identity.Name,
                     Time = DateTime.UtcNow
-                });
+                }).ConfigureAwait(false);
             return result.ToApiModel();
         }
 
@@ -172,7 +172,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Service.Controllers {
             await _management.ApproveRequestAsync(requestId, new VaultOperationContextModel {
                 AuthorityId = User.Identity.Name,
                 Time = DateTime.UtcNow
-            });
+            }).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -192,7 +192,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Service.Controllers {
             await _management.RejectRequestAsync(requestId, new VaultOperationContextModel {
                 AuthorityId = User.Identity.Name,
                 Time = DateTime.UtcNow
-            });
+            }).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -210,7 +210,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Service.Controllers {
             await _management.AcceptRequestAsync(requestId, new VaultOperationContextModel {
                 AuthorityId = User.Identity.Name,
                 Time = DateTime.UtcNow
-            });
+            }).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -230,7 +230,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Service.Controllers {
             await _management.DeleteRequestAsync(requestId, new VaultOperationContextModel {
                 AuthorityId = User.Identity.Name,
                 Time = DateTime.UtcNow
-            });
+            }).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -242,7 +242,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Service.Controllers {
         public async Task<CertificateRequestRecordApiModel> GetRequestAsync(
             string requestId) {
             HttpContext.User = null; // TODO: Set service principal
-            var result = await _management.GetRequestAsync(requestId);
+            var result = await _management.GetRequestAsync(requestId).ConfigureAwait(false);
             return result.ToApiModel();
         }
 
@@ -261,15 +261,10 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Service.Controllers {
         public async Task<CertificateRequestQueryResponseApiModel> QueryRequestsAsync(
             [FromBody] CertificateRequestQueryRequestApiModel query,
             [FromQuery] int? pageSize) {
-
-            if (Request.Headers.ContainsKey(HttpHeader.MaxItemCount)) {
-                pageSize = int.Parse(Request.Headers[HttpHeader.MaxItemCount]
-                    .FirstOrDefault());
-            }
-
+            pageSize = Request.GetPageSize(pageSize);
             HttpContext.User = null; // TODO: Set service principal
             var result = await _management.QueryRequestsAsync(query?.ToServiceModel(),
-                pageSize);
+                pageSize).ConfigureAwait(false);
             return result.ToApiModel();
         }
 
@@ -282,26 +277,18 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Service.Controllers {
         /// The returned model can contain a link to the next page if more results are
         /// available.
         /// </remarks>
-        /// <param name="nextPageLink">optional, link to next page </param>
+        /// <param name="continuationToken">optional, continuation token</param>
         /// <param name="pageSize">optional, the maximum number of result per page</param>
         /// <returns>Matching requests, next page link</returns>
         [HttpGet]
-        [AutoRestExtension(NextPageLinkName = "nextPageLink")]
+        [AutoRestExtension(NextPageLinkName = "continuationToken")]
         public async Task<CertificateRequestQueryResponseApiModel> ListRequestsAsync(
-            [FromQuery] string nextPageLink, [FromQuery] int? pageSize) {
-
-            if (Request.Headers.ContainsKey(HttpHeader.ContinuationToken)) {
-                nextPageLink = Request.Headers[HttpHeader.ContinuationToken]
-                    .FirstOrDefault();
-            }
-            if (Request.Headers.ContainsKey(HttpHeader.MaxItemCount)) {
-                pageSize = int.Parse(Request.Headers[HttpHeader.MaxItemCount]
-                    .FirstOrDefault());
-            }
-
+            [FromQuery] string continuationToken, [FromQuery] int? pageSize) {
+            continuationToken = Request.GetContinuationToken(continuationToken);
+            pageSize = Request.GetPageSize(pageSize);
             HttpContext.User = null; // TODO: Set service principal
             var result = await _management.ListRequestsAsync(
-                nextPageLink, pageSize);
+                continuationToken, pageSize).ConfigureAwait(false);
             return result.ToApiModel();
         }
 

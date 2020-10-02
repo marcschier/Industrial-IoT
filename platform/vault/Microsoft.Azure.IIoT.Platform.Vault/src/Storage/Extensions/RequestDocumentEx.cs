@@ -47,6 +47,10 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Models {
         /// <param name="etag"></param>
         public static RequestDocument ToDocument(
             this CertificateRequestModel record, string etag = null) {
+            if (record is null) {
+                throw new System.ArgumentNullException(nameof(record));
+            }
+
             return new RequestDocument {
                 RequestId = record.Record.RequestId,
                 State = record.Record.State,

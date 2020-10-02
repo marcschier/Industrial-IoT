@@ -6,6 +6,7 @@
 namespace System {
     using System.Collections.Generic;
     using System.Diagnostics.Contracts;
+    using System.Globalization;
     using System.Linq;
     using System.Text;
 
@@ -21,8 +22,8 @@ namespace System {
         /// <param name="prefix"></param>
         /// <returns></returns>
         public static string CreateUnique(int len, string prefix = "") {
-            return (prefix + Guid.NewGuid().ToString("N"))
-                .Substring(0, Math.Min(len, 32 + prefix.Length));
+            return (prefix + Guid.NewGuid().ToString("N", CultureInfo.InvariantCulture))
+                .Substring(0, Math.Min(len, 32 + (prefix?.Length ?? 0)));
         }
 
         /// <summary>
@@ -135,8 +136,8 @@ namespace System {
         /// </summary>
         /// <param name="str">string to hash</param>
         /// <returns></returns>
-        public static string ToSha1Hash(this string str) {
-            return Encoding.UTF8.GetBytes(str).ToSha1Hash();
+        public static string ToSha256Hash(this string str) {
+            return Encoding.UTF8.GetBytes(str).ToSha256Hash();
         }
 
         /// <summary>
@@ -162,10 +163,15 @@ namespace System {
             if (value == null || value.Length <= 1) {
                 return value;
             }
-            var words = value.Split(new char[0], StringSplitOptions.RemoveEmptyEntries);
-            var result = words[0].Substring(0, 1).ToLower() + words[0].Substring(1);
+            var words = value.Split(Array.Empty<char>(), StringSplitOptions.RemoveEmptyEntries);
+
+            static string CamelCase(string[] words, int i) {
+                return words[i].Substring(0, 1)
+                    .ToUpper(CultureInfo.InvariantCulture) + words[i].Substring(1);
+            }
+            var result = CamelCase(words, 0);
             for (var i = 1; i < words.Length; i++) {
-                result += words[i].Substring(0, 1).ToUpper() + words[i].Substring(1);
+                result += CamelCase(words, i);
             }
             return result;
         }
@@ -196,7 +202,7 @@ namespace System {
             if (end == -1) {
                 return string.Empty;
             }
-            return value.Substring(start, end - start);
+            return value[start..end];
         }
 
         /// <summary>
@@ -218,7 +224,7 @@ namespace System {
                 var next = 0;
                 for (var c = 0; c < value.Length; c++) {
                     if (predicate(value[c])) {
-                        var v = value.Substring(next, c - next);
+                        var v = value[next..c];
                         if (options != StringSplitOptions.RemoveEmptyEntries ||
                             !string.IsNullOrEmpty(v)) {
                             yield return v;
@@ -242,8 +248,8 @@ namespace System {
         public static string TrimMatchingChar(this string value, char match) {
             Contract.Assert(value != null);
             if (value.Length >= 2 && value[0] == match &&
-                value[value.Length - 1] == match) {
-                return value.Substring(1, value.Length - 2);
+                value[^1] == match) {
+                return value[1..^1];
             }
             return value;
         }

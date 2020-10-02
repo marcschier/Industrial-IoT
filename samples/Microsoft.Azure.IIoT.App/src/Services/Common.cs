@@ -8,14 +8,23 @@ namespace Microsoft.Azure.IIoT.App.Common {
     using Microsoft.AspNetCore.Components;
 
     public class UICommon : ComponentBase {
-        public string ExtractSecurityPolicy(string policy) {;
-            return policy[(policy.LastIndexOf("#") + 1)..policy.Length];
+
+        /// <summary>
+        /// Helper
+        /// </summary>
+        /// <param name="policy"></param>
+        /// <returns></returns>
+        public static string ExtractSecurityPolicy(string policy) {
+            if (policy is null) {
+                return null;
+            };
+            return policy[(policy.LastIndexOf("#", System.StringComparison.Ordinal) + 1)..policy.Length];
         }
 
         public int PageLength { get; set; } = 10;
         public int PageLengthSmall { get; set; } = 4;
         public string None { get; set; } = "(None)";
         public string CredentialKey { get; } = "credential";
-        public Dictionary<string, string> ApplicationUri { get; set; } = new Dictionary<string, string>();
+        public Dictionary<string, string> ApplicationUri { get; internal set; } = new Dictionary<string, string>();
     }
 }

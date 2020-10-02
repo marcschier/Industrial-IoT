@@ -115,13 +115,13 @@ namespace Microsoft.Azure.IIoT.Crypto.Storage.Models {
         /// Private key identifier
         /// </summary>
         [DataMember]
-        public byte[] KeyHandle { get; set; }
+        public IReadOnlyCollection<byte> KeyHandle { get; set; }
 
         /// <summary>
         /// Raw certificate
         /// </summary>
         [DataMember]
-        public byte[] RawData { get; set; }
+        public IReadOnlyCollection<byte> RawData { get; set; }
 
         /// <summary>
         /// Certificate version
@@ -133,7 +133,7 @@ namespace Microsoft.Azure.IIoT.Crypto.Storage.Models {
         /// Type
         /// </summary>
         [DataMember]
-        public string Type => nameof(Certificate);
+        public string Type { get; } = nameof(Certificate);
     }
 }
 

@@ -25,7 +25,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
         /// <summary>
         /// Additional request information as per event
         /// </summary>
-        public Dictionary<string, string> RequestDetails { get; set; }
+        public IReadOnlyDictionary<string, string> RequestDetails { get; set; }
 
         /// <summary>
         /// Timestamp of progress event
@@ -65,6 +65,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
         /// <summary>
         /// Discovery result details
         /// </summary>
-        public Dictionary<string, string> ResultDetails { get; set; }
+        public IReadOnlyDictionary<string, string> ResultDetails { get; set; }
     }
 }

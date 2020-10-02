@@ -19,6 +19,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
         /// <summary>
         /// Supervisor items
         /// </summary>
-        public List<SupervisorModel> Items { get; set; }
+        public IReadOnlyList<SupervisorModel> Items { get; set; }
     }
 }

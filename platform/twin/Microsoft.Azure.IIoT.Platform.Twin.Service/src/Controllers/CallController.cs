@@ -51,7 +51,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Service.Controllers {
                 throw new ArgumentNullException(nameof(request));
             }
             var metadataresult = await _nodes.NodeMethodGetMetadataAsync(
-                endpointId, request.ToServiceModel());
+                endpointId, request.ToServiceModel()).ConfigureAwait(false);
             return metadataresult.ToApiModel();
         }
 
@@ -76,7 +76,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Service.Controllers {
             // TODO: Permissions
 
             var callresult = await _nodes.NodeMethodCallAsync(
-                endpointId, request.ToServiceModel());
+                endpointId, request.ToServiceModel()).ConfigureAwait(false);
             return callresult.ToApiModel();
         }
 

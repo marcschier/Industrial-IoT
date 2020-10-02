@@ -6,7 +6,7 @@
 namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Services {
     using Microsoft.Azure.IIoT.Platform.Core.Models;
     using Microsoft.Azure.IIoT.Platform.Publisher.Services;
-    using Microsoft.Azure.IIoT.Platform.Publisher.Storage.Default;
+    using Microsoft.Azure.IIoT.Platform.Publisher.Storage.Services;
     using Microsoft.Azure.IIoT.Platform.Publisher.Models;
     using Microsoft.Azure.IIoT.Platform.Publisher;
     using Microsoft.Azure.IIoT.Platform.Publisher.Default;
@@ -57,7 +57,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Services {
                 var result1 = await groups.AddWriterGroupAsync(new WriterGroupAddRequestModel {
                     Name = "TestGroup",
                     SiteId = "fakesite" // See below
-                });
+                }).ConfigureAwait(false);
 
                 // Add a single writer to endpoint
                 var result2 = await service.AddDataSetWriterAsync(new DataSetWriterAddRequestModel {
@@ -67,17 +67,17 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Services {
                         PublishingInterval = TimeSpan.FromSeconds(1)
                     },
                     WriterGroupId = result1.WriterGroupId
-                });
+                }).ConfigureAwait(false);
 
                 var variable = await service.AddDataSetVariableAsync(
                     result2.DataSetWriterId,
                     new DataSetAddVariableRequestModel {
                         PublishedVariableNodeId = "i=2258", // server time
                         SamplingInterval = TimeSpan.FromSeconds(1)
-                    });
+                    }).ConfigureAwait(false);
 
                 // Activate the group - will start the engine
-                await groups.ActivateWriterGroupAsync(result1.WriterGroupId);
+                await groups.ActivateWriterGroupAsync(result1.WriterGroupId).ConfigureAwait(false);
 
                 // Should get a good source state
                 var sevt = events.GetSourceStates(result2.DataSetWriterId).WaitForEvent();
@@ -120,7 +120,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Services {
                 Assert.True(value.GetByPath("Messages[0].Payload.i=2258.Value").IsDateTime);
 
                 // Deactivate - stop engine
-                await groups.DeactivateWriterGroupAsync(result1.WriterGroupId);
+                await groups.DeactivateWriterGroupAsync(result1.WriterGroupId).ConfigureAwait(false);
             }
         }
 
@@ -137,7 +137,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Services {
                 var result1 = await groups.AddWriterGroupAsync(new WriterGroupAddRequestModel {
                     Name = "TestGroup",
                     SiteId = "fakesite" // See below
-                });
+                }).ConfigureAwait(false);
 
                 // Add a single writer to endpoint
                 var result2 = await service.AddDataSetWriterAsync(new DataSetWriterAddRequestModel {
@@ -147,17 +147,17 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Services {
                         PublishingInterval = TimeSpan.FromSeconds(1)
                     },
                     WriterGroupId = result1.WriterGroupId
-                });
+                }).ConfigureAwait(false);
 
                 var variable = await service.AddDataSetVariableAsync(
                     result2.DataSetWriterId,
                     new DataSetAddVariableRequestModel {
                         PublishedVariableNodeId = "i=88888", // bad
                         SamplingInterval = TimeSpan.FromSeconds(1)
-                    });
+                    }).ConfigureAwait(false);
 
                 // Activate the group - will start the engine
-                await groups.ActivateWriterGroupAsync(result1.WriterGroupId);
+                await groups.ActivateWriterGroupAsync(result1.WriterGroupId).ConfigureAwait(false);
 
                 // Should get a good source state
                 var sevt = events.GetSourceStates(result2.DataSetWriterId).WaitForEvent();
@@ -173,7 +173,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Services {
                 Assert.NotNull(v1evt.LastResult?.ErrorMessage);
 
                 // Deactivate - stop engine
-                await groups.DeactivateWriterGroupAsync(result1.WriterGroupId);
+                await groups.DeactivateWriterGroupAsync(result1.WriterGroupId).ConfigureAwait(false);
             }
         }
 
@@ -190,7 +190,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Services {
                 var result1 = await groups.AddWriterGroupAsync(new WriterGroupAddRequestModel {
                     Name = "TestGroup",
                     SiteId = "fakesite" // See below
-                });
+                }).ConfigureAwait(false);
 
                 // Add a single writer to endpoint
                 var result2 = await service.AddDataSetWriterAsync(new DataSetWriterAddRequestModel {
@@ -200,17 +200,17 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Services {
                         PublishingInterval = TimeSpan.FromSeconds(1)
                     },
                     WriterGroupId = result1.WriterGroupId
-                });
+                }).ConfigureAwait(false);
 
                 var variable = await service.AddDataSetVariableAsync(
                     result2.DataSetWriterId,
                     new DataSetAddVariableRequestModel {
                         PublishedVariableNodeId = "i=88888", // bad
                         SamplingInterval = TimeSpan.FromSeconds(1)
-                    });
+                    }).ConfigureAwait(false);
 
                 // Activate the group - will start the engine
-                await groups.ActivateWriterGroupAsync(result1.WriterGroupId);
+                await groups.ActivateWriterGroupAsync(result1.WriterGroupId).ConfigureAwait(false);
 
                 // Should get a good source state
                 var sevt = events.GetSourceStates(result2.DataSetWriterId).WaitForEvent();
@@ -231,7 +231,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Services {
                     new DataSetAddVariableRequestModel {
                         PublishedVariableNodeId = "i=2258", // good
                         SamplingInterval = TimeSpan.FromSeconds(1)
-                    });
+                    }).ConfigureAwait(false);
 
                 // Should get state change for item
                 var v2evt = events.GetItemStates(result2.DataSetWriterId, variable.Id)
@@ -248,7 +248,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Services {
                 Assert.Equal(ContentMimeType.Json, message.ContentType);
 
                 // Deactivate - stop engine
-                await groups.DeactivateWriterGroupAsync(result1.WriterGroupId);
+                await groups.DeactivateWriterGroupAsync(result1.WriterGroupId).ConfigureAwait(false);
             }
         }
 
@@ -265,7 +265,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Services {
                 var result1 = await groups.AddWriterGroupAsync(new WriterGroupAddRequestModel {
                     Name = "TestGroup",
                     SiteId = "fakesite" // See below
-                });
+                }).ConfigureAwait(false);
 
                 // Add a single writer to endpoint
                 var result2 = await service.AddDataSetWriterAsync(new DataSetWriterAddRequestModel {
@@ -275,14 +275,14 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Services {
                         PublishingInterval = TimeSpan.FromSeconds(1)
                     },
                     WriterGroupId = result1.WriterGroupId
-                });
+                }).ConfigureAwait(false);
 
                 var bad = await service.AddDataSetVariableAsync(
                     result2.DataSetWriterId,
                     new DataSetAddVariableRequestModel {
                         PublishedVariableNodeId = "i=88888", // bad
                         SamplingInterval = TimeSpan.FromSeconds(1)
-                    });
+                    }).ConfigureAwait(false);
 
                 // Add a single writer to endpoint
                 var good = await service.AddDataSetVariableAsync(
@@ -290,10 +290,10 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Services {
                     new DataSetAddVariableRequestModel {
                         PublishedVariableNodeId = "i=2258", // good
                         SamplingInterval = TimeSpan.FromSeconds(1)
-                    });
+                    }).ConfigureAwait(false);
 
                 // Activate the group - will start the engine
-                await groups.ActivateWriterGroupAsync(result1.WriterGroupId);
+                await groups.ActivateWriterGroupAsync(result1.WriterGroupId).ConfigureAwait(false);
 
                 // Should get a good source state
                 var sevt = events.GetSourceStates(result2.DataSetWriterId).WaitForEvent();
@@ -344,7 +344,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Services {
                 Assert.True(value.GetByPath("Messages[0].Payload.i=2258.Value").IsDateTime);
 
                 // Deactivate - stop engine
-                await groups.DeactivateWriterGroupAsync(result1.WriterGroupId);
+                await groups.DeactivateWriterGroupAsync(result1.WriterGroupId).ConfigureAwait(false);
             }
         }
 
@@ -370,7 +370,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Services {
                     PublishingInterval = intervalInSec == 0 ?
                         (TimeSpan?)null : TimeSpan.FromSeconds(intervalInSec),
                     SiteId = "fakesite" // See below
-                });
+                }).ConfigureAwait(false);
 
                 // Add a single writer to endpoint
                 var result2 = await service.AddDataSetWriterAsync(new DataSetWriterAddRequestModel {
@@ -380,17 +380,17 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Services {
                         PublishingInterval = TimeSpan.FromMilliseconds(100)
                     },
                     WriterGroupId = result1.WriterGroupId
-                });
+                }).ConfigureAwait(false);
 
                 var variable = await service.AddDataSetVariableAsync(
                     result2.DataSetWriterId,
                     new DataSetAddVariableRequestModel {
                         PublishedVariableNodeId = "i=2258", // server time
                         SamplingInterval = TimeSpan.FromMilliseconds(100)
-                    });
+                    }).ConfigureAwait(false);
 
                 // Activate the group - will start the engine
-                await groups.ActivateWriterGroupAsync(result1.WriterGroupId);
+                await groups.ActivateWriterGroupAsync(result1.WriterGroupId).ConfigureAwait(false);
 
                 // Should get a good source state
                 var sevt = events.GetSourceStates(result2.DataSetWriterId).WaitForEvent();
@@ -431,7 +431,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Services {
                 Assert.True(value.Count > 3);
 
                 // Deactivate - stop engine
-                await groups.DeactivateWriterGroupAsync(result1.WriterGroupId);
+                await groups.DeactivateWriterGroupAsync(result1.WriterGroupId).ConfigureAwait(false);
             }
         }
 

@@ -51,6 +51,6 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Models {
         /// <summary>
         /// Extension fields
         /// </summary>
-        public Dictionary<string, string> ExtensionFields { get; set; }
+        public IReadOnlyDictionary<string, string> ExtensionFields { get; set; }
     }
 }

@@ -8,6 +8,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Storage.Models {
     using Microsoft.Azure.IIoT.Platform.Vault.Models;
     using Microsoft.Azure.IIoT.Serializers;
     using System.Runtime.Serialization;
+    using System.Collections.Generic;
 
     /// <summary>
     /// Certificate request document in cosmos db
@@ -61,7 +62,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Storage.Models {
         /// Signing request
         /// </summary>
         [DataMember]
-        public byte[] SigningRequest { get; set; }
+        public IReadOnlyCollection<byte> SigningRequest { get; set; }
 
         /// <summary>
         /// Entity
@@ -85,7 +86,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Storage.Models {
         /// Private key handle
         /// </summary>
         [DataMember]
-        public byte[] KeyHandle { get; set; }
+        public IReadOnlyCollection<byte> KeyHandle { get; set; }
 
         /// <summary>
         /// Error information

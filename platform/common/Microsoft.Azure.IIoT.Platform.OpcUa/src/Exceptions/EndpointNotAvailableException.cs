@@ -3,21 +3,42 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-
 namespace Microsoft.Azure.IIoT.Platform.OpcUa.Exceptions {
     using Microsoft.Azure.IIoT.Platform.Core.Models;
     using System;
 
     /// <summary>
-    /// Exception when an endpoint with requested security settings is not available.
+    /// Exception when an endpoint with requested security settings
+    /// is not available.
     /// </summary>
     public class EndpointNotAvailableException : Exception {
+
+        /// <inheritdoc/>
+        public EndpointNotAvailableException() {
+        }
+
+        /// <inheritdoc/>
+        public EndpointNotAvailableException(string message) :
+            base(message) {
+        }
+
+        /// <inheritdoc/>
+        public EndpointNotAvailableException(string message,
+            Exception innerException) : base(message, innerException) {
+        }
+
         /// <summary>
-        /// Creates a new instance of EndpointNotAvailableException.
+        /// Create EndpointNotAvailableException.
         /// </summary>
-        /// <param name="url"></param>
+        /// <param name="endpoint"></param>
         /// <param name="securityMode"></param>
-        /// <param name="securityPolicyUrl"></param>
-        public EndpointNotAvailableException(string url, SecurityMode? securityMode, string securityPolicyUrl) : base($"There is not endpoint with requested security settings (SecurityMode: {securityMode}, SecurityPolicyUrl: {securityPolicyUrl}) available at url '{url}'.") { }
+        /// <param name="securityPolicy"></param>
+        public EndpointNotAvailableException(string endpoint,
+            SecurityMode? securityMode, string securityPolicy) :
+            this($"There is not endpoint with requested security settings " +
+                $"(SecurityMode: {securityMode}, " +
+                $"SecurityPolicyUrl: {securityPolicy}) " +
+                $"available at url '{endpoint}'.") {
+        }
     }
 }

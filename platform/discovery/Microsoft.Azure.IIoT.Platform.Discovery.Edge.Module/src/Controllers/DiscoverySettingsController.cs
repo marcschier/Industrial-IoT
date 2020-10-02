@@ -103,7 +103,7 @@ namespace Microsoft.Azure.IIoT.Platform.Discovery.Edge.Module.Controllers {
         /// <summary>
         /// Discovery Urls to scan
         /// </summary>
-        public Dictionary<string, string> DiscoveryUrls {
+        public IReadOnlyDictionary<string, string> DiscoveryUrls {
             set => _config.DiscoveryUrls = value.DecodeAsList();
             get => _config.DiscoveryUrls.EncodeAsDictionary();
         }
@@ -125,8 +125,8 @@ namespace Microsoft.Azure.IIoT.Platform.Discovery.Edge.Module.Controllers {
         /// </summary>
         /// <returns></returns>
         public async Task ApplyAsync() {
-            await _discovery.ConfigureAsync(_mode, _config.Clone());
-            await _discovery.ScanAsync();
+            await _discovery.ConfigureAsync(_mode, _config.Clone()).ConfigureAwait(false);
+            await _discovery.ScanAsync().ConfigureAwait(false);
         }
 
         private readonly IScannerServices _discovery;

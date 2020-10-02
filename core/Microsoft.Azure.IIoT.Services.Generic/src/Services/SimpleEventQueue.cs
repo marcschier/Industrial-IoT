@@ -98,7 +98,7 @@ namespace Microsoft.Azure.IIoT.Services.Generic.Services {
             }
             foreach (var payload in batch) {
                 var properties = CreateProperties(contentType, eventSchema, contentEncoding);
-                await SendAsync(target, payload, properties, eventSchema, ct);
+                await SendAsync(target, payload, properties, eventSchema, ct).ConfigureAwait(false);
             }
         }
 

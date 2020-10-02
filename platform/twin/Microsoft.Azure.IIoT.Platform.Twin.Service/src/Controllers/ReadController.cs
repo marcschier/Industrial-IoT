@@ -53,7 +53,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Service.Controllers {
                 throw new ArgumentNullException(nameof(request));
             }
             var readresult = await _nodes.NodeValueReadAsync(
-                endpointId, request.ToServiceModel());
+                endpointId, request.ToServiceModel()).ConfigureAwait(false);
             return readresult.ToApiModel();
         }
 
@@ -75,7 +75,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Service.Controllers {
                 throw new ArgumentNullException(nameof(request));
             }
             var readresult = await _nodes.NodeReadAsync(
-                endpointId, request.ToServiceModel());
+                endpointId, request.ToServiceModel()).ConfigureAwait(false);
             return readresult.ToApiModel();
         }
 
@@ -98,7 +98,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Service.Controllers {
             }
             var request = new ValueReadRequestApiModel { NodeId = nodeId };
             var readresult = await _nodes.NodeValueReadAsync(
-                endpointId, request.ToServiceModel());
+                endpointId, request.ToServiceModel()).ConfigureAwait(false);
             return readresult.ToApiModel();
         }
         /// <summary>
@@ -120,7 +120,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Service.Controllers {
                 throw new ArgumentNullException(nameof(request));
             }
             var readresult = await _historian.HistoryReadEventsAsync(
-                endpointId, request.ToServiceModel(d => d.ToServiceModel()));
+                endpointId, request.ToServiceModel(d => d.ToServiceModel())).ConfigureAwait(false);
             return readresult.ToApiModel(d => d?.Select(v => v.ToApiModel()).ToArray());
         }
 
@@ -143,7 +143,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Service.Controllers {
                 throw new ArgumentNullException(nameof(request));
             }
             var readresult = await _historian.HistoryReadEventsNextAsync(
-                endpointId, request.ToServiceModel());
+                endpointId, request.ToServiceModel()).ConfigureAwait(false);
             return readresult.ToApiModel(d => d?.Select(v => v.ToApiModel()).ToArray());
         }
 
@@ -166,7 +166,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Service.Controllers {
                 throw new ArgumentNullException(nameof(request));
             }
             var readresult = await _historian.HistoryReadValuesAsync(
-                endpointId, request.ToServiceModel(d => d.ToServiceModel()));
+                endpointId, request.ToServiceModel(d => d.ToServiceModel())).ConfigureAwait(false);
             return readresult.ToApiModel(d => d?.Select(v => v.ToApiModel()).ToArray());
         }
 
@@ -189,7 +189,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Service.Controllers {
                 throw new ArgumentNullException(nameof(request));
             }
             var readresult = await _historian.HistoryReadValuesAtTimesAsync(
-                endpointId, request.ToServiceModel(d => d.ToServiceModel()));
+                endpointId, request.ToServiceModel(d => d.ToServiceModel())).ConfigureAwait(false);
             return readresult.ToApiModel(d => d?.Select(v => v.ToApiModel()).ToArray());
         }
 
@@ -212,7 +212,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Service.Controllers {
                 throw new ArgumentNullException(nameof(request));
             }
             var readresult = await _historian.HistoryReadProcessedValuesAsync(
-                endpointId, request.ToServiceModel(d => d.ToServiceModel()));
+                endpointId, request.ToServiceModel(d => d.ToServiceModel())).ConfigureAwait(false);
             return readresult.ToApiModel(d => d?.Select(v => v.ToApiModel()).ToArray());
         }
 
@@ -235,7 +235,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Service.Controllers {
                 throw new ArgumentNullException(nameof(request));
             }
             var readresult = await _historian.HistoryReadModifiedValuesAsync(
-                endpointId, request.ToServiceModel(d => d.ToServiceModel()));
+                endpointId, request.ToServiceModel(d => d.ToServiceModel())).ConfigureAwait(false);
             return readresult.ToApiModel(d => d?.Select(v => v.ToApiModel()).ToArray());
         }
 
@@ -258,7 +258,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Service.Controllers {
                 throw new ArgumentNullException(nameof(request));
             }
             var readresult = await _historian.HistoryReadValuesNextAsync(
-                endpointId, request.ToServiceModel());
+                endpointId, request.ToServiceModel()).ConfigureAwait(false);
             return readresult.ToApiModel(d => d?.Select(v => v.ToApiModel()).ToArray());
         }
 

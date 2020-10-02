@@ -43,22 +43,22 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge {
 
         [Fact]
         public async Task HistoryReadInt64ValuesTest1Async() {
-            await GetTests().HistoryReadInt64ValuesTest1Async();
+            await GetTests().HistoryReadInt64ValuesTest1Async().ConfigureAwait(false);
         }
 
         [Fact]
         public async Task HistoryReadInt64ValuesTest2Async() {
-            await GetTests().HistoryReadInt64ValuesTest2Async();
+            await GetTests().HistoryReadInt64ValuesTest2Async().ConfigureAwait(false);
         }
 
         [Fact]
         public async Task HistoryReadInt64ValuesTest3Async() {
-            await GetTests().HistoryReadInt64ValuesTest3Async();
+            await GetTests().HistoryReadInt64ValuesTest3Async().ConfigureAwait(false);
         }
 
         [Fact]
         public async Task HistoryReadInt64ValuesTest4Async() {
-            await GetTests().HistoryReadInt64ValuesTest4Async();
+            await GetTests().HistoryReadInt64ValuesTest4Async().ConfigureAwait(false);
         }
 
         private readonly HistoryServerFixture _server;

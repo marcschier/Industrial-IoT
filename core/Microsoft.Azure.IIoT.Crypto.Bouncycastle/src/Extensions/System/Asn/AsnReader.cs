@@ -7,6 +7,7 @@ namespace System.Security.Cryptography.Asn1 {
     using System.Buffers.Binary;
     using System.Collections.Generic;
     using System.Diagnostics;
+    using System.Globalization;
     using System.Numerics;
     using System.Runtime.InteropServices;
     using System.Text;
@@ -635,7 +636,7 @@ namespace System.Security.Cryptography.Asn1 {
             // If 3 bits are "unused" then build a mask for them to check for 0.
             // -1 << 3 => 0b1111_1111 << 3 => 0b1111_1000
             var mask = -1 << unusedBitCount;
-            var lastByte = sourceSpan[sourceSpan.Length - 1];
+            var lastByte = sourceSpan[^1];
             var maskedByte = (byte)(lastByte & mask);
 
             if (maskedByte != lastByte) {
@@ -1029,7 +1030,7 @@ namespace System.Security.Cryptography.Asn1 {
             try {
                 if (!TryCopyBitStringBytes(expectedTag, stackSpan, out var unusedBitCount, out var bytesWritten)) {
                     throw new CryptographicException(
-                        string.Format(SR.Cryptography_Asn_NamedBitListValueTooBig, tFlagsEnum.Name));
+                        string.Format(CultureInfo.InvariantCulture, SR.Cryptography_Asn_NamedBitListValueTooBig, tFlagsEnum.Name));
                 }
 
                 if (bytesWritten == 0) {
@@ -1650,7 +1651,7 @@ namespace System.Security.Cryptography.Asn1 {
 
                 builder.Append(firstArc);
                 builder.Append('.');
-                builder.Append(firstIdentifier.ToString());
+                builder.Append(firstIdentifier.ToString(CultureInfo.InvariantCulture));
             }
 
             contents = contents.Slice(bytesRead);
@@ -1666,7 +1667,7 @@ namespace System.Security.Cryptography.Asn1 {
                     builder.Append(smallValue.Value);
                 }
                 else {
-                    builder.Append(largeValue.Value.ToString());
+                    builder.Append(largeValue.Value.ToString(CultureInfo.InvariantCulture));
                 }
 
                 contents = contents.Slice(bytesRead);

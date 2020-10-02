@@ -19,6 +19,6 @@ namespace Microsoft.Azure.IIoT.Hub.Models {
         /// <summary>
         /// Items returned
         /// </summary>
-        public List<DeviceTwinModel> Items { get; set; }
+        public IReadOnlyList<DeviceTwinModel> Items { get; set; }
     }
 }

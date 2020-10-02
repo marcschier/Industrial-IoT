@@ -24,8 +24,15 @@ namespace Microsoft.Azure.IIoT.Http {
         /// <returns>this</returns>
         public static IHttpRequest AddHeader(this IHttpRequest request, string name,
             string value) {
+            if (request is null) {
+                throw new ArgumentNullException(nameof(request));
+            }
+            if (string.IsNullOrEmpty(name)) {
+                throw new ArgumentNullException(nameof(name));
+            }
+
             if (!request.Headers.TryAddWithoutValidation(name, value)) {
-                if (name.ToLowerInvariant() != "content-type") {
+                if (!name.Equals("content-type", StringComparison.InvariantCultureIgnoreCase)) {
                     throw new ArgumentOutOfRangeException(name, "Invalid header name");
                 }
             }
@@ -42,7 +49,10 @@ namespace Microsoft.Azure.IIoT.Http {
         /// <returns>this</returns>
         public static IHttpRequest SetStringContent(this IHttpRequest request, string content,
             string mediaType = null, Encoding encoding = null) {
-            return request.SetByteArrayContent((encoding ?? kDefaultEncoding).GetBytes(content),
+            if (encoding == null) {
+                encoding = kDefaultEncoding;
+            }
+            return request.SetByteArrayContent(encoding.GetBytes(content),
                 string.IsNullOrEmpty(mediaType) ? ContentMimeType.Json : mediaType, encoding);
         }
 
@@ -56,6 +66,9 @@ namespace Microsoft.Azure.IIoT.Http {
         /// <returns>this</returns>
         public static IHttpRequest SetByteArrayContent(this IHttpRequest request, byte[] content,
             string mediaType = null, Encoding encoding = null) {
+            if (request is null) {
+                throw new ArgumentNullException(nameof(request));
+            }
 
             var headerValue = new MediaTypeHeaderValue(
                 string.IsNullOrEmpty(mediaType) ? ContentMimeType.Binary : mediaType);
@@ -77,6 +90,9 @@ namespace Microsoft.Azure.IIoT.Http {
         /// <returns>this</returns>
         public static IHttpRequest SetStreamContent(this IHttpRequest request, Stream content,
             string mediaType = null, Encoding encoding = null) {
+            if (request is null) {
+                throw new ArgumentNullException(nameof(request));
+            }
 
             var headerValue = new MediaTypeHeaderValue(
                 string.IsNullOrEmpty(mediaType) ? ContentMimeType.Binary : mediaType);

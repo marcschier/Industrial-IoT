@@ -23,7 +23,7 @@ namespace Microsoft.Azure.IIoT.Storage {
         /// <returns></returns>
         public static async Task<string> GetStringAsync(this ICache cache,
             string key, CancellationToken ct = default) {
-            var val = await cache.GetAsync(key, ct);
+            var val = await cache.GetAsync(key, ct).ConfigureAwait(false);
             if (val == null) {
                 return null;
             }
@@ -49,7 +49,7 @@ namespace Microsoft.Azure.IIoT.Storage {
             if (value == null) {
                 throw new ArgumentNullException(nameof(value));
             }
-            await cache.SetAsync(key, Encoding.UTF8.GetBytes(value), expiration, ct);
+            await cache.SetAsync(key, Encoding.UTF8.GetBytes(value), expiration, ct).ConfigureAwait(false);
         }
     }
 }

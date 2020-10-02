@@ -9,6 +9,8 @@ namespace Microsoft.Azure.IIoT.Exceptions {
     /// Marks exceptions that are transient in nature, i.e.
     /// they can be retried with another outcome.
     /// </summary>
+#pragma warning disable CA1040 // Avoid empty interfaces
     public interface ITransientException {
+#pragma warning restore CA1040 // Avoid empty interfaces
     }
 }

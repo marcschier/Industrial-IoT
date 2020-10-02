@@ -14,6 +14,6 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Models {
         /// <summary>
         /// Values to replace
         /// </summary>
-        public List<HistoricValueModel> Values { get; set; }
+        public IReadOnlyList<HistoricValueModel> Values { get; set; }
     }
 }

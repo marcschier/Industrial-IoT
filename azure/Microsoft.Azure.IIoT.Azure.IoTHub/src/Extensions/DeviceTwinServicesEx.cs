@@ -45,7 +45,7 @@ namespace Microsoft.Azure.IIoT.Hub {
         public static async Task<ConnectionString> GetConnectionStringAsync(
             this IDeviceTwinServices service, string deviceId, bool primary = true,
             CancellationToken ct = default) {
-            var model = await service.GetRegistrationAsync(deviceId, null, ct);
+            var model = await service.GetRegistrationAsync(deviceId, null, ct).ConfigureAwait(false);
             if (model == null) {
                 throw new ResourceNotFoundException("Could not find " + deviceId);
             }
@@ -66,7 +66,7 @@ namespace Microsoft.Azure.IIoT.Hub {
         public static async Task<ConnectionString> GetConnectionStringAsync(
             this IDeviceTwinServices service, string deviceId, string moduleId,
             bool primary = true, CancellationToken ct = default) {
-            var model = await service.GetRegistrationAsync(deviceId, moduleId, ct);
+            var model = await service.GetRegistrationAsync(deviceId, moduleId, ct).ConfigureAwait(false);
             if (model == null) {
                 throw new ResourceNotFoundException("Could not find " + moduleId);
             }

@@ -38,10 +38,10 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Hosting {
             MethodResponse response;
             var deviceId = HubResource.Parse(target, out _, out var moduleId);
             if (string.IsNullOrEmpty(moduleId)) {
-                response = await _client.InvokeMethodAsync(deviceId, request, ct);
+                response = await _client.InvokeMethodAsync(deviceId, request, ct).ConfigureAwait(false);
             }
             else {
-                response = await _client.InvokeMethodAsync(deviceId, moduleId, request, ct);
+                response = await _client.InvokeMethodAsync(deviceId, moduleId, request, ct).ConfigureAwait(false);
             }
             if (response.Status != 200) {
                 throw new MethodCallStatusException(

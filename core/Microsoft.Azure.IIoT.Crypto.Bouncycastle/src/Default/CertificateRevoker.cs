@@ -3,9 +3,10 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Crypto.Default {
+namespace Microsoft.Azure.IIoT.Crypto.Services {
     using Microsoft.Azure.IIoT.Crypto.Models;
     using System;
+    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
 
@@ -28,10 +29,11 @@ namespace Microsoft.Azure.IIoT.Crypto.Default {
         }
 
         /// <inheritdoc/>
-        public async Task RevokeCertificateAsync(byte[] serialNumber, CancellationToken ct) {
+        public async Task RevokeCertificateAsync(IReadOnlyCollection<byte> serialNumber,
+            CancellationToken ct) {
             // Get certificate
-            var certificate = await _store.GetCertificateAsync(serialNumber, ct);
-            await RevokeCertificateAsync(certificate, ct);
+            var certificate = await _store.GetCertificateAsync(serialNumber, ct).ConfigureAwait(false);
+            await RevokeCertificateAsync(certificate, ct).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -44,13 +46,13 @@ namespace Microsoft.Azure.IIoT.Crypto.Default {
             CancellationToken ct) {
 
             // Disable
-            await _issuer.DisableCertificateAsync(certificate, ct);
+            await _issuer.DisableCertificateAsync(certificate, ct).ConfigureAwait(false);
 
             // TODO: Notify listeners
 
             // Invalidate crl for issuer
             if (!certificate.IsSelfIssued()) {
-                await _crls.InvalidateAsync(certificate.IssuerSerialNumber, ct);
+                await _crls.InvalidateAsync(certificate.IssuerSerialNumber, ct).ConfigureAwait(false);
             }
 
             // TODO: do this as a reaction to the revocation event above
@@ -60,11 +62,11 @@ namespace Microsoft.Azure.IIoT.Crypto.Default {
 
             // Get all not revoked issued certificates and recursively revoke those
             var issuedCerts = await _store.GetIssuedCertificatesAsync(
-                certificate, null, false, true, ct);
+                certificate, null, false, true, ct).ConfigureAwait(false);
 
             // Recursively revoke certificate
             foreach (var issued in issuedCerts) {
-                await RevokeCertificateAsync(issued, ct);
+                await RevokeCertificateAsync(issued, ct).ConfigureAwait(false);
             }
         }
 

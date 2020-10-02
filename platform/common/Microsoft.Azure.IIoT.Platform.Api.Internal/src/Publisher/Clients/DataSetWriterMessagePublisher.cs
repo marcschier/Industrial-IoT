@@ -37,7 +37,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api.Clients {
             }
             // Send to dataset listeners
             await _callback.MulticastAsync(message.DataSetWriterId,
-                EventTargets.DataSetMessageTarget, new object[] { message });
+                EventTargets.DataSetMessageTarget, new object[] { message }).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>

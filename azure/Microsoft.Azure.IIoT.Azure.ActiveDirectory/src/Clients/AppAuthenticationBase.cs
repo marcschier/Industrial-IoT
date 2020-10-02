@@ -45,8 +45,8 @@ namespace Microsoft.Azure.IIoT.Azure.ActiveDirectory.Clients {
             foreach (var (config, provider) in Get(resource)) {
                 try {
                     var token = await provider.KeyVaultTokenCallback(
-                        config.GetAuthorityUrl(true), config.GetAudience(scopes),
-                        config.GetScopeNames(scopes)?.FirstOrDefault());
+                        config.GetAuthority(true), config.GetAudience(scopes),
+                        config.GetScopeNames(scopes)?.FirstOrDefault()).ConfigureAwait(false);
                     if (token == null) {
                         return null;
                     }

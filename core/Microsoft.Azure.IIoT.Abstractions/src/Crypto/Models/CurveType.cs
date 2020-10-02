@@ -32,71 +32,71 @@ namespace Microsoft.Azure.IIoT.Crypto.Models {
         /// <summary>
         /// Brainpool P160r1
         /// </summary>
-        Brainpool_P160r1,
+        BrainpoolP160r1,
 
         /// <summary>
         /// Brainpool P160t1
         /// </summary>
-        Brainpool_P160t1,
+        BrainpoolP160t1,
 
         /// <summary>
         /// Brainpool P192r1
         /// </summary>
-        Brainpool_P192r1,
+        BrainpoolP192r1,
 
         /// <summary>
         /// Brainpool P192t1
         /// </summary>
-        Brainpool_P192t1,
+        BrainpoolP192t1,
 
         /// <summary>
         /// Brainpool P224r1
         /// </summary>
-        Brainpool_P224r1,
+        BrainpoolP224r1,
 
         /// <summary>
         /// Brainpool P224t1
         /// </summary>
-        Brainpool_P224t1,
+        BrainpoolP224t1,
 
         /// <summary>
         /// Brainpool P256r1
         /// </summary>
-        Brainpool_P256r1,
+        BrainpoolP256r1,
 
         /// <summary>
         /// Brainpool P256t1
         /// </summary>
-        Brainpool_P256t1,
+        BrainpoolP256t1,
 
         /// <summary>
         /// Brainpool P320r1
         /// </summary>
-        Brainpool_P320r1,
+        BrainpoolP320r1,
 
         /// <summary>
         /// Brainpool P320t1
         /// </summary>
-        Brainpool_P320t1,
+        BrainpoolP320t1,
 
         /// <summary>
         /// Brainpool P384r1
         /// </summary>
-        Brainpool_P384r1,
+        BrainpoolP384r1,
 
         /// <summary>
         /// Brainpool P384t1
         /// </summary>
-        Brainpool_P384t1,
+        BrainpoolP384t1,
 
         /// <summary>
         /// Brainpool P512r1
         /// </summary>
-        Brainpool_P512r1,
+        BrainpoolP512r1,
 
         /// <summary>
         /// Brainpool P512t1
         /// </summary>
-        Brainpool_P512t1,
+        BrainpoolP512t1,
     }
 }

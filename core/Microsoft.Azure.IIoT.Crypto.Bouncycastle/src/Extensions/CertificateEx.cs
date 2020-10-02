@@ -24,10 +24,10 @@ namespace Microsoft.Azure.IIoT.Crypto {
         /// <param name="policies"></param>
         /// <param name="revoked"></param>
         /// <returns></returns>
-        public static Certificate Create(byte[] buffer,
+        public static Certificate Create(IReadOnlyCollection<byte> buffer,
             KeyHandle key = null, IssuerPolicies policies = null,
             RevocationInfo revoked = null) {
-            using (var cert = new X509Certificate2(buffer)) {
+            using (var cert = new X509Certificate2(buffer.ToArray())) {
                 return ToCertificate(cert, policies, key, revoked);
             }
         }
@@ -141,7 +141,10 @@ namespace Microsoft.Azure.IIoT.Crypto {
         /// <param name="certificate"></param>
         /// <returns></returns>
         public static X509Certificate2 ToX509Certificate2(this Certificate certificate) {
-            return new X509Certificate2(certificate.RawData);
+            if (certificate is null) {
+                throw new ArgumentNullException(nameof(certificate));
+            }
+            return new X509Certificate2(certificate.RawData?.ToArray());
         }
 
         /// <summary>
@@ -198,6 +201,9 @@ namespace Microsoft.Azure.IIoT.Crypto {
         /// </summary>
         /// <param name="certificateCollection"></param>
         public static void Dispose(this X509Certificate2Collection certificateCollection) {
+            if (certificateCollection is null) {
+                throw new ArgumentNullException(nameof(certificateCollection));
+            }
             foreach (var cert in certificateCollection.OfType<X509Certificate>().ToList()) {
                 certificateCollection.Remove(cert);
                 cert?.Dispose();
@@ -286,6 +292,12 @@ namespace Microsoft.Azure.IIoT.Crypto {
         /// <returns></returns>
         public static void Verify(this Certificate certificate,
             Certificate issuer) {
+            if (certificate is null) {
+                throw new ArgumentNullException(nameof(certificate));
+            }
+            if (issuer is null) {
+                throw new ArgumentNullException(nameof(issuer));
+            }
             var cert = issuer.ToX509Certificate();
             certificate.ToX509Certificate().Verify(cert.GetPublicKey());
         }
@@ -305,7 +317,7 @@ namespace Microsoft.Azure.IIoT.Crypto {
         /// <param name="certificate"></param>
         /// <returns></returns>
         public static SerialNumber GetSerialNumber(this Certificate certificate) {
-            if (certificate?.SerialNumber == null) {
+            if (certificate == null || certificate.SerialNumber == null) {
                 return null;
             }
             return new SerialNumber(certificate.SerialNumber);
@@ -353,7 +365,7 @@ namespace Microsoft.Azure.IIoT.Crypto {
         /// <param name="certificate"></param>
         /// <returns></returns>
         public static SerialNumber GetIssuerSerialNumber(this Certificate certificate) {
-            if (certificate?.IssuerSerialNumber == null) {
+            if (certificate == null || certificate.IssuerSerialNumber == null) {
                 return null;
             }
             return new SerialNumber(certificate.IssuerSerialNumber);
@@ -384,7 +396,7 @@ namespace Microsoft.Azure.IIoT.Crypto {
         /// <param name="certificate"></param>
         /// <returns></returns>
         public static T GetExtensionByType<T>(this Certificate certificate) {
-            if (certificate?.Extensions == null) {
+            if (certificate == null || certificate.Extensions == null) {
                 return default;
             }
             return certificate.Extensions.OfType<T>().FirstOrDefault();
@@ -512,6 +524,9 @@ namespace Microsoft.Azure.IIoT.Crypto {
         /// <param name="certificate"></param>
         /// <returns></returns>
         public static bool IsSelfIssued(this Certificate certificate) {
+            if (certificate is null) {
+                throw new ArgumentNullException(nameof(certificate));
+            }
             var issuerSn = certificate.IssuerSerialNumber;
             if (issuerSn != null) {
                 return certificate.IssuerSerialNumber.SequenceEqualsSafe(

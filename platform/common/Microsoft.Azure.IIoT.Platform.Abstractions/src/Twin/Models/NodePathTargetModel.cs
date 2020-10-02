@@ -5,6 +5,7 @@
 
 namespace Microsoft.Azure.IIoT.Platform.Twin.Models {
     using Microsoft.Azure.IIoT.Platform.Core.Models;
+    using System.Collections.Generic;
 
     /// <summary>
     /// Node path target
@@ -14,7 +15,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Models {
         /// <summary>
         /// The target browse path
         /// </summary>
-        public string[] BrowsePath { get; set; }
+        public IReadOnlyList<string> BrowsePath { get; set; }
 
         /// <summary>
         /// Target node

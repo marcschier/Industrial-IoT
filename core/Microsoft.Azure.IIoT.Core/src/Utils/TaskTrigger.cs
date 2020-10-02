@@ -20,9 +20,9 @@ namespace Microsoft.Azure.IIoT.Utils {
         public TaskTrigger(Func<CancellationToken, Task> task) {
             _worker = new Worker(async ct => {
                 while (!ct.IsCancellationRequested) {
-                    await _event.WaitAsync();
+                    await _event.WaitAsync().ConfigureAwait(false);
                     if (!ct.IsCancellationRequested) {
-                        await task(ct);
+                        await task(ct).ConfigureAwait(false);
                     }
                 }
             });

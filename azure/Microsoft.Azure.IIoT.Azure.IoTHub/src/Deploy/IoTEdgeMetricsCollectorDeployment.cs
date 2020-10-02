@@ -50,7 +50,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub.Deploy {
                 TargetCondition = IoTEdgeBaseDeployment.TargetCondition +
                     " AND tags.os = 'Linux'",
                 Priority = 2
-            }, true);
+            }, true).ConfigureAwait(false);
 
             await _service.CreateOrUpdateConfigurationAsync(new ConfigurationModel {
                 Id = "__default-metricscollector-windows",
@@ -61,7 +61,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub.Deploy {
                 TargetCondition = IoTEdgeBaseDeployment.TargetCondition +
                     " AND tags.os = 'Windows'",
                 Priority = 2
-            }, true);
+            }, true).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
@@ -74,7 +74,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub.Deploy {
         /// </summary>
         /// <param name="isLinux"></param>
         /// <returns></returns>
-        private IDictionary<string, IDictionary<string, object>> CreateLayeredDeployment(
+        private IReadOnlyDictionary<string, IReadOnlyDictionary<string, object>> CreateLayeredDeployment(
             bool isLinux) {
 
             // Configure create options and version per os specified
@@ -89,7 +89,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub.Deploy {
                     User = "ContainerAdministrator"
                 });
             }
-            createOptions = createOptions.Replace("\"", "\\\"");
+            createOptions = createOptions.Replace("\"", "\\\"", StringComparison.Ordinal);
             var image = $"azureiotedge/azureiotedge-metrics-collector-sample:0.1";
             _logger.Information("Updating metrics collector module deployment for {os}", isLinux ? "Linux" : "Windows");
 
@@ -132,7 +132,8 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub.Deploy {
                     ""properties.desired.routes.upstream"": ""FROM /messages/* INTO $upstream""
                 }
             }";
-            return _serializer.Deserialize<IDictionary<string, IDictionary<string, object>>>(content);
+            return _serializer
+                .Deserialize<IReadOnlyDictionary<string, IReadOnlyDictionary<string, object>>>(content);
         }
 
         private const string kDefaultSchemaVersion = "1.0";

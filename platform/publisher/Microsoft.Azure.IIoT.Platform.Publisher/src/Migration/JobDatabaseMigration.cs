@@ -23,50 +23,45 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Migration {
         /// <summary>
         /// Create
         /// </summary>
-        /// <param name="databaseServer"></param>
+        /// <param name="database"></param>
         /// <param name="logger"></param>
         /// <param name="config"></param>
         /// <param name="batch"></param>
-        public JobDatabaseMigration(IDatabaseServer databaseServer, IWriterGroupBatchOperations batch,
-            ILogger logger, IItemContainerConfig config = null) {
-
+        public JobDatabaseMigration(IDatabaseServer database, ILogger logger,
+            IWriterGroupBatchOperations batch, IItemContainerConfig config = null) {
+            _config = config;
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _database = database ?? throw new ArgumentNullException(nameof(database));
             _batch = batch ?? throw new ArgumentNullException(nameof(batch));
-
-            try {
-                var dbs = databaseServer.OpenAsync(config?.DatabaseName ?? "iiot_opc").Result;
-                _documents = dbs.OpenContainerAsync(config?.ContainerName ?? "iiot_opc").Result;
-            }
-            catch (Exception ex) {
-                logger.Error(ex, "Failed to open container - not migrating");
-            }
         }
 
         /// <inheritdoc/>
         public async Task MigrateAsync() {
-            if (_documents == null) {
-                return;
-            }
-            var query = _documents.CreateQuery<JobDocument>()
-                .Where(x => x.ClassType == JobDocument.ClassTypeName)
-                .GetResults();
-            // Read results
-            while (query.HasMore()) {
-                var results = await query.ReadAsync();
-                foreach (var document in results) {
-                    var group = ToServiceModel(document.Value);
-                    try {
+            IItemContainer _documents;
+            try {
+                var dbs = await _database.OpenAsync(_config?.DatabaseName ??
+                    "iiot_opc").ConfigureAwait(false);
+                _documents = await dbs.OpenContainerAsync(_config?.ContainerName ??
+                    "iiot_opc").ConfigureAwait(false);
+                var query = _documents.CreateQuery<JobDocument>()
+                    .Where(x => x.ClassType == JobDocument.ClassTypeName)
+                    .GetResults();
+                // Read results
+                while (query.HasMore()) {
+                    var results = await query.ReadAsync().ConfigureAwait(false);
+                    foreach (var document in results) {
+                        var group = ToServiceModel(document.Value);
                         if (group != null) {
-                            await _batch.ImportWriterGroupAsync(group);
+                            await _batch.ImportWriterGroupAsync(group).ConfigureAwait(false);
                         }
                         // Force delete now
-                        await _documents.DeleteAsync<JobDocument>(document.Id);
-                    }
-                    catch (Exception e) {
-                        _logger.Error(e, "Error adding {group} - skip migration...",
-                            group.WriterGroupId ?? group.Name);
+                        await _documents.DeleteAsync<JobDocument>(document.Id).ConfigureAwait(false);
                     }
                 }
+            }
+            catch (Exception ex) {
+                _logger.Error(ex, "Failed to open container - not migrating");
+                return;
             }
         }
 
@@ -107,7 +102,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Migration {
 
         /// <summary> Job document </summary>
         [DataContract]
-        public class JobDocument {
+        internal class JobDocument {
             /// <summary> id </summary>
             [DataMember(Name = "id")]
             public string Id { get; set; }
@@ -118,7 +113,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Migration {
             [DataMember]
             public string ClassType { get; set; } = ClassTypeName;
             /// <summary/>
-            public static readonly string ClassTypeName = "Job";
+            public const string ClassTypeName = "Job";
             /// <summary> Identifier of the job document </summary>
             [DataMember]
             public string JobId { get; set; }
@@ -141,7 +136,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Migration {
 
         /// <summary> Job model </summary>
         [DataContract]
-        public class JobConfigModel {
+        internal class JobConfigModel {
             /// <summary> Identifier of the job document </summary>
             [DataMember]
             public string JobId { get; set; }
@@ -152,7 +147,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Migration {
 
         /// <summary> Pub sub writer group job </summary>
         [DataContract]
-        public class WriterGroupJobModel {
+        internal class WriterGroupJobModel {
             /// <summary> Writer group configuration </summary>
             [DataMember]
             public WriterGroupV1Model WriterGroup { get; set; }
@@ -169,7 +164,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Migration {
 
         /// <summary> Message encoding </summary>
         [DataContract]
-        public enum MessageType {
+        internal enum MessageType {
             /// <summary> Ua Json encoding </summary>
             [EnumMember]
             Json,
@@ -180,7 +175,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Migration {
 
         /// <summary> Writer group model </summary>
         [DataContract]
-        public class WriterGroupV1Model {
+        internal class WriterGroupV1Model {
             /// <summary> Dataset writer group identifier </summary>
             [DataMember]
             public string WriterGroupId { get; set; }
@@ -200,7 +195,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Migration {
 
         /// <summary> Message mode </summary>
         [DataContract]
-        public enum MessagingMode {
+        internal enum MessagingMode {
             /// <summary> Network messages (default) </summary>
             [EnumMember]
             PubSub,
@@ -211,7 +206,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Migration {
 
         /// <summary> Engine configuration </summary>
         [DataContract]
-        public class EngineConfigurationModel {
+        internal class EngineConfigurationModel {
             /// <summary> Batch buffer size </summary>
             [DataMember]
             public int? BatchSize { get; set; }
@@ -226,8 +221,9 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Migration {
             public TimeSpan? DiagnosticsInterval { get; set; }
         }
 
-        private readonly IItemContainer _documents;
         private readonly ILogger _logger;
+        private readonly IItemContainerConfig _config;
+        private readonly IDatabaseServer _database;
         private readonly IWriterGroupBatchOperations _batch;
     }
 }

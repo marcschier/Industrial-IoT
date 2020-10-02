@@ -39,16 +39,16 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Services {
                 Id = _config.UserName
             };
             try {
-                var exists = await _manager.FindByIdAsync(_config.UserName);
+                var exists = await _manager.FindByIdAsync(_config.UserName).ConfigureAwait(false);
                 if (exists != null) {
                     return;
                 }
 
                 if (string.IsNullOrEmpty(_config.Password)) {
-                    await _manager.CreateAsync(rootUser);
+                    await _manager.CreateAsync(rootUser).ConfigureAwait(false);
                 }
                 else {
-                    await _manager.CreateAsync(rootUser, _config.Password);
+                    await _manager.CreateAsync(rootUser, _config.Password).ConfigureAwait(false);
                 }
                 _logger.Information("Root user {user} added", _config.UserName);
             }

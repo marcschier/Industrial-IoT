@@ -26,7 +26,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Models {
         /// <summary>
         /// Metadata for the data set fiels
         /// </summary>
-        public List<FieldMetaDataModel> Fields { get; set; }
+        public IReadOnlyList<FieldMetaDataModel> Fields { get; set; }
 
         /// <summary>
         /// Dataset class id
@@ -41,21 +41,21 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Models {
         /// <summary>
         /// Namespaces in the metadata description
         /// </summary>
-        public List<string> Namespaces { get; set; }
+        public IReadOnlyList<string> Namespaces { get; set; }
 
         /// <summary>
         /// Structure data types
         /// </summary>
-        public List<StructureDescriptionModel> StructureDataTypes { get; set; }
+        public IReadOnlyList<StructureDescriptionModel> StructureDataTypes { get; set; }
 
         /// <summary>
         /// Enum data types
         /// </summary>
-        public List<EnumDescriptionModel> EnumDataTypes { get; set; }
+        public IReadOnlyList<EnumDescriptionModel> EnumDataTypes { get; set; }
 
         /// <summary>
         /// Simple data type.
         /// </summary>
-        public List<SimpleTypeDescriptionModel> SimpleDataTypes { get; set; }
+        public IReadOnlyList<SimpleTypeDescriptionModel> SimpleDataTypes { get; set; }
     }
 }

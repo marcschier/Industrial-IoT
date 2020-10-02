@@ -39,7 +39,7 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Storage {
             }
             try {
                 var document = role.ToDocumentModel();
-                await _documents.AddAsync(document, ct);
+                await _documents.AddAsync(document, ct: ct).ConfigureAwait(false);
                 return IdentityResult.Success;
             }
             catch {
@@ -55,14 +55,14 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Storage {
             }
             while (true) {
                 var document = await _documents.FindAsync<RoleDocumentModel>(
-                    role.Id, ct);
+                    role.Id, ct: ct).ConfigureAwait(false);
                 if (document == null) {
                     return IdentityResult.Failed();
                 }
                 try {
                     var newDocument = document.Value.UpdateFrom(role);
                     document = await _documents.ReplaceAsync(document,
-                        newDocument, ct);
+                        newDocument, ct: ct).ConfigureAwait(false);
                     return IdentityResult.Success;
                 }
                 catch (ResourceOutOfDateException) {
@@ -75,8 +75,8 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Storage {
         public async Task<IdentityResult> DeleteAsync(RoleModel role,
             CancellationToken ct) {
             try {
-                await _documents.DeleteAsync<RoleDocumentModel>(role.Id, ct, null,
-                    role.ConcurrencyStamp);
+                await _documents.DeleteAsync<RoleDocumentModel>(role.Id, null, role.ConcurrencyStamp,
+                    ct).ConfigureAwait(false);
                 return IdentityResult.Success;
             }
             catch {
@@ -87,7 +87,7 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Storage {
         /// <inheritdoc/>
         public async Task<RoleModel> FindByIdAsync(string roleId,
             CancellationToken ct) {
-            var role = await _documents.FindAsync<RoleDocumentModel>(roleId, ct);
+            var role = await _documents.FindAsync<RoleDocumentModel>(roleId, ct: ct).ConfigureAwait(false);
             if (role?.Value == null) {
                 return null;
             }
@@ -105,7 +105,7 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Storage {
                 .Where(x => x.NormalizedName == normalizedRoleName)
                 .GetResults();
             if (results.HasMore()) {
-                var documents = await results.ReadAsync();
+                var documents = await results.ReadAsync().ConfigureAwait(false);
                 return documents.FirstOrDefault().Value.ToServiceModel();
             }
             return null;
@@ -117,7 +117,7 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Storage {
             if (role == null) {
                 throw new ArgumentNullException(nameof(role));
             }
-            var doc = await _documents.GetAsync<RoleDocumentModel>(role.Id, ct);
+            var doc = await _documents.GetAsync<RoleDocumentModel>(role.Id, ct: ct).ConfigureAwait(false);
             return doc.Value.Claims.Select(c => c.ToClaim()).ToList();
         }
 
@@ -218,7 +218,7 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Storage {
             }
             while (true) {
                 var document = await _documents.FindAsync<RoleDocumentModel>(
-                    role.Id, ct);
+                    role.Id, ct: ct).ConfigureAwait(false);
                 if (document == null) {
                     throw new ResourceNotFoundException("Role was not found");
                 }
@@ -229,7 +229,7 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Storage {
                     var newDocument = document.Value.Clone();
                     var result = update(newDocument);
                     document = await _documents.ReplaceAsync(document,
-                        newDocument, ct);
+                        newDocument, ct: ct).ConfigureAwait(false);
                     return result;
                 }
                 catch (ResourceOutOfDateException) {

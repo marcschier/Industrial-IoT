@@ -45,6 +45,10 @@ namespace Opc.Ua.Nodeset {
         /// <returns></returns>
         public static NodeState ToNodeState(this BaseNodeModel nodeModel, ISystemContext context,
             NodeState parent = null) {
+            if (nodeModel is null) {
+                return null;
+            }
+
             NodeState state;
             switch (nodeModel) {
                 case ViewNodeModel viewState:
@@ -68,7 +72,7 @@ namespace Opc.Ua.Nodeset {
                             }
                             var baseVariableTypeState = state as BaseVariableTypeState;
                             baseVariableTypeState.ArrayDimensions =
-                                variableType.ArrayDimensions;
+                                variableType.ArrayDimensions?.ToArray();
                             baseVariableTypeState.DataType =
                                 variableType.DataType;
                             baseVariableTypeState.ValueRank =
@@ -111,7 +115,7 @@ namespace Opc.Ua.Nodeset {
                             }
                             var baseVariableState = state as BaseVariableState;
                             baseVariableState.ArrayDimensions =
-                                variable.ArrayDimensions;
+                                variable.ArrayDimensions?.ToArray();
                             baseVariableState.DataType =
                                 variable.DataType;
                             baseVariableState.ValueRank =
@@ -170,7 +174,9 @@ namespace Opc.Ua.Nodeset {
             state.UserWriteMask = nodeModel.UserWriteMask ?? AttributeWriteMask.None;
             state.Initialized = true;
             foreach (var child in nodeModel.GetChildren(context)) {
+#pragma warning disable CA2000 // Dispose objects before losing scope
                 state.AddChild(child.ToNodeState(context, state) as BaseInstanceState);
+#pragma warning restore CA2000 // Dispose objects before losing scope
             }
             foreach (var reference in nodeModel.References) {
                 state.AddReference(reference.ReferenceTypeId, reference.IsInverse,
@@ -188,6 +194,10 @@ namespace Opc.Ua.Nodeset {
         /// <returns></returns>
         public static BaseNodeModel ToNodeModel(this NodeState state, ISystemContext context,
             BaseNodeModel parent = null) {
+            if (state is null) {
+                throw new ArgumentNullException(nameof(state));
+            }
+
             BaseNodeModel nodeModel;
             switch (state) {
                 case ViewState viewState:
@@ -335,6 +345,13 @@ namespace Opc.Ua.Nodeset {
         /// <returns></returns>
         public static INodeAttributes ToNodeAttributes(this BaseNodeModel nodeModel,
             ISystemContext context) {
+            if (nodeModel is null) {
+                throw new ArgumentNullException(nameof(nodeModel));
+            }
+            if (context is null) {
+                throw new ArgumentNullException(nameof(context));
+            }
+
             var raw = new NodeAttributeSet(nodeModel.NodeId, context.NamespaceUris) {
                 BrowseName = nodeModel.BrowseName,
                 DisplayName = nodeModel.DisplayName,
@@ -409,6 +426,10 @@ namespace Opc.Ua.Nodeset {
         /// <returns></returns>
         public static BaseNodeModel ToNodeModel(this INodeAttributes attributes,
             bool isProperty = false) {
+            if (attributes is null) {
+                throw new ArgumentNullException(nameof(attributes));
+            }
+
             BaseNodeModel nodeModel;
             var nodeClass = attributes.NodeClass;
             switch (nodeClass) {

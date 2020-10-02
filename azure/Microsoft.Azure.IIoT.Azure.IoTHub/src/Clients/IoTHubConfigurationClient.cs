@@ -41,7 +41,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub.Clients {
             ConfigurationContentModel configuration, CancellationToken ct) {
             try {
                 await _registry.ApplyConfigurationContentOnDeviceAsync(deviceId,
-                    configuration.ToContent(), ct);
+                    configuration.ToContent(), ct).ConfigureAwait(false);
             }
             catch (Exception e) {
                 _logger.Verbose(e, "Apply configuration failed ");
@@ -58,7 +58,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub.Clients {
                     // First try create configuration
                     try {
                         var added = await _registry.AddConfigurationAsync(
-                            configuration.ToConfiguration(), ct);
+                            configuration.ToConfiguration(), ct).ConfigureAwait(false);
                         return added.ToModel();
                     }
                     catch (DeviceAlreadyExistsException) when (forceUpdate) {
@@ -67,16 +67,16 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub.Clients {
                         // some reason it does not.
                         // Remove and re-add in case we are forcing updates.
                         //
-                        await _registry.RemoveConfigurationAsync(configuration.Id, ct);
+                        await _registry.RemoveConfigurationAsync(configuration.Id, ct).ConfigureAwait(false);
                         var added = await _registry.AddConfigurationAsync(
-                            configuration.ToConfiguration(), ct);
+                            configuration.ToConfiguration(), ct).ConfigureAwait(false);
                         return added.ToModel();
                     }
                 }
 
                 // Try update existing configuration
                 var result = await _registry.UpdateConfigurationAsync(
-                    configuration.ToConfiguration(), forceUpdate, ct);
+                    configuration.ToConfiguration(), forceUpdate, ct).ConfigureAwait(false);
                 return result.ToModel();
             }
             catch (Exception e) {
@@ -91,7 +91,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub.Clients {
             string configurationId, CancellationToken ct) {
             try {
                 var configuration = await _registry.GetConfigurationAsync(
-                    configurationId, ct);
+                    configurationId, ct).ConfigureAwait(false);
                 return configuration.ToModel();
             }
             catch (Exception e) {
@@ -105,7 +105,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub.Clients {
             int? maxCount, CancellationToken ct) {
             try {
                 var configurations = await _registry.GetConfigurationsAsync(
-                    maxCount ?? int.MaxValue, ct);
+                    maxCount ?? int.MaxValue, ct).ConfigureAwait(false);
                 return configurations.Select(c => c.ToModel());
             }
             catch (Exception e) {
@@ -119,11 +119,11 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub.Clients {
             string etag, CancellationToken ct) {
             try {
                 if (string.IsNullOrEmpty(etag)) {
-                    await _registry.RemoveConfigurationAsync(configurationId, ct);
+                    await _registry.RemoveConfigurationAsync(configurationId, ct).ConfigureAwait(false);
                 }
                 else {
                     await _registry.RemoveConfigurationAsync(
-                        new Configuration(configurationId) { ETag = etag }, ct);
+                        new Configuration(configurationId) { ETag = etag }, ct).ConfigureAwait(false);
                 }
             }
             catch (Exception e) {

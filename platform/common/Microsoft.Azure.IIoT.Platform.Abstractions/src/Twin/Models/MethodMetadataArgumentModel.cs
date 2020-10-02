@@ -6,6 +6,7 @@
 namespace Microsoft.Azure.IIoT.Platform.Twin.Models {
     using Microsoft.Azure.IIoT.Platform.Core.Models;
     using Microsoft.Azure.IIoT.Serializers;
+    using System.Collections.Generic;
 
     /// <summary>
     /// Method argument metadata model
@@ -40,6 +41,6 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Models {
         /// <summary>
         /// Optional Array dimension of argument
         /// </summary>
-        public uint[] ArrayDimensions { get; set; }
+        public IReadOnlyList<uint> ArrayDimensions { get; set; }
     }
 }

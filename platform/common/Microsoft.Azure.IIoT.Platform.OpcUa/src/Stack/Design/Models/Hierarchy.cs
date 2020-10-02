@@ -44,19 +44,19 @@ namespace Opc.Ua.Models {
         /// <summary>
         /// Nodes
         /// </summary>
-        public Dictionary<string, HierarchyNode> Nodes { get; set; } =
+        public Dictionary<string, HierarchyNode> Nodes { get; } =
             new Dictionary<string, HierarchyNode>();
 
         /// <summary>
         /// Node lsit
         /// </summary>
-        public List<HierarchyNode> NodeList { get; set; } =
+        public List<HierarchyNode> NodeList { get; } =
             new List<HierarchyNode>();
 
         /// <summary>
         /// References
         /// </summary>
-        public List<HierarchyReference> References { get; set; } =
+        public List<HierarchyReference> References { get; } =
             new List<HierarchyReference>();
     }
 }

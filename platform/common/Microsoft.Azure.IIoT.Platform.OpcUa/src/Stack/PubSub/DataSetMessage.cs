@@ -6,6 +6,7 @@
 namespace Opc.Ua.PubSub {
     using Opc.Ua.Encoders;
     using System;
+    using System.Collections.Generic;
 
     /// <summary>
     /// Data set message
@@ -50,7 +51,7 @@ namespace Opc.Ua.PubSub {
         /// <summary>
         /// Payload
         /// </summary>
-        public DataSet Payload { get; set; }
+        public DataSet Payload { get; internal set; }
 
         /// <inheritdoc/>
         public ExpandedNodeId TypeId => ExpandedNodeId.Null;
@@ -62,7 +63,28 @@ namespace Opc.Ua.PubSub {
         public ExpandedNodeId XmlEncodingId => ExpandedNodeId.Null;
 
         /// <inheritdoc/>
+        private DataSetMessage() {
+        }
+
+        /// <inheritdoc/>
+        public DataSetMessage(DataSet payload) {
+            Payload = payload;
+        }
+
+        /// <inheritdoc/>
+        public void AddOrUpdatePayload(string key, DataValue value) {
+            Payload.AddOrUpdate(key, value);
+        }
+        /// <inheritdoc/>
+        public void SetFieldContentMask(uint mask) {
+            Payload.FieldContentMask = mask;
+        }
+
+        /// <inheritdoc/>
         public void Decode(IDecoder decoder) {
+            if (decoder is null) {
+                throw new ArgumentNullException(nameof(decoder));
+            }
             switch (decoder.EncodingType) {
                 case EncodingType.Binary:
                     DecodeBinary(decoder);
@@ -79,6 +101,9 @@ namespace Opc.Ua.PubSub {
 
         /// <inheritdoc/>
         public void Encode(IEncoder encoder) {
+            if (encoder is null) {
+                throw new ArgumentNullException(nameof(encoder));
+            }
             ApplyEncodeMask();
             switch (encoder.EncodingType) {
                 case EncodingType.Binary:
@@ -166,7 +191,7 @@ namespace Opc.Ua.PubSub {
             if ((MessageContentMask & (uint)UadpDataSetMessageContentMask.SequenceNumber) != 0) {
                 encoder.WriteUInt32(nameof(UadpDataSetMessageContentMask.SequenceNumber), SequenceNumber);
             }
-            if ((MessageContentMask & (uint)UadpDataSetMessageContentMask.MajorVersion) != 0){ 
+            if ((MessageContentMask & (uint)UadpDataSetMessageContentMask.MajorVersion) != 0){
                 encoder.WriteUInt32(nameof(UadpDataSetMessageContentMask.MajorVersion), MetaDataVersion.MajorVersion);
             }
             if ((MessageContentMask & (uint)UadpDataSetMessageContentMask.MinorVersion) != 0) {
@@ -193,7 +218,6 @@ namespace Opc.Ua.PubSub {
             }
 
         }
-
         /// <inheritdoc/>
         private void EncodeJson(IEncoder encoder) {
             if ((MessageContentMask & (uint)JsonDataSetMessageContentMask.DataSetWriterId) != 0) {

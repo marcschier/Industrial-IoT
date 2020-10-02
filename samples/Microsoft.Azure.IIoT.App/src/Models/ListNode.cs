@@ -8,6 +8,7 @@ namespace Microsoft.Azure.IIoT.App.Models {
     using Microsoft.Azure.IIoT.Platform.Twin.Api.Models;
     using System;
     using System.Collections.Generic;
+    using System.Globalization;
 
     public class ListNode {
         public string Id { get; set; }
@@ -26,7 +27,7 @@ namespace Microsoft.Azure.IIoT.App.Models {
         public string Status { get; set; }
         public string Timestamp { get; set; }
         public string ErrorMessage { get; set; }
-        public List<string> ParentIdList { get; set; }
+        public List<string> ParentIdList { get; internal set; }
 
         public ListNode() {
             ParentIdList = new List<string>();
@@ -36,15 +37,19 @@ namespace Microsoft.Azure.IIoT.App.Models {
         public bool Publishing { get; set; }
 
         public bool TryUpdateData(ListNodeRequested input) {
+            if (input is null) {
+                throw new ArgumentNullException(nameof(input));
+            }
+
             try {
                 PublishedItem.PublishingInterval = string.IsNullOrWhiteSpace(input.RequestedPublishingInterval) ?
-                    TimeSpan.MinValue : TimeSpan.FromMilliseconds(Convert.ToDouble(input.RequestedPublishingInterval));
+                    TimeSpan.MinValue : TimeSpan.FromMilliseconds(Convert.ToDouble(input.RequestedPublishingInterval, CultureInfo.InvariantCulture));
 
                 PublishedItem.SamplingInterval = string.IsNullOrWhiteSpace(input.RequestedSamplingInterval) ?
-                    TimeSpan.MinValue : TimeSpan.FromMilliseconds(Convert.ToDouble(input.RequestedSamplingInterval));
+                    TimeSpan.MinValue : TimeSpan.FromMilliseconds(Convert.ToDouble(input.RequestedSamplingInterval, CultureInfo.InvariantCulture));
 
                 PublishedItem.HeartbeatInterval = string.IsNullOrWhiteSpace(input.RequestedHeartbeatInterval) ?
-                    TimeSpan.MinValue : TimeSpan.FromSeconds(Convert.ToDouble(input.RequestedHeartbeatInterval));
+                    TimeSpan.MinValue : TimeSpan.FromSeconds(Convert.ToDouble(input.RequestedHeartbeatInterval, CultureInfo.InvariantCulture));
 
                 return true;
             }

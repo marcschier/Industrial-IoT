@@ -56,11 +56,11 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Handler {
         public async Task OnCertificateRequestApprovedAsync(CertificateRequestModel request) {
             try {
                 if (request.Record.Type == CertificateRequestType.KeyPairRequest) {
-                    await CreateNewKeyPairAsync(request);
+                    await CreateNewKeyPairAsync(request).ConfigureAwait(false);
                 }
             }
             catch (Exception ex) {
-                await Try.Async(() => _workflow.FailRequestAsync(request.Record.RequestId, ex));
+                await Try.Async(() => _workflow.FailRequestAsync(request.Record.RequestId, ex)).ConfigureAwait(false);
             }
         }
 
@@ -85,12 +85,12 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Handler {
                     Type = KeyType.RSA, // TODO - should come from request
                     KeySize = 2048 // TODO - should come from request
                 },
-                sn => request.Entity.ToX509Extensions(), ct);
+                sn => request.Entity.ToX509Extensions(), ct).ConfigureAwait(false);
 
             await _workflow.CompleteRequestAsync(request.Record.RequestId, record => {
                 record.KeyHandle = _serializer.SerializeHandle(certKeyPair.KeyHandle);
                 record.Certificate = certKeyPair.ToServiceModel();
-            }, ct);
+            }, ct).ConfigureAwait(false);
         }
 
         private readonly IRequestWorkflow _workflow;

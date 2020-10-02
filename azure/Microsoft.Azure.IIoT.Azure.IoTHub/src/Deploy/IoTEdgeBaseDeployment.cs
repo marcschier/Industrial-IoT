@@ -56,8 +56,9 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub.Deploy {
         /// </summary>
         /// <param name="version"></param>
         /// <returns></returns>
-        private IDictionary<string, IDictionary<string, object>> GetEdgeBase(string version = "1.0.9") {
-            return _serializer.Deserialize<IDictionary<string, IDictionary<string, object>>>(@"
+        private IReadOnlyDictionary<string, IReadOnlyDictionary<string, object>> GetEdgeBase(
+            string version = "1.0.9") {
+            return _serializer.Deserialize<IReadOnlyDictionary<string, IReadOnlyDictionary<string, object>>>(@"
 {
     ""$edgeAgent"": {
         ""properties.desired"": {

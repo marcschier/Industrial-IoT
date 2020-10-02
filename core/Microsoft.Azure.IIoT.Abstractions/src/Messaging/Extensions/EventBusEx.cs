@@ -19,11 +19,14 @@ namespace Microsoft.Azure.IIoT.Messaging {
         /// <param name="type"></param>
         /// <returns></returns>
         public static string GetMoniker(this Type type) {
+            if (type is null) {
+                throw new ArgumentNullException(nameof(type));
+            }
             var name = type.FullName
-                .Replace("Microsoft.Azure.IIoT.", "")
-                .Replace(".", "-")
-                .ToLowerInvariant()
-                .Replace("model", "");
+                .Replace("Microsoft.Azure.IIoT.", "", StringComparison.InvariantCultureIgnoreCase)
+                .Replace(".", "-", StringComparison.InvariantCultureIgnoreCase)
+                .Replace("Model", "", StringComparison.InvariantCultureIgnoreCase)
+                .ToUpperInvariant();
             if (name.Length >= 50) {
                 name = name.Substring(0, 50);
             }
@@ -39,6 +42,9 @@ namespace Microsoft.Azure.IIoT.Messaging {
         /// <returns></returns>
         public static Task<string> RegisterAsync<T>(this IEventBus bus,
             Func<T, Task> handler) {
+            if (bus is null) {
+                throw new ArgumentNullException(nameof(bus));
+            }
             if (handler == null) {
                 throw new ArgumentNullException(nameof(handler));
             }

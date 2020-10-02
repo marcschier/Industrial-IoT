@@ -64,7 +64,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Models {
         /// </summary>
         [DataMember(Name = "localizedNames", Order = 6,
             EmitDefaultValue = false)]
-        public Dictionary<string, string> LocalizedNames { get; set; }
+        public IReadOnlyDictionary<string, string> LocalizedNames { get; set; }
 
         /// <summary>
         /// The OPC UA defined capabilities of the server.
@@ -73,14 +73,14 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Models {
         /// <example>DA</example>
         [DataMember(Name = "capabilities", Order = 7,
             EmitDefaultValue = false)]
-        public HashSet<string> Capabilities { get; set; }
+        public /*IReadOnlySet*/ IReadOnlyCollection<string> Capabilities { get; set; }
 
         /// <summary>
         /// Discovery urls of the server.
         /// </summary>
         [DataMember(Name = "discoveryUrls", Order = 8,
             EmitDefaultValue = false)]
-        public HashSet<string> DiscoveryUrls { get; set; }
+        public /*IReadOnlySet*/ IReadOnlyCollection<string> DiscoveryUrls { get; set; }
 
         /// <summary>
         /// The discovery profile uri of the server.

@@ -15,32 +15,19 @@ namespace Microsoft.Azure.IIoT.App.Pages {
 
         public PublisherInfo Publisher { get; set; }
 
-        protected override async Task GetItems(bool getNextPage) {
-            Items = await RegistryHelper.GetPublisherListAsync(Items, getNextPage);
+        protected override async Task LoadPageContentAsync(bool getNextPage) {
+            Items = await RegistryHelper.GetPublisherListAsync(Items, getNextPage).ConfigureAwait(false);
         }
 
-        protected override async Task SubscribeEvents() {
+        protected override async Task SubscribeContentEventsAsync() {
             _events = await RegistryServiceEvents.SubscribePublisherEventsAsync(
-                    ev => InvokeAsync(() => PublisherEvent(ev)));
+                    ev => InvokeAsync(() => PublisherEvent(ev))).ConfigureAwait(false);
         }
 
         private Task PublisherEvent(PublisherEventApiModel ev) {
             Items.Results.Update(ev);
             StateHasChanged();
             return Task.CompletedTask;
-        }
-
-        private bool IsTimeIntervalSet(TimeSpan? interval) {
-            return interval != null && interval.Value != TimeSpan.MinValue;
-        }
-
-        /// <summary>
-        /// Open then Drawer
-        /// </summary>
-        /// <param name="OpenDrawer"></param>
-        private void OpenDrawer(PublisherApiModel publisherModel) {
-            IsOpen = true;
-            Publisher = new PublisherInfo { PublisherModel = publisherModel };
         }
     }
 }

@@ -19,7 +19,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
     using Microsoft.Azure.IIoT.Platform.Vault.Api;
     using Microsoft.Azure.IIoT.Platform.Vault.Api.Clients;
     using Microsoft.Azure.IIoT.Platform.Vault.Api.Models;
-    using Microsoft.Azure.IIoT.Http.Default;
+    using Microsoft.Azure.IIoT.Http.Clients;
     using Microsoft.Azure.IIoT.Http.SignalR;
     using Microsoft.Azure.IIoT.Utils;
     using Microsoft.Azure.IIoT.Authentication.Runtime;
@@ -37,7 +37,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
     /// <summary>
     /// Api command line interface
     /// </summary>
-    public class Program : IDisposable {
+    public sealed class Program : IDisposable {
 
         /// <summary>
         /// Configure Dependency injection
@@ -127,7 +127,9 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
             _publisher = _scope.Resolve<IPublisherServiceApi>();
             _vault = _scope.Resolve<IVaultServiceApi>();
             _serializer = _scope.Resolve<IJsonSerializer>();
+#pragma warning disable CA2000 // Dispose objects before losing scope
             if (_scope.TryResolve(out _metrics)) {
+#pragma warning restore CA2000 // Dispose objects before losing scope
                 _metrics.Start();
             }
         }
@@ -142,6 +144,10 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
         /// Run client
         /// </summary>
         public async Task RunAsync(string[] args) {
+            if (args is null) {
+                throw new ArgumentNullException(nameof(args));
+            }
+
             var interactive = false;
             do {
                 if (interactive) {
@@ -154,7 +160,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
                     }
 
                     CliOptions options;
-                    var command = args[0].ToLowerInvariant();
+                    var command = args[0];
                     switch (command) {
                         case "exit":
                             interactive = false;
@@ -171,57 +177,57 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
                             break;
                         case "status":
                             options = new CliOptions(args);
-                            await GetStatusAsync(options);
+                            await GetStatusAsync().ConfigureAwait(false);
                             break;
                         case "monitor":
                             options = new CliOptions(args);
-                            await MonitorAllAsync();
+                            await MonitorAllAsync().ConfigureAwait(false);
                             break;
                         case "apps":
                             if (args.Length < 2) {
                                 throw new ArgumentException("Need a command!");
                             }
-                            command = args[1].ToLowerInvariant();
+                            command = args[1];
                             options = new CliOptions(args, 2);
                             switch (command) {
                                 case "sites":
-                                    await ListSitesAsync(options);
+                                    await ListSitesAsync(options).ConfigureAwait(false);
                                     break;
                                 case "register":
-                                    await RegisterApplicationAsync(options);
+                                    await RegisterApplicationAsync(options).ConfigureAwait(false);
                                     break;
                                 case "add":
-                                    await RegisterServerAsync(options);
+                                    await RegisterServerAsync(options).ConfigureAwait(false);
                                     break;
                                 case "discover":
-                                    await DiscoverServersAsync(options);
+                                    await DiscoverServersAsync(options).ConfigureAwait(false);
                                     break;
                                 case "cancel":
-                                    await CancelDiscoveryAsync(options);
+                                    await CancelDiscoveryAsync(options).ConfigureAwait(false);
                                     break;
                                 case "update":
-                                    await UpdateApplicationAsync(options);
+                                    await UpdateApplicationAsync(options).ConfigureAwait(false);
                                     break;
                                 case "unregister":
-                                    await UnregisterApplicationAsync(options);
+                                    await UnregisterApplicationAsync(options).ConfigureAwait(false);
                                     break;
                                 case "purge":
-                                    await PurgeDisabledApplicationsAsync(options);
+                                    await PurgeDisabledApplicationsAsync(options).ConfigureAwait(false);
                                     break;
                                 case "list":
-                                    await ListApplicationsAsync(options);
+                                    await ListApplicationsAsync(options).ConfigureAwait(false);
                                     break;
                                 case "monitor":
-                                    await MonitorApplicationsAsync();
+                                    await MonitorApplicationsAsync().ConfigureAwait(false);
                                     break;
                                 case "select":
-                                    await SelectApplicationAsync(options);
+                                    await SelectApplicationAsync(options).ConfigureAwait(false);
                                     break;
                                 case "query":
-                                    await QueryApplicationsAsync(options);
+                                    await QueryApplicationsAsync(options).ConfigureAwait(false);
                                     break;
                                 case "get":
-                                    await GetApplicationAsync(options);
+                                    await GetApplicationAsync(options).ConfigureAwait(false);
                                     break;
                                 case "-?":
                                 case "-h":
@@ -237,32 +243,32 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
                             if (args.Length < 2) {
                                 throw new ArgumentException("Need a command!");
                             }
-                            command = args[1].ToLowerInvariant();
+                            command = args[1];
                             options = new CliOptions(args, 2);
                             switch (command) {
                                 case "get":
-                                    await GetEndpointAsync(options);
+                                    await GetEndpointAsync(options).ConfigureAwait(false);
                                     break;
                                 case "list":
-                                    await ListEndpointsAsync(options);
+                                    await ListEndpointsAsync(options).ConfigureAwait(false);
                                     break;
                                 case "monitor":
-                                    await MonitorEndpointsAsync();
+                                    await MonitorEndpointsAsync().ConfigureAwait(false);
                                     break;
                                 case "select":
-                                    await SelectEndpointsAsync(options);
+                                    await SelectEndpointsAsync(options).ConfigureAwait(false);
                                     break;
                                 case "query":
-                                    await QueryEndpointsAsync(options);
+                                    await QueryEndpointsAsync(options).ConfigureAwait(false);
                                     break;
                                 case "validate":
-                                    await GetEndpointCertificateAsync(options);
+                                    await GetEndpointCertificateAsync(options).ConfigureAwait(false);
                                     break;
                                 case "activate":
-                                    await ActivateEndpointsAsync(options);
+                                    await ActivateEndpointsAsync(options).ConfigureAwait(false);
                                     break;
                                 case "deactivate":
-                                    await DeactivateEndpointsAsync(options);
+                                    await DeactivateEndpointsAsync(options).ConfigureAwait(false);
                                     break;
                                 case "-?":
                                 case "-h":
@@ -279,32 +285,32 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
                             if (args.Length < 2) {
                                 throw new ArgumentException("Need a command!");
                             }
-                            command = args[1].ToLowerInvariant();
+                            command = args[1];
                             options = new CliOptions(args, 2);
                             switch (command) {
                                 case "create":
-                                    await AddWriterGroupAsync(options);
+                                    await AddWriterGroupAsync(options).ConfigureAwait(false);
                                     break;
                                 case "update":
-                                    await UpdateWriterGroupAsync(options);
+                                    await UpdateWriterGroupAsync(options).ConfigureAwait(false);
                                     break;
                                 case "delete":
-                                    await DeleteWriterGroupAsync(options);
+                                    await DeleteWriterGroupAsync(options).ConfigureAwait(false);
                                     break;
                                 case "list":
-                                    await ListWriterGroupsAsync(options);
+                                    await ListWriterGroupsAsync(options).ConfigureAwait(false);
                                     break;
                                 case "query":
-                                    await QueryWriterGroupsAsync(options);
+                                    await QueryWriterGroupsAsync(options).ConfigureAwait(false);
                                     break;
                                 case "monitor":
-                                    await MonitorWriterGroupsAsync();
+                                    await MonitorWriterGroupsAsync().ConfigureAwait(false);
                                     break;
                                 case "select":
-                                    await SelectWriterGroupAsync(options);
+                                    await SelectWriterGroupAsync(options).ConfigureAwait(false);
                                     break;
                                 case "get":
-                                    await GetWriterGroupAsync(options);
+                                    await GetWriterGroupAsync(options).ConfigureAwait(false);
                                     break;
                                 case "-?":
                                 case "-h":
@@ -321,32 +327,32 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
                             if (args.Length < 2) {
                                 throw new ArgumentException("Need a command!");
                             }
-                            command = args[1].ToLowerInvariant();
+                            command = args[1];
                             options = new CliOptions(args, 2);
                             switch (command) {
                                 case "create":
-                                    await AddDataSetWriterAsync(options);
+                                    await AddDataSetWriterAsync(options).ConfigureAwait(false);
                                     break;
                                 case "update":
-                                    await UpdateDataSetWriterAsync(options);
+                                    await UpdateDataSetWriterAsync(options).ConfigureAwait(false);
                                     break;
                                 case "delete":
-                                    await RemoveDataSetWriterAsync(options);
+                                    await RemoveDataSetWriterAsync(options).ConfigureAwait(false);
                                     break;
                                 case "list":
-                                    await ListDataSetWritersAsync(options);
+                                    await ListDataSetWritersAsync(options).ConfigureAwait(false);
                                     break;
                                 case "query":
-                                    await QueryDataSetWritersAsync(options);
+                                    await QueryDataSetWritersAsync(options).ConfigureAwait(false);
                                     break;
                                 case "monitor":
-                                    await MonitorDataSetWritersAsync();
+                                    await MonitorDataSetWritersAsync().ConfigureAwait(false);
                                     break;
                                 case "select":
-                                    await SelectDataSetWriterAsync(options);
+                                    await SelectDataSetWriterAsync(options).ConfigureAwait(false);
                                     break;
                                 case "get":
-                                    await GetDataSetWriterAsync(options);
+                                    await GetDataSetWriterAsync(options).ConfigureAwait(false);
                                     break;
                                 case "-?":
                                 case "-h":
@@ -362,26 +368,26 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
                             if (args.Length < 2) {
                                 throw new ArgumentException("Need a command!");
                             }
-                            command = args[1].ToLowerInvariant();
+                            command = args[1];
                             options = new CliOptions(args, 2);
                             switch (command) {
                                 case "add":
-                                    await AddDataSetVariableAsync(options);
+                                    await AddDataSetVariableAsync(options).ConfigureAwait(false);
                                     break;
                                 case "get":
-                                    await ListDataSetVariablesAsync(options);
+                                    await ListDataSetVariablesAsync(options).ConfigureAwait(false);
                                     break;
                                 case "update":
-                                    await UpdateDataSetVariableAsync(options);
+                                    await UpdateDataSetVariableAsync(options).ConfigureAwait(false);
                                     break;
                                 case "remove":
-                                    await RemoveDataSetVariableAsync(options);
+                                    await RemoveDataSetVariableAsync(options).ConfigureAwait(false);
                                     break;
                                 case "delete":
-                                    await RemoveDataSetWriterAsync(options);
+                                    await RemoveDataSetWriterAsync(options).ConfigureAwait(false);
                                     break;
                                 case "query":
-                                    await QueryDataSetVariablesAsync(options);
+                                    await QueryDataSetVariablesAsync(options).ConfigureAwait(false);
                                     break;
                                 case "-?":
                                 case "-h":
@@ -397,20 +403,20 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
                             if (args.Length < 2) {
                                 throw new ArgumentException("Need a command!");
                             }
-                            command = args[1].ToLowerInvariant();
+                            command = args[1];
                             options = new CliOptions(args, 2);
                             switch (command) {
                                 case "add":
-                                    await AddEventDataSetAsync(options);
+                                    await AddEventDataSetAsync(options).ConfigureAwait(false);
                                     break;
                                 case "get":
-                                    await GetEventDataSetAsync(options);
+                                    await GetEventDataSetAsync(options).ConfigureAwait(false);
                                     break;
                                 case "update":
-                                    await UpdateEventDataSetAsync(options);
+                                    await UpdateEventDataSetAsync(options).ConfigureAwait(false);
                                     break;
                                 case "remove":
-                                    await RemoveEventDataSetAsync(options);
+                                    await RemoveEventDataSetAsync(options).ConfigureAwait(false);
                                     break;
                                 case "-?":
                                 case "-h":
@@ -426,32 +432,32 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
                             if (args.Length < 2) {
                                 throw new ArgumentException("Need a command!");
                             }
-                            command = args[1].ToLowerInvariant();
+                            command = args[1];
                             options = new CliOptions(args, 2);
                             switch (command) {
                                 case "root":
-                                    await CreateRootCertificateAsync(options);
+                                    await CreateRootCertificateAsync(options).ConfigureAwait(false);
                                     break;
                                 case "child":
-                                    await CreateCertificateGroupAsync(options);
+                                    await CreateCertificateGroupAsync(options).ConfigureAwait(false);
                                     break;
                                 case "update":
-                                    await UpdateCertificateGroupAsync(options);
+                                    await UpdateCertificateGroupAsync(options).ConfigureAwait(false);
                                     break;
                                 case "delete":
-                                    await DeleteCertificateGroupAsync(options);
+                                    await DeleteCertificateGroupAsync(options).ConfigureAwait(false);
                                     break;
                                 case "list":
-                                    await ListCertificateGroupsAsync(options);
+                                    await ListCertificateGroupsAsync(options).ConfigureAwait(false);
                                     break;
                                 case "select":
-                                    await SelectCertificateGroupAsync(options);
+                                    await SelectCertificateGroupAsync(options).ConfigureAwait(false);
                                     break;
                                 case "get":
-                                    await GetCertificateGroupAsync(options);
+                                    await GetCertificateGroupAsync(options).ConfigureAwait(false);
                                     break;
                                 case "renew":
-                                    await RenewIssuerCertAsync(options);
+                                    await RenewIssuerCertAsync(options).ConfigureAwait(false);
                                     break;
                                 case "-?":
                                 case "-h":
@@ -467,38 +473,38 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
                             if (args.Length < 2) {
                                 throw new ArgumentException("Need a command!");
                             }
-                            command = args[1].ToLowerInvariant();
+                            command = args[1];
                             options = new CliOptions(args, 2);
                             switch (command) {
                                 case "sign":
-                                    await SigningRequestAsync(options);
+                                    await SigningRequestAsync(options).ConfigureAwait(false);
                                     break;
                                 case "keypair":
-                                    await KeyPairRequestAsync(options);
+                                    await KeyPairRequestAsync(options).ConfigureAwait(false);
                                     break;
                                 case "approve":
-                                    await ApproveRequestAsync(options);
+                                    await ApproveRequestAsync(options).ConfigureAwait(false);
                                     break;
                                 case "reject":
-                                    await RejectRequestAsync(options);
+                                    await RejectRequestAsync(options).ConfigureAwait(false);
                                     break;
                                 case "accept":
-                                    await AcceptRequestAsync(options);
+                                    await AcceptRequestAsync(options).ConfigureAwait(false);
                                     break;
                                 case "delete":
-                                    await DeleteRequestAsync(options);
+                                    await DeleteRequestAsync(options).ConfigureAwait(false);
                                     break;
                                 case "list":
-                                    await ListRequestsAsync(options);
+                                    await ListRequestsAsync(options).ConfigureAwait(false);
                                     break;
                                 case "select":
-                                    await SelectRequestAsync(options);
+                                    await SelectRequestAsync(options).ConfigureAwait(false);
                                     break;
                                 case "get":
-                                    await GetRequestAsync(options);
+                                    await GetRequestAsync(options).ConfigureAwait(false);
                                     break;
                                 case "query":
-                                    await QueryRequestsAsync(options);
+                                    await QueryRequestsAsync(options).ConfigureAwait(false);
                                     break;
                                 case "-?":
                                 case "-h":
@@ -514,17 +520,17 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
                             if (args.Length < 2) {
                                 throw new ArgumentException("Need a command!");
                             }
-                            command = args[1].ToLowerInvariant();
+                            command = args[1];
                             options = new CliOptions(args, 2);
                             switch (command) {
                                 case "create":
-                                    await AddTrustRelationshipAsync(options);
+                                    await AddTrustRelationshipAsync(options).ConfigureAwait(false);
                                     break;
                                 case "get":
-                                    await GetTrustedCertificatesAsync(options);
+                                    await GetTrustedCertificatesAsync(options).ConfigureAwait(false);
                                     break;
                                 case "delete":
-                                    await RemoveTrustRelationshipAsync(options);
+                                    await RemoveTrustRelationshipAsync(options).ConfigureAwait(false);
                                     break;
                                 case "-?":
                                 case "-h":
@@ -540,29 +546,29 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
                             if (args.Length < 2) {
                                 throw new ArgumentException("Need a command!");
                             }
-                            command = args[1].ToLowerInvariant();
+                            command = args[1];
                             options = new CliOptions(args, 2);
                             switch (command) {
                                 case "get":
-                                    await GetDiscovererAsync(options);
+                                    await GetDiscovererAsync(options).ConfigureAwait(false);
                                     break;
                                 case "update":
-                                    await UpdateDiscovererAsync(options);
+                                    await UpdateDiscovererAsync(options).ConfigureAwait(false);
                                     break;
                                 case "scan":
-                                    await DiscovererScanAsync(options);
+                                    await DiscovererScanAsync(options).ConfigureAwait(false);
                                     break;
                                 case "monitor":
-                                    await MonitorDiscoverersAsync(options);
+                                    await MonitorDiscoverersAsync(options).ConfigureAwait(false);
                                     break;
                                 case "list":
-                                    await ListDiscoverersAsync(options);
+                                    await ListDiscoverersAsync(options).ConfigureAwait(false);
                                     break;
                                 case "select":
-                                    await SelectDiscovererAsync(options);
+                                    await SelectDiscovererAsync(options).ConfigureAwait(false);
                                     break;
                                 case "query":
-                                    await QueryDiscoverersAsync(options);
+                                    await QueryDiscoverersAsync(options).ConfigureAwait(false);
                                     break;
                                 case "-?":
                                 case "-h":
@@ -578,32 +584,32 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
                             if (args.Length < 2) {
                                 throw new ArgumentException("Need a command!");
                             }
-                            command = args[1].ToLowerInvariant();
+                            command = args[1];
                             options = new CliOptions(args, 2);
                             switch (command) {
                                 case "get":
-                                    await GetSupervisorAsync(options);
+                                    await GetSupervisorAsync(options).ConfigureAwait(false);
                                     break;
                                 case "status":
-                                    await GetSupervisorStatusAsync(options);
+                                    await GetSupervisorStatusAsync(options).ConfigureAwait(false);
                                     break;
                                 case "update":
-                                    await UpdateSupervisorAsync(options);
+                                    await UpdateSupervisorAsync(options).ConfigureAwait(false);
                                     break;
                                 case "monitor":
-                                    await MonitorSupervisorsAsync();
+                                    await MonitorSupervisorsAsync().ConfigureAwait(false);
                                     break;
                                 case "reset":
-                                    await ResetSupervisorAsync(options);
+                                    await ResetSupervisorAsync(options).ConfigureAwait(false);
                                     break;
                                 case "list":
-                                    await ListSupervisorsAsync(options);
+                                    await ListSupervisorsAsync(options).ConfigureAwait(false);
                                     break;
                                 case "select":
-                                    await SelectSupervisorAsync(options);
+                                    await SelectSupervisorAsync(options).ConfigureAwait(false);
                                     break;
                                 case "query":
-                                    await QuerySupervisorsAsync(options);
+                                    await QuerySupervisorsAsync(options).ConfigureAwait(false);
                                     break;
                                 case "-?":
                                 case "-h":
@@ -619,26 +625,26 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
                             if (args.Length < 2) {
                                 throw new ArgumentException("Need a command!");
                             }
-                            command = args[1].ToLowerInvariant();
+                            command = args[1];
                             options = new CliOptions(args, 2);
                             switch (command) {
                                 case "get":
-                                    await GetPublisherAsync(options);
+                                    await GetPublisherAsync(options).ConfigureAwait(false);
                                     break;
                                 case "update":
-                                    await UpdatePublisherAsync(options);
+                                    await UpdatePublisherAsync(options).ConfigureAwait(false);
                                     break;
                                 case "monitor":
-                                    await MonitorPublishersAsync();
+                                    await MonitorPublishersAsync().ConfigureAwait(false);
                                     break;
                                 case "list":
-                                    await ListPublishersAsync(options);
+                                    await ListPublishersAsync(options).ConfigureAwait(false);
                                     break;
                                 case "select":
-                                    await SelectPublisherAsync(options);
+                                    await SelectPublisherAsync(options).ConfigureAwait(false);
                                     break;
                                 case "query":
-                                    await QueryPublishersAsync(options);
+                                    await QueryPublishersAsync(options).ConfigureAwait(false);
                                     break;
                                 case "-?":
                                 case "-h":
@@ -654,26 +660,26 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
                             if (args.Length < 2) {
                                 throw new ArgumentException("Need a command!");
                             }
-                            command = args[1].ToLowerInvariant();
+                            command = args[1];
                             options = new CliOptions(args, 2);
                             switch (command) {
                                 case "get":
-                                    await GetGatewayAsync(options);
+                                    await GetGatewayAsync(options).ConfigureAwait(false);
                                     break;
                                 case "update":
-                                    await UpdateGatewayAsync(options);
+                                    await UpdateGatewayAsync(options).ConfigureAwait(false);
                                     break;
                                 case "monitor":
-                                    await MonitorGatewaysAsync();
+                                    await MonitorGatewaysAsync().ConfigureAwait(false);
                                     break;
                                 case "list":
-                                    await ListGatewaysAsync(options);
+                                    await ListGatewaysAsync(options).ConfigureAwait(false);
                                     break;
                                 case "select":
-                                    await SelectGatewayAsync(options);
+                                    await SelectGatewayAsync(options).ConfigureAwait(false);
                                     break;
                                 case "query":
-                                    await QueryGatewaysAsync(options);
+                                    await QueryGatewaysAsync(options).ConfigureAwait(false);
                                     break;
                                 case "-?":
                                 case "-h":
@@ -689,38 +695,38 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
                             if (args.Length < 2) {
                                 throw new ArgumentException("Need a command!");
                             }
-                            command = args[1].ToLowerInvariant();
+                            command = args[1];
                             options = new CliOptions(args, 2);
                             switch (command) {
                                 case "browse":
-                                    await BrowseAsync(options);
+                                    await BrowseAsync(options).ConfigureAwait(false);
                                     break;
                                 case "select":
-                                    await SelectNodeAsync(options);
+                                    await SelectNodeAsync(options).ConfigureAwait(false);
                                     break;
                                 case "publish":
-                                    await PublishAsync(options);
+                                    await PublishAsync(options).ConfigureAwait(false);
                                     break;
                                 case "monitor":
-                                    await MonitorSamplesAsync(options);
+                                    await MonitorSamplesAsync(options).ConfigureAwait(false);
                                     break;
                                 case "unpublish":
-                                    await UnpublishAsync(options);
+                                    await UnpublishAsync(options).ConfigureAwait(false);
                                     break;
                                 case "list":
-                                    await ListPublishedNodesAsync(options);
+                                    await ListPublishedNodesAsync(options).ConfigureAwait(false);
                                     break;
                                 case "read":
-                                    await ReadAsync(options);
+                                    await ReadAsync(options).ConfigureAwait(false);
                                     break;
                                 case "write":
-                                    await WriteAsync(options);
+                                    await WriteAsync(options).ConfigureAwait(false);
                                     break;
                                 case "metadata":
-                                    await MethodMetadataAsync(options);
+                                    await MethodMetadataAsync(options).ConfigureAwait(false);
                                     break;
                                 case "call":
-                                    await MethodCallAsync(options);
+                                    await MethodCallAsync(options).ConfigureAwait(false);
                                     break;
                                 case "-?":
                                 case "-h":
@@ -801,7 +807,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
                         var results = await _twin.NodeBrowseAsync(id, new BrowseRequestApiModel {
                             TargetNodesOnly = true,
                             NodeId = _nodeId
-                        });
+                        }).ConfigureAwait(false);
                         var node = ConsoleEx.Select(results.References.Select(r => r.Target),
                             n => n.BrowseName);
                         if (node != null) {
@@ -829,7 +835,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
                     ObjectId = options.GetValue<string>("-o", "--objectid")
 
                     // ...
-                });
+                }).ConfigureAwait(false);
             PrintResult(options, result);
         }
 
@@ -841,7 +847,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
                 GetEndpointId(options),
                 new MethodMetadataRequestApiModel {
                     MethodId = GetNodeId(options)
-                });
+                }).ConfigureAwait(false);
             PrintResult(options, result);
         }
 
@@ -855,7 +861,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
                     NodeId = GetNodeId(options),
                     DataType = options.GetValueOrDefault<string>("-t", "--datatype", null),
                     Value = _serializer.FromObject(options.GetValue<string>("-v", "--value"))
-                });
+                }).ConfigureAwait(false);
             PrintResult(options, result);
         }
 
@@ -867,7 +873,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
                 GetEndpointId(options),
                 new ValueReadRequestApiModel {
                     NodeId = GetNodeId(options)
-                });
+                }).ConfigureAwait(false);
             PrintResult(options, result);
         }
 
@@ -899,7 +905,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
                 try {
                     var result = await (all ?
                         _twin.NodeBrowseAsync(id, request) :
-                        _twin.NodeBrowseFirstAsync(id, request));
+                        _twin.NodeBrowseFirstAsync(id, request)).ConfigureAwait(false);
                     visited.Add(request.NodeId);
                     if (!silent) {
                         PrintResult(options, result);
@@ -931,7 +937,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
                                 var read = await _twin.NodeValueReadAsync(id,
                                     new ValueReadRequestApiModel {
                                         NodeId = r.Target.NodeId
-                                    });
+                                    }).ConfigureAwait(false);
                                 if (!silent) {
                                     PrintResult(options, read);
                                 }
@@ -965,7 +971,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
                         SamplingInterval = TimeSpan.FromMilliseconds(1000),
                         PublishingInterval = TimeSpan.FromMilliseconds(1000)
                     }
-                });
+                }).ConfigureAwait(false);
             if (result.ErrorInfo != null) {
                 PrintResult(options, result);
             }
@@ -980,7 +986,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
             Console.WriteLine("Press any key to stop.");
 
             var finish = await events.NodePublishSubscribeByEndpointAsync(
-                endpointId, PrintSample);
+                endpointId, PrintSample).ConfigureAwait(false);
             try {
                 Console.ReadKey();
             }
@@ -997,7 +1003,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
                 GetEndpointId(options),
                 new PublishStopRequestApiModel {
                     NodeId = GetNodeId(options)
-                });
+                }).ConfigureAwait(false);
             if (result.ErrorInfo != null) {
                 PrintResult(options, result);
             }
@@ -1008,13 +1014,13 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
         /// </summary>
         private async Task ListPublishedNodesAsync(CliOptions options) {
             if (options.IsSet("-A", "--all")) {
-                var result = await _twin.NodePublishListAllAsync(GetEndpointId(options));
+                var result = await _twin.NodePublishListAllAsync(GetEndpointId(options)).ConfigureAwait(false);
                 PrintResult(options, result);
                 Console.WriteLine($"{result.Count()} item(s) found...");
             }
             else {
                 var result = await _twin.NodePublishListAsync(GetEndpointId(options),
-                    options.GetValueOrDefault<string>("-C", "--continuation", null));
+                    options.GetValueOrDefault<string>("-C", "--continuation", null)).ConfigureAwait(false);
                 PrintResult(options, result);
             }
         }
@@ -1056,7 +1062,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
             else {
                 var dataSetWriterId = options.GetValueOrDefault<string>("-i", "--id", null);
                 if (string.IsNullOrEmpty(dataSetWriterId)) {
-                    var result = await _publisher.ListAllDataSetWritersAsync();
+                    var result = await _publisher.ListAllDataSetWritersAsync().ConfigureAwait(false);
                     dataSetWriterId = ConsoleEx.Select(result.Select(a => a.DataSetWriterId));
                     if (string.IsNullOrEmpty(dataSetWriterId)) {
                         Console.WriteLine("Nothing selected - writer selection cleared.");
@@ -1082,7 +1088,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
                // ExtensionFields = null,
                 MessageSettings = BuildDataSetWriterMessageSettings(options),
                 SubscriptionSettings = BuildDataSetWriterSubscriptionSettings(options)
-            });
+            }).ConfigureAwait(false);
             PrintResult(options, result);
         }
 
@@ -1091,7 +1097,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
         /// dataset members if there are any.
         /// </summary>
         private async Task GetDataSetWriterAsync(CliOptions options) {
-            var result = await _publisher.GetDataSetWriterAsync(GetDataSetWriterId(options));
+            var result = await _publisher.GetDataSetWriterAsync(GetDataSetWriterId(options)).ConfigureAwait(false);
             PrintResult(options, result);
         }
 
@@ -1113,7 +1119,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
                     // ExtensionFields = null,
                     MessageSettings = BuildDataSetWriterMessageSettings(options),
                     SubscriptionSettings = BuildDataSetWriterSubscriptionSettings(options)
-                });
+                }).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -1121,14 +1127,14 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
         /// </summary>
         private async Task ListDataSetWritersAsync(CliOptions options) {
             if (options.IsSet("-A", "--all")) {
-                var result = await _publisher.ListAllDataSetWritersAsync();
+                var result = await _publisher.ListAllDataSetWritersAsync().ConfigureAwait(false);
                 PrintResult(options, result);
                 Console.WriteLine($"{result.Count()} item(s) found...");
             }
             else {
                 var result = await _publisher.ListDataSetWritersAsync(
                     options.GetValueOrDefault<string>("-C", "--continuation", null),
-                    options.GetValueOrDefault<int>("-P", "--page-size", null));
+                    options.GetValueOrDefault<int>("-P", "--page-size", null)).ConfigureAwait(false);
                 PrintResult(options, result);
             }
         }
@@ -1143,13 +1149,13 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
                 WriterGroupId = options.GetValueOrDefault<string>("-g", "--group", null)
             };
             if (options.IsSet("-A", "--all")) {
-                var result = await _publisher.QueryAllDataSetWritersAsync(query);
+                var result = await _publisher.QueryAllDataSetWritersAsync(query).ConfigureAwait(false);
                 PrintResult(options, result);
                 Console.WriteLine($"{result.Count()} item(s) found...");
             }
             else {
                 var result = await _publisher.QueryDataSetWritersAsync(query,
-                    options.GetValueOrDefault<int>("-P", "--page-size", null));
+                    options.GetValueOrDefault<int>("-P", "--page-size", null)).ConfigureAwait(false);
                 PrintResult(options, result);
             }
         }
@@ -1159,7 +1165,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
         /// </summary>
         private async Task RemoveDataSetWriterAsync(CliOptions options) {
             await _publisher.RemoveDataSetWriterAsync(GetDataSetWriterId(options),
-                options.GetValue<string>("-g", "--genid"));
+                options.GetValue<string>("-g", "--genid")).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -1168,7 +1174,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
         private async Task MonitorDataSetWritersAsync() {
             var events = _scope.Resolve<IPublisherServiceEvents>();
             Console.WriteLine("Press any key to stop.");
-            var complete = await events.SubscribeDataSetWriterEventsAsync(PrintEvent);
+            var complete = await events.SubscribeDataSetWriterEventsAsync(PrintEvent).ConfigureAwait(false);
             try {
                 Console.ReadKey();
             }
@@ -1191,7 +1197,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
                     TriggerId = options.GetValueOrDefault<string>("-t", "--triggerid", null),
                     Filter = null, // TODO
                     SelectedFields = null // TODO
-                });
+                }).ConfigureAwait(false);
             PrintResult(options, result);
         }
 
@@ -1199,7 +1205,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
         /// Read full event set if any.
         /// </summary>
         private async Task GetEventDataSetAsync(CliOptions options) {
-            var result = await _publisher.GetEventDataSetAsync(GetDataSetWriterId(options));
+            var result = await _publisher.GetEventDataSetAsync(GetDataSetWriterId(options)).ConfigureAwait(false);
             PrintResult(options, result);
         }
 
@@ -1216,7 +1222,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
                     TriggerId = options.GetValueOrDefault<string>("-t", "--triggerid", null),
                     Filter = null, // TODO
                     SelectedFields = null // TODO
-                });
+                }).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -1224,7 +1230,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
         /// </summary>
         private async Task RemoveEventDataSetAsync(CliOptions options) {
             await _publisher.RemoveEventDataSetAsync(GetDataSetWriterId(options),
-                options.GetValue<string>("-g", "--genid"));
+                options.GetValue<string>("-g", "--genid")).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -1250,7 +1256,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
                   //  SubstituteValue = null // TODO
                     MonitoringMode = options.GetValueOrDefault<MonitoringMode?>("-m", "--mode", null),
                     TriggerId = options.GetValueOrDefault<string>("-t", "--triggerid", null),
-                });
+                }).ConfigureAwait(false);
             PrintResult(options, result);
         }
 
@@ -1274,7 +1280,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
                     //  SubstituteValue = null // TODO
                     MonitoringMode = options.GetValueOrDefault<MonitoringMode?>("-m", "--mode", null),
                     TriggerId = options.GetValueOrDefault<string>("-t", "--triggerid", null),
-                });
+                }).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -1282,14 +1288,14 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
         /// </summary>
         private async Task ListDataSetVariablesAsync(CliOptions options) {
             if (options.IsSet("-A", "--all")) {
-                var result = await _publisher.ListAllDataSetVariablesAsync(GetDataSetWriterId(options));
+                var result = await _publisher.ListAllDataSetVariablesAsync(GetDataSetWriterId(options)).ConfigureAwait(false);
                 PrintResult(options, result);
                 Console.WriteLine($"{result.Count()} item(s) found...");
             }
             else {
                 var result = await _publisher.ListDataSetVariablesAsync(GetDataSetWriterId(options),
                     options.GetValueOrDefault<string>("-C", "--continuation", null),
-                    options.GetValueOrDefault<int>("-P", "--page-size", null));
+                    options.GetValueOrDefault<int>("-P", "--page-size", null)).ConfigureAwait(false);
                 PrintResult(options, result);
             }
         }
@@ -1305,14 +1311,14 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
             };
             if (options.IsSet("-A", "--all")) {
                 var result = await _publisher.QueryAllDataSetVariablesAsync(
-                    GetDataSetWriterId(options), query);
+                    GetDataSetWriterId(options), query).ConfigureAwait(false);
                 PrintResult(options, result);
                 Console.WriteLine($"{result.Count()} item(s) found...");
             }
             else {
                 var result = await _publisher.QueryDataSetVariablesAsync(
                     GetDataSetWriterId(options), query,
-                    options.GetValueOrDefault<int>("-P", "--page-size", null));
+                    options.GetValueOrDefault<int>("-P", "--page-size", null)).ConfigureAwait(false);
                 PrintResult(options, result);
             }
         }
@@ -1323,7 +1329,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
         private async Task RemoveDataSetVariableAsync(CliOptions options) {
             await _publisher.RemoveDataSetVariableAsync(GetDataSetWriterId(options),
                 options.GetValue<string>("-v", "--variable"),
-                options.GetValue<string>("-g", "--genid"));
+                options.GetValue<string>("-g", "--genid")).ConfigureAwait(false);
         }
 
         private string _writerGroupId;
@@ -1363,7 +1369,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
             else {
                 var writerGroupId = options.GetValueOrDefault<string>("-i", "--id", null);
                 if (string.IsNullOrEmpty(writerGroupId)) {
-                    var result = await _publisher.ListAllWriterGroupsAsync();
+                    var result = await _publisher.ListAllWriterGroupsAsync().ConfigureAwait(false);
                     writerGroupId = ConsoleEx.Select(result.Select(a => a.WriterGroupId));
                     if (string.IsNullOrEmpty(writerGroupId)) {
                         Console.WriteLine("Nothing selected - group selection cleared.");
@@ -1378,14 +1384,14 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
         /// </summary>
         private async Task ListWriterGroupsAsync(CliOptions options) {
             if (options.IsSet("-A", "--all")) {
-                var result = await _publisher.ListAllWriterGroupsAsync();
+                var result = await _publisher.ListAllWriterGroupsAsync().ConfigureAwait(false);
                 PrintResult(options, result);
                 Console.WriteLine($"{result.Count()} item(s) found...");
             }
             else {
                 var result = await _publisher.ListWriterGroupsAsync(
                     options.GetValueOrDefault<string>("-C", "--continuation", null),
-                    options.GetValueOrDefault<int>("-P", "--page-size", null));
+                    options.GetValueOrDefault<int>("-P", "--page-size", null)).ConfigureAwait(false);
                 PrintResult(options, result);
             }
         }
@@ -1406,7 +1412,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
                 SiteId = options.GetValueOrDefault<string>("-s", "--siteId", null),
                 // LocaleIds = ...
                 MessageSettings = BuildWriterGroupMessageSettings(options)
-            });
+            }).ConfigureAwait(false);
             PrintResult(options, result);
         }
 
@@ -1414,7 +1420,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
         /// Get writer group
         /// </summary>
         private async Task GetWriterGroupAsync(CliOptions options) {
-            var result = await _publisher.GetWriterGroupAsync(GetWriterGroupId(options));
+            var result = await _publisher.GetWriterGroupAsync(GetWriterGroupId(options)).ConfigureAwait(false);
             PrintResult(options, result);
         }
 
@@ -1423,7 +1429,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
         /// </summary>
         private async Task DeleteWriterGroupAsync(CliOptions options) {
             await _publisher.RemoveWriterGroupAsync(GetWriterGroupId(options),
-                options.GetValue<string>("-g", "--genid"));
+                options.GetValue<string>("-g", "--genid")).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -1443,7 +1449,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
                     Priority = options.GetValueOrDefault<byte>("-p", "--priority", null),
                     // LocaleIds = ...
                     MessageSettings = BuildWriterGroupMessageSettings(options)
-                });
+                }).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -1459,13 +1465,13 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
                 SiteId = options.GetValueOrDefault<string>("-s", "--siteId", null)
             };
             if (options.IsSet("-A", "--all")) {
-                var result = await _publisher.QueryAllWriterGroupsAsync(query);
+                var result = await _publisher.QueryAllWriterGroupsAsync(query).ConfigureAwait(false);
                 PrintResult(options, result);
                 Console.WriteLine($"{result.Count()} item(s) found...");
             }
             else {
                 var result = await _publisher.QueryWriterGroupsAsync(query,
-                    options.GetValueOrDefault<int>("-P", "--page-size", null));
+                    options.GetValueOrDefault<int>("-P", "--page-size", null)).ConfigureAwait(false);
                 PrintResult(options, result);
             }
         }
@@ -1476,7 +1482,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
         private async Task MonitorWriterGroupsAsync() {
             var events = _scope.Resolve<IPublisherServiceEvents>();
             Console.WriteLine("Press any key to stop.");
-            var complete = await events.SubscribeWriterGroupEventsAsync(PrintEvent);
+            var complete = await events.SubscribeWriterGroupEventsAsync(PrintEvent).ConfigureAwait(false);
             try {
                 Console.ReadKey();
             }
@@ -1520,7 +1526,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
             else {
                 var publisherId = options.GetValueOrDefault<string>("-i", "--id", null);
                 if (string.IsNullOrEmpty(publisherId)) {
-                    var result = await _registry.ListAllPublishersAsync();
+                    var result = await _registry.ListAllPublishersAsync().ConfigureAwait(false);
                     publisherId = ConsoleEx.Select(result.Select(r => r.Id));
                     if (string.IsNullOrEmpty(publisherId)) {
                         Console.WriteLine("Nothing selected - publisher selection cleared.");
@@ -1538,14 +1544,14 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
         /// </summary>
         private async Task ListPublishersAsync(CliOptions options) {
             if (options.IsSet("-A", "--all")) {
-                var result = await _registry.ListAllPublishersAsync();
+                var result = await _registry.ListAllPublishersAsync().ConfigureAwait(false);
                 PrintResult(options, result);
                 Console.WriteLine($"{result.Count()} item(s) found...");
             }
             else {
                 var result = await _registry.ListPublishersAsync(
                     options.GetValueOrDefault<string>("-C", "--continuation", null),
-                    options.GetValueOrDefault<int>("-P", "--page-size", null));
+                    options.GetValueOrDefault<int>("-P", "--page-size", null)).ConfigureAwait(false);
                 PrintResult(options, result);
             }
         }
@@ -1558,13 +1564,13 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
                 Connected = options.IsProvidedOrNull("-c", "--connected"),
             };
             if (options.IsSet("-A", "--all")) {
-                var result = await _registry.QueryAllPublishersAsync(query);
+                var result = await _registry.QueryAllPublishersAsync(query).ConfigureAwait(false);
                 PrintResult(options, result);
                 Console.WriteLine($"{result.Count()} item(s) found...");
             }
             else {
                 var result = await _registry.QueryPublishersAsync(query,
-                    options.GetValueOrDefault<int>("-P", "--page-size", null));
+                    options.GetValueOrDefault<int>("-P", "--page-size", null)).ConfigureAwait(false);
                 PrintResult(options, result);
             }
         }
@@ -1573,7 +1579,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
         /// Get publisher
         /// </summary>
         private async Task GetPublisherAsync(CliOptions options) {
-            var result = await _registry.GetPublisherAsync(GetPublisherId(options));
+            var result = await _registry.GetPublisherAsync(GetPublisherId(options)).ConfigureAwait(false);
             PrintResult(options, result);
         }
 
@@ -1585,7 +1591,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
                 new PublisherUpdateApiModel {
                     LogLevel = options.GetValueOrDefault<TraceLogLevel>(
                         "-l", "--log-level", null)
-                });
+                }).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -1594,7 +1600,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
         private async Task MonitorPublishersAsync() {
             var events = _scope.Resolve<IRegistryServiceEvents>();
             Console.WriteLine("Press any key to stop.");
-            var complete = await events.SubscribePublisherEventsAsync(PrintEvent);
+            var complete = await events.SubscribePublisherEventsAsync(PrintEvent).ConfigureAwait(false);
             try {
                 Console.ReadKey();
             }
@@ -1638,7 +1644,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
             else {
                 var gatewayId = options.GetValueOrDefault<string>("-i", "--id", null);
                 if (string.IsNullOrEmpty(gatewayId)) {
-                    var result = await _registry.ListAllGatewaysAsync();
+                    var result = await _registry.ListAllGatewaysAsync().ConfigureAwait(false);
                     gatewayId = ConsoleEx.Select(result.Select(r => r.Id));
                     if (string.IsNullOrEmpty(gatewayId)) {
                         Console.WriteLine("Nothing selected - gateway selection cleared.");
@@ -1656,14 +1662,14 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
         /// </summary>
         private async Task ListGatewaysAsync(CliOptions options) {
             if (options.IsSet("-A", "--all")) {
-                var result = await _registry.ListAllGatewaysAsync();
+                var result = await _registry.ListAllGatewaysAsync().ConfigureAwait(false);
                 PrintResult(options, result);
                 Console.WriteLine($"{result.Count()} item(s) found...");
             }
             else {
                 var result = await _registry.ListGatewaysAsync(
                     options.GetValueOrDefault<string>("-C", "--continuation", null),
-                    options.GetValueOrDefault<int>("-P", "--page-size", null));
+                    options.GetValueOrDefault<int>("-P", "--page-size", null)).ConfigureAwait(false);
                 PrintResult(options, result);
             }
         }
@@ -1677,13 +1683,13 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
                 SiteId = options.GetValueOrDefault<string>("-s", "--siteId", null)
             };
             if (options.IsSet("-A", "--all")) {
-                var result = await _registry.QueryAllGatewaysAsync(query);
+                var result = await _registry.QueryAllGatewaysAsync(query).ConfigureAwait(false);
                 PrintResult(options, result);
                 Console.WriteLine($"{result.Count()} item(s) found...");
             }
             else {
                 var result = await _registry.QueryGatewaysAsync(query,
-                    options.GetValueOrDefault<int>("-P", "--page-size", null));
+                    options.GetValueOrDefault<int>("-P", "--page-size", null)).ConfigureAwait(false);
                 PrintResult(options, result);
             }
         }
@@ -1692,7 +1698,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
         /// Get gateway
         /// </summary>
         private async Task GetGatewayAsync(CliOptions options) {
-            var result = await _registry.GetGatewayAsync(GetGatewayId(options));
+            var result = await _registry.GetGatewayAsync(GetGatewayId(options)).ConfigureAwait(false);
             PrintResult(options, result);
         }
 
@@ -1703,7 +1709,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
             await _registry.UpdateGatewayAsync(GetGatewayId(options),
                 new GatewayUpdateApiModel {
                     SiteId = options.GetValueOrDefault<string>("-s", "--siteId", null),
-                });
+                }).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -1712,7 +1718,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
         private async Task MonitorGatewaysAsync() {
             var events = _scope.Resolve<IRegistryServiceEvents>();
             Console.WriteLine("Press any key to stop.");
-            var complete = await events.SubscribeGatewayEventsAsync(PrintEvent);
+            var complete = await events.SubscribeGatewayEventsAsync(PrintEvent).ConfigureAwait(false);
             try {
                 Console.ReadKey();
             }
@@ -1756,7 +1762,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
             else {
                 var supervisorId = options.GetValueOrDefault<string>("-i", "--id", null);
                 if (string.IsNullOrEmpty(supervisorId)) {
-                    var result = await _registry.ListAllSupervisorsAsync();
+                    var result = await _registry.ListAllSupervisorsAsync().ConfigureAwait(false);
                     supervisorId = ConsoleEx.Select(result.Select(r => r.Id));
                     if (string.IsNullOrEmpty(supervisorId)) {
                         Console.WriteLine("Nothing selected - supervisor selection cleared.");
@@ -1774,14 +1780,14 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
         /// </summary>
         private async Task ListSupervisorsAsync(CliOptions options) {
             if (options.IsSet("-A", "--all")) {
-                var result = await _registry.ListAllSupervisorsAsync();
+                var result = await _registry.ListAllSupervisorsAsync().ConfigureAwait(false);
                 PrintResult(options, result);
                 Console.WriteLine($"{result.Count()} item(s) found...");
             }
             else {
                 var result = await _registry.ListSupervisorsAsync(
                     options.GetValueOrDefault<string>("-C", "--continuation", null),
-                    options.GetValueOrDefault<int>("-P", "--page-size", null));
+                    options.GetValueOrDefault<int>("-P", "--page-size", null)).ConfigureAwait(false);
                 PrintResult(options, result);
             }
         }
@@ -1795,13 +1801,13 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
                 EndpointId = options.GetValueOrDefault<string>("-e", "--endpoint", null),
             };
             if (options.IsSet("-A", "--all")) {
-                var result = await _registry.QueryAllSupervisorsAsync(query);
+                var result = await _registry.QueryAllSupervisorsAsync(query).ConfigureAwait(false);
                 PrintResult(options, result);
                 Console.WriteLine($"{result.Count()} item(s) found...");
             }
             else {
                 var result = await _registry.QuerySupervisorsAsync(query,
-                    options.GetValueOrDefault<int>("-P", "--page-size", null));
+                    options.GetValueOrDefault<int>("-P", "--page-size", null)).ConfigureAwait(false);
                 PrintResult(options, result);
             }
         }
@@ -1810,7 +1816,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
         /// Get supervisor
         /// </summary>
         private async Task GetSupervisorAsync(CliOptions options) {
-            var result = await _registry.GetSupervisorAsync(GetSupervisorId(options));
+            var result = await _registry.GetSupervisorAsync(GetSupervisorId(options)).ConfigureAwait(false);
             PrintResult(options, result);
         }
 
@@ -1818,7 +1824,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
         /// Get supervisor status
         /// </summary>
         private async Task GetSupervisorStatusAsync(CliOptions options) {
-            var result = await _registry.GetSupervisorStatusAsync(GetSupervisorId(options));
+            var result = await _registry.GetSupervisorStatusAsync(GetSupervisorId(options)).ConfigureAwait(false);
             PrintResult(options, result);
         }
 
@@ -1826,7 +1832,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
         /// Reset supervisor
         /// </summary>
         private async Task ResetSupervisorAsync(CliOptions options) {
-            await _registry.ResetSupervisorAsync(GetSupervisorId(options));
+            await _registry.ResetSupervisorAsync(GetSupervisorId(options)).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -1835,7 +1841,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
         private async Task MonitorSupervisorsAsync() {
             var events = _scope.Resolve<IRegistryServiceEvents>();
             Console.WriteLine("Press any key to stop.");
-            var complete = await events.SubscribeSupervisorEventsAsync(PrintEvent);
+            var complete = await events.SubscribeSupervisorEventsAsync(PrintEvent).ConfigureAwait(false);
             try {
                 Console.ReadKey();
             }
@@ -1853,7 +1859,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
                 new SupervisorUpdateApiModel {
                     LogLevel = options.GetValueOrDefault<TraceLogLevel>(
                         "-l", "--log-level", null)
-                });
+                }).ConfigureAwait(false);
         }
 
         private string _discovererId;
@@ -1891,7 +1897,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
             else {
                 var discovererId = options.GetValueOrDefault<string>("-i", "--id", null);
                 if (string.IsNullOrEmpty(discovererId)) {
-                    var result = await _registry.ListAllDiscoverersAsync();
+                    var result = await _registry.ListAllDiscoverersAsync().ConfigureAwait(false);
                     discovererId = ConsoleEx.Select(result.Select(r => r.Id));
                     if (string.IsNullOrEmpty(discovererId)) {
                         Console.WriteLine("Nothing selected - discoverer selection cleared.");
@@ -1909,14 +1915,14 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
         /// </summary>
         private async Task ListDiscoverersAsync(CliOptions options) {
             if (options.IsSet("-A", "--all")) {
-                var result = await _registry.ListAllDiscoverersAsync();
+                var result = await _registry.ListAllDiscoverersAsync().ConfigureAwait(false);
                 PrintResult(options, result);
                 Console.WriteLine($"{result.Count()} item(s) found...");
             }
             else {
                 var result = await _registry.ListDiscoverersAsync(
                     options.GetValueOrDefault<string>("-C", "--continuation", null),
-                    options.GetValueOrDefault<int>("-P", "--page-size", null));
+                    options.GetValueOrDefault<int>("-P", "--page-size", null)).ConfigureAwait(false);
                 PrintResult(options, result);
             }
         }
@@ -1930,13 +1936,13 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
                 Discovery = options.GetValueOrDefault<DiscoveryMode>("-d", "--discovery", null),
             };
             if (options.IsSet("-A", "--all")) {
-                var result = await _registry.QueryAllDiscoverersAsync(query);
+                var result = await _registry.QueryAllDiscoverersAsync(query).ConfigureAwait(false);
                 PrintResult(options, result);
                 Console.WriteLine($"{result.Count()} item(s) found...");
             }
             else {
                 var result = await _registry.QueryDiscoverersAsync(query,
-                    options.GetValueOrDefault<int>("-P", "--page-size", null));
+                    options.GetValueOrDefault<int>("-P", "--page-size", null)).ConfigureAwait(false);
                 PrintResult(options, result);
             }
         }
@@ -1945,7 +1951,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
         /// Get discoverer
         /// </summary>
         private async Task GetDiscovererAsync(CliOptions options) {
-            var result = await _registry.GetDiscovererAsync(GetDiscovererId(options));
+            var result = await _registry.GetDiscovererAsync(GetDiscovererId(options)).ConfigureAwait(false);
             PrintResult(options, result);
         }
 
@@ -1960,10 +1966,10 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
             if (discovererId != null) {
                 // If specified - monitor progress
                 complete = await events.SubscribeDiscoveryProgressByDiscovererIdAsync(
-                    discovererId, PrintProgress);
+                    discovererId, PrintProgress).ConfigureAwait(false);
             }
             else {
-                complete = await events.SubscribeDiscovererEventsAsync(PrintEvent);
+                complete = await events.SubscribeDiscovererEventsAsync(PrintEvent).ConfigureAwait(false);
             }
             try {
                 Console.ReadKey();
@@ -1985,7 +1991,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
                     Discovery = options.GetValueOrDefault("-d", "--discovery",
                         config == null ? (DiscoveryMode?)null : DiscoveryMode.Fast),
                     DiscoveryConfig = config,
-                });
+                }).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -1996,7 +2002,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
             var events = _scope.Resolve<IRegistryServiceEvents>();
             Console.WriteLine("Press any key to stop.");
             var discovery = await events.SubscribeDiscoveryProgressByDiscovererIdAsync(
-                discovererId, PrintProgress);
+                discovererId, PrintProgress).ConfigureAwait(false);
             try {
                 var config = BuildDiscoveryConfig(options);
                 var mode = options.GetValueOrDefault("-d", "--discovery",
@@ -2007,10 +2013,10 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
                 if (mode == DiscoveryMode.Off) {
                     throw new ArgumentException("-d/--discovery Off is not supported");
                 }
-                await _registry.SetDiscoveryModeAsync(discovererId, mode, config);
+                await _registry.SetDiscoveryModeAsync(discovererId, mode, config).ConfigureAwait(false);
                 Console.ReadKey();
                 await _registry.SetDiscoveryModeAsync(discovererId, DiscoveryMode.Off,
-                    new DiscoveryConfigApiModel());
+                    new DiscoveryConfigApiModel()).ConfigureAwait(false);
             }
             catch {
                 await discovery.DisposeAsync();
@@ -2054,7 +2060,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
             else {
                 var applicationId = options.GetValueOrDefault<string>("-i", "--id", null);
                 if (string.IsNullOrEmpty(applicationId)) {
-                    var result = await _registry.ListAllApplicationsAsync();
+                    var result = await _registry.ListAllApplicationsAsync().ConfigureAwait(false);
                     applicationId = ConsoleEx.Select(result.Select(r => r.ApplicationId));
                     if (string.IsNullOrEmpty(applicationId)) {
                         Console.WriteLine("Nothing selected - application selection cleared.");
@@ -2082,7 +2088,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
                     DiscoveryProfileUri = options.GetValueOrDefault<string>("-r", "--dpuri", null),
                     DiscoveryUrls = string.IsNullOrEmpty(discoveryUrl) ? null :
                         new HashSet<string> { discoveryUrl }
-                });
+                }).ConfigureAwait(false);
             PrintResult(options, result);
         }
 
@@ -2098,7 +2104,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
 
                 var discovery = await events.SubscribeDiscoveryProgressByRequestIdAsync(
                     id, async ev => {
-                        await PrintProgress(ev);
+                        await PrintProgress(ev).ConfigureAwait(false);
                         switch (ev.EventType) {
                             case DiscoveryProgressType.Error:
                             case DiscoveryProgressType.Cancelled:
@@ -2106,17 +2112,17 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
                                 tcs.TrySetResult(true);
                                 break;
                         }
-                    });
+                    }).ConfigureAwait(false);
                 try {
-                    await RegisterServerAsync(options, id);
-                    await tcs.Task; // For completion
+                    await RegisterServerAsync(options, id).ConfigureAwait(false);
+                    await tcs.Task.ConfigureAwait(false); // For completion
                 }
                 finally {
                     await discovery.DisposeAsync();
                 }
             }
             else {
-                await RegisterServerAsync(options, id);
+                await RegisterServerAsync(options, id).ConfigureAwait(false);
             }
         }
 
@@ -2129,7 +2135,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
                 new ServerRegistrationRequestApiModel {
                     Id = id,
                     DiscoveryUrl = options.GetValue<string>("-u", "--url")
-                });
+                }).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -2143,7 +2149,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
                 var tcs = new TaskCompletionSource<bool>();
                 var discovery = await events.SubscribeDiscoveryProgressByRequestIdAsync(
                     id, async ev => {
-                        await PrintProgress(ev);
+                        await PrintProgress(ev).ConfigureAwait(false);
                         switch (ev.EventType) {
                             case DiscoveryProgressType.Error:
                             case DiscoveryProgressType.Cancelled:
@@ -2151,10 +2157,10 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
                                 tcs.TrySetResult(true);
                                 break;
                         }
-                    });
+                    }).ConfigureAwait(false);
                 try {
-                    await DiscoverServersAsync(options, id);
-                    await tcs.Task; // For completion
+                    await DiscoverServersAsync(options, id).ConfigureAwait(false);
+                    await tcs.Task.ConfigureAwait(false); // For completion
                 }
                 finally {
                     await discovery.DisposeAsync();
@@ -2162,7 +2168,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
 
             }
             else {
-                await DiscoverServersAsync(options, id);
+                await DiscoverServersAsync(options, id).ConfigureAwait(false);
             }
         }
 
@@ -2175,7 +2181,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
                     Id = id,
                     Discovery = options.GetValueOrDefault("-d", "--discovery", DiscoveryMode.Fast),
                     Configuration = BuildDiscoveryConfig(options)
-                });
+                }).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -2185,7 +2191,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
             await _registry.CancelAsync(
                 new DiscoveryCancelApiModel {
                     Id = options.GetValue<string>("-i", "--id")
-                });
+                }).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -2200,7 +2206,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
                     ProductUri = options.GetValueOrDefault<string>("-p", "--product", null),
                     DiscoveryProfileUri = options.GetValueOrDefault<string>("-r", "--dpuri", null)
                     // ...
-                });
+                }).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -2211,7 +2217,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
             var id = GetApplicationId(options, false);
             if (id != null) {
                 await _registry.UnregisterApplicationAsync(id,
-                    options.GetValue<string>("-g", "--genid"));
+                    options.GetValue<string>("-g", "--genid")).ConfigureAwait(false);
                 return;
             }
 
@@ -2226,11 +2232,11 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
             };
 
             // Unregister all applications
-            var result = await _registry.QueryAllApplicationsAsync(query);
+            var result = await _registry.QueryAllApplicationsAsync(query).ConfigureAwait(false);
             foreach (var item in result) {
                 try {
                     await _registry.UnregisterApplicationAsync(item.ApplicationId,
-                        item.GenerationId);
+                        item.GenerationId).ConfigureAwait(false);
                 }
                 catch (Exception ex) {
                     Console.WriteLine($"Failed to unregister {item.ApplicationId}: {ex.Message}");
@@ -2251,14 +2257,14 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
         /// </summary>
         private async Task ListApplicationsAsync(CliOptions options) {
             if (options.IsSet("-A", "--all")) {
-                var result = await _registry.ListAllApplicationsAsync();
+                var result = await _registry.ListAllApplicationsAsync().ConfigureAwait(false);
                 PrintResult(options, result);
                 Console.WriteLine($"{result.Count()} item(s) found...");
             }
             else {
                 var result = await _registry.ListApplicationsAsync(
                     options.GetValueOrDefault<string>("-C", "--continuation", null),
-                    options.GetValueOrDefault<int>("-P", "--page-size", null));
+                    options.GetValueOrDefault<int>("-P", "--page-size", null)).ConfigureAwait(false);
                 PrintResult(options, result);
             }
         }
@@ -2268,14 +2274,14 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
         /// </summary>
         private async Task ListSitesAsync(CliOptions options) {
             if (options.IsSet("-A", "--all")) {
-                var result = await _registry.ListAllSitesAsync();
+                var result = await _registry.ListAllSitesAsync().ConfigureAwait(false);
                 PrintResult(options, result);
                 Console.WriteLine($"{result.Count()} item(s) found...");
             }
             else {
                 var result = await _registry.ListSitesAsync(
                     options.GetValueOrDefault<string>("-C", "--continuation", null),
-                    options.GetValueOrDefault<int>("-P", "--page-size", null));
+                    options.GetValueOrDefault<int>("-P", "--page-size", null)).ConfigureAwait(false);
                 PrintResult(options, result);
             }
         }
@@ -2296,13 +2302,13 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
                 DiscovererId = options.GetValueOrDefault<string>("-D", "--discovererId", null)
             };
             if (options.IsSet("-A", "--all")) {
-                var result = await _registry.QueryAllApplicationsAsync(query);
+                var result = await _registry.QueryAllApplicationsAsync(query).ConfigureAwait(false);
                 PrintResult(options, result);
                 Console.WriteLine($"{result.Count()} item(s) found...");
             }
             else {
                 var result = await _registry.QueryApplicationsAsync(query,
-                    options.GetValueOrDefault<int>("-P", "--page-size", null));
+                    options.GetValueOrDefault<int>("-P", "--page-size", null)).ConfigureAwait(false);
                 PrintResult(options, result);
             }
         }
@@ -2311,7 +2317,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
         /// Get application
         /// </summary>
         private async Task GetApplicationAsync(CliOptions options) {
-            var result = await _registry.GetApplicationAsync(GetApplicationId(options));
+            var result = await _registry.GetApplicationAsync(GetApplicationId(options)).ConfigureAwait(false);
             PrintResult(options, result);
         }
 
@@ -2321,7 +2327,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
         private async Task MonitorApplicationsAsync() {
             var events = _scope.Resolve<IRegistryServiceEvents>();
             Console.WriteLine("Press any key to stop.");
-            var complete = await events.SubscribeApplicationEventsAsync(PrintEvent);
+            var complete = await events.SubscribeApplicationEventsAsync(PrintEvent).ConfigureAwait(false);
             try {
                 Console.ReadKey();
             }
@@ -2336,20 +2342,20 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
         private async Task MonitorAllAsync() {
             var events = _scope.Resolve<IRegistryServiceEvents>();
             Console.WriteLine("Press any key to stop.");
-            var apps = await events.SubscribeApplicationEventsAsync(PrintEvent);
+            var apps = await events.SubscribeApplicationEventsAsync(PrintEvent).ConfigureAwait(false);
             try {
-                var endpoint = await events.SubscribeEndpointEventsAsync(PrintEvent);
+                var endpoint = await events.SubscribeEndpointEventsAsync(PrintEvent).ConfigureAwait(false);
                 try {
-                    var supervisor = await events.SubscribeSupervisorEventsAsync(PrintEvent);
+                    var supervisor = await events.SubscribeSupervisorEventsAsync(PrintEvent).ConfigureAwait(false);
                     try {
-                        var publisher = await events.SubscribePublisherEventsAsync(PrintEvent);
+                        var publisher = await events.SubscribePublisherEventsAsync(PrintEvent).ConfigureAwait(false);
                         try {
-                            var discoverers = await events.SubscribeDiscovererEventsAsync(PrintEvent);
+                            var discoverers = await events.SubscribeDiscovererEventsAsync(PrintEvent).ConfigureAwait(false);
                             try {
-                                var supervisors = await _registry.ListAllDiscoverersAsync();
+                                var supervisors = await _registry.ListAllDiscoverersAsync().ConfigureAwait(false);
                                 var discovery = await supervisors
                                     .Select(s => events.SubscribeDiscoveryProgressByDiscovererIdAsync(
-                                        s.Id, PrintProgress)).AsAsyncDisposable();
+                                        s.Id, PrintProgress)).AsAsyncDisposable().ConfigureAwait(false);
                                 try {
                                     Console.ReadKey();
                                 }
@@ -2416,7 +2422,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
             else {
                 var endpointId = options.GetValueOrDefault<string>("-i", "--id", null);
                 if (string.IsNullOrEmpty(endpointId)) {
-                    var result = await _registry.ListAllEndpointsAsync();
+                    var result = await _registry.ListAllEndpointsAsync().ConfigureAwait(false);
                     endpointId = ConsoleEx.Select(result.Select(r => r.Id));
                     if (string.IsNullOrEmpty(endpointId)) {
                         Console.WriteLine("Nothing selected - endpoint selection cleared.");
@@ -2434,14 +2440,14 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
         /// </summary>
         private async Task ListEndpointsAsync(CliOptions options) {
             if (options.IsSet("-A", "--all")) {
-                var result = await _registry.ListAllEndpointsAsync();
+                var result = await _registry.ListAllEndpointsAsync().ConfigureAwait(false);
                 PrintResult(options, result);
                 Console.WriteLine($"{result.Count()} item(s) found...");
             }
             else {
                 var result = await _registry.ListEndpointsAsync(
                     options.GetValueOrDefault<string>("-C", "--continuation", null),
-                    options.GetValueOrDefault<int>("-P", "--page-size", null));
+                    options.GetValueOrDefault<int>("-P", "--page-size", null)).ConfigureAwait(false);
                 PrintResult(options, result);
             }
         }
@@ -2466,13 +2472,13 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
                 DiscovererId = options.GetValueOrDefault<string>("-D", "--discovererId", null)
             };
             if (options.IsSet("-A", "--all")) {
-                var result = await _registry.QueryAllEndpointsAsync(query);
+                var result = await _registry.QueryAllEndpointsAsync(query).ConfigureAwait(false);
                 PrintResult(options, result);
                 Console.WriteLine($"{result.Count()} item(s) found...");
             }
             else {
                 var result = await _registry.QueryEndpointsAsync(query,
-                    options.GetValueOrDefault<int>("-P", "--page-size", null));
+                    options.GetValueOrDefault<int>("-P", "--page-size", null)).ConfigureAwait(false);
                 PrintResult(options, result);
             }
         }
@@ -2485,7 +2491,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
             var id = GetEndpointId(options, false);
             if (id != null) {
                 await _registry.ActivateEndpointAsync(id,
-                    options.GetValueOrDefault<string>("-g", "--genid", null));
+                    options.GetValueOrDefault<string>("-g", "--genid", null)).ConfigureAwait(false);
                 return;
             }
 
@@ -2493,10 +2499,10 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
             var result = await _registry.QueryAllEndpointsAsync(new EndpointInfoQueryApiModel {
                 SecurityMode = options.GetValueOrDefault<SecurityMode>("-m", "mode", null),
                 Activated = false
-            });
+            }).ConfigureAwait(false);
             foreach (var item in result) {
                 try {
-                    await _registry.ActivateEndpointAsync(item.Id, item.GenerationId);
+                    await _registry.ActivateEndpointAsync(item.Id, item.GenerationId).ConfigureAwait(false);
                 }
                 catch (Exception ex) {
                     Console.WriteLine($"Failed to activate {item.Id}: {ex.Message}");
@@ -2512,7 +2518,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
             var id = GetEndpointId(options, false);
             if (id != null) {
                 await _registry.DeactivateEndpointAsync(id,
-                    options.GetValueOrDefault<string>("-g", "--genid", null));
+                    options.GetValueOrDefault<string>("-g", "--genid", null)).ConfigureAwait(false);
                 return;
             }
 
@@ -2520,10 +2526,10 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
             var result = await _registry.QueryAllEndpointsAsync(new EndpointInfoQueryApiModel {
                 SecurityMode = options.GetValueOrDefault<SecurityMode>("-m", "mode", null),
                 Activated = true
-            });
+            }).ConfigureAwait(false);
             foreach (var item in result) {
                 try {
-                    await _registry.DeactivateEndpointAsync(item.Id, item.GenerationId);
+                    await _registry.DeactivateEndpointAsync(item.Id, item.GenerationId).ConfigureAwait(false);
                 }
                 catch (Exception ex) {
                     Console.WriteLine($"Failed to deactivate {item.Id}: {ex.Message}");
@@ -2535,7 +2541,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
         /// Get endpoint
         /// </summary>
         private async Task GetEndpointAsync(CliOptions options) {
-            var result = await _registry.GetEndpointAsync(GetEndpointId(options));
+            var result = await _registry.GetEndpointAsync(GetEndpointId(options)).ConfigureAwait(false);
             PrintResult(options, result);
         }
 
@@ -2543,7 +2549,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
         /// Get endpoint certificate
         /// </summary>
         private async Task GetEndpointCertificateAsync(CliOptions options) {
-            var result = await _registry.GetEndpointCertificateAsync(GetEndpointId(options));
+            var result = await _registry.GetEndpointCertificateAsync(GetEndpointId(options)).ConfigureAwait(false);
             PrintResult(options, result);
         }
 
@@ -2553,7 +2559,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
         private async Task MonitorEndpointsAsync() {
             var events = _scope.Resolve<IRegistryServiceEvents>();
             Console.WriteLine("Press any key to stop.");
-            var complete = await events.SubscribeEndpointEventsAsync(PrintEvent);
+            var complete = await events.SubscribeEndpointEventsAsync(PrintEvent).ConfigureAwait(false);
             try {
                 Console.ReadKey();
             }
@@ -2597,7 +2603,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
             else {
                 var requestId = options.GetValueOrDefault<string>("-i", "--id", null);
                 if (string.IsNullOrEmpty(requestId)) {
-                    var result = await _vault.ListAllRequestsAsync();
+                    var result = await _vault.ListAllRequestsAsync().ConfigureAwait(false);
                     requestId = ConsoleEx.Select(result.Select(r => r.RequestId));
                     if (string.IsNullOrEmpty(requestId)) {
                         Console.WriteLine("Nothing selected - request selection cleared.");
@@ -2619,13 +2625,13 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
                 State = options.GetValueOrDefault<CertificateRequestState>("-s", "--state", null)
             };
             if (options.IsSet("-A", "--all")) {
-                var result = await _vault.QueryAllRequestsAsync(query);
+                var result = await _vault.QueryAllRequestsAsync(query).ConfigureAwait(false);
                 PrintResult(options, result);
                 Console.WriteLine($"{result.Count()} item(s) found...");
             }
             else {
                 var result = await _vault.QueryRequestsAsync(query,
-                    options.GetValueOrDefault<int>("-P", "--page-size", null));
+                    options.GetValueOrDefault<int>("-P", "--page-size", null)).ConfigureAwait(false);
                 PrintResult(options, result);
             }
         }
@@ -2635,14 +2641,14 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
         /// </summary>
         private async Task ListRequestsAsync(CliOptions options) {
             if (options.IsSet("-A", "--all")) {
-                var result = await _vault.ListAllRequestsAsync();
+                var result = await _vault.ListAllRequestsAsync().ConfigureAwait(false);
                 PrintResult(options, result);
                 Console.WriteLine($"{result.Count()} item(s) found...");
             }
             else {
                 var result = await _vault.ListRequestsAsync(
                     options.GetValueOrDefault<string>("-C", "--continuation", null),
-                    options.GetValueOrDefault<int>("-P", "--page-size", null));
+                    options.GetValueOrDefault<int>("-P", "--page-size", null)).ConfigureAwait(false);
                 PrintResult(options, result);
             }
         }
@@ -2651,7 +2657,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
         /// Get request
         /// </summary>
         private async Task GetRequestAsync(CliOptions options) {
-            var result = await _vault.GetRequestAsync(GetRequestId(options));
+            var result = await _vault.GetRequestAsync(GetRequestId(options)).ConfigureAwait(false);
             PrintResult(options, result);
         }
 
@@ -2659,28 +2665,28 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
         /// Delete request
         /// </summary>
         private async Task DeleteRequestAsync(CliOptions options) {
-            await _vault.DeleteRequestAsync(GetRequestId(options));
+            await _vault.DeleteRequestAsync(GetRequestId(options)).ConfigureAwait(false);
         }
 
         /// <summary>
         /// Accept request
         /// </summary>
         private async Task AcceptRequestAsync(CliOptions options) {
-            await _vault.AcceptRequestAsync(GetRequestId(options));
+            await _vault.AcceptRequestAsync(GetRequestId(options)).ConfigureAwait(false);
         }
 
         /// <summary>
         /// Reject request
         /// </summary>
         private async Task RejectRequestAsync(CliOptions options) {
-            await _vault.RejectRequestAsync(GetRequestId(options));
+            await _vault.RejectRequestAsync(GetRequestId(options)).ConfigureAwait(false);
         }
 
         /// <summary>
         /// Approve request
         /// </summary>
         private async Task ApproveRequestAsync(CliOptions options) {
-            await _vault.ApproveRequestAsync(GetRequestId(options));
+            await _vault.ApproveRequestAsync(GetRequestId(options)).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -2688,7 +2694,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
         /// </summary>
         private async Task KeyPairRequestAsync(CliOptions options) {
             if (options.IsProvidedOrNull("-f", "--finish") == true) {
-                var result = await _vault.FinishKeyPairRequestAsync(GetRequestId(options));
+                var result = await _vault.FinishKeyPairRequestAsync(GetRequestId(options)).ConfigureAwait(false);
                 PrintResult(options, result);
             }
             else {
@@ -2699,7 +2705,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
                     SubjectName = options.GetValueOrDefault<string>("-s", "--subject", null),
                     DomainNames = options.GetValueOrDefault<string>("-d", "--domain", null)?
                         .YieldReturn().ToList()
-                });
+                }).ConfigureAwait(false);
                 PrintResult(options, result);
             }
         }
@@ -2709,7 +2715,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
         /// </summary>
         private async Task SigningRequestAsync(CliOptions options) {
             if (options.IsProvidedOrNull("-f", "--finish") == true) {
-                var result = await _vault.FinishSigningRequestAsync(GetRequestId(options));
+                var result = await _vault.FinishSigningRequestAsync(GetRequestId(options)).ConfigureAwait(false);
                 PrintResult(options, result);
             }
             else {
@@ -2718,7 +2724,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
                         options.GetValue<byte[]>("-c", "--csr")),
                     EntityId = options.GetValue<string>("-e", "--entityId"),
                     GroupId = options.GetValue<string>("-g", "--groupId")
-                });
+                }).ConfigureAwait(false);
                 PrintResult(options, result);
             }
         }
@@ -2729,7 +2735,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
         private async Task RemoveTrustRelationshipAsync(CliOptions options) {
             await _vault.RemoveTrustRelationshipAsync(
                 options.GetValue<string>("-e", "--entityId"),
-                options.GetValue<string>("-t", "--trustedId"));
+                options.GetValue<string>("-t", "--trustedId")).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -2738,7 +2744,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
         private async Task GetTrustedCertificatesAsync(CliOptions options) {
             if (options.IsSet("-A", "--all")) {
                 var result = await _vault.ListAllTrustedCertificatesAsync(
-                    options.GetValue<string>("-e", "--entityId"));
+                    options.GetValue<string>("-e", "--entityId")).ConfigureAwait(false);
                 PrintResult(options, result);
                 Console.WriteLine($"{result.Count()} item(s) found...");
             }
@@ -2746,7 +2752,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
                 var result = await _vault.ListTrustedCertificatesAsync(
                     options.GetValue<string>("-e", "--entityId"),
                     options.GetValueOrDefault<string>("-C", "--continuation", null),
-                    options.GetValueOrDefault<int>("-P", "--page-size", null));
+                    options.GetValueOrDefault<int>("-P", "--page-size", null)).ConfigureAwait(false);
                 PrintResult(options, result);
             }
         }
@@ -2757,7 +2763,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
         private async Task AddTrustRelationshipAsync(CliOptions options) {
             await _vault.AddTrustRelationshipAsync(
                 options.GetValue<string>("-e", "--entityId"),
-                options.GetValue<string>("-t", "--trustedId"));
+                options.GetValue<string>("-t", "--trustedId")).ConfigureAwait(false);
         }
         private string _groupId;
 
@@ -2796,7 +2802,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
             else {
                 var groupId = options.GetValueOrDefault<string>("-i", "--id", null);
                 if (string.IsNullOrEmpty(groupId)) {
-                    var result = await _vault.ListAllGroupsAsync();
+                    var result = await _vault.ListAllGroupsAsync().ConfigureAwait(false);
                     groupId = ConsoleEx.Select(result);
                     if (string.IsNullOrEmpty(groupId)) {
                         Console.WriteLine("Nothing selected - group selection cleared.");
@@ -2811,14 +2817,14 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
         /// </summary>
         private async Task ListCertificateGroupsAsync(CliOptions options) {
             if (options.IsSet("-A", "--all")) {
-                var result = await _vault.ListAllGroupsAsync();
+                var result = await _vault.ListAllGroupsAsync().ConfigureAwait(false);
                 PrintResult(options, result);
                 Console.WriteLine($"{result.Count()} item(s) found...");
             }
             else {
                 var result = await _vault.ListGroupsAsync(
                     options.GetValueOrDefault<string>("-C", "--continuation", null),
-                    options.GetValueOrDefault<int>("-P", "--page-size", null));
+                    options.GetValueOrDefault<int>("-P", "--page-size", null)).ConfigureAwait(false);
                 PrintResult(options, result);
             }
         }
@@ -2834,7 +2840,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
                         "-a", "--algorithm", null),
                 Name = options.GetValue<string>("-n", "--name"),
                 SubjectName = options.GetValue<string>("-s", "--subject")
-            });
+            }).ConfigureAwait(false);
             PrintResult(options, result);
         }
 
@@ -2850,7 +2856,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
                 Name = options.GetValueOrDefault<string>("-n", "--name", null),
                 ParentId = options.GetValue<string>("-p", "--parent"),
                 SubjectName = options.GetValue<string>("-s", "--subject")
-            });
+            }).ConfigureAwait(false);
             PrintResult(options, result);
         }
 
@@ -2858,7 +2864,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
         /// Get group
         /// </summary>
         private async Task GetCertificateGroupAsync(CliOptions options) {
-            var result = await _vault.GetGroupAsync(GetGroupId(options));
+            var result = await _vault.GetGroupAsync(GetGroupId(options)).ConfigureAwait(false);
             PrintResult(options, result);
         }
 
@@ -2866,14 +2872,14 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
         /// Delete group
         /// </summary>
         private async Task DeleteCertificateGroupAsync(CliOptions options) {
-            await _vault.DeleteGroupAsync(GetGroupId(options));
+            await _vault.DeleteGroupAsync(GetGroupId(options)).ConfigureAwait(false);
         }
 
         /// <summary>
         /// Renew issuer cert
         /// </summary>
         private async Task RenewIssuerCertAsync(CliOptions options) {
-            var result = await _vault.RenewIssuerCertificateAsync(GetGroupId(options));
+            var result = await _vault.RenewIssuerCertificateAsync(GetGroupId(options)).ConfigureAwait(false);
             PrintResult(options, result);
         }
 
@@ -2888,18 +2894,18 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
                     IssuedSignatureAlgorithm = options.GetValueOrDefault<SignatureAlgorithm>(
                         "-a", "--algorithm", null),
                     Name = options.GetValueOrDefault<string>("-n", "--name", null)
-                });
+                }).ConfigureAwait(false);
         }
 
         /// <summary>
         /// Get status
         /// </summary>
-        private async Task GetStatusAsync(CliOptions options) {
-            Console.WriteLine("Twin:      " + await _twin.GetServiceStatusAsync());
-            Console.WriteLine("Registry:  " + await _registry.GetServiceStatusAsync());
-            Console.WriteLine("Publisher: " + await _publisher.GetServiceStatusAsync());
-            Console.WriteLine("Vault:     " + await _vault.GetServiceStatusAsync());
-            Console.WriteLine("History:   " + await _history.GetServiceStatusAsync());
+        private async Task GetStatusAsync() {
+            Console.WriteLine("Twin:      " + await _twin.GetServiceStatusAsync().ConfigureAwait(false));
+            Console.WriteLine("Registry:  " + await _registry.GetServiceStatusAsync().ConfigureAwait(false));
+            Console.WriteLine("Publisher: " + await _publisher.GetServiceStatusAsync().ConfigureAwait(false));
+            Console.WriteLine("Vault:     " + await _vault.GetServiceStatusAsync().ConfigureAwait(false));
+            Console.WriteLine("History:   " + await _history.GetServiceStatusAsync().ConfigureAwait(false));
         }
 
         /// <summary>
@@ -3066,7 +3072,8 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
         /// <summary>
         /// Build message settings
         /// </summary>
-        private WriterGroupMessageSettingsApiModel BuildWriterGroupMessageSettings(CliOptions options) {
+        private static WriterGroupMessageSettingsApiModel BuildWriterGroupMessageSettings(
+            CliOptions options) {
             var config = new WriterGroupMessageSettingsApiModel();
             var empty = true;
 
@@ -3097,7 +3104,8 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
         /// <summary>
         /// Build subscription settings
         /// </summary>
-        private PublishedDataSetSourceSettingsApiModel BuildDataSetWriterSubscriptionSettings(CliOptions options) {
+        private static PublishedDataSetSourceSettingsApiModel BuildDataSetWriterSubscriptionSettings(
+            CliOptions options) {
             var config = new PublishedDataSetSourceSettingsApiModel();
             var empty = true;
 
@@ -3138,7 +3146,8 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
         /// <summary>
         /// Build message settings
         /// </summary>
-        private DataSetWriterMessageSettingsApiModel BuildDataSetWriterMessageSettings(CliOptions options) {
+        private static DataSetWriterMessageSettingsApiModel BuildDataSetWriterMessageSettings(
+            CliOptions options) {
             var config = new DataSetWriterMessageSettingsApiModel();
             var empty = true;
             var messageNumber = options.GetValueOrDefault<ushort>("-N", "--number", null);
@@ -3167,7 +3176,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
         /// <summary>
         /// Build discovery config model from options
         /// </summary>
-        private DiscoveryConfigApiModel BuildDiscoveryConfig(CliOptions options) {
+        private static DiscoveryConfigApiModel BuildDiscoveryConfig(CliOptions options) {
             var config = new DiscoveryConfigApiModel();
             var empty = true;
 
@@ -3228,7 +3237,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
         /// <summary>
         /// Print help
         /// </summary>
-        private void PrintHelp() {
+        private static void PrintHelp() {
             Console.WriteLine(
                 @"
 aziiotcli - Allows to script Industrial IoT Services api.
@@ -3263,7 +3272,7 @@ Commands and Options
         /// <summary>
         /// Print help
         /// </summary>
-        private void PrintApplicationsHelp() {
+        private static void PrintApplicationsHelp() {
             Console.WriteLine(
                 @"
 Manage applications registry.
@@ -3375,7 +3384,7 @@ Commands and Options
         /// <summary>
         /// Print help
         /// </summary>
-        private void PrintEndpointsHelp() {
+        private static void PrintEndpointsHelp() {
             Console.WriteLine(
                 @"
 Manage endpoints in registry.
@@ -3446,7 +3455,7 @@ Commands and Options
         /// <summary>
         /// Print help
         /// </summary>
-        private void PrintNodesHelp() {
+        private static void PrintNodesHelp() {
             Console.WriteLine(
                 @"
 Access address space through configured server endpoint.
@@ -3534,7 +3543,7 @@ Commands and Options
         /// <summary>
         /// Print help
         /// </summary>
-        private void PrintGatewaysHelp() {
+        private static void PrintGatewaysHelp() {
             Console.WriteLine(
                 @"
 Manage and configure Edge Gateways
@@ -3583,7 +3592,7 @@ Commands and Options
         /// <summary>
         /// Print help
         /// </summary>
-        private void PrintPublishersHelp() {
+        private static void PrintPublishersHelp() {
             Console.WriteLine(
                 @"
 Manage and configure Publisher modules
@@ -3631,7 +3640,7 @@ Commands and Options
         /// <summary>
         /// Print help
         /// </summary>
-        private void PrintSupervisorsHelp() {
+        private static void PrintSupervisorsHelp() {
             Console.WriteLine(
                 @"
 Manage and configure Twin modules (endpoint supervisors)
@@ -3689,7 +3698,7 @@ Commands and Options
         /// <summary>
         /// Print help
         /// </summary>
-        private void PrintDiscoverersHelp() {
+        private static void PrintDiscoverersHelp() {
             Console.WriteLine(
                 @"
 Manage and configure discovery modules
@@ -3771,7 +3780,7 @@ Commands and Options
         /// <summary>
         /// Print help
         /// </summary>
-        private void PrintWriterGroupsHelp() {
+        private static void PrintWriterGroupsHelp() {
             Console.WriteLine(
                 @"
 Manage dataset writer groups
@@ -3859,7 +3868,7 @@ Commands and Options
         /// <summary>
         /// Print help
         /// </summary>
-        private void PrintDataSetWritersHelp() {
+        private static void PrintDataSetWritersHelp() {
             Console.WriteLine(
                 @"
 Manage dataset and dataset writers
@@ -3995,7 +4004,7 @@ Commands and Options
         /// <summary>
         /// Print help
         /// </summary>
-        private void PrintDataSetVariablesHelp() {
+        private static void PrintDataSetVariablesHelp() {
             Console.WriteLine(
                 @"
 Manage dataset variables
@@ -4071,7 +4080,7 @@ Commands and Options
         /// <summary>
         /// Print help
         /// </summary>
-        private void PrintCertificateGroupsHelp() {
+        private static void PrintCertificateGroupsHelp() {
             Console.WriteLine(
                 @"
 Manage entity trust groups
@@ -4135,7 +4144,7 @@ Commands and Options
         /// <summary>
         /// Print help
         /// </summary>
-        private void PrintRequestsHelp() {
+        private static void PrintRequestsHelp() {
             Console.WriteLine(
                 @"
 Submit and manage Certificate requests
@@ -4212,7 +4221,7 @@ Commands and Options
         /// <summary>
         /// Print help
         /// </summary>
-        private void PrintTrustHelp() {
+        private static void PrintTrustHelp() {
             Console.WriteLine(
                 @"
 Manage trust between entities

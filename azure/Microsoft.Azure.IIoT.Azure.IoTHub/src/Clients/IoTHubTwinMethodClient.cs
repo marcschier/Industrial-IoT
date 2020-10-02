@@ -42,7 +42,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub.Clients {
                     Name = method,
                     ResponseTimeout = timeout ?? TimeSpan.FromSeconds(kDefaultMethodTimeout),
                     JsonPayload = payload
-                }, ct);
+                }, ct).ConfigureAwait(false);
             if (result.Status != 200) {
                 _logger.Debug("Call {method} on {device} ({module}) with {payload} " +
                     "returned with error {status}: {result}",

@@ -10,6 +10,8 @@ namespace Microsoft.Azure.IIoT.Crypto.BouncyCastle {
     using Org.BouncyCastle.Math;
     using Org.BouncyCastle.X509;
     using Org.BouncyCastle.X509.Extension;
+    using System.Collections.Generic;
+    using System.Linq;
 
     /// <summary>
     /// Crl extensions
@@ -30,8 +32,8 @@ namespace Microsoft.Azure.IIoT.Crypto.BouncyCastle {
         /// </summary>
         /// <param name="buffer"></param>
         /// <returns></returns>
-        internal static X509Crl ToX509Crl(byte[] buffer) {
-            return new X509CrlParser().ReadCrl(buffer);
+        internal static X509Crl ToX509Crl(IReadOnlyCollection<byte> buffer) {
+            return new X509CrlParser().ReadCrl(buffer.ToArray());
         }
 
         /// <summary>

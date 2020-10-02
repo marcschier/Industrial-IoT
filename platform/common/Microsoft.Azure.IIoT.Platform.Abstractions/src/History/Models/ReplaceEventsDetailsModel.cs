@@ -20,6 +20,6 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Models {
         /// <summary>
         /// The new events to replace
         /// </summary>
-        public List<HistoricEventModel> Events { get; set; }
+        public IReadOnlyList<HistoricEventModel> Events { get; set; }
     }
 }

@@ -19,7 +19,7 @@ namespace Microsoft.Azure.IIoT.Platform.Core.Models {
         /// <summary>
         /// The operands in the element for the operator
         /// </summary>
-        public List<FilterOperandModel> FilterOperands { get; set; }
+        public IReadOnlyList<FilterOperandModel> FilterOperands { get; set; }
 
     }
 }

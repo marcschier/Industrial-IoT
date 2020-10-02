@@ -49,7 +49,7 @@ namespace Microsoft.Azure.IIoT.Platform.Discovery.Services {
                 return;
             }
 
-            var gateway = await _gateways.GetGatewayAsync(gatewayId);
+            var gateway = await _gateways.GetGatewayAsync(gatewayId).ConfigureAwait(false);
             var siteId = gateway?.Gateway?.SiteId ?? gatewayId;
 
             //
@@ -63,7 +63,7 @@ namespace Microsoft.Azure.IIoT.Platform.Discovery.Services {
 
             // Process discovery events
             await _applications.ProcessDiscoveryEventsAsync(siteId, discovererId,
-                gateway.Modules?.Supervisor?.Id, result, events);
+                gateway.Modules?.Supervisor?.Id, result, events).ConfigureAwait(false);
         }
 
         private readonly IGatewayRegistry _gateways;

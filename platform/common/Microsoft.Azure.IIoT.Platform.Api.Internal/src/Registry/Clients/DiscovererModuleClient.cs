@@ -38,7 +38,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Clients {
             if (request == null) {
                 throw new ArgumentNullException(nameof(request));
             }
-            await CallServiceOnDiscovererAsync(discovererId, "Discover_V2", request, ct);
+            await CallServiceOnDiscovererAsync(discovererId, "Discover_V2", request, ct).ConfigureAwait(false);
         }
 
         /// <inhertitdoc/>
@@ -47,7 +47,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Clients {
             if (request == null) {
                 throw new ArgumentNullException(nameof(request));
             }
-            await CallServiceOnDiscovererAsync(discovererId, "Cancel_V2", request, ct);
+            await CallServiceOnDiscovererAsync(discovererId, "Cancel_V2", request, ct).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -66,7 +66,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Clients {
             }
             var sw = Stopwatch.StartNew();
             _ = await _client.CallMethodAsync(discovererId, service,
-                _serializer.SerializeToString(request), null, ct);
+                _serializer.SerializeToString(request), null, ct).ConfigureAwait(false);
             _logger.Debug("Calling discoverer service '{service}' on " +
                 "{discovererId} took {elapsed} ms.", service,
                 discovererId, sw.ElapsedMilliseconds);

@@ -11,6 +11,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Service.Controllers {
     using Microsoft.Azure.IIoT.Platform.Twin.Api.Models;
     using Microsoft.Azure.IIoT.Http;
     using Microsoft.Azure.IIoT.AspNetCore.OpenApi;
+    using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using System;
@@ -54,7 +55,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Service.Controllers {
                 throw new ArgumentNullException(nameof(request));
             }
             var browseresult = await _browser.NodeBrowseAsync(endpointId,
-                request.ToServiceModel());
+                request.ToServiceModel()).ConfigureAwait(false);
             return browseresult.ToApiModel();
         }
 
@@ -76,10 +77,10 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Service.Controllers {
                 throw new ArgumentNullException(nameof(request));
             }
             if (request.ContinuationToken == null) {
-                throw new ArgumentNullException(nameof(request.ContinuationToken));
+                throw new ArgumentException("Missing continuation", nameof(request));
             }
             var browseresult = await _browser.NodeBrowseNextAsync(endpointId,
-                request.ToServiceModel());
+                request.ToServiceModel()).ConfigureAwait(false);
             return browseresult.ToApiModel();
         }
 
@@ -102,7 +103,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Service.Controllers {
                 throw new ArgumentNullException(nameof(request));
             }
             var browseresult = await _browser.NodeBrowsePathAsync(endpointId,
-                request.ToServiceModel());
+                request.ToServiceModel()).ConfigureAwait(false);
             return browseresult.ToApiModel();
         }
 
@@ -134,7 +135,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Service.Controllers {
                 TargetNodesOnly = true,
                 ReadVariableValues = true
             };
-            var browseresult = await _browser.NodeBrowseAsync(endpointId, request);
+            var browseresult = await _browser.NodeBrowseAsync(endpointId, request).ConfigureAwait(false);
             return browseresult.ToApiModel();
         }
 
@@ -157,10 +158,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Service.Controllers {
         [AutoRestExtension(NextPageLinkName = "continuationToken")]
         public async Task<BrowseNextResponseApiModel> GetNextSetOfUniqueNodesAsync(
             string endpointId, [FromQuery] [Required] string continuationToken) {
-            if (Request.Headers.ContainsKey(HttpHeader.ContinuationToken)) {
-                continuationToken = Request.Headers[HttpHeader.ContinuationToken]
-                    .FirstOrDefault();
-            }
+            continuationToken = Request.GetContinuationToken(continuationToken);
             if (string.IsNullOrEmpty(continuationToken)) {
                 throw new ArgumentNullException(nameof(continuationToken));
             }
@@ -169,7 +167,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Service.Controllers {
                 TargetNodesOnly = true,
                 ReadVariableValues = true
             };
-            var browseresult = await _browser.NodeBrowseNextAsync(endpointId, request);
+            var browseresult = await _browser.NodeBrowseNextAsync(endpointId, request).ConfigureAwait(false);
             return browseresult.ToApiModel();
         }
 

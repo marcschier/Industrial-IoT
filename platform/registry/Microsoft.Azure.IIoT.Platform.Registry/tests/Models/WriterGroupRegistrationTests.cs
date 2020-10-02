@@ -9,6 +9,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
     using Microsoft.Azure.IIoT.Utils;
     using AutoFixture;
     using AutoFixture.Kernel;
+    using System.Collections.Generic;
     using System;
     using System.Linq;
     using Xunit;
@@ -79,7 +80,9 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
         public void TestEqualIsNotEqualWithDeviceModel() {
             var r1 = CreateRegistration();
             var m = r1.ToDeviceTwin(_serializer);
-            m.Properties.Desired["HeaderLayoutUri"] = "babab";
+            var properties = m.Properties.Desired.Clone();
+            properties["HeaderLayoutUri"] = "babab";
+            m.Properties.Desired = properties;
             var r2 = m.ToEntityRegistration();
 
             Assert.NotEqual(r1, r2);

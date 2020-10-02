@@ -53,7 +53,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
             await CallServiceOnSupervisorAsync("ActivateEndpoint_V2", registration.SupervisorId, new {
                 registration.Id,
                 Secret = secret
-            }, ct);
+            }, ct).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
@@ -69,7 +69,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
                 throw new ArgumentNullException(nameof(registration.Id));
             }
             await CallServiceOnSupervisorAsync("DeactivateEndpoint_V2", registration.SupervisorId,
-                registration.Id, ct);
+                registration.Id, ct).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -84,7 +84,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
             string supervisorId, object payload, CancellationToken ct) {
             var sw = Stopwatch.StartNew();
             _ = await _client.CallMethodAsync(supervisorId, service,
-                _serializer.SerializeToString(payload), null, ct);
+                _serializer.SerializeToString(payload), null, ct).ConfigureAwait(false);
             _logger.Debug("Calling supervisor service '{service}' on " +
                 "{supervisorId} took {elapsed} ms.", service, supervisorId,
                     sw.ElapsedMilliseconds);

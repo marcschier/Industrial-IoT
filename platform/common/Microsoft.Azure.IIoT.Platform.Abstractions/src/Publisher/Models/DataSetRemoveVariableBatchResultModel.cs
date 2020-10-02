@@ -14,6 +14,6 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Models {
         /// <summary>
         /// Variables to remove from the dataset in the writer
         /// </summary>
-        public List<DataSetRemoveVariableResultModel> Results { get; set; }
+        public IReadOnlyList<DataSetRemoveVariableResultModel> Results { get; set; }
     }
 }

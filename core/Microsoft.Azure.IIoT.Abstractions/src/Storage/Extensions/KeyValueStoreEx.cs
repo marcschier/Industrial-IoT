@@ -24,7 +24,7 @@ namespace Microsoft.Azure.IIoT.Storage {
         public static async Task<string> FindKeyValueAsync(this IKeyValueStore store,
             string key, string contentType = null, CancellationToken ct = default) {
             try {
-                return await store.GetKeyValueAsync(key, contentType, ct);
+                return await store.GetKeyValueAsync(key, contentType, ct).ConfigureAwait(false);
             }
             catch (ResourceNotFoundException) {
                 return null;

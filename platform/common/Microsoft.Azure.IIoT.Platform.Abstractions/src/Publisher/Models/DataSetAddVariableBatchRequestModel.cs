@@ -18,7 +18,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Models {
         /// <summary>
         /// Variables to add to the dataset in the specified writer
         /// </summary>
-        public List<DataSetAddVariableRequestModel> Variables { get; set; }
+        public IReadOnlyList<DataSetAddVariableRequestModel> Variables { get; set; }
 
         /// <summary>
         /// (Optional) Update data source to use publishing interval

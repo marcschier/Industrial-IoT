@@ -50,7 +50,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Service.Controllers {
                 throw new ArgumentNullException(nameof(request));
             }
             var browseresult = await _transfer.ModelUploadStartAsync(endpointId,
-                request.ToServiceModel());
+                request.ToServiceModel()).ConfigureAwait(false);
             return browseresult.ToApiModel();
         }
 

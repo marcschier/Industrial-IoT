@@ -75,49 +75,49 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Clients {
         /// <inheritdoc/>
         public async Task<HistoryReadResultModel<HistoricEventModel[]>> HistoryReadEventsAsync(
             T endpoint, HistoryReadRequestModel<ReadEventsDetailsModel> request) {
-            var results = await _client.HistoryReadAsync(endpoint, request.ToRawModel(_codec.Encode));
+            var results = await _client.HistoryReadAsync(endpoint, request.ToRawModel(_codec.Encode)).ConfigureAwait(false);
             return results.ToSpecificModel(_codec.DecodeEvents);
         }
 
         /// <inheritdoc/>
         public async Task<HistoryReadNextResultModel<HistoricEventModel[]>> HistoryReadEventsNextAsync(
             T endpoint, HistoryReadNextRequestModel request) {
-            var results = await _client.HistoryReadNextAsync(endpoint, request);
+            var results = await _client.HistoryReadNextAsync(endpoint, request).ConfigureAwait(false);
             return results.ToSpecificModel(_codec.DecodeEvents);
         }
 
         /// <inheritdoc/>
         public async Task<HistoryReadResultModel<HistoricValueModel[]>> HistoryReadValuesAsync(
             T endpoint, HistoryReadRequestModel<ReadValuesDetailsModel> request) {
-            var results = await _client.HistoryReadAsync(endpoint, request.ToRawModel(_codec.Encode));
+            var results = await _client.HistoryReadAsync(endpoint, request.ToRawModel(_codec.Encode)).ConfigureAwait(false);
             return results.ToSpecificModel(_codec.DecodeValues);
         }
 
         /// <inheritdoc/>
         public async Task<HistoryReadResultModel<HistoricValueModel[]>> HistoryReadValuesAtTimesAsync(
             T endpoint, HistoryReadRequestModel<ReadValuesAtTimesDetailsModel> request) {
-            var results = await _client.HistoryReadAsync(endpoint, request.ToRawModel(_codec.Encode));
+            var results = await _client.HistoryReadAsync(endpoint, request.ToRawModel(_codec.Encode)).ConfigureAwait(false);
             return results.ToSpecificModel(_codec.DecodeValues);
         }
 
         /// <inheritdoc/>
         public async Task<HistoryReadResultModel<HistoricValueModel[]>> HistoryReadProcessedValuesAsync(
             T endpoint, HistoryReadRequestModel<ReadProcessedValuesDetailsModel> request) {
-            var results = await _client.HistoryReadAsync(endpoint, request.ToRawModel(_codec.Encode));
+            var results = await _client.HistoryReadAsync(endpoint, request.ToRawModel(_codec.Encode)).ConfigureAwait(false);
             return results.ToSpecificModel(_codec.DecodeValues);
         }
 
         /// <inheritdoc/>
         public async Task<HistoryReadResultModel<HistoricValueModel[]>> HistoryReadModifiedValuesAsync(
             T endpoint, HistoryReadRequestModel<ReadModifiedValuesDetailsModel> request) {
-            var results = await _client.HistoryReadAsync(endpoint, request.ToRawModel(_codec.Encode));
+            var results = await _client.HistoryReadAsync(endpoint, request.ToRawModel(_codec.Encode)).ConfigureAwait(false);
             return results.ToSpecificModel(_codec.DecodeValues);
         }
 
         /// <inheritdoc/>
         public async Task<HistoryReadNextResultModel<HistoricValueModel[]>> HistoryReadValuesNextAsync(
             T endpoint, HistoryReadNextRequestModel request) {
-            var results = await _client.HistoryReadNextAsync(endpoint, request);
+            var results = await _client.HistoryReadNextAsync(endpoint, request).ConfigureAwait(false);
             return results.ToSpecificModel(_codec.DecodeValues);
         }
 

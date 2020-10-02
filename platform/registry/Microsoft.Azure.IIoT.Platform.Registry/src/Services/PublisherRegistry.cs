@@ -44,7 +44,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                 throw new ArgumentException(nameof(id));
             }
             var deviceId = HubResource.Parse(id, out var hub, out var moduleId);
-            var device = await _iothub.GetAsync(deviceId, moduleId, ct);
+            var device = await _iothub.GetAsync(deviceId, moduleId, ct).ConfigureAwait(false);
             var registration = device.ToEntityRegistration()
                 as PublisherRegistration;
             if (registration == null) {
@@ -69,7 +69,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
 
             while (true) {
                 try {
-                    var twin = await _iothub.GetAsync(deviceId, moduleId, ct);
+                    var twin = await _iothub.GetAsync(deviceId, moduleId, ct).ConfigureAwait(false);
                     if (twin.Id != deviceId && twin.ModuleId != moduleId) {
                         throw new ArgumentException("Id must be same as twin to patch",
                             nameof(publisherId));
@@ -91,12 +91,12 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
 
                     // Patch
                     twin = await _iothub.PatchAsync(registration.Patch(
-                        patched.ToPublisherRegistration(), _serializer), false, ct);
+                        patched.ToPublisherRegistration(), _serializer), false, ct).ConfigureAwait(false);
 
                     // Send update to through broker
                     registration = twin.ToEntityRegistration(true) as PublisherRegistration;
                     await _broker.NotifyAllAsync(l => l.OnPublisherUpdatedAsync(null,
-                        registration.ToServiceModel()));
+                        registration.ToServiceModel())).ConfigureAwait(false);
                     return;
                 }
                 catch (ResourceOutOfDateException ex) {
@@ -113,7 +113,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                 $"properties.reported.{TwinProperty.Type} = '{IdentityType.Publisher}' " +
                 $"AND NOT IS_DEFINED(tags.{nameof(EntityRegistration.NotSeenSince)})";
             var devices = await _iothub.QueryDeviceTwinsAsync(continuation == null ? query : null,
-                continuation, pageSize, ct);
+                continuation, pageSize, ct).ConfigureAwait(false);
             return new PublisherListModel {
                 ContinuationToken = devices.ContinuationToken,
                 Items = devices.Items
@@ -140,7 +140,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                 }
             }
 
-            var queryResult = await _iothub.QueryDeviceTwinsAsync(query, null, pageSize, ct);
+            var queryResult = await _iothub.QueryDeviceTwinsAsync(query, null, pageSize, ct).ConfigureAwait(false);
             return new PublisherListModel {
                 ContinuationToken = queryResult.ContinuationToken,
                 Items = queryResult.Items
@@ -160,7 +160,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
             }
             query += $"tags.{nameof(EntityRegistration.DeviceType)} = '{IdentityType.WriterGroup}' ";
 
-            var devices = await _iothub.QueryDeviceTwinsAsync(query, continuation, pageSize, ct);
+            var devices = await _iothub.QueryDeviceTwinsAsync(query, continuation, pageSize, ct).ConfigureAwait(false);
             return new EntityActivationStatusListModel {
                 ContinuationToken = devices.ContinuationToken,
                 Items = devices.Items

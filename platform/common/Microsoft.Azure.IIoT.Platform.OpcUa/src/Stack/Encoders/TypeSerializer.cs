@@ -26,6 +26,15 @@ namespace Opc.Ua.Encoders {
         /// <inheritdoc/>
         public T Decode<T>(string contentType, byte[] input,
             Func<IDecoder, T> reader) {
+            if (contentType is null) {
+                throw new ArgumentNullException(nameof(contentType));
+            }
+            if (input is null) {
+                throw new ArgumentNullException(nameof(input));
+            }
+            if (reader is null) {
+                throw new ArgumentNullException(nameof(reader));
+            }
             using (var stream = new MemoryStream(input)) {
                 IDecoder decoder = null;
                 try {
@@ -42,6 +51,12 @@ namespace Opc.Ua.Encoders {
 
         /// <inheritdoc/>
         public byte[] Encode(string contentType, Action<IEncoder> writer) {
+            if (contentType is null) {
+                throw new ArgumentNullException(nameof(contentType));
+            }
+            if (writer is null) {
+                throw new ArgumentNullException(nameof(writer));
+            }
             using (var stream = new MemoryStream()) {
                 IEncoder encoder = null;
                 try {
@@ -70,21 +85,27 @@ namespace Opc.Ua.Encoders {
         /// <param name="stream"></param>
         /// <returns></returns>
         private IDecoder CreateDecoder(string contentType, Stream stream) {
-            switch (contentType.ToLowerInvariant()) {
-                case ContentMimeType.UaJson:
-                case ContentMimeType.UaNonReversibleJson:
-                case ContentMimeType.UaNonReversibleJsonReference:
-                    return new JsonDecoderEx(stream, _context);
-                case ContentMimeType.UaBinary:
-                    return new BinaryDecoder(stream, _context);
-                case ContentMimeType.UaXml:
-                    return new XmlDecoder(null, XmlReader.Create(stream), _context);
-                case ContentMimeType.UaJsonReference:
-                    return new JsonDecoder(null, new JsonTextReader(
-                        new StreamReader(stream)), _context);
-                default:
-                    throw new ArgumentException(nameof(contentType));
+            if (contentType is null) {
+                throw new ArgumentNullException(nameof(contentType));
             }
+            if (contentType.EqualsIgnoreCase(ContentMimeType.UaJson) ||
+                contentType.EqualsIgnoreCase(ContentMimeType.UaNonReversibleJson) ||
+                contentType.EqualsIgnoreCase(ContentMimeType.UaNonReversibleJsonReference)) {
+                return new JsonDecoderEx(stream, _context);
+            }
+            if (contentType.EqualsIgnoreCase(ContentMimeType.UaBinary)) {
+                return new BinaryDecoder(stream, _context);
+            }
+#pragma warning disable CA2000 // Dispose objects before losing scope
+            if (contentType.EqualsIgnoreCase(ContentMimeType.UaXml)) {
+                return new XmlDecoder(null, XmlReader.Create(stream), _context);
+            }
+            if (contentType.EqualsIgnoreCase(ContentMimeType.UaJsonReference)) {
+                return new JsonDecoder(null, new JsonTextReader(
+                    new StreamReader(stream)), _context);
+            }
+#pragma warning restore CA2000 // Dispose objects before losing scope
+            throw new ArgumentException("Bad content type", nameof(contentType));
         }
 
         /// <summary>
@@ -94,26 +115,34 @@ namespace Opc.Ua.Encoders {
         /// <param name="stream"></param>
         /// <returns></returns>
         private IEncoder CreateEncoder(string contentType, Stream stream) {
-            switch (contentType.ToLowerInvariant()) {
-                case ContentMimeType.UaJson:
-                    return new JsonEncoderEx(stream, _context);
-                case ContentMimeType.UaNonReversibleJson:
-                    return new JsonEncoderEx(stream, _context) {
-                        UseReversibleEncoding = false
-                    };
-                case ContentMimeType.UaJsonReference:
-                    return new JsonEncoder(_context, true, new StreamWriter(stream));
-                case ContentMimeType.UaNonReversibleJsonReference:
-                    return new JsonEncoder(_context, false, new StreamWriter(stream));
-                case ContentMimeType.UaBinary:
-                    return new BinaryEncoder(stream, _context);
-                case ContentMimeType.UaXml:
-                    return new XmlEncoder(
-                        new XmlQualifiedName("ua", Namespaces.OpcUaXsd),
-                            XmlWriter.Create(stream), _context);
-                default:
-                    throw new ArgumentException(nameof(contentType));
+            if (contentType is null) {
+                throw new ArgumentNullException(nameof(contentType));
             }
+            if (contentType.EqualsIgnoreCase(ContentMimeType.UaJson)) {
+                return new JsonEncoderEx(stream, _context);
+            }
+            if (contentType.EqualsIgnoreCase(ContentMimeType.UaNonReversibleJson)) {
+                return new JsonEncoderEx(stream, _context) {
+                    UseReversibleEncoding = false
+                };
+            }
+#pragma warning disable CA2000 // Dispose objects before losing scope
+            if (contentType.EqualsIgnoreCase(ContentMimeType.UaJsonReference)) {
+                return new JsonEncoder(_context, true, new StreamWriter(stream));
+            }
+            if (contentType.EqualsIgnoreCase(ContentMimeType.UaNonReversibleJsonReference)) {
+                return new JsonEncoder(_context, false, new StreamWriter(stream));
+            }
+            if (contentType.EqualsIgnoreCase(ContentMimeType.UaBinary)) {
+                return new BinaryEncoder(stream, _context);
+            }
+            if (contentType.EqualsIgnoreCase(ContentMimeType.UaXml)) {
+                return new XmlEncoder(
+                    new XmlQualifiedName("ua", Namespaces.OpcUaXsd),
+                        XmlWriter.Create(stream), _context);
+            }
+#pragma warning restore CA2000 // Dispose objects before losing scope
+            throw new ArgumentException("Bad content type", nameof(contentType));
         }
 
         private readonly ServiceMessageContext _context;

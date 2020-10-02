@@ -42,7 +42,7 @@ namespace Microsoft.Azure.IIoT.Net.Scanner {
             int? maxProbeCount, TimeSpan? timeout, CancellationToken ct) {
             using (var scanner = new NetworkScanner(_logger, (s, p) => replies(p),
                 local, addresses, netclass, maxProbeCount, timeout, ct)) {
-                await scanner.Completion;
+                await scanner.Completion.ConfigureAwait(false);
             }
         }
 
@@ -62,7 +62,7 @@ namespace Microsoft.Azure.IIoT.Net.Scanner {
             int? minProbePercent, TimeSpan? timeout, CancellationToken ct) {
             using (var scanner = new PortScanner(_logger, source, (s, p) => target(p), portProbe,
                 maxProbeCount, minProbePercent, timeout, ct)) {
-                await scanner.Completion;
+                await scanner.Completion.ConfigureAwait(false);
             }
         }
 

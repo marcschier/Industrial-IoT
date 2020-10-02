@@ -39,7 +39,7 @@ namespace Microsoft.Azure.IIoT.Platform.Edge.Gateway.Service.Controllers {
         [HttpPut("{endpointId}/{fileName}")]
         public async Task ProcessAsync(string endpointId, string fileName) {
             await _processor.PublishFromNodesetAsync(endpointId, fileName,
-                Request.Body, Request.ContentType);
+                Request.Body, Request.ContentType).ConfigureAwait(false);
         }
 
         private readonly IBulkPublishHandler _processor;

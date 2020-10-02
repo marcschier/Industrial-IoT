@@ -19,6 +19,6 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Models {
         /// <summary>
         /// Variables
         /// </summary>
-        public List<PublishedDataSetVariableModel> Variables { get; set; }
+        public IReadOnlyList<PublishedDataSetVariableModel> Variables { get; set; }
     }
 }

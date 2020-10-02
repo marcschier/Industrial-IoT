@@ -53,7 +53,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
         /// Supported credential configurations that can be selected to
         /// obtain a credential and used to interact with the endpoint.
         /// </summary>
-        public List<AuthenticationMethodModel> AuthenticationMethods { get; set; }
+        public IReadOnlyList<AuthenticationMethodModel> AuthenticationMethods { get; set; }
 
         /// <summary>
         /// Application id endpoint is registered under.

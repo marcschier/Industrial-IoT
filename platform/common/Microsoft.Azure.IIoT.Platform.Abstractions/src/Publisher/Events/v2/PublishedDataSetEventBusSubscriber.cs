@@ -31,25 +31,25 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Events.v2 {
                         await Task.WhenAll(_listeners
                             .Select(l => l.OnPublishedDataSetVariableAddedAsync(
                                 eventData.Context, eventData.DataSetWriterId, eventData.DataSetVariable)
-                            .ContinueWith(t => Task.CompletedTask)));
+                            .ContinueWith(t => Task.CompletedTask))).ConfigureAwait(false);
                         break;
                     case PublishedDataSetItemEventType.Updated:
                         await Task.WhenAll(_listeners
                             .Select(l => l.OnPublishedDataSetVariableUpdatedAsync(
                                 eventData.Context, eventData.DataSetWriterId, eventData.DataSetVariable)
-                            .ContinueWith(t => Task.CompletedTask)));
+                            .ContinueWith(t => Task.CompletedTask))).ConfigureAwait(false);
                         break;
                     case PublishedDataSetItemEventType.StateChange:
                         await Task.WhenAll(_listeners
                             .Select(l => l.OnPublishedDataSetVariableStateChangeAsync(
                                 eventData.Context, eventData.DataSetWriterId, eventData.DataSetVariable)
-                            .ContinueWith(t => Task.CompletedTask)));
+                            .ContinueWith(t => Task.CompletedTask))).ConfigureAwait(false);
                         break;
                     case PublishedDataSetItemEventType.Removed:
                         await Task.WhenAll(_listeners
                             .Select(l => l.OnPublishedDataSetVariableRemovedAsync(
                                 eventData.Context, eventData.DataSetWriterId, eventData.VariableId)
-                            .ContinueWith(t => Task.CompletedTask)));
+                            .ContinueWith(t => Task.CompletedTask))).ConfigureAwait(false);
                         break;
                 }
             }
@@ -59,25 +59,25 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Events.v2 {
                         await Task.WhenAll(_listeners
                             .Select(l => l.OnPublishedDataSetEventsAddedAsync(
                                 eventData.Context, eventData.DataSetWriterId, eventData.EventDataSet)
-                            .ContinueWith(t => Task.CompletedTask)));
+                            .ContinueWith(t => Task.CompletedTask))).ConfigureAwait(false);
                         break;
                     case PublishedDataSetItemEventType.Updated:
                         await Task.WhenAll(_listeners
                             .Select(l => l.OnPublishedDataSetEventsUpdatedAsync(
                                 eventData.Context, eventData.DataSetWriterId, eventData.EventDataSet)
-                            .ContinueWith(t => Task.CompletedTask)));
+                            .ContinueWith(t => Task.CompletedTask))).ConfigureAwait(false);
                         break;
                     case PublishedDataSetItemEventType.StateChange:
                         await Task.WhenAll(_listeners
                             .Select(l => l.OnPublishedDataSetEventsStateChangeAsync(
                                 eventData.Context, eventData.DataSetWriterId, eventData.EventDataSet)
-                            .ContinueWith(t => Task.CompletedTask)));
+                            .ContinueWith(t => Task.CompletedTask))).ConfigureAwait(false);
                         break;
                     case PublishedDataSetItemEventType.Removed:
                         await Task.WhenAll(_listeners
                             .Select(l => l.OnPublishedDataSetEventsRemovedAsync(
                                 eventData.Context, eventData.DataSetWriterId)
-                            .ContinueWith(t => Task.CompletedTask)));
+                            .ContinueWith(t => Task.CompletedTask))).ConfigureAwait(false);
                         break;
                 }
             }

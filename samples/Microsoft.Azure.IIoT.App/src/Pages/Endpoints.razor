@@ -23,7 +23,7 @@
 @inject RegistryServiceEvents RegistryServiceEvents
 @inject Registry RegistryHelper
 @inject UICommon CommonHelper
-@inherits IIoTItemsCollection<EndpointInfo>
+@inherits ItemsCollection<EndpointInfo>
 
 <h1>Endpoints</h1>
 
@@ -96,7 +96,7 @@ else {
 }
                 <td class="hover-text width-medium-large">
                     <div>
-                        @endpoint.EndpointModel.Endpoint.SecurityMode - @CommonHelper.ExtractSecurityPolicy(endpoint.EndpointModel.Endpoint.SecurityPolicy)
+                        @endpoint.EndpointModel.Endpoint.SecurityMode - @UICommon.ExtractSecurityPolicy(endpoint.EndpointModel.Endpoint.SecurityPolicy)
                     </div>
                 </td>
                 <td class="hover-text width-small">

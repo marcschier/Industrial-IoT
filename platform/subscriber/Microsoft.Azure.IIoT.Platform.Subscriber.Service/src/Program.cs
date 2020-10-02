@@ -153,7 +153,7 @@ namespace Microsoft.Azure.IIoT.Platform.Subscriber.Service {
                 if (!properties.TryGetValue(SystemProperties.To, out var route)) {
                     properties.TryGetValue(EventProperties.Target, out route);
                 }
-                await _client.SendAsync(route, eventData, properties);
+                await _client.SendAsync(route, eventData, properties).ConfigureAwait(false);
             }
 
             private readonly IEventQueueClient _client;

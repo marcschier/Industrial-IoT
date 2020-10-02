@@ -8,5 +8,7 @@ namespace Microsoft.Azure.IIoT.Hosting {
     /// <summary>
     /// Tags a controllers as settings handler.
     /// </summary>
+#pragma warning disable CA1040 // Avoid empty interfaces
     public interface ISettingsController { }
+#pragma warning restore CA1040 // Avoid empty interfaces
 }

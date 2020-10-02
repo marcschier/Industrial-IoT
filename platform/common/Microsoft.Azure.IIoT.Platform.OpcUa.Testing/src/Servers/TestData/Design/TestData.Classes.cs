@@ -206,30 +206,30 @@ namespace TestData {
         /// <remarks />
         public PropertyState<uint> Iterations {
             get {
-                return m_iterations;
+                return _iterations;
             }
 
             set {
-                if (!Object.ReferenceEquals(m_iterations, value)) {
+                if (!Object.ReferenceEquals(_iterations, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_iterations = value;
+                _iterations = value;
             }
         }
 
         /// <remarks />
         public PropertyState<uint> NewValueCount {
             get {
-                return m_newValueCount;
+                return _newValueCount;
             }
 
             set {
-                if (!Object.ReferenceEquals(m_newValueCount, value)) {
+                if (!Object.ReferenceEquals(_newValueCount, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_newValueCount = value;
+                _newValueCount = value;
             }
         }
         #endregion
@@ -243,12 +243,12 @@ namespace TestData {
         public override void GetChildren(
             ISystemContext context,
             IList<BaseInstanceState> children) {
-            if (m_iterations != null) {
-                children.Add(m_iterations);
+            if (_iterations != null) {
+                children.Add(_iterations);
             }
 
-            if (m_newValueCount != null) {
-                children.Add(m_newValueCount);
+            if (_newValueCount != null) {
+                children.Add(_newValueCount);
             }
 
             base.GetChildren(context, children);
@@ -311,15 +311,15 @@ namespace TestData {
         #endregion
 
         #region Private Fields
-        private PropertyState<uint> m_iterations;
-        private PropertyState<uint> m_newValueCount;
+        private PropertyState<uint> _iterations;
+        private PropertyState<uint> _newValueCount;
         #endregion
     }
 #endif
     #endregion
 
     #region TestDataObjectState Class
-#if (!OPCUA_EXCLUDE_TestDataObjectState)
+#if !OPCUA_EXCLUDE_TestDataObjectState
     /// <summary>
     /// Stores an instance of the TestDataObjectType ObjectType.
     /// </summary>
@@ -340,7 +340,7 @@ namespace TestData {
             return Opc.Ua.NodeId.Create(TestData.ObjectTypes.TestDataObjectType, TestData.Namespaces.TestData, namespaceUris);
         }
 
-#if (!OPCUA_EXCLUDE_InitializationStrings)
+#if !OPCUA_EXCLUDE_InitializationStrings
         /// <summary>
         /// Initializes the instance.
         /// </summary>
@@ -415,40 +415,40 @@ namespace TestData {
         #region Public Properties
         /// <remarks />
         public PropertyState<bool> SimulationActive {
-            get => m_simulationActive;
+            get => _simulationActive;
 
             set {
-                if (!Object.ReferenceEquals(m_simulationActive, value)) {
+                if (!Object.ReferenceEquals(_simulationActive, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_simulationActive = value;
+                _simulationActive = value;
             }
         }
 
         /// <remarks />
         public GenerateValuesMethodState GenerateValues {
-            get => m_generateValuesMethod;
+            get => _generateValuesMethod;
 
             set {
-                if (!Object.ReferenceEquals(m_generateValuesMethod, value)) {
+                if (!Object.ReferenceEquals(_generateValuesMethod, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_generateValuesMethod = value;
+                _generateValuesMethod = value;
             }
         }
 
         /// <remarks />
         public AcknowledgeableConditionState CycleComplete {
-            get => m_cycleComplete;
+            get => _cycleComplete;
 
             set {
-                if (!Object.ReferenceEquals(m_cycleComplete, value)) {
+                if (!Object.ReferenceEquals(_cycleComplete, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_cycleComplete = value;
+                _cycleComplete = value;
             }
         }
         #endregion
@@ -462,16 +462,16 @@ namespace TestData {
         public override void GetChildren(
             ISystemContext context,
             IList<BaseInstanceState> children) {
-            if (m_simulationActive != null) {
-                children.Add(m_simulationActive);
+            if (_simulationActive != null) {
+                children.Add(_simulationActive);
             }
 
-            if (m_generateValuesMethod != null) {
-                children.Add(m_generateValuesMethod);
+            if (_generateValuesMethod != null) {
+                children.Add(_generateValuesMethod);
             }
 
-            if (m_cycleComplete != null) {
-                children.Add(m_cycleComplete);
+            if (_cycleComplete != null) {
+                children.Add(_cycleComplete);
             }
 
             base.GetChildren(context, children);
@@ -550,9 +550,9 @@ namespace TestData {
         #endregion
 
         #region Private Fields
-        private PropertyState<bool> m_simulationActive;
-        private GenerateValuesMethodState m_generateValuesMethod;
-        private AcknowledgeableConditionState m_cycleComplete;
+        private PropertyState<bool> _simulationActive;
+        private GenerateValuesMethodState _generateValuesMethod;
+        private AcknowledgeableConditionState _cycleComplete;
         #endregion
     }
 #endif
@@ -1067,7 +1067,7 @@ namespace TestData {
     #endregion
 
     #region ScalarValueObjectState Class
-#if (!OPCUA_EXCLUDE_ScalarValueObjectState)
+#if !OPCUA_EXCLUDE_ScalarValueObjectState
     /// <summary>
     /// Stores an instance of the ScalarValueObjectType ObjectType.
     /// </summary>
@@ -1088,7 +1088,7 @@ namespace TestData {
             return Opc.Ua.NodeId.Create(TestData.ObjectTypes.ScalarValueObjectType, TestData.Namespaces.TestData, namespaceUris);
         }
 
-#if (!OPCUA_EXCLUDE_InitializationStrings)
+#if !OPCUA_EXCLUDE_InitializationStrings
         /// <summary>
         /// Initializes the instance.
         /// </summary>
@@ -1187,352 +1187,352 @@ namespace TestData {
         #region Public Properties
         /// <remarks />
         public BaseDataVariableState<bool> BooleanValue {
-            get => m_booleanValue;
+            get => _booleanValue;
 
             set {
-                if (!Object.ReferenceEquals(m_booleanValue, value)) {
+                if (!Object.ReferenceEquals(_booleanValue, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_booleanValue = value;
+                _booleanValue = value;
             }
         }
 
         /// <remarks />
         public BaseDataVariableState<sbyte> SByteValue {
-            get => m_sByteValue;
+            get => _sByteValue;
 
             set {
-                if (!Object.ReferenceEquals(m_sByteValue, value)) {
+                if (!Object.ReferenceEquals(_sByteValue, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_sByteValue = value;
+                _sByteValue = value;
             }
         }
 
         /// <remarks />
         public BaseDataVariableState<byte> ByteValue {
-            get => m_byteValue;
+            get => _byteValue;
 
             set {
-                if (!Object.ReferenceEquals(m_byteValue, value)) {
+                if (!Object.ReferenceEquals(_byteValue, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_byteValue = value;
+                _byteValue = value;
             }
         }
 
         /// <remarks />
         public BaseDataVariableState<short> Int16Value {
-            get => m_int16Value;
+            get => _int16Value;
 
             set {
-                if (!Object.ReferenceEquals(m_int16Value, value)) {
+                if (!Object.ReferenceEquals(_int16Value, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_int16Value = value;
+                _int16Value = value;
             }
         }
 
         /// <remarks />
         public BaseDataVariableState<ushort> UInt16Value {
-            get => m_uInt16Value;
+            get => _uInt16Value;
 
             set {
-                if (!Object.ReferenceEquals(m_uInt16Value, value)) {
+                if (!Object.ReferenceEquals(_uInt16Value, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_uInt16Value = value;
+                _uInt16Value = value;
             }
         }
 
         /// <remarks />
         public BaseDataVariableState<int> Int32Value {
-            get => m_int32Value;
+            get => _int32Value;
 
             set {
-                if (!Object.ReferenceEquals(m_int32Value, value)) {
+                if (!Object.ReferenceEquals(_int32Value, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_int32Value = value;
+                _int32Value = value;
             }
         }
 
         /// <remarks />
         public BaseDataVariableState<uint> UInt32Value {
-            get => m_uInt32Value;
+            get => _uInt32Value;
 
             set {
-                if (!Object.ReferenceEquals(m_uInt32Value, value)) {
+                if (!Object.ReferenceEquals(_uInt32Value, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_uInt32Value = value;
+                _uInt32Value = value;
             }
         }
 
         /// <remarks />
         public BaseDataVariableState<long> Int64Value {
-            get => m_int64Value;
+            get => _int64Value;
 
             set {
-                if (!Object.ReferenceEquals(m_int64Value, value)) {
+                if (!Object.ReferenceEquals(_int64Value, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_int64Value = value;
+                _int64Value = value;
             }
         }
 
         /// <remarks />
         public BaseDataVariableState<ulong> UInt64Value {
-            get => m_uInt64Value;
+            get => _uInt64Value;
 
             set {
-                if (!Object.ReferenceEquals(m_uInt64Value, value)) {
+                if (!Object.ReferenceEquals(_uInt64Value, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_uInt64Value = value;
+                _uInt64Value = value;
             }
         }
 
         /// <remarks />
         public BaseDataVariableState<float> FloatValue {
-            get => m_floatValue;
+            get => _floatValue;
 
             set {
-                if (!Object.ReferenceEquals(m_floatValue, value)) {
+                if (!Object.ReferenceEquals(_floatValue, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_floatValue = value;
+                _floatValue = value;
             }
         }
 
         /// <remarks />
         public BaseDataVariableState<double> DoubleValue {
-            get => m_doubleValue;
+            get => _doubleValue;
 
             set {
-                if (!Object.ReferenceEquals(m_doubleValue, value)) {
+                if (!Object.ReferenceEquals(_doubleValue, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_doubleValue = value;
+                _doubleValue = value;
             }
         }
 
         /// <remarks />
         public BaseDataVariableState<string> StringValue {
-            get => m_stringValue;
+            get => _stringValue;
 
             set {
-                if (!Object.ReferenceEquals(m_stringValue, value)) {
+                if (!Object.ReferenceEquals(_stringValue, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_stringValue = value;
+                _stringValue = value;
             }
         }
 
         /// <remarks />
         public BaseDataVariableState<DateTime> DateTimeValue {
-            get => m_dateTimeValue;
+            get => _dateTimeValue;
 
             set {
-                if (!Object.ReferenceEquals(m_dateTimeValue, value)) {
+                if (!Object.ReferenceEquals(_dateTimeValue, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_dateTimeValue = value;
+                _dateTimeValue = value;
             }
         }
 
         /// <remarks />
         public BaseDataVariableState<Guid> GuidValue {
-            get => m_guidValue;
+            get => _guidValue;
 
             set {
-                if (!Object.ReferenceEquals(m_guidValue, value)) {
+                if (!Object.ReferenceEquals(_guidValue, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_guidValue = value;
+                _guidValue = value;
             }
         }
 
         /// <remarks />
         public BaseDataVariableState<byte[]> ByteStringValue {
-            get => m_byteStringValue;
+            get => _byteStringValue;
 
             set {
-                if (!Object.ReferenceEquals(m_byteStringValue, value)) {
+                if (!Object.ReferenceEquals(_byteStringValue, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_byteStringValue = value;
+                _byteStringValue = value;
             }
         }
 
         /// <remarks />
         public BaseDataVariableState<XmlElement> XmlElementValue {
-            get => m_xmlElementValue;
+            get => _xmlElementValue;
 
             set {
-                if (!Object.ReferenceEquals(m_xmlElementValue, value)) {
+                if (!Object.ReferenceEquals(_xmlElementValue, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_xmlElementValue = value;
+                _xmlElementValue = value;
             }
         }
 
         /// <remarks />
         public BaseDataVariableState<NodeId> NodeIdValue {
-            get => m_nodeIdValue;
+            get => _nodeIdValue;
 
             set {
-                if (!Object.ReferenceEquals(m_nodeIdValue, value)) {
+                if (!Object.ReferenceEquals(_nodeIdValue, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_nodeIdValue = value;
+                _nodeIdValue = value;
             }
         }
 
         /// <remarks />
         public BaseDataVariableState<ExpandedNodeId> ExpandedNodeIdValue {
-            get => m_expandedNodeIdValue;
+            get => _expandedNodeIdValue;
 
             set {
-                if (!Object.ReferenceEquals(m_expandedNodeIdValue, value)) {
+                if (!Object.ReferenceEquals(_expandedNodeIdValue, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_expandedNodeIdValue = value;
+                _expandedNodeIdValue = value;
             }
         }
 
         /// <remarks />
         public BaseDataVariableState<QualifiedName> QualifiedNameValue {
-            get => m_qualifiedNameValue;
+            get => _qualifiedNameValue;
 
             set {
-                if (!Object.ReferenceEquals(m_qualifiedNameValue, value)) {
+                if (!Object.ReferenceEquals(_qualifiedNameValue, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_qualifiedNameValue = value;
+                _qualifiedNameValue = value;
             }
         }
 
         /// <remarks />
         public BaseDataVariableState<LocalizedText> LocalizedTextValue {
-            get => m_localizedTextValue;
+            get => _localizedTextValue;
 
             set {
-                if (!Object.ReferenceEquals(m_localizedTextValue, value)) {
+                if (!Object.ReferenceEquals(_localizedTextValue, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_localizedTextValue = value;
+                _localizedTextValue = value;
             }
         }
 
         /// <remarks />
         public BaseDataVariableState<StatusCode> StatusCodeValue {
-            get => m_statusCodeValue;
+            get => _statusCodeValue;
 
             set {
-                if (!Object.ReferenceEquals(m_statusCodeValue, value)) {
+                if (!Object.ReferenceEquals(_statusCodeValue, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_statusCodeValue = value;
+                _statusCodeValue = value;
             }
         }
 
         /// <remarks />
         public BaseDataVariableState VariantValue {
-            get => m_variantValue;
+            get => _variantValue;
 
             set {
-                if (!Object.ReferenceEquals(m_variantValue, value)) {
+                if (!Object.ReferenceEquals(_variantValue, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_variantValue = value;
+                _variantValue = value;
             }
         }
 
         /// <remarks />
         public BaseDataVariableState<int> EnumerationValue {
-            get => m_enumerationValue;
+            get => _enumerationValue;
 
             set {
-                if (!Object.ReferenceEquals(m_enumerationValue, value)) {
+                if (!Object.ReferenceEquals(_enumerationValue, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_enumerationValue = value;
+                _enumerationValue = value;
             }
         }
 
         /// <remarks />
         public BaseDataVariableState<ExtensionObject> StructureValue {
-            get => m_structureValue;
+            get => _structureValue;
 
             set {
-                if (!Object.ReferenceEquals(m_structureValue, value)) {
+                if (!Object.ReferenceEquals(_structureValue, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_structureValue = value;
+                _structureValue = value;
             }
         }
 
         /// <remarks />
         public BaseDataVariableState NumberValue {
-            get => m_numberValue;
+            get => _numberValue;
 
             set {
-                if (!Object.ReferenceEquals(m_numberValue, value)) {
+                if (!Object.ReferenceEquals(_numberValue, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_numberValue = value;
+                _numberValue = value;
             }
         }
 
         /// <remarks />
         public BaseDataVariableState IntegerValue {
-            get => m_integerValue;
+            get => _integerValue;
 
             set {
-                if (!Object.ReferenceEquals(m_integerValue, value)) {
+                if (!Object.ReferenceEquals(_integerValue, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_integerValue = value;
+                _integerValue = value;
             }
         }
 
         /// <remarks />
         public BaseDataVariableState UIntegerValue {
-            get => m_uIntegerValue;
+            get => _uIntegerValue;
 
             set {
-                if (!Object.ReferenceEquals(m_uIntegerValue, value)) {
+                if (!Object.ReferenceEquals(_uIntegerValue, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_uIntegerValue = value;
+                _uIntegerValue = value;
             }
         }
         #endregion
@@ -1546,112 +1546,112 @@ namespace TestData {
         public override void GetChildren(
             ISystemContext context,
             IList<BaseInstanceState> children) {
-            if (m_booleanValue != null) {
-                children.Add(m_booleanValue);
+            if (_booleanValue != null) {
+                children.Add(_booleanValue);
             }
 
-            if (m_sByteValue != null) {
-                children.Add(m_sByteValue);
+            if (_sByteValue != null) {
+                children.Add(_sByteValue);
             }
 
-            if (m_byteValue != null) {
-                children.Add(m_byteValue);
+            if (_byteValue != null) {
+                children.Add(_byteValue);
             }
 
-            if (m_int16Value != null) {
-                children.Add(m_int16Value);
+            if (_int16Value != null) {
+                children.Add(_int16Value);
             }
 
-            if (m_uInt16Value != null) {
-                children.Add(m_uInt16Value);
+            if (_uInt16Value != null) {
+                children.Add(_uInt16Value);
             }
 
-            if (m_int32Value != null) {
-                children.Add(m_int32Value);
+            if (_int32Value != null) {
+                children.Add(_int32Value);
             }
 
-            if (m_uInt32Value != null) {
-                children.Add(m_uInt32Value);
+            if (_uInt32Value != null) {
+                children.Add(_uInt32Value);
             }
 
-            if (m_int64Value != null) {
-                children.Add(m_int64Value);
+            if (_int64Value != null) {
+                children.Add(_int64Value);
             }
 
-            if (m_uInt64Value != null) {
-                children.Add(m_uInt64Value);
+            if (_uInt64Value != null) {
+                children.Add(_uInt64Value);
             }
 
-            if (m_floatValue != null) {
-                children.Add(m_floatValue);
+            if (_floatValue != null) {
+                children.Add(_floatValue);
             }
 
-            if (m_doubleValue != null) {
-                children.Add(m_doubleValue);
+            if (_doubleValue != null) {
+                children.Add(_doubleValue);
             }
 
-            if (m_stringValue != null) {
-                children.Add(m_stringValue);
+            if (_stringValue != null) {
+                children.Add(_stringValue);
             }
 
-            if (m_dateTimeValue != null) {
-                children.Add(m_dateTimeValue);
+            if (_dateTimeValue != null) {
+                children.Add(_dateTimeValue);
             }
 
-            if (m_guidValue != null) {
-                children.Add(m_guidValue);
+            if (_guidValue != null) {
+                children.Add(_guidValue);
             }
 
-            if (m_byteStringValue != null) {
-                children.Add(m_byteStringValue);
+            if (_byteStringValue != null) {
+                children.Add(_byteStringValue);
             }
 
-            if (m_xmlElementValue != null) {
-                children.Add(m_xmlElementValue);
+            if (_xmlElementValue != null) {
+                children.Add(_xmlElementValue);
             }
 
-            if (m_nodeIdValue != null) {
-                children.Add(m_nodeIdValue);
+            if (_nodeIdValue != null) {
+                children.Add(_nodeIdValue);
             }
 
-            if (m_expandedNodeIdValue != null) {
-                children.Add(m_expandedNodeIdValue);
+            if (_expandedNodeIdValue != null) {
+                children.Add(_expandedNodeIdValue);
             }
 
-            if (m_qualifiedNameValue != null) {
-                children.Add(m_qualifiedNameValue);
+            if (_qualifiedNameValue != null) {
+                children.Add(_qualifiedNameValue);
             }
 
-            if (m_localizedTextValue != null) {
-                children.Add(m_localizedTextValue);
+            if (_localizedTextValue != null) {
+                children.Add(_localizedTextValue);
             }
 
-            if (m_statusCodeValue != null) {
-                children.Add(m_statusCodeValue);
+            if (_statusCodeValue != null) {
+                children.Add(_statusCodeValue);
             }
 
-            if (m_variantValue != null) {
-                children.Add(m_variantValue);
+            if (_variantValue != null) {
+                children.Add(_variantValue);
             }
 
-            if (m_enumerationValue != null) {
-                children.Add(m_enumerationValue);
+            if (_enumerationValue != null) {
+                children.Add(_enumerationValue);
             }
 
-            if (m_structureValue != null) {
-                children.Add(m_structureValue);
+            if (_structureValue != null) {
+                children.Add(_structureValue);
             }
 
-            if (m_numberValue != null) {
-                children.Add(m_numberValue);
+            if (_numberValue != null) {
+                children.Add(_numberValue);
             }
 
-            if (m_integerValue != null) {
-                children.Add(m_integerValue);
+            if (_integerValue != null) {
+                children.Add(_integerValue);
             }
 
-            if (m_uIntegerValue != null) {
-                children.Add(m_uIntegerValue);
+            if (_uIntegerValue != null) {
+                children.Add(_uIntegerValue);
             }
 
             base.GetChildren(context, children);
@@ -2114,40 +2114,40 @@ namespace TestData {
         #endregion
 
         #region Private Fields
-        private BaseDataVariableState<bool> m_booleanValue;
-        private BaseDataVariableState<sbyte> m_sByteValue;
-        private BaseDataVariableState<byte> m_byteValue;
-        private BaseDataVariableState<short> m_int16Value;
-        private BaseDataVariableState<ushort> m_uInt16Value;
-        private BaseDataVariableState<int> m_int32Value;
-        private BaseDataVariableState<uint> m_uInt32Value;
-        private BaseDataVariableState<long> m_int64Value;
-        private BaseDataVariableState<ulong> m_uInt64Value;
-        private BaseDataVariableState<float> m_floatValue;
-        private BaseDataVariableState<double> m_doubleValue;
-        private BaseDataVariableState<string> m_stringValue;
-        private BaseDataVariableState<DateTime> m_dateTimeValue;
-        private BaseDataVariableState<Guid> m_guidValue;
-        private BaseDataVariableState<byte[]> m_byteStringValue;
-        private BaseDataVariableState<XmlElement> m_xmlElementValue;
-        private BaseDataVariableState<NodeId> m_nodeIdValue;
-        private BaseDataVariableState<ExpandedNodeId> m_expandedNodeIdValue;
-        private BaseDataVariableState<QualifiedName> m_qualifiedNameValue;
-        private BaseDataVariableState<LocalizedText> m_localizedTextValue;
-        private BaseDataVariableState<StatusCode> m_statusCodeValue;
-        private BaseDataVariableState m_variantValue;
-        private BaseDataVariableState<int> m_enumerationValue;
-        private BaseDataVariableState<ExtensionObject> m_structureValue;
-        private BaseDataVariableState m_numberValue;
-        private BaseDataVariableState m_integerValue;
-        private BaseDataVariableState m_uIntegerValue;
+        private BaseDataVariableState<bool> _booleanValue;
+        private BaseDataVariableState<sbyte> _sByteValue;
+        private BaseDataVariableState<byte> _byteValue;
+        private BaseDataVariableState<short> _int16Value;
+        private BaseDataVariableState<ushort> _uInt16Value;
+        private BaseDataVariableState<int> _int32Value;
+        private BaseDataVariableState<uint> _uInt32Value;
+        private BaseDataVariableState<long> _int64Value;
+        private BaseDataVariableState<ulong> _uInt64Value;
+        private BaseDataVariableState<float> _floatValue;
+        private BaseDataVariableState<double> _doubleValue;
+        private BaseDataVariableState<string> _stringValue;
+        private BaseDataVariableState<DateTime> _dateTimeValue;
+        private BaseDataVariableState<Guid> _guidValue;
+        private BaseDataVariableState<byte[]> _byteStringValue;
+        private BaseDataVariableState<XmlElement> _xmlElementValue;
+        private BaseDataVariableState<NodeId> _nodeIdValue;
+        private BaseDataVariableState<ExpandedNodeId> _expandedNodeIdValue;
+        private BaseDataVariableState<QualifiedName> _qualifiedNameValue;
+        private BaseDataVariableState<LocalizedText> _localizedTextValue;
+        private BaseDataVariableState<StatusCode> _statusCodeValue;
+        private BaseDataVariableState _variantValue;
+        private BaseDataVariableState<int> _enumerationValue;
+        private BaseDataVariableState<ExtensionObject> _structureValue;
+        private BaseDataVariableState _numberValue;
+        private BaseDataVariableState _integerValue;
+        private BaseDataVariableState _uIntegerValue;
         #endregion
     }
 #endif
     #endregion
 
     #region AnalogScalarValueObjectState Class
-#if (!OPCUA_EXCLUDE_AnalogScalarValueObjectState)
+#if !OPCUA_EXCLUDE_AnalogScalarValueObjectState
     /// <summary>
     /// Stores an instance of the AnalogScalarValueObjectType ObjectType.
     /// </summary>
@@ -2168,7 +2168,7 @@ namespace TestData {
             return Opc.Ua.NodeId.Create(TestData.ObjectTypes.AnalogScalarValueObjectType, TestData.Namespaces.TestData, namespaceUris);
         }
 
-#if (!OPCUA_EXCLUDE_InitializationStrings)
+#if !OPCUA_EXCLUDE_InitializationStrings
         /// <summary>
         /// Initializes the instance.
         /// </summary>
@@ -2266,170 +2266,170 @@ namespace TestData {
         #region Public Properties
         /// <remarks />
         public AnalogItemState<sbyte> SByteValue {
-            get => m_sByteValue;
+            get => _sByteValue;
 
             set {
-                if (!Object.ReferenceEquals(m_sByteValue, value)) {
+                if (!Object.ReferenceEquals(_sByteValue, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_sByteValue = value;
+                _sByteValue = value;
             }
         }
 
         /// <remarks />
         public AnalogItemState<byte> ByteValue {
-            get => m_byteValue;
+            get => _byteValue;
 
             set {
-                if (!Object.ReferenceEquals(m_byteValue, value)) {
+                if (!Object.ReferenceEquals(_byteValue, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_byteValue = value;
+                _byteValue = value;
             }
         }
 
         /// <remarks />
         public AnalogItemState<short> Int16Value {
-            get => m_int16Value;
+            get => _int16Value;
 
             set {
-                if (!Object.ReferenceEquals(m_int16Value, value)) {
+                if (!Object.ReferenceEquals(_int16Value, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_int16Value = value;
+                _int16Value = value;
             }
         }
 
         /// <remarks />
         public AnalogItemState<ushort> UInt16Value {
-            get => m_uInt16Value;
+            get => _uInt16Value;
 
             set {
-                if (!Object.ReferenceEquals(m_uInt16Value, value)) {
+                if (!Object.ReferenceEquals(_uInt16Value, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_uInt16Value = value;
+                _uInt16Value = value;
             }
         }
 
         /// <remarks />
         public AnalogItemState<int> Int32Value {
-            get => m_int32Value;
+            get => _int32Value;
 
             set {
-                if (!Object.ReferenceEquals(m_int32Value, value)) {
+                if (!Object.ReferenceEquals(_int32Value, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_int32Value = value;
+                _int32Value = value;
             }
         }
 
         /// <remarks />
         public AnalogItemState<uint> UInt32Value {
-            get => m_uInt32Value;
+            get => _uInt32Value;
 
             set {
-                if (!Object.ReferenceEquals(m_uInt32Value, value)) {
+                if (!Object.ReferenceEquals(_uInt32Value, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_uInt32Value = value;
+                _uInt32Value = value;
             }
         }
 
         /// <remarks />
         public AnalogItemState<long> Int64Value {
-            get => m_int64Value;
+            get => _int64Value;
 
             set {
-                if (!Object.ReferenceEquals(m_int64Value, value)) {
+                if (!Object.ReferenceEquals(_int64Value, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_int64Value = value;
+                _int64Value = value;
             }
         }
 
         /// <remarks />
         public AnalogItemState<ulong> UInt64Value {
-            get => m_uInt64Value;
+            get => _uInt64Value;
 
             set {
-                if (!Object.ReferenceEquals(m_uInt64Value, value)) {
+                if (!Object.ReferenceEquals(_uInt64Value, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_uInt64Value = value;
+                _uInt64Value = value;
             }
         }
 
         /// <remarks />
         public AnalogItemState<float> FloatValue {
-            get => m_floatValue;
+            get => _floatValue;
 
             set {
-                if (!Object.ReferenceEquals(m_floatValue, value)) {
+                if (!Object.ReferenceEquals(_floatValue, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_floatValue = value;
+                _floatValue = value;
             }
         }
 
         /// <remarks />
         public AnalogItemState<double> DoubleValue {
-            get => m_doubleValue;
+            get => _doubleValue;
 
             set {
-                if (!Object.ReferenceEquals(m_doubleValue, value)) {
+                if (!Object.ReferenceEquals(_doubleValue, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_doubleValue = value;
+                _doubleValue = value;
             }
         }
 
         /// <remarks />
         public AnalogItemState NumberValue {
-            get => m_numberValue;
+            get => _numberValue;
 
             set {
-                if (!Object.ReferenceEquals(m_numberValue, value)) {
+                if (!Object.ReferenceEquals(_numberValue, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_numberValue = value;
+                _numberValue = value;
             }
         }
 
         /// <remarks />
         public AnalogItemState IntegerValue {
-            get => m_integerValue;
+            get => _integerValue;
 
             set {
-                if (!Object.ReferenceEquals(m_integerValue, value)) {
+                if (!Object.ReferenceEquals(_integerValue, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_integerValue = value;
+                _integerValue = value;
             }
         }
 
         /// <remarks />
         public AnalogItemState UIntegerValue {
-            get => m_uIntegerValue;
+            get => _uIntegerValue;
 
             set {
-                if (!Object.ReferenceEquals(m_uIntegerValue, value)) {
+                if (!Object.ReferenceEquals(_uIntegerValue, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_uIntegerValue = value;
+                _uIntegerValue = value;
             }
         }
         #endregion
@@ -2443,56 +2443,56 @@ namespace TestData {
         public override void GetChildren(
             ISystemContext context,
             IList<BaseInstanceState> children) {
-            if (m_sByteValue != null) {
-                children.Add(m_sByteValue);
+            if (_sByteValue != null) {
+                children.Add(_sByteValue);
             }
 
-            if (m_byteValue != null) {
-                children.Add(m_byteValue);
+            if (_byteValue != null) {
+                children.Add(_byteValue);
             }
 
-            if (m_int16Value != null) {
-                children.Add(m_int16Value);
+            if (_int16Value != null) {
+                children.Add(_int16Value);
             }
 
-            if (m_uInt16Value != null) {
-                children.Add(m_uInt16Value);
+            if (_uInt16Value != null) {
+                children.Add(_uInt16Value);
             }
 
-            if (m_int32Value != null) {
-                children.Add(m_int32Value);
+            if (_int32Value != null) {
+                children.Add(_int32Value);
             }
 
-            if (m_uInt32Value != null) {
-                children.Add(m_uInt32Value);
+            if (_uInt32Value != null) {
+                children.Add(_uInt32Value);
             }
 
-            if (m_int64Value != null) {
-                children.Add(m_int64Value);
+            if (_int64Value != null) {
+                children.Add(_int64Value);
             }
 
-            if (m_uInt64Value != null) {
-                children.Add(m_uInt64Value);
+            if (_uInt64Value != null) {
+                children.Add(_uInt64Value);
             }
 
-            if (m_floatValue != null) {
-                children.Add(m_floatValue);
+            if (_floatValue != null) {
+                children.Add(_floatValue);
             }
 
-            if (m_doubleValue != null) {
-                children.Add(m_doubleValue);
+            if (_doubleValue != null) {
+                children.Add(_doubleValue);
             }
 
-            if (m_numberValue != null) {
-                children.Add(m_numberValue);
+            if (_numberValue != null) {
+                children.Add(_numberValue);
             }
 
-            if (m_integerValue != null) {
-                children.Add(m_integerValue);
+            if (_integerValue != null) {
+                children.Add(_integerValue);
             }
 
-            if (m_uIntegerValue != null) {
-                children.Add(m_uIntegerValue);
+            if (_uIntegerValue != null) {
+                children.Add(_uIntegerValue);
             }
 
             base.GetChildren(context, children);
@@ -2731,19 +2731,19 @@ namespace TestData {
         #endregion
 
         #region Private Fields
-        private AnalogItemState<sbyte> m_sByteValue;
-        private AnalogItemState<byte> m_byteValue;
-        private AnalogItemState<short> m_int16Value;
-        private AnalogItemState<ushort> m_uInt16Value;
-        private AnalogItemState<int> m_int32Value;
-        private AnalogItemState<uint> m_uInt32Value;
-        private AnalogItemState<long> m_int64Value;
-        private AnalogItemState<ulong> m_uInt64Value;
-        private AnalogItemState<float> m_floatValue;
-        private AnalogItemState<double> m_doubleValue;
-        private AnalogItemState m_numberValue;
-        private AnalogItemState m_integerValue;
-        private AnalogItemState m_uIntegerValue;
+        private AnalogItemState<sbyte> _sByteValue;
+        private AnalogItemState<byte> _byteValue;
+        private AnalogItemState<short> _int16Value;
+        private AnalogItemState<ushort> _uInt16Value;
+        private AnalogItemState<int> _int32Value;
+        private AnalogItemState<uint> _uInt32Value;
+        private AnalogItemState<long> _int64Value;
+        private AnalogItemState<ulong> _uInt64Value;
+        private AnalogItemState<float> _floatValue;
+        private AnalogItemState<double> _doubleValue;
+        private AnalogItemState _numberValue;
+        private AnalogItemState _integerValue;
+        private AnalogItemState _uIntegerValue;
         #endregion
     }
 #endif
@@ -3262,7 +3262,7 @@ namespace TestData {
     #endregion
 
     #region ArrayValueObjectState Class
-#if (!OPCUA_EXCLUDE_ArrayValueObjectState)
+#if !OPCUA_EXCLUDE_ArrayValueObjectState
     /// <summary>
     /// Stores an instance of the ArrayValueObjectType ObjectType.
     /// </summary>
@@ -3283,7 +3283,7 @@ namespace TestData {
             return Opc.Ua.NodeId.Create(TestData.ObjectTypes.ArrayValueObjectType, TestData.Namespaces.TestData, namespaceUris);
         }
 
-#if (!OPCUA_EXCLUDE_InitializationStrings)
+#if !OPCUA_EXCLUDE_InitializationStrings
         /// <summary>
         /// Initializes the instance.
         /// </summary>
@@ -3386,352 +3386,352 @@ namespace TestData {
         #region Public Properties
         /// <remarks />
         public BaseDataVariableState<bool[]> BooleanValue {
-            get => m_booleanValue;
+            get => _booleanValue;
 
             set {
-                if (!Object.ReferenceEquals(m_booleanValue, value)) {
+                if (!Object.ReferenceEquals(_booleanValue, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_booleanValue = value;
+                _booleanValue = value;
             }
         }
 
         /// <remarks />
         public BaseDataVariableState<sbyte[]> SByteValue {
-            get => m_sByteValue;
+            get => _sByteValue;
 
             set {
-                if (!Object.ReferenceEquals(m_sByteValue, value)) {
+                if (!Object.ReferenceEquals(_sByteValue, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_sByteValue = value;
+                _sByteValue = value;
             }
         }
 
         /// <remarks />
         public BaseDataVariableState<byte[]> ByteValue {
-            get => m_byteValue;
+            get => _byteValue;
 
             set {
-                if (!Object.ReferenceEquals(m_byteValue, value)) {
+                if (!Object.ReferenceEquals(_byteValue, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_byteValue = value;
+                _byteValue = value;
             }
         }
 
         /// <remarks />
         public BaseDataVariableState<short[]> Int16Value {
-            get => m_int16Value;
+            get => _int16Value;
 
             set {
-                if (!Object.ReferenceEquals(m_int16Value, value)) {
+                if (!Object.ReferenceEquals(_int16Value, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_int16Value = value;
+                _int16Value = value;
             }
         }
 
         /// <remarks />
         public BaseDataVariableState<ushort[]> UInt16Value {
-            get => m_uInt16Value;
+            get => _uInt16Value;
 
             set {
-                if (!Object.ReferenceEquals(m_uInt16Value, value)) {
+                if (!Object.ReferenceEquals(_uInt16Value, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_uInt16Value = value;
+                _uInt16Value = value;
             }
         }
 
         /// <remarks />
         public BaseDataVariableState<int[]> Int32Value {
-            get => m_int32Value;
+            get => _int32Value;
 
             set {
-                if (!Object.ReferenceEquals(m_int32Value, value)) {
+                if (!Object.ReferenceEquals(_int32Value, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_int32Value = value;
+                _int32Value = value;
             }
         }
 
         /// <remarks />
         public BaseDataVariableState<uint[]> UInt32Value {
-            get => m_uInt32Value;
+            get => _uInt32Value;
 
             set {
-                if (!Object.ReferenceEquals(m_uInt32Value, value)) {
+                if (!Object.ReferenceEquals(_uInt32Value, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_uInt32Value = value;
+                _uInt32Value = value;
             }
         }
 
         /// <remarks />
         public BaseDataVariableState<long[]> Int64Value {
-            get => m_int64Value;
+            get => _int64Value;
 
             set {
-                if (!Object.ReferenceEquals(m_int64Value, value)) {
+                if (!Object.ReferenceEquals(_int64Value, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_int64Value = value;
+                _int64Value = value;
             }
         }
 
         /// <remarks />
         public BaseDataVariableState<ulong[]> UInt64Value {
-            get => m_uInt64Value;
+            get => _uInt64Value;
 
             set {
-                if (!Object.ReferenceEquals(m_uInt64Value, value)) {
+                if (!Object.ReferenceEquals(_uInt64Value, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_uInt64Value = value;
+                _uInt64Value = value;
             }
         }
 
         /// <remarks />
         public BaseDataVariableState<float[]> FloatValue {
-            get => m_floatValue;
+            get => _floatValue;
 
             set {
-                if (!Object.ReferenceEquals(m_floatValue, value)) {
+                if (!Object.ReferenceEquals(_floatValue, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_floatValue = value;
+                _floatValue = value;
             }
         }
 
         /// <remarks />
         public BaseDataVariableState<double[]> DoubleValue {
-            get => m_doubleValue;
+            get => _doubleValue;
 
             set {
-                if (!Object.ReferenceEquals(m_doubleValue, value)) {
+                if (!Object.ReferenceEquals(_doubleValue, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_doubleValue = value;
+                _doubleValue = value;
             }
         }
 
         /// <remarks />
         public BaseDataVariableState<string[]> StringValue {
-            get => m_stringValue;
+            get => _stringValue;
 
             set {
-                if (!Object.ReferenceEquals(m_stringValue, value)) {
+                if (!Object.ReferenceEquals(_stringValue, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_stringValue = value;
+                _stringValue = value;
             }
         }
 
         /// <remarks />
         public BaseDataVariableState<DateTime[]> DateTimeValue {
-            get => m_dateTimeValue;
+            get => _dateTimeValue;
 
             set {
-                if (!Object.ReferenceEquals(m_dateTimeValue, value)) {
+                if (!Object.ReferenceEquals(_dateTimeValue, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_dateTimeValue = value;
+                _dateTimeValue = value;
             }
         }
 
         /// <remarks />
         public BaseDataVariableState<Guid[]> GuidValue {
-            get => m_guidValue;
+            get => _guidValue;
 
             set {
-                if (!Object.ReferenceEquals(m_guidValue, value)) {
+                if (!Object.ReferenceEquals(_guidValue, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_guidValue = value;
+                _guidValue = value;
             }
         }
 
         /// <remarks />
         public BaseDataVariableState<byte[][]> ByteStringValue {
-            get => m_byteStringValue;
+            get => _byteStringValue;
 
             set {
-                if (!Object.ReferenceEquals(m_byteStringValue, value)) {
+                if (!Object.ReferenceEquals(_byteStringValue, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_byteStringValue = value;
+                _byteStringValue = value;
             }
         }
 
         /// <remarks />
         public BaseDataVariableState<XmlElement[]> XmlElementValue {
-            get => m_xmlElementValue;
+            get => _xmlElementValue;
 
             set {
-                if (!Object.ReferenceEquals(m_xmlElementValue, value)) {
+                if (!Object.ReferenceEquals(_xmlElementValue, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_xmlElementValue = value;
+                _xmlElementValue = value;
             }
         }
 
         /// <remarks />
         public BaseDataVariableState<NodeId[]> NodeIdValue {
-            get => m_nodeIdValue;
+            get => _nodeIdValue;
 
             set {
-                if (!Object.ReferenceEquals(m_nodeIdValue, value)) {
+                if (!Object.ReferenceEquals(_nodeIdValue, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_nodeIdValue = value;
+                _nodeIdValue = value;
             }
         }
 
         /// <remarks />
         public BaseDataVariableState<ExpandedNodeId[]> ExpandedNodeIdValue {
-            get => m_expandedNodeIdValue;
+            get => _expandedNodeIdValue;
 
             set {
-                if (!Object.ReferenceEquals(m_expandedNodeIdValue, value)) {
+                if (!Object.ReferenceEquals(_expandedNodeIdValue, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_expandedNodeIdValue = value;
+                _expandedNodeIdValue = value;
             }
         }
 
         /// <remarks />
         public BaseDataVariableState<QualifiedName[]> QualifiedNameValue {
-            get => m_qualifiedNameValue;
+            get => _qualifiedNameValue;
 
             set {
-                if (!Object.ReferenceEquals(m_qualifiedNameValue, value)) {
+                if (!Object.ReferenceEquals(_qualifiedNameValue, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_qualifiedNameValue = value;
+                _qualifiedNameValue = value;
             }
         }
 
         /// <remarks />
         public BaseDataVariableState<LocalizedText[]> LocalizedTextValue {
-            get => m_localizedTextValue;
+            get => _localizedTextValue;
 
             set {
-                if (!Object.ReferenceEquals(m_localizedTextValue, value)) {
+                if (!Object.ReferenceEquals(_localizedTextValue, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_localizedTextValue = value;
+                _localizedTextValue = value;
             }
         }
 
         /// <remarks />
         public BaseDataVariableState<StatusCode[]> StatusCodeValue {
-            get => m_statusCodeValue;
+            get => _statusCodeValue;
 
             set {
-                if (!Object.ReferenceEquals(m_statusCodeValue, value)) {
+                if (!Object.ReferenceEquals(_statusCodeValue, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_statusCodeValue = value;
+                _statusCodeValue = value;
             }
         }
 
         /// <remarks />
         public BaseDataVariableState<object[]> VariantValue {
-            get => m_variantValue;
+            get => _variantValue;
 
             set {
-                if (!Object.ReferenceEquals(m_variantValue, value)) {
+                if (!Object.ReferenceEquals(_variantValue, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_variantValue = value;
+                _variantValue = value;
             }
         }
 
         /// <remarks />
         public BaseDataVariableState<int[]> EnumerationValue {
-            get => m_enumerationValue;
+            get => _enumerationValue;
 
             set {
-                if (!Object.ReferenceEquals(m_enumerationValue, value)) {
+                if (!Object.ReferenceEquals(_enumerationValue, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_enumerationValue = value;
+                _enumerationValue = value;
             }
         }
 
         /// <remarks />
         public BaseDataVariableState<ExtensionObject[]> StructureValue {
-            get => m_structureValue;
+            get => _structureValue;
 
             set {
-                if (!Object.ReferenceEquals(m_structureValue, value)) {
+                if (!Object.ReferenceEquals(_structureValue, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_structureValue = value;
+                _structureValue = value;
             }
         }
 
         /// <remarks />
         public BaseDataVariableState<object[]> NumberValue {
-            get => m_numberValue;
+            get => _numberValue;
 
             set {
-                if (!Object.ReferenceEquals(m_numberValue, value)) {
+                if (!Object.ReferenceEquals(_numberValue, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_numberValue = value;
+                _numberValue = value;
             }
         }
 
         /// <remarks />
         public BaseDataVariableState<object[]> IntegerValue {
-            get => m_integerValue;
+            get => _integerValue;
 
             set {
-                if (!Object.ReferenceEquals(m_integerValue, value)) {
+                if (!Object.ReferenceEquals(_integerValue, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_integerValue = value;
+                _integerValue = value;
             }
         }
 
         /// <remarks />
         public BaseDataVariableState<object[]> UIntegerValue {
-            get => m_uIntegerValue;
+            get => _uIntegerValue;
 
             set {
-                if (!Object.ReferenceEquals(m_uIntegerValue, value)) {
+                if (!Object.ReferenceEquals(_uIntegerValue, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_uIntegerValue = value;
+                _uIntegerValue = value;
             }
         }
         #endregion
@@ -3745,112 +3745,112 @@ namespace TestData {
         public override void GetChildren(
             ISystemContext context,
             IList<BaseInstanceState> children) {
-            if (m_booleanValue != null) {
-                children.Add(m_booleanValue);
+            if (_booleanValue != null) {
+                children.Add(_booleanValue);
             }
 
-            if (m_sByteValue != null) {
-                children.Add(m_sByteValue);
+            if (_sByteValue != null) {
+                children.Add(_sByteValue);
             }
 
-            if (m_byteValue != null) {
-                children.Add(m_byteValue);
+            if (_byteValue != null) {
+                children.Add(_byteValue);
             }
 
-            if (m_int16Value != null) {
-                children.Add(m_int16Value);
+            if (_int16Value != null) {
+                children.Add(_int16Value);
             }
 
-            if (m_uInt16Value != null) {
-                children.Add(m_uInt16Value);
+            if (_uInt16Value != null) {
+                children.Add(_uInt16Value);
             }
 
-            if (m_int32Value != null) {
-                children.Add(m_int32Value);
+            if (_int32Value != null) {
+                children.Add(_int32Value);
             }
 
-            if (m_uInt32Value != null) {
-                children.Add(m_uInt32Value);
+            if (_uInt32Value != null) {
+                children.Add(_uInt32Value);
             }
 
-            if (m_int64Value != null) {
-                children.Add(m_int64Value);
+            if (_int64Value != null) {
+                children.Add(_int64Value);
             }
 
-            if (m_uInt64Value != null) {
-                children.Add(m_uInt64Value);
+            if (_uInt64Value != null) {
+                children.Add(_uInt64Value);
             }
 
-            if (m_floatValue != null) {
-                children.Add(m_floatValue);
+            if (_floatValue != null) {
+                children.Add(_floatValue);
             }
 
-            if (m_doubleValue != null) {
-                children.Add(m_doubleValue);
+            if (_doubleValue != null) {
+                children.Add(_doubleValue);
             }
 
-            if (m_stringValue != null) {
-                children.Add(m_stringValue);
+            if (_stringValue != null) {
+                children.Add(_stringValue);
             }
 
-            if (m_dateTimeValue != null) {
-                children.Add(m_dateTimeValue);
+            if (_dateTimeValue != null) {
+                children.Add(_dateTimeValue);
             }
 
-            if (m_guidValue != null) {
-                children.Add(m_guidValue);
+            if (_guidValue != null) {
+                children.Add(_guidValue);
             }
 
-            if (m_byteStringValue != null) {
-                children.Add(m_byteStringValue);
+            if (_byteStringValue != null) {
+                children.Add(_byteStringValue);
             }
 
-            if (m_xmlElementValue != null) {
-                children.Add(m_xmlElementValue);
+            if (_xmlElementValue != null) {
+                children.Add(_xmlElementValue);
             }
 
-            if (m_nodeIdValue != null) {
-                children.Add(m_nodeIdValue);
+            if (_nodeIdValue != null) {
+                children.Add(_nodeIdValue);
             }
 
-            if (m_expandedNodeIdValue != null) {
-                children.Add(m_expandedNodeIdValue);
+            if (_expandedNodeIdValue != null) {
+                children.Add(_expandedNodeIdValue);
             }
 
-            if (m_qualifiedNameValue != null) {
-                children.Add(m_qualifiedNameValue);
+            if (_qualifiedNameValue != null) {
+                children.Add(_qualifiedNameValue);
             }
 
-            if (m_localizedTextValue != null) {
-                children.Add(m_localizedTextValue);
+            if (_localizedTextValue != null) {
+                children.Add(_localizedTextValue);
             }
 
-            if (m_statusCodeValue != null) {
-                children.Add(m_statusCodeValue);
+            if (_statusCodeValue != null) {
+                children.Add(_statusCodeValue);
             }
 
-            if (m_variantValue != null) {
-                children.Add(m_variantValue);
+            if (_variantValue != null) {
+                children.Add(_variantValue);
             }
 
-            if (m_enumerationValue != null) {
-                children.Add(m_enumerationValue);
+            if (_enumerationValue != null) {
+                children.Add(_enumerationValue);
             }
 
-            if (m_structureValue != null) {
-                children.Add(m_structureValue);
+            if (_structureValue != null) {
+                children.Add(_structureValue);
             }
 
-            if (m_numberValue != null) {
-                children.Add(m_numberValue);
+            if (_numberValue != null) {
+                children.Add(_numberValue);
             }
 
-            if (m_integerValue != null) {
-                children.Add(m_integerValue);
+            if (_integerValue != null) {
+                children.Add(_integerValue);
             }
 
-            if (m_uIntegerValue != null) {
-                children.Add(m_uIntegerValue);
+            if (_uIntegerValue != null) {
+                children.Add(_uIntegerValue);
             }
 
             base.GetChildren(context, children);
@@ -4313,40 +4313,40 @@ namespace TestData {
         #endregion
 
         #region Private Fields
-        private BaseDataVariableState<bool[]> m_booleanValue;
-        private BaseDataVariableState<sbyte[]> m_sByteValue;
-        private BaseDataVariableState<byte[]> m_byteValue;
-        private BaseDataVariableState<short[]> m_int16Value;
-        private BaseDataVariableState<ushort[]> m_uInt16Value;
-        private BaseDataVariableState<int[]> m_int32Value;
-        private BaseDataVariableState<uint[]> m_uInt32Value;
-        private BaseDataVariableState<long[]> m_int64Value;
-        private BaseDataVariableState<ulong[]> m_uInt64Value;
-        private BaseDataVariableState<float[]> m_floatValue;
-        private BaseDataVariableState<double[]> m_doubleValue;
-        private BaseDataVariableState<string[]> m_stringValue;
-        private BaseDataVariableState<DateTime[]> m_dateTimeValue;
-        private BaseDataVariableState<Guid[]> m_guidValue;
-        private BaseDataVariableState<byte[][]> m_byteStringValue;
-        private BaseDataVariableState<XmlElement[]> m_xmlElementValue;
-        private BaseDataVariableState<NodeId[]> m_nodeIdValue;
-        private BaseDataVariableState<ExpandedNodeId[]> m_expandedNodeIdValue;
-        private BaseDataVariableState<QualifiedName[]> m_qualifiedNameValue;
-        private BaseDataVariableState<LocalizedText[]> m_localizedTextValue;
-        private BaseDataVariableState<StatusCode[]> m_statusCodeValue;
-        private BaseDataVariableState<object[]> m_variantValue;
-        private BaseDataVariableState<int[]> m_enumerationValue;
-        private BaseDataVariableState<ExtensionObject[]> m_structureValue;
-        private BaseDataVariableState<object[]> m_numberValue;
-        private BaseDataVariableState<object[]> m_integerValue;
-        private BaseDataVariableState<object[]> m_uIntegerValue;
+        private BaseDataVariableState<bool[]> _booleanValue;
+        private BaseDataVariableState<sbyte[]> _sByteValue;
+        private BaseDataVariableState<byte[]> _byteValue;
+        private BaseDataVariableState<short[]> _int16Value;
+        private BaseDataVariableState<ushort[]> _uInt16Value;
+        private BaseDataVariableState<int[]> _int32Value;
+        private BaseDataVariableState<uint[]> _uInt32Value;
+        private BaseDataVariableState<long[]> _int64Value;
+        private BaseDataVariableState<ulong[]> _uInt64Value;
+        private BaseDataVariableState<float[]> _floatValue;
+        private BaseDataVariableState<double[]> _doubleValue;
+        private BaseDataVariableState<string[]> _stringValue;
+        private BaseDataVariableState<DateTime[]> _dateTimeValue;
+        private BaseDataVariableState<Guid[]> _guidValue;
+        private BaseDataVariableState<byte[][]> _byteStringValue;
+        private BaseDataVariableState<XmlElement[]> _xmlElementValue;
+        private BaseDataVariableState<NodeId[]> _nodeIdValue;
+        private BaseDataVariableState<ExpandedNodeId[]> _expandedNodeIdValue;
+        private BaseDataVariableState<QualifiedName[]> _qualifiedNameValue;
+        private BaseDataVariableState<LocalizedText[]> _localizedTextValue;
+        private BaseDataVariableState<StatusCode[]> _statusCodeValue;
+        private BaseDataVariableState<object[]> _variantValue;
+        private BaseDataVariableState<int[]> _enumerationValue;
+        private BaseDataVariableState<ExtensionObject[]> _structureValue;
+        private BaseDataVariableState<object[]> _numberValue;
+        private BaseDataVariableState<object[]> _integerValue;
+        private BaseDataVariableState<object[]> _uIntegerValue;
         #endregion
     }
 #endif
     #endregion
 
     #region AnalogArrayValueObjectState Class
-#if (!OPCUA_EXCLUDE_AnalogArrayValueObjectState)
+#if !OPCUA_EXCLUDE_AnalogArrayValueObjectState
     /// <summary>
     /// Stores an instance of the AnalogArrayValueObjectType ObjectType.
     /// </summary>
@@ -4367,7 +4367,7 @@ namespace TestData {
             return Opc.Ua.NodeId.Create(TestData.ObjectTypes.AnalogArrayValueObjectType, TestData.Namespaces.TestData, namespaceUris);
         }
 
-#if (!OPCUA_EXCLUDE_InitializationStrings)
+#if !OPCUA_EXCLUDE_InitializationStrings
         /// <summary>
         /// Initializes the instance.
         /// </summary>
@@ -4466,170 +4466,170 @@ namespace TestData {
         #region Public Properties
         /// <remarks />
         public AnalogItemState<sbyte[]> SByteValue {
-            get => m_sByteValue;
+            get => _sByteValue;
 
             set {
-                if (!Object.ReferenceEquals(m_sByteValue, value)) {
+                if (!Object.ReferenceEquals(_sByteValue, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_sByteValue = value;
+                _sByteValue = value;
             }
         }
 
         /// <remarks />
         public AnalogItemState<byte[]> ByteValue {
-            get => m_byteValue;
+            get => _byteValue;
 
             set {
-                if (!Object.ReferenceEquals(m_byteValue, value)) {
+                if (!Object.ReferenceEquals(_byteValue, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_byteValue = value;
+                _byteValue = value;
             }
         }
 
         /// <remarks />
         public AnalogItemState<short[]> Int16Value {
-            get => m_int16Value;
+            get => _int16Value;
 
             set {
-                if (!Object.ReferenceEquals(m_int16Value, value)) {
+                if (!Object.ReferenceEquals(_int16Value, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_int16Value = value;
+                _int16Value = value;
             }
         }
 
         /// <remarks />
         public AnalogItemState<ushort[]> UInt16Value {
-            get => m_uInt16Value;
+            get => _uInt16Value;
 
             set {
-                if (!Object.ReferenceEquals(m_uInt16Value, value)) {
+                if (!Object.ReferenceEquals(_uInt16Value, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_uInt16Value = value;
+                _uInt16Value = value;
             }
         }
 
         /// <remarks />
         public AnalogItemState<int[]> Int32Value {
-            get => m_int32Value;
+            get => _int32Value;
 
             set {
-                if (!Object.ReferenceEquals(m_int32Value, value)) {
+                if (!Object.ReferenceEquals(_int32Value, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_int32Value = value;
+                _int32Value = value;
             }
         }
 
         /// <remarks />
         public AnalogItemState<uint[]> UInt32Value {
-            get => m_uInt32Value;
+            get => _uInt32Value;
 
             set {
-                if (!Object.ReferenceEquals(m_uInt32Value, value)) {
+                if (!Object.ReferenceEquals(_uInt32Value, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_uInt32Value = value;
+                _uInt32Value = value;
             }
         }
 
         /// <remarks />
         public AnalogItemState<long[]> Int64Value {
-            get => m_int64Value;
+            get => _int64Value;
 
             set {
-                if (!Object.ReferenceEquals(m_int64Value, value)) {
+                if (!Object.ReferenceEquals(_int64Value, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_int64Value = value;
+                _int64Value = value;
             }
         }
 
         /// <remarks />
         public AnalogItemState<ulong[]> UInt64Value {
-            get => m_uInt64Value;
+            get => _uInt64Value;
 
             set {
-                if (!Object.ReferenceEquals(m_uInt64Value, value)) {
+                if (!Object.ReferenceEquals(_uInt64Value, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_uInt64Value = value;
+                _uInt64Value = value;
             }
         }
 
         /// <remarks />
         public AnalogItemState<float[]> FloatValue {
-            get => m_floatValue;
+            get => _floatValue;
 
             set {
-                if (!Object.ReferenceEquals(m_floatValue, value)) {
+                if (!Object.ReferenceEquals(_floatValue, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_floatValue = value;
+                _floatValue = value;
             }
         }
 
         /// <remarks />
         public AnalogItemState<double[]> DoubleValue {
-            get => m_doubleValue;
+            get => _doubleValue;
 
             set {
-                if (!Object.ReferenceEquals(m_doubleValue, value)) {
+                if (!Object.ReferenceEquals(_doubleValue, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_doubleValue = value;
+                _doubleValue = value;
             }
         }
 
         /// <remarks />
         public AnalogItemState<object[]> NumberValue {
-            get => m_numberValue;
+            get => _numberValue;
 
             set {
-                if (!Object.ReferenceEquals(m_numberValue, value)) {
+                if (!Object.ReferenceEquals(_numberValue, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_numberValue = value;
+                _numberValue = value;
             }
         }
 
         /// <remarks />
         public AnalogItemState<object[]> IntegerValue {
-            get => m_integerValue;
+            get => _integerValue;
 
             set {
-                if (!Object.ReferenceEquals(m_integerValue, value)) {
+                if (!Object.ReferenceEquals(_integerValue, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_integerValue = value;
+                _integerValue = value;
             }
         }
 
         /// <remarks />
         public AnalogItemState<object[]> UIntegerValue {
-            get => m_uIntegerValue;
+            get => _uIntegerValue;
 
             set {
-                if (!Object.ReferenceEquals(m_uIntegerValue, value)) {
+                if (!Object.ReferenceEquals(_uIntegerValue, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_uIntegerValue = value;
+                _uIntegerValue = value;
             }
         }
         #endregion
@@ -4643,56 +4643,56 @@ namespace TestData {
         public override void GetChildren(
             ISystemContext context,
             IList<BaseInstanceState> children) {
-            if (m_sByteValue != null) {
-                children.Add(m_sByteValue);
+            if (_sByteValue != null) {
+                children.Add(_sByteValue);
             }
 
-            if (m_byteValue != null) {
-                children.Add(m_byteValue);
+            if (_byteValue != null) {
+                children.Add(_byteValue);
             }
 
-            if (m_int16Value != null) {
-                children.Add(m_int16Value);
+            if (_int16Value != null) {
+                children.Add(_int16Value);
             }
 
-            if (m_uInt16Value != null) {
-                children.Add(m_uInt16Value);
+            if (_uInt16Value != null) {
+                children.Add(_uInt16Value);
             }
 
-            if (m_int32Value != null) {
-                children.Add(m_int32Value);
+            if (_int32Value != null) {
+                children.Add(_int32Value);
             }
 
-            if (m_uInt32Value != null) {
-                children.Add(m_uInt32Value);
+            if (_uInt32Value != null) {
+                children.Add(_uInt32Value);
             }
 
-            if (m_int64Value != null) {
-                children.Add(m_int64Value);
+            if (_int64Value != null) {
+                children.Add(_int64Value);
             }
 
-            if (m_uInt64Value != null) {
-                children.Add(m_uInt64Value);
+            if (_uInt64Value != null) {
+                children.Add(_uInt64Value);
             }
 
-            if (m_floatValue != null) {
-                children.Add(m_floatValue);
+            if (_floatValue != null) {
+                children.Add(_floatValue);
             }
 
-            if (m_doubleValue != null) {
-                children.Add(m_doubleValue);
+            if (_doubleValue != null) {
+                children.Add(_doubleValue);
             }
 
-            if (m_numberValue != null) {
-                children.Add(m_numberValue);
+            if (_numberValue != null) {
+                children.Add(_numberValue);
             }
 
-            if (m_integerValue != null) {
-                children.Add(m_integerValue);
+            if (_integerValue != null) {
+                children.Add(_integerValue);
             }
 
-            if (m_uIntegerValue != null) {
-                children.Add(m_uIntegerValue);
+            if (_uIntegerValue != null) {
+                children.Add(_uIntegerValue);
             }
 
             base.GetChildren(context, children);
@@ -4931,26 +4931,26 @@ namespace TestData {
         #endregion
 
         #region Private Fields
-        private AnalogItemState<sbyte[]> m_sByteValue;
-        private AnalogItemState<byte[]> m_byteValue;
-        private AnalogItemState<short[]> m_int16Value;
-        private AnalogItemState<ushort[]> m_uInt16Value;
-        private AnalogItemState<int[]> m_int32Value;
-        private AnalogItemState<uint[]> m_uInt32Value;
-        private AnalogItemState<long[]> m_int64Value;
-        private AnalogItemState<ulong[]> m_uInt64Value;
-        private AnalogItemState<float[]> m_floatValue;
-        private AnalogItemState<double[]> m_doubleValue;
-        private AnalogItemState<object[]> m_numberValue;
-        private AnalogItemState<object[]> m_integerValue;
-        private AnalogItemState<object[]> m_uIntegerValue;
+        private AnalogItemState<sbyte[]> _sByteValue;
+        private AnalogItemState<byte[]> _byteValue;
+        private AnalogItemState<short[]> _int16Value;
+        private AnalogItemState<ushort[]> _uInt16Value;
+        private AnalogItemState<int[]> _int32Value;
+        private AnalogItemState<uint[]> _uInt32Value;
+        private AnalogItemState<long[]> _int64Value;
+        private AnalogItemState<ulong[]> _uInt64Value;
+        private AnalogItemState<float[]> _floatValue;
+        private AnalogItemState<double[]> _doubleValue;
+        private AnalogItemState<object[]> _numberValue;
+        private AnalogItemState<object[]> _integerValue;
+        private AnalogItemState<object[]> _uIntegerValue;
         #endregion
     }
 #endif
     #endregion
 
     #region UserScalarValueObjectState Class
-#if (!OPCUA_EXCLUDE_UserScalarValueObjectState)
+#if !OPCUA_EXCLUDE_UserScalarValueObjectState
     /// <summary>
     /// Stores an instance of the UserScalarValueObjectType ObjectType.
     /// </summary>
@@ -4971,7 +4971,7 @@ namespace TestData {
             return Opc.Ua.NodeId.Create(TestData.ObjectTypes.UserScalarValueObjectType, TestData.Namespaces.TestData, namespaceUris);
         }
 
-#if (!OPCUA_EXCLUDE_InitializationStrings)
+#if !OPCUA_EXCLUDE_InitializationStrings
         /// <summary>
         /// Initializes the instance.
         /// </summary>
@@ -5066,287 +5066,287 @@ namespace TestData {
         #region Public Properties
         /// <remarks />
         public BaseDataVariableState<bool> BooleanValue {
-            get => m_booleanValue;
+            get => _booleanValue;
 
             set {
-                if (!Object.ReferenceEquals(m_booleanValue, value)) {
+                if (!Object.ReferenceEquals(_booleanValue, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_booleanValue = value;
+                _booleanValue = value;
             }
         }
 
         /// <remarks />
         public BaseDataVariableState<sbyte> SByteValue {
-            get => m_sByteValue;
+            get => _sByteValue;
 
             set {
-                if (!Object.ReferenceEquals(m_sByteValue, value)) {
+                if (!Object.ReferenceEquals(_sByteValue, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_sByteValue = value;
+                _sByteValue = value;
             }
         }
 
         /// <remarks />
         public BaseDataVariableState<byte> ByteValue {
-            get => m_byteValue;
+            get => _byteValue;
 
             set {
-                if (!Object.ReferenceEquals(m_byteValue, value)) {
+                if (!Object.ReferenceEquals(_byteValue, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_byteValue = value;
+                _byteValue = value;
             }
         }
 
         /// <remarks />
         public BaseDataVariableState<short> Int16Value {
-            get => m_int16Value;
+            get => _int16Value;
 
             set {
-                if (!Object.ReferenceEquals(m_int16Value, value)) {
+                if (!Object.ReferenceEquals(_int16Value, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_int16Value = value;
+                _int16Value = value;
             }
         }
 
         /// <remarks />
         public BaseDataVariableState<ushort> UInt16Value {
-            get => m_uInt16Value;
+            get => _uInt16Value;
 
             set {
-                if (!Object.ReferenceEquals(m_uInt16Value, value)) {
+                if (!Object.ReferenceEquals(_uInt16Value, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_uInt16Value = value;
+                _uInt16Value = value;
             }
         }
 
         /// <remarks />
         public BaseDataVariableState<int> Int32Value {
-            get => m_int32Value;
+            get => _int32Value;
 
             set {
-                if (!Object.ReferenceEquals(m_int32Value, value)) {
+                if (!Object.ReferenceEquals(_int32Value, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_int32Value = value;
+                _int32Value = value;
             }
         }
 
         /// <remarks />
         public BaseDataVariableState<uint> UInt32Value {
-            get => m_uInt32Value;
+            get => _uInt32Value;
 
             set {
-                if (!Object.ReferenceEquals(m_uInt32Value, value)) {
+                if (!Object.ReferenceEquals(_uInt32Value, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_uInt32Value = value;
+                _uInt32Value = value;
             }
         }
 
         /// <remarks />
         public BaseDataVariableState<long> Int64Value {
-            get => m_int64Value;
+            get => _int64Value;
 
             set {
-                if (!Object.ReferenceEquals(m_int64Value, value)) {
+                if (!Object.ReferenceEquals(_int64Value, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_int64Value = value;
+                _int64Value = value;
             }
         }
 
         /// <remarks />
         public BaseDataVariableState<ulong> UInt64Value {
-            get => m_uInt64Value;
+            get => _uInt64Value;
 
             set {
-                if (!Object.ReferenceEquals(m_uInt64Value, value)) {
+                if (!Object.ReferenceEquals(_uInt64Value, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_uInt64Value = value;
+                _uInt64Value = value;
             }
         }
 
         /// <remarks />
         public BaseDataVariableState<float> FloatValue {
-            get => m_floatValue;
+            get => _floatValue;
 
             set {
-                if (!Object.ReferenceEquals(m_floatValue, value)) {
+                if (!Object.ReferenceEquals(_floatValue, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_floatValue = value;
+                _floatValue = value;
             }
         }
 
         /// <remarks />
         public BaseDataVariableState<double> DoubleValue {
-            get => m_doubleValue;
+            get => _doubleValue;
 
             set {
-                if (!Object.ReferenceEquals(m_doubleValue, value)) {
+                if (!Object.ReferenceEquals(_doubleValue, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_doubleValue = value;
+                _doubleValue = value;
             }
         }
 
         /// <remarks />
         public BaseDataVariableState<string> StringValue {
-            get => m_stringValue;
+            get => _stringValue;
 
             set {
-                if (!Object.ReferenceEquals(m_stringValue, value)) {
+                if (!Object.ReferenceEquals(_stringValue, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_stringValue = value;
+                _stringValue = value;
             }
         }
 
         /// <remarks />
         public BaseDataVariableState<DateTime> DateTimeValue {
-            get => m_dateTimeValue;
+            get => _dateTimeValue;
 
             set {
-                if (!Object.ReferenceEquals(m_dateTimeValue, value)) {
+                if (!Object.ReferenceEquals(_dateTimeValue, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_dateTimeValue = value;
+                _dateTimeValue = value;
             }
         }
 
         /// <remarks />
         public BaseDataVariableState<Guid> GuidValue {
-            get => m_guidValue;
+            get => _guidValue;
 
             set {
-                if (!Object.ReferenceEquals(m_guidValue, value)) {
+                if (!Object.ReferenceEquals(_guidValue, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_guidValue = value;
+                _guidValue = value;
             }
         }
 
         /// <remarks />
         public BaseDataVariableState<byte[]> ByteStringValue {
-            get => m_byteStringValue;
+            get => _byteStringValue;
 
             set {
-                if (!Object.ReferenceEquals(m_byteStringValue, value)) {
+                if (!Object.ReferenceEquals(_byteStringValue, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_byteStringValue = value;
+                _byteStringValue = value;
             }
         }
 
         /// <remarks />
         public BaseDataVariableState<XmlElement> XmlElementValue {
-            get => m_xmlElementValue;
+            get => _xmlElementValue;
 
             set {
-                if (!Object.ReferenceEquals(m_xmlElementValue, value)) {
+                if (!Object.ReferenceEquals(_xmlElementValue, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_xmlElementValue = value;
+                _xmlElementValue = value;
             }
         }
 
         /// <remarks />
         public BaseDataVariableState<NodeId> NodeIdValue {
-            get => m_nodeIdValue;
+            get => _nodeIdValue;
 
             set {
-                if (!Object.ReferenceEquals(m_nodeIdValue, value)) {
+                if (!Object.ReferenceEquals(_nodeIdValue, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_nodeIdValue = value;
+                _nodeIdValue = value;
             }
         }
 
         /// <remarks />
         public BaseDataVariableState<ExpandedNodeId> ExpandedNodeIdValue {
-            get => m_expandedNodeIdValue;
+            get => _expandedNodeIdValue;
 
             set {
-                if (!Object.ReferenceEquals(m_expandedNodeIdValue, value)) {
+                if (!Object.ReferenceEquals(_expandedNodeIdValue, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_expandedNodeIdValue = value;
+                _expandedNodeIdValue = value;
             }
         }
 
         /// <remarks />
         public BaseDataVariableState<QualifiedName> QualifiedNameValue {
-            get => m_qualifiedNameValue;
+            get => _qualifiedNameValue;
 
             set {
-                if (!Object.ReferenceEquals(m_qualifiedNameValue, value)) {
+                if (!Object.ReferenceEquals(_qualifiedNameValue, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_qualifiedNameValue = value;
+                _qualifiedNameValue = value;
             }
         }
 
         /// <remarks />
         public BaseDataVariableState<LocalizedText> LocalizedTextValue {
-            get => m_localizedTextValue;
+            get => _localizedTextValue;
 
             set {
-                if (!Object.ReferenceEquals(m_localizedTextValue, value)) {
+                if (!Object.ReferenceEquals(_localizedTextValue, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_localizedTextValue = value;
+                _localizedTextValue = value;
             }
         }
 
         /// <remarks />
         public BaseDataVariableState<StatusCode> StatusCodeValue {
-            get => m_statusCodeValue;
+            get => _statusCodeValue;
 
             set {
-                if (!Object.ReferenceEquals(m_statusCodeValue, value)) {
+                if (!Object.ReferenceEquals(_statusCodeValue, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_statusCodeValue = value;
+                _statusCodeValue = value;
             }
         }
 
         /// <remarks />
         public BaseDataVariableState VariantValue {
-            get => m_variantValue;
+            get => _variantValue;
 
             set {
-                if (!Object.ReferenceEquals(m_variantValue, value)) {
+                if (!Object.ReferenceEquals(_variantValue, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_variantValue = value;
+                _variantValue = value;
             }
         }
         #endregion
@@ -5360,92 +5360,92 @@ namespace TestData {
         public override void GetChildren(
             ISystemContext context,
             IList<BaseInstanceState> children) {
-            if (m_booleanValue != null) {
-                children.Add(m_booleanValue);
+            if (_booleanValue != null) {
+                children.Add(_booleanValue);
             }
 
-            if (m_sByteValue != null) {
-                children.Add(m_sByteValue);
+            if (_sByteValue != null) {
+                children.Add(_sByteValue);
             }
 
-            if (m_byteValue != null) {
-                children.Add(m_byteValue);
+            if (_byteValue != null) {
+                children.Add(_byteValue);
             }
 
-            if (m_int16Value != null) {
-                children.Add(m_int16Value);
+            if (_int16Value != null) {
+                children.Add(_int16Value);
             }
 
-            if (m_uInt16Value != null) {
-                children.Add(m_uInt16Value);
+            if (_uInt16Value != null) {
+                children.Add(_uInt16Value);
             }
 
-            if (m_int32Value != null) {
-                children.Add(m_int32Value);
+            if (_int32Value != null) {
+                children.Add(_int32Value);
             }
 
-            if (m_uInt32Value != null) {
-                children.Add(m_uInt32Value);
+            if (_uInt32Value != null) {
+                children.Add(_uInt32Value);
             }
 
-            if (m_int64Value != null) {
-                children.Add(m_int64Value);
+            if (_int64Value != null) {
+                children.Add(_int64Value);
             }
 
-            if (m_uInt64Value != null) {
-                children.Add(m_uInt64Value);
+            if (_uInt64Value != null) {
+                children.Add(_uInt64Value);
             }
 
-            if (m_floatValue != null) {
-                children.Add(m_floatValue);
+            if (_floatValue != null) {
+                children.Add(_floatValue);
             }
 
-            if (m_doubleValue != null) {
-                children.Add(m_doubleValue);
+            if (_doubleValue != null) {
+                children.Add(_doubleValue);
             }
 
-            if (m_stringValue != null) {
-                children.Add(m_stringValue);
+            if (_stringValue != null) {
+                children.Add(_stringValue);
             }
 
-            if (m_dateTimeValue != null) {
-                children.Add(m_dateTimeValue);
+            if (_dateTimeValue != null) {
+                children.Add(_dateTimeValue);
             }
 
-            if (m_guidValue != null) {
-                children.Add(m_guidValue);
+            if (_guidValue != null) {
+                children.Add(_guidValue);
             }
 
-            if (m_byteStringValue != null) {
-                children.Add(m_byteStringValue);
+            if (_byteStringValue != null) {
+                children.Add(_byteStringValue);
             }
 
-            if (m_xmlElementValue != null) {
-                children.Add(m_xmlElementValue);
+            if (_xmlElementValue != null) {
+                children.Add(_xmlElementValue);
             }
 
-            if (m_nodeIdValue != null) {
-                children.Add(m_nodeIdValue);
+            if (_nodeIdValue != null) {
+                children.Add(_nodeIdValue);
             }
 
-            if (m_expandedNodeIdValue != null) {
-                children.Add(m_expandedNodeIdValue);
+            if (_expandedNodeIdValue != null) {
+                children.Add(_expandedNodeIdValue);
             }
 
-            if (m_qualifiedNameValue != null) {
-                children.Add(m_qualifiedNameValue);
+            if (_qualifiedNameValue != null) {
+                children.Add(_qualifiedNameValue);
             }
 
-            if (m_localizedTextValue != null) {
-                children.Add(m_localizedTextValue);
+            if (_localizedTextValue != null) {
+                children.Add(_localizedTextValue);
             }
 
-            if (m_statusCodeValue != null) {
-                children.Add(m_statusCodeValue);
+            if (_statusCodeValue != null) {
+                children.Add(_statusCodeValue);
             }
 
-            if (m_variantValue != null) {
-                children.Add(m_variantValue);
+            if (_variantValue != null) {
+                children.Add(_variantValue);
             }
 
             base.GetChildren(context, children);
@@ -5828,28 +5828,28 @@ namespace TestData {
         #endregion
 
         #region Private Fields
-        private BaseDataVariableState<bool> m_booleanValue;
-        private BaseDataVariableState<sbyte> m_sByteValue;
-        private BaseDataVariableState<byte> m_byteValue;
-        private BaseDataVariableState<short> m_int16Value;
-        private BaseDataVariableState<ushort> m_uInt16Value;
-        private BaseDataVariableState<int> m_int32Value;
-        private BaseDataVariableState<uint> m_uInt32Value;
-        private BaseDataVariableState<long> m_int64Value;
-        private BaseDataVariableState<ulong> m_uInt64Value;
-        private BaseDataVariableState<float> m_floatValue;
-        private BaseDataVariableState<double> m_doubleValue;
-        private BaseDataVariableState<string> m_stringValue;
-        private BaseDataVariableState<DateTime> m_dateTimeValue;
-        private BaseDataVariableState<Guid> m_guidValue;
-        private BaseDataVariableState<byte[]> m_byteStringValue;
-        private BaseDataVariableState<XmlElement> m_xmlElementValue;
-        private BaseDataVariableState<NodeId> m_nodeIdValue;
-        private BaseDataVariableState<ExpandedNodeId> m_expandedNodeIdValue;
-        private BaseDataVariableState<QualifiedName> m_qualifiedNameValue;
-        private BaseDataVariableState<LocalizedText> m_localizedTextValue;
-        private BaseDataVariableState<StatusCode> m_statusCodeValue;
-        private BaseDataVariableState m_variantValue;
+        private BaseDataVariableState<bool> _booleanValue;
+        private BaseDataVariableState<sbyte> _sByteValue;
+        private BaseDataVariableState<byte> _byteValue;
+        private BaseDataVariableState<short> _int16Value;
+        private BaseDataVariableState<ushort> _uInt16Value;
+        private BaseDataVariableState<int> _int32Value;
+        private BaseDataVariableState<uint> _uInt32Value;
+        private BaseDataVariableState<long> _int64Value;
+        private BaseDataVariableState<ulong> _uInt64Value;
+        private BaseDataVariableState<float> _floatValue;
+        private BaseDataVariableState<double> _doubleValue;
+        private BaseDataVariableState<string> _stringValue;
+        private BaseDataVariableState<DateTime> _dateTimeValue;
+        private BaseDataVariableState<Guid> _guidValue;
+        private BaseDataVariableState<byte[]> _byteStringValue;
+        private BaseDataVariableState<XmlElement> _xmlElementValue;
+        private BaseDataVariableState<NodeId> _nodeIdValue;
+        private BaseDataVariableState<ExpandedNodeId> _expandedNodeIdValue;
+        private BaseDataVariableState<QualifiedName> _qualifiedNameValue;
+        private BaseDataVariableState<LocalizedText> _localizedTextValue;
+        private BaseDataVariableState<StatusCode> _statusCodeValue;
+        private BaseDataVariableState _variantValue;
         #endregion
     }
 #endif
@@ -6245,7 +6245,7 @@ namespace TestData {
     #endregion
 
     #region UserArrayValueObjectState Class
-#if (!OPCUA_EXCLUDE_UserArrayValueObjectState)
+#if !OPCUA_EXCLUDE_UserArrayValueObjectState
     /// <summary>
     /// Stores an instance of the UserArrayValueObjectType ObjectType.
     /// </summary>
@@ -6266,7 +6266,7 @@ namespace TestData {
             return Opc.Ua.NodeId.Create(TestData.ObjectTypes.UserArrayValueObjectType, TestData.Namespaces.TestData, namespaceUris);
         }
 
-#if (!OPCUA_EXCLUDE_InitializationStrings)
+#if !OPCUA_EXCLUDE_InitializationStrings
         /// <summary>
         /// Initializes the instance.
         /// </summary>
@@ -6364,287 +6364,287 @@ namespace TestData {
         #region Public Properties
         /// <remarks />
         public BaseDataVariableState<bool[]> BooleanValue {
-            get => m_booleanValue;
+            get => _booleanValue;
 
             set {
-                if (!Object.ReferenceEquals(m_booleanValue, value)) {
+                if (!Object.ReferenceEquals(_booleanValue, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_booleanValue = value;
+                _booleanValue = value;
             }
         }
 
         /// <remarks />
         public BaseDataVariableState<sbyte[]> SByteValue {
-            get => m_sByteValue;
+            get => _sByteValue;
 
             set {
-                if (!Object.ReferenceEquals(m_sByteValue, value)) {
+                if (!Object.ReferenceEquals(_sByteValue, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_sByteValue = value;
+                _sByteValue = value;
             }
         }
 
         /// <remarks />
         public BaseDataVariableState<byte[]> ByteValue {
-            get => m_byteValue;
+            get => _byteValue;
 
             set {
-                if (!Object.ReferenceEquals(m_byteValue, value)) {
+                if (!Object.ReferenceEquals(_byteValue, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_byteValue = value;
+                _byteValue = value;
             }
         }
 
         /// <remarks />
         public BaseDataVariableState<short[]> Int16Value {
-            get => m_int16Value;
+            get => _int16Value;
 
             set {
-                if (!Object.ReferenceEquals(m_int16Value, value)) {
+                if (!Object.ReferenceEquals(_int16Value, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_int16Value = value;
+                _int16Value = value;
             }
         }
 
         /// <remarks />
         public BaseDataVariableState<ushort[]> UInt16Value {
-            get => m_uInt16Value;
+            get => _uInt16Value;
 
             set {
-                if (!Object.ReferenceEquals(m_uInt16Value, value)) {
+                if (!Object.ReferenceEquals(_uInt16Value, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_uInt16Value = value;
+                _uInt16Value = value;
             }
         }
 
         /// <remarks />
         public BaseDataVariableState<int[]> Int32Value {
-            get => m_int32Value;
+            get => _int32Value;
 
             set {
-                if (!Object.ReferenceEquals(m_int32Value, value)) {
+                if (!Object.ReferenceEquals(_int32Value, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_int32Value = value;
+                _int32Value = value;
             }
         }
 
         /// <remarks />
         public BaseDataVariableState<uint[]> UInt32Value {
-            get => m_uInt32Value;
+            get => _uInt32Value;
 
             set {
-                if (!Object.ReferenceEquals(m_uInt32Value, value)) {
+                if (!Object.ReferenceEquals(_uInt32Value, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_uInt32Value = value;
+                _uInt32Value = value;
             }
         }
 
         /// <remarks />
         public BaseDataVariableState<long[]> Int64Value {
-            get => m_int64Value;
+            get => _int64Value;
 
             set {
-                if (!Object.ReferenceEquals(m_int64Value, value)) {
+                if (!Object.ReferenceEquals(_int64Value, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_int64Value = value;
+                _int64Value = value;
             }
         }
 
         /// <remarks />
         public BaseDataVariableState<ulong[]> UInt64Value {
-            get => m_uInt64Value;
+            get => _uInt64Value;
 
             set {
-                if (!Object.ReferenceEquals(m_uInt64Value, value)) {
+                if (!Object.ReferenceEquals(_uInt64Value, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_uInt64Value = value;
+                _uInt64Value = value;
             }
         }
 
         /// <remarks />
         public BaseDataVariableState<float[]> FloatValue {
-            get => m_floatValue;
+            get => _floatValue;
 
             set {
-                if (!Object.ReferenceEquals(m_floatValue, value)) {
+                if (!Object.ReferenceEquals(_floatValue, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_floatValue = value;
+                _floatValue = value;
             }
         }
 
         /// <remarks />
         public BaseDataVariableState<double[]> DoubleValue {
-            get => m_doubleValue;
+            get => _doubleValue;
 
             set {
-                if (!Object.ReferenceEquals(m_doubleValue, value)) {
+                if (!Object.ReferenceEquals(_doubleValue, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_doubleValue = value;
+                _doubleValue = value;
             }
         }
 
         /// <remarks />
         public BaseDataVariableState<string[]> StringValue {
-            get => m_stringValue;
+            get => _stringValue;
 
             set {
-                if (!Object.ReferenceEquals(m_stringValue, value)) {
+                if (!Object.ReferenceEquals(_stringValue, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_stringValue = value;
+                _stringValue = value;
             }
         }
 
         /// <remarks />
         public BaseDataVariableState<DateTime[]> DateTimeValue {
-            get => m_dateTimeValue;
+            get => _dateTimeValue;
 
             set {
-                if (!Object.ReferenceEquals(m_dateTimeValue, value)) {
+                if (!Object.ReferenceEquals(_dateTimeValue, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_dateTimeValue = value;
+                _dateTimeValue = value;
             }
         }
 
         /// <remarks />
         public BaseDataVariableState<Guid[]> GuidValue {
-            get => m_guidValue;
+            get => _guidValue;
 
             set {
-                if (!Object.ReferenceEquals(m_guidValue, value)) {
+                if (!Object.ReferenceEquals(_guidValue, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_guidValue = value;
+                _guidValue = value;
             }
         }
 
         /// <remarks />
         public BaseDataVariableState<byte[][]> ByteStringValue {
-            get => m_byteStringValue;
+            get => _byteStringValue;
 
             set {
-                if (!Object.ReferenceEquals(m_byteStringValue, value)) {
+                if (!Object.ReferenceEquals(_byteStringValue, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_byteStringValue = value;
+                _byteStringValue = value;
             }
         }
 
         /// <remarks />
         public BaseDataVariableState<XmlElement[]> XmlElementValue {
-            get => m_xmlElementValue;
+            get => _xmlElementValue;
 
             set {
-                if (!Object.ReferenceEquals(m_xmlElementValue, value)) {
+                if (!Object.ReferenceEquals(_xmlElementValue, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_xmlElementValue = value;
+                _xmlElementValue = value;
             }
         }
 
         /// <remarks />
         public BaseDataVariableState<NodeId[]> NodeIdValue {
-            get => m_nodeIdValue;
+            get => _nodeIdValue;
 
             set {
-                if (!Object.ReferenceEquals(m_nodeIdValue, value)) {
+                if (!Object.ReferenceEquals(_nodeIdValue, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_nodeIdValue = value;
+                _nodeIdValue = value;
             }
         }
 
         /// <remarks />
         public BaseDataVariableState<ExpandedNodeId[]> ExpandedNodeIdValue {
-            get => m_expandedNodeIdValue;
+            get => _expandedNodeIdValue;
 
             set {
-                if (!Object.ReferenceEquals(m_expandedNodeIdValue, value)) {
+                if (!Object.ReferenceEquals(_expandedNodeIdValue, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_expandedNodeIdValue = value;
+                _expandedNodeIdValue = value;
             }
         }
 
         /// <remarks />
         public BaseDataVariableState<QualifiedName[]> QualifiedNameValue {
-            get => m_qualifiedNameValue;
+            get => _qualifiedNameValue;
 
             set {
-                if (!Object.ReferenceEquals(m_qualifiedNameValue, value)) {
+                if (!Object.ReferenceEquals(_qualifiedNameValue, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_qualifiedNameValue = value;
+                _qualifiedNameValue = value;
             }
         }
 
         /// <remarks />
         public BaseDataVariableState<LocalizedText[]> LocalizedTextValue {
-            get => m_localizedTextValue;
+            get => _localizedTextValue;
 
             set {
-                if (!Object.ReferenceEquals(m_localizedTextValue, value)) {
+                if (!Object.ReferenceEquals(_localizedTextValue, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_localizedTextValue = value;
+                _localizedTextValue = value;
             }
         }
 
         /// <remarks />
         public BaseDataVariableState<StatusCode[]> StatusCodeValue {
-            get => m_statusCodeValue;
+            get => _statusCodeValue;
 
             set {
-                if (!Object.ReferenceEquals(m_statusCodeValue, value)) {
+                if (!Object.ReferenceEquals(_statusCodeValue, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_statusCodeValue = value;
+                _statusCodeValue = value;
             }
         }
 
         /// <remarks />
         public BaseDataVariableState<object[]> VariantValue {
-            get => m_variantValue;
+            get => _variantValue;
 
             set {
-                if (!Object.ReferenceEquals(m_variantValue, value)) {
+                if (!Object.ReferenceEquals(_variantValue, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_variantValue = value;
+                _variantValue = value;
             }
         }
         #endregion
@@ -6658,92 +6658,92 @@ namespace TestData {
         public override void GetChildren(
             ISystemContext context,
             IList<BaseInstanceState> children) {
-            if (m_booleanValue != null) {
-                children.Add(m_booleanValue);
+            if (_booleanValue != null) {
+                children.Add(_booleanValue);
             }
 
-            if (m_sByteValue != null) {
-                children.Add(m_sByteValue);
+            if (_sByteValue != null) {
+                children.Add(_sByteValue);
             }
 
-            if (m_byteValue != null) {
-                children.Add(m_byteValue);
+            if (_byteValue != null) {
+                children.Add(_byteValue);
             }
 
-            if (m_int16Value != null) {
-                children.Add(m_int16Value);
+            if (_int16Value != null) {
+                children.Add(_int16Value);
             }
 
-            if (m_uInt16Value != null) {
-                children.Add(m_uInt16Value);
+            if (_uInt16Value != null) {
+                children.Add(_uInt16Value);
             }
 
-            if (m_int32Value != null) {
-                children.Add(m_int32Value);
+            if (_int32Value != null) {
+                children.Add(_int32Value);
             }
 
-            if (m_uInt32Value != null) {
-                children.Add(m_uInt32Value);
+            if (_uInt32Value != null) {
+                children.Add(_uInt32Value);
             }
 
-            if (m_int64Value != null) {
-                children.Add(m_int64Value);
+            if (_int64Value != null) {
+                children.Add(_int64Value);
             }
 
-            if (m_uInt64Value != null) {
-                children.Add(m_uInt64Value);
+            if (_uInt64Value != null) {
+                children.Add(_uInt64Value);
             }
 
-            if (m_floatValue != null) {
-                children.Add(m_floatValue);
+            if (_floatValue != null) {
+                children.Add(_floatValue);
             }
 
-            if (m_doubleValue != null) {
-                children.Add(m_doubleValue);
+            if (_doubleValue != null) {
+                children.Add(_doubleValue);
             }
 
-            if (m_stringValue != null) {
-                children.Add(m_stringValue);
+            if (_stringValue != null) {
+                children.Add(_stringValue);
             }
 
-            if (m_dateTimeValue != null) {
-                children.Add(m_dateTimeValue);
+            if (_dateTimeValue != null) {
+                children.Add(_dateTimeValue);
             }
 
-            if (m_guidValue != null) {
-                children.Add(m_guidValue);
+            if (_guidValue != null) {
+                children.Add(_guidValue);
             }
 
-            if (m_byteStringValue != null) {
-                children.Add(m_byteStringValue);
+            if (_byteStringValue != null) {
+                children.Add(_byteStringValue);
             }
 
-            if (m_xmlElementValue != null) {
-                children.Add(m_xmlElementValue);
+            if (_xmlElementValue != null) {
+                children.Add(_xmlElementValue);
             }
 
-            if (m_nodeIdValue != null) {
-                children.Add(m_nodeIdValue);
+            if (_nodeIdValue != null) {
+                children.Add(_nodeIdValue);
             }
 
-            if (m_expandedNodeIdValue != null) {
-                children.Add(m_expandedNodeIdValue);
+            if (_expandedNodeIdValue != null) {
+                children.Add(_expandedNodeIdValue);
             }
 
-            if (m_qualifiedNameValue != null) {
-                children.Add(m_qualifiedNameValue);
+            if (_qualifiedNameValue != null) {
+                children.Add(_qualifiedNameValue);
             }
 
-            if (m_localizedTextValue != null) {
-                children.Add(m_localizedTextValue);
+            if (_localizedTextValue != null) {
+                children.Add(_localizedTextValue);
             }
 
-            if (m_statusCodeValue != null) {
-                children.Add(m_statusCodeValue);
+            if (_statusCodeValue != null) {
+                children.Add(_statusCodeValue);
             }
 
-            if (m_variantValue != null) {
-                children.Add(m_variantValue);
+            if (_variantValue != null) {
+                children.Add(_variantValue);
             }
 
             base.GetChildren(context, children);
@@ -7126,28 +7126,28 @@ namespace TestData {
         #endregion
 
         #region Private Fields
-        private BaseDataVariableState<bool[]> m_booleanValue;
-        private BaseDataVariableState<sbyte[]> m_sByteValue;
-        private BaseDataVariableState<byte[]> m_byteValue;
-        private BaseDataVariableState<short[]> m_int16Value;
-        private BaseDataVariableState<ushort[]> m_uInt16Value;
-        private BaseDataVariableState<int[]> m_int32Value;
-        private BaseDataVariableState<uint[]> m_uInt32Value;
-        private BaseDataVariableState<long[]> m_int64Value;
-        private BaseDataVariableState<ulong[]> m_uInt64Value;
-        private BaseDataVariableState<float[]> m_floatValue;
-        private BaseDataVariableState<double[]> m_doubleValue;
-        private BaseDataVariableState<string[]> m_stringValue;
-        private BaseDataVariableState<DateTime[]> m_dateTimeValue;
-        private BaseDataVariableState<Guid[]> m_guidValue;
-        private BaseDataVariableState<byte[][]> m_byteStringValue;
-        private BaseDataVariableState<XmlElement[]> m_xmlElementValue;
-        private BaseDataVariableState<NodeId[]> m_nodeIdValue;
-        private BaseDataVariableState<ExpandedNodeId[]> m_expandedNodeIdValue;
-        private BaseDataVariableState<QualifiedName[]> m_qualifiedNameValue;
-        private BaseDataVariableState<LocalizedText[]> m_localizedTextValue;
-        private BaseDataVariableState<StatusCode[]> m_statusCodeValue;
-        private BaseDataVariableState<object[]> m_variantValue;
+        private BaseDataVariableState<bool[]> _booleanValue;
+        private BaseDataVariableState<sbyte[]> _sByteValue;
+        private BaseDataVariableState<byte[]> _byteValue;
+        private BaseDataVariableState<short[]> _int16Value;
+        private BaseDataVariableState<ushort[]> _uInt16Value;
+        private BaseDataVariableState<int[]> _int32Value;
+        private BaseDataVariableState<uint[]> _uInt32Value;
+        private BaseDataVariableState<long[]> _int64Value;
+        private BaseDataVariableState<ulong[]> _uInt64Value;
+        private BaseDataVariableState<float[]> _floatValue;
+        private BaseDataVariableState<double[]> _doubleValue;
+        private BaseDataVariableState<string[]> _stringValue;
+        private BaseDataVariableState<DateTime[]> _dateTimeValue;
+        private BaseDataVariableState<Guid[]> _guidValue;
+        private BaseDataVariableState<byte[][]> _byteStringValue;
+        private BaseDataVariableState<XmlElement[]> _xmlElementValue;
+        private BaseDataVariableState<NodeId[]> _nodeIdValue;
+        private BaseDataVariableState<ExpandedNodeId[]> _expandedNodeIdValue;
+        private BaseDataVariableState<QualifiedName[]> _qualifiedNameValue;
+        private BaseDataVariableState<LocalizedText[]> _localizedTextValue;
+        private BaseDataVariableState<StatusCode[]> _statusCodeValue;
+        private BaseDataVariableState<object[]> _variantValue;
         #endregion
     }
 #endif
@@ -7547,7 +7547,7 @@ namespace TestData {
     #endregion
 
     #region MethodTestState Class
-#if (!OPCUA_EXCLUDE_MethodTestState)
+#if !OPCUA_EXCLUDE_MethodTestState
     /// <summary>
     /// Stores an instance of the MethodTestType ObjectType.
     /// </summary>
@@ -7568,7 +7568,7 @@ namespace TestData {
             return Opc.Ua.NodeId.Create(TestData.ObjectTypes.MethodTestType, TestData.Namespaces.TestData, namespaceUris);
         }
 
-#if (!OPCUA_EXCLUDE_InitializationStrings)
+#if !OPCUA_EXCLUDE_InitializationStrings
         /// <summary>
         /// Initializes the instance.
         /// </summary>
@@ -7749,131 +7749,131 @@ namespace TestData {
         #region Public Properties
         /// <remarks />
         public ScalarValue1MethodState ScalarMethod1 {
-            get => m_scalarMethod1Method;
+            get => _scalarMethod1Method;
 
             set {
-                if (!Object.ReferenceEquals(m_scalarMethod1Method, value)) {
+                if (!Object.ReferenceEquals(_scalarMethod1Method, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_scalarMethod1Method = value;
+                _scalarMethod1Method = value;
             }
         }
 
         /// <remarks />
         public ScalarValue2MethodState ScalarMethod2 {
-            get => m_scalarMethod2Method;
+            get => _scalarMethod2Method;
 
             set {
-                if (!Object.ReferenceEquals(m_scalarMethod2Method, value)) {
+                if (!Object.ReferenceEquals(_scalarMethod2Method, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_scalarMethod2Method = value;
+                _scalarMethod2Method = value;
             }
         }
 
         /// <remarks />
         public ScalarValue3MethodState ScalarMethod3 {
-            get => m_scalarMethod3Method;
+            get => _scalarMethod3Method;
 
             set {
-                if (!Object.ReferenceEquals(m_scalarMethod3Method, value)) {
+                if (!Object.ReferenceEquals(_scalarMethod3Method, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_scalarMethod3Method = value;
+                _scalarMethod3Method = value;
             }
         }
 
         /// <remarks />
         public ArrayValue1MethodState ArrayMethod1 {
-            get => m_arrayMethod1Method;
+            get => _arrayMethod1Method;
 
             set {
-                if (!Object.ReferenceEquals(m_arrayMethod1Method, value)) {
+                if (!Object.ReferenceEquals(_arrayMethod1Method, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_arrayMethod1Method = value;
+                _arrayMethod1Method = value;
             }
         }
 
         /// <remarks />
         public ArrayValue2MethodState ArrayMethod2 {
-            get => m_arrayMethod2Method;
+            get => _arrayMethod2Method;
 
             set {
-                if (!Object.ReferenceEquals(m_arrayMethod2Method, value)) {
+                if (!Object.ReferenceEquals(_arrayMethod2Method, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_arrayMethod2Method = value;
+                _arrayMethod2Method = value;
             }
         }
 
         /// <remarks />
         public ArrayValue3MethodState ArrayMethod3 {
-            get => m_arrayMethod3Method;
+            get => _arrayMethod3Method;
 
             set {
-                if (!Object.ReferenceEquals(m_arrayMethod3Method, value)) {
+                if (!Object.ReferenceEquals(_arrayMethod3Method, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_arrayMethod3Method = value;
+                _arrayMethod3Method = value;
             }
         }
 
         /// <remarks />
         public UserScalarValue1MethodState UserScalarMethod1 {
-            get => m_userScalarMethod1Method;
+            get => _userScalarMethod1Method;
 
             set {
-                if (!Object.ReferenceEquals(m_userScalarMethod1Method, value)) {
+                if (!Object.ReferenceEquals(_userScalarMethod1Method, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_userScalarMethod1Method = value;
+                _userScalarMethod1Method = value;
             }
         }
 
         /// <remarks />
         public UserScalarValue2MethodState UserScalarMethod2 {
-            get => m_userScalarMethod2Method;
+            get => _userScalarMethod2Method;
 
             set {
-                if (!Object.ReferenceEquals(m_userScalarMethod2Method, value)) {
+                if (!Object.ReferenceEquals(_userScalarMethod2Method, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_userScalarMethod2Method = value;
+                _userScalarMethod2Method = value;
             }
         }
 
         /// <remarks />
         public UserArrayValue1MethodState UserArrayMethod1 {
-            get => m_userArrayMethod1Method;
+            get => _userArrayMethod1Method;
 
             set {
-                if (!Object.ReferenceEquals(m_userArrayMethod1Method, value)) {
+                if (!Object.ReferenceEquals(_userArrayMethod1Method, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_userArrayMethod1Method = value;
+                _userArrayMethod1Method = value;
             }
         }
 
         /// <remarks />
         public UserArrayValue2MethodState UserArrayMethod2 {
-            get => m_userArrayMethod2Method;
+            get => _userArrayMethod2Method;
 
             set {
-                if (!Object.ReferenceEquals(m_userArrayMethod2Method, value)) {
+                if (!Object.ReferenceEquals(_userArrayMethod2Method, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_userArrayMethod2Method = value;
+                _userArrayMethod2Method = value;
             }
         }
         #endregion
@@ -7887,44 +7887,44 @@ namespace TestData {
         public override void GetChildren(
             ISystemContext context,
             IList<BaseInstanceState> children) {
-            if (m_scalarMethod1Method != null) {
-                children.Add(m_scalarMethod1Method);
+            if (_scalarMethod1Method != null) {
+                children.Add(_scalarMethod1Method);
             }
 
-            if (m_scalarMethod2Method != null) {
-                children.Add(m_scalarMethod2Method);
+            if (_scalarMethod2Method != null) {
+                children.Add(_scalarMethod2Method);
             }
 
-            if (m_scalarMethod3Method != null) {
-                children.Add(m_scalarMethod3Method);
+            if (_scalarMethod3Method != null) {
+                children.Add(_scalarMethod3Method);
             }
 
-            if (m_arrayMethod1Method != null) {
-                children.Add(m_arrayMethod1Method);
+            if (_arrayMethod1Method != null) {
+                children.Add(_arrayMethod1Method);
             }
 
-            if (m_arrayMethod2Method != null) {
-                children.Add(m_arrayMethod2Method);
+            if (_arrayMethod2Method != null) {
+                children.Add(_arrayMethod2Method);
             }
 
-            if (m_arrayMethod3Method != null) {
-                children.Add(m_arrayMethod3Method);
+            if (_arrayMethod3Method != null) {
+                children.Add(_arrayMethod3Method);
             }
 
-            if (m_userScalarMethod1Method != null) {
-                children.Add(m_userScalarMethod1Method);
+            if (_userScalarMethod1Method != null) {
+                children.Add(_userScalarMethod1Method);
             }
 
-            if (m_userScalarMethod2Method != null) {
-                children.Add(m_userScalarMethod2Method);
+            if (_userScalarMethod2Method != null) {
+                children.Add(_userScalarMethod2Method);
             }
 
-            if (m_userArrayMethod1Method != null) {
-                children.Add(m_userArrayMethod1Method);
+            if (_userArrayMethod1Method != null) {
+                children.Add(_userArrayMethod1Method);
             }
 
-            if (m_userArrayMethod2Method != null) {
-                children.Add(m_userArrayMethod2Method);
+            if (_userArrayMethod2Method != null) {
+                children.Add(_userArrayMethod2Method);
             }
 
             base.GetChildren(context, children);
@@ -8115,23 +8115,23 @@ namespace TestData {
         #endregion
 
         #region Private Fields
-        private ScalarValue1MethodState m_scalarMethod1Method;
-        private ScalarValue2MethodState m_scalarMethod2Method;
-        private ScalarValue3MethodState m_scalarMethod3Method;
-        private ArrayValue1MethodState m_arrayMethod1Method;
-        private ArrayValue2MethodState m_arrayMethod2Method;
-        private ArrayValue3MethodState m_arrayMethod3Method;
-        private UserScalarValue1MethodState m_userScalarMethod1Method;
-        private UserScalarValue2MethodState m_userScalarMethod2Method;
-        private UserArrayValue1MethodState m_userArrayMethod1Method;
-        private UserArrayValue2MethodState m_userArrayMethod2Method;
+        private ScalarValue1MethodState _scalarMethod1Method;
+        private ScalarValue2MethodState _scalarMethod2Method;
+        private ScalarValue3MethodState _scalarMethod3Method;
+        private ArrayValue1MethodState _arrayMethod1Method;
+        private ArrayValue2MethodState _arrayMethod2Method;
+        private ArrayValue3MethodState _arrayMethod3Method;
+        private UserScalarValue1MethodState _userScalarMethod1Method;
+        private UserScalarValue2MethodState _userScalarMethod2Method;
+        private UserArrayValue1MethodState _userArrayMethod1Method;
+        private UserArrayValue2MethodState _userArrayMethod2Method;
         #endregion
     }
 #endif
     #endregion
 
     #region TestSystemConditionState Class
-#if (!OPCUA_EXCLUDE_TestSystemConditionState)
+#if !OPCUA_EXCLUDE_TestSystemConditionState
     /// <summary>
     /// Stores an instance of the TestSystemConditionType ObjectType.
     /// </summary>
@@ -8152,7 +8152,7 @@ namespace TestData {
             return Opc.Ua.NodeId.Create(TestData.ObjectTypes.TestSystemConditionType, TestData.Namespaces.TestData, namespaceUris);
         }
 
-#if (!OPCUA_EXCLUDE_InitializationStrings)
+#if !OPCUA_EXCLUDE_InitializationStrings
         /// <summary>
         /// Initializes the instance.
         /// </summary>
@@ -8214,14 +8214,14 @@ namespace TestData {
         #region Public Properties
         /// <remarks />
         public PropertyState<int> MonitoredNodeCount {
-            get => m_monitoredNodeCount;
+            get => _monitoredNodeCount;
 
             set {
-                if (!Object.ReferenceEquals(m_monitoredNodeCount, value)) {
+                if (!Object.ReferenceEquals(_monitoredNodeCount, value)) {
                     ChangeMasks |= NodeStateChangeMasks.Children;
                 }
 
-                m_monitoredNodeCount = value;
+                _monitoredNodeCount = value;
             }
         }
         #endregion
@@ -8235,8 +8235,8 @@ namespace TestData {
         public override void GetChildren(
             ISystemContext context,
             IList<BaseInstanceState> children) {
-            if (m_monitoredNodeCount != null) {
-                children.Add(m_monitoredNodeCount);
+            if (_monitoredNodeCount != null) {
+                children.Add(_monitoredNodeCount);
             }
 
             base.GetChildren(context, children);
@@ -8283,7 +8283,7 @@ namespace TestData {
         #endregion
 
         #region Private Fields
-        private PropertyState<int> m_monitoredNodeCount;
+        private PropertyState<int> _monitoredNodeCount;
         #endregion
     }
 #endif

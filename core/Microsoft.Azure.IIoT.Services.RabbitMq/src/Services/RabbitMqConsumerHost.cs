@@ -38,7 +38,7 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Services {
 
         /// <inheritdoc/>
         public async Task StartAsync() {
-            await _lock.WaitAsync();
+            await _lock.WaitAsync().ConfigureAwait(false);
             try {
                 if (_channel != null) {
                     throw new ResourceInvalidStateException("Already started");
@@ -61,7 +61,7 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Services {
 
         /// <inheritdoc/>
         public async Task StopAsync() {
-            await _lock.WaitAsync();
+            await _lock.WaitAsync().ConfigureAwait(false);
             try {
                 if (_channel == null) {
                     return;
@@ -83,6 +83,8 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Services {
         /// <inheritdoc/>
         public void Dispose() {
             Try.Op(() => StopAsync().Wait());
+            _channel?.Dispose();
+            _lock?.Dispose();
         }
 
         /// <summary>
@@ -102,8 +104,8 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Services {
 
             await _consumer.HandleAsync(body.ToArray(),
                 properties.ToDictionary(deliveryTag),
-                () => Task.CompletedTask);
-            await Try.Async(_consumer.OnBatchCompleteAsync);
+                () => Task.CompletedTask).ConfigureAwait(false);
+            await Try.Async(_consumer.OnBatchCompleteAsync).ConfigureAwait(false);
         }
 
         private readonly ILogger _logger;

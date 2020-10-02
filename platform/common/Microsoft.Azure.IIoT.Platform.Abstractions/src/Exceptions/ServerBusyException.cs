@@ -13,6 +13,10 @@ namespace Microsoft.Azure.IIoT.Platform.Exceptions {
     public class ServerBusyException : ExternalDependencyException {
 
         /// <inheritdoc/>
+        public ServerBusyException() {
+        }
+
+        /// <inheritdoc/>
         public ServerBusyException(string message) :
             base(message) {
         }

@@ -33,7 +33,9 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
         /// <param name="message"></param>
         /// <returns></returns>
         public async Task OnWriterGroupStateChangeAsync(WriterGroupStateEventModel message) {
-
+            if (message is null) {
+                throw new ArgumentNullException(nameof(message));
+            }
             var context = new PublisherOperationContextModel {
                 Time = message.TimeStamp,
                 AuthorityId = null // TODO
@@ -50,7 +52,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                     if (!string.IsNullOrEmpty(message.DataSetWriterId)) {
                         // Patch source state
                         await _datasets.UpdateDataSetWriterStateAsync(
-                           message.DataSetWriterId, sourceState, context);
+                           message.DataSetWriterId, sourceState, context).ConfigureAwait(false);
                         break;
                     }
 
@@ -69,11 +71,11 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                         if (!string.IsNullOrEmpty(message.PublishedVariableId)) {
                             await _datasets.UpdateDataSetVariableStateAsync(
                                 message.DataSetWriterId, message.PublishedVariableId,
-                                itemState, context);
+                                itemState, context).ConfigureAwait(false);
                         }
                         else {
                             await _datasets.UpdateDataSetEventStateAsync(
-                                message.DataSetWriterId, itemState, context);
+                                message.DataSetWriterId, itemState, context).ConfigureAwait(false);
                         }
                         break;
                     }

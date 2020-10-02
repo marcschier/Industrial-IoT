@@ -27,14 +27,14 @@ namespace Microsoft.Azure.IIoT.Azure.ActiveDirectory {
             this IClientApplicationBase application, ClaimsPrincipal user) {
             var accountId = user.GetMsalAccountId();
             if (accountId != null) {
-                var account = await application.GetAccountAsync(accountId);
+                var account = await application.GetAccountAsync(accountId).ConfigureAwait(false);
                 // Special case for guest users as the Guest oid / tenant id are not surfaced.
                 if (account == null) {
                     var loginHint = user.GetLoginHint();
                     if (loginHint == null) {
                         throw new ArgumentNullException(nameof(loginHint));
                     }
-                    var accounts = await application.GetAccountsAsync();
+                    var accounts = await application.GetAccountsAsync().ConfigureAwait(false);
                     account = accounts.FirstOrDefault(a => a.Username == loginHint);
                 }
             }

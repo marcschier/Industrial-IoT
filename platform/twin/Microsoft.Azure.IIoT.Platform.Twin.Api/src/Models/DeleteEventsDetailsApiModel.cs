@@ -19,6 +19,6 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Models {
         /// </summary>
         [DataMember(Name = "eventIds", Order = 0)]
         [Required]
-        public List<byte[]> EventIds { get; set; }
+        public IReadOnlyList<byte[]> EventIds { get; set; }
     }
 }

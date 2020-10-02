@@ -21,7 +21,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Services {
     /// <summary>
     /// Writer group processing engine
     /// </summary>
-    public class WriterGroupMessageEmitter : IWriterGroupMessageEmitter,
+    public sealed class WriterGroupMessageEmitter : IWriterGroupMessageEmitter,
         IDisposable {
 
         /// <inheritdoc/>
@@ -140,7 +140,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Services {
         }
 
         /// <inheritdoc/>
-        public List<double> PublishingOffset { get; set; }
+        public IReadOnlyList<double> PublishingOffset { get; set; }
 
         /// <summary>
         /// Create writer group processor
@@ -199,7 +199,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Services {
             try {
                 using (kSendingDuration.NewTimer()) {
                     await _events.SendEventAsync(null, message.Body,  // TODO: Target
-                        message.ContentType, message.MessageSchema, message.ContentEncoding);
+                        message.ContentType, message.MessageSchema, message.ContentEncoding).ConfigureAwait(false);
                 }
                 _diagnostics.ReportNetworkMessageSent(WriterGroupId);
                 kMessagesSent.WithLabels(_iotHubMessageSinkGuid, _iotHubMessageSinkStartTime).Inc();
@@ -224,7 +224,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Services {
         ///
         /// TODO: Consider using rx.net instead for more control over time windows, etc.
         /// </summary>
-        private sealed class DataFlowProcessingEngine {
+        private sealed class DataFlowProcessingEngine : IDisposable {
 
             /// <summary>
             /// Create engine
@@ -234,7 +234,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Services {
                 _cts = new CancellationTokenSource();
                 _outer = outer ?? throw new ArgumentNullException(nameof(outer));
                 _logger = _outer._logger?.ForContext<WriterGroupDataCollector>() ??
-                    throw new ArgumentNullException(nameof(_logger));
+                    throw new ArgumentNullException(nameof(outer));
 
                 // Snapshot the current configuration
                 _publishingInterval = outer.PublishingInterval ?? TimeSpan.Zero;
@@ -354,7 +354,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Services {
             /// <returns></returns>
             private async Task SendAsync(NetworkMessageModel message) {
                 if (message != null) {
-                    await _outer.EmitNetworkMessageAsync(message);
+                    await _outer.EmitNetworkMessageAsync(message).ConfigureAwait(false);
                     // message published re-arm publishing timer
                     ReArmPublishingTimer();
                 }

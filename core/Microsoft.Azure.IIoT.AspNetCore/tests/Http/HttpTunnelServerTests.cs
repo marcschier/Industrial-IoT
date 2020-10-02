@@ -34,7 +34,7 @@ namespace Microsoft.Azure.IIoT.AspNetCore.Http.Tunnel {
             }.ToString();
             var httpRequest = client.NewRequest(uri);
             serializer.SetAcceptHeaders(httpRequest);
-            var httpResponse = await client.GetAsync(httpRequest);
+            var httpResponse = await client.GetAsync(httpRequest).ConfigureAwait(false);
             httpResponse.Validate();
 
             var response = serializer.DeserializeResponse<TestResponseModel>(
@@ -61,7 +61,7 @@ namespace Microsoft.Azure.IIoT.AspNetCore.Http.Tunnel {
             }.ToString();
             var httpRequest = client.NewRequest(uri);
             serializer.SerializeToRequest(httpRequest, expected);
-            var httpResponse = await client.PutAsync(httpRequest);
+            var httpResponse = await client.PutAsync(httpRequest).ConfigureAwait(false);
             httpResponse.Validate();
             var response = serializer.DeserializeResponse<TestResponseModel>(
                 httpResponse);
@@ -87,7 +87,7 @@ namespace Microsoft.Azure.IIoT.AspNetCore.Http.Tunnel {
             }.ToString();
             var httpRequest = client.NewRequest(uri);
             serializer.SerializeToRequest(httpRequest, expected);
-            var httpResponse = await client.PutAsync(httpRequest);
+            var httpResponse = await client.PutAsync(httpRequest).ConfigureAwait(false);
             httpResponse.Validate();
 
             var response = serializer.DeserializeResponse<TestResponseModel>(
@@ -102,7 +102,7 @@ namespace Microsoft.Azure.IIoT.AspNetCore.Http.Tunnel {
             }.ToString();
             httpRequest = client.NewRequest(uri);
             serializer.SetAcceptHeaders(httpRequest);
-            httpResponse = await client.GetAsync(httpRequest);
+            httpResponse = await client.GetAsync(httpRequest).ConfigureAwait(false);
             httpResponse.Validate();
 
             response = serializer.DeserializeResponse<TestResponseModel>(
@@ -129,7 +129,7 @@ namespace Microsoft.Azure.IIoT.AspNetCore.Http.Tunnel {
             }.ToString();
             var httpRequest = client.NewRequest(uri);
             serializer.SerializeToRequest(httpRequest, expected);
-            var httpResponse = await client.PostAsync(httpRequest);
+            var httpResponse = await client.PostAsync(httpRequest).ConfigureAwait(false);
             httpResponse.Validate();
             var response = serializer.DeserializeResponse<TestResponseModel>(
                 httpResponse);
@@ -154,7 +154,7 @@ namespace Microsoft.Azure.IIoT.AspNetCore.Http.Tunnel {
             }.ToString();
             var httpRequest = client.NewRequest(uri);
             serializer.SerializeToRequest(httpRequest, expected);
-            var httpResponse = await client.PutAsync(httpRequest);
+            var httpResponse = await client.PutAsync(httpRequest).ConfigureAwait(false);
 
             Assert.Equal(HttpStatusCode.MethodNotAllowed, httpResponse.StatusCode);
             Assert.Throws<InvalidOperationException>(httpResponse.Validate);
@@ -176,7 +176,7 @@ namespace Microsoft.Azure.IIoT.AspNetCore.Http.Tunnel {
             }.ToString();
             var httpRequest = client.NewRequest(uri);
             serializer.SerializeToRequest(httpRequest, expected);
-            var httpResponse = await client.PostAsync(httpRequest);
+            var httpResponse = await client.PostAsync(httpRequest).ConfigureAwait(false);
             httpResponse.Validate();
             var response = serializer.DeserializeResponse<TestResponseModel>(
                 httpResponse);
@@ -187,7 +187,7 @@ namespace Microsoft.Azure.IIoT.AspNetCore.Http.Tunnel {
 
             httpRequest = client.NewRequest(uri);
             serializer.SetAcceptHeaders(httpRequest);
-            httpResponse = await client.GetAsync(httpRequest);
+            httpResponse = await client.GetAsync(httpRequest).ConfigureAwait(false);
             httpResponse.Validate();
 
             response = serializer.DeserializeResponse<TestResponseModel>(
@@ -214,12 +214,12 @@ namespace Microsoft.Azure.IIoT.AspNetCore.Http.Tunnel {
             }.ToString();
             var httpRequest = client.NewRequest(uri);
             serializer.SerializeToRequest(httpRequest, expected);
-            var httpResponse = await client.PatchAsync(httpRequest);
+            var httpResponse = await client.PatchAsync(httpRequest).ConfigureAwait(false);
             httpResponse.Validate();
 
             httpRequest = client.NewRequest(uri);
             serializer.SetAcceptHeaders(httpRequest);
-            httpResponse = await client.GetAsync(httpRequest);
+            httpResponse = await client.GetAsync(httpRequest).ConfigureAwait(false);
             httpResponse.Validate();
 
             var response = serializer.DeserializeResponse<TestResponseModel>(
@@ -246,7 +246,7 @@ namespace Microsoft.Azure.IIoT.AspNetCore.Http.Tunnel {
             }.ToString();
             var httpRequest = client.NewRequest(uri);
             serializer.SerializeToRequest(httpRequest, expected);
-            var httpResponse = await client.PostAsync(httpRequest);
+            var httpResponse = await client.PostAsync(httpRequest).ConfigureAwait(false);
             httpResponse.Validate();
             var response = serializer.DeserializeResponse<TestResponseModel>(
                 httpResponse);
@@ -256,12 +256,12 @@ namespace Microsoft.Azure.IIoT.AspNetCore.Http.Tunnel {
             Assert.Equal("testid", response.Id);
 
             httpRequest = client.NewRequest(uri);
-            httpResponse = await client.DeleteAsync(httpRequest);
+            httpResponse = await client.DeleteAsync(httpRequest).ConfigureAwait(false);
             httpResponse.Validate();
 
             httpRequest = client.NewRequest(uri);
             serializer.SetAcceptHeaders(httpRequest);
-            httpResponse = await client.GetAsync(httpRequest);
+            httpResponse = await client.GetAsync(httpRequest).ConfigureAwait(false);
             httpResponse.Validate();
 
             response = serializer.DeserializeResponse<TestResponseModel>(

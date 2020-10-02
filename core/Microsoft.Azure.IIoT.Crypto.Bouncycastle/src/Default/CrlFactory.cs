@@ -3,7 +3,7 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Crypto.Default {
+namespace Microsoft.Azure.IIoT.Crypto.Services {
     using Microsoft.Azure.IIoT.Crypto.BouncyCastle;
     using Microsoft.Azure.IIoT.Crypto.Models;
     using Org.BouncyCastle.Asn1.X509;
@@ -39,16 +39,16 @@ namespace Microsoft.Azure.IIoT.Crypto.Default {
                     throw new ArgumentNullException(nameof(issuer));
                 }
                 if (issuer.RawData == null) {
-                    throw new ArgumentNullException(nameof(issuer.RawData));
+                    throw new ArgumentException(nameof(issuer.RawData));
                 }
                 if (issuer.IssuerPolicies == null) {
-                    throw new ArgumentNullException(nameof(issuer.IssuerPolicies));
+                    throw new ArgumentException(nameof(issuer.IssuerPolicies));
                 }
                 if (issuer.KeyHandle == null) {
-                    throw new ArgumentNullException(nameof(issuer.KeyHandle));
+                    throw new ArgumentException(nameof(issuer.KeyHandle));
                 }
 
-                var bcCertCA = new X509CertificateParser().ReadCertificate(issuer.RawData);
+                var bcCertCA = new X509CertificateParser().ReadCertificate(issuer.RawData.ToArray());
                 var thisUpdate = DateTime.UtcNow;
                 var crlGen = new X509V2CrlGenerator();
 
@@ -64,7 +64,7 @@ namespace Microsoft.Azure.IIoT.Crypto.Default {
                     // add the revoked certs
                     foreach (var revokedCertificate in revokedCertificates) {
                         var revoked = revokedCertificate.Revoked?.Date ?? thisUpdate;
-                        crlGen.AddCrlEntry(new BigInteger(1, revokedCertificate.SerialNumber),
+                        crlGen.AddCrlEntry(new BigInteger(1, revokedCertificate.SerialNumber.ToArray()),
                             revoked, CrlReason.PrivilegeWithdrawn);
                     }
                 }

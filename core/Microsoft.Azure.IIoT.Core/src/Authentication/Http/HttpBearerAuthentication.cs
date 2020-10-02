@@ -46,7 +46,7 @@ namespace Microsoft.Azure.IIoT.Http.Auth {
                 var desiredPermissions = Enumerable.Empty<string>();
 
                 var result = await _provider.GetTokenForAsync(resourceId,
-                    desiredPermissions);
+                    desiredPermissions).ConfigureAwait(false);
 
                 if (result?.RawToken != null) {
                     headers.Authorization = new AuthenticationHeaderValue(
@@ -70,7 +70,7 @@ namespace Microsoft.Azure.IIoT.Http.Auth {
 
             if (resourceId != null) {
                 if (statusCode == HttpStatusCode.Unauthorized) {
-                    await _provider.InvalidateAsync(resourceId);
+                    await _provider.InvalidateAsync(resourceId).ConfigureAwait(false);
                 }
             }
         }

@@ -13,6 +13,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Tests {
     using Microsoft.Azure.IIoT.Platform.Core.Models;
     using Microsoft.Azure.IIoT.Platform.Core.Api.Models;
     using Microsoft.Azure.IIoT.Platform.Registry.Api.Clients;
+    using Microsoft.Azure.IIoT.Platform.Registry.Storage.Default;
     using Microsoft.Azure.IIoT.Platform.Twin.Api;
     using Microsoft.Azure.IIoT.Platform.Twin.Api.Clients;
     using Microsoft.Azure.IIoT.Azure.IoTEdge;
@@ -20,7 +21,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Tests {
     using Microsoft.Azure.IIoT.Azure.IoTHub.Mock;
     using Microsoft.Azure.IIoT.Hub.Models;
     using Microsoft.Azure.IIoT.Utils;
-    using Microsoft.Azure.IIoT.Http.Default;
+    using Microsoft.Azure.IIoT.Http.Clients;
     using Microsoft.Azure.IIoT.Messaging;
     using Microsoft.Azure.IIoT.Hub;
     using Microsoft.Azure.IIoT.Serializers;
@@ -35,12 +36,11 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Tests {
     using System.Text;
     using System.Threading.Tasks;
     using Xunit;
-    using Microsoft.Azure.IIoT.Platform.Registry.Storage.Default;
 
     /// <summary>
     /// Harness for opc twin module
     /// </summary>
-    public class TwinModuleFixture : IInjector, ITwinModuleConfig, IDisposable {
+    public sealed class TwinModuleFixture : IInjector, ITwinModuleConfig, IDisposable {
 
         /// <summary>
         /// Hub
@@ -173,13 +173,17 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Tests {
         /// <param name="test"></param>
         /// <returns></returns>
         public async Task RunTestAsync(Func<string, string, string, IContainer, Task> test) {
+            if (test is null) {
+                throw new ArgumentNullException(nameof(test));
+            }
+
             AssertRunning();
             try {
-                await test(Hub, DeviceId, ModuleId, HubContainer);
+                await test(Hub, DeviceId, ModuleId, HubContainer).ConfigureAwait(false);
             }
             finally {
                 _module.Exit(1);
-                var result = await _process;
+                var result = await _process.ConfigureAwait(false);
                 Assert.Equal(1, result);
                 _running = false;
             }
@@ -194,6 +198,10 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Tests {
         /// <returns></returns>
         public async Task RunTestAsync(EndpointModel ep,
             Func<EndpointInfoModel, IContainer, Task> test) {
+            if (test is null) {
+                throw new ArgumentNullException(nameof(test));
+            }
+
             var endpoint = new EndpointInfoModel {
                 Endpoint = ep,
                 SupervisorId = HubResource.Format(Hub, DeviceId, ModuleId)
@@ -201,12 +209,12 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Tests {
             AssertRunning();
             try {
                 endpoint = RegisterAndActivateTwinId(endpoint);
-                await test(endpoint, HubContainer);
+                await test(endpoint, HubContainer).ConfigureAwait(false);
                 DeactivateTwinId(endpoint);
             }
             finally {
                 _module.Exit(1);
-                var result = await _process;
+                var result = await _process.ConfigureAwait(false);
                 Assert.Equal(1, result);
                 _running = false;
             }
@@ -239,6 +247,10 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Tests {
         /// <param name="endpoint"></param>
         /// <returns></returns>
         public EndpointInfoModel RegisterAndActivateTwinId(EndpointInfoModel endpoint) {
+            if (endpoint is null) {
+                throw new ArgumentNullException(nameof(endpoint));
+            }
+
             endpoint.ApplicationId = "uas" + Guid.NewGuid().ToString();
 
             var registry = HubContainer.Resolve<IEndpointRegistry>();
@@ -258,13 +270,17 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Tests {
         /// <param name="endpoint"></param>
         /// <returns></returns>
         public void DeactivateTwinId(EndpointInfoModel endpoint) {
+            if (endpoint is null) {
+                throw new ArgumentNullException(nameof(endpoint));
+            }
+
             var registry = HubContainer.Resolve<IEndpointRegistry>();
             // Deactivate
             registry.DeactivateEndpointAsync(endpoint.Id).Wait();
         }
 
         /// <inheritdoc/>
-        public class TestModuleConfig : IIoTEdgeClientConfig {
+        internal sealed class TestModuleConfig : IIoTEdgeClientConfig {
 
             /// <inheritdoc/>
             public TestModuleConfig(DeviceModel device) {
@@ -290,7 +306,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Tests {
         }
 
         /// <inheritdoc/>
-        public class TestIoTHubConfig : IIoTHubConfig {
+        internal sealed class TestIoTHubConfig : IIoTHubConfig {
 
             /// <inheritdoc/>
             public string IoTHubConnString =>
@@ -365,6 +381,5 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Tests {
         private readonly ModuleProcess _module;
         private readonly IConfiguration _config;
         private readonly Task<int> _process;
-        private readonly IJsonSerializer _serializer = new NewtonSoftJsonSerializer();
     }
 }

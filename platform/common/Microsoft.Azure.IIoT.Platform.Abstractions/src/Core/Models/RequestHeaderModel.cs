@@ -19,7 +19,7 @@ namespace Microsoft.Azure.IIoT.Platform.Core.Models {
         /// <summary>
         /// Optional list of locales in preference order.
         /// </summary>
-        public List<string> Locales { get; set; }
+        public IReadOnlyList<string> Locales { get; set; }
 
         /// <summary>
         /// Optional diagnostics configuration

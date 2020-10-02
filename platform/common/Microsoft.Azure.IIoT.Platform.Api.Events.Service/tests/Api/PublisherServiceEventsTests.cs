@@ -38,7 +38,7 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service.Api {
             await using (await client.NodePublishSubscribeByEndpointAsync(endpointId, ev => {
                 result.SetResult(ev);
                 return Task.CompletedTask;
-            })) {
+            }).ConfigureAwait(false)) {
                 var expected = new MonitoredItemMessageModel {
                     DataSetWriterId = "testid",
                     EndpointId = endpointId,
@@ -48,8 +48,8 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service.Api {
                     Timestamp = DateTime.UtcNow,
                     Value = v
                 };
-                await bus.HandleSampleAsync(expected);
-                await Task.WhenAny(result.Task, Task.Delay(5000));
+                await bus.HandleSampleAsync(expected).ConfigureAwait(false);
+                await Task.WhenAny(result.Task, Task.Delay(5000)).ConfigureAwait(false);
 
                 Assert.True(result.Task.IsCompleted);
                 var received = result.Task.Result;
@@ -92,13 +92,13 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service.Api {
                     result.SetResult(true);
                 }
                 return Task.CompletedTask;
-            })) {
+            }).ConfigureAwait(false)) {
 
                 for (var i = 0; i < total; i++) {
-                    await bus.HandleSampleAsync(expected);
+                    await bus.HandleSampleAsync(expected).ConfigureAwait(false);
                 }
 
-                await Task.WhenAny(result.Task, Task.Delay(10000));
+                await Task.WhenAny(result.Task, Task.Delay(10000)).ConfigureAwait(false);
                 Assert.True(result.Task.IsCompleted, $"{counter} received instead of {total}");
             }
         }
@@ -107,7 +107,7 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service.Api {
             yield return ("", "");
             yield return ("str ing", "str ing");
             yield return ("{}", "{}");
-            yield return (new byte[0], new byte[0]);
+            yield return (Array.Empty<byte>(), Array.Empty<byte>());
             yield return (new byte[1000], new byte[1000]);
             yield return (new byte[] { 1, 2, 3, 4, 5, 6, 7, 8 }, new byte[] { 1, 2, 3, 4, 5, 6, 7, 8 });
             yield return (Encoding.UTF8.GetBytes("utf-8-string"), Encoding.UTF8.GetBytes("utf-8-string"));

@@ -38,14 +38,14 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Migration {
         public async Task MigrateAsync() {
             string continuation = null;
             do {
-                var results = await ListAsync(continuation);
+                var results = await ListAsync(continuation).ConfigureAwait(false);
                 continuation = results.ContinuationToken;
                 foreach (var application in results.Items) {
                     try {
                         var clone = application.Clone();
                         clone.ApplicationId =
                             ApplicationInfoModelEx.CreateApplicationId(application);
-                        await _repo.AddAsync(clone);
+                        await _repo.AddAsync(clone).ConfigureAwait(false);
                     }
                     catch (ResourceConflictException ex) {
                         _logger.Error(ex,
@@ -59,7 +59,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Migration {
                         continue;
                     }
                     // Force delete now
-                    await _source.DeleteAsync(application.ApplicationId);
+                    await _source.DeleteAsync(application.ApplicationId).ConfigureAwait(false);
                 }
             }
             while (continuation != null);
@@ -70,7 +70,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Migration {
             string continuation, int? pageSize = null, CancellationToken ct = default) {
             var query = "SELECT * FROM devices WHERE " +
                 $"tags.{nameof(EntityRegistration.DeviceType)} = '{IdentityType.Application}' ";
-            var result = await _source.QueryDeviceTwinsAsync(query, continuation, pageSize, ct);
+            var result = await _source.QueryDeviceTwinsAsync(query, continuation, pageSize, ct).ConfigureAwait(false);
             return new ApplicationInfoListModel {
                 ContinuationToken = result.ContinuationToken,
                 Items = result.Items

@@ -75,8 +75,8 @@ namespace Microsoft.Azure.IIoT.Azure.CosmosDb.Clients {
         }
 
         /// <inheritdoc/>
-        public async Task<IDocumentInfo<T>> FindAsync<T>(string id, CancellationToken ct,
-            OperationOptions options) {
+        public async Task<IDocumentInfo<T>> FindAsync<T>(string id, OperationOptions options,
+            CancellationToken ct) {
             if (string.IsNullOrEmpty(id)) {
                 throw new ArgumentNullException(nameof(id));
             }
@@ -84,7 +84,7 @@ namespace Microsoft.Azure.IIoT.Azure.CosmosDb.Clients {
                 return await Retry.WithExponentialBackoff(_logger, ct, async () => {
                     try {
                         var doc = await _container.ReadItemStreamAsync(id,
-                            partitionKey: PartitionKey.None /*TODO*/, null, ct);
+                            partitionKey: PartitionKey.None /*TODO*/, null, ct).ConfigureAwait(false);
                         doc.EnsureSuccessStatusCode();
                         return AsDocumentInfo<T>(doc.Content);
                     }
@@ -92,7 +92,7 @@ namespace Microsoft.Azure.IIoT.Azure.CosmosDb.Clients {
                         FilterException(ex);
                         return null;
                     }
-                });
+                }).ConfigureAwait(false);
             }
             catch (ResourceNotFoundException) {
                 return null;
@@ -101,7 +101,7 @@ namespace Microsoft.Azure.IIoT.Azure.CosmosDb.Clients {
 
         /// <inheritdoc/>
         public async Task<IDocumentInfo<T>> UpsertAsync<T>(T newItem,
-            CancellationToken ct, string id, OperationOptions options, string etag) {
+            string id, OperationOptions options, string etag, CancellationToken ct) {
             if (newItem == null) {
                 throw new ArgumentNullException(nameof(newItem));
             }
@@ -112,7 +112,7 @@ namespace Microsoft.Azure.IIoT.Azure.CosmosDb.Clients {
                         new ItemRequestOptions {
                             IfMatchEtag = etag,
                             EnableContentResponseOnWrite = true
-                        }, ct);
+                        }, ct).ConfigureAwait(false);
                     doc.EnsureSuccessStatusCode();
                     return AsDocumentInfo<T>(doc.Content);
                 }
@@ -120,12 +120,12 @@ namespace Microsoft.Azure.IIoT.Azure.CosmosDb.Clients {
                     FilterException(ex);
                     return null;
                 }
-            });
+            }).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
         public async Task<IDocumentInfo<T>> ReplaceAsync<T>(IDocumentInfo<T> existing,
-            T newItem, CancellationToken ct, OperationOptions options) {
+            T newItem, OperationOptions options, CancellationToken ct) {
             if (existing == null) {
                 throw new ArgumentNullException(nameof(existing));
             }
@@ -144,7 +144,7 @@ namespace Microsoft.Azure.IIoT.Azure.CosmosDb.Clients {
                         new ItemRequestOptions {
                             IfMatchEtag = existing.Etag,
                             EnableContentResponseOnWrite = true
-                        }, ct);
+                        }, ct).ConfigureAwait(false);
                     doc.EnsureSuccessStatusCode();
                     return AsDocumentInfo<T>(doc.Content);
                 }
@@ -152,12 +152,12 @@ namespace Microsoft.Azure.IIoT.Azure.CosmosDb.Clients {
                     FilterException(ex);
                     return null;
                 }
-            });
+            }).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
-        public async Task<IDocumentInfo<T>> AddAsync<T>(T newItem, CancellationToken ct,
-            string id, OperationOptions options) {
+        public async Task<IDocumentInfo<T>> AddAsync<T>(T newItem, string id,
+            OperationOptions options, CancellationToken ct) {
             if (newItem == null) {
                 throw new ArgumentNullException(nameof(newItem));
             }
@@ -167,7 +167,7 @@ namespace Microsoft.Azure.IIoT.Azure.CosmosDb.Clients {
                         partitionKey: PartitionKey.None /*TODO*/,
                         new ItemRequestOptions {
                             EnableContentResponseOnWrite = true
-                        }, ct);
+                        }, ct).ConfigureAwait(false);
                     doc.EnsureSuccessStatusCode();
                     return new DocumentInfo<T>(_serializer.Parse(doc.Content.ReadAsBuffer()));
                 }
@@ -175,22 +175,22 @@ namespace Microsoft.Azure.IIoT.Azure.CosmosDb.Clients {
                     FilterException(ex);
                     return null;
                 }
-            });
+            }).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
-        public Task DeleteAsync<T>(IDocumentInfo<T> item, CancellationToken ct,
-            OperationOptions options) {
+        public Task DeleteAsync<T>(IDocumentInfo<T> item, OperationOptions options,
+            CancellationToken ct) {
             if (item == null) {
                 throw new ArgumentNullException(nameof(item));
             }
             options ??= new OperationOptions();
-            return DeleteAsync<T>(item.Id, ct, options, item.Etag);
+            return DeleteAsync<T>(item.Id, options, item.Etag, ct);
         }
 
         /// <inheritdoc/>
-        public async Task DeleteAsync<T>(string id, CancellationToken ct,
-            OperationOptions options, string etag) {
+        public async Task DeleteAsync<T>(string id, OperationOptions options,
+            string etag, CancellationToken ct) {
             if (string.IsNullOrEmpty(id)) {
                 throw new ArgumentNullException(nameof(id));
             }
@@ -198,14 +198,14 @@ namespace Microsoft.Azure.IIoT.Azure.CosmosDb.Clients {
                 try {
                     var doc = await _container.DeleteItemStreamAsync(id,
                         partitionKey: PartitionKey.None /*TODO*/,
-                        new ItemRequestOptions { IfMatchEtag = etag, }, ct);
+                        new ItemRequestOptions { IfMatchEtag = etag, }, ct).ConfigureAwait(false);
                     doc.EnsureSuccessStatusCode();
                 }
                 catch (Exception ex) {
                     FilterException(ex);
                     return;
                 }
-            });
+            }).ConfigureAwait(false);
         }
 
         /// <summary>

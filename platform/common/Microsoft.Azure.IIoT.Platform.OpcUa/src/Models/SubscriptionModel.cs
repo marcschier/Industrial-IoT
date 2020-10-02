@@ -30,11 +30,11 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Models {
         /// <summary>
         /// Monitored items in the subscription
         /// </summary>
-        public List<MonitoredItemModel> MonitoredItems { get; set; }
+        public IReadOnlyList<MonitoredItemModel> MonitoredItems { get; set; }
 
         /// <summary>
         /// Extra fields in each message
         /// </summary>
-        public Dictionary<string, string> ExtensionFields { get; set; }
+        public IReadOnlyDictionary<string, string> ExtensionFields { get; set; }
     }
 }

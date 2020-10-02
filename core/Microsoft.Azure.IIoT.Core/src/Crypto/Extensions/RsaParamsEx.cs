@@ -86,6 +86,9 @@ namespace Microsoft.Azure.IIoT.Crypto.Models {
         /// <param name="key"></param>
         /// <returns></returns>
         public static Key GetPublicKey(this RsaParams key) {
+            if (key is null) {
+                return null;
+            }
             return new Key {
                 Type = KeyType.RSA,
                 Parameters = new RsaParams {
@@ -101,6 +104,9 @@ namespace Microsoft.Azure.IIoT.Crypto.Models {
         /// </summary>
         /// <returns> True if the object has private key; false otherwise.</returns>
         public static bool HasPrivateKey(this RsaParams key) {
+            if (key is null) {
+                return false;
+            }
             return key.D != null && key.DP != null && key.DQ != null &&
                 key.QI != null && key.P != null && key.Q != null;
         }
@@ -111,6 +117,9 @@ namespace Microsoft.Azure.IIoT.Crypto.Models {
         /// <param name="rsa"></param>
         /// <returns></returns>
         public static Key ToKey(this RSA rsa) {
+            if (rsa is null) {
+                return null;
+            }
             return ToKey(rsa.ExportParameters(true));
         }
 
@@ -120,6 +129,9 @@ namespace Microsoft.Azure.IIoT.Crypto.Models {
         /// <param name="rsa"></param>
         /// <returns></returns>
         public static Key ToPublicKey(this RSA rsa) {
+            if (rsa is null) {
+                return null;
+            }
             return ToKey(rsa.ExportParameters(false));
         }
 
@@ -129,13 +141,18 @@ namespace Microsoft.Azure.IIoT.Crypto.Models {
         /// <param name="key"></param>
         /// <returns></returns>
         public static RSA ToRSA(this Key key) {
+            if (key is null) {
+                throw new ArgumentNullException(nameof(key));
+            }
             if (key.Type != KeyType.RSA) {
                 throw new ArgumentException("Not an rsa key", nameof(key));
             }
             var parameters = key.Parameters as RsaParams;
             var rsa = RSA.Create();
             rsa.ImportParameters(parameters.ToRSAParameters());
+#pragma warning disable CA5385 // Use Rivest–Shamir–Adleman (RSA) Algorithm With Sufficient Key Size
             return rsa;
+#pragma warning restore CA5385 // Use Rivest–Shamir–Adleman (RSA) Algorithm With Sufficient Key Size
         }
 
         /// <summary>

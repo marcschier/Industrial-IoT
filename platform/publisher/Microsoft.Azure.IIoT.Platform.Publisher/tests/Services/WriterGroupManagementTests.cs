@@ -6,7 +6,7 @@
 namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
     using Microsoft.Azure.IIoT.Platform.Publisher;
     using Microsoft.Azure.IIoT.Platform.Publisher.Models;
-    using Microsoft.Azure.IIoT.Platform.Publisher.Storage.Default;
+    using Microsoft.Azure.IIoT.Platform.Publisher.Storage.Services;
     using Microsoft.Azure.IIoT.Platform.Registry;
     using Microsoft.Azure.IIoT.Platform.Registry.Models;
     using Microsoft.Azure.IIoT.Platform.Core.Models;
@@ -42,63 +42,63 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                 var result1 = await groups.AddWriterGroupAsync(new WriterGroupAddRequestModel {
                     Name = "Test",
                     SiteId = "fakesite" // See below
-                });
+                }).ConfigureAwait(false);
 
                 // Assert
                 var found = await groups.QueryAllWriterGroupsAsync(new WriterGroupInfoQueryModel {
                     State = WriterGroupState.Disabled
-                });
+                }).ConfigureAwait(false);
                 Assert.Single(found); // Initial state is disabled
 
                 // Act
-                await service.UpdateWriterGroupStateAsync(result1.WriterGroupId, WriterGroupState.Publishing);
+                await service.UpdateWriterGroupStateAsync(result1.WriterGroupId, WriterGroupState.Publishing).ConfigureAwait(false);
                 // Assert
                 found = await groups.QueryAllWriterGroupsAsync(new WriterGroupInfoQueryModel {
                     State = WriterGroupState.Publishing
-                });
+                }).ConfigureAwait(false);
                 Assert.Empty(found); // No publishing if not activate
 
                 // Act
-                await groups.ActivateWriterGroupAsync(result1.WriterGroupId);
-                await service.UpdateWriterGroupStateAsync(result1.WriterGroupId, WriterGroupState.Publishing);
+                await groups.ActivateWriterGroupAsync(result1.WriterGroupId).ConfigureAwait(false);
+                await service.UpdateWriterGroupStateAsync(result1.WriterGroupId, WriterGroupState.Publishing).ConfigureAwait(false);
                 found = await groups.QueryAllWriterGroupsAsync(new WriterGroupInfoQueryModel {
                     State = WriterGroupState.Pending
-                });
+                }).ConfigureAwait(false);
                 Assert.Empty(found);
                 found = await groups.QueryAllWriterGroupsAsync(new WriterGroupInfoQueryModel {
                     State = WriterGroupState.Publishing
-                });
+                }).ConfigureAwait(false);
                 Assert.Single(found); // Publishing - not pending
 
                 // Act
-                await service.UpdateWriterGroupStateAsync(result1.WriterGroupId, WriterGroupState.Publishing);
+                await service.UpdateWriterGroupStateAsync(result1.WriterGroupId, WriterGroupState.Publishing).ConfigureAwait(false);
                 found = await groups.QueryAllWriterGroupsAsync(new WriterGroupInfoQueryModel {
                     State = WriterGroupState.Publishing
-                });
+                }).ConfigureAwait(false);
                 Assert.Single(found);
-                await service.UpdateWriterGroupStateAsync(result1.WriterGroupId, WriterGroupState.Pending);
+                await service.UpdateWriterGroupStateAsync(result1.WriterGroupId, WriterGroupState.Pending).ConfigureAwait(false);
                 found = await groups.QueryAllWriterGroupsAsync(new WriterGroupInfoQueryModel {
                     State = WriterGroupState.Pending
-                });
+                }).ConfigureAwait(false);
                 Assert.Single(found);
-                await service.UpdateWriterGroupStateAsync(result1.WriterGroupId, WriterGroupState.Publishing);
+                await service.UpdateWriterGroupStateAsync(result1.WriterGroupId, WriterGroupState.Publishing).ConfigureAwait(false);
                 found = await groups.QueryAllWriterGroupsAsync(new WriterGroupInfoQueryModel {
                     State = WriterGroupState.Publishing
-                });
+                }).ConfigureAwait(false);
                 Assert.Single(found);
 
                 // Act
-                await groups.DeactivateWriterGroupAsync(result1.WriterGroupId);
+                await groups.DeactivateWriterGroupAsync(result1.WriterGroupId).ConfigureAwait(false);
                 found = await groups.QueryAllWriterGroupsAsync(new WriterGroupInfoQueryModel {
                     State = WriterGroupState.Disabled
-                });
+                }).ConfigureAwait(false);
                 Assert.Single(found);
 
-                await service.UpdateWriterGroupStateAsync(result1.WriterGroupId, WriterGroupState.Publishing);
+                await service.UpdateWriterGroupStateAsync(result1.WriterGroupId, WriterGroupState.Publishing).ConfigureAwait(false);
 
                 found = await groups.QueryAllWriterGroupsAsync(new WriterGroupInfoQueryModel {
                     State = WriterGroupState.Disabled
-                });
+                }).ConfigureAwait(false);
                 Assert.Single(found); // No publishing if disabled
             }
         }
@@ -115,7 +115,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                 var result1 = await groups.AddWriterGroupAsync(new WriterGroupAddRequestModel {
                     Name = "Test",
                     SiteId = "fakesite" // See below
-                });
+                }).ConfigureAwait(false);
 
                 var result2 = await writers.AddDataSetWriterAsync(new DataSetWriterAddRequestModel {
                     EndpointId = "endpoint1",
@@ -125,12 +125,12 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                         Priority = 1
                     },
                     WriterGroupId = result1.WriterGroupId
-                });
+                }).ConfigureAwait(false);
 
                 // Assert
                 var found = await writers.QueryAllDataSetWritersAsync(new DataSetWriterInfoQueryModel {
                     ExcludeDisabled = true
-                });
+                }).ConfigureAwait(false);
                 Assert.Single(found); // Initial state is enabled
 
                 // Act
@@ -141,12 +141,12 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                             ErrorMessage = "error"
                         },
                         LastResultChange = now
-                    });
+                    }).ConfigureAwait(false);
 
                 // Assert
                 found = await writers.QueryAllDataSetWritersAsync(new DataSetWriterInfoQueryModel {
                     ExcludeDisabled = true
-                });
+                }).ConfigureAwait(false);
                 Assert.Single(found);
                 Assert.Equal("error", found.Single().DataSet.State.LastResult.ErrorMessage);
                 Assert.Equal(now, found.Single().DataSet.State.LastResultChange);
@@ -157,12 +157,12 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                 await service.UpdateDataSetWriterStateAsync(result2.DataSetWriterId,
                     new PublishedDataSetSourceStateModel {
                         LastResultChange = now
-                    });
+                    }).ConfigureAwait(false);
 
                 // Assert
                 found = await writers.QueryAllDataSetWritersAsync(new DataSetWriterInfoQueryModel {
                     ExcludeDisabled = true
-                });
+                }).ConfigureAwait(false);
                 Assert.Single(found);
                 Assert.Null(found.Single().DataSet.State.LastResult);
                 Assert.Equal(now, found.Single().DataSet.State.LastResultChange);
@@ -182,7 +182,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                 var result1 = await groups.AddWriterGroupAsync(new WriterGroupAddRequestModel {
                     Name = "Test",
                     SiteId = "fakesite" // See below
-                });
+                }).ConfigureAwait(false);
 
                 var result2 = await writers.AddDataSetWriterAsync(new DataSetWriterAddRequestModel {
                     EndpointId = "endpoint1",
@@ -192,7 +192,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                         Priority = 1
                     },
                     WriterGroupId = result1.WriterGroupId
-                });
+                }).ConfigureAwait(false);
 
                 var result = await batch.AddVariablesToDataSetWriterAsync(result2.DataSetWriterId,
                     new DataSetAddVariableBatchRequestModel {
@@ -211,9 +211,9 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                                 HeartbeatInterval = TimeSpan.FromDays(1)
                             }
                         }
-                    });
+                    }).ConfigureAwait(false);
 
-                var found = await writers.ListAllDataSetVariablesAsync(result2.DataSetWriterId);
+                var found = await writers.ListAllDataSetVariablesAsync(result2.DataSetWriterId).ConfigureAwait(false);
                 Assert.Equal(3, found.Count);
                 var v = found.First();
                 var targetId = v.Id;
@@ -229,9 +229,9 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                         },
                         ServerId = 5,
                         LastResultChange = now
-                    });
+                    }).ConfigureAwait(false);
 
-                found = await writers.ListAllDataSetVariablesAsync(result2.DataSetWriterId);
+                found = await writers.ListAllDataSetVariablesAsync(result2.DataSetWriterId).ConfigureAwait(false);
                 v = found.FirstOrDefault(v => v.Id == targetId);
                 Assert.NotNull(v);
                 Assert.NotNull(v.State);
@@ -246,9 +246,9 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                         ClientId = 0,
                         ServerId = 0,
                         LastResultChange = now
-                    });
+                    }).ConfigureAwait(false);
 
-                found = await writers.ListAllDataSetVariablesAsync(result2.DataSetWriterId);
+                found = await writers.ListAllDataSetVariablesAsync(result2.DataSetWriterId).ConfigureAwait(false);
                 v = found.FirstOrDefault(v => v.Id == targetId);
                 Assert.NotNull(v);
                 Assert.NotNull(v.State);
@@ -280,7 +280,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                 var result1 = await groups.AddWriterGroupAsync(new WriterGroupAddRequestModel {
                     Name = "Test",
                     SiteId = "fakesite" // See below
-                });
+                }).ConfigureAwait(false);
 
                 var result2 = await writers.AddDataSetWriterAsync(new DataSetWriterAddRequestModel {
                     EndpointId = "endpoint1",
@@ -290,84 +290,84 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                         Priority = 1
                     },
                     WriterGroupId = result1.WriterGroupId
-                });
+                }).ConfigureAwait(false);
 
                 // Assert
                 var found = await writers.QueryAllDataSetWritersAsync(new DataSetWriterInfoQueryModel {
                     ExcludeDisabled = true
-                });
+                }).ConfigureAwait(false);
                 Assert.Single(found);
 
                 // Act
-                await service.OnEndpointActivatedAsync(null, endpoint);
+                await service.OnEndpointActivatedAsync(null, endpoint).ConfigureAwait(false);
                 // Assert
                 found = await writers.QueryAllDataSetWritersAsync(new DataSetWriterInfoQueryModel {
                     ExcludeDisabled = true
-                });
+                }).ConfigureAwait(false);
                 Assert.Single(found);
 
                 // Act
-                await service.OnEndpointDeactivatedAsync(null, endpoint);
+                await service.OnEndpointDeactivatedAsync(null, endpoint).ConfigureAwait(false);
                 // Assert
                 found = await writers.QueryAllDataSetWritersAsync(new DataSetWriterInfoQueryModel {
                     ExcludeDisabled = true
-                });
+                }).ConfigureAwait(false);
                 Assert.Empty(found);
 
                 // Act
-                await service.OnEndpointDeactivatedAsync(null, endpoint);
+                await service.OnEndpointDeactivatedAsync(null, endpoint).ConfigureAwait(false);
                 // Assert
                 found = await writers.QueryAllDataSetWritersAsync(new DataSetWriterInfoQueryModel {
                     ExcludeDisabled = true
-                });
+                }).ConfigureAwait(false);
                 Assert.Empty(found);
 
                 // Act
-                await service.OnEndpointActivatedAsync(null, endpoint);
+                await service.OnEndpointActivatedAsync(null, endpoint).ConfigureAwait(false);
                 // Assert
                 found = await writers.QueryAllDataSetWritersAsync(new DataSetWriterInfoQueryModel {
                     ExcludeDisabled = true
-                });
+                }).ConfigureAwait(false);
                 Assert.Single(found);
 
                 // Act
-                await service.OnEndpointDeletedAsync(null, endpoint.Id, null);
+                await service.OnEndpointDeletedAsync(null, endpoint.Id, null).ConfigureAwait(false);
                 // Assert
                 found = await writers.QueryAllDataSetWritersAsync(new DataSetWriterInfoQueryModel {
                     ExcludeDisabled = true
-                });
+                }).ConfigureAwait(false);
                 Assert.Empty(found);
 
                 // Act
-                await service.OnEndpointDeletedAsync(null, endpoint.Id, null);
+                await service.OnEndpointDeletedAsync(null, endpoint.Id, null).ConfigureAwait(false);
                 // Assert
                 found = await writers.QueryAllDataSetWritersAsync(new DataSetWriterInfoQueryModel {
                     ExcludeDisabled = true
-                });
+                }).ConfigureAwait(false);
                 Assert.Empty(found);
 
                 // Act
-                await service.OnEndpointNewAsync(null, endpoint);
+                await service.OnEndpointNewAsync(null, endpoint).ConfigureAwait(false);
                 // Assert
                 found = await writers.QueryAllDataSetWritersAsync(new DataSetWriterInfoQueryModel {
                     ExcludeDisabled = true
-                });
+                }).ConfigureAwait(false);
                 Assert.Single(found);
 
                 // Act
-                await service.OnEndpointDeletedAsync(null, endpoint.Id, null);
+                await service.OnEndpointDeletedAsync(null, endpoint.Id, null).ConfigureAwait(false);
                 // Assert
                 found = await writers.QueryAllDataSetWritersAsync(new DataSetWriterInfoQueryModel {
                     ExcludeDisabled = true
-                });
+                }).ConfigureAwait(false);
                 Assert.Empty(found);
 
                 // Act
-                await service.OnEndpointActivatedAsync(null, endpoint);
+                await service.OnEndpointActivatedAsync(null, endpoint).ConfigureAwait(false);
                 // Assert
                 found = await writers.QueryAllDataSetWritersAsync(new DataSetWriterInfoQueryModel {
                     ExcludeDisabled = true
-                });
+                }).ConfigureAwait(false);
                 Assert.Single(found);
             }
         }

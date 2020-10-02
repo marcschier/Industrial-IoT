@@ -9,7 +9,9 @@ namespace Microsoft.Azure.IIoT.Crypto.BouncyCastle {
     using Org.BouncyCastle.Pkcs;
     using Org.BouncyCastle.Security;
     using Org.BouncyCastle.X509;
+    using System.Collections.Generic;
     using System.IO;
+    using System.Linq;
 
     /// <summary>
     /// Certificate extensions
@@ -59,8 +61,8 @@ namespace Microsoft.Azure.IIoT.Crypto.BouncyCastle {
         /// </summary>
         /// <param name="buffer"></param>
         /// <returns></returns>
-        internal static X509Certificate ToX509Certificate(byte[] buffer) {
-            return new X509CertificateParser().ReadCertificate(buffer);
+        internal static X509Certificate ToX509Certificate(IReadOnlyCollection<byte> buffer) {
+            return new X509CertificateParser().ReadCertificate(buffer.ToArray());
         }
 
         /// <summary>

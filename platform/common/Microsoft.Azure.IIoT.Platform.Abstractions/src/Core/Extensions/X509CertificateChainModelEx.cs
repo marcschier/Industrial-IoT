@@ -61,7 +61,7 @@ namespace Microsoft.Azure.IIoT.Platform.Core.Models {
             }
             catch {
                 // Fall back to sha1 which was the previous thumprint algorithm
-                return rawCertificates.ToSha1Hash();
+                return rawCertificates.ToSha256Hash();
             }
         }
 

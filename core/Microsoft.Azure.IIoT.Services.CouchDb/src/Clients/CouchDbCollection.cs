@@ -46,24 +46,24 @@ namespace Microsoft.Azure.IIoT.Services.CouchDb.Clients {
         }
 
         /// <inheritdoc/>
-        public async Task<IDocumentInfo<T>> FindAsync<T>(string id, CancellationToken ct,
-            OperationOptions options) {
+        public async Task<IDocumentInfo<T>> FindAsync<T>(string id, OperationOptions options,
+            CancellationToken ct) {
             if (string.IsNullOrEmpty(id)) {
                 throw new ArgumentNullException(nameof(id));
             }
             try {
-                var doc = await _db.FindAsync(id);
+                var doc = await _db.FindAsync(id).ConfigureAwait(false);
                 return doc?.ToDocumentInfo<T>();
             }
             catch (Exception ex) {
                 FilterException(ex);
-                return null;
+                throw;
             }
         }
 
         /// <inheritdoc/>
         public async Task<IDocumentInfo<T>> UpsertAsync<T>(T newItem,
-            CancellationToken ct, string id, OperationOptions options, string etag) {
+            string id, OperationOptions options, string etag, CancellationToken ct) {
             if (newItem == null) {
                 throw new ArgumentNullException(nameof(newItem));
             }
@@ -76,14 +76,14 @@ namespace Microsoft.Azure.IIoT.Services.CouchDb.Clients {
                 try {
                     if (force) {
                         // Retrieve top etag or null if not found
-                        newDoc.Etag = await GetRevAsync(newDoc.Id, ct);
+                        newDoc.Etag = await GetRevAsync(newDoc.Id, ct).ConfigureAwait(false);
                     }
-                    return await AddOrUpdateAsync<T>(newDoc, ct);
+                    return await AddOrUpdateAsync<T>(newDoc, ct).ConfigureAwait(false);
                 }
                 catch (ResourceConflictException) when (force) { }
                 catch (ResourceNotFoundException) when (force) { }
                 catch (ResourceOutOfDateException) when (!force) {
-                    etag = await GetRevAsync(newDoc.Id, ct);
+                    etag = await GetRevAsync(newDoc.Id, ct).ConfigureAwait(false);
                     if (etag != null) {
                         throw;
                     }
@@ -94,7 +94,7 @@ namespace Microsoft.Azure.IIoT.Services.CouchDb.Clients {
 
         /// <inheritdoc/>
         public async Task<IDocumentInfo<T>> ReplaceAsync<T>(IDocumentInfo<T> existing,
-            T newItem, CancellationToken ct, OperationOptions options) {
+            T newItem, OperationOptions options, CancellationToken ct) {
             if (existing == null) {
                 throw new ArgumentNullException(nameof(existing));
             }
@@ -112,10 +112,10 @@ namespace Microsoft.Azure.IIoT.Services.CouchDb.Clients {
             }
             var newDoc = CouchDbDocument.Wrap(newItem, existing.Id, existing.Etag);
             try {
-                return await AddOrUpdateAsync<T>(newDoc, ct);
+                return await AddOrUpdateAsync<T>(newDoc, ct).ConfigureAwait(false);
             }
             catch (ResourceOutOfDateException e) {
-                var rev = await GetRevAsync(existing.Id, ct);
+                var rev = await GetRevAsync(existing.Id, ct).ConfigureAwait(false);
                 if (rev == null) {
                     // Existing item is deleted so update exception
                     throw new ResourceNotFoundException(e.Message, e);
@@ -125,8 +125,8 @@ namespace Microsoft.Azure.IIoT.Services.CouchDb.Clients {
         }
 
         /// <inheritdoc/>
-        public async Task<IDocumentInfo<T>> AddAsync<T>(T newItem, CancellationToken ct,
-            string id, OperationOptions options) {
+        public async Task<IDocumentInfo<T>> AddAsync<T>(T newItem, string id,
+            OperationOptions options, CancellationToken ct) {
             if (newItem == null) {
                 throw new ArgumentNullException(nameof(newItem));
             }
@@ -134,30 +134,30 @@ namespace Microsoft.Azure.IIoT.Services.CouchDb.Clients {
                 throw new NotSupportedException(typeof(T).Name);
             }
             var newDoc = CouchDbDocument.Wrap(newItem, id, null);
-            return await AddOrUpdateAsync<T>(newDoc, ct);
+            return await AddOrUpdateAsync<T>(newDoc, ct).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
-        public Task DeleteAsync<T>(IDocumentInfo<T> item, CancellationToken ct,
-            OperationOptions options) {
+        public Task DeleteAsync<T>(IDocumentInfo<T> item, OperationOptions options,
+            CancellationToken ct) {
             if (item == null) {
                 throw new ArgumentNullException(nameof(item));
             }
             if (string.IsNullOrEmpty(item.Id)) {
-                throw new ArgumentNullException(nameof(item.Id));
+                throw new ArgumentException("Id is missing", nameof(item.Id));
             }
             if (string.IsNullOrEmpty(item.Etag)) {
-                throw new ArgumentNullException(nameof(item.Etag));
+                throw new ArgumentException("Etag is missing", nameof(item.Etag));
             }
             if (typeof(T).IsValueType) {
                 throw new NotSupportedException(typeof(T).Name);
             }
-            return DeleteAsync<T>(item.Id, ct, options, item.Etag);
+            return DeleteAsync<T>(item.Id, options, item.Etag, ct);
         }
 
         /// <inheritdoc/>
-        public async Task DeleteAsync<T>(string id, CancellationToken ct,
-            OperationOptions options, string etag) {
+        public async Task DeleteAsync<T>(string id, OperationOptions options,
+            string etag, CancellationToken ct) {
             if (string.IsNullOrEmpty(id)) {
                 throw new ArgumentNullException(nameof(id));
             }
@@ -169,10 +169,10 @@ namespace Microsoft.Azure.IIoT.Services.CouchDb.Clients {
                 try {
                     if (force) {
                         // Retrieve top etag or null if not found
-                        etag = await GetRevAsync(id, ct);
+                        etag = await GetRevAsync(id, ct).ConfigureAwait(false);
                     }
                     try {
-                        await DeleteAsync(id, etag, ct);
+                        await DeleteAsync(id, etag, ct).ConfigureAwait(false);
                         return; // Success
                     }
                     catch (Exception ex) {
@@ -220,17 +220,17 @@ namespace Microsoft.Azure.IIoT.Services.CouchDb.Clients {
             try {
                 if (string.IsNullOrEmpty(newDoc.Etag)) {
                     // Insert
-                    newDoc = await _db.AddAsync(newDoc, false, ct);
+                    newDoc = await _db.AddAsync(newDoc, false, ct).ConfigureAwait(false);
                 }
                 else {
                     // Upsert
-                    newDoc = await _db.AddOrUpdateAsync(newDoc, false, ct);
+                    newDoc = await _db.AddOrUpdateAsync(newDoc, false, ct).ConfigureAwait(false);
                 }
                 return newDoc.ToDocumentInfo<T>();
             }
             catch (Exception ex) {
                 FilterException(ex, string.IsNullOrEmpty(newDoc.Etag));
-                return null;
+                throw;
             }
         }
 
@@ -289,7 +289,7 @@ namespace Microsoft.Azure.IIoT.Services.CouchDb.Clients {
                             o.Properties().FirstOrDefault()?.Name : (string)f)
                         .Where(f => f != null)
                         .Select(f => GetOrAddIndexAsync(typeName, f));
-                    await Task.WhenAll(indexes);
+                    await Task.WhenAll(indexes).ConfigureAwait(false);
                     o["use_index"] = JToken.FromObject(
                         indexes.Select(i => i.Result.Name).ToArray());
                 }
@@ -331,7 +331,7 @@ namespace Microsoft.Azure.IIoT.Services.CouchDb.Clients {
         /// <returns></returns>
         internal async Task<string> GetRevAsync(string id,
             CancellationToken ct = default) {
-            var result = await _db.NewRequest()
+            using var result = await _db.NewRequest()
                 .AppendPathSegment(id)
                 .AllowAnyHttpStatus()
                 .HeadAsync(ct, HttpCompletionOption.ResponseHeadersRead)
@@ -367,7 +367,7 @@ namespace Microsoft.Azure.IIoT.Services.CouchDb.Clients {
                         type = "json"
                     }, ct)
                     .SendRequestAsync()
-                    .ReceiveJson<IndexResult>();
+                    .ReceiveJson<IndexResult>().ConfigureAwait(false);
                 return result;
             });
         }
@@ -412,7 +412,6 @@ namespace Microsoft.Azure.IIoT.Services.CouchDb.Clients {
                     }
                     throw new ExternalDependencyException(cc.Message, cc);
             }
-            throw ex;
         }
 
         /// <summary>
@@ -469,7 +468,7 @@ namespace Microsoft.Azure.IIoT.Services.CouchDb.Clients {
                 if (_server.HasMore()) {
                     var results = new List<IDocumentInfo<TServer>>();
                     while (_server.HasMore()) { // Read all from server
-                        var serverResults = await _server.ReadAsync(ct);
+                        var serverResults = await _server.ReadAsync(ct).ConfigureAwait(false);
                         results.AddRange(serverResults);
                     }
 
@@ -600,7 +599,7 @@ namespace Microsoft.Azure.IIoT.Services.CouchDb.Clients {
 
                 // Query server
                 var results = await _collection.QueryAsync(_originalType, _mango, PageSize,
-                    string.IsNullOrEmpty(_bookmark) ? null : _bookmark, ct);
+                    string.IsNullOrEmpty(_bookmark) ? null : _bookmark, ct).ConfigureAwait(false);
 
                 lock (_lock) {
                     var bookmark = results.Bookmark;
@@ -720,7 +719,7 @@ namespace Microsoft.Azure.IIoT.Services.CouchDb.Clients {
             public async Task<int> CountAsync(CancellationToken ct = default) {
                 var result = new FilteredResultFeed<TResult, TServer>(_collection,
                     _server, _pageSize, _filter);
-                return await result.CountAsync(ct);
+                return await result.CountAsync(ct).ConfigureAwait(false);
             }
 
             private readonly IQueryable<TResult> _filter;
@@ -825,7 +824,7 @@ namespace Microsoft.Azure.IIoT.Services.CouchDb.Clients {
 
             /// <inheritdoc/>
             public async Task<int> CountAsync(CancellationToken ct = default) {
-                return await Complete(true).CountAsync();
+                return await Complete(true).CountAsync().ConfigureAwait(false);
             }
 
             /// <summary>

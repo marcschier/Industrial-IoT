@@ -59,7 +59,7 @@ namespace Microsoft.Azure.IIoT.Services.CouchDb.Clients {
             )) {
                 try {
                     // Try get last item
-                    var up = await client.IsUpAsync(ct);
+                    var up = await client.IsUpAsync(ct).ConfigureAwait(false);
                     return up ? HealthCheckResult.Healthy() :
                         HealthCheckResult.Degraded();
                 }

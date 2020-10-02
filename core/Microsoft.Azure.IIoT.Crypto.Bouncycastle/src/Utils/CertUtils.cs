@@ -108,7 +108,7 @@ namespace Microsoft.Azure.IIoT.Crypto.Utils {
 
                         buffer.Append(value);
 
-                        if (value.Length > 0 && value[value.Length - 1] != '"') {
+                        if (value.Length > 0 && value[^1] != '"') {
                             buffer.Append('"');
                         }
                     }

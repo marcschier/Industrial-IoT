@@ -13,6 +13,10 @@ namespace Microsoft.Azure.IIoT.Platform.Exceptions {
     public class CertificateUntrustedException : SecurityException {
 
         /// <inheritdoc/>
+        public CertificateUntrustedException() {
+        }
+
+        /// <inheritdoc/>
         public CertificateUntrustedException(string message) :
             base(message) {
         }

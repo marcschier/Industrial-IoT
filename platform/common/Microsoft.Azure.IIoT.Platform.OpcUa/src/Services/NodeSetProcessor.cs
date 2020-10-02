@@ -64,7 +64,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
                     foreach (var node in nodeset.GetNodeStates(context)) {
                         ct.ThrowIfCancellationRequested();
                         if (node != null) {
-                            await HandleAsync(handler, node, context);
+                            await HandleAsync(handler, node, context).ConfigureAwait(false);
                         }
                     }
                 }
@@ -78,17 +78,17 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
                             if (node == null) {
                                 break;
                             }
-                            await HandleAsync(handler, node.Node, context);
+                            await HandleAsync(handler, node.Node, context).ConfigureAwait(false);
                         }
                     }
                 }
                 // Commit
-                await handler.CompleteAsync(context);
+                await handler.CompleteAsync(context).ConfigureAwait(false);
             }
             catch (Exception ex) {
                 _logger.Error(ex, "Failed to parse model, aborting processing.");
                 // Abort
-                await handler.CompleteAsync(context, true);
+                await handler.CompleteAsync(context, true).ConfigureAwait(false);
             }
         }
 
@@ -106,34 +106,34 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
             }
             switch (node) {
                 case ObjectNodeModel n:
-                    await handler.HandleAsync(n, context);
+                    await handler.HandleAsync(n, context).ConfigureAwait(false);
                     break;
                 case PropertyNodeModel n:
-                    await handler.HandleAsync(n, context);
+                    await handler.HandleAsync(n, context).ConfigureAwait(false);
                     break;
                 case VariableNodeModel n:
-                    await handler.HandleAsync(n, context);
+                    await handler.HandleAsync(n, context).ConfigureAwait(false);
                     break;
                 case MethodNodeModel n:
-                    await handler.HandleAsync(n, context);
+                    await handler.HandleAsync(n, context).ConfigureAwait(false);
                     break;
                 case ViewNodeModel n:
-                    await handler.HandleAsync(n, context);
+                    await handler.HandleAsync(n, context).ConfigureAwait(false);
                     break;
                 case ObjectTypeNodeModel n:
-                    await handler.HandleAsync(n, context);
+                    await handler.HandleAsync(n, context).ConfigureAwait(false);
                     break;
                 case PropertyTypeNodeModel n:
-                    await handler.HandleAsync(n, context);
+                    await handler.HandleAsync(n, context).ConfigureAwait(false);
                     break;
                 case VariableTypeNodeModel n:
-                    await handler.HandleAsync(n, context);
+                    await handler.HandleAsync(n, context).ConfigureAwait(false);
                     break;
                 case DataTypeNodeModel n:
-                    await handler.HandleAsync(n, context);
+                    await handler.HandleAsync(n, context).ConfigureAwait(false);
                     break;
                 case ReferenceTypeNodeModel n:
-                    await handler.HandleAsync(n, context);
+                    await handler.HandleAsync(n, context).ConfigureAwait(false);
                     break;
             }
         }

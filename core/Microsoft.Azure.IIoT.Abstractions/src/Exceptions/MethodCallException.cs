@@ -11,21 +11,18 @@ namespace Microsoft.Azure.IIoT.Exceptions {
     /// </summary>
     public class MethodCallException : Exception {
 
-        /// <summary>
-        /// Create exception
-        /// </summary>
-        /// <param name="message"></param>
+        /// <inheritdoc/>
         public MethodCallException(string message) :
             base(message) {
         }
 
-        /// <summary>
-        /// Create exception with inner
-        /// </summary>
-        /// <param name="message"></param>
-        /// <param name="innerException"></param>
+        /// <inheritdoc/>
         public MethodCallException(string message, Exception innerException) :
             base(message, innerException) {
+        }
+
+        /// <inheritdoc/>
+        public MethodCallException() {
         }
     }
 }

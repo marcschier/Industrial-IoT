@@ -51,8 +51,9 @@ namespace System {
             var charLookup = upperCase ?
                 "0123456789ABCDEF" : "0123456789abcdef";
             foreach (var c in base16) {
-                if (!charLookup.Contains(c))
+                if (!charLookup.Contains(c, StringComparison.Ordinal)) {
                     return false;
+                }
             }
             return true;
         }
@@ -74,12 +75,12 @@ namespace System {
         /// </summary>
         /// <param name="bytestr">string to hash</param>
         /// <returns></returns>
-        public static string ToSha1Hash(this byte[] bytestr) {
+        public static string ToSha256Hash(this byte[] bytestr) {
             if (bytestr == null) {
                 return null;
             }
-            using (var sha1 = new SHA1Managed()) {
-                var hash = sha1.ComputeHash(bytestr);
+            using (var sha = new SHA256Managed()) {
+                var hash = sha.ComputeHash(bytestr);
                 return hash.ToBase16String(false);
             }
         }
@@ -90,12 +91,16 @@ namespace System {
         /// <param name="bytes"></param>
         /// <param name="size"></param>
         public static string ToString(this byte[] bytes, int size) {
+            if (bytes is null) {
+                throw new ArgumentNullException(nameof(bytes));
+            }
+
             var truncate = bytes.Length > size;
             var length = truncate ? size : bytes.Length;
             var ascii = IsAscii(bytes, length);
             var content = ascii ? Encoding.ASCII.GetString(bytes, 0, length) :
                 BitConverter.ToString(bytes, 0, length);
-            length = content.IndexOf('\n');
+            length = content.IndexOf('\n', StringComparison.Ordinal);
             if (length > 0) {
                 return content.Substring(0, length);
             }

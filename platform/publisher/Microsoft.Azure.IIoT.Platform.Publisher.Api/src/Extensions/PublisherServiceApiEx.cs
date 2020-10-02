@@ -23,11 +23,11 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api {
         public static async Task<IEnumerable<WriterGroupInfoApiModel>> ListAllWriterGroupsAsync(
             this IPublisherServiceApi service, CancellationToken ct = default) {
             var groups = new List<WriterGroupInfoApiModel>();
-            var result = await service.ListWriterGroupsAsync(null, null, ct);
+            var result = await service.ListWriterGroupsAsync(null, null, ct).ConfigureAwait(false);
             groups.AddRange(result.WriterGroups);
             while (result.ContinuationToken != null) {
                 result = await service.ListWriterGroupsAsync(result.ContinuationToken,
-                    null, ct);
+                    null, ct).ConfigureAwait(false);
                 groups.AddRange(result.WriterGroups);
             }
             return groups;
@@ -44,11 +44,11 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api {
             this IPublisherServiceApi service, WriterGroupInfoQueryApiModel query,
             CancellationToken ct = default) {
             var groups = new List<WriterGroupInfoApiModel>();
-            var result = await service.QueryWriterGroupsAsync(query, null, ct);
+            var result = await service.QueryWriterGroupsAsync(query, null, ct).ConfigureAwait(false);
             groups.AddRange(result.WriterGroups);
             while (result.ContinuationToken != null) {
                 result = await service.ListWriterGroupsAsync(result.ContinuationToken,
-                    null, ct);
+                    null, ct).ConfigureAwait(false);
                 groups.AddRange(result.WriterGroups);
             }
             return groups;
@@ -63,11 +63,11 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api {
         public static async Task<IEnumerable<DataSetWriterInfoApiModel>> ListAllDataSetWritersAsync(
             this IPublisherServiceApi service, CancellationToken ct = default) {
             var writers = new List<DataSetWriterInfoApiModel>();
-            var result = await service.ListDataSetWritersAsync(null, null, ct);
+            var result = await service.ListDataSetWritersAsync(null, null, ct).ConfigureAwait(false);
             writers.AddRange(result.DataSetWriters);
             while (result.ContinuationToken != null) {
                 result = await service.ListDataSetWritersAsync(result.ContinuationToken,
-                    null, ct);
+                    null, ct).ConfigureAwait(false);
                 writers.AddRange(result.DataSetWriters);
             }
             return writers;
@@ -84,11 +84,11 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api {
             this IPublisherServiceApi service, DataSetWriterInfoQueryApiModel query,
             CancellationToken ct = default) {
             var writers = new List<DataSetWriterInfoApiModel>();
-            var result = await service.QueryDataSetWritersAsync(query, null, ct);
+            var result = await service.QueryDataSetWritersAsync(query, null, ct).ConfigureAwait(false);
             writers.AddRange(result.DataSetWriters);
             while (result.ContinuationToken != null) {
                 result = await service.ListDataSetWritersAsync(result.ContinuationToken,
-                    null, ct);
+                    null, ct).ConfigureAwait(false);
                 writers.AddRange(result.DataSetWriters);
             }
             return writers;
@@ -104,11 +104,11 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api {
         public static async Task<IEnumerable<PublishedDataSetVariableApiModel>> ListAllDataSetVariablesAsync(
             this IPublisherServiceApi service, string dataSetWriterId, CancellationToken ct = default) {
             var writers = new List<PublishedDataSetVariableApiModel>();
-            var result = await service.ListDataSetVariablesAsync(dataSetWriterId, null, null, ct);
+            var result = await service.ListDataSetVariablesAsync(dataSetWriterId, null, null, ct).ConfigureAwait(false);
             writers.AddRange(result.Variables);
             while (result.ContinuationToken != null) {
                 result = await service.ListDataSetVariablesAsync(dataSetWriterId, result.ContinuationToken,
-                    null, ct);
+                    null, ct).ConfigureAwait(false);
                 writers.AddRange(result.Variables);
             }
             return writers;
@@ -126,11 +126,11 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api {
             this IPublisherServiceApi service, string dataSetWriterId, PublishedDataSetVariableQueryApiModel query,
             CancellationToken ct = default) {
             var writers = new List<PublishedDataSetVariableApiModel>();
-            var result = await service.QueryDataSetVariablesAsync(dataSetWriterId, query, null, ct);
+            var result = await service.QueryDataSetVariablesAsync(dataSetWriterId, query, null, ct).ConfigureAwait(false);
             writers.AddRange(result.Variables);
             while (result.ContinuationToken != null) {
                 result = await service.ListDataSetVariablesAsync(dataSetWriterId, result.ContinuationToken,
-                    null, ct);
+                    null, ct).ConfigureAwait(false);
                 writers.AddRange(result.Variables);
             }
             return writers;

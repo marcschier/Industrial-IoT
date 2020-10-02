@@ -50,7 +50,8 @@ namespace Opc.Ua.Models {
         /// <summary>
         /// Overrides
         /// </summary>
-        public List<NodeDesign> OverriddenNodes { get; set; }
+        public List<NodeDesign> OverriddenNodes { get; }
+            = new List<NodeDesign>();
 
         /// <summary>
         /// Explicitly defined

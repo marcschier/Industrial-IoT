@@ -7,6 +7,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
     using Microsoft.Azure.IIoT.Platform.Core.Models;
     using System.Collections.Generic;
     using System.Linq;
+    using System;
 
     /// <summary>
     /// Service model extensions for discovery service
@@ -74,6 +75,10 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
         /// <param name="server"></param>
         public static void AddOrUpdate(this List<ApplicationRegistrationModel> discovered,
             ApplicationRegistrationModel server) {
+            if (discovered is null) {
+                throw new System.ArgumentNullException(nameof(discovered));
+            }
+
             var actual = discovered
                 .FirstOrDefault(s => s.Application.IsSameAs(server.Application));
             if (actual != null) {
@@ -92,6 +97,12 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
         /// <param name="server"></param>
         public static void UnionWith(this ApplicationRegistrationModel model,
             ApplicationRegistrationModel server) {
+            if (server is null) {
+                throw new System.ArgumentNullException(nameof(server));
+            }
+            if (model is null) {
+                throw new System.ArgumentNullException(nameof(model));
+            }
 
             if (model.Application == null) {
                 model.Application = server.Application;
@@ -110,10 +121,11 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
                     model.Endpoints = server.Endpoints;
                 }
                 else {
+                    var endpoints = new List<EndpointInfoModel>(model.Endpoints);
                     foreach (var ep in server.Endpoints) {
                         var found = model.Endpoints.Where(ep.IsSameAs);
                         if (!found.Any()) {
-                            model.Endpoints.Add(ep);
+                            endpoints.Add(ep);
                         }
                         foreach (var existing in found) {
                             if (existing.Endpoint == null) {
@@ -123,6 +135,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
                             existing.Endpoint?.UnionWith(ep.Endpoint);
                         }
                     }
+                    model.Endpoints = endpoints;
                 }
             }
         }

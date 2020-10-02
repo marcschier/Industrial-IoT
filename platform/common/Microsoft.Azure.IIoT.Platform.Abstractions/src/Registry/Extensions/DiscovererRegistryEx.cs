@@ -27,7 +27,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry {
             this IDiscovererRegistry service, string discovererId,
             CancellationToken ct = default) {
             try {
-                return await service.GetDiscovererAsync(discovererId, ct);
+                return await service.GetDiscovererAsync(discovererId, ct).ConfigureAwait(false);
             }
             catch (ResourceNotFoundException) {
                 return null;
@@ -43,11 +43,11 @@ namespace Microsoft.Azure.IIoT.Platform.Registry {
         public static async Task<List<DiscovererModel>> ListAllDiscoverersAsync(
             this IDiscovererRegistry service, CancellationToken ct = default) {
             var discoverers = new List<DiscovererModel>();
-            var result = await service.ListDiscoverersAsync(null, null, ct);
+            var result = await service.ListDiscoverersAsync(null, null, ct).ConfigureAwait(false);
             discoverers.AddRange(result.Items);
             while (result.ContinuationToken != null) {
                 result = await service.ListDiscoverersAsync(result.ContinuationToken,
-                    null, ct);
+                    null, ct).ConfigureAwait(false);
                 discoverers.AddRange(result.Items);
             }
             return discoverers;
@@ -62,11 +62,11 @@ namespace Microsoft.Azure.IIoT.Platform.Registry {
         public static async Task<List<string>> ListAllDiscovererIdsAsync(
             this IDiscovererRegistry service, CancellationToken ct = default) {
             var discoverers = new List<string>();
-            var result = await service.ListDiscoverersAsync(null, null, ct);
+            var result = await service.ListDiscoverersAsync(null, null, ct).ConfigureAwait(false);
             discoverers.AddRange(result.Items.Select(s => s.Id));
             while (result.ContinuationToken != null) {
                 result = await service.ListDiscoverersAsync(result.ContinuationToken,
-                    null, ct);
+                    null, ct).ConfigureAwait(false);
                 discoverers.AddRange(result.Items.Select(s => s.Id));
             }
             return discoverers;

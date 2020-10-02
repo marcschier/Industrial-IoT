@@ -42,7 +42,7 @@ namespace Microsoft.Azure.IIoT.Azure.ActiveDirectory.Clients {
             }
             cs += $";AppKey={config.ClientSecret}";
             return KeyValuePair.Create(config.Resource ?? Http.Resource.Platform,
-                (config, new AzureServiceTokenProvider(cs, config.GetAuthorityUrl(true))));
+                (config, new AzureServiceTokenProvider(cs, config.GetAuthority(true))));
         }
 
         private readonly List<KeyValuePair<string, (IOAuthClientConfig, AzureServiceTokenProvider)>> _config;

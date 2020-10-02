@@ -14,7 +14,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Models {
         /// <summary>
         /// Requests
         /// </summary>
-        public List<CertificateRequestModel> Requests { get; set; }
+        public IReadOnlyList<CertificateRequestModel> Requests { get; set; }
 
         /// <summary>
         /// Continuation token

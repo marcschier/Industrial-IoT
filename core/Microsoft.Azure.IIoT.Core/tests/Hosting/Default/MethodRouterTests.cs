@@ -40,12 +40,12 @@ namespace Microsoft.Azure.IIoT.Hosting.Services {
                 var response = await hub.CallMethodAsync(device, module, new MethodParameterModel {
                     Name = "Test1_V1",
                     JsonPayload = _serializer.SerializeToString(expected)
-                });
+                }).ConfigureAwait(false);
 
                 var returned = _serializer.Deserialize<TestModel>(response.JsonPayload);
                 Assert.Equal(expected.Test, returned.Test);
                 Assert.Equal(200, response.Status);
-            });
+            }).ConfigureAwait(false);
         }
 
         [Fact]
@@ -60,12 +60,12 @@ namespace Microsoft.Azure.IIoT.Hosting.Services {
                 var response = await hub.CallMethodAsync(device, module, new MethodParameterModel {
                     Name = "Test2_V1",
                     JsonPayload = _serializer.SerializeToString(buffer)
-                });
+                }).ConfigureAwait(false);
 
                 var returned = _serializer.Deserialize<byte[]>(response.JsonPayload);
                 Assert.True(buffer.SequenceEqual(returned));
                 Assert.Equal(200, response.Status);
-            });
+            }).ConfigureAwait(false);
         }
 
         [Fact]
@@ -83,12 +83,12 @@ namespace Microsoft.Azure.IIoT.Hosting.Services {
                         request = buffer,
                         value = 55
                     })
-                });
+                }).ConfigureAwait(false);
 
                 var returned = _serializer.Deserialize<byte[]>(response.JsonPayload);
                 Assert.True(buffer.SequenceEqual(returned));
                 Assert.Equal(200, response.Status);
-            });
+            }).ConfigureAwait(false);
         }
 
         [Fact]
@@ -107,12 +107,12 @@ namespace Microsoft.Azure.IIoT.Hosting.Services {
                         request = buffer,
                         value = expected
                     })
-                });
+                }).ConfigureAwait(false);
 
                 var returned = _serializer.Deserialize<int>(response.JsonPayload);
                 Assert.Equal(expected, returned);
                 Assert.Equal(200, response.Status);
-            });
+            }).ConfigureAwait(false);
         }
 
         [Fact]
@@ -124,12 +124,12 @@ namespace Microsoft.Azure.IIoT.Hosting.Services {
                 var response = await hub.CallMethodAsync(device, module, new MethodParameterModel {
                     Name = "TestNoParameters_V1",
                     JsonPayload = _serializer.SerializeToString(null)
-                });
+                }).ConfigureAwait(false);
 
                 var returned = _serializer.Deserialize<string>(response.JsonPayload);
                 Assert.Equal(nameof(TestControllerV1.TestNoParametersAsync), returned);
                 Assert.Equal(200, response.Status);
-            });
+            }).ConfigureAwait(false);
         }
 
         [Fact]
@@ -141,11 +141,11 @@ namespace Microsoft.Azure.IIoT.Hosting.Services {
                 var response = await hub.CallMethodAsync(device, module, new MethodParameterModel {
                     Name = "TestNoReturn_V1",
                     JsonPayload = _serializer.SerializeToString(nameof(TestControllerV1.TestNoReturnAsync))
-                });
+                }).ConfigureAwait(false);
 
                 Assert.Null(response.JsonPayload);
                 Assert.Equal(200, response.Status);
-            });
+            }).ConfigureAwait(false);
         }
 
         [Fact]
@@ -158,12 +158,12 @@ namespace Microsoft.Azure.IIoT.Hosting.Services {
                 var response = await hub.CallMethodAsync(device, module, new MethodParameterModel {
                     Name = "TestNoParametersAndNoReturn_V1",
                     JsonPayload = _serializer.SerializeToString(null)
-                });
+                }).ConfigureAwait(false);
 
                 Assert.Null(response.JsonPayload);
                 Assert.Equal(200, response.Status);
                 Assert.True(controller._noparamcalled);
-            });
+            }).ConfigureAwait(false);
         }
 
         [Fact]
@@ -177,10 +177,10 @@ namespace Microsoft.Azure.IIoT.Hosting.Services {
                 var expected = new TestModel { Test = buffer };
                 var response = await hub.CallMethodAsync(
                     HubResource.Format(null, device, module), "Test1_V1",
-                        _serializer.SerializeToString(expected));
+                        _serializer.SerializeToString(expected)).ConfigureAwait(false);
                 var returned = _serializer.Deserialize<TestModel>(response);
                 Assert.Equal(expected.Test, returned.Test);
-            });
+            }).ConfigureAwait(false);
         }
 
         [Fact]
@@ -194,10 +194,10 @@ namespace Microsoft.Azure.IIoT.Hosting.Services {
                 var expected = new TestModel { Test = buffer };
                 var response = await hub.CallMethodAsync(
                     HubResource.Format(null, device, module), "Test1_V1",
-                    _serializer.SerializeToString(expected));
+                    _serializer.SerializeToString(expected)).ConfigureAwait(false);
                 var returned = _serializer.Deserialize<TestModel>(response);
                 Assert.Equal(expected.Test, returned.Test);
-            });
+            }).ConfigureAwait(false);
         }
 
         [Fact]
@@ -211,11 +211,11 @@ namespace Microsoft.Azure.IIoT.Hosting.Services {
 
                 var response = await hub.CallMethodAsync(
                     HubResource.Format(null, device, module), "Test2_V1",
-                    _serializer.SerializeToString(buffer));
+                    _serializer.SerializeToString(buffer)).ConfigureAwait(false);
 
                 var returned = _serializer.Deserialize<byte[]>(response);
                 Assert.True(buffer.SequenceEqual(returned));
-            });
+            }).ConfigureAwait(false);
         }
 
         [Fact]
@@ -233,11 +233,11 @@ namespace Microsoft.Azure.IIoT.Hosting.Services {
                         request = buffer,
                         value = 55
                     })
-                );
+                ).ConfigureAwait(false);
 
                 var returned = _serializer.Deserialize<byte[]>(response);
                 Assert.True(buffer.SequenceEqual(returned));
-            });
+            }).ConfigureAwait(false);
         }
 
         [Fact]
@@ -256,11 +256,11 @@ namespace Microsoft.Azure.IIoT.Hosting.Services {
                         request = buffer,
                         value = expected
                     })
-                );
+                ).ConfigureAwait(false);
 
                 var returned = _serializer.Deserialize<int>(response);
                 Assert.Equal(expected, returned);
-            });
+            }).ConfigureAwait(false);
         }
 
         [Fact]
@@ -271,11 +271,11 @@ namespace Microsoft.Azure.IIoT.Hosting.Services {
 
                 var response = await hub.CallMethodAsync(
                     HubResource.Format(null, device, module), "TestNoParameters_V1",
-                    _serializer.SerializeToString(null));
+                    _serializer.SerializeToString(null)).ConfigureAwait(false);
 
                 var returned = _serializer.Deserialize<string>(response);
                 Assert.Equal(nameof(TestControllerV1.TestNoParametersAsync), returned);
-            });
+            }).ConfigureAwait(false);
         }
 
         [Fact]
@@ -286,11 +286,11 @@ namespace Microsoft.Azure.IIoT.Hosting.Services {
 
                 var response = await hub.CallMethodAsync(
                     HubResource.Format(null, device, module), "TestNoParameters_V1",
-                    null);
+                    null).ConfigureAwait(false);
 
                 var returned = _serializer.Deserialize<string>(response);
                 Assert.Equal(nameof(TestControllerV1.TestNoParametersAsync), returned);
-            });
+            }).ConfigureAwait(false);
         }
 
         [Fact]
@@ -301,10 +301,10 @@ namespace Microsoft.Azure.IIoT.Hosting.Services {
 
                 var response = await hub.CallMethodAsync(
                     HubResource.Format(null, device, module), "TestNoReturn_V1",
-                    _serializer.SerializeToString(nameof(TestControllerV1.TestNoReturnAsync)));
+                    _serializer.SerializeToString(nameof(TestControllerV1.TestNoReturnAsync))).ConfigureAwait(false);
 
                 Assert.Null(response);
-            });
+            }).ConfigureAwait(false);
         }
 
         [Fact]
@@ -316,11 +316,11 @@ namespace Microsoft.Azure.IIoT.Hosting.Services {
 
                 var response = await hub.CallMethodAsync(
                     HubResource.Format(null, device, module), "TestNoParametersAndNoReturn_V1",
-                    _serializer.SerializeToString(null));
+                    _serializer.SerializeToString(null)).ConfigureAwait(false);
 
                 Assert.Null(response);
                 Assert.True(controller._noparamcalled);
-            });
+            }).ConfigureAwait(false);
         }
 
         [Fact]
@@ -555,7 +555,7 @@ namespace Microsoft.Azure.IIoT.Hosting.Services {
             const int kMaxMessageSize = 127 * 1024;
             try {
                 var result = await router.InvokeAsync(target, request.Name, request.Data,
-                    ContentMimeType.Json);
+                    ContentMimeType.Json).ConfigureAwait(false);
                 if (result.Length > kMaxMessageSize) {
                     return new MethodResponse((int)HttpStatusCode.RequestEntityTooLarge);
                 }
@@ -591,7 +591,7 @@ namespace Microsoft.Azure.IIoT.Hosting.Services {
                 string payload, TimeSpan? timeout, CancellationToken ct) {
                 var result = await InvokeMethodOnRouterAsync(_router, target,
                     new MethodRequest(method, Encoding.UTF8.GetBytes(payload),
-                        timeout, timeout));
+                        timeout, timeout)).ConfigureAwait(false);
                 if (result.Status != 200) {
                     throw new MethodCallStatusException(result.ResultAsJson,
                         result.Status);

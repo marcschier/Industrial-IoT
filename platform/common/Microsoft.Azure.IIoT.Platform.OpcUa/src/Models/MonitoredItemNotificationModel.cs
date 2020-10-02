@@ -61,12 +61,12 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Models {
         /// <summary>
         /// Notification data
         /// </summary>
-        public List<ExtensionObject> NotificationData { get; set; }
+        public IReadOnlyList<ExtensionObject> NotificationData { get; set; }
 
         /// <summary>
         /// String table
         /// </summary>
-        public List<string> StringTable { get; set; }
+        public IReadOnlyList<string> StringTable { get; set; }
 
         /// <summary>
         /// Diagnostics

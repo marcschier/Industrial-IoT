@@ -25,13 +25,13 @@ namespace Microsoft.Azure.IIoT.App.Pages {
 
         public EndpointInfo EndpointData { get; set; }
 
-        protected override async Task GetItems(bool getNextPage) {
-            Items = await RegistryHelper.GetEndpointListAsync(DiscovererId, ApplicationId, SupervisorId, Items, getNextPage);
+        protected override async Task LoadPageContentAsync(bool getNextPage) {
+            Items = await RegistryHelper.GetEndpointListAsync(DiscovererId, ApplicationId, SupervisorId, Items, getNextPage).ConfigureAwait(false);
         }
 
-        protected override async Task SubscribeEvents() {
+        protected override async Task SubscribeContentEventsAsync() {
             _events = await RegistryServiceEvents.SubscribeEndpointEventsAsync(
-                    ev => InvokeAsync(() => EndpointEvent(ev)));
+                    ev => InvokeAsync(() => EndpointEvent(ev))).ConfigureAwait(false);
         }
 
         private Task EndpointEvent(EndpointEventApiModel ev) {
@@ -88,7 +88,7 @@ namespace Microsoft.Azure.IIoT.App.Pages {
                         ActivationState = IsEndpointActivated(endpoint) ?
                             EntityActivationState.Activated :
                             EntityActivationState.Deactivated
-                    });
+                    }).ConfigureAwait(false);
             }
             catch (Exception e) {
                 Status = e.Message;

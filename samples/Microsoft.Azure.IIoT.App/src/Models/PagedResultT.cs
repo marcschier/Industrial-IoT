@@ -8,7 +8,7 @@ namespace Microsoft.Azure.IIoT.App.Data {
 
     public class PagedResult<T> : PagedResultBase where T : class {
 
-        public List<T> Results { get; set; }
+        public List<T> Results { get; internal set; }
 
         public PagedResult() {
             Results = new List<T>();

@@ -45,7 +45,7 @@ namespace Microsoft.Azure.IIoT.Crypto.Models {
             Assert.Throws<ArgumentOutOfRangeException>(() => new SerialNumber(-1));
             Assert.Throws<ArgumentOutOfRangeException>(() => new SerialNumber(0));
             Assert.Throws<ArgumentNullException>(() => new SerialNumber(null));
-            Assert.Throws<ArgumentException>(() => new SerialNumber(new byte[0]));
+            Assert.Throws<ArgumentException>(() => new SerialNumber(Array.Empty<byte>()));
         }
     }
 }

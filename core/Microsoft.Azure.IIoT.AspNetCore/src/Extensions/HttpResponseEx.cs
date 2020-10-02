@@ -7,6 +7,7 @@ namespace Microsoft.Extensions.Primitives {
     using Microsoft.AspNetCore.Http;
     using System.Collections.Generic;
     using System.Linq;
+    using System;
 
     /// <summary>
     /// Http response extensions
@@ -21,6 +22,10 @@ namespace Microsoft.Extensions.Primitives {
         /// <param name="value"></param>
         public static void AddHeader(this HttpResponse response,
             string key, string value) {
+            if (response is null) {
+                throw new ArgumentNullException(nameof(response));
+            }
+
             if (!response.Headers.ContainsKey(key)) {
                 response.Headers[key] = value;
             }
@@ -39,6 +44,12 @@ namespace Microsoft.Extensions.Primitives {
         /// <param name="values"></param>
         public static void AddHeaders(this HttpResponse response,
             string key, IEnumerable<string> values) {
+            if (response is null) {
+                throw new ArgumentNullException(nameof(response));
+            }
+            if (values is null) {
+                throw new ArgumentNullException(nameof(values));
+            }
             foreach (var value in values) {
                 response.AddHeader(key, value);
             }
@@ -51,6 +62,9 @@ namespace Microsoft.Extensions.Primitives {
         /// <param name="response"></param>
         public static void DisableSessionAffinity(this HttpResponse response) {
             const string kHeader = "Arr-Disable-Session-Affinity";
+            if (response is null) {
+                throw new ArgumentNullException(nameof(response));
+            }
             if (!response.Headers.ContainsKey(kHeader)) {
                 response.Headers.Add(kHeader, "True");
             }

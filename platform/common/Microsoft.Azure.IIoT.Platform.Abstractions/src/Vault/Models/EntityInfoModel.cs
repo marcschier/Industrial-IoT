@@ -39,11 +39,11 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Models {
         /// <summary>
         /// List of addresses
         /// </summary>
-        public List<string> Addresses { get; set; }
+        public IReadOnlyList<string> Addresses { get; set; }
 
         /// <summary>
         /// List of uris
         /// </summary>
-        public List<string> Uris { get; set; }
+        public IReadOnlyList<string> Uris { get; set; }
     }
 }

@@ -10,6 +10,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service.Controllers {
     using Microsoft.Azure.IIoT.Platform.Registry;
     using Microsoft.Azure.IIoT.Http;
     using Microsoft.Azure.IIoT.AspNetCore.OpenApi;
+    using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using System.Linq;
@@ -46,7 +47,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service.Controllers {
         /// <returns>Gateway registration</returns>
         [HttpGet("{GatewayId}")]
         public async Task<GatewayInfoApiModel> GetGatewayAsync(string GatewayId) {
-            var result = await _gateways.GetGatewayAsync(GatewayId);
+            var result = await _gateways.GetGatewayAsync(GatewayId).ConfigureAwait(false);
             return result.ToApiModel();
         }
 
@@ -67,7 +68,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service.Controllers {
                 throw new ArgumentNullException(nameof(request));
             }
             await _gateways.UpdateGatewayAsync(GatewayId,
-                request.ToServiceModel());
+                request.ToServiceModel()).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -90,16 +91,10 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service.Controllers {
         public async Task<GatewayListApiModel> GetListOfGatewayAsync(
             [FromQuery] string continuationToken,
             [FromQuery] int? pageSize) {
-            if (Request.Headers.ContainsKey(HttpHeader.ContinuationToken)) {
-                continuationToken = Request.Headers[HttpHeader.ContinuationToken]
-                    .FirstOrDefault();
-            }
-            if (Request.Headers.ContainsKey(HttpHeader.MaxItemCount)) {
-                pageSize = int.Parse(Request.Headers[HttpHeader.MaxItemCount]
-                    .FirstOrDefault());
-            }
+            continuationToken = Request.GetContinuationToken(continuationToken);
+            pageSize = Request.GetPageSize(pageSize);
             var result = await _gateways.ListGatewaysAsync(
-                continuationToken, pageSize);
+                continuationToken, pageSize).ConfigureAwait(false);
             return result.ToApiModel();
         }
 
@@ -123,12 +118,9 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service.Controllers {
             if (query == null) {
                 throw new ArgumentNullException(nameof(query));
             }
-            if (Request.Headers.ContainsKey(HttpHeader.MaxItemCount)) {
-                pageSize = int.Parse(Request.Headers[HttpHeader.MaxItemCount]
-                    .FirstOrDefault());
-            }
+            pageSize = Request.GetPageSize(pageSize);
             var result = await _gateways.QueryGatewaysAsync(
-                query.ToServiceModel(), pageSize);
+                query.ToServiceModel(), pageSize).ConfigureAwait(false);
             return result.ToApiModel();
         }
 
@@ -153,12 +145,9 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service.Controllers {
             if (query == null) {
                 throw new ArgumentNullException(nameof(query));
             }
-            if (Request.Headers.ContainsKey(HttpHeader.MaxItemCount)) {
-                pageSize = int.Parse(Request.Headers[HttpHeader.MaxItemCount]
-                    .FirstOrDefault());
-            }
+            pageSize = Request.GetPageSize(pageSize);
             var result = await _gateways.QueryGatewaysAsync(
-                query.ToServiceModel(), pageSize);
+                query.ToServiceModel(), pageSize).ConfigureAwait(false);
             return result.ToApiModel();
         }
 

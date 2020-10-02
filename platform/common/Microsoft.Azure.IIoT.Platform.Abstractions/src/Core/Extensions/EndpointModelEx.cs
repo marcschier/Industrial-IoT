@@ -66,6 +66,10 @@ namespace Microsoft.Azure.IIoT.Platform.Core.Models {
         /// <param name="endpoint"></param>
         /// <returns></returns>
         public static int CreateConsistentHash(this EndpointModel endpoint) {
+            if (endpoint is null) {
+                return 0;
+            }
+
             var hashCode = -1971667340;
             hashCode = (hashCode * -1521134295) +
                 endpoint.GetAllUrls().SequenceGetHashSafe();
@@ -76,7 +80,6 @@ namespace Microsoft.Azure.IIoT.Platform.Core.Models {
             hashCode = (hashCode * -1521134295) +
                 EqualityComparer<SecurityMode?>.Default.GetHashCode(
                     endpoint.SecurityMode ?? SecurityMode.Best);
-
             return hashCode;
         }
 
@@ -103,24 +106,34 @@ namespace Microsoft.Azure.IIoT.Platform.Core.Models {
         /// <param name="endpoint"></param>
         public static void UnionWith(this EndpointModel model,
             EndpointModel endpoint) {
+            if (model is null) {
+                throw new System.ArgumentNullException(nameof(model));
+            }
+
             if (endpoint == null) {
                 return;
             }
-
+            HashSet<string> urls;
             if (model.AlternativeUrls == null) {
-                model.AlternativeUrls = endpoint.AlternativeUrls;
+                if (endpoint.AlternativeUrls != null) {
+                    urls = new HashSet<string>(endpoint.AlternativeUrls);
+                }
+                else {
+                    urls = new HashSet<string>();
+                }
             }
             else {
-                model.AlternativeUrls = model.AlternativeUrls.MergeWith(
+                urls = model.AlternativeUrls.MergeWith(
                     endpoint.AlternativeUrls);
             }
             if (model.Url == null) {
                 model.Url = endpoint.Url;
             }
             else {
-                model.AlternativeUrls.Add(endpoint.Url);
+                urls.Add(endpoint.Url);
             }
-            model.AlternativeUrls.Remove(model.Url);
+            urls.Remove(model.Url);
+            model.AlternativeUrls = urls;
         }
 
         /// <summary>

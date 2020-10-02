@@ -159,7 +159,7 @@ namespace Microsoft.Azure.IIoT.Platform.Core.Models {
         /// Array dimensions of variable or variable type.
         /// (default: empty array)
         /// </summary>
-        public uint[] ArrayDimensions { get; set; }
+        public IReadOnlyList<uint> ArrayDimensions { get; set; }
 
         /// <summary>
         /// Whether the value of a variable is historizing.
@@ -190,12 +190,12 @@ namespace Microsoft.Azure.IIoT.Platform.Core.Models {
         /// <summary>
         /// Role permissions
         /// </summary>
-        public List<RolePermissionModel> RolePermissions { get; set; }
+        public IReadOnlyList<RolePermissionModel> RolePermissions { get; set; }
 
         /// <summary>
         /// User Role permissions
         /// </summary>
-        public List<RolePermissionModel> UserRolePermissions { get; set; }
+        public IReadOnlyList<RolePermissionModel> UserRolePermissions { get; set; }
 
         /// <summary>
         /// Optional type definition of the node

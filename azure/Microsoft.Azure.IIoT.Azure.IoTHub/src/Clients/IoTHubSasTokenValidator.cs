@@ -36,10 +36,10 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub.Clients {
             if (string.IsNullOrEmpty(deviceId)) {
                 throw new UnauthorizedAccessException();
             }
-            var key = await _cache.GetStringAsync(token.Audience);
+            var key = await _cache.GetStringAsync(token.Audience).ConfigureAwait(false);
             if (key == null || !token.Authenticate(key)) {
                 var registration = await _hub.GetRegistrationAsync(
-                    deviceId, moduleId);
+                    deviceId, moduleId).ConfigureAwait(false);
                 key = registration.Authentication.PrimaryKey;
                 if (key == null || !token.Authenticate(key)) {
                     // Try secondary key
@@ -50,7 +50,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub.Clients {
                     }
                 }
                 await _cache.SetStringAsync(token.Audience, key,
-                    DateTime.UtcNow + TimeSpan.FromHours(1));
+                    DateTime.UtcNow + TimeSpan.FromHours(1)).ConfigureAwait(false);
             }
             return $"_{deviceId}_{moduleId ?? ""}";
         }

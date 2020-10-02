@@ -75,7 +75,7 @@ namespace Microsoft.Azure.IIoT.AspNetCore.Authentication {
                         return;
                     }
 
-                    options.Authority = config.GetAuthorityUrl();
+                    options.Authority = config.GetAuthority();
                     options.ClientId = config.ClientId;
                     options.ClientSecret = config.ClientSecret;
                     options.UseTokenLifetime = true;
@@ -122,7 +122,7 @@ namespace Microsoft.Azure.IIoT.AspNetCore.Authentication {
                             context.ProtocolMessage.SetParameter(kAdditionalClaims,
                                 context.Properties.Items[kAdditionalClaims]);
                         }
-                        await redirectToIdpHandler(context);
+                        await redirectToIdpHandler(context).ConfigureAwait(false);
                     };
 
                     // Chain code received handler
@@ -138,13 +138,13 @@ namespace Microsoft.Azure.IIoT.AspNetCore.Authentication {
                                 user.AddClaims(context.Principal.Claims);
                             }
                             var result = await redeemer.RedeemCodeForUserAsync(
-                                context.HttpContext.User, context.ProtocolMessage.Code, options.Scope);
+                                context.HttpContext.User, context.ProtocolMessage.Code, options.Scope).ConfigureAwait(false);
                             if (result?.IdToken != null) {
                                 // Only share id token or otherwise ASP.NET will cache the access token
                                 context.HandleCodeRedemption(null, result.IdToken);
                             }
                         }
-                        await codeReceivedHandler(context);
+                        await codeReceivedHandler(context).ConfigureAwait(false);
                     };
 
                     // Chain sign out
@@ -154,9 +154,9 @@ namespace Microsoft.Azure.IIoT.AspNetCore.Authentication {
                             .GetRequiredService<IEnumerable<IUserTokenClient>>();
                         var redeemer = redeemers.FirstOrDefault(r => r.Provider == provider);
                         if (redeemer != null) {
-                            await redeemer.SignOutUserAsync(context.HttpContext.User);
+                            await redeemer.SignOutUserAsync(context.HttpContext.User).ConfigureAwait(false);
                         }
-                        await signOutHandler(context);
+                        await signOutHandler(context).ConfigureAwait(false);
                     };
                 });
             });

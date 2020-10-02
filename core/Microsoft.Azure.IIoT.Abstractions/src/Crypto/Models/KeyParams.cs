@@ -4,6 +4,7 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Crypto.Models {
+    using System.Collections.Generic;
 
     /// <summary>
     /// Key parameters
@@ -13,6 +14,6 @@ namespace Microsoft.Azure.IIoT.Crypto.Models {
         /// <summary>
         /// Represents a token.
         /// </summary>
-        public byte[] T { get; set; }
+        public IReadOnlyCollection<byte> T { get; set; }
     }
 }

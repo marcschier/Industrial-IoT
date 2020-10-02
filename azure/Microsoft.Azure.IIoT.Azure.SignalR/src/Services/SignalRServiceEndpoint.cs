@@ -29,7 +29,7 @@ namespace Microsoft.Azure.IIoT.Azure.SignalR.Services {
         /// </summary>
         /// <param name="config"></param>
         public SignalRServiceEndpoint(ISignalRServiceConfig config) {
-            Resource = HubNameAttribute.GetName(typeof(THub));
+            Resource = HubNameAttribute.GetHubName(typeof(THub));
             if (!string.IsNullOrEmpty(config?.SignalRConnString) && config.SignalRServerLess) {
                 _serviceManager = new ServiceManagerBuilder().WithOptions(option => {
                     option.ConnectionString = config.SignalRConnString;

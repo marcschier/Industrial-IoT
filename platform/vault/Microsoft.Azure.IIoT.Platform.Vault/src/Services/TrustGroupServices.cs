@@ -39,21 +39,21 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Services {
             if (string.IsNullOrEmpty(groupId)) {
                 throw new ArgumentNullException(nameof(groupId));
             }
-            var group = await _groups.FindAsync(groupId, ct);
+            var group = await _groups.FindAsync(groupId, ct).ConfigureAwait(false);
             if (group == null) {
                 throw new ResourceNotFoundException("Group not found");
             }
 
             TrustGroupRegistrationModel parent = null;
             if (!string.IsNullOrEmpty(group.Group.ParentId)) {
-                parent = await _groups.FindAsync(group.Group.ParentId, ct);
+                parent = await _groups.FindAsync(group.Group.ParentId, ct).ConfigureAwait(false);
                 if (parent == null) {
                     throw new ResourceNotFoundException("Parent not found");
                 }
             }
 
             _ = await RenewGroupCertificateAsync(group,
-                parent, ct);
+                parent, ct).ConfigureAwait(false);
             _logger.Information("Group {groupId} certificate renewed.", groupId);
         }
 
@@ -67,7 +67,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Services {
                 throw new ArgumentNullException(nameof(request.ParentId));
             }
 
-            var parent = await _groups.FindAsync(request.ParentId, ct);
+            var parent = await _groups.FindAsync(request.ParentId, ct).ConfigureAwait(false);
             if (parent == null) {
                 throw new ResourceNotFoundException("Parent group not found");
             }
@@ -75,11 +75,11 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Services {
             System.Diagnostics.Debug.Assert(parent.Id.EqualsIgnoreCase(
                 request.ParentId));
 
-            var result = await _groups.AddAsync(request.ToRegistration(parent.Group), ct);
+            var result = await _groups.AddAsync(request.ToRegistration(parent.Group), ct).ConfigureAwait(false);
             try {
                 // Issue new certificate from parent
                 var certificate = await RenewGroupCertificateAsync(result,
-                    parent, ct);
+                    parent, ct).ConfigureAwait(false);
                 _logger.Information("Group {name} {groupId} created.",
                     request.Name, result.Id);
                 return new TrustGroupRegistrationResultModel {
@@ -88,7 +88,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Services {
             }
             catch {
                 // Attempt to remove group
-                await Try.Async(() => _groups.DeleteAsync(result.Id, r => true));
+                await Try.Async(() => _groups.DeleteAsync(result.Id, r => true)).ConfigureAwait(false);
                 throw;
             }
         }
@@ -99,10 +99,10 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Services {
             if (request == null) {
                 throw new ArgumentNullException(nameof(request));
             }
-            var result = await _groups.AddAsync(request.ToRegistration(), ct);
+            var result = await _groups.AddAsync(request.ToRegistration(), ct).ConfigureAwait(false);
             try {
                 // Issues new root certificate
-                var certificate = await RenewGroupCertificateAsync(result, null, ct);
+                var certificate = await RenewGroupCertificateAsync(result, null, ct).ConfigureAwait(false);
                 _logger.Information("Root {name} {groupId} created.",
                     request.Name, result.Id);
                 return new TrustGroupRegistrationResultModel {
@@ -111,7 +111,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Services {
             }
             catch {
                 // Attempt to remove group
-                await Try.Async(() => _groups.DeleteAsync(result.Id, r => true));
+                await Try.Async(() => _groups.DeleteAsync(result.Id, r => true)).ConfigureAwait(false);
                 throw;
             }
         }
@@ -119,7 +119,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Services {
         /// <inheritdoc/>
         public async Task<TrustGroupRegistrationModel> GetGroupAsync(
             string groupId, CancellationToken ct) {
-            var group = await _groups.FindAsync(groupId, ct);
+            var group = await _groups.FindAsync(groupId, ct).ConfigureAwait(false);
             if (group == null) {
                 throw new ResourceNotFoundException("No such group");
             }
@@ -138,7 +138,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Services {
             await _groups.UpdateAsync(groupId, group => {
                 group.Group.Patch(request);
                 return true;
-            }, ct);
+            }, ct).ConfigureAwait(false);
             _logger.Information("Group {groupId} updated.", groupId);
         }
 
@@ -157,7 +157,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Services {
 
         /// <inheritdoc/>
         public async Task DeleteGroupAsync(string groupId, CancellationToken ct) {
-            await _groups.DeleteAsync(groupId, r => true, ct);
+            await _groups.DeleteAsync(groupId, r => true, ct).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -174,9 +174,9 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Services {
             var notBefore = new DateTime(now.Year, now.Month, now.Day,
                 0, 0, 0, DateTimeKind.Utc);
             if (parent == null) {
-                return await RenewGroupRootAsync(group, notBefore, ct);
+                return await RenewGroupRootAsync(group, notBefore, ct).ConfigureAwait(false);
             }
-            return await RenewGroupFromParentAsync(group, parent, notBefore, ct);
+            return await RenewGroupFromParentAsync(group, parent, notBefore, ct).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -203,7 +203,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Services {
                     SignatureType = group.Group.IssuedSignatureAlgorithm
                 .ToSignatureType()
                 },
-                null, ct);
+                null, ct).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -229,7 +229,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Services {
                     SignatureType = group.Group.IssuedSignatureAlgorithm
                         .ToSignatureType()
                 },
-                null, ct);
+                null, ct).ConfigureAwait(false);
         }
 
         private readonly ILogger _logger;

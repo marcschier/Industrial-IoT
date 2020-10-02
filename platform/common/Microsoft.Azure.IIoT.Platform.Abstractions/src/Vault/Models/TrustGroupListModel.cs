@@ -14,7 +14,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Models {
         /// <summary>
         /// Policies
         /// </summary>
-        public List<string> Groups { get; set; }
+        public IReadOnlyList<string> Groups { get; set; }
 
         /// <summary>
         /// Next link

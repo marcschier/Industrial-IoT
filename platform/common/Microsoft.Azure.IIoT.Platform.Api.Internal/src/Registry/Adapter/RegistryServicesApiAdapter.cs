@@ -30,7 +30,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Clients {
         /// <inheritdoc/>
         public async Task<EndpointInfoModel> GetEndpointAsync(string id,
             CancellationToken ct) {
-            var result = await _client.GetEndpointAsync(id, ct);
+            var result = await _client.GetEndpointAsync(id, ct).ConfigureAwait(false);
             return result.ToServiceModel();
         }
 
@@ -38,7 +38,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Clients {
         public async Task<EndpointInfoListModel> ListEndpointsAsync(
             string continuation, int? pageSize, CancellationToken ct) {
             var result = await _client.ListEndpointsAsync(continuation,
-                pageSize, ct);
+                pageSize, ct).ConfigureAwait(false);
             return result.ToServiceModel();
         }
 
@@ -46,28 +46,28 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Clients {
         public async Task<EndpointInfoListModel> QueryEndpointsAsync(
             EndpointInfoQueryModel query, int? pageSize, CancellationToken ct) {
             var result = await _client.QueryEndpointsAsync(query.ToApiModel(),
-                pageSize, ct);
+                pageSize, ct).ConfigureAwait(false);
             return result.ToServiceModel();
         }
 
         /// <inheritdoc/>
         public async Task<X509CertificateChainModel> GetEndpointCertificateAsync(
             string id, CancellationToken ct) {
-            var result = await _client.GetEndpointCertificateAsync(id, ct);
+            var result = await _client.GetEndpointCertificateAsync(id, ct).ConfigureAwait(false);
             return result.ToServiceModel();
         }
 
         /// <inheritdoc/>
         public async Task UpdateEndpointAsync(string id,
             EndpointInfoUpdateModel request, CancellationToken ct) {
-            await _client.UpdateEndpointAsync(id, request.ToApiModel(), ct);
+            await _client.UpdateEndpointAsync(id, request.ToApiModel(), ct).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
         public async Task<SupervisorListModel> ListSupervisorsAsync(
             string continuation, int? pageSize, CancellationToken ct) {
             var result = await _client.ListSupervisorsAsync(continuation,
-                pageSize, ct);
+                pageSize, ct).ConfigureAwait(false);
             return result.ToServiceModel();
         }
 
@@ -76,21 +76,21 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Clients {
             SupervisorQueryModel query, int? pageSize,
             CancellationToken ct) {
             var result = await _client.QuerySupervisorsAsync(query.ToApiModel(),
-                pageSize, ct);
+                pageSize, ct).ConfigureAwait(false);
             return result.ToServiceModel();
         }
 
         /// <inheritdoc/>
         public async Task<SupervisorModel> GetSupervisorAsync(string id,
             CancellationToken ct) {
-            var result = await _client.GetSupervisorAsync(id, ct);
+            var result = await _client.GetSupervisorAsync(id, ct).ConfigureAwait(false);
             return result.ToServiceModel();
         }
 
         /// <inheritdoc/>
         public async Task<SupervisorStatusModel> GetSupervisorStatusAsync(string id,
             CancellationToken ct) {
-            var result = await _client.GetSupervisorStatusAsync(id, ct);
+            var result = await _client.GetSupervisorStatusAsync(id, ct).ConfigureAwait(false);
             return result.ToServiceModel();
         }
 
@@ -109,7 +109,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Clients {
         public async Task<PublisherListModel> ListPublishersAsync(
             string continuation, int? pageSize, CancellationToken ct) {
             var result = await _client.ListPublishersAsync(continuation,
-                pageSize, ct);
+                pageSize, ct).ConfigureAwait(false);
             return result.ToServiceModel();
         }
 
@@ -118,21 +118,21 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Clients {
             PublisherQueryModel query, int? pageSize,
             CancellationToken ct) {
             var result = await _client.QueryPublishersAsync(query.ToApiModel(),
-                pageSize, ct);
+                pageSize, ct).ConfigureAwait(false);
             return result.ToServiceModel();
         }
 
         /// <inheritdoc/>
         public async Task<PublisherModel> GetPublisherAsync(string id,
             CancellationToken ct) {
-            var result = await _client.GetPublisherAsync(id, ct);
+            var result = await _client.GetPublisherAsync(id, ct).ConfigureAwait(false);
             return result.ToServiceModel();
         }
 
         /// <inheritdoc/>
         public async Task<SupervisorStatusModel> GetPublisherStatusAsync(string id,
             CancellationToken ct) {
-            var result = await _client.GetPublisherStatusAsync(id, ct);
+            var result = await _client.GetPublisherStatusAsync(id, ct).ConfigureAwait(false);
             return result.ToServiceModel();
         }
 
@@ -144,13 +144,13 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Clients {
         /// <inheritdoc/>
         public async Task UpdatePublisherAsync(string id, PublisherUpdateModel request,
             CancellationToken ct) {
-            await _client.UpdatePublisherAsync(id, request.ToApiModel(), ct);
+            await _client.UpdatePublisherAsync(id, request.ToApiModel(), ct).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
         public async Task<ApplicationRegistrationResultModel> RegisterApplicationAsync(
             ApplicationRegistrationRequestModel request, CancellationToken ct) {
-            var result = await _client.RegisterAsync(request.ToApiModel(), ct);
+            var result = await _client.RegisterAsync(request.ToApiModel(), ct).ConfigureAwait(false);
             return result.ToServiceModel();
         }
 
@@ -158,7 +158,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Clients {
         public async Task<ApplicationRegistrationModel> GetApplicationAsync(
             string applicationId, bool filterInactiveTwins, CancellationToken ct) {
             var result = await _client.GetApplicationAsync(applicationId
-                /* TODO ,filterInactiveTwins */, ct);
+                /* TODO ,filterInactiveTwins */, ct).ConfigureAwait(false);
             return result.ToServiceModel();
         }
 
@@ -171,21 +171,21 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Clients {
         /// <inheritdoc/>
         public async Task<ApplicationSiteListModel> ListSitesAsync(
             string continuation, int? pageSize, CancellationToken ct) {
-            var result = await _client.ListSitesAsync(continuation, pageSize, ct);
+            var result = await _client.ListSitesAsync(continuation, pageSize, ct).ConfigureAwait(false);
             return result.ToServiceModel();
         }
 
         /// <inheritdoc/>
         public async Task<ApplicationInfoListModel> ListApplicationsAsync(
             string continuation, int? pageSize, CancellationToken ct) {
-            var result = await _client.ListApplicationsAsync(continuation, pageSize, ct);
+            var result = await _client.ListApplicationsAsync(continuation, pageSize, ct).ConfigureAwait(false);
             return result.ToServiceModel();
         }
 
         /// <inheritdoc/>
         public async Task<ApplicationInfoListModel> QueryApplicationsAsync(
             ApplicationRegistrationQueryModel query, int? pageSize, CancellationToken ct) {
-            var result = await _client.QueryApplicationsAsync(query.ToApiModel(), pageSize, ct);
+            var result = await _client.QueryApplicationsAsync(query.ToApiModel(), pageSize, ct).ConfigureAwait(false);
             return result.ToServiceModel();
         }
 

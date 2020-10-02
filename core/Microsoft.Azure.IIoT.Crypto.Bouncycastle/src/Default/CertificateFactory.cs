@@ -3,10 +3,11 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Crypto.Default {
+namespace Microsoft.Azure.IIoT.Crypto.Services {
     using Microsoft.Azure.IIoT.Crypto.Models;
     using System;
     using System.Collections.Generic;
+    using System.Globalization;
     using System.Security.Cryptography.X509Certificates;
     using System.Threading;
     using System.Threading.Tasks;
@@ -28,7 +29,7 @@ namespace Microsoft.Azure.IIoT.Crypto.Default {
         public Task<X509Certificate2> CreateCertificateAsync(IDigestSigner signer,
             Certificate issuer, X500DistinguishedName subjectName, Key pubKey,
             DateTime notBefore, DateTime notAfter, SignatureType signatureType,
-            bool canIssue, Func<byte[], IEnumerable<X509Extension>> extensions,
+            bool canIssue, Func<IReadOnlyCollection<byte>, IEnumerable<X509Extension>> extensions,
             CancellationToken ct) {
 
             try {
@@ -37,10 +38,10 @@ namespace Microsoft.Azure.IIoT.Crypto.Default {
                     throw new ArgumentNullException(nameof(issuer));
                 }
                 if (issuer.RawData == null) {
-                    throw new ArgumentNullException(nameof(issuer.RawData));
+                    throw new ArgumentException("Missing data", nameof(issuer));
                 }
                 if (issuer.IssuerPolicies == null) {
-                    throw new ArgumentNullException(nameof(issuer.IssuerPolicies));
+                    throw new ArgumentException("Missing policies", nameof(issuer));
                 }
                 if (pubKey == null) {
                     throw new ArgumentNullException(nameof(pubKey));
@@ -132,7 +133,8 @@ namespace Microsoft.Azure.IIoT.Crypto.Default {
         Task<X509Certificate2> ICertificateFactory.CreateCertificateAsync(IDigestSigner signer,
             KeyHandle signingKey, X500DistinguishedName subject, Key pubKey,
             DateTime notBefore, DateTime notAfter, SignatureType signatureType,
-            bool canIssue, Func<byte[], IEnumerable<X509Extension>> extensions, CancellationToken ct) {
+            bool canIssue, Func<IReadOnlyCollection<byte>, IEnumerable<X509Extension>> extensions,
+            CancellationToken ct) {
             try {
                 if (signingKey == null) {
                     throw new ArgumentNullException(nameof(signingKey));
@@ -221,8 +223,9 @@ namespace Microsoft.Azure.IIoT.Crypto.Default {
             if (serial == null) {
                 throw new ArgumentNullException(nameof(serial));
             }
-            if (extensionUrl.Contains("%serial%")) {
-                return extensionUrl.Replace("%serial%", serial.ToLower());
+            if (extensionUrl.Contains("%serial%", StringComparison.CurrentCulture)) {
+                return extensionUrl.Replace("%serial%",
+                    serial.ToLower(CultureInfo.CurrentCulture), StringComparison.CurrentCulture);
             }
             return $"{extensionUrl.TrimEnd('/')}/{serial}";
         }

@@ -14,7 +14,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Models {
         /// <summary>
         /// Registrations
         /// </summary>
-        public List<TrustGroupRegistrationModel> Registrations { get; set; }
+        public IReadOnlyList<TrustGroupRegistrationModel> Registrations { get; set; }
 
         /// <summary>
         /// Next link

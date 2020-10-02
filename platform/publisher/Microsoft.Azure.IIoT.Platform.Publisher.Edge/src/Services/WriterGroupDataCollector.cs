@@ -22,7 +22,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Services {
     /// Collects / receives data for writers in the writer group, contextualizes
     /// them and enqueues them to the writer group message emitter.
     /// </summary>
-    public class WriterGroupDataCollector : IWriterGroupDataCollector,
+    public sealed class WriterGroupDataCollector : IWriterGroupDataCollector,
         IDisposable {
 
         /// <inheritdoc/>
@@ -53,23 +53,36 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Services {
             _subscriptions = subscriptions ?? throw new ArgumentNullException(nameof(subscriptions));
             _emitter = emitter ?? throw new ArgumentNullException(nameof(emitter));
             _diagnostics = diagnostics ?? throw new ArgumentNullException(nameof(diagnostics));
-            _writers = new ConcurrentDictionary<string, DataSetWriterSubscription>();
+            _writers = new ConcurrentDictionary<string, Task<DataSetWriterSubscription>>();
         }
 
         /// <inheritdoc/>
         public void AddWriters(IEnumerable<DataSetWriterModel> dataSetWriters) {
+            if (dataSetWriters is null) {
+                throw new ArgumentNullException(nameof(dataSetWriters));
+            }
 
             // TODO capture tasks
 
             foreach (var writer in dataSetWriters) {
-                _writers.AddOrUpdate(writer.DataSetWriterId, writerId => {
+                _writers.AddOrUpdate(writer.DataSetWriterId, async writerId => {
                     var subscription = new DataSetWriterSubscription(this, writer);
-                    subscription.OpenAsync().ContinueWith(_ => subscription.ActivateAsync());
+                    await subscription.OpenAsync().ConfigureAwait(false);
+                    await subscription.ActivateAsync().ConfigureAwait(false);
                     return subscription;
-                }, (writerId, subscription) => {
-                    subscription.DeactivateAsync().ContinueWith(_ => subscription.Dispose());
+                }, async (writerId, old) => {
+                    DataSetWriterSubscription subscription = null;
+                    try {
+                        subscription = await old.ConfigureAwait(false);
+                        await subscription.DeactivateAsync().ConfigureAwait(false);
+                    }
+                    catch { }
+                    finally {
+                        subscription?.Dispose();
+                    }
                     subscription = new DataSetWriterSubscription(this, writer);
-                    subscription.OpenAsync().ContinueWith(_ => subscription.ActivateAsync());
+                    await subscription.OpenAsync().ConfigureAwait(false);
+                    await subscription.ActivateAsync().ConfigureAwait(false);
                     return subscription;
                 });
             }
@@ -77,13 +90,15 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Services {
 
         /// <inheritdoc/>
         public void RemoveWriters(IEnumerable<string> dataSetWriters) {
+            if (dataSetWriters is null) {
+                throw new ArgumentNullException(nameof(dataSetWriters));
+            }
 
             // TODO capture tasks
 
             foreach (var writer in dataSetWriters) {
                 if (_writers.TryRemove(writer, out var subscription)) {
-                    // TODO: Add cleanup
-                    subscription.DeactivateAsync().ContinueWith(_ => subscription.Dispose());
+                    DisposeAsync(subscription).Wait();
                 }
             }
         }
@@ -92,14 +107,10 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Services {
         public void RemoveAllWriters() {
 
             // TODO capture tasks
+
             var writers = _writers.Values.ToList();
             _writers.Clear();
-            try {
-                Task.WhenAll(writers.Select(sc => sc.DeactivateAsync())).Wait();
-            }
-            finally {
-                writers.ForEach(writer => writer.Dispose());
-            }
+            Task.WhenAll(writers.Select(sc => DisposeAsync(sc))).Wait();
         }
 
         /// <inheritdoc/>
@@ -113,6 +124,24 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Services {
             }
             finally {
                 _writers.Clear();
+            }
+        }
+
+        /// <summary>
+        /// Dispose writer
+        /// </summary>
+        /// <param name="writer"></param>
+        /// <returns></returns>
+        private static async Task DisposeAsync(Task<DataSetWriterSubscription> writer) {
+            DataSetWriterSubscription subscription = null;
+            try {
+                // TODO: Add cleanup
+                subscription = await writer.ConfigureAwait(false);
+                await subscription.DeactivateAsync().ConfigureAwait(false);
+            }
+            catch { }
+            finally {
+                subscription?.Dispose();
             }
         }
 
@@ -163,16 +192,13 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Services {
             public DataSetWriterSubscription(WriterGroupDataCollector outer,
                 DataSetWriterModel dataSetWriter) {
 
-                _outer = outer ??
-                    throw new ArgumentNullException(nameof(outer));
-                _logger = _outer._logger?.ForContext<DataSetWriterSubscription>() ??
-                    throw new ArgumentNullException(nameof(_logger));
-                _dataSetWriter = dataSetWriter.Clone() ??
-                    throw new ArgumentNullException(nameof(dataSetWriter));
+                _outer = outer;
+                _logger = _outer._logger?.ForContext<DataSetWriterSubscription>();
+                _dataSetWriter = dataSetWriter.Clone();
                 _subscriptionInfo = _dataSetWriter.ToSubscriptionModel();
 
                 if (dataSetWriter.KeyFrameInterval.HasValue &&
-                   dataSetWriter.KeyFrameInterval.Value > TimeSpan.Zero) {
+                    dataSetWriter.KeyFrameInterval.Value > TimeSpan.Zero) {
                     _keyframeTimer = new System.Timers.Timer(
                         dataSetWriter.KeyFrameInterval.Value.TotalMilliseconds);
                     _keyframeTimer.Elapsed += KeyframeTimerElapsedAsync;
@@ -184,7 +210,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Services {
                 if (dataSetWriter.DataSetMetaDataSendInterval.HasValue &&
                     dataSetWriter.DataSetMetaDataSendInterval.Value > TimeSpan.Zero) {
                     _metaData = dataSetWriter.DataSet?.DataSetMetaData ??
-                        throw new ArgumentNullException(nameof(dataSetWriter.DataSet));
+                        throw new ArgumentException("Dataset missing", nameof(dataSetWriter));
 
                     _metadataTimer = new System.Timers.Timer(
                         dataSetWriter.DataSetMetaDataSendInterval.Value.TotalMilliseconds);
@@ -202,7 +228,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Services {
                     return;
                 }
 
-                var sc = await _outer._subscriptions.GetOrCreateSubscriptionAsync(_subscriptionInfo);
+                var sc = await _outer._subscriptions.GetOrCreateSubscriptionAsync(_subscriptionInfo).ConfigureAwait(false);
 
                 sc.OnSubscriptionNotification += OnSubscriptionNotificationAsync;
                 sc.OnMonitoredItemStatusChange += OnMonitoredItemStatusChange;
@@ -210,7 +236,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Services {
                 sc.OnEndpointConnectivityChange += OnEndpointConnectivityChange;
 
                 await sc.ApplyAsync(_subscriptionInfo.MonitoredItems,
-                    _subscriptionInfo.Configuration);
+                    _subscriptionInfo.Configuration).ConfigureAwait(false);
                 Subscription = sc;
             }
 
@@ -288,7 +314,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Services {
 
                     _logger.Debug("Insert keyframe message...");
                     var sequenceNumber = (uint)Interlocked.Increment(ref _currentSequenceNumber);
-                    var snapshot = await Subscription.GetSnapshotAsync();
+                    var snapshot = await Subscription.GetSnapshotAsync().ConfigureAwait(false);
                     if (snapshot != null) {
                         _outer.OnSubscriptionNotification(_dataSetWriter, sequenceNumber, snapshot);
                     }
@@ -374,7 +400,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Services {
                     var sequenceNumber = (uint)Interlocked.Increment(ref _currentSequenceNumber);
                     if (_keyFrameCount.HasValue && _keyFrameCount.Value != 0 &&
                         (sequenceNumber % _keyFrameCount.Value) == 0) {
-                        var snapshot = await Try.Async(() => Subscription.GetSnapshotAsync());
+                        var snapshot = await Try.Async(() => Subscription.GetSnapshotAsync()).ConfigureAwait(false);
                         if (snapshot != null) {
                             e = snapshot;
                         }
@@ -402,7 +428,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Services {
         private readonly IWriterGroupMessageEmitter _emitter;
         private readonly IWriterGroupStateReporter _state;
         private readonly ILogger _logger;
-        private readonly ConcurrentDictionary<string, DataSetWriterSubscription> _writers;
+        private readonly ConcurrentDictionary<string, Task<DataSetWriterSubscription>> _writers;
         private readonly IWriterGroupDiagnostics _diagnostics;
     }
 }

@@ -10,7 +10,7 @@ namespace Microsoft.Azure.IIoT.Platform.Edge.Tunnel.Service {
     using Microsoft.Azure.IIoT.Azure.IoTHub.Handlers;
     using Microsoft.Azure.IIoT.Azure.IoTHub;
     using Microsoft.Azure.IIoT.Azure.AppInsights;
-    using Microsoft.Azure.IIoT.Http.Default;
+    using Microsoft.Azure.IIoT.Http.Clients;
     using Microsoft.Azure.IIoT.Http.Tunnel.Services;
     using Microsoft.Azure.IIoT.Rpc.Default;
     using Microsoft.Azure.IIoT.Serializers;
@@ -24,10 +24,10 @@ namespace Microsoft.Azure.IIoT.Platform.Edge.Tunnel.Service {
     using System;
 
     /// <summary>
-    /// IoT Hub device telemetry event processor host.  Processes all
+    /// IoT Hub device tunnel processor host.  Processes all
     /// tunnel requests from devices.
     /// </summary>
-    public class Program {
+    public static class Program {
 
         /// <summary>
         /// Main entry point for iot hub device event processor host

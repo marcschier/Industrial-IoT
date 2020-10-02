@@ -13,6 +13,7 @@ namespace Opc.Ua.Nodeset {
     using System.Xml.Serialization;
     using System.Collections.Generic;
     using System.Text;
+    using System.Globalization;
 
     /// <summary>
     /// Nodeset model
@@ -1002,7 +1003,7 @@ namespace Opc.Ua.Nodeset {
             }
             return arrayDimensions.Split(',').Select(s => {
                 try {
-                    return Convert.ToUInt32(s);
+                    return Convert.ToUInt32(s, CultureInfo.InvariantCulture);
                 }
                 catch {
                     return (uint)0;

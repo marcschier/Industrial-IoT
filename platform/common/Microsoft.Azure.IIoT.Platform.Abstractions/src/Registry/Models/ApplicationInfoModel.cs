@@ -46,22 +46,22 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
         /// <summary>
         /// Localized Names of application keyed on locale
         /// </summary>
-        public Dictionary<string, string> LocalizedNames { get; set; }
+        public IReadOnlyDictionary<string, string> LocalizedNames { get; set; }
 
         /// <summary>
         /// Application capabilities
         /// </summary>
-        public HashSet<string> Capabilities { get; set; }
+        public /*IReadOnlySet*/ IReadOnlyCollection<string> Capabilities { get; set; }
 
         /// <summary>
         /// Host addresses of server application or null
         /// </summary>
-        public HashSet<string> HostAddresses { get; set; }
+        public /*IReadOnlySet*/ IReadOnlyCollection<string> HostAddresses { get; set; }
 
         /// <summary>
         /// Discovery urls of the application
         /// </summary>
-        public HashSet<string> DiscoveryUrls { get; set; }
+        public /*IReadOnlySet*/ IReadOnlyCollection<string> DiscoveryUrls { get; set; }
 
         /// <summary>
         /// Discovery profile uri

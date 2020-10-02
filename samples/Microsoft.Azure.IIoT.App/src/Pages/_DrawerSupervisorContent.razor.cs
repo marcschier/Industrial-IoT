@@ -29,7 +29,7 @@ namespace Microsoft.Azure.IIoT.App.Pages {
         /// <param name="firstRender"></param>
         protected override async Task OnAfterRenderAsync(bool firstRender) {
             if (firstRender) {
-                SupervisorStatus = await RegistryHelper.GetSupervisorStatusAsync(SupervisorId);
+                SupervisorStatus = await RegistryHelper.GetSupervisorStatusAsync(SupervisorId).ConfigureAwait(false);
                 IsLoading = false;
                 StateHasChanged();
             }

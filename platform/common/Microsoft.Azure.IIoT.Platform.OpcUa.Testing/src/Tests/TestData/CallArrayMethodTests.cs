@@ -40,7 +40,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
             var result = await service.NodeMethodGetMetadataAsync(_endpoint,
                 new MethodMetadataRequestModel {
                     MethodId = methodId
-                });
+                }).ConfigureAwait(false);
 
             // Assert
             Assert.Equal(objectId, result.ObjectId);
@@ -323,7 +323,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
             var result = await service.NodeMethodGetMetadataAsync(_endpoint,
                 new MethodMetadataRequestModel {
                     MethodId = methodId
-                });
+                }).ConfigureAwait(false);
 
             // Assert
             Assert.Equal(objectId, result.ObjectId);
@@ -582,7 +582,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
             var result = await service.NodeMethodGetMetadataAsync(_endpoint,
                 new MethodMetadataRequestModel {
                     MethodId = methodId
-                });
+                }).ConfigureAwait(false);
 
             // Assert
             Assert.Equal(objectId, result.ObjectId);
@@ -733,7 +733,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
                     MethodId = methodId,
                     ObjectId = objectId,
                     Arguments = input
-                });
+                }).ConfigureAwait(false);
 
             // Assert
             Assert.Equal(new List<string> {
@@ -777,7 +777,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
                     MethodId = methodId,
                     ObjectId = objectId,
                     Arguments = input
-                });
+                }).ConfigureAwait(false);
 
             // Assert
             Assert.Equal(new List<string> {
@@ -834,7 +834,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
                 new MethodCallRequestModel {
                     MethodId = methodId,
                     ObjectId = objectId
-                });
+                }).ConfigureAwait(false);
 
             // Assert
             Assert.Equal(new List<string> {
@@ -890,7 +890,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
                     MethodId = methodId,
                     ObjectId = objectId,
                     Arguments = input
-                });
+                }).ConfigureAwait(false);
 
             // Assert
             Assert.Equal(new List<string> {
@@ -946,11 +946,11 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
             var input = new List<MethodCallArgumentModel> {
                 new MethodCallArgumentModel {
                     DataType = "boolean",
-                    Value = _serializer.FromObject(new bool[0])
+                    Value = _serializer.FromObject(Array.Empty<bool>())
                 },
                 new MethodCallArgumentModel {
                     DataType = "sbyte",
-                    Value = _serializer.FromObject(new sbyte[0])
+                    Value = _serializer.FromObject(Array.Empty<sbyte>())
                 },
                 new MethodCallArgumentModel {
                     DataType = "Byte",
@@ -958,35 +958,35 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
                 },
                 new MethodCallArgumentModel {
                     DataType = "Int16",
-                    Value = _serializer.FromObject(new short[0])
+                    Value = _serializer.FromObject(Array.Empty<short>())
                 },
                 new MethodCallArgumentModel {
                     DataType = "UInt16",
-                    Value = _serializer.FromObject(new ushort[0])
+                    Value = _serializer.FromObject(Array.Empty<ushort>())
                 },
                 new MethodCallArgumentModel {
                     DataType = "int32",
-                    Value = _serializer.FromObject(new int[0])
+                    Value = _serializer.FromObject(Array.Empty<int>())
                 },
                 new MethodCallArgumentModel {
                     DataType = "uInt32",
-                    Value = _serializer.FromObject(new uint[0])
+                    Value = _serializer.FromObject(Array.Empty<uint>())
                 },
                 new MethodCallArgumentModel {
                     DataType = "Int64",
-                    Value = _serializer.FromObject(new long[0])
+                    Value = _serializer.FromObject(Array.Empty<long>())
                 },
                 new MethodCallArgumentModel {
                     DataType = "uint64",
-                    Value = _serializer.FromObject(new ulong[0])
+                    Value = _serializer.FromObject(Array.Empty<ulong>())
                 },
                 new MethodCallArgumentModel {
                     DataType = "float",
-                    Value = _serializer.FromObject(new float[0])
+                    Value = _serializer.FromObject(Array.Empty<float>())
                 },
                 new MethodCallArgumentModel {
                     DataType = "DOUBLE",
-                    Value = _serializer.FromObject(new double[0])
+                    Value = _serializer.FromObject(Array.Empty<double>())
                 }
             };
 
@@ -996,7 +996,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
                     MethodId = methodId,
                     ObjectId = objectId,
                     Arguments = input
-                });
+                }).ConfigureAwait(false);
 
             // Assert
             Assert.Equal(new List<string> {
@@ -1093,8 +1093,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
                 },
                 new MethodCallArgumentModel {
                     DataType = "XmlElement",
-                    Value = _serializer.FromObject(new System.Xml.XmlElement[] {
-                    })
+                    Value = _serializer.FromObject(Array.Empty<System.Xml.XmlElement>())
                 },
                 new MethodCallArgumentModel {
                     DataType = "NodeId",
@@ -1164,7 +1163,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
                     MethodId = methodId,
                     ObjectId = objectId,
                     Arguments = input
-                });
+                }).ConfigureAwait(false);
 
             // Assert
             Assert.Equal(new List<string> {
@@ -1218,7 +1217,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
                 new MethodCallRequestModel {
                     MethodId = methodId,
                     ObjectId = objectId
-                });
+                }).ConfigureAwait(false);
 
             // Assert
             Assert.Equal(new List<string> {
@@ -1262,7 +1261,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
                     MethodId = methodId,
                     ObjectId = objectId,
                     Arguments = input
-                });
+                }).ConfigureAwait(false);
 
             // Assert
             Assert.Equal(new List<string> {
@@ -1284,15 +1283,15 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
             var input = new List<MethodCallArgumentModel> {
                 new MethodCallArgumentModel {
                     DataType = "String",
-                    Value = _serializer.FromObject(new string[0])
+                    Value = _serializer.FromObject(Array.Empty<string>())
                 },
                 new MethodCallArgumentModel {
                     DataType = "DateTime",
-                    Value = _serializer.FromObject(new DateTime[0])
+                    Value = _serializer.FromObject(Array.Empty<DateTime>())
                 },
                 new MethodCallArgumentModel {
                     DataType = "Guid",
-                    Value = _serializer.FromObject(new Guid[0])
+                    Value = _serializer.FromObject(Array.Empty<Guid>())
                 },
                 new MethodCallArgumentModel {
                     DataType = "ByteString",
@@ -1300,27 +1299,27 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
                 },
                 new MethodCallArgumentModel {
                     DataType = "XmlElement",
-                    Value = _serializer.FromObject(new System.Xml.XmlElement[0])
+                    Value = _serializer.FromObject(Array.Empty<System.Xml.XmlElement>())
                 },
                 new MethodCallArgumentModel {
                     DataType = "NodeId",
-                    Value = _serializer.FromObject(new string[0])
+                    Value = _serializer.FromObject(Array.Empty<string>())
                 },
                 new MethodCallArgumentModel {
                     DataType = "ExpandedNodeId",
-                    Value = _serializer.FromObject(new string[0])
+                    Value = _serializer.FromObject(Array.Empty<string>())
                 },
                 new MethodCallArgumentModel {
                     DataType = "QualifiedName",
-                    Value = _serializer.FromObject(new string[0])
+                    Value = _serializer.FromObject(Array.Empty<string>())
                 },
                 new MethodCallArgumentModel {
                     DataType = "LocalizedText",
-                    Value = _serializer.FromObject(new object[0])
+                    Value = _serializer.FromObject(Array.Empty<object>())
                 },
                 new MethodCallArgumentModel {
                     DataType = "StatusCode",
-                    Value = _serializer.FromObject(new int[0])
+                    Value = _serializer.FromObject(Array.Empty<int>())
                 }
             };
 
@@ -1330,7 +1329,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
                     MethodId = methodId,
                     ObjectId = objectId,
                     Arguments = input
-                });
+                }).ConfigureAwait(false);
 
             // Assert
             Assert.Equal(new List<string> {
@@ -1372,7 +1371,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
                     MethodId = methodId,
                     ObjectId = objectId,
                     Arguments = input
-                });
+                }).ConfigureAwait(false);
 
             // Assert
             Assert.Equal(new List<string> {
@@ -1439,7 +1438,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
                     MethodId = methodId,
                     ObjectId = objectId,
                     Arguments = input
-                });
+                }).ConfigureAwait(false);
 
             // Assert
             Assert.Equal(new List<string> {
@@ -1462,7 +1461,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
                 new MethodCallRequestModel {
                     MethodId = methodId,
                     ObjectId = objectId
-                });
+                }).ConfigureAwait(false);
 
             // Assert
             Assert.Equal(new List<string> {

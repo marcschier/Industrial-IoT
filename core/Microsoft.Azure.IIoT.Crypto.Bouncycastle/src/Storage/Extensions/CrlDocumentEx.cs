@@ -34,10 +34,13 @@ namespace Microsoft.Azure.IIoT.Crypto.Storage.Models {
         /// <returns></returns>
         public static CrlDocument ToDocument(this Crl crl, string certificateSerial,
             string issuerSerial, TimeSpan? defaultTtl = null) {
+            if (crl is null) {
+                throw new ArgumentNullException(nameof(crl));
+            }
 
             if (crl.ThisUpdate == DateTime.MinValue ||
                 crl.ThisUpdate == DateTime.MaxValue) {
-                throw new ArgumentException(nameof(crl));
+                throw new ArgumentException("Bad update time", nameof(crl));
             }
 
             var ttl = (defaultTtl ?? TimeSpan.FromMinutes(5)).TotalSeconds;

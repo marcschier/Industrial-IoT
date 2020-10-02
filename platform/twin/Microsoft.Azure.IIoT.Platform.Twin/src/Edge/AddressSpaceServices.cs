@@ -45,7 +45,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge {
         /// <inheritdoc/>
         public Task<BrowseResultModel> NodeBrowseFirstAsync(EndpointModel endpoint,
             BrowseRequestModel request) {
-            return _client.ExecuteServiceAsync(endpoint, request.Header?.Elevation, async session => {
+            return _client.ExecuteServiceAsync(endpoint, request?.Header?.Elevation, async session => {
                 var rootId = request.NodeId.ToNodeId(session.MessageContext);
                 if (NodeId.IsNull(rootId)) {
                     rootId = ObjectIds.RootFolder;
@@ -75,7 +75,8 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge {
                         ViewDescription.IsDefault(view) ? null : view, rootId,
                         request.MaxReferencesToReturn ?? 0u, direction, typeId,
                         !(request?.NoSubtypes ?? false),
-                        (uint)request.NodeClassFilter.ToStackMask(), BrowseResultMask.All);
+                        (uint)request.NodeClassFilter.ToStackMask(),
+                        BrowseResultMask.All).ConfigureAwait(false);
 
                     OperationResultEx.Validate("Browse_" + rootId,
                         diagnostics, response.Results.Select(r => r.StatusCode),
@@ -84,13 +85,13 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge {
 
                     result.ContinuationToken = await AddReferencesToBrowseResultAsync(session, codec,
                         (request.Header?.Diagnostics).ToStackModel(), request.TargetNodesOnly ?? false,
-                        request.ReadVariableValues ?? false, rawMode, result.References, diagnostics,
-                        response.Results[0].ContinuationPoint, response.Results[0].References);
+                        request.ReadVariableValues ?? false, rawMode, result.References.ToList(), diagnostics,
+                        response.Results[0].ContinuationPoint, response.Results[0].References).ConfigureAwait(false);
                 }
                 // Read root node
                 result.Node = await ReadNodeModelAsync(session, codec,
                     (request.Header?.Diagnostics).ToStackModel(), rootId, null, true, rawMode,
-                    !excludeReferences ? result.References.Count != 0 : (bool?)null, diagnostics, true);
+                    !excludeReferences ? result.References.Count != 0 : (bool?)null, diagnostics, true).ConfigureAwait(false);
                 result.ErrorInfo = codec.Encode(diagnostics, request.Header?.Diagnostics);
                 return result;
             });
@@ -103,7 +104,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge {
                 throw new ArgumentNullException(nameof(request));
             }
             if (string.IsNullOrEmpty(request.ContinuationToken)) {
-                throw new ArgumentNullException(nameof(request.ContinuationToken));
+                throw new ArgumentException("Missing continuation token", nameof(request));
             }
             var continuationPoint = request.ContinuationToken.DecodeAsBase64();
             return _client.ExecuteServiceAsync(endpoint, request.Header?.Elevation, async session => {
@@ -113,7 +114,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge {
                 };
                 var response = await session.BrowseNextAsync(
                     (request.Header?.Diagnostics).ToStackModel(),
-                    request.Abort ?? false, new ByteStringCollection { continuationPoint });
+                    request.Abort ?? false, new ByteStringCollection { continuationPoint }).ConfigureAwait(false);
                 OperationResultEx.Validate("BrowseNext_" + request.ContinuationToken,
                     diagnostics, response.Results.Select(r => r.StatusCode),
                     response.DiagnosticInfos, false);
@@ -122,8 +123,8 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge {
                 result.ContinuationToken = await AddReferencesToBrowseResultAsync(session, codec,
                     (request.Header?.Diagnostics).ToStackModel(), request.TargetNodesOnly ?? false,
                     request.ReadVariableValues ?? false, request.NodeIdsOnly ?? false,
-                    result.References, diagnostics, response.Results[0].ContinuationPoint,
-                    response.Results[0].References);
+                    result.References.ToList(), diagnostics, response.Results[0].ContinuationPoint,
+                    response.Results[0].References).ConfigureAwait(false);
                 result.ErrorInfo = codec.Encode(diagnostics, request.Header?.Diagnostics);
                 return result;
             });
@@ -135,9 +136,10 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge {
             if (request == null) {
                 throw new ArgumentNullException(nameof(request));
             }
-            if (request.BrowsePaths == null || request.BrowsePaths.Count == 0 ||
-                request.BrowsePaths.Any(p => p == null || p.Length == 0)) {
-                throw new ArgumentNullException(nameof(request.BrowsePaths));
+            if (request.BrowsePaths == null ||
+                request.BrowsePaths.Count == 0 ||
+                request.BrowsePaths.Any(p => p == null || p.Count == 0)) {
+                throw new ArgumentException("Bad browse path", nameof(request));
             }
             return _client.ExecuteServiceAsync(endpoint, request.Header?.Elevation, async session => {
                 var rootId = request?.NodeId.ToNodeId(session.MessageContext);
@@ -154,7 +156,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge {
                         RelativePath = p.ToRelativePath(session.MessageContext)
                     }));
                 var response = await session.TranslateBrowsePathsToNodeIdsAsync(
-                    (request.Header?.Diagnostics).ToStackModel(), requests);
+                    (request.Header?.Diagnostics).ToStackModel(), requests).ConfigureAwait(false);
                 OperationResultEx.Validate("Translate" + request.NodeId,
                     diagnostics, response.Results.Select(r => r.StatusCode),
                     response.DiagnosticInfos, requests, false);
@@ -163,8 +165,8 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge {
                     await AddTargetsToBrowseResultAsync(session, codec,
                         (request.Header?.Diagnostics).ToStackModel(),
                         request.ReadVariableValues ?? false, request.NodeIdsOnly ?? false,
-                        result.Targets, diagnostics, response.Results[index].Targets,
-                        request.BrowsePaths[index]);
+                        result.Targets.ToList(), diagnostics, response.Results[index].Targets,
+                        request.BrowsePaths[index]?.ToArray()).ConfigureAwait(false);
                 }
                 result.ErrorInfo = codec.Encode(diagnostics, request.Header?.Diagnostics);
                 return result;
@@ -178,26 +180,26 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge {
                 throw new ArgumentNullException(nameof(request));
             }
             if (string.IsNullOrEmpty(request.MethodId) &&
-                (request.MethodBrowsePath == null || request.MethodBrowsePath.Length == 0)) {
-                throw new ArgumentException(nameof(request.MethodId));
+                (request.MethodBrowsePath == null || request.MethodBrowsePath.Count == 0)) {
+                throw new ArgumentException("Method id missing or browse path", nameof(request));
             }
             return _client.ExecuteServiceAsync(endpoint, request.Header?.Elevation, async session => {
                 var diagnostics = new List<OperationResultModel>();
                 var methodId = request.MethodId.ToNodeId(session.MessageContext);
-                if (request.MethodBrowsePath != null && request.MethodBrowsePath.Length > 0) {
+                if (request.MethodBrowsePath != null && request.MethodBrowsePath.Count > 0) {
                     methodId = await ResolveBrowsePathToNodeAsync(session, methodId,
-                        nameof(request.MethodBrowsePath), request.MethodBrowsePath,
-                        request.Header?.Diagnostics, diagnostics);
+                        nameof(request.MethodBrowsePath), request.MethodBrowsePath.ToArray(),
+                        request.Header?.Diagnostics, diagnostics).ConfigureAwait(false);
                 }
                 if (NodeId.IsNull(methodId)) {
-                    throw new ArgumentException(nameof(request.MethodId));
+                    throw new ArgumentException("Method id missing", nameof(request));
                 }
 
                 var codec = _codec.Create(session.MessageContext);
                 var response = await session.BrowseAsync(
                     (request.Header?.Diagnostics).ToStackModel(), null, methodId, 0,
                     Opc.Ua.BrowseDirection.Both, ReferenceTypeIds.Aggregates,
-                    true, 0, BrowseResultMask.All);
+                    true, 0, BrowseResultMask.All).ConfigureAwait(false);
                 OperationResultEx.Validate("Browse_" + methodId, diagnostics,
                     response.Results.Select(r => r.StatusCode), response.DiagnosticInfos, false);
                 SessionClientEx.Validate(response.Results, response.DiagnosticInfos);
@@ -226,7 +228,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge {
 
                     var node = nodeReference.NodeId.ToNodeId(session.NamespaceUris);
                     var value = await RawNodeModel.ReadValueAsync(session,
-                        (request.Header?.Diagnostics).ToStackModel(), node, diagnostics, false);
+                        (request.Header?.Diagnostics).ToStackModel(), node, diagnostics, false).ConfigureAwait(false);
                     if (!(value?.Value is ExtensionObject[] argumentsList)) {
                         continue;
                     }
@@ -235,14 +237,14 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge {
                     foreach (var argument in argumentsList.Select(a => (Argument)a.Body)) {
                         var dataTypeIdNode = await ReadNodeModelAsync(session, codec,
                             (request.Header?.Diagnostics).ToStackModel(), argument.DataType, null,
-                            false, false, false, diagnostics, false);
+                            false, false, false, diagnostics, false).ConfigureAwait(false);
                         var arg = new MethodMetadataArgumentModel {
                             Name = argument.Name,
                             DefaultValue = argument.Value == null ? VariantValue.Null :
                                 codec.Encode(new Variant(argument.Value), out var type),
                             ValueRank = argument.ValueRank == ValueRanks.Scalar ?
                                 (NodeValueRank?)null : (NodeValueRank)argument.ValueRank,
-                            ArrayDimensions = argument.ArrayDimensions?.ToArray(),
+                            ArrayDimensions = argument.ArrayDimensions?.ToList(),
                             Description = argument.Description?.ToString(),
                             Type = dataTypeIdNode
                         };
@@ -267,8 +269,8 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge {
                 throw new ArgumentNullException(nameof(request));
             }
             if (string.IsNullOrEmpty(request.ObjectId) &&
-                (request.ObjectBrowsePath == null || request.ObjectBrowsePath.Length == 0)) {
-                throw new ArgumentException(nameof(request.ObjectId));
+                (request.ObjectBrowsePath == null || request.ObjectBrowsePath.Count == 0)) {
+                throw new ArgumentException("Object id missing or bad browse path", nameof(request));
             }
             return _client.ExecuteServiceAsync(endpoint, request.Header?.Elevation, async session => {
                 var diagnostics = new List<OperationResultModel>();
@@ -284,35 +286,37 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge {
                 //   real method node.
                 //
                 var objectId = request.ObjectId.ToNodeId(session.MessageContext);
-                if (request.ObjectBrowsePath != null && request.ObjectBrowsePath.Length > 0) {
+                if (request.ObjectBrowsePath != null && request.ObjectBrowsePath.Count > 0) {
                     objectId = await ResolveBrowsePathToNodeAsync(session, objectId,
-                        nameof(request.ObjectBrowsePath), request.ObjectBrowsePath,
-                        request.Header?.Diagnostics, diagnostics);
+                        nameof(request.ObjectBrowsePath), request.ObjectBrowsePath.ToArray(),
+                        request.Header?.Diagnostics, diagnostics).ConfigureAwait(false);
                 }
                 if (NodeId.IsNull(objectId)) {
-                    throw new ArgumentException(nameof(request.ObjectId));
+                    throw new ArgumentException("Object id missing", nameof(request));
                 }
 
                 var methodId = request.MethodId.ToNodeId(session.MessageContext);
-                if (request.MethodBrowsePath != null && request.MethodBrowsePath.Length > 0) {
+                if (request.MethodBrowsePath != null && request.MethodBrowsePath.Count > 0) {
                     if (NodeId.IsNull(methodId)) {
                         // Browse from object id to method if possible
-                        methodId = objectId ?? throw new ArgumentException(nameof(request.MethodId));
+                        methodId = objectId ??
+                            throw new ArgumentException("Method id and object id missing",
+                                nameof(request));
                     }
                     methodId = await ResolveBrowsePathToNodeAsync(session, methodId,
-                        nameof(request.MethodBrowsePath), request.MethodBrowsePath,
-                        request.Header?.Diagnostics, diagnostics);
+                        nameof(request.MethodBrowsePath), request.MethodBrowsePath.ToArray(),
+                        request.Header?.Diagnostics, diagnostics).ConfigureAwait(false);
                 }
                 else if (NodeId.IsNull(methodId)) {
                     // Method is null and cannot browse to method from object
-                    throw new ArgumentException(nameof(request.MethodId));
+                    throw new ArgumentException("Method id missing", nameof(request));
                 }
 
                 // Get default input arguments and types
                 var browse = await session.BrowseAsync(
                     (request.Header?.Diagnostics).ToStackModel(), null, methodId,
                     0, Opc.Ua.BrowseDirection.Forward, ReferenceTypeIds.HasProperty,
-                    true, 0, BrowseResultMask.All);
+                    true, 0, BrowseResultMask.All).ConfigureAwait(false);
                 OperationResultEx.Validate("Browse_" + methodId,
                     diagnostics, browse.Results.Select(r => r.StatusCode),
                     browse.DiagnosticInfos, false);
@@ -348,7 +352,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge {
 
                 if ((request.Arguments?.Count ?? 0) > (inputs?.Count ?? 0)) {
                     // Too many arguments
-                    throw new ArgumentException(nameof(request.Arguments));
+                    throw new ArgumentException("Arguments missing", nameof(request));
                 }
 
                 var codec = _codec.Create(session.MessageContext);
@@ -384,7 +388,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge {
 
                 // Call method
                 var response = await session.CallAsync(
-                    (request.Header?.Diagnostics).ToStackModel(), requests);
+                    (request.Header?.Diagnostics).ToStackModel(), requests).ConfigureAwait(false);
                 OperationResultEx.Validate("Call" + methodId, diagnostics,
                     response.Results.Select(r => r.StatusCode), response.DiagnosticInfos,
                     false);
@@ -425,19 +429,19 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge {
                 throw new ArgumentNullException(nameof(request));
             }
             if (string.IsNullOrEmpty(request.NodeId) &&
-                (request.BrowsePath == null || request.BrowsePath.Length == 0)) {
-                throw new ArgumentException(nameof(request.NodeId));
+                (request.BrowsePath == null || request.BrowsePath.Count == 0)) {
+                throw new ArgumentException("Bad node id or browse path missing", nameof(request));
             }
             return _client.ExecuteServiceAsync(endpoint, request.Header?.Elevation, async session => {
                 var diagnostics = new List<OperationResultModel>();
                 var readNode = request.NodeId.ToNodeId(session.MessageContext);
-                if (request.BrowsePath != null && request.BrowsePath.Length > 0) {
+                if (request.BrowsePath != null && request.BrowsePath.Count > 0) {
                     readNode = await ResolveBrowsePathToNodeAsync(session, readNode,
-                        nameof(request.BrowsePath), request.BrowsePath,
-                        request.Header?.Diagnostics, diagnostics);
+                        nameof(request.BrowsePath), request.BrowsePath.ToArray(),
+                        request.Header?.Diagnostics, diagnostics).ConfigureAwait(false);
                 }
                 if (NodeId.IsNull(readNode)) {
-                    throw new ArgumentException(nameof(request.NodeId));
+                    throw new ArgumentException("Node id missing", nameof(request));
                 }
                 var response = await session.ReadAsync((request.Header?.Diagnostics).ToStackModel(),
                     0, TimestampsToReturn.Both, new ReadValueIdCollection {
@@ -455,7 +459,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge {
                         //
                         DataEncoding = null
                     }
-                });
+                }).ConfigureAwait(false);
                 OperationResultEx.Validate("ReadValue_" + readNode, diagnostics,
                     response.Results.Select(r => r.StatusCode), response.DiagnosticInfos, false);
                 SessionClientEx.Validate(response.Results, response.DiagnosticInfos);
@@ -487,22 +491,22 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge {
                 throw new ArgumentNullException(nameof(request));
             }
             if (request.Value is null) {
-                throw new ArgumentNullException(nameof(request.Value));
+                throw new ArgumentException("Missing value", nameof(request));
             }
             if (string.IsNullOrEmpty(request.NodeId) &&
-                (request.BrowsePath == null || request.BrowsePath.Length == 0)) {
-                throw new ArgumentException(nameof(request.NodeId));
+                (request.BrowsePath == null || request.BrowsePath.Count == 0)) {
+                throw new ArgumentException("Bad node id or browse path missing", nameof(request));
             }
             return _client.ExecuteServiceAsync(endpoint, request.Header?.Elevation, async session => {
                 var diagnostics = new List<OperationResultModel>();
                 var writeNode = request.NodeId.ToNodeId(session.MessageContext);
-                if (request.BrowsePath != null && request.BrowsePath.Length > 0) {
+                if (request.BrowsePath != null && request.BrowsePath.Count > 0) {
                     writeNode = await ResolveBrowsePathToNodeAsync(session, writeNode,
-                        nameof(request.BrowsePath), request.BrowsePath,
-                        request.Header?.Diagnostics, diagnostics);
+                        nameof(request.BrowsePath), request.BrowsePath.ToArray(),
+                        request.Header?.Diagnostics, diagnostics).ConfigureAwait(false);
                 }
                 if (NodeId.IsNull(writeNode)) {
-                    throw new ArgumentException(nameof(request.NodeId));
+                    throw new ArgumentException("Node id missing", nameof(request));
                 }
                 var dataTypeId = request.DataType.ToNodeId(session.MessageContext);
                 if (NodeId.IsNull(dataTypeId)) {
@@ -510,7 +514,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge {
                     // TODO Async
                     if (!(session.ReadNode(writeNode) is VariableNode variable) ||
                         NodeId.IsNull(variable.DataType)) {
-                        throw new ArgumentException(nameof(request.NodeId));
+                        throw new ArgumentException("Data type missing", nameof(request));
                     }
                     dataTypeId = variable.DataType;
                 }
@@ -527,7 +531,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge {
                 };
                 var result = new ValueWriteResultModel();
                 var response = await session.WriteAsync(
-                    (request.Header?.Diagnostics).ToStackModel(), nodesToWrite);
+                    (request.Header?.Diagnostics).ToStackModel(), nodesToWrite).ConfigureAwait(false);
                 OperationResultEx.Validate("WriteValue_" + writeNode, diagnostics, response.Results,
                     response.DiagnosticInfos, false);
                 SessionClientEx.Validate(response.Results, response.DiagnosticInfos);
@@ -543,10 +547,10 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge {
                 throw new ArgumentNullException(nameof(request));
             }
             if (request.Attributes == null) {
-                throw new ArgumentNullException(nameof(request.Attributes));
+                throw new ArgumentException("Missing attributes", nameof(request));
             }
             if (request.Attributes.Any(a => string.IsNullOrEmpty(a.NodeId))) {
-                throw new ArgumentException(nameof(request.Attributes));
+                throw new ArgumentException("Bad attributes", nameof(request));
             }
             return _client.ExecuteServiceAsync(endpoint, request.Header?.Elevation,
                 async session => {
@@ -558,7 +562,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge {
                         }));
                     var response = await session.ReadAsync(
                         (request.Header?.Diagnostics).ToStackModel(), 0, TimestampsToReturn.Both,
-                        requests);
+                        requests).ConfigureAwait(false);
                     SessionClientEx.Validate(response.Results, response.DiagnosticInfos, requests);
                     return new ReadResultModel {
                         Results = response.Results
@@ -583,10 +587,10 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge {
                 throw new ArgumentNullException(nameof(request));
             }
             if (request.Attributes == null) {
-                throw new ArgumentNullException(nameof(request.Attributes));
+                throw new ArgumentException("Missing attributes", nameof(request));
             }
             if (request.Attributes.Any(a => string.IsNullOrEmpty(a.NodeId))) {
-                throw new ArgumentException(nameof(request.Attributes));
+                throw new ArgumentException("Missing node id in attributes", nameof(request));
             }
             return _client.ExecuteServiceAsync(endpoint, request.Header?.Elevation,
                 async session => {
@@ -599,7 +603,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge {
                                 AttributeMap.GetBuiltInType((uint)a.Attribute)))
                         }));
                     var response = await session.WriteAsync(
-                        (request.Header?.Diagnostics).ToStackModel(), requests);
+                        (request.Header?.Diagnostics).ToStackModel(), requests).ConfigureAwait(false);
                     SessionClientEx.Validate(response.Results, response.DiagnosticInfos, requests);
                     return new WriteResultModel {
                         Results = response.Results
@@ -623,27 +627,27 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge {
                 throw new ArgumentNullException(nameof(request));
             }
             if (request.Details == null) {
-                throw new ArgumentNullException(nameof(request.Details));
+                throw new ArgumentException("Missing details", nameof(request));
             }
             if (string.IsNullOrEmpty(request.NodeId) &&
-                (request.BrowsePath == null || request.BrowsePath.Length == 0)) {
-                throw new ArgumentException(nameof(request.NodeId));
+                (request.BrowsePath == null || request.BrowsePath.Count == 0)) {
+                throw new ArgumentException("Bad node id or browse path missing", nameof(request));
             }
             return _client.ExecuteServiceAsync(endpoint, request.Header?.Elevation, async session => {
                 var diagnostics = new List<OperationResultModel>();
                 var nodeId = request.NodeId.ToNodeId(session.MessageContext);
-                if (request.BrowsePath != null && request.BrowsePath.Length > 0) {
+                if (request.BrowsePath != null && request.BrowsePath.Count > 0) {
                     nodeId = await ResolveBrowsePathToNodeAsync(session, nodeId,
-                        nameof(request.BrowsePath), request.BrowsePath,
-                        request.Header?.Diagnostics, diagnostics);
+                        nameof(request.BrowsePath), request.BrowsePath.ToArray(),
+                        request.Header?.Diagnostics, diagnostics).ConfigureAwait(false);
                 }
                 if (NodeId.IsNull(nodeId)) {
-                    throw new ArgumentException(nameof(request.NodeId));
+                    throw new ArgumentException("Bad node id", nameof(request));
                 }
                 var codec = _codec.Create(session.MessageContext);
                 var details = codec.Decode(request.Details, BuiltInType.ExtensionObject);
                 if (!(details.Value is ExtensionObject readDetails)) {
-                    throw new ArgumentNullException(nameof(request.Details));
+                    throw new ArgumentException("Bad details", nameof(request));
                 }
                 var response = await session.HistoryReadAsync(
                     (request.Header?.Diagnostics).ToStackModel(), readDetails,
@@ -653,7 +657,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge {
                             NodeId = nodeId,
                             DataEncoding = null // TODO
                         }
-                    });
+                    }).ConfigureAwait(false);
                 OperationResultEx.Validate("HistoryRead_" + nodeId,
                     diagnostics, response.Results.Select(r => r.StatusCode),
                     response.DiagnosticInfos, false);
@@ -674,7 +678,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge {
                 throw new ArgumentNullException(nameof(request));
             }
             if (string.IsNullOrEmpty(request.ContinuationToken)) {
-                throw new ArgumentNullException(nameof(request.ContinuationToken));
+                throw new ArgumentException("Missing continuation", nameof(request));
             }
             return _client.ExecuteServiceAsync(endpoint, request.Header?.Elevation,
                 async session => {
@@ -687,7 +691,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge {
                             ContinuationPoint = request.ContinuationToken.DecodeAsBase64(),
                             DataEncoding = null // TODO
                         }
-                    });
+                    }).ConfigureAwait(false);
                     OperationResultEx.Validate("HistoryReadNext_" + request.ContinuationToken,
                         diagnostics, response.Results.Select(r => r.StatusCode),
                         response.DiagnosticInfos, false);
@@ -708,20 +712,20 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge {
                 throw new ArgumentNullException(nameof(request));
             }
             if (request.Details == null) {
-                throw new ArgumentNullException(nameof(request.Details));
+                throw new ArgumentException("Missing details", nameof(request));
             }
             return _client.ExecuteServiceAsync(endpoint, request.Header?.Elevation, async session => {
                 var codec = _codec.Create(session.MessageContext);
                 var diagnostics = new List<OperationResultModel>();
                 var nodeId = request.NodeId.ToNodeId(session.MessageContext);
-                if (request.BrowsePath != null && request.BrowsePath.Length > 0) {
+                if (request.BrowsePath != null && request.BrowsePath.Count > 0) {
                     nodeId = await ResolveBrowsePathToNodeAsync(session, nodeId,
-                        nameof(request.BrowsePath), request.BrowsePath,
-                        request.Header?.Diagnostics, diagnostics);
+                        nameof(request.BrowsePath), request.BrowsePath.ToArray(),
+                        request.Header?.Diagnostics, diagnostics).ConfigureAwait(false);
                 }
                 var details = codec.Decode(request.Details, BuiltInType.ExtensionObject);
                 if (!(details.Value is ExtensionObject extensionObject)) {
-                    throw new ArgumentNullException(nameof(request.Details));
+                    throw new ArgumentException("Bad details", nameof(request));
                 }
                 if (extensionObject.Body is HistoryUpdateDetails updateDetails) {
                     // Update the node id to target based on the request
@@ -729,12 +733,12 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge {
                         updateDetails.NodeId = nodeId;
                     }
                     if (NodeId.IsNull(updateDetails.NodeId)) {
-                        throw new ArgumentNullException(nameof(request.NodeId));
+                        throw new ArgumentException("Missing node id", nameof(request));
                     }
                 }
                 var response = await session.HistoryUpdateAsync(
                     (request.Header?.Diagnostics).ToStackModel(),
-                    new ExtensionObjectCollection { extensionObject });
+                    new ExtensionObjectCollection { extensionObject }).ConfigureAwait(false);
                 OperationResultEx.Validate("HistoryUpdate",
                     diagnostics, response.Results.Select(r => r.StatusCode),
                     response.DiagnosticInfos, false);
@@ -765,7 +769,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge {
         /// <param name="diagnostics"></param>
         /// <param name="traceOnly"></param>
         /// <returns></returns>
-        private async Task<NodeModel> ReadNodeModelAsync(Session session, IVariantEncoder codec,
+        private static async Task<NodeModel> ReadNodeModelAsync(Session session, IVariantEncoder codec,
             RequestHeader header, NodeId nodeId, Opc.Ua.NodeClass? nodeClass, bool skipValue,
             bool rawMode, bool? children, List<OperationResultModel> diagnostics, bool traceOnly) {
             var id = nodeId.AsString(session.MessageContext);
@@ -773,7 +777,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge {
                 return new NodeModel { NodeId = id, NodeClass = nodeClass?.ToServiceType() };
             }
             var node = await RawNodeModel.ReadAsync(session, header, nodeId, skipValue,
-                diagnostics, traceOnly);
+                diagnostics, traceOnly).ConfigureAwait(false);
             var value = node.DataValue;
             return new NodeModel {
                 Children = children,
@@ -856,7 +860,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge {
                             var response = await session.BrowseAsync(header, null,
                                 nodeId, 1, Opc.Ua.BrowseDirection.Forward,
                                 ReferenceTypeIds.HierarchicalReferences,
-                                true, 0, BrowseResultMask.All);
+                                true, 0, BrowseResultMask.All).ConfigureAwait(false);
                             OperationResultEx.Validate("FetchChildren_" + nodeId,
                                 diagnostics, response?.Results?.Select(r => r.StatusCode),
                                 response?.DiagnosticInfos, true);
@@ -866,7 +870,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge {
                                     await session.BrowseNextAsync(header, true,
                                         new ByteStringCollection {
                                             response.Results[0].ContinuationPoint
-                                        });
+                                        }).ConfigureAwait(false);
                                 }
                             }
                         }
@@ -876,7 +880,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge {
                     }
                     var model = await ReadNodeModelAsync(session, codec, header, nodeId,
                         reference.NodeClass, !readValues, rawMode, children, diagnostics,
-                        true);
+                        true).ConfigureAwait(false);
                     if (rawMode) {
                         model.BrowseName = reference.BrowseName.AsString(
                             session.MessageContext);
@@ -927,7 +931,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge {
                     try {
                         var nodeId = target.TargetId.ToNodeId(session.NamespaceUris);
                         var model = await ReadNodeModelAsync(session, codec, header, nodeId,
-                            null, !readValues, rawMode, false, diagnostics, true);
+                            null, !readValues, rawMode, false, diagnostics, true).ConfigureAwait(false);
                         result.Add(new NodePathTargetModel {
                             BrowsePath = path,
                             Target = model,
@@ -972,7 +976,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge {
                         StartingNode = rootId,
                         RelativePath = paths.ToRelativePath(session.MessageContext)
                     }
-                });
+                }).ConfigureAwait(false);
             OperationResultEx.Validate($"Resolve_" + paramName, operations,
                 response.Results.Select(r => r.StatusCode), response.DiagnosticInfos,
                 false);

@@ -47,6 +47,9 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa {
         /// <param name="requestHeader"></param>
         /// <returns></returns>
         public static DiagnosticsModel ToServiceModel(this RequestHeader requestHeader) {
+            if (requestHeader is null) {
+                throw new ArgumentNullException(nameof(requestHeader));
+            }
             return new DiagnosticsModel {
                 AuditId = requestHeader.AuditEntryId,
                 Level = ((DiagnosticsMasks)requestHeader.ReturnDiagnostics)
@@ -314,7 +317,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa {
         /// <param name="policies"></param>
         /// <returns></returns>
         public static UserTokenPolicyCollection ToStackModel(
-            this List<AuthenticationMethodModel> policies) {
+            this IReadOnlyList<AuthenticationMethodModel> policies) {
             if (policies == null || policies.Count == 0) {
                 return new UserTokenPolicyCollection{
                      new UserTokenPolicy {
@@ -406,7 +409,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa {
                 case CredentialType.JwtToken:
                     result.TokenType = UserTokenType.IssuedToken;
                     result.IssuedTokenType = "http://opcfoundation.org/UA/UserToken#JWT";
-                    result.IssuerEndpointUrl = policy.Configuration?.ToString();
+                    result.IssuerEndpointUrl = (string)policy.Configuration;
                     break;
                 default:
                     return null;
@@ -420,7 +423,11 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa {
         /// <param name="authentication"></param>
         /// <returns></returns>
         public static IUserIdentity ToStackModel(this CredentialModel authentication) {
-            switch (authentication?.Type ?? CredentialType.None) {
+            if (authentication is null) {
+                return new UserIdentity(new AnonymousIdentityToken());
+            }
+
+            switch (authentication.Type ?? CredentialType.None) {
                 case CredentialType.UserName:
                     if (authentication.Value.IsObject &&
                         authentication.Value.TryGetProperty("user", out var user) &&
@@ -432,8 +439,10 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa {
                     throw new ServiceResultException(StatusCodes.BadNotSupported,
                         $"User/passord token format is not supported.");
                 case CredentialType.X509Certificate:
+#pragma warning disable CA2000 // Dispose objects before losing scope
                     return new UserIdentity(new X509Certificate2(
                         authentication.Value?.ConvertTo<byte[]>()));
+#pragma warning restore CA2000 // Dispose objects before losing scope
                 case CredentialType.JwtToken:
                     return new UserIdentity(new IssuedIdentityToken {
                         DecryptedTokenData = authentication.Value?.ConvertTo<byte[]>()
@@ -442,7 +451,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa {
                     return new UserIdentity(new AnonymousIdentityToken());
                 default:
                     throw new ServiceResultException(StatusCodes.BadNotSupported,
-                        $"Token type {authentication.Type} is not supported");
+                        $"Token type {authentication?.Type} is not supported");
             }
         }
 
@@ -452,7 +461,10 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa {
         /// <param name="authentication"></param>
         /// <returns></returns>
         public static UserIdentityToken ToUserIdentityToken(this CredentialModel authentication) {
-            switch (authentication?.Type ?? CredentialType.None) {
+            if (authentication is null) {
+                return new AnonymousIdentityToken();
+            }
+            switch (authentication.Type ?? CredentialType.None) {
                 case CredentialType.UserName:
                     if (authentication.Value.IsObject &&
                         authentication.Value.TryGetProperty("user", out var user) &&
@@ -489,7 +501,8 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa {
         /// <param name="identity"></param>
         /// <param name="serializer"></param>
         /// <returns></returns>
-        public static CredentialModel ToServiceModel(this IUserIdentity identity, IJsonSerializer serializer) {
+        public static CredentialModel ToServiceModel(this IUserIdentity identity,
+            IJsonSerializer serializer) {
             return ToServiceModel(identity?.GetIdentityToken(), serializer);
         }
 
@@ -508,6 +521,9 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa {
                 case IssuedIdentityToken it:
                     switch (it.IssuedTokenType) {
                         case IssuedTokenType.JWT:
+                            if (serializer is null) {
+                                throw new ArgumentNullException(nameof(serializer));
+                            }
                             return new CredentialModel {
                                 Type = CredentialType.JwtToken,
                                 Value = serializer.FromObject(it.DecryptedTokenData)
@@ -522,6 +538,9 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa {
                 case AnonymousIdentityToken _:
                     return null;
                 case UserNameIdentityToken un:
+                    if (serializer is null) {
+                        throw new ArgumentNullException(nameof(serializer));
+                    }
                     return new CredentialModel {
                         Type = CredentialType.UserName,
                         Value = serializer.FromObject(new {
@@ -530,6 +549,9 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa {
                         })
                     };
                 case X509IdentityToken x5:
+                    if (serializer is null) {
+                        throw new ArgumentNullException(nameof(serializer));
+                    }
                     return new CredentialModel {
                         Type = CredentialType.X509Certificate,
                         Value = serializer.FromObject(x5.CertificateData)

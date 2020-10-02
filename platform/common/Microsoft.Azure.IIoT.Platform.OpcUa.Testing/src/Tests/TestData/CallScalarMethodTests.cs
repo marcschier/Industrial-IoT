@@ -39,7 +39,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
             var result = await service.NodeMethodGetMetadataAsync(_endpoint,
                 new MethodMetadataRequestModel {
                     MethodId = methodId
-                });
+                }).ConfigureAwait(false);
 
             // Assert
             Assert.Equal(objectId, result.ObjectId);
@@ -278,7 +278,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
             var result = await service.NodeMethodGetMetadataAsync(_endpoint,
                 new MethodMetadataRequestModel {
                     MethodId = methodId
-                });
+                }).ConfigureAwait(false);
 
             // Assert
             Assert.Equal(objectId, result.ObjectId);
@@ -497,7 +497,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
             var result = await service.NodeMethodGetMetadataAsync(_endpoint,
                 new MethodMetadataRequestModel {
                     MethodId = methodId
-                });
+                }).ConfigureAwait(false);
 
             // Assert
             Assert.Equal(objectId, result.ObjectId);
@@ -579,7 +579,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
                 new MethodMetadataRequestModel {
                     MethodId = objectId,
                     MethodBrowsePath = path
-                });
+                }).ConfigureAwait(false);
 
             // Assert
             Assert.Equal(objectId, result.ObjectId);
@@ -663,7 +663,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
             var result = await service.NodeMethodGetMetadataAsync(_endpoint,
                 new MethodMetadataRequestModel {
                     MethodBrowsePath = path
-                });
+                }).ConfigureAwait(false);
 
             // Assert
             Assert.Equal("http://test.org/UA/Data/#i=10755", result.ObjectId);
@@ -791,7 +791,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
                     MethodId = methodId,
                     ObjectId = objectId,
                     Arguments = input
-                });
+                }).ConfigureAwait(false);
 
             // Assert
             Assert.Collection(result.Results,
@@ -858,7 +858,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
                     MethodId = methodId,
                     ObjectId = objectId,
                     Arguments = input
-                });
+                }).ConfigureAwait(false);
 
             // Assert
             Assert.Collection(result.Results,
@@ -909,7 +909,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
                 new MethodCallRequestModel {
                     MethodId = methodId,
                     ObjectId = objectId
-                });
+                }).ConfigureAwait(false);
 
             // Assert
             Assert.Collection(result.Results,
@@ -960,7 +960,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
                     MethodId = methodId,
                     ObjectId = objectId,
                     Arguments = new List<MethodCallArgumentModel>()
-                });
+                }).ConfigureAwait(false);
 
             // Assert
             Assert.Collection(result.Results,
@@ -1038,7 +1038,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
                     MethodId = methodId,
                     ObjectId = objectId,
                     Arguments = input
-                });
+                }).ConfigureAwait(false);
 
             // Assert
             Assert.Collection(result.Results,
@@ -1141,7 +1141,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
                     MethodId = methodId,
                     ObjectId = objectId,
                     Arguments = input
-                });
+                }).ConfigureAwait(false);
 
             // Assert
             Assert.Collection(result.Results,
@@ -1205,7 +1205,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
                 new MethodCallRequestModel {
                     MethodId = methodId,
                     ObjectId = objectId
-                });
+                }).ConfigureAwait(false);
 
             // Assert
             Assert.Collection(result.Results,
@@ -1287,7 +1287,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
                     MethodId = methodId,
                     ObjectId = objectId,
                     Arguments = input
-                });
+                }).ConfigureAwait(false);
 
             // Assert
             Assert.Collection(result.Results,
@@ -1335,7 +1335,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
                     MethodId = methodId,
                     ObjectId = objectId,
                     Arguments = input
-                });
+                }).ConfigureAwait(false);
 
             // Assert
             Assert.Collection(result.Results,
@@ -1394,7 +1394,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
                     MethodBrowsePath = methodPath,
                     ObjectBrowsePath = objectPath,
                     Arguments = input
-                });
+                }).ConfigureAwait(false);
 
             // Assert
             Assert.Collection(result.Results,
@@ -1448,7 +1448,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
                     MethodBrowsePath = methodPath,
                     ObjectId = objectId,
                     Arguments = input
-                });
+                }).ConfigureAwait(false);
 
             // Assert
             Assert.Collection(result.Results,
@@ -1507,7 +1507,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
                     ObjectId = objectId,
                     MethodId = methodId,
                     Arguments = input
-                });
+                }).ConfigureAwait(false);
 
             // Assert
             Assert.Collection(result.Results,
@@ -1571,7 +1571,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
                     ObjectBrowsePath = objectPath,
                     MethodId = methodId,
                     Arguments = input
-                });
+                }).ConfigureAwait(false);
 
             // Assert
             Assert.Collection(result.Results,
@@ -1635,7 +1635,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
                     MethodId = methodId,
                     ObjectId = objectId,
                     Arguments = input
-                });
+                }).ConfigureAwait(false);
 
             // Assert
             Assert.Collection(result.Results,
@@ -1663,7 +1663,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
                 new MethodCallRequestModel {
                     MethodId = methodId,
                     ObjectId = objectId
-                });
+                }).ConfigureAwait(false);
 
             // Assert
             Assert.Empty(result.Results);
@@ -1683,7 +1683,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
                     MethodId = methodId,
                     ObjectId = objectId,
                     Arguments = new List<MethodCallArgumentModel>()
-                });
+                }).ConfigureAwait(false);
 
             // Assert
             Assert.Empty(result.Results);

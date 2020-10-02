@@ -6,6 +6,7 @@
 namespace Microsoft.Azure.IIoT.Platform.Core.Api.Models {
     using System.Runtime.Serialization;
     using System;
+    using System.Collections.Generic;
 
     /// <summary>
     /// Certificate model
@@ -59,6 +60,6 @@ namespace Microsoft.Azure.IIoT.Platform.Core.Api.Models {
         /// Raw data
         /// </summary>
         [DataMember(Name = "certificate", Order = 6)]
-        public byte[] Certificate { get; set; }
+        public IReadOnlyCollection<byte> Certificate { get; set; }
     }
 }

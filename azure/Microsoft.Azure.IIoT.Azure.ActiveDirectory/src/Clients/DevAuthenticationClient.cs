@@ -38,7 +38,7 @@ namespace Microsoft.Azure.IIoT.Azure.ActiveDirectory.Clients {
         /// <returns></returns>
         private static IEnumerable<KeyValuePair<string, (IOAuthClientConfig, AzureServiceTokenProvider)>>
             CreateProvider(IOAuthClientConfig config) {
-            var authority = config.GetAuthorityUrl(true);
+            var authority = config.GetAuthority(true);
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) {
                 yield return KeyValuePair.Create(config.Resource ?? Http.Resource.Platform,
                     (config, new AzureServiceTokenProvider(

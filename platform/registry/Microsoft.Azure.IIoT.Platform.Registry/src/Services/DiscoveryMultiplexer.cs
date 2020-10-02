@@ -50,7 +50,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
             var discoverers = _discoverers;
             foreach (var id in discoverers) {
                 try {
-                    await _client.DiscoverAsync(id, request, ct);
+                    await _client.DiscoverAsync(id, request, ct).ConfigureAwait(false);
                 }
                 catch (Exception ex) {
                     _logger.Debug(ex, "Failed to call discover on {id}. Continue...",
@@ -66,7 +66,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
             var discoverers = _discoverers;
             foreach (var id in discoverers) {
                 try {
-                    await _client.CancelAsync(id, request, ct);
+                    await _client.CancelAsync(id, request, ct).ConfigureAwait(false);
                 }
                 catch (Exception ex) {
                     _logger.Debug(ex, "Failed to call cancel on {id}. Continue...",
@@ -86,7 +86,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
         /// <returns></returns>
         private async Task OnTimerFiredAsync() {
             try {
-                _discoverers = await _registry.ListAllDiscovererIdsAsync();
+                _discoverers = await _registry.ListAllDiscovererIdsAsync().ConfigureAwait(false);
                 try {
                     _timer.Change((int)kDiscovererRefreshTimer.TotalMilliseconds, 0);
                 }

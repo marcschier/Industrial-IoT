@@ -5,6 +5,7 @@
 
 namespace Microsoft.Azure.IIoT.Crypto.Models {
     using System;
+    using System.Collections.Generic;
     using System.Security.Cryptography.X509Certificates;
 
     /// <summary>
@@ -61,7 +62,7 @@ namespace Microsoft.Azure.IIoT.Crypto.Models {
         /// <summary>
         /// With specific issuer serial number
         /// </summary>
-        public byte[] IssuerSerialNumber { get; set; }
+        public IReadOnlyCollection<byte> IssuerSerialNumber { get; set; }
 
         /// <summary>
         /// Issuer key id

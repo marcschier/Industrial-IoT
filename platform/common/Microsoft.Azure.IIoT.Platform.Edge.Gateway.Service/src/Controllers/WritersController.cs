@@ -43,7 +43,7 @@ namespace Microsoft.Azure.IIoT.Platform.Edge.Gateway.Service.Controllers {
             if (string.IsNullOrEmpty(dataSetWriterId)) {
                 throw new ArgumentNullException(nameof(dataSetWriterId));
             }
-            var group = await _writers.GetDataSetWriterAsync(dataSetWriterId);
+            var group = await _writers.GetDataSetWriterAsync(dataSetWriterId).ConfigureAwait(false);
             return group.ToApiModel();
         }
 

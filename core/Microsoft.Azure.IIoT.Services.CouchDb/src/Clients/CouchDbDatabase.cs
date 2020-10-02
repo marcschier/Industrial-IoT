@@ -33,13 +33,13 @@ namespace Microsoft.Azure.IIoT.Services.CouchDb.Clients {
             if (string.IsNullOrEmpty(id)) {
                 id = "default";
             }
-            var db = await _client.GetOrCreateDatabaseAsync<CouchDbDocument>(id);
+            var db = await _client.GetOrCreateDatabaseAsync<CouchDbDocument>(id).ConfigureAwait(false);
             return new CouchDbCollection(id, db, options, _logger);
         }
 
         /// <inheritdoc/>
         public async Task<IEnumerable<string>> ListContainersAsync(CancellationToken ct) {
-            return await _client.GetDatabasesNamesAsync(ct);
+            return await _client.GetDatabasesNamesAsync(ct).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>

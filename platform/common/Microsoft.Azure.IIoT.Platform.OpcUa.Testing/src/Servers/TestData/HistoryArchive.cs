@@ -142,7 +142,7 @@ namespace TestData {
 
                         switch (record.DataType) {
                             case BuiltInType.Int32: {
-                                    var lastValue = (int)record.RawData[record.RawData.Count - 1].Value.Value;
+                                    var lastValue = (int)record.RawData[^1].Value.Value;
                                     entry.Value.Value = lastValue + 1;
                                     break;
                                 }

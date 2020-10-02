@@ -4,6 +4,7 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Exceptions {
+    using System;
 
     /// <summary>
     /// This exception is thrown when method call returned a
@@ -21,13 +22,30 @@ namespace Microsoft.Azure.IIoT.Exceptions {
         /// </summary>
         public string ResponsePayload { get; }
 
+        /// <inheritdoc/>
+        public MethodCallStatusException() :
+            this(500, "") {
+        }
+
+        /// <inheritdoc/>
+        public MethodCallStatusException(string message) :
+            this(500, message) {
+        }
+
+        /// <inheritdoc/>
+        public MethodCallStatusException(string message, Exception innerException) :
+            this(500, message, innerException) {
+        }
+
         /// <summary>
         /// Create exception
         /// </summary>
         /// <param name="result"></param>
         /// <param name="errorMessage"></param>
-        public MethodCallStatusException(int result, string errorMessage = null) :
-            this("{}", result, errorMessage) {
+        /// <param name="innerException"></param>
+        public MethodCallStatusException(int result, string errorMessage = null,
+            Exception innerException = null) :
+            this("{}", result, errorMessage, innerException) {
         }
 
         /// <summary>
@@ -36,9 +54,11 @@ namespace Microsoft.Azure.IIoT.Exceptions {
         /// <param name="responsePayload"></param>
         /// <param name="result"></param>
         /// <param name="errorMessage"></param>
+        /// <param name="innerException"></param>
         public MethodCallStatusException(string responsePayload, int result,
-            string errorMessage = null) :
-            base($"Response {result} {errorMessage ?? ""}: {responsePayload}") {
+            string errorMessage = null, Exception innerException = null) :
+            base($"Response {result} {errorMessage ?? ""}: {responsePayload}",
+                innerException) {
             Result = result;
             ResponsePayload = responsePayload;
         }

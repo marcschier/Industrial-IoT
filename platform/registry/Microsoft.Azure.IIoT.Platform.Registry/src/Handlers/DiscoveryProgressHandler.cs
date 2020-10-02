@@ -51,7 +51,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Handlers {
                 return;
             }
             try {
-                await Task.WhenAll(_handlers.Select(h => h.OnDiscoveryProgressAsync(discovery)));
+                await Task.WhenAll(_handlers.Select(h => h.OnDiscoveryProgressAsync(discovery))).ConfigureAwait(false);
             }
             catch (Exception ex) {
                 _logger.Error(ex,

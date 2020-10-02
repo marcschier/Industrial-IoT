@@ -35,7 +35,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
                         EndTime = DateTime.UtcNow + TimeSpan.FromDays(1),
                         ReturnBounds = true
                     }
-                });
+                }).ConfigureAwait(false);
 
             Assert.NotNull(results.History);
             Assert.Equal(14, results.History.Length);
@@ -110,7 +110,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
                         StartTime = DateTime.UtcNow - TimeSpan.FromDays(600),
                         NumValues = 10
                     }
-                });
+                }).ConfigureAwait(false);
 
             Assert.NotNull(results.History);
             Assert.Equal(10, results.History.Length);
@@ -169,7 +169,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
                         StartTime = DateTime.UtcNow - TimeSpan.FromDays(600),
                         EndTime = DateTime.UtcNow + TimeSpan.FromDays(1),
                     }
-                });
+                }).ConfigureAwait(false);
 
             Assert.NotNull(results.History);
             Assert.Equal(12, results.History.Length);
@@ -236,7 +236,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
                         EndTime = DateTime.UtcNow + TimeSpan.FromDays(1),
                         NumValues = 10
                     }
-                });
+                }).ConfigureAwait(false);
 
             Assert.NotNull(results.History);
             Assert.Equal(10, results.History.Length);

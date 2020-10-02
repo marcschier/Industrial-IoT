@@ -14,6 +14,6 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Models {
         /// <summary>
         /// Variables to add to the dataset in the writer
         /// </summary>
-        public List<DataSetAddVariableResultModel> Results { get; set; }
+        public IReadOnlyList<DataSetAddVariableResultModel> Results { get; set; }
     }
 }

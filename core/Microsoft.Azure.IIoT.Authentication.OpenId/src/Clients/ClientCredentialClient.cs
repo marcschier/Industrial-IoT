@@ -5,7 +5,7 @@
 
 namespace Microsoft.Azure.IIoT.Authentication.Clients.Default {
     using Microsoft.Azure.IIoT.Authentication.Models;
-    using Microsoft.Azure.IIoT.Http.Default;
+    using Microsoft.Azure.IIoT.Http.Clients;
     using global::IdentityModel.Client;
     using Serilog;
     using System;
@@ -50,12 +50,13 @@ namespace Microsoft.Azure.IIoT.Authentication.Clients.Default {
                 }
                 try {
                     var client = Http.CreateClient("token_client");
+                    using var request = new ClientCredentialsTokenRequest {
+                        Address = $"{config.GetAuthority()}/connect/token",
+                        ClientId = config.ClientId,
+                        ClientSecret = config.ClientSecret
+                    };
                     var response = await client.RequestClientCredentialsTokenAsync(
-                        new ClientCredentialsTokenRequest {
-                            Address = $"{config.GetAuthorityUrl()}/connect/token",
-                            ClientId = config.ClientId,
-                            ClientSecret = config.ClientSecret
-                        });
+                        request).ConfigureAwait(false);
                     if (response.IsError) {
                         _logger.Error("Error {error} aquiring token for {resource} with {config}",
                             response.Error, resource, config.GetName());

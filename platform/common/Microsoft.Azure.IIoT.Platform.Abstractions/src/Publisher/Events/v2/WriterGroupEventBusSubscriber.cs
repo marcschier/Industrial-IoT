@@ -41,37 +41,37 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Events.v2 {
                     await Task.WhenAll(_listeners
                         .Select(l => l.OnWriterGroupAddedAsync(
                             eventData.Context, eventData.WriterGroup)
-                        .ContinueWith(t => Task.CompletedTask)));
+                        .ContinueWith(t => Task.CompletedTask))).ConfigureAwait(false);
                     break;
                 case WriterGroupEventType.Updated:
                     await Task.WhenAll(_listeners
                         .Select(l => l.OnWriterGroupUpdatedAsync(
                             eventData.Context, eventData.WriterGroup)
-                        .ContinueWith(t => Task.CompletedTask)));
+                        .ContinueWith(t => Task.CompletedTask))).ConfigureAwait(false);
                     break;
                 case WriterGroupEventType.StateChange:
                     await Task.WhenAll(_listeners
                         .Select(l => l.OnWriterGroupStateChangeAsync(
                             eventData.Context, eventData.WriterGroup)
-                        .ContinueWith(t => Task.CompletedTask)));
+                        .ContinueWith(t => Task.CompletedTask))).ConfigureAwait(false);
                     break;
                 case WriterGroupEventType.Activated:
                     await Task.WhenAll(_listeners
                         .Select(l => l.OnWriterGroupActivatedAsync(
                             eventData.Context, eventData.WriterGroup)
-                        .ContinueWith(t => Task.CompletedTask)));
+                        .ContinueWith(t => Task.CompletedTask))).ConfigureAwait(false);
                     break;
                 case WriterGroupEventType.Deactivated:
                     await Task.WhenAll(_listeners
                         .Select(l => l.OnWriterGroupDeactivatedAsync(
                             eventData.Context, eventData.WriterGroup)
-                        .ContinueWith(t => Task.CompletedTask)));
+                        .ContinueWith(t => Task.CompletedTask))).ConfigureAwait(false);
                     break;
                 case WriterGroupEventType.Removed:
                     await Task.WhenAll(_listeners
                         .Select(l => l.OnWriterGroupRemovedAsync(
                             eventData.Context, eventData.Id)
-                        .ContinueWith(t => Task.CompletedTask)));
+                        .ContinueWith(t => Task.CompletedTask))).ConfigureAwait(false);
                     break;
             }
         }

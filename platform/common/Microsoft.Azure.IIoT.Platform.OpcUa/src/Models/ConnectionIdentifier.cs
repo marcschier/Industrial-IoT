@@ -63,7 +63,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Models {
 
         /// <inheritdoc/>
         public override string ToString() {
-            return (Connection.Endpoint?.Url ?? "" + _hash).ToSha1Hash();
+            return (Connection.Endpoint?.Url ?? "" + _hash).ToSha256Hash();
         }
 
         private readonly int _hash;

@@ -38,6 +38,10 @@ namespace Microsoft.Extensions.Configuration {
         public static IConfigurationBuilder AddFromKeyVault(this IConfigurationBuilder builder,
             ConfigurationProviderPriority providerPriority = ConfigurationProviderPriority.Lowest,
             bool allowInteractiveLogon = false, bool singleton = true, string keyVaultUrlVarName = null) {
+            if (builder is null) {
+                throw new ArgumentNullException(nameof(builder));
+            }
+
             var configuration = builder.Build();
 
             // Check if configuration should be loaded from KeyVault, default to true.
@@ -68,7 +72,7 @@ namespace Microsoft.Extensions.Configuration {
         /// Keyvault configuration provider.
         /// </summary>
         internal sealed class KeyVaultConfigurationProvider : IConfigurationSource,
-            IConfigurationProvider {
+            IConfigurationProvider, IDisposable {
 
             /// <summary>
             /// Create keyvault provider
@@ -130,6 +134,12 @@ namespace Microsoft.Extensions.Configuration {
                 return _reloadToken;
             }
 
+            /// <inheritdoc/>
+            public void Dispose() {
+                _keyVault.Dispose();
+            }
+
+            /// <inheritdoc/>
             public IEnumerable<string> GetChildKeys(IEnumerable<string> earlierKeys,
                 string parentPath) {
                 // Not supported
@@ -161,11 +171,11 @@ namespace Microsoft.Extensions.Configuration {
                             }
                         }
                     }
-                    return await _singleton;
+                    return await _singleton.ConfigureAwait(false);
                 }
                 // Create new instance
                 return await CreateInstanceAsync(configuration, allowInteractiveLogon,
-                    keyVaultUrlVarName, true);
+                    keyVaultUrlVarName, true).ConfigureAwait(false);
             }
 
             /// <summary>
@@ -194,7 +204,7 @@ namespace Microsoft.Extensions.Configuration {
                 var provider = new KeyVaultConfigurationProvider(configuration, vaultUri,
                     allowInteractiveLogon);
                 try {
-                    await provider.ValidateReadSecretAsync(keyVaultUrlVarName);
+                    await provider.ValidateReadSecretAsync(keyVaultUrlVarName).ConfigureAwait(false);
                 }
                 catch (Exception ex) {
                     // https://github.com/Azure/Industrial-IoT/tree/master/deploy/helm/azure-industrial-iot#load-configuration-from-azure-key-vault
@@ -208,13 +218,13 @@ namespace Microsoft.Extensions.Configuration {
                 if (!lazyLoad) {
                     while (true) {
                         try {
-                            await provider.LoadAllSecretsAsync();
+                            await provider.LoadAllSecretsAsync().ConfigureAwait(false);
                             break;
                         }
                         // try again...
                         catch (TaskCanceledException) {}
                         catch (SocketException) {}
-                        await Task.Delay(TimeSpan.FromSeconds(1));
+                        await Task.Delay(TimeSpan.FromSeconds(1)).ConfigureAwait(false);
                         Log.Logger.Information(
                             "Failed loading secrets due to timeout or network - try again ...");
                     }
@@ -241,7 +251,7 @@ namespace Microsoft.Extensions.Configuration {
                         throw new TimeoutException(
                             $"Failed to access keyvault due to timeout or network {_keyVaultUri}.");
                     }
-                    await Task.Delay(TimeSpan.FromSeconds(5));
+                    await Task.Delay(TimeSpan.FromSeconds(5)).ConfigureAwait(false);
                 }
             }
 
@@ -284,7 +294,9 @@ namespace Microsoft.Extensions.Configuration {
             /// <param name="key"></param>
             /// <returns></returns>
             private static string GetSecretNameForKey(string key) {
-                return key.Replace("_", "-").ToLowerInvariant();
+#pragma warning disable CA1308 // Normalize strings to uppercase
+                return key.Replace("_", "-", StringComparison.Ordinal).ToLowerInvariant();
+#pragma warning restore CA1308 // Normalize strings to uppercase
             }
 
             /// <summary>
@@ -294,10 +306,10 @@ namespace Microsoft.Extensions.Configuration {
             /// <param name="secretId"></param>
             /// <returns></returns>
             private static string GetKeyForSecretName(string secretId) {
-                if (!secretId.StartsWith("pcs-")) {
+                if (!secretId.StartsWith("pcs-", StringComparison.Ordinal)) {
                     return null;
                 }
-                return secretId.Replace("-", "_").ToUpperInvariant();
+                return secretId.Replace("-", "_", StringComparison.Ordinal).ToUpperInvariant();
             }
 
             private static readonly object kLock = new object();

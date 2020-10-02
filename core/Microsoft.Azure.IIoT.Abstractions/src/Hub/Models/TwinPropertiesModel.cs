@@ -15,11 +15,11 @@ namespace Microsoft.Azure.IIoT.Hub.Models {
         /// <summary>
         /// Reported settings
         /// </summary>
-        public Dictionary<string, VariantValue> Reported { get; set; }
+        public IReadOnlyDictionary<string, VariantValue> Reported { get; set; }
 
         /// <summary>
         /// Desired settings
         /// </summary>
-        public Dictionary<string, VariantValue> Desired { get; set; }
+        public IReadOnlyDictionary<string, VariantValue> Desired { get; set; }
     }
 }

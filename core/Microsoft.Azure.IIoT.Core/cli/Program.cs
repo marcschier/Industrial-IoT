@@ -123,14 +123,14 @@ Operations (Mutually exclusive):
         /// <returns></returns>
         private static async Task TestPortScannerAsync(string host) {
             var logger = ConsoleOutLogger.Create();
-            var addresses = await Dns.GetHostAddressesAsync(host);
+            var addresses = await Dns.GetHostAddressesAsync(host).ConfigureAwait(false);
             using (var cts = new CancellationTokenSource(TimeSpan.FromMinutes(10))) {
                 var watch = Stopwatch.StartNew();
                 var scanning = new ScanServices(logger);
                 DumpMemory();
                 var results = await scanning.ScanAsync(
                     PortRange.All.SelectMany(r => r.GetEndpoints(addresses.First())),
-                    cts.Token);
+                    cts.Token).ConfigureAwait(false);
                 foreach (var result in results) {
                     Console.WriteLine($"Found {result} open.");
                 }
@@ -149,7 +149,7 @@ Operations (Mutually exclusive):
                 var watch = Stopwatch.StartNew();
                 var scanning = new ScanServices(logger);
                 DumpMemory();
-                var results = await scanning.ScanAsync(NetworkClass.Wired, cts.Token);
+                var results = await scanning.ScanAsync(NetworkClass.Wired, cts.Token).ConfigureAwait(false);
                 foreach (var result in results) {
                     Console.WriteLine($"Found {result.Address}...");
                 }

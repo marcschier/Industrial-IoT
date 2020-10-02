@@ -30,19 +30,19 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Events.v2 {
                     await Task.WhenAll(_listeners
                         .Select(l => l.OnGatewayNewAsync(
                             eventData.Context, eventData.Gateway)
-                        .ContinueWith(t => Task.CompletedTask)));
+                        .ContinueWith(t => Task.CompletedTask))).ConfigureAwait(false);
                     break;
                 case GatewayEventType.Updated:
                     await Task.WhenAll(_listeners
                         .Select(l => l.OnGatewayUpdatedAsync(
                             eventData.Context, eventData.Gateway)
-                        .ContinueWith(t => Task.CompletedTask)));
+                        .ContinueWith(t => Task.CompletedTask))).ConfigureAwait(false);
                     break;
                 case GatewayEventType.Deleted:
                     await Task.WhenAll(_listeners
                         .Select(l => l.OnGatewayDeletedAsync(
                             eventData.Context, eventData.Id)
-                        .ContinueWith(t => Task.CompletedTask)));
+                        .ContinueWith(t => Task.CompletedTask))).ConfigureAwait(false);
                     break;
             }
         }

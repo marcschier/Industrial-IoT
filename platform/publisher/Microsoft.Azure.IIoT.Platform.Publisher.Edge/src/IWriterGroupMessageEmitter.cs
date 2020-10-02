@@ -62,7 +62,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge {
         /// <summary>
         /// Publishing offset for uadp messages
         /// </summary>
-        List<double> PublishingOffset { get; set; }
+        IReadOnlyList<double> PublishingOffset { get; set; }
 
         /// <summary>
         /// Enqueue new message for processing - will block

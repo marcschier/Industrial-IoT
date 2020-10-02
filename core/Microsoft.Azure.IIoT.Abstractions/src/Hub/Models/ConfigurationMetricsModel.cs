@@ -14,12 +14,12 @@ namespace Microsoft.Azure.IIoT.Hub.Models {
         /// <summary>
         /// Results of the metrics collection queries
         /// </summary>
-        public IDictionary<string, long> Results { get; set; }
+        public IReadOnlyDictionary<string, long> Results { get; set; }
 
         /// <summary>
         /// Queries used for metrics collection
         /// </summary>
-        public IDictionary<string, string> Queries { get; set; }
+        public IReadOnlyDictionary<string, string> Queries { get; set; }
     }
 
 }

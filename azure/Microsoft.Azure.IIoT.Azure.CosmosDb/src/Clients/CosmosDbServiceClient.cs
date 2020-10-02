@@ -28,8 +28,8 @@ namespace Microsoft.Azure.IIoT.Azure.CosmosDb.Clients {
             _config = config ?? throw new ArgumentNullException(nameof(config));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _serializer = serializer ?? throw new ArgumentNullException(nameof(serializer));
-            if (string.IsNullOrEmpty(_config?.DbConnectionString)) {
-                throw new ArgumentNullException(nameof(_config.DbConnectionString));
+            if (string.IsNullOrEmpty(_config.DbConnectionString)) {
+                throw new ArgumentException("Connection string missing", nameof(config));
             }
         }
 
@@ -39,12 +39,14 @@ namespace Microsoft.Azure.IIoT.Azure.CosmosDb.Clients {
                 databaseId = "default";
             }
             var cs = ConnectionString.Parse(_config.DbConnectionString);
+#pragma warning disable CA2000 // Dispose objects before losing scope
             var client = new CosmosClient(cs.Endpoint, cs.SharedAccessKey,
                 new CosmosClientOptions {
                     ConsistencyLevel = options?.Consistency.ToConsistencyLevel()
                 });
+#pragma warning restore CA2000 // Dispose objects before losing scope
             var response = await client.CreateDatabaseIfNotExistsAsync(databaseId,
-                _config.ThroughputUnits);
+                _config.ThroughputUnits).ConfigureAwait(false);
             return new DocumentDatabase(response.Database, _serializer, _logger);
         }
 

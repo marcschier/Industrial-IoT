@@ -6,6 +6,7 @@
 namespace Opc.Ua {
     using Newtonsoft.Json;
     using System;
+    using System.Globalization;
 
     /// <summary>
     /// Writes and reads status codes
@@ -22,18 +23,26 @@ namespace Opc.Ua {
         /// <inheritdoc/>
         public override object ReadJson(JsonReader reader, Type objectType,
             object existingValue, JsonSerializer serializer) {
+            if (reader is null) {
+                throw new ArgumentNullException(nameof(reader));
+            }
+
             if (reader.TokenType != JsonToken.Integer) {
                 if (objectType == typeof(StatusCode?)) {
                     return null;
                 }
                 return StatusCodes.Good;
             }
-            return new StatusCode(Convert.ToUInt32(reader.Value));
+            return new StatusCode(Convert.ToUInt32(reader.Value, CultureInfo.InvariantCulture));
         }
 
         /// <inheritdoc/>
         public override void WriteJson(JsonWriter writer, object value,
             JsonSerializer serializer) {
+            if (writer is null) {
+                throw new ArgumentNullException(nameof(writer));
+            }
+
             var statusCode = value as StatusCode?;
             if (statusCode == null) {
                 writer.WriteNull();

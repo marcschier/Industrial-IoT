@@ -56,7 +56,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Service.Runtime {
         /// <inheritdoc/>
         public string OpenApiAppSecret => _openApi.OpenApiAppSecret;
         /// <inheritdoc/>
-        public string OpenApiAuthorizationUrl => _openApi.OpenApiAuthorizationUrl;
+        public string OpenApiAuthorizationEndpoint => _openApi.OpenApiAuthorizationEndpoint;
         /// <inheritdoc/>
         public bool UseV2 => _openApi.UseV2;
         /// <inheritdoc/>

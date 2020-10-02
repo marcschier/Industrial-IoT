@@ -24,6 +24,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
         /// <summary>
         /// Entity diagnostics
         /// </summary>
-        public List<EntityActivationStatusModel> Entities { get; set; }
+        public IReadOnlyList<EntityActivationStatusModel> Entities { get; set; }
     }
 }

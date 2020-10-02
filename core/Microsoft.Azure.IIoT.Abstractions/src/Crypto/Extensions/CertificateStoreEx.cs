@@ -27,7 +27,10 @@ namespace Microsoft.Azure.IIoT.Crypto {
         public static async Task<Certificate> GetLatestCertificateAsync(
             this ICertificateStore store, string certificateName,
             CancellationToken ct = default) {
-            var result = await store.FindLatestCertificateAsync(certificateName, ct);
+            if (store is null) {
+                throw new System.ArgumentNullException(nameof(store));
+            }
+            var result = await store.FindLatestCertificateAsync(certificateName, ct).ConfigureAwait(false);
             if (result == null) {
                 throw new ResourceNotFoundException("Failed to find certificate");
             }
@@ -43,10 +46,13 @@ namespace Microsoft.Azure.IIoT.Crypto {
         /// <param name="ct"></param>
         /// <returns></returns>
         public static async Task<Certificate> FindCertificateAsync(
-            this ICertificateStore store, byte[] serialNumber,
+            this ICertificateStore store, IReadOnlyCollection<byte> serialNumber,
             CancellationToken ct = default) {
+            if (store is null) {
+                throw new System.ArgumentNullException(nameof(store));
+            }
             try {
-                return await store.GetCertificateAsync(serialNumber, ct);
+                return await store.GetCertificateAsync(serialNumber, ct).ConfigureAwait(false);
             }
             catch (ResourceNotFoundException) {
                 return null;
@@ -63,14 +69,17 @@ namespace Microsoft.Azure.IIoT.Crypto {
         public static async Task<IEnumerable<Certificate>> ListCompleteCertificateChainAsync(
             this ICertificateStore store, Certificate certificate,
             CancellationToken ct = default) {
+            if (store is null) {
+                throw new System.ArgumentNullException(nameof(store));
+            }
             var certificates = new List<Certificate>();
-            var chain = await store.ListCertificateChainAsync(certificate, ct);
+            var chain = await store.ListCertificateChainAsync(certificate, ct).ConfigureAwait(false);
             if (chain != null) {
                 certificates.AddRange(chain.Certificates);
             }
             while (chain?.ContinuationToken != null) {
                 chain = await store.ListCertificatesAsync(
-                    chain.ContinuationToken, null, ct);
+                    chain.ContinuationToken, null, ct).ConfigureAwait(false);
                 certificates.AddRange(chain.Certificates);
             }
             return certificates;
@@ -87,8 +96,11 @@ namespace Microsoft.Azure.IIoT.Crypto {
         public static async Task<CertificateCollection> ListCertificateChainAsync(
             this ICertificateStore store, byte[] serialNumber,
             CancellationToken ct = default) {
-            var cert = await store.GetCertificateAsync(serialNumber, ct);
-            return await store.ListCertificateChainAsync(cert, ct);
+            if (store is null) {
+                throw new System.ArgumentNullException(nameof(store));
+            }
+            var cert = await store.GetCertificateAsync(serialNumber, ct).ConfigureAwait(false);
+            return await store.ListCertificateChainAsync(cert, ct).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -100,10 +112,13 @@ namespace Microsoft.Azure.IIoT.Crypto {
         /// <param name="ct"></param>
         /// <returns></returns>
         public static async Task<IEnumerable<Certificate>> ListCompleteCertificateChainAsync(
-            this ICertificateStore store, byte[] serialNumber,
+            this ICertificateStore store, IReadOnlyCollection<byte> serialNumber,
             CancellationToken ct = default) {
-            var cert = await store.GetCertificateAsync(serialNumber, ct);
-            return await store.ListCompleteCertificateChainAsync(cert, ct);
+            if (store is null) {
+                throw new System.ArgumentNullException(nameof(store));
+            }
+            var cert = await store.GetCertificateAsync(serialNumber, ct).ConfigureAwait(false);
+            return await store.ListCompleteCertificateChainAsync(cert, ct).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -116,11 +131,14 @@ namespace Microsoft.Azure.IIoT.Crypto {
         public static async Task<IEnumerable<Certificate>> QueryAllCertificatesAsync(
             this ICertificateStore store, CertificateFilter filter,
             CancellationToken ct = default) {
-            var results = await store.QueryCertificatesAsync(filter, null, ct);
+            if (store is null) {
+                throw new System.ArgumentNullException(nameof(store));
+            }
+            var results = await store.QueryCertificatesAsync(filter, null, ct).ConfigureAwait(false);
             var certificates = new List<Certificate>(results.Certificates);
             while (results.ContinuationToken != null) {
                 results = await store.ListCertificatesAsync(
-                    results.ContinuationToken, null, ct);
+                    results.ContinuationToken, null, ct).ConfigureAwait(false);
                 certificates.AddRange(results.Certificates);
             }
             return certificates;

@@ -40,7 +40,7 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Storage {
                 throw new ArgumentNullException(nameof(resource));
             }
             var document = resource.ToDocumentModel();
-            await _documents.AddAsync(document, ct);
+            await _documents.AddAsync(document, ct: ct).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
@@ -49,11 +49,11 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Storage {
                 throw new ArgumentNullException(nameof(resource));
             }
             var document = await _documents.GetAsync<ResourceDocumentModel>(
-                resource.Name, ct);
+                resource.Name, ct: ct).ConfigureAwait(false);
             if (etag != null && document.Etag != etag) {
                 throw new ResourceOutOfDateException();
             }
-            await _documents.ReplaceAsync(document, resource.ToDocumentModel(), ct);
+            await _documents.ReplaceAsync(document, resource.ToDocumentModel(), ct: ct).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
@@ -61,14 +61,14 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Storage {
             if (string.IsNullOrEmpty(resourceName)) {
                 throw new ArgumentNullException(nameof(resourceName));
             }
-            var document = await _documents.GetAsync<ResourceDocumentModel>(resourceName, ct);
+            var document = await _documents.GetAsync<ResourceDocumentModel>(resourceName, ct: ct).ConfigureAwait(false);
             return (document.Value.ToServiceModel(), document.Etag);
         }
 
         /// <inheritdoc/>
         public async Task DeleteAsync(string resourceName, string etag,
             CancellationToken ct) {
-            await _documents.DeleteAsync<ResourceDocumentModel>(resourceName, ct, null, etag);
+            await _documents.DeleteAsync<ResourceDocumentModel>(resourceName, null, etag, ct).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
@@ -79,7 +79,7 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Storage {
 
             var apiScopes = new List<ApiScope>();
             while (results.HasMore()) {
-                var documents = await results.ReadAsync();
+                var documents = await results.ReadAsync().ConfigureAwait(false);
                 var resources = documents.Select(d => d.Value.ToServiceModel()).ToList();
                 apiScopes.AddRange(resources.OfType<ApiScope>());
             }
@@ -94,7 +94,7 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Storage {
 
             var identityResources = new List<IdentityResource>();
             while (results.HasMore()) {
-                var documents = await results.ReadAsync();
+                var documents = await results.ReadAsync().ConfigureAwait(false);
                 var resources = documents.Select(d => d.Value.ToServiceModel()).ToList();
                 identityResources.AddRange(resources.OfType<IdentityResource>());
             }
@@ -108,7 +108,7 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Storage {
                 scopeNames, nameof(ApiResource));
             var apiResources = new List<ApiResource>();
             while (results.HasMore()) {
-                var documents = await results.ReadAsync();
+                var documents = await results.ReadAsync().ConfigureAwait(false);
                 var resources = documents.Select(d => d.Value.ToServiceModel()).ToList();
                 apiResources.AddRange(resources.OfType<ApiResource>());
             }
@@ -123,7 +123,7 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Storage {
 
             var apiResources = new List<ApiResource>();
             while (results.HasMore()) {
-                var documents = await results.ReadAsync();
+                var documents = await results.ReadAsync().ConfigureAwait(false);
                 var resources = documents.Select(d => d.Value.ToServiceModel()).ToList();
                 apiResources.AddRange(resources.OfType<ApiResource>());
             }
@@ -132,7 +132,7 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Storage {
 
         /// <inheritdoc/>
         public async Task<ApiResource> FindApiResourceAsync(string name) {
-            var resource = await _documents.FindAsync<ResourceDocumentModel>(name);
+            var resource = await _documents.FindAsync<ResourceDocumentModel>(name).ConfigureAwait(false);
             if (resource?.Value == null) {
                 return null;
             }
@@ -146,7 +146,7 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Storage {
             var apiScopes = new List<ApiScope>();
             var identityResources = new List<IdentityResource>();
             while (results.HasMore()) {
-                var documents = await results.ReadAsync();
+                var documents = await results.ReadAsync().ConfigureAwait(false);
                 var resources = documents.Select(d => d.Value.ToServiceModel()).ToList();
 
                 apiScopes.AddRange(resources.OfType<ApiScope>());

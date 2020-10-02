@@ -24,7 +24,7 @@ namespace Microsoft.Azure.IIoT.Services.Generic.Services {
             var name = typeof(T).GetMoniker();
             await Task.WhenAll(_handlers.Values
                 .Where(h => h.Moniker == name)
-                .Select(h => h.HandleAsync(message)));
+                .Select(h => h.HandleAsync(message))).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>

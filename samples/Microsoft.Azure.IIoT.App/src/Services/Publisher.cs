@@ -45,14 +45,14 @@ namespace Microsoft.Azure.IIoT.App.Services {
             try {
                 var continuationToken = string.Empty;
                 do {
-                    var result = await _twinService.NodePublishListAsync(endpointId, continuationToken);
+                    var result = await _twinService.NodePublishListAsync(endpointId, continuationToken).ConfigureAwait(false);
                     continuationToken = result.ContinuationToken;
 
                     if (result.Items != null) {
                         foreach (var item in result.Items) {
                             model.NodeId = item.NodeId;
                             model.Header = Elevate(new RequestHeaderApiModel(), credential);
-                            var readResponse = readValues ? await _twinService.NodeValueReadAsync(endpointId, model) : null;
+                            var readResponse = readValues ? await _twinService.NodeValueReadAsync(endpointId, model).ConfigureAwait(false) : null;
                             pageResult.Results.Add(new ListNode {
                                 PublishedItem = item,
                                 Value = readResponse?.Value?.ToJson()?.TrimQuotes(),
@@ -97,7 +97,7 @@ namespace Microsoft.Azure.IIoT.App.Services {
 
                 requestApiModel.Header = Elevate(new RequestHeaderApiModel(), credential);
 
-                var resultApiModel = await _twinService.NodePublishStartAsync(endpointId, requestApiModel);
+                var resultApiModel = await _twinService.NodePublishStartAsync(endpointId, requestApiModel).ConfigureAwait(false);
                 return resultApiModel.ErrorInfo == null;
             }
             catch (Exception e) {
@@ -119,7 +119,7 @@ namespace Microsoft.Azure.IIoT.App.Services {
                 };
                 requestApiModel.Header = Elevate(new RequestHeaderApiModel(), credential);
 
-                var resultApiModel = await _twinService.NodePublishStopAsync(endpointId, requestApiModel);
+                var resultApiModel = await _twinService.NodePublishStopAsync(endpointId, requestApiModel).ConfigureAwait(false);
                 return resultApiModel.ErrorInfo == null;
             }
             catch (Exception e) {

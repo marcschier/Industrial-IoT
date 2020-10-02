@@ -18,7 +18,7 @@ namespace Opc.Ua.Encoders {
     /// <summary>
     /// Writes objects to a json
     /// </summary>
-    public class JsonEncoderEx : IEncoder, IDisposable {
+    public sealed class JsonEncoderEx : IEncoder, IDisposable {
 
         /// <inheritdoc/>
         public EncodingType EncodingType => EncodingType.Json;
@@ -64,7 +64,7 @@ namespace Opc.Ua.Encoders {
             /// <summary>
             /// Start writing object (default)
             /// </summary>
-            Object,
+            StartObject,
 
             /// <summary>
             /// Start writing array
@@ -85,7 +85,7 @@ namespace Opc.Ua.Encoders {
         /// <param name="encoding"></param>
         /// <param name="formatting"></param>
         public JsonEncoderEx(Stream stream,
-            ServiceMessageContext context = null, JsonEncoding encoding = JsonEncoding.Object,
+            ServiceMessageContext context = null, JsonEncoding encoding = JsonEncoding.StartObject,
             Newtonsoft.Json.Formatting formatting = Newtonsoft.Json.Formatting.None) :
             this(new StreamWriter(stream, new UTF8Encoding(false)),
                 context, encoding, formatting) {
@@ -99,7 +99,7 @@ namespace Opc.Ua.Encoders {
         /// <param name="encoding"></param>
         /// <param name="formatting"></param>
         public JsonEncoderEx(TextWriter writer,
-            ServiceMessageContext context = null, JsonEncoding encoding = JsonEncoding.Object,
+            ServiceMessageContext context = null, JsonEncoding encoding = JsonEncoding.StartObject,
             Newtonsoft.Json.Formatting formatting = Newtonsoft.Json.Formatting.None) :
             this(new JsonTextWriter(writer) {
                 AutoCompleteOnClose = true,
@@ -116,13 +116,13 @@ namespace Opc.Ua.Encoders {
         /// <param name="context"></param>
         /// <param name="encoding"></param>
         public JsonEncoderEx(JsonWriter writer,
-            ServiceMessageContext context = null, JsonEncoding encoding = JsonEncoding.Object) {
+            ServiceMessageContext context = null, JsonEncoding encoding = JsonEncoding.StartObject) {
             _namespaces = new Stack<string>();
             Context = context ?? new ServiceMessageContext();
             _writer = writer ?? throw new ArgumentNullException(nameof(writer));
             _encoding = encoding;
             switch (encoding) {
-                case JsonEncoding.Object:
+                case JsonEncoding.StartObject:
                     _writer.WriteStartObject();
                     break;
                 case JsonEncoding.Array:
@@ -137,7 +137,7 @@ namespace Opc.Ua.Encoders {
         public void Close() {
             if (_writer != null) {
                 switch (_encoding) {
-                    case JsonEncoding.Object:
+                    case JsonEncoding.StartObject:
                         _writer.WriteEndObject();
                         _writer.Close();
                         break;
@@ -229,7 +229,7 @@ namespace Opc.Ua.Encoders {
                     _writer.WriteValue(value);
                 }
                 else {
-                    _writer.WriteValue(value.ToString());
+                    _writer.WriteValue(value.ToString(CultureInfo.InvariantCulture));
                 }
             }
         }
@@ -241,7 +241,7 @@ namespace Opc.Ua.Encoders {
                     _writer.WriteValue(value);
                 }
                 else {
-                    _writer.WriteValue(value.ToString());
+                    _writer.WriteValue(value.ToString(CultureInfo.InvariantCulture));
                 }
             }
         }
@@ -368,7 +368,7 @@ namespace Opc.Ua.Encoders {
 
         /// <inheritdoc/>
         public void WriteNodeId(string property, NodeId value) {
-            if (NodeId.IsNull(value)) {
+            if (value == null || NodeId.IsNull(value)) {
                 WriteNull(property);
             }
             else if (UseAdvancedEncoding) {
@@ -422,7 +422,7 @@ namespace Opc.Ua.Encoders {
 
         /// <inheritdoc/>
         public void WriteExpandedNodeId(string property, ExpandedNodeId value) {
-            if (NodeId.IsNull(value)) {
+            if (value == null || NodeId.IsNull(value)) {
                 WriteNull(property);
             }
             else if (UseAdvancedEncoding) {
@@ -540,7 +540,7 @@ namespace Opc.Ua.Encoders {
 
         /// <inheritdoc/>
         public void WriteQualifiedName(string property, QualifiedName value) {
-            if (QualifiedName.IsNull(value)) {
+            if (value == null || QualifiedName.IsNull(value)) {
                 WriteNull(property);
             }
             else if (UseReversibleEncoding) {
@@ -567,7 +567,7 @@ namespace Opc.Ua.Encoders {
 
         /// <inheritdoc/>
         public void WriteLocalizedText(string property, LocalizedText value) {
-            if (LocalizedText.IsNullOrEmpty(value)) {
+            if (value == null || LocalizedText.IsNullOrEmpty(value)) {
                 WriteNull(property);
             }
             else if (UseReversibleEncoding) {
@@ -869,7 +869,8 @@ namespace Opc.Ua.Encoders {
         }
 
         /// <inheritdoc/>
-        public void WriteStringDictionary(string property, IDictionary<string, string> values) {
+        public void WriteStringDictionary(string property,
+            IReadOnlyDictionary<string, string> values) {
             WriteDictionary(property, values, (k, v) => WriteString(k, v));
         }
 
@@ -939,7 +940,8 @@ namespace Opc.Ua.Encoders {
         }
 
         /// <inheritdoc/>
-        public void WriteDataValueDictionary(string property, IDictionary<string, DataValue> values) {
+        public void WriteDataValueDictionary(string property,
+            IReadOnlyDictionary<string, DataValue> values) {
             WriteDictionary(property, values, (k, v) => WriteDataValue(k, v));
         }
 
@@ -1069,7 +1071,7 @@ namespace Opc.Ua.Encoders {
                         WriteGuid(null, ToTypedScalar<Uuid>(value));
                         return;
                     case BuiltInType.ByteString:
-                        WriteByteString(null, ToTypedScalar<byte[]>(value ?? new byte[0]));
+                        WriteByteString(null, ToTypedScalar<byte[]>(value ?? Array.Empty<byte>()));
                         return;
                     case BuiltInType.XmlElement:
                         WriteXmlElement(null, ToTypedScalar<XmlElement>(value));
@@ -1374,27 +1376,6 @@ namespace Opc.Ua.Encoders {
         }
 
         /// <summary>
-        /// Write server uri
-        /// </summary>
-        /// <param name="serverIndex"></param>
-        private void WriteServerIndex(uint serverIndex) {
-            if (serverIndex > 1) {
-                var uri = Context.ServerUris.GetString(serverIndex);
-                if (!string.IsNullOrEmpty(uri)) {
-                    WriteString("ServerUri", uri);
-                    return;
-                }
-            }
-            if (_serverMappings != null &&
-                _serverMappings.Length > serverIndex) {
-                serverIndex = _serverMappings[serverIndex];
-            }
-            if (serverIndex != 0) {
-                WriteUInt32("ServerIndex", serverIndex);
-            }
-        }
-
-        /// <summary>
         /// Write array to stream
         /// </summary>
         /// <typeparam name="T"></typeparam>
@@ -1422,8 +1403,8 @@ namespace Opc.Ua.Encoders {
         /// <param name="property"></param>
         /// <param name="values"></param>
         /// <param name="writer"></param>
-        private void WriteDictionary<T>(string property, IDictionary<string, T> values,
-            Action<string, T> writer) {
+        private void WriteDictionary<T>(string property,
+            IReadOnlyDictionary<string, T> values, Action<string, T> writer) {
             if (values == null) {
                 WriteNull(property);
             }

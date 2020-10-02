@@ -5,6 +5,7 @@
 
 namespace Microsoft.Azure.IIoT.Platform.Vault.Models {
     using Microsoft.Azure.IIoT.Crypto.Models;
+    using System.Linq;
     using System;
 
     /// <summary>
@@ -17,8 +18,11 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Models {
         /// </summary>
         /// <param name="crl"></param>
         public static X509CrlModel ToServiceModel(this Crl crl) {
+            if (crl is null) {
+                throw new ArgumentNullException(nameof(crl));
+            }
             return new X509CrlModel {
-                Crl = crl.RawData,
+                Crl = crl.RawData.ToArray(),
                 Issuer = crl.Issuer
             };
         }
@@ -36,10 +40,14 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Models {
         /// </summary>
         /// <returns></returns>
         public static byte[] ToRawData(this X509CrlModel model) {
+            if (model is null) {
+                throw new ArgumentNullException(nameof(model));
+            }
+
             const string certPemHeader = "-----BEGIN X509 CRL-----";
             const string certPemFooter = "-----END X509 CRL-----";
             if (model.Crl == null) {
-                throw new ArgumentNullException(nameof(model.Crl));
+                throw new ArgumentException("Crl data missing", nameof(model));
             }
             if (model.Crl.IsBytes) {
                 return (byte[])model.Crl;
@@ -56,7 +64,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Models {
                 }
                 return Convert.FromBase64String(request);
             }
-            throw new ArgumentException("Bad crl data.", nameof(model.Crl));
+            throw new ArgumentException("Bad crl data.", nameof(model));
         }
     }
 }

@@ -26,7 +26,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry {
             this ISupervisorRegistry service, string supervisorId,
             CancellationToken ct = default) {
             try {
-                return await service.GetSupervisorAsync(supervisorId, ct);
+                return await service.GetSupervisorAsync(supervisorId, ct).ConfigureAwait(false);
             }
             catch (ResourceNotFoundException) {
                 return null;
@@ -42,10 +42,10 @@ namespace Microsoft.Azure.IIoT.Platform.Registry {
         public static async Task<List<SupervisorModel>> ListAllSupervisorsAsync(
             this ISupervisorRegistry service, CancellationToken ct = default) {
             var supervisors = new List<SupervisorModel>();
-            var result = await service.ListSupervisorsAsync(null, null, ct);
+            var result = await service.ListSupervisorsAsync(null, null, ct).ConfigureAwait(false);
             supervisors.AddRange(result.Items);
             while (result.ContinuationToken != null) {
-                result = await service.ListSupervisorsAsync(result.ContinuationToken, null, ct);
+                result = await service.ListSupervisorsAsync(result.ContinuationToken, null, ct).ConfigureAwait(false);
                 supervisors.AddRange(result.Items);
             }
             return supervisors;
@@ -62,10 +62,10 @@ namespace Microsoft.Azure.IIoT.Platform.Registry {
             this ISupervisorRegistry service, SupervisorQueryModel query,
             CancellationToken ct = default) {
             var supervisors = new List<SupervisorModel>();
-            var result = await service.QuerySupervisorsAsync(query, null, ct);
+            var result = await service.QuerySupervisorsAsync(query, null, ct).ConfigureAwait(false);
             supervisors.AddRange(result.Items);
             while (result.ContinuationToken != null) {
-                result = await service.ListSupervisorsAsync(result.ContinuationToken, null, ct);
+                result = await service.ListSupervisorsAsync(result.ContinuationToken, null, ct).ConfigureAwait(false);
                 supervisors.AddRange(result.Items);
             }
             return supervisors;

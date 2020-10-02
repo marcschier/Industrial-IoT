@@ -33,7 +33,7 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Services {
             try {
                 if (_config.Clients != null) {
                     foreach (var client in _config.Clients) {
-                        await _clients.CreateOrUpdateAsync(client);
+                        await _clients.CreateOrUpdateAsync(client).ConfigureAwait(false);
                     }
                 }
             }
@@ -43,7 +43,7 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Services {
             try {
                 if (_config.Ids != null) {
                     foreach (var resource in _config.Ids) {
-                        await _resources.CreateOrUpdateAsync(resource);
+                        await _resources.CreateOrUpdateAsync(resource).ConfigureAwait(false);
                     }
                 }
             }
@@ -53,7 +53,7 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Services {
             try {
                 if (_config.Apis != null) {
                     foreach (var resource in _config.Apis) {
-                        await _resources.CreateOrUpdateAsync(resource);
+                        await _resources.CreateOrUpdateAsync(resource).ConfigureAwait(false);
                     }
                 }
             }

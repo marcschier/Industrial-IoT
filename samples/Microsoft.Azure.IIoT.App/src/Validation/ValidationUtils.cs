@@ -8,12 +8,12 @@ namespace Microsoft.Azure.IIoT.App.Validation {
     public class ValidationUtils {
 
         /// <summary>
-        /// Checks if the default value should be used. The default value 
+        /// Checks if the default value should be used. The default value
         /// should be used when the user did not input any value
         /// </summary>
         /// <param name="value">User input</param>
         /// <returns>True if the input is empty, false otherwise</returns>
-        public bool ShouldUseDefaultValue(string value) {
+        public static bool ShouldUseDefaultValue(string value) {
             // User did not input the value, so the default value will be used
             return string.IsNullOrWhiteSpace(value);
         }

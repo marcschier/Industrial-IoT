@@ -31,7 +31,7 @@ namespace Microsoft.Azure.IIoT.Azure.ActiveDirectory.Clients {
             if (!client.IsSystemWebViewAvailable) {
                 return null;
             }
-            var result = await client.AcquireTokenInteractive(scopes).ExecuteAsync();
+            var result = await client.AcquireTokenInteractive(scopes).ExecuteAsync().ConfigureAwait(false);
             return result.ToTokenResult();
         }
 

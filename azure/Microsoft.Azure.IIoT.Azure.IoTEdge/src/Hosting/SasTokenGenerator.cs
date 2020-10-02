@@ -51,17 +51,17 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Hosting {
             }
             audience = FormatAudience(audience);
             var cacheKey = keyId + ":" + audience;
-            var rawToken = await _cache.GetStringAsync(cacheKey, ct);
+            var rawToken = await _cache.GetStringAsync(cacheKey, ct).ConfigureAwait(false);
             if (SasToken.IsValid(rawToken)) {
                 return rawToken;
             }
             // If not found or not valid, create new token with default lifetime...
             var expiration = DateTime.UtcNow + kDefaultTokenLifetime;
             var token = await SasToken.CreateAsync(audience, expiration,
-                SignTokenAsync, _identity.DeviceId, _identity.ModuleId, keyId);
+                SignTokenAsync, _identity.DeviceId, _identity.ModuleId, keyId).ConfigureAwait(false);
             rawToken = token.ToString();
             await _cache.SetStringAsync(audience + keyId, rawToken,
-                expiration - kTokenCacheRenewal, ct);
+                expiration - kTokenCacheRenewal, ct).ConfigureAwait(false);
             return rawToken;
         }
 
@@ -86,7 +86,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Hosting {
             var toSign = Encoding.UTF8.GetBytes(value);
             byte[] signature;
             if (_hsm.IsPresent) {
-                signature = await _hsm.SignAsync(toSign, keyId);
+                signature = await _hsm.SignAsync(toSign, keyId).ConfigureAwait(false);
             }
             else if (string.IsNullOrEmpty(_cs?.SharedAccessKey)) {
                 throw new ArgumentException("No key material present to sign token.");

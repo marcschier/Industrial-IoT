@@ -35,7 +35,7 @@ namespace Microsoft.Azure.IIoT.Crypto.Models {
                         oid = Oids.RsaPkcs1Sha512;
                     }
                     else {
-                        throw new ArgumentOutOfRangeException(nameof(hashAlgorithm),
+                        throw new ArgumentOutOfRangeException(nameof(signature),
                             $"The hash algorithm {hashAlgorithm.Name} is not supported.");
                     }
                     using (var writer = new AsnWriter(AsnEncodingRules.DER)) {
@@ -62,7 +62,7 @@ namespace Microsoft.Azure.IIoT.Crypto.Models {
                         oid = Oids.Sha512;
                     }
                     else {
-                        throw new ArgumentOutOfRangeException(nameof(hashAlgorithm),
+                        throw new ArgumentOutOfRangeException(nameof(signature),
                             $"The hash algorithm {hashAlgorithm.Name} is not supported.");
                     }
                     using (var writer = new AsnWriter(AsnEncodingRules.DER)) {
@@ -84,7 +84,7 @@ namespace Microsoft.Azure.IIoT.Crypto.Models {
                 oid = Oids.ECDsaWithSha512;
             }
             else {
-                throw new ArgumentOutOfRangeException(nameof(hashAlgorithm),
+                throw new ArgumentOutOfRangeException(nameof(signature),
                     $"The hash algorithm {hashAlgorithm.Name} is not supported.");
             }
             using (var writer = new AsnWriter(AsnEncodingRules.DER)) {

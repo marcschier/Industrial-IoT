@@ -5,6 +5,7 @@
 
 namespace Microsoft.Azure.IIoT.Platform.Twin.Models {
     using Microsoft.Azure.IIoT.Platform.Core.Models;
+    using System.Collections.Generic;
 
     /// <summary>
     /// Requests method metadata
@@ -21,7 +22,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Models {
         /// An optional component path from the node identified by
         /// MethodId to the actual method node.
         /// </summary>
-        public string[] MethodBrowsePath { get; set; }
+        public IReadOnlyList<string> MethodBrowsePath { get; set; }
 
         /// <summary>
         /// Optional header

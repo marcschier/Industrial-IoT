@@ -14,6 +14,6 @@ namespace Microsoft.Azure.IIoT.Platform.Core.Models {
         /// <summary>
         /// The fields of the enum
         /// </summary>
-        public List<EnumFieldModel> Fields { get; set; }
+        public IReadOnlyList<EnumFieldModel> Fields { get; set; }
     }
 }

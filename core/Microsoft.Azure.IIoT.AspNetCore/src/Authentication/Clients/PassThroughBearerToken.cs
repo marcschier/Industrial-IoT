@@ -44,11 +44,11 @@ namespace Microsoft.Azure.IIoT.AspNetCore.Authentication.Clients {
             }
             string token = null;
             if (_providers == null) {
-                token = await _ctx.HttpContext.GetTokenAsync(kAccessTokenKey);
+                token = await _ctx.HttpContext.GetTokenAsync(kAccessTokenKey).ConfigureAwait(false);
             }
             else {
                 foreach (var provider in _providers) {
-                    token = await _ctx.HttpContext.GetTokenAsync(provider, kAccessTokenKey);
+                    token = await _ctx.HttpContext.GetTokenAsync(provider, kAccessTokenKey).ConfigureAwait(false);
                     if (token != null) {
                         break; // Use first found token
                     }

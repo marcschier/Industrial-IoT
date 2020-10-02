@@ -3,7 +3,7 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Http.Default {
+namespace Microsoft.Azure.IIoT.Http.Clients {
     using Serilog;
     using System;
     using System.Collections.Generic;
@@ -101,13 +101,13 @@ namespace Microsoft.Azure.IIoT.Http.Default {
             HttpRequestMessage request, CancellationToken cancellationToken) {
             foreach (var h in _handlers) {
                 await h.OnRequestAsync(_resourceId, request.RequestUri,
-                    request.Headers, request.Content, cancellationToken);
+                    request.Headers, request.Content, cancellationToken).ConfigureAwait(false);
             }
-            var response = await base.SendAsync(request, cancellationToken);
+            var response = await base.SendAsync(request, cancellationToken).ConfigureAwait(false);
             foreach (var h in _handlers) {
                 await h.OnResponseAsync(_resourceId, request.RequestUri,
                     response.StatusCode, response.Headers, response.Content,
-                    cancellationToken);
+                    cancellationToken).ConfigureAwait(false);
             }
             return response;
         }

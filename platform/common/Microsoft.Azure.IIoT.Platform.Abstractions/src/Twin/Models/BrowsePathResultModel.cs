@@ -15,7 +15,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Models {
         /// <summary>
         /// Targets
         /// </summary>
-        public List<NodePathTargetModel> Targets { get; set; }
+        public IReadOnlyList<NodePathTargetModel> Targets { get; set; }
 
         /// <summary>
         /// Service result in case of error

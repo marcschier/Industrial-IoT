@@ -98,11 +98,11 @@ namespace Microsoft.Azure.IIoT.Azure.EventHub.Processor.Services {
                         continue;
                     }
                     await _handler.HandleAsync(eventData.Body.Array, properties,
-                        () => CheckpointAsync(context, eventData));
+                        () => CheckpointAsync(context, eventData)).ConfigureAwait(false);
 
                     if (context.CancellationToken.IsCancellationRequested) {
                         // Checkpoint to the last processed event.
-                        await CheckpointAsync(context, eventData);
+                        await CheckpointAsync(context, eventData).ConfigureAwait(false);
                         context.CancellationToken.ThrowIfCancellationRequested();
                     }
                 }
@@ -115,7 +115,7 @@ namespace Microsoft.Azure.IIoT.Azure.EventHub.Processor.Services {
                     try {
                         _logger.Debug("Checkpointing EventProcessor {id} for partition {partitionId}...",
                             _processorId, context.PartitionId);
-                        await context.CheckpointAsync();
+                        await context.CheckpointAsync().ConfigureAwait(false);
                         _sw.Restart();
                     }
                     catch (Exception ex) {
@@ -129,7 +129,7 @@ namespace Microsoft.Azure.IIoT.Azure.EventHub.Processor.Services {
                         }
                     }
                 }
-                await Try.Async(_handler.OnBatchCompleteAsync);
+                await Try.Async(_handler.OnBatchCompleteAsync).ConfigureAwait(false);
             }
 
             /// <inheritdoc/>

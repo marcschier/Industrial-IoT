@@ -12,6 +12,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Service.Controllers {
     using System;
     using System.Threading.Tasks;
     using System.IO;
+    using System.Linq;
 
     /// <summary>
     /// Certificate CRL Distribution Point and Authority Information Access services.
@@ -46,10 +47,10 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Service.Controllers {
             }
             try {
                 var certificates =
-                    await _services.GetIssuerCertificateChainAsync(serialNumber);
+                    await _services.GetIssuerCertificateChainAsync(serialNumber).ConfigureAwait(false);
                 using (var stream = new MemoryStream()) {
                     foreach (var certificate in certificates.Chain) {
-                        stream.Write(certificate.Certificate);
+                        stream.Write(certificate.Certificate.ToArray());
                     }
                     return new FileContentResult(stream.ToArray(),
                         ContentMimeType.Cert) {
@@ -77,7 +78,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Service.Controllers {
             }
             try {
                 var crls =
-                    await _services.GetIssuerCrlChainAsync(serialNumber);
+                    await _services.GetIssuerCrlChainAsync(serialNumber).ConfigureAwait(false);
                 using (var stream = new MemoryStream()) {
                     foreach (var item in crls.Chain) {
                         stream.Write(item.ToRawData());

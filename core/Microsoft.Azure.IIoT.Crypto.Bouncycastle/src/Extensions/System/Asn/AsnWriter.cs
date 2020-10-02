@@ -11,6 +11,7 @@ namespace System.Security.Cryptography.Asn1 {
     using System.Buffers.Text;
     using System.Collections.Generic;
     using System.Diagnostics;
+    using System.Globalization;
     using System.Numerics;
     using System.Runtime.InteropServices;
 
@@ -398,7 +399,7 @@ namespace System.Security.Cryptography.Asn1 {
             // 1 << 3 => 0b0000_1000
             // subtract 1 => 0b000_0111
             var mask = (1 << unusedBitCount) - 1;
-            var lastByte = bitString.IsEmpty ? (byte)0 : bitString[bitString.Length - 1];
+            var lastByte = bitString.IsEmpty ? (byte)0 : bitString[^1];
 
             if ((lastByte & mask) != 0) {
                 // T-REC-X.690-201508 sec 11.2
@@ -539,11 +540,11 @@ namespace System.Security.Cryptography.Asn1 {
             ulong integralValue;
 
             if (backingType == typeof(ulong)) {
-                integralValue = Convert.ToUInt64(enumValue);
+                integralValue = Convert.ToUInt64(enumValue, CultureInfo.InvariantCulture);
             }
             else {
                 // All other types fit in a (signed) long.
-                var numericValue = Convert.ToInt64(enumValue);
+                var numericValue = Convert.ToInt64(enumValue, CultureInfo.InvariantCulture);
                 integralValue = unchecked((ulong)numericValue);
             }
 
@@ -917,13 +918,13 @@ namespace System.Security.Cryptography.Asn1 {
             }
 
             if (backingType == typeof(ulong)) {
-                var numericValue = Convert.ToUInt64(enumValue);
+                var numericValue = Convert.ToUInt64(enumValue, CultureInfo.InvariantCulture);
                 // T-REC-X.690-201508 sec 8.4
                 WriteNonNegativeIntegerCore(tag, numericValue);
             }
             else {
                 // All other types fit in a (signed) long.
-                var numericValue = Convert.ToInt64(enumValue);
+                var numericValue = Convert.ToInt64(enumValue, CultureInfo.InvariantCulture);
                 // T-REC-X.690-201508 sec 8.4
                 WriteIntegerCore(tag, numericValue);
             }

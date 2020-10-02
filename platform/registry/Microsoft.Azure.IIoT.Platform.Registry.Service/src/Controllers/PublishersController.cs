@@ -10,6 +10,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service.Controllers {
     using Microsoft.Azure.IIoT.Platform.Registry;
     using Microsoft.Azure.IIoT.Http;
     using Microsoft.Azure.IIoT.AspNetCore.OpenApi;
+    using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using System.Linq;
@@ -49,7 +50,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service.Controllers {
         /// <returns>Publisher registration</returns>
         [HttpGet("{publisherId}")]
         public async Task<PublisherApiModel> GetPublisherAsync(string publisherId) {
-            var result = await _publishers.GetPublisherAsync(publisherId);
+            var result = await _publishers.GetPublisherAsync(publisherId).ConfigureAwait(false);
             return result.ToApiModel();
         }
 
@@ -71,7 +72,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service.Controllers {
                 throw new ArgumentNullException(nameof(request));
             }
             await _publishers.UpdatePublisherAsync(publisherId,
-                request.ToServiceModel());
+                request.ToServiceModel()).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -85,7 +86,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service.Controllers {
         [HttpGet("{publisherId}/status")]
         public async Task<SupervisorStatusApiModel> GetPublisherStatusAsync(
             string publisherId) {
-            var result = await _diagnostics.GetPublisherStatusAsync(publisherId);
+            var result = await _diagnostics.GetPublisherStatusAsync(publisherId).ConfigureAwait(false);
             return result.ToApiModel();
         }
 
@@ -124,16 +125,10 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service.Controllers {
         public async Task<PublisherListApiModel> GetListOfPublisherAsync(
             [FromQuery] string continuationToken,
             [FromQuery] int? pageSize) {
-            if (Request.Headers.ContainsKey(HttpHeader.ContinuationToken)) {
-                continuationToken = Request.Headers[HttpHeader.ContinuationToken]
-                    .FirstOrDefault();
-            }
-            if (Request.Headers.ContainsKey(HttpHeader.MaxItemCount)) {
-                pageSize = int.Parse(Request.Headers[HttpHeader.MaxItemCount]
-                    .FirstOrDefault());
-            }
+            continuationToken = Request.GetContinuationToken(continuationToken);
+            pageSize = Request.GetPageSize(pageSize);
             var result = await _publishers.ListPublishersAsync(continuationToken,
-                pageSize);
+                pageSize).ConfigureAwait(false);
             return result.ToApiModel();
         }
 
@@ -157,12 +152,9 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service.Controllers {
             if (query == null) {
                 throw new ArgumentNullException(nameof(query));
             }
-            if (Request.Headers.ContainsKey(HttpHeader.MaxItemCount)) {
-                pageSize = int.Parse(Request.Headers[HttpHeader.MaxItemCount]
-                    .FirstOrDefault());
-            }
+            pageSize = Request.GetPageSize(pageSize);
             var result = await _publishers.QueryPublishersAsync(
-                query.ToServiceModel(), pageSize);
+                query.ToServiceModel(), pageSize).ConfigureAwait(false);
 
             // TODO: Filter results based on RBAC
 
@@ -190,12 +182,9 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service.Controllers {
             if (query == null) {
                 throw new ArgumentNullException(nameof(query));
             }
-            if (Request.Headers.ContainsKey(HttpHeader.MaxItemCount)) {
-                pageSize = int.Parse(Request.Headers[HttpHeader.MaxItemCount]
-                    .FirstOrDefault());
-            }
+            pageSize = Request.GetPageSize(pageSize);
             var result = await _publishers.QueryPublishersAsync(
-                query.ToServiceModel(), pageSize);
+                query.ToServiceModel(), pageSize).ConfigureAwait(false);
 
             // TODO: Filter results based on RBAC
 

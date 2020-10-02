@@ -63,6 +63,9 @@ namespace Microsoft.Azure.IIoT.Net {
         /// <param name="nic"></param>
         /// <returns></returns>
         public static NetInterface ToNetInterface(this NetworkInterface nic) {
+            if (nic is null) {
+                throw new System.ArgumentNullException(nameof(nic));
+            }
 
             var props = nic.GetIPProperties();
             var address = props.UnicastAddresses.FirstOrDefault(a =>

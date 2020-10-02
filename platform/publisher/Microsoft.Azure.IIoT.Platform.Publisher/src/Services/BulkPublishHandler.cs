@@ -50,7 +50,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                 throw new ArgumentNullException(nameof(nodeset));
             }
             var session = new PublishingSession(this, endpointId, sessionId);
-            await _processor.ProcessAsync(nodeset, session, contentType, ct);
+            await _processor.ProcessAsync(nodeset, session, contentType, ct).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -69,7 +69,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
             public override async Task CompleteAsync(ISystemContext context,
                 bool abort = false) {
                 if (_cache.Count != 0) {
-                    await PublishFromCacheAsync(context);
+                    await PublishFromCacheAsync(context).ConfigureAwait(false);
                 }
             }
 
@@ -78,7 +78,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                 ISystemContext context) {
                 _cache.Add(node);
                 if (_cache.Count >= kMaxCacheSize) {
-                    await PublishFromCacheAsync(context);
+                    await PublishFromCacheAsync(context).ConfigureAwait(false);
                 }
             }
 
@@ -98,14 +98,16 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                             NodeId = n.NodeId.AsString(ctx)
                         })
                         .ToList()
-                });
+                }).ConfigureAwait(false);
                 _cache.Clear();
             }
 
             private const int kMaxCacheSize = 1000;
             private readonly List<VariableNodeModel> _cache = new List<VariableNodeModel>();
             private readonly string _endpointId;
+#pragma warning disable IDE0052 // Remove unread private members
             private readonly string _sessionId;
+#pragma warning restore IDE0052 // Remove unread private members
             private readonly BulkPublishHandler _outer;
         }
 

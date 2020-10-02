@@ -19,6 +19,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
         /// <summary>
         /// Discoverers
         /// </summary>
-        public List<DiscovererModel> Items { get; set; }
+        public IReadOnlyList<DiscovererModel> Items { get; set; }
     }
 }

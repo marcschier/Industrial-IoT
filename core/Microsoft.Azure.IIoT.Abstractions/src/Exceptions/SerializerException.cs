@@ -12,6 +12,11 @@ namespace Microsoft.Azure.IIoT.Exceptions {
     public class SerializerException : Exception {
 
         /// <inheritdoc />
+        public SerializerException() :
+            this("Failed to serializer or deserialize") {
+        }
+
+        /// <inheritdoc />
         public SerializerException(string message) : base(message) {
         }
 

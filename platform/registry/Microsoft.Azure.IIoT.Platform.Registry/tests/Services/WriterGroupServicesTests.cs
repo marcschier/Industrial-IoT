@@ -39,7 +39,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                 IWriterGroupRegistryListener events = mock.Create<WriterGroupServices>();
                 IWriterGroupStatus service = mock.Create<PublisherRegistry>();
 
-                var results = await service.ListAllWriterGroupActivationsAsync();
+                var results = await service.ListAllWriterGroupActivationsAsync().ConfigureAwait(false);
                 Assert.Empty(results);
 
                 // Run
@@ -47,53 +47,53 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                     WriterGroupId = "testid",
                     BatchSize = 5,
                     LocaleIds = new List<string> { "test" }
-                });
+                }).ConfigureAwait(false);
 
                 // Assert
-                results = await service.ListAllWriterGroupActivationsAsync();
+                results = await service.ListAllWriterGroupActivationsAsync().ConfigureAwait(false);
                 Assert.Empty(results);
-                results = await service.ListAllWriterGroupActivationsAsync(false);
+                results = await service.ListAllWriterGroupActivationsAsync(false).ConfigureAwait(false);
                 Assert.Empty(results);
 
                 // Run
                 await events.OnWriterGroupActivatedAsync(null, new WriterGroupInfoModel {
                     WriterGroupId = "testid"
-                });
+                }).ConfigureAwait(false);
 
                 // Assert
-                results = await service.ListAllWriterGroupActivationsAsync();
+                results = await service.ListAllWriterGroupActivationsAsync().ConfigureAwait(false);
                 Assert.Empty(results); // Not placed and connected
-                results = await service.ListAllWriterGroupActivationsAsync(false);
+                results = await service.ListAllWriterGroupActivationsAsync(false).ConfigureAwait(false);
                 Assert.Single(results);
 
                 // Run
                 await events.OnWriterGroupDeactivatedAsync(null, new WriterGroupInfoModel {
                     WriterGroupId = "testid"
-                });
+                }).ConfigureAwait(false);
 
                 // Assert
-                results = await service.ListAllWriterGroupActivationsAsync(false);
+                results = await service.ListAllWriterGroupActivationsAsync(false).ConfigureAwait(false);
                 Assert.Empty(results);
-                results = await service.ListAllWriterGroupActivationsAsync();
+                results = await service.ListAllWriterGroupActivationsAsync().ConfigureAwait(false);
                 Assert.Empty(results);
 
                 // Run
                 await events.OnWriterGroupActivatedAsync(null, new WriterGroupInfoModel {
                     WriterGroupId = "testid"
-                });
+                }).ConfigureAwait(false);
 
                 // Assert
-                results = await service.ListAllWriterGroupActivationsAsync();
+                results = await service.ListAllWriterGroupActivationsAsync().ConfigureAwait(false);
                 Assert.Empty(results); // Not placed and connected
-                results = await service.ListAllWriterGroupActivationsAsync(false);
+                results = await service.ListAllWriterGroupActivationsAsync(false).ConfigureAwait(false);
                 Assert.Single(results);
 
                 // Run
-                await events.OnWriterGroupRemovedAsync(null, "testid");
+                await events.OnWriterGroupRemovedAsync(null, "testid").ConfigureAwait(false);
                 // Assert
-                results = await service.ListAllWriterGroupActivationsAsync();
+                results = await service.ListAllWriterGroupActivationsAsync().ConfigureAwait(false);
                 Assert.Empty(results);
-                results = await service.ListAllWriterGroupActivationsAsync(false);
+                results = await service.ListAllWriterGroupActivationsAsync(false).ConfigureAwait(false);
                 Assert.Empty(results);
             }
         }
@@ -119,39 +119,39 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                     WriterGroupId = groupid,
                     BatchSize = 5,
                     LocaleIds = new List<string> { "test" }
-                });
+                }).ConfigureAwait(false);
 
                 await writers.OnDataSetWriterAddedAsync(null, new DataSetWriterInfoModel {
                     DataSetWriterId = "dw1",
                     WriterGroupId = groupid
-                });
+                }).ConfigureAwait(false);
 
-                var device = await hub.GetAsync(PublisherRegistryEx.ToDeviceId(groupid), null, default);
+                var device = await hub.GetAsync(PublisherRegistryEx.ToDeviceId(groupid), null, default).ConfigureAwait(false);
                 Assert.Contains(PublisherRegistryEx.ToPropertyName("dw1"), device.Properties.Desired.Keys);
 
                 await writers.OnDataSetWriterAddedAsync(null, new DataSetWriterInfoModel {
                     DataSetWriterId = "dw2",
                     WriterGroupId = groupid
-                });
+                }).ConfigureAwait(false);
 
-                device = await hub.GetAsync(PublisherRegistryEx.ToDeviceId(groupid), null, default);
+                device = await hub.GetAsync(PublisherRegistryEx.ToDeviceId(groupid), null, default).ConfigureAwait(false);
                 Assert.Contains(PublisherRegistryEx.ToPropertyName("dw1"), device.Properties.Desired.Keys);
                 Assert.Contains(PublisherRegistryEx.ToPropertyName("dw2"), device.Properties.Desired.Keys);
 
                 await writers.OnDataSetWriterRemovedAsync(null, new DataSetWriterInfoModel {
                     DataSetWriterId = "dw1",
                     WriterGroupId = groupid
-                });
+                }).ConfigureAwait(false);
 
-                device = await hub.GetAsync(PublisherRegistryEx.ToDeviceId(groupid), null, default);
+                device = await hub.GetAsync(PublisherRegistryEx.ToDeviceId(groupid), null, default).ConfigureAwait(false);
                 Assert.DoesNotContain(PublisherRegistryEx.ToPropertyName("dw1"), device.Properties.Desired.Keys);
                 Assert.Contains(PublisherRegistryEx.ToPropertyName("dw2"), device.Properties.Desired.Keys);
 
                 await writers.OnDataSetWriterUpdatedAsync(null, "dw2", new DataSetWriterInfoModel {
                     IsDisabled = true
-                });
+                }).ConfigureAwait(false);
 
-                device = await hub.GetAsync(PublisherRegistryEx.ToDeviceId(groupid), null, default);
+                device = await hub.GetAsync(PublisherRegistryEx.ToDeviceId(groupid), null, default).ConfigureAwait(false);
                 Assert.DoesNotContain(PublisherRegistryEx.ToPropertyName("dw1"), device.Properties.Desired.Keys);
                 Assert.DoesNotContain(PublisherRegistryEx.ToPropertyName("dw2"), device.Properties.Desired.Keys);
 
@@ -159,18 +159,18 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                     DataSetWriterId = "dw2",
                     WriterGroupId = groupid,
                     IsDisabled = false
-                });
+                }).ConfigureAwait(false);
 
-                device = await hub.GetAsync(PublisherRegistryEx.ToDeviceId(groupid), null, default);
+                device = await hub.GetAsync(PublisherRegistryEx.ToDeviceId(groupid), null, default).ConfigureAwait(false);
                 Assert.DoesNotContain(PublisherRegistryEx.ToPropertyName("dw1"), device.Properties.Desired.Keys);
                 Assert.Contains(PublisherRegistryEx.ToPropertyName("dw2"), device.Properties.Desired.Keys);
 
                 await writers.OnDataSetWriterRemovedAsync(null, new DataSetWriterInfoModel {
                     DataSetWriterId = "dw2",
                     WriterGroupId = groupid
-                });
+                }).ConfigureAwait(false);
 
-                device = await hub.GetAsync(PublisherRegistryEx.ToDeviceId(groupid), null, default);
+                device = await hub.GetAsync(PublisherRegistryEx.ToDeviceId(groupid), null, default).ConfigureAwait(false);
                 Assert.DoesNotContain(PublisherRegistryEx.ToPropertyName("dw1"), device.Properties.Desired.Keys);
                 Assert.DoesNotContain(PublisherRegistryEx.ToPropertyName("dw2"), device.Properties.Desired.Keys);
             }

@@ -46,7 +46,7 @@ namespace Microsoft.Azure.IIoT.Http.SignalR {
             if (string.IsNullOrEmpty(endpointUrl)) {
                 throw new ArgumentNullException(nameof(endpointUrl));
             }
-            await _lock.WaitAsync();
+            await _lock.WaitAsync().ConfigureAwait(false);
             try {
                 var lookup = endpointUrl;
                 if (!string.IsNullOrEmpty(resourceId)) {
@@ -55,11 +55,11 @@ namespace Microsoft.Azure.IIoT.Http.SignalR {
                 if (!_clients.TryGetValue(lookup, out var client) ||
                     client.ConnectionId == null) {
                     if (client != null) {
-                        await client.DisposeAsync();
+                        await client.DisposeAsync().ConfigureAwait(false);
                         _clients.Remove(lookup);
                     }
                     client = await SignalRClientRegistrar.CreateAsync(_config,
-                        endpointUrl, _logger, resourceId, _provider, _jsonSettings);
+                        endpointUrl, _logger, resourceId, _provider, _jsonSettings).ConfigureAwait(false);
                     _clients.Add(lookup, client);
                 }
                 return client;
@@ -82,10 +82,10 @@ namespace Microsoft.Azure.IIoT.Http.SignalR {
             if (_disposed) {
                 return;
             }
-            await _lock.WaitAsync();
+            await _lock.WaitAsync().ConfigureAwait(false);
             try {
                 foreach (var client in _clients.Values) {
-                    await client.DisposeAsync();
+                    await client.DisposeAsync().ConfigureAwait(false);
                 }
                 _clients.Clear();
             }
@@ -160,7 +160,7 @@ namespace Microsoft.Azure.IIoT.Http.SignalR {
                     throw new ObjectDisposedException(nameof(SignalRClientRegistrar));
                 }
                 _disposed = true;
-                await _client.StopAsync();
+                await _client.StopAsync().ConfigureAwait(false);
             }
 
             private bool _disposed;

@@ -49,7 +49,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Service.Controllers {
             }
             // Use service principal
             HttpContext.User = null; // TODO Set sp
-            var result = await _services.GetIssuerCertificateChainAsync(serialNumber);
+            var result = await _services.GetIssuerCertificateChainAsync(serialNumber).ConfigureAwait(false);
             return result.ToApiModel();
         }
 
@@ -67,7 +67,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Service.Controllers {
             }
             // Use service principal
             HttpContext.User = null; // TODO Set sp
-            var result = await _services.GetIssuerCrlChainAsync(serialNumber);
+            var result = await _services.GetIssuerCrlChainAsync(serialNumber).ConfigureAwait(false);
             return result.ToApiModel();
         }
 

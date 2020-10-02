@@ -24,7 +24,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Models {
         /// PublishedVariableNodeId to the actual node to publish
         /// (Publisher extension).
         /// </summary>
-        public string[] BrowsePath { get; set; }
+        public IReadOnlyList<string> BrowsePath { get; set; }
 
         /// <summary>
         /// Display name of the published variable
@@ -69,7 +69,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Models {
         /// <summary>
         /// MetaData properties qualified names. (not supported yet)
         /// </summary>
-        public List<string> MetaDataProperties { get; set; }
+        public IReadOnlyList<string> MetaDataProperties { get; set; }
 
         /// <summary>
         /// Monitoring mode (Publisher extension)

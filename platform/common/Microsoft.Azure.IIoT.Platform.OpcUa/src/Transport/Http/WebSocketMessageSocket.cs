@@ -236,7 +236,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Transport {
             var sent = 0;
             foreach (var buffer in buffers) {
                 await _socket.SendAsync(buffer, WebSocketMessageType.Binary, true,
-                    _open.Token);
+                    _open.Token).ConfigureAwait(false);
                 sent += buffer.Count;
             }
             return sent;

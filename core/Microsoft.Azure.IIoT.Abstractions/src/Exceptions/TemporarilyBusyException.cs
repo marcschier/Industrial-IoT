@@ -18,22 +18,37 @@ namespace Microsoft.Azure.IIoT.Exceptions {
         public TimeSpan? RetryAfter { get; }
 
         /// <inheritdoc />
+        public TemporarilyBusyException() :
+            this("Temporarily busy - try again.") {
+        }
+
+        /// <inheritdoc />
         public TemporarilyBusyException(TimeSpan? retryAfter = null) {
             RetryAfter = retryAfter;
         }
 
         /// <inheritdoc />
         public TemporarilyBusyException(string message,
-            TimeSpan? retryAfter = null) :
+            TimeSpan? retryAfter) :
             base(message) {
             RetryAfter = retryAfter;
         }
 
         /// <inheritdoc />
         public TemporarilyBusyException(string message, Exception innerException,
-            TimeSpan? retryAfter = null) :
+            TimeSpan? retryAfter) :
             base(message, innerException) {
             RetryAfter = retryAfter;
+        }
+
+        /// <inheritdoc />
+        public TemporarilyBusyException(string message) :
+            this(message, (TimeSpan?)null) {
+        }
+
+        /// <inheritdoc />
+        public TemporarilyBusyException(string message, Exception innerException) :
+            this(message, innerException, (TimeSpan?)null) {
         }
     }
 }

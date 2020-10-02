@@ -18,13 +18,16 @@ namespace Microsoft.Azure.IIoT.Storage {
         /// </summary>
         /// <param name="documents"></param>
         /// <param name="id"></param>
-        /// <param name="ct"></param>
         /// <param name="options"></param>
+        /// <param name="ct"></param>
         /// <returns></returns>
         public static async Task<IDocumentInfo<T>> GetAsync<T>(
-            this IItemContainer documents, string id, CancellationToken ct = default,
-            OperationOptions options = null) {
-            var result = await documents.FindAsync<T>(id, ct, options);
+            this IItemContainer documents, string id, OperationOptions options = null,
+            CancellationToken ct = default) {
+            if (documents is null) {
+                throw new System.ArgumentNullException(nameof(documents));
+            }
+            var result = await documents.FindAsync<T>(id, options, ct).ConfigureAwait(false);
             if (result == null) {
                 throw new ResourceNotFoundException($"Resource {id} not found");
             }

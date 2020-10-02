@@ -19,11 +19,12 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
     using System.Threading;
     using System.Threading.Tasks;
     using Prometheus;
+    using System.Globalization;
 
     /// <summary>
     /// Subscription services implementation
     /// </summary>
-    public class SubscriptionServices : ISubscriptionManager, IDisposable {
+    public sealed class SubscriptionServices : ISubscriptionManager, IDisposable {
 
         /// <inheritdoc/>
         public int TotalSubscriptionCount => _subscriptions.Count;
@@ -43,8 +44,11 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
 
         /// <inheritdoc/>
         public Task<ISubscription> GetOrCreateSubscriptionAsync(SubscriptionModel subscriptionModel) {
-            if (string.IsNullOrEmpty(subscriptionModel?.Id)) {
+            if (subscriptionModel is null) {
                 throw new ArgumentNullException(nameof(subscriptionModel));
+            }
+            if (string.IsNullOrEmpty(subscriptionModel.Id)) {
+                throw new ArgumentException("Missing id field", nameof(subscriptionModel));
             }
             var sub = _subscriptions.GetOrAdd(subscriptionModel.Id,
                 key => new SubscriptionWrapper(this, subscriptionModel, _logger));
@@ -159,7 +163,9 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
             public async Task<SubscriptionNotificationModel> GetSnapshotAsync() {
                 await _lock.WaitAsync().ConfigureAwait(false);
                 try {
+#pragma warning disable CA2000 // Dispose objects before losing scope
                     var subscription = GetSubscription(null, null, false);
+#pragma warning restore CA2000 // Dispose objects before losing scope
                     if (subscription == null) {
                         return null;
                     }
@@ -288,7 +294,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
                 catch (ServiceResultException sre) {
                     _logger.Error("Failed to reapply monitored items due to {exception}", sre.Message);
                     NotifySubscriptionError(sre);
-                    throw sre;
+                    throw;
                 }
                 finally {
                     _lock.Release();
@@ -526,7 +532,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
                         }
 
                         count = _currentlyMonitored.Count(m => m.Item.Status.Error == null);
-                        kMonitoredItems.WithLabels(rawSubscription.Id.ToString()).Set(count);
+                        kMonitoredItems.WithLabels(rawSubscription.Id.ToString(CultureInfo.InvariantCulture)).Set(count);
 
                         _logger.Information("Now monitoring {count} nodes in subscription " +
                             "{subscription}", count, rawSubscription.DisplayName);
@@ -571,7 +577,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
                         if (results != null) {
                             _logger.Information("Failed to set monitoring for {count} nodes in subscription " +
                                 "{subscription}",
-                                results.Count(r => (r == null) ? false : StatusCode.IsNotGood(r.StatusCode)),
+                                results.Count(r => r != null && StatusCode.IsNotGood(r.StatusCode)),
                                 rawSubscription.DisplayName);
                         }
 
@@ -963,11 +969,11 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
 
             /// <inheritdoc/>
             public override int GetHashCode() {
-                var hashCode = 1301977042;
+                var hashCode = base.GetHashCode();
                 hashCode = (hashCode * -1521134295) +
                     EqualityComparer<string>.Default.GetHashCode(Template.Id);
                 hashCode = (hashCode * -1521134295) +
-                    EqualityComparer<string[]>.Default.GetHashCode(Template.RelativePath);
+                    EqualityComparer<string[]>.Default.GetHashCode(Template.RelativePath?.ToArray());
                 hashCode = (hashCode * -1521134295) +
                     EqualityComparer<string>.Default.GetHashCode(Template.StartNodeId);
                 hashCode = (hashCode * -1521134295) +

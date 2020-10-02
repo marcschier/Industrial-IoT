@@ -3,7 +3,7 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Platform.Publisher.Storage.Default {
+namespace Microsoft.Azure.IIoT.Platform.Publisher.Storage.Services {
     using Microsoft.Azure.IIoT.Platform.Publisher.Models;
     using Microsoft.Azure.IIoT.Platform.Core.Models;
     using Microsoft.Azure.IIoT.Serializers;
@@ -71,7 +71,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Storage.Default {
         /// (Publisher extension).
         /// </summary>
         [DataMember]
-        public string[] BrowsePath { get; set; }
+        public IReadOnlyList<string> BrowsePath { get; set; }
 
         /// <summary>
         /// Default is <see cref="NodeAttribute.Value"/>.
@@ -119,7 +119,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Storage.Default {
         /// MetaData properties qualified names. (not supported yet)
         /// </summary>
         [DataMember]
-        public List<string> MetaDataProperties { get; set; }
+        public IReadOnlyList<string> MetaDataProperties { get; set; }
 
         /// <summary>
         /// Monitoring mode (Publisher extension)
@@ -164,13 +164,13 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Storage.Default {
         /// Fields to select
         /// </summary>
         [DataMember]
-        public List<SimpleAttributeOperandModel> SelectedFields { get; set; }
+        public IReadOnlyList<SimpleAttributeOperandModel> SelectedFields { get; set; }
 
         /// <summary>
         /// Filter to use
         /// </summary>
         [DataMember]
-        public List<ContentFilterElementModel> FilterElements { get; set; }
+        public IReadOnlyList<ContentFilterElementModel> FilterElements { get; set; }
 
         /// <summary>
         /// Order

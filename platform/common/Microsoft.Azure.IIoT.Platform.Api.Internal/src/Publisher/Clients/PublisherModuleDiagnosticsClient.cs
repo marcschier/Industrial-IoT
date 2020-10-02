@@ -40,7 +40,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api.Clients {
             }
             var sw = Stopwatch.StartNew();
             var result = await _client.CallMethodAsync(publisherId,
-                "GetStatus_V2", null, null, ct);
+                "GetStatus_V2", null, null, ct).ConfigureAwait(false);
             _logger.Debug("Get publisher supervisor {publisherId} status " +
                 "took {elapsed} ms.", publisherId, sw.ElapsedMilliseconds);
             return _serializer.Deserialize<SupervisorStatusModel>(
@@ -55,7 +55,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api.Clients {
             }
             var sw = Stopwatch.StartNew();
             _ = await _client.CallMethodAsync(publisherId,
-                "Reset_V2", null, null, ct);
+                "Reset_V2", null, null, ct).ConfigureAwait(false);
             _logger.Debug("Reset publisher supervisor {publisherId} took " +
                 "{elapsed} ms.", publisherId, sw.ElapsedMilliseconds);
         }

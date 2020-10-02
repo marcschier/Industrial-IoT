@@ -27,7 +27,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry {
             this IApplicationRegistry service, string applicationId,
             CancellationToken ct = default) {
             try {
-                return await service.GetApplicationAsync(applicationId, false, ct);
+                return await service.GetApplicationAsync(applicationId, false, ct).ConfigureAwait(false);
             }
             catch (ResourceNotFoundException) {
                 return null;
@@ -45,10 +45,10 @@ namespace Microsoft.Azure.IIoT.Platform.Registry {
             this IApplicationRegistry service, ApplicationRegistrationQueryModel query,
             CancellationToken ct = default) {
             var registrations = new List<ApplicationInfoModel>();
-            var result = await service.QueryApplicationsAsync(query, null, ct);
+            var result = await service.QueryApplicationsAsync(query, null, ct).ConfigureAwait(false);
             registrations.AddRange(result.Items);
             while (result.ContinuationToken != null) {
-                result = await service.ListApplicationsAsync(result.ContinuationToken, null, ct);
+                result = await service.ListApplicationsAsync(result.ContinuationToken, null, ct).ConfigureAwait(false);
                 registrations.AddRange(result.Items);
             }
             return registrations;
@@ -63,10 +63,10 @@ namespace Microsoft.Azure.IIoT.Platform.Registry {
         public static async Task<List<ApplicationInfoModel>> ListAllApplicationsAsync(
             this IApplicationRegistry service, CancellationToken ct = default) {
             var registrations = new List<ApplicationInfoModel>();
-            var result = await service.ListApplicationsAsync(null, null, ct);
+            var result = await service.ListApplicationsAsync(null, null, ct).ConfigureAwait(false);
             registrations.AddRange(result.Items);
             while (result.ContinuationToken != null) {
-                result = await service.ListApplicationsAsync(result.ContinuationToken, null, ct);
+                result = await service.ListApplicationsAsync(result.ContinuationToken, null, ct).ConfigureAwait(false);
                 registrations.AddRange(result.Items);
             }
             return registrations;
@@ -81,9 +81,9 @@ namespace Microsoft.Azure.IIoT.Platform.Registry {
         public static async Task<List<ApplicationRegistrationModel>> ListAllRegistrationsAsync(
             this IApplicationRegistry service, CancellationToken ct = default) {
             var registrations = new List<ApplicationRegistrationModel>();
-            var infos = await service.ListAllApplicationsAsync(ct);
+            var infos = await service.ListAllApplicationsAsync(ct).ConfigureAwait(false);
             foreach (var info in infos) {
-                var registration = await service.GetApplicationAsync(info.ApplicationId, false, ct);
+                var registration = await service.GetApplicationAsync(info.ApplicationId, false, ct).ConfigureAwait(false);
                 registrations.Add(registration);
             }
             return registrations;
@@ -97,10 +97,10 @@ namespace Microsoft.Azure.IIoT.Platform.Registry {
         /// <returns></returns>
         public static async Task UnregisterAllApplicationsAsync(
             this IApplicationRegistry service, CancellationToken ct = default) {
-            var apps = await service.ListAllApplicationsAsync(ct);
+            var apps = await service.ListAllApplicationsAsync(ct).ConfigureAwait(false);
             foreach (var app in apps) {
                 await Try.Async(() => service.UnregisterApplicationAsync(
-                    app.ApplicationId, app.GenerationId, null, ct));
+                    app.ApplicationId, app.GenerationId, null, ct)).ConfigureAwait(false);
             }
         }
 
@@ -113,10 +113,10 @@ namespace Microsoft.Azure.IIoT.Platform.Registry {
         public static async Task<List<string>> ListAllSitesAsync(
             this IApplicationRegistry service, CancellationToken ct = default) {
             var sites = new List<string>();
-            var result = await service.ListSitesAsync(null, null, ct);
+            var result = await service.ListSitesAsync(null, null, ct).ConfigureAwait(false);
             sites.AddRange(result.Sites);
             while (result.ContinuationToken != null) {
-                result = await service.ListSitesAsync(result.ContinuationToken, null, ct);
+                result = await service.ListSitesAsync(result.ContinuationToken, null, ct).ConfigureAwait(false);
                 sites.AddRange(result.Sites);
             }
             return sites;

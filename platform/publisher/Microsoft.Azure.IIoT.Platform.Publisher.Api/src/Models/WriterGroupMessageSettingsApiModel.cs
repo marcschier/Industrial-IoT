@@ -46,6 +46,6 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api.Models {
         /// </summary>
         [DataMember(Name = "publishingOffset", Order = 4,
             EmitDefaultValue = false)]
-        public List<double> PublishingOffset { get; set; }
+        public IReadOnlyList<double> PublishingOffset { get; set; }
     }
 }

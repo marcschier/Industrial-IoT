@@ -109,7 +109,7 @@ namespace Microsoft.Azure.IIoT.Utils {
                 try {
                     _cts.Token.ThrowIfCancellationRequested();
                     _outer._logger.Information("Running {taskName}.", _outer._taskName);
-                    await _outer.RunAsync(_cts.Token);
+                    await _outer.RunAsync(_cts.Token).ConfigureAwait(false);
                     _outer._logger.Information("{taskName} finished.", _outer._taskName);
                 }
                 catch (OperationCanceledException) {

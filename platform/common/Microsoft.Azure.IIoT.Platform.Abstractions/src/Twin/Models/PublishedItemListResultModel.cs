@@ -20,7 +20,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Models {
         /// <summary>
         /// Monitored items
         /// </summary>
-        public List<PublishedItemModel> Items { get; set; }
+        public IReadOnlyList<PublishedItemModel> Items { get; set; }
 
         /// <summary>
         /// Service result in case of error

@@ -24,12 +24,21 @@ namespace Opc.Ua {
         public static void Add(this ICertificateStore store,
             IEnumerable<X509Certificate2> certificates,
             bool noCopy = false) {
+            if (store is null) {
+                throw new ArgumentNullException(nameof(store));
+            }
             if (certificates == null) {
                 throw new ArgumentNullException(nameof(certificates));
             }
             foreach (var cert in certificates) {
                 Try.Op(() => store.Delete(cert.Thumbprint));
-                store.Add(noCopy ? cert : new X509Certificate2(cert));
+                if (noCopy) {
+                    store.Add(cert);
+                }
+                else {
+                    using var copy = new X509Certificate2(cert);
+                    store.Add(copy);
+                }
             }
         }
 
@@ -41,6 +50,9 @@ namespace Opc.Ua {
         /// <returns></returns>
         public static void Remove(this ICertificateStore store,
             IEnumerable<X509Certificate2> certificates) {
+            if (store is null) {
+                throw new ArgumentNullException(nameof(store));
+            }
             if (certificates == null) {
                 throw new ArgumentNullException(nameof(certificates));
             }

@@ -12,7 +12,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Transport {
     /// <summary>
     /// Secure channel over websocket middleware
     /// </summary>
-    public class WebSocketMiddleware {
+    public class WebSocketMiddleware : IMiddleware {
 
         /// <inheritdoc/>
         public Uri EndpointUrl { get; }
@@ -20,12 +20,10 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Transport {
         /// <summary>
         /// Constructor
         /// </summary>
-        /// <param name="next"></param>
         /// <param name="listener"></param>
         /// <param name="logger"></param>
-        public WebSocketMiddleware(RequestDelegate next,
+        public WebSocketMiddleware(
             IWebSocketChannelListener listener, ILogger logger) {
-            _next = next;
             _listener = listener ??
                 throw new ArgumentNullException(nameof(listener));
             _logger = logger ??
@@ -38,10 +36,17 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Transport {
         /// Handle websocket requests
         /// </summary>
         /// <param name="context"></param>
+        /// <param name="next"></param>
         /// <returns></returns>
-        public async Task Invoke(HttpContext context) {
+        public async Task InvokeAsync(HttpContext context, RequestDelegate next) {
+            if (context is null) {
+                throw new ArgumentNullException(nameof(context));
+            }
+            if (next is null) {
+                throw new ArgumentNullException(nameof(next));
+            }
             if (context.WebSockets.IsWebSocketRequest) {
-                var webSocket = await context.WebSockets.AcceptWebSocketAsync();
+                using var webSocket = await context.WebSockets.AcceptWebSocketAsync().ConfigureAwait(false);
                 if (webSocket != null) {
                     // pass to listener to decode secure channel binary stream
                     _listener.OnAccept(context, webSocket);
@@ -52,10 +57,9 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Transport {
                 }
                 return;
             }
-            await _next(context);
+            await next(context).ConfigureAwait(false);
         }
 
-        private readonly RequestDelegate _next;
         private readonly IWebSocketChannelListener _listener;
         private readonly ILogger _logger;
     }

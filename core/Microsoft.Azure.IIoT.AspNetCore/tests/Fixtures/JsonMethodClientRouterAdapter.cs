@@ -28,7 +28,7 @@ namespace Microsoft.Azure.IIoT.AspNetCore.Tests {
         public async Task<string> CallMethodAsync(string target, string method,
             string payload, TimeSpan? timeout, CancellationToken ct) {
             var result = await _router.InvokeAsync(target, method,
-                Encoding.UTF8.GetBytes(payload), ContentMimeType.Json);
+                Encoding.UTF8.GetBytes(payload), ContentMimeType.Json).ConfigureAwait(false);
             const int kMaxMessageSize = 127 * 1024;
             if (result.Length > kMaxMessageSize) {
                 throw new MethodCallStatusException(

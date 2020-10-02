@@ -77,7 +77,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Models {
         /// nodes that have classes in this array.
         /// (default: null - all targets are returned)
         /// </summary>
-        public List<NodeClass> NodeClassFilter { get; set; }
+        public IReadOnlyList<NodeClass> NodeClassFilter { get; set; }
 
         /// <summary>
         /// Optional header

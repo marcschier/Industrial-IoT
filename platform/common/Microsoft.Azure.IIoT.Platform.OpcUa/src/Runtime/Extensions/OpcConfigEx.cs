@@ -42,7 +42,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa {
                     break;
                 }
                 else {
-                    await Task.Delay(3000);
+                    await Task.Delay(3000).ConfigureAwait(false);
                 }
             }
 
@@ -91,19 +91,19 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa {
                             opcConfig.ToSecurityConfiguration(hostname);
                         applicationConfiguration.ServerConfiguration.AlternateBaseAddresses =
                             alternateBaseAddresses.ToArray();
-                        await applicationConfiguration.Validate(applicationConfiguration.ApplicationType);
+                        await applicationConfiguration.Validate(applicationConfiguration.ApplicationType).ConfigureAwait(false);
                         var application = new ApplicationInstance(applicationConfiguration);
                         var hasAppCertificate = await application.CheckApplicationInstanceCertificate(true,
-                            CertificateFactory.defaultKeySize);
+                            CertificateFactory.defaultKeySize).ConfigureAwait(false);
                         if (!hasAppCertificate) {
                             throw new InvalidConfigurationException("OPC UA application certificate invalid");
                         }
 
                         applicationConfiguration.CertificateValidator.CertificateValidation += handler;
                         await applicationConfiguration.CertificateValidator
-                            .Update(applicationConfiguration.SecurityConfiguration);
+                            .Update(applicationConfiguration.SecurityConfiguration).ConfigureAwait(false);
                     },
-                    e => true, 5);
+                    e => true, 5).ConfigureAwait(false);
             }
             catch (Exception e) {
                 throw new InvalidConfigurationException("OPC UA configuration not valid", e);

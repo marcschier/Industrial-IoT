@@ -41,9 +41,9 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Transport {
         /// <param name="context"></param>
         /// <returns></returns>
         public async Task Invoke(HttpContext context) {
-            var handled = await ProcessAsync(context);
+            var handled = await ProcessAsync(context).ConfigureAwait(false);
             if (!handled) {
-                await _next(context);
+                await _next(context).ConfigureAwait(false);
             }
         }
 
@@ -65,7 +65,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Transport {
             }
             try {
                 _logger.Verbose("Processing UA request...");
-                var response = await _listener.ProcessAsync(context, request);
+                var response = await _listener.ProcessAsync(context, request).ConfigureAwait(false);
                 // Encode content as per encoding requested
                 context.Response.ContentType = context.Request.ContentType;
                 context.Response.StatusCode = (int)HttpStatusCode.OK;

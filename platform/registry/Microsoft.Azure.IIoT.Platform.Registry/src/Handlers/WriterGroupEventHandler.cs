@@ -51,7 +51,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Handlers {
                 return;
             }
             try {
-                await Task.WhenAll(_handlers.Select(h => h.OnWriterGroupStateChangeAsync(change)));
+                await Task.WhenAll(_handlers.Select(h => h.OnWriterGroupStateChangeAsync(change))).ConfigureAwait(false);
             }
             catch (Exception ex) {
                 _logger.Error(ex, "Handling publisher state event failed with exception - skip");

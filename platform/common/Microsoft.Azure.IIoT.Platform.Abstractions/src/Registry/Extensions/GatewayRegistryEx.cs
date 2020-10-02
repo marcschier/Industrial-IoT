@@ -27,7 +27,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry {
             this IGatewayRegistry service, string gatewayId,
             bool onlyServerState = false, CancellationToken ct = default) {
             try {
-                return await service.GetGatewayAsync(gatewayId, onlyServerState, ct);
+                return await service.GetGatewayAsync(gatewayId, onlyServerState, ct).ConfigureAwait(false);
             }
             catch (ResourceNotFoundException) {
                 return null;
@@ -43,11 +43,11 @@ namespace Microsoft.Azure.IIoT.Platform.Registry {
         public static async Task<List<GatewayModel>> ListAllGatewaysAsync(
             this IGatewayRegistry service, CancellationToken ct = default) {
             var gateways = new List<GatewayModel>();
-            var result = await service.ListGatewaysAsync(null, null, ct);
+            var result = await service.ListGatewaysAsync(null, null, ct).ConfigureAwait(false);
             gateways.AddRange(result.Items);
             while (result.ContinuationToken != null) {
                 result = await service.ListGatewaysAsync(result.ContinuationToken,
-                    null, ct);
+                    null, ct).ConfigureAwait(false);
                 gateways.AddRange(result.Items);
             }
             return gateways;
@@ -64,11 +64,11 @@ namespace Microsoft.Azure.IIoT.Platform.Registry {
             this IGatewayRegistry service, GatewayQueryModel query,
             CancellationToken ct = default) {
             var gateways = new List<GatewayModel>();
-            var result = await service.QueryGatewaysAsync(query, null, ct);
+            var result = await service.QueryGatewaysAsync(query, null, ct).ConfigureAwait(false);
             gateways.AddRange(result.Items);
             while (result.ContinuationToken != null) {
                 result = await service.ListGatewaysAsync(result.ContinuationToken,
-                    null, ct);
+                    null, ct).ConfigureAwait(false);
                 gateways.AddRange(result.Items);
             }
             return gateways;

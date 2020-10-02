@@ -3,7 +3,7 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Platform.Publisher.Storage.Default {
+namespace Microsoft.Azure.IIoT.Platform.Publisher.Storage.Services {
     using Microsoft.Azure.IIoT.Platform.Publisher.Models;
     using Microsoft.Azure.IIoT.Exceptions;
     using Microsoft.Azure.IIoT.Storage;
@@ -24,6 +24,12 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Storage.Default {
         /// <param name="databaseServer"></param>
         /// <param name="config"></param>
         public WriterGroupDatabase(IDatabaseServer databaseServer, IItemContainerConfig config) {
+            if (databaseServer is null) {
+                throw new ArgumentNullException(nameof(databaseServer));
+            }
+            if (config is null) {
+                throw new ArgumentNullException(nameof(config));
+            }
             var dbs = databaseServer.OpenAsync(config.DatabaseName).Result;
             _documents = dbs.OpenContainerAsync(config.ContainerName ?? "publisher").Result;
         }
@@ -38,7 +44,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Storage.Default {
             while (true) {
                 if (!string.IsNullOrEmpty(writerGroup.WriterGroupId)) {
                     var document = await _documents.FindAsync<WriterGroupDocument>(
-                        writerGroup.WriterGroupId, ct);
+                        writerGroup.WriterGroupId, ct: ct).ConfigureAwait(false);
                     if (document != null) {
                         throw new ResourceConflictException(
                             $"Writer Group {writerGroup.WriterGroupId} already exists.");
@@ -48,7 +54,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Storage.Default {
                     writerGroup.WriterGroupId = Guid.NewGuid().ToString();
                 }
                 try {
-                    var result = await _documents.AddAsync(writerGroup.ToDocumentModel(), ct);
+                    var result = await _documents.AddAsync(writerGroup.ToDocumentModel(), ct: ct).ConfigureAwait(false);
                     return result.Value.ToFrameworkModel();
                 }
                 catch (ResourceConflictException) {
@@ -69,9 +75,9 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Storage.Default {
                 throw new ArgumentNullException(nameof(writerGroupId));
             }
             while (true) {
-                var document = await _documents.FindAsync<WriterGroupDocument>(writerGroupId, ct);
+                var document = await _documents.FindAsync<WriterGroupDocument>(writerGroupId, ct: ct).ConfigureAwait(false);
                 var updateOrAdd = document?.Value.ToFrameworkModel();
-                var group = await predicate(updateOrAdd);
+                var group = await predicate(updateOrAdd).ConfigureAwait(false);
                 if (group == null) {
                     return updateOrAdd;
                 }
@@ -80,7 +86,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Storage.Default {
                 if (document == null) {
                     try {
                         // Add document
-                        var result = await _documents.AddAsync(updated, ct);
+                        var result = await _documents.AddAsync(updated, ct: ct).ConfigureAwait(false);
                         return result.Value.ToFrameworkModel();
                     }
                     catch (ResourceConflictException) {
@@ -90,7 +96,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Storage.Default {
                 }
                 // Try replacing
                 try {
-                    var result = await _documents.ReplaceAsync(document, updated, ct);
+                    var result = await _documents.ReplaceAsync(document, updated, ct: ct).ConfigureAwait(false);
                     return result.Value.ToFrameworkModel();
                 }
                 catch (ResourceOutOfDateException) {
@@ -107,18 +113,18 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Storage.Default {
                 throw new ArgumentNullException(nameof(writerGroupId));
             }
             while (true) {
-                var document = await _documents.FindAsync<WriterGroupDocument>(writerGroupId, ct);
+                var document = await _documents.FindAsync<WriterGroupDocument>(writerGroupId, ct: ct).ConfigureAwait(false);
                 if (document == null) {
                     throw new ResourceNotFoundException("Writer group not found");
                 }
                 var group = document.Value.ToFrameworkModel();
-                if (!await predicate(group)) {
+                if (!await predicate(group).ConfigureAwait(false)) {
                     return group;
                 }
                 group.WriterGroupId = writerGroupId;
                 var updated = group.ToDocumentModel();
                 try {
-                    var result = await _documents.ReplaceAsync(document, updated, ct);
+                    var result = await _documents.ReplaceAsync(document, updated, ct: ct).ConfigureAwait(false);
                     return result.Value.ToFrameworkModel();
                 }
                 catch (ResourceOutOfDateException) {
@@ -134,7 +140,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Storage.Default {
                 throw new ArgumentNullException(nameof(writerGroupId));
             }
             var document = await _documents.FindAsync<WriterGroupDocument>(
-                writerGroupId, ct);
+                writerGroupId, ct: ct).ConfigureAwait(false);
             if (document == null) {
                 return null;
             }
@@ -152,7 +158,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Storage.Default {
                     WriterGroups = new List<WriterGroupInfoModel>()
                 };
             }
-            var documents = await results.ReadAsync(ct);
+            var documents = await results.ReadAsync(ct).ConfigureAwait(false);
             return new WriterGroupInfoListModel {
                 ContinuationToken = results.ContinuationToken,
                 WriterGroups = documents.Select(r => r.Value.ToFrameworkModel()).ToList()
@@ -167,16 +173,16 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Storage.Default {
             }
             while (true) {
                 var document = await _documents.FindAsync<WriterGroupDocument>(
-                    writerGroupId);
+                    writerGroupId).ConfigureAwait(false);
                 if (document == null) {
                     return null;
                 }
                 var group = document.Value.ToFrameworkModel();
-                if (!await predicate(group)) {
+                if (!await predicate(group).ConfigureAwait(false)) {
                     return group;
                 }
                 try {
-                    await _documents.DeleteAsync(document, ct);
+                    await _documents.DeleteAsync(document, ct: ct).ConfigureAwait(false);
                 }
                 catch (ResourceOutOfDateException) {
                     continue;
@@ -194,7 +200,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Storage.Default {
             if (string.IsNullOrEmpty(generationId)) {
                 throw new ArgumentNullException(nameof(generationId));
             }
-            await _documents.DeleteAsync<WriterGroupDocument>(writerGroupId, ct, null, generationId);
+            await _documents.DeleteAsync<WriterGroupDocument>(writerGroupId, null, generationId, ct).ConfigureAwait(false);
         }
 
         /// <summary>

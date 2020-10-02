@@ -11,6 +11,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Service.Controllers {
     using Microsoft.Azure.IIoT.Platform.Publisher.Models;
     using Microsoft.Azure.IIoT.Http;
     using Microsoft.Azure.IIoT.AspNetCore.OpenApi;
+    using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using System.Threading.Tasks;
@@ -55,7 +56,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Service.Controllers {
                 request.ToServiceModel(), new PublisherOperationContextModel {
                     Time = DateTime.UtcNow,
                     AuthorityId = HttpContext.User.Identity.Name
-                });
+                }).ConfigureAwait(false);
             return result.ToApiModel();
         }
 
@@ -77,7 +78,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Service.Controllers {
             if (string.IsNullOrEmpty(dataSetWriterId)) {
                 throw new ArgumentNullException(nameof(dataSetWriterId));
             }
-            var group = await _writers.GetDataSetWriterAsync(dataSetWriterId);
+            var group = await _writers.GetDataSetWriterAsync(dataSetWriterId).ConfigureAwait(false);
             return group.ToApiModel();
         }
 
@@ -103,7 +104,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Service.Controllers {
                 request.ToServiceModel(), new PublisherOperationContextModel {
                     Time = DateTime.UtcNow,
                     AuthorityId = HttpContext.User.Identity.Name
-                });
+                }).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -128,7 +129,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Service.Controllers {
                 request.ToServiceModel(), new PublisherOperationContextModel {
                     Time = DateTime.UtcNow,
                     AuthorityId = HttpContext.User.Identity.Name
-                });
+                }).ConfigureAwait(false);
             return result.ToApiModel();
         }
 
@@ -146,7 +147,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Service.Controllers {
             if (string.IsNullOrEmpty(dataSetWriterId)) {
                 throw new ArgumentNullException(nameof(dataSetWriterId));
             }
-            var result = await _writers.GetEventDataSetAsync(dataSetWriterId);
+            var result = await _writers.GetEventDataSetAsync(dataSetWriterId).ConfigureAwait(false);
             return result.ToApiModel();
         }
 
@@ -172,7 +173,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Service.Controllers {
                 request.ToServiceModel(), new PublisherOperationContextModel {
                     Time = DateTime.UtcNow,
                     AuthorityId = HttpContext.User.Identity.Name
-                });
+                }).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -200,7 +201,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Service.Controllers {
                 generationId, new PublisherOperationContextModel {
                     Time = DateTime.UtcNow,
                     AuthorityId = HttpContext.User.Identity.Name
-                });
+                }).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -225,7 +226,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Service.Controllers {
                 request.ToServiceModel(), new PublisherOperationContextModel {
                     Time = DateTime.UtcNow,
                     AuthorityId = HttpContext.User.Identity.Name
-                });
+                }).ConfigureAwait(false);
             return result.ToApiModel();
         }
 
@@ -255,7 +256,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Service.Controllers {
                 variableId, request.ToServiceModel(), new PublisherOperationContextModel {
                     Time = DateTime.UtcNow,
                     AuthorityId = HttpContext.User.Identity.Name
-                });
+                }).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -274,16 +275,10 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Service.Controllers {
             if (string.IsNullOrEmpty(dataSetWriterId)) {
                 throw new ArgumentNullException(nameof(dataSetWriterId));
             }
-            if (Request.Headers.ContainsKey(HttpHeader.ContinuationToken)) {
-                continuationToken = Request.Headers[HttpHeader.ContinuationToken]
-                    .FirstOrDefault();
-            }
-            if (Request.Headers.ContainsKey(HttpHeader.MaxItemCount)) {
-                pageSize = int.Parse(Request.Headers[HttpHeader.MaxItemCount]
-                    .FirstOrDefault());
-            }
+            continuationToken = Request.GetContinuationToken(continuationToken);
+            pageSize = Request.GetPageSize(pageSize);
             var result = await _writers.ListDataSetVariablesAsync(dataSetWriterId,
-                continuationToken, pageSize);
+                continuationToken, pageSize).ConfigureAwait(false);
             return result.ToApiModel();
         }
 
@@ -310,12 +305,9 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Service.Controllers {
             if (query == null) {
                 throw new ArgumentNullException(nameof(query));
             }
-            if (Request.Headers.ContainsKey(HttpHeader.MaxItemCount)) {
-                pageSize = int.Parse(Request.Headers[HttpHeader.MaxItemCount]
-                    .FirstOrDefault());
-            }
+            pageSize = Request.GetPageSize(pageSize);
             var result = await _writers.QueryDataSetVariablesAsync(dataSetWriterId,
-                query.ToServiceModel(), pageSize);
+                query.ToServiceModel(), pageSize).ConfigureAwait(false);
 
             return result.ToApiModel();
         }
@@ -349,7 +341,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Service.Controllers {
                 generationId, new PublisherOperationContextModel {
                     Time = DateTime.UtcNow,
                     AuthorityId = HttpContext.User.Identity.Name
-                });
+                }).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -365,16 +357,10 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Service.Controllers {
         [AutoRestExtension(NextPageLinkName = "continuationToken")]
         public async Task<DataSetWriterInfoListApiModel> GetListOfDataSetWritersAsync(
             [FromQuery] string continuationToken, [FromQuery] int? pageSize) {
-            if (Request.Headers.ContainsKey(HttpHeader.ContinuationToken)) {
-                continuationToken = Request.Headers[HttpHeader.ContinuationToken]
-                    .FirstOrDefault();
-            }
-            if (Request.Headers.ContainsKey(HttpHeader.MaxItemCount)) {
-                pageSize = int.Parse(Request.Headers[HttpHeader.MaxItemCount]
-                    .FirstOrDefault());
-            }
+            continuationToken = Request.GetContinuationToken(continuationToken);
+            pageSize = Request.GetPageSize(pageSize);
             var result = await _writers.ListDataSetWritersAsync(
-                continuationToken, pageSize);
+                continuationToken, pageSize).ConfigureAwait(false);
             return result.ToApiModel();
         }
 
@@ -397,12 +383,9 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Service.Controllers {
             if (query == null) {
                 throw new ArgumentNullException(nameof(query));
             }
-            if (Request.Headers.ContainsKey(HttpHeader.MaxItemCount)) {
-                pageSize = int.Parse(Request.Headers[HttpHeader.MaxItemCount]
-                    .FirstOrDefault());
-            }
+            pageSize = Request.GetPageSize(pageSize);
             var result = await _writers.QueryDataSetWritersAsync(
-                query.ToServiceModel(), pageSize);
+                query.ToServiceModel(), pageSize).ConfigureAwait(false);
 
             return result.ToApiModel();
         }
@@ -432,7 +415,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Service.Controllers {
                 new PublisherOperationContextModel {
                     Time = DateTime.UtcNow,
                     AuthorityId = HttpContext.User.Identity.Name
-                });
+                }).ConfigureAwait(false);
         }
 
         private readonly IDataSetWriterRegistry _writers;

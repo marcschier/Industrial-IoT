@@ -18,7 +18,7 @@ namespace Microsoft.Azure.IIoT.Authentication {
         /// <param name="config"></param>
         /// <param name="noVersion"></param>
         /// <returns></returns>
-        public static string GetAuthorityUrl(this IOAuthConfig config,
+        public static string GetAuthority(this IOAuthConfig config,
             bool noVersion = false) {
             var authorityUrl = config?.InstanceUrl?.TrimEnd('/');
 
@@ -55,7 +55,7 @@ namespace Microsoft.Azure.IIoT.Authentication {
         /// <param name="config"></param>
         /// <returns></returns>
         public static string GetProviderName(this IOAuthConfig config) {
-            var name = config.Provider;
+            var name = config?.Provider;
             if (string.IsNullOrEmpty(name)) {
                 return AuthProvider.Unknown;
             }

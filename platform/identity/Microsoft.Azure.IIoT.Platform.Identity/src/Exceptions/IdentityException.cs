@@ -18,19 +18,23 @@ namespace Microsoft.Azure.IIoT.Exceptions {
         /// </summary>
         public IEnumerable<IdentityError> Errors { get; }
 
-        /// <summary>
-        /// Create empty
-        /// </summary>
+        /// <inheritdoc />
         public IdentityException() {
             Errors = new List<IdentityError>();
         }
 
-        /// <summary>
-        /// Create exception
-        /// </summary>
-        /// <param name="errors"></param>
+        /// <inheritdoc />
         public IdentityException(IEnumerable<IdentityError> errors) {
             Errors = errors;
+        }
+
+        /// <inheritdoc />
+        public IdentityException(string message) : base(message) {
+        }
+
+        /// <inheritdoc />
+        public IdentityException(string message, Exception innerException) :
+            base(message, innerException) {
         }
     }
 }

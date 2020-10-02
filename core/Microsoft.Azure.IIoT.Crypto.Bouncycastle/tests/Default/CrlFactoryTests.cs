@@ -3,7 +3,7 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Crypto.Default {
+namespace Microsoft.Azure.IIoT.Crypto.Services {
     using Microsoft.Azure.IIoT.Crypto.Models;
     using Microsoft.Azure.IIoT.Crypto.Storage;
     using Microsoft.Azure.IIoT.Serializers.NewtonSoft;
@@ -31,7 +31,7 @@ namespace Microsoft.Azure.IIoT.Crypto.Default {
         [InlineData(SignatureType.RS256)]
         [InlineData(SignatureType.PS384)]
         [InlineData(SignatureType.RS384)]
-        public static async Task RSASignedCrlCreateWith1Test(SignatureType signature) {
+        public async Task RSASignedCrlCreateWith1TestAsync(SignatureType signature) {
 
             using (var mock = Setup()) {
 
@@ -48,16 +48,16 @@ namespace Microsoft.Azure.IIoT.Crypto.Default {
                     var rootPrivateKey = root.ExportPrivateKey();
                     var rootPublicKey = rootPrivateKey.GetPublicKey();
                     var rootKeyHandle = await keys.ImportKeyAsync("ababa", rootPrivateKey,
-                        new KeyStoreProperties { Exportable = true });
+                        new KeyStoreProperties { Exportable = true }).ConfigureAwait(false);
 
                     var next = DateTime.UtcNow + TimeSpan.FromDays(4);
                     next = next.Date;
                     var rootCert = root.ToCertificate(new IssuerPolicies(), rootKeyHandle);
 
                     var crl = await factory.CreateCrlAsync(rootCert, signature,
-                        ca1.ToCertificate().YieldReturn(), next);
+                        ca1.ToCertificate().YieldReturn(), next).ConfigureAwait(false);
 
-                    var privateKey = await keys.ExportKeyAsync(rootKeyHandle);
+                    var privateKey = await keys.ExportKeyAsync(rootKeyHandle).ConfigureAwait(false);
 
                     Assert.True(rootPrivateKey.SameAs(privateKey));
                     Assert.Equal(next, crl.NextUpdate);
@@ -76,7 +76,7 @@ namespace Microsoft.Azure.IIoT.Crypto.Default {
         [InlineData(SignatureType.RS256)]
         [InlineData(SignatureType.PS384)]
         [InlineData(SignatureType.RS384)]
-        public static async Task RSASignedCrlCreateWith2Test(SignatureType signature) {
+        public async Task RSASignedCrlCreateWith2TestAsync(SignatureType signature) {
 
             using (var mock = Setup()) {
 
@@ -93,7 +93,7 @@ namespace Microsoft.Azure.IIoT.Crypto.Default {
                     var rootPrivateKey = root.ExportPrivateKey();
                     var rootPublicKey = rootPrivateKey.GetPublicKey();
                     var rootKeyHandle = await keys.ImportKeyAsync("ababa", rootPrivateKey,
-                        new KeyStoreProperties { Exportable = true });
+                        new KeyStoreProperties { Exportable = true }).ConfigureAwait(false);
 
                     var next = DateTime.UtcNow + TimeSpan.FromDays(4);
                     next = next.Date;
@@ -103,9 +103,9 @@ namespace Microsoft.Azure.IIoT.Crypto.Default {
                         new List<Certificate> {
                             ca2.ToCertificate(),
                             ca1.ToCertificate()
-                        }, next);
+                        }, next).ConfigureAwait(false);
 
-                    var privateKey = await keys.ExportKeyAsync(rootKeyHandle);
+                    var privateKey = await keys.ExportKeyAsync(rootKeyHandle).ConfigureAwait(false);
 
                     Assert.True(rootPrivateKey.SameAs(privateKey));
                     Assert.Equal(next, crl.NextUpdate);
@@ -122,7 +122,7 @@ namespace Microsoft.Azure.IIoT.Crypto.Default {
         [InlineData(SignatureType.ES256K)]
         [InlineData(SignatureType.ES384)]
         [InlineData(SignatureType.ES512)]
-        public static async Task ECCSignedCrlCreateWith2Test(SignatureType signature) {
+        public async Task ECCSignedCrlCreateWith2TestAsync(SignatureType signature) {
 
             using (var mock = Setup()) {
 
@@ -139,7 +139,7 @@ namespace Microsoft.Azure.IIoT.Crypto.Default {
                     var rootPrivateKey = root.ExportPrivateKey();
                     var rootPublicKey = rootPrivateKey.GetPublicKey();
                     var rootKeyHandle = await keys.ImportKeyAsync("ababa", rootPrivateKey,
-                        new KeyStoreProperties { Exportable = true });
+                        new KeyStoreProperties { Exportable = true }).ConfigureAwait(false);
 
                     var next = DateTime.UtcNow + TimeSpan.FromDays(4);
                     next = next.Date;
@@ -149,9 +149,9 @@ namespace Microsoft.Azure.IIoT.Crypto.Default {
                         new List<Certificate> {
                             ca2.ToCertificate(),
                             ca1.ToCertificate()
-                        }, next);
+                        }, next).ConfigureAwait(false);
 
-                    var privateKey = await keys.ExportKeyAsync(rootKeyHandle);
+                    var privateKey = await keys.ExportKeyAsync(rootKeyHandle).ConfigureAwait(false);
 
                     Assert.True(rootPrivateKey.SameAs(privateKey));
                     Assert.Equal(next, crl.NextUpdate);

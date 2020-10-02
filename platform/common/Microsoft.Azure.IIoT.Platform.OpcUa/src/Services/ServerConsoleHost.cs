@@ -38,7 +38,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
         /// <inheritdoc/>
         public async Task StopAsync() {
             if (_server != null) {
-                await _lock.WaitAsync();
+                await _lock.WaitAsync().ConfigureAwait(false);
                 try {
                     if (_server != null) {
                         _logger.Information("Stopping server.");
@@ -67,10 +67,10 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
         /// <inheritdoc/>
         public async Task StartAsync(IEnumerable<int> ports) {
             if (_server == null) {
-                await _lock.WaitAsync();
+                await _lock.WaitAsync().ConfigureAwait(false);
                 try {
                     if (_server == null) {
-                        await StartServerInternalAsync(ports, PkiRootPath);
+                        await StartServerInternalAsync(ports, PkiRootPath).ConfigureAwait(false);
                         return;
                     }
                 }
@@ -109,7 +109,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
             config = ApplicationInstance.FixupAppConfig(config);
 
             _logger.Information("Validate configuration...");
-            await config.Validate(config.ApplicationType);
+            await config.Validate(config.ApplicationType).ConfigureAwait(false);
 
             _logger.Information("Initialize certificate validation...");
             var application = new ApplicationInstance(config);
@@ -117,7 +117,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
             // check the application certificate.
             var hasAppCertificate =
                 await application.CheckApplicationInstanceCertificate(true,
-                    CertificateFactory.defaultKeySize);
+                    CertificateFactory.defaultKeySize).ConfigureAwait(false);
             if (!hasAppCertificate) {
                 _logger.Error("Failed validating own certificate!");
                 throw new Exception("Application instance certificate invalid!");
@@ -131,7 +131,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
                 }
             };
 
-            await config.CertificateValidator.Update(config.SecurityConfiguration);
+            await config.CertificateValidator.Update(config.SecurityConfiguration).ConfigureAwait(false);
 
             // Set Certificate
             try {
@@ -144,7 +144,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
 
             _logger.Information("Starting server ...");
             // start the server.
-            await application.Start(_server);
+            await application.Start(_server).ConfigureAwait(false);
 
             foreach (var ep in config.ServerConfiguration.BaseAddresses) {
                 _logger.Information("Listening on {ep}", ep);

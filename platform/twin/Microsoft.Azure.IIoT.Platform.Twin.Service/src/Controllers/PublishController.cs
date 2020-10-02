@@ -8,8 +8,8 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Service.Controllers {
     using Microsoft.Azure.IIoT.Platform.Twin.Service.Filters;
     using Microsoft.Azure.IIoT.Platform.Twin.Api.Models;
     using Microsoft.Azure.IIoT.Platform.Twin;
-    using Microsoft.Azure.IIoT.Http;
     using Microsoft.Azure.IIoT.AspNetCore.OpenApi;
+    using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using System;
@@ -53,7 +53,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Service.Controllers {
                 throw new ArgumentNullException(nameof(request));
             }
             var result = await _publisher.NodePublishStartAsync(
-                endpointId, request.ToServiceModel());
+                endpointId, request.ToServiceModel()).ConfigureAwait(false);
             return result.ToApiModel();
         }
 
@@ -74,7 +74,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Service.Controllers {
                 throw new ArgumentNullException(nameof(request));
             }
             var result = await _publisher.NodePublishBulkAsync(
-                endpointId, request.ToServiceModel());
+                endpointId, request.ToServiceModel()).ConfigureAwait(false);
             return result.ToApiModel();
         }
 
@@ -96,7 +96,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Service.Controllers {
                 throw new ArgumentNullException(nameof(request));
             }
             var result = await _publisher.NodePublishStopAsync(
-                endpointId, request.ToServiceModel());
+                endpointId, request.ToServiceModel()).ConfigureAwait(false);
             return result.ToApiModel();
         }
 
@@ -118,7 +118,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Service.Controllers {
                 throw new ArgumentNullException(nameof(request));
             }
             var result = await _publisher.NodePublishListAsync(
-                endpointId, request.ToServiceModel());
+                endpointId, request.ToServiceModel()).ConfigureAwait(false);
             return result.ToApiModel();
         }
 
@@ -137,13 +137,11 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Service.Controllers {
         [AutoRestExtension(NextPageLinkName = "continuationToken")]
         public async Task<PublishedItemListResponseApiModel> GetNextListOfPublishedNodesAsync(
             string endpointId, [FromQuery] [Required] string continuationToken) {
-            if (Request.Headers.ContainsKey(HttpHeader.ContinuationToken)) {
-                continuationToken = Request.Headers[HttpHeader.ContinuationToken].FirstOrDefault();
-            }
+            continuationToken = Request.GetContinuationToken(continuationToken);
             var result = await _publisher.NodePublishListAsync(endpointId,
                 new PublishedItemListRequestApiModel {
                     ContinuationToken = continuationToken
-                }.ToServiceModel());
+                }.ToServiceModel()).ConfigureAwait(false);
             return result.ToApiModel();
         }
 

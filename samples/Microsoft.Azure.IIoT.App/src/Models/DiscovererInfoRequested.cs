@@ -47,24 +47,24 @@ namespace Microsoft.Azure.IIoT.App.Models
         /// <summary>
         /// List of preset discovery urls to use
         /// </summary>
-        public List<string> RequestedDiscoveryUrls { get; set; }
+        public List<string> RequestedDiscoveryUrls { get; internal set; }
 
         /// <summary>
         /// Add url
         /// </summary>
-        public void AddDiscoveryUrl(string url) {
-            if (string.IsNullOrWhiteSpace(url) || (RequestedDiscoveryUrls?.Contains(url) ?? false)) {
+        public void AddDiscoveryUrl(string value) {
+            if (string.IsNullOrWhiteSpace(value) || (RequestedDiscoveryUrls?.Contains(value) ?? false)) {
                 return;
             }
             RequestedDiscoveryUrls ??= new List<string>();
-            RequestedDiscoveryUrls.Add(url);
+            RequestedDiscoveryUrls.Add(value);
         }
 
         /// <summary>
         /// Remove url
         /// </summary>
-        public void RemoveDiscoveryUrl(string url) {
-            RequestedDiscoveryUrls?.Remove(url);
+        public void RemoveDiscoveryUrl(string value) {
+            RequestedDiscoveryUrls?.Remove(value);
         }
 
         /// <summary>
@@ -77,7 +77,7 @@ namespace Microsoft.Azure.IIoT.App.Models
         /// <summary>
         /// List of locales to filter with during discovery
         /// </summary>
-        public List<string> RequestedLocales { get; set; }
+        public List<string> RequestedLocales { get; internal set; }
 
         /// <summary>
         /// Add locale

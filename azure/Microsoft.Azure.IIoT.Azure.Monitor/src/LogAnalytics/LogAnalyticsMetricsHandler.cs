@@ -6,11 +6,13 @@
 namespace Microsoft.Azure.IIoT.Azure.LogAnalytics {
     using Microsoft.Azure.IIoT.Diagnostics;
     using Microsoft.Azure.IIoT.Http;
-    using Microsoft.Azure.IIoT.Http.Default;
+    using Microsoft.Azure.IIoT.Http.Clients;
     using Microsoft.Azure.IIoT.Serializers;
     using Serilog;
     using System;
     using System.Collections.Generic;
+    using System.Globalization;
+    using System.Net.Http;
     using System.Security.Cryptography;
     using System.Text;
     using System.Threading;
@@ -34,12 +36,15 @@ namespace Microsoft.Azure.IIoT.Azure.LogAnalytics {
         /// <summary>
         /// Create publisher
         /// </summary>
+        /// <param name="factory"></param>
         /// <param name="config"></param>
         /// <param name="logger"></param>
         /// <param name="serializer"></param>
         public LogAnalyticsMetricsHandler(IJsonSerializer serializer, ILogger logger,
-            ILogAnalyticsConfig config = null) : base(serializer) {
+            IHttpClientFactory factory = null, ILogAnalyticsConfig config = null)
+            : base(serializer) {
             _config = config;
+            _factory = factory ?? new HttpClientFactory(_logger);
             _serializer = serializer ?? throw new ArgumentNullException(nameof(serializer));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
@@ -52,7 +57,7 @@ namespace Microsoft.Azure.IIoT.Azure.LogAnalytics {
             }
             // Create client if not configured before...
             if (HttpClient == null) {
-                HttpClient = new HttpClient(new HttpClientFactory(_logger), _logger);
+                HttpClient = new Http.Clients.HttpClient(_factory, _logger);
             }
         }
 
@@ -73,14 +78,14 @@ namespace Microsoft.Azure.IIoT.Azure.LogAnalytics {
                 $"/api/logs?api-version={kApiVersion}");
             request.AddHeader("Log-Type", _config.LogType ?? "promMetrics");
             // Set authorization
-            var dateString = DateTime.UtcNow.ToString("r");
+            var dateString = DateTime.UtcNow.ToString("r", CultureInfo.InvariantCulture);
             request.AddHeader("x-ms-date", dateString);
             var content = _serializer.SerializeToBytes(batch).ToArray();
             var signature = GetSignature(workspaceId, workspaceKey, "POST", content.Length,
                 ContentMimeType.Json, dateString, "/api/logs");
             request.AddHeader("Authorization", signature);
             request.SetByteArrayContent(content, ContentMimeType.Json);
-            var response = await HttpClient.PostAsync(request, ct);
+            var response = await HttpClient.PostAsync(request, ct).ConfigureAwait(false);
             response.Validate();
         }
 
@@ -109,6 +114,7 @@ namespace Microsoft.Azure.IIoT.Azure.LogAnalytics {
         private const string kApiVersion = "2016-04-01";
         private readonly IJsonSerializer _serializer;
         private readonly ILogAnalyticsConfig _config;
+        private readonly IHttpClientFactory _factory;
         private readonly ILogger _logger;
     }
 }

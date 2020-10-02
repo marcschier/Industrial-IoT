@@ -3,8 +3,8 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-
 namespace Microsoft.Azure.IIoT.Crypto.Models {
+    using System.Collections.Generic;
 
     /// <summary>
     /// Aes params
@@ -14,6 +14,6 @@ namespace Microsoft.Azure.IIoT.Crypto.Models {
         /// <summary>
         /// Symmetric key
         /// </summary>
-        public byte[] K { get; set; }
+        public IReadOnlyCollection<byte> K { get; set; }
     }
 }

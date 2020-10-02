@@ -7,6 +7,7 @@ namespace Microsoft.Azure.IIoT.Crypto.Models {
     using Microsoft.Azure.IIoT.Serializers;
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Security.Cryptography;
 
     /// <summary>
@@ -54,6 +55,9 @@ namespace Microsoft.Azure.IIoT.Crypto.Models {
         /// <param name="key"></param>
         /// <returns></returns>
         public static Key GetPublicKey(this Key key) {
+            if (key is null) {
+                return null;
+            }
             switch (key.Type) {
                 case KeyType.RSA:
                     return (key.Parameters as RsaParams)?.GetPublicKey();
@@ -70,6 +74,9 @@ namespace Microsoft.Azure.IIoT.Crypto.Models {
         /// <param name="key"></param>
         /// <returns></returns>
         public static AsymmetricAlgorithm ToAsymmetricAlgorithm(this Key key) {
+            if (key is null) {
+                return null;
+            }
             switch (key.Type) {
                 case KeyType.RSA:
                     return key.ToRSA();
@@ -86,6 +93,9 @@ namespace Microsoft.Azure.IIoT.Crypto.Models {
         /// <param name="key"></param>
         /// <returns></returns>
         public static SymmetricAlgorithm ToSymmetricAlgorithm(this Key key) {
+            if (key is null) {
+                return null;
+            }
             switch (key.Type) {
                 case KeyType.AES:
                     return key.ToAes();
@@ -176,6 +186,9 @@ namespace Microsoft.Azure.IIoT.Crypto.Models {
         /// </summary>
         /// <returns> True if the object has private key; false otherwise.</returns>
         public static bool HasPrivateKey(this Key key) {
+            if (key is null) {
+                return false;
+            }
             switch (key.Type) {
                 case KeyType.RSA:
                     return (key.Parameters as RsaParams)?.HasPrivateKey() ?? false;
@@ -192,14 +205,12 @@ namespace Microsoft.Azure.IIoT.Crypto.Models {
         /// Check non zero
         /// </summary>
         /// <param name="value"></param>
-        internal static void VerifyNonZero(byte[] value) {
+        internal static void VerifyNonZero(IReadOnlyCollection<byte> value) {
             if (value == null) {
                 throw new ArgumentNullException(nameof(value));
             }
-            for (var i = 0; i < value.Length; i++) {
-                if (value[i] != 0) {
-                    return;
-                }
+            if (!value.All(b => b != 0)) {
+                throw new ArgumentException("Value has 0", nameof(value));
             }
         }
 
@@ -208,21 +219,23 @@ namespace Microsoft.Azure.IIoT.Crypto.Models {
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
-        internal static byte[] RemoveLeadingZeros(byte[] value) {
+        internal static byte[] RemoveLeadingZeros(
+            IReadOnlyCollection<byte> value) {
             if (value == null) {
                 return null;
             }
-            if (value != null && value.Length > 1 && value[0] == 0) {
-                for (var i = 1; i < value.Length; i++) {
-                    if (value[i] != 0) {
-                        var array = new byte[value.Length - i];
-                        Array.Copy(value, i, array, 0, array.Length);
+            var copy = value.ToArray();
+            if (copy.Length > 1 && copy[0] == 0) {
+                for (var i = 1; i < copy.Length; i++) {
+                    if (copy[i] != 0) {
+                        var array = new byte[copy.Length - i];
+                        Array.Copy(copy, i, array, 0, array.Length);
                         return array;
                     }
                 }
                 return new byte[1];
             }
-            return value;
+            return copy;
         }
 
         /// <summary>
@@ -231,14 +244,15 @@ namespace Microsoft.Azure.IIoT.Crypto.Models {
         /// <param name="value"></param>
         /// <param name="other"></param>
         /// <returns></returns>
-        internal static bool SameNoLeadingZeros(byte[] value, byte[] other) {
+        internal static bool SameNoLeadingZeros(
+            IReadOnlyCollection<byte> value, IReadOnlyCollection<byte> other) {
             if (value == other) {
                 return true;
             }
-            if (value?.Length != other?.Length) {
+            if (value?.Count != other?.Count) {
                 value = RemoveLeadingZeros(value);
                 other = RemoveLeadingZeros(other);
-                if (value?.Length != other?.Length) {
+                if (value?.Count != other?.Count) {
                     return false;
                 }
             }
@@ -251,28 +265,29 @@ namespace Microsoft.Azure.IIoT.Crypto.Models {
         /// <param name="value"></param>
         /// <param name="requiredLength"></param>
         /// <returns></returns>
-        internal static byte[] ForceLength(byte[] value, int requiredLength) {
-            if (value == null || value.Length == 0) {
+        internal static byte[] ForceLength(IReadOnlyCollection<byte> value, int requiredLength) {
+            if (value == null || value.Count == 0) {
                 return null;
             }
-            if (value.Length == requiredLength) {
-                return value;
+            var copy = value.ToArray();
+            if (copy.Length == requiredLength) {
+                return copy;
             }
-            if (value.Length < requiredLength) {
+            if (copy.Length < requiredLength) {
                 var array = new byte[requiredLength];
-                Array.Copy(value, 0, array,
-                    requiredLength - value.Length, value.Length);
+                Array.Copy(copy, 0, array,
+                    requiredLength - copy.Length, copy.Length);
                 return array;
             }
-            var num = value.Length - requiredLength;
+            var num = copy.Length - requiredLength;
             for (var i = 0; i < num; i++) {
-                if (value[i] != 0) {
+                if (copy[i] != 0) {
                     throw new ArgumentException($"Expected at most {requiredLength} " +
-                        $"but found {value.Length - i} bytes.");
+                        $"but found {copy.Length - i} bytes.");
                 }
             }
             var array2 = new byte[requiredLength];
-            Array.Copy(value, value.Length - requiredLength,
+            Array.Copy(copy, copy.Length - requiredLength,
                 array2, 0, requiredLength);
             return array2;
         }

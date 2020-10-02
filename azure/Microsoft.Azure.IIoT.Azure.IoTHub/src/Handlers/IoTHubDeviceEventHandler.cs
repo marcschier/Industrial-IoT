@@ -57,7 +57,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub.Handlers {
                 //  the schemaType might not exist
                 var source = HubResource.Format(null, deviceId, moduleId);
                 if (_handlers.TryGetValue(schemaType.ToLowerInvariant(), out var handler)) {
-                    await handler.HandleAsync(source, eventData, properties, checkpoint);
+                    await handler.HandleAsync(source, eventData, properties, checkpoint).ConfigureAwait(false);
                     _used.Enqueue(handler);
                 }
 
@@ -67,9 +67,9 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub.Handlers {
 
             if (_unknown != null) {
                 // From a device, but does not have any event schema or message schema
-                await _unknown.HandleAsync(eventData, properties);
+                await _unknown.HandleAsync(eventData, properties).ConfigureAwait(false);
                 if (checkpoint != null) {
-                    await Try.Async(() => checkpoint());
+                    await Try.Async(() => checkpoint()).ConfigureAwait(false);
                 }
             }
         }
@@ -77,7 +77,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub.Handlers {
         /// <inheritdoc/>
         public async Task OnBatchCompleteAsync() {
             while (_used.TryDequeue(out var handler)) {
-                await Try.Async(handler.OnBatchCompleteAsync);
+                await Try.Async(handler.OnBatchCompleteAsync).ConfigureAwait(false);
             }
         }
 

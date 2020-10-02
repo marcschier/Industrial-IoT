@@ -28,7 +28,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api {
         public async Task<HistoryReadResultModel<VariantValue>> HistoryReadAsync(
             string endpoint, HistoryReadRequestModel<VariantValue> request) {
             var result = await _client.HistoryReadRawAsync(endpoint,
-                request.ToApiModel());
+                request.ToApiModel()).ConfigureAwait(false);
             return result.ToServiceModel();
         }
 
@@ -36,7 +36,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api {
         public async Task<HistoryReadNextResultModel<VariantValue>> HistoryReadNextAsync(
             string endpoint, HistoryReadNextRequestModel request) {
             var result = await _client.HistoryReadRawNextAsync(endpoint,
-                request.ToApiModel());
+                request.ToApiModel()).ConfigureAwait(false);
             return result.ToServiceModel();
         }
 
@@ -44,7 +44,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api {
         public async Task<HistoryUpdateResultModel> HistoryUpdateAsync(
             string endpoint, HistoryUpdateRequestModel<VariantValue> request) {
             var result = await _client.HistoryUpdateRawAsync(endpoint,
-                request.ToApiModel());
+                request.ToApiModel()).ConfigureAwait(false);
             return result.ToServiceModel();
         }
 

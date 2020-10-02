@@ -46,7 +46,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Models {
         /// <summary>
         /// Array dimensions
         /// </summary>
-        public List<uint> ArrayDimensions { get; set; }
+        public IReadOnlyList<uint> ArrayDimensions { get; set; }
 
         /// <summary>
         /// Max String Length constraint.
@@ -61,6 +61,6 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Models {
         /// <summary>
         /// Additional properties
         /// </summary>
-        public Dictionary<string, string> Properties { get; set; }
+        public IReadOnlyDictionary<string, string> Properties { get; set; }
     }
 }

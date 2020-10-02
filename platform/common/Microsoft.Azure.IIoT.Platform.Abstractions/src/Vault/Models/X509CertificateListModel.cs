@@ -15,7 +15,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Models {
         /// <summary>
         /// Chain
         /// </summary>
-        public List<X509CertificateModel> Certificates { get; set; }
+        public IReadOnlyList<X509CertificateModel> Certificates { get; set; }
 
         /// <summary>
         /// Next link

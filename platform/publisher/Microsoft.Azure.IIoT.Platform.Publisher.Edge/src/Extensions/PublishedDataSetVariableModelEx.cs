@@ -21,7 +21,8 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Models {
         public static MonitoredItemModel ToMonitoredItem(
             this PublishedDataSetVariableModel publishedVariable,
             string displayName = null) {
-            if (string.IsNullOrEmpty(publishedVariable?.PublishedVariableNodeId)) {
+            if (publishedVariable == null ||
+                string.IsNullOrEmpty(publishedVariable.PublishedVariableNodeId)) {
                 return null;
             }
             return new MonitoredItemModel {

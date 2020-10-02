@@ -14,6 +14,6 @@ namespace Microsoft.Azure.IIoT.Platform.Core.Models {
         /// <summary>
         /// The flat list of elements in the filter AST
         /// </summary>
-        public List<ContentFilterElementModel> Elements { get; set; }
+        public IReadOnlyList<ContentFilterElementModel> Elements { get; set; }
     }
 }

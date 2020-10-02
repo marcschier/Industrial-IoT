@@ -22,7 +22,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Models {
         /// The paths to browse from specified node.
         /// (mandatory)
         /// </summary>
-        public List<string[]> BrowsePaths { get; set; }
+        public IReadOnlyList<IReadOnlyList<string>> BrowsePaths { get; set; }
 
         /// <summary>
         /// Whether to read variable values on target nodes.

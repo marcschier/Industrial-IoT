@@ -14,11 +14,11 @@ namespace Microsoft.Azure.IIoT.Hub.Models {
         /// <summary>
         /// Gets or sets modules configurations
         /// </summary>
-        public IDictionary<string, IDictionary<string, object>> ModulesContent { get; set; }
+        public IReadOnlyDictionary<string, IReadOnlyDictionary<string, object>> ModulesContent { get; set; }
 
         /// <summary>
         /// Gets or sets device configuration
         /// </summary>
-        public IDictionary<string, object> DeviceContent { get; set; }
+        public IReadOnlyDictionary<string, object> DeviceContent { get; set; }
     }
 }

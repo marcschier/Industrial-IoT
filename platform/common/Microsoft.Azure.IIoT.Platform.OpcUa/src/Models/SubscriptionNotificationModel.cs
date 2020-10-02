@@ -20,7 +20,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Models {
         /// <summary>
         /// Notification
         /// </summary>
-        public List<MonitoredItemNotificationModel> Notifications { get; set; }
+        public IReadOnlyList<MonitoredItemNotificationModel> Notifications { get; set; }
 
         /// <summary>
         /// Subscription from which message originated

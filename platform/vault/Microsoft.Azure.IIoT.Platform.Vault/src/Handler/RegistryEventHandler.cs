@@ -109,7 +109,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Handler {
             var result = await _requests.QueryRequestsAsync(
                 new CertificateRequestQueryRequestModel {
                     EntityId = entityId
-                });
+                }).ConfigureAwait(false);
             while (true) {
                 nextPageLink = result.NextPageLink;
                 foreach (var request in result.Requests) {
@@ -118,13 +118,13 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Handler {
                             request.RequestId, new VaultOperationContextModel {
                                 AuthorityId = context?.AuthorityId,
                                 Time = context?.Time ?? DateTime.UtcNow
-                            }));
+                            })).ConfigureAwait(false);
                     }
                 }
                 if (result.NextPageLink == null) {
                     break;
                 }
-                result = await _requests.ListRequestsAsync(result.NextPageLink);
+                result = await _requests.ListRequestsAsync(result.NextPageLink).ConfigureAwait(false);
             }
         }
 

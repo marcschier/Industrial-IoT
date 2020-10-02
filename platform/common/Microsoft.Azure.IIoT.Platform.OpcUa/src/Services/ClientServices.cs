@@ -27,7 +27,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
     /// <summary>
     /// Opc ua stack based service client
     /// </summary>
-    public class ClientServices : IClientHost, IEndpointServices, IEndpointDiscovery,
+    public sealed class ClientServices : IClientHost, IEndpointServices, IEndpointDiscovery,
         ICertificateServices<EndpointModel>, IDisposable {
 
         /// <summary>
@@ -56,7 +56,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
         public async Task InitializeAsync() {
             if (_appConfig == null) {
                 _appConfig = await _clientConfig.ToApplicationConfigurationAsync(
-                    _identity, VerifyCertificate);
+                    _identity, VerifyCertificate).ConfigureAwait(false);
             }
         }
 
@@ -131,8 +131,11 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
 
         /// <inheritdoc/>
         public ISessionHandle GetSessionHandle(ConnectionModel connection) {
-            if (connection?.Endpoint == null) {
+            if (connection is null) {
                 throw new ArgumentNullException(nameof(connection));
+            }
+            if (connection.Endpoint == null) {
+                throw new ArgumentException("Endpoint missing", nameof(connection));
             }
             InitializeAsync().ConfigureAwait(false);
             var id = new ConnectionIdentifier(connection);
@@ -157,8 +160,11 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
         /// <inheritdoc/>
         public IDisposable RegisterCallback(ConnectionModel connection,
             Func<EndpointConnectivityState, Task> callback) {
-            if (connection?.Endpoint == null) {
+            if (connection is null) {
                 throw new ArgumentNullException(nameof(connection));
+            }
+            if (connection.Endpoint == null) {
+                throw new ArgumentException("Endpoint missing", nameof(connection));
             }
             if (callback == null) {
                 throw new ArgumentNullException(nameof(callback));
@@ -181,8 +187,11 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
 
         /// <inheritdoc/>
         public async Task<IEnumerable<DiscoveredEndpointModel>> FindEndpointsAsync(
-            Uri discoveryUrl, List<string> locales, CancellationToken ct) {
-            await InitializeAsync();
+            Uri discoveryUrl, IReadOnlyList<string> locales, CancellationToken ct) {
+            if (discoveryUrl is null) {
+                throw new ArgumentNullException(nameof(discoveryUrl));
+            }
+            await InitializeAsync().ConfigureAwait(false);
             var results = new HashSet<DiscoveredEndpointModel>();
             var visitedUris = new HashSet<string> {
                 CreateDiscoveryUri(discoveryUrl.ToString(), 4840)
@@ -221,17 +230,20 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
         /// <inheritdoc/>
         public async Task<byte[]> GetEndpointCertificateAsync(
             EndpointModel endpoint, CancellationToken ct) {
-            if (string.IsNullOrEmpty(endpoint?.Url)) {
-                throw new ArgumentNullException(nameof(endpoint.Url));
+            if (endpoint is null) {
+                throw new ArgumentNullException(nameof(endpoint));
             }
-            await InitializeAsync();
+            if (string.IsNullOrEmpty(endpoint.Url)) {
+                throw new ArgumentException("Url missing", nameof(endpoint));
+            }
+            await InitializeAsync().ConfigureAwait(false);
             var configuration = EndpointConfiguration.Create(_appConfig);
             configuration.OperationTimeout = 20000;
             var discoveryUrl = new Uri(endpoint.Url);
             using (var client = DiscoveryClient.Create(discoveryUrl, configuration)) {
                 // Get endpoint descriptions from endpoint url
                 var endpoints = await client.GetEndpointsAsync(null,
-                    client.Endpoint.EndpointUrl, null, null);
+                    client.Endpoint.EndpointUrl, null, null).ConfigureAwait(false);
 
                 // Match to provided endpoint info
                 var ep = endpoints.Endpoints?.FirstOrDefault(e => e.IsSameAs(endpoint));
@@ -247,14 +259,14 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
         /// <inheritdoc/>
         public async Task<T> ExecuteServiceAsync<T>(ConnectionModel connection,
             CredentialModel elevation, int priority, Func<Session, Task<T>> service,
-            TimeSpan? timeout, CancellationToken ct, Func<Exception, bool> handler) {
-            if (connection.Endpoint == null) {
+            TimeSpan? timeout, Func<Exception, bool> handler, CancellationToken ct) {
+            if (connection == null) {
                 throw new ArgumentNullException(nameof(connection));
             }
             if (string.IsNullOrEmpty(connection.Endpoint?.Url)) {
-                throw new ArgumentNullException(nameof(connection.Endpoint.Url));
+                throw new ArgumentException("Url missing", nameof(connection));
             }
-            await InitializeAsync();
+            await InitializeAsync().ConfigureAwait(false);
             var key = new ConnectionIdentifier(connection);
             while (true) {
                 _cts.Token.ThrowIfCancellationRequested();
@@ -264,7 +276,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
                         service, handler, timeout, ct, out var result);
                     if (scheduled) {
                         // Session is owning the task to completion now.
-                        return await result;
+                        return await result.ConfigureAwait(false);
                     }
                 }
                 // Create new session next go around
@@ -293,7 +305,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
                 // Get endpoints from current discovery server
                 //
                 var endpoints = await client.GetEndpointsAsync(null,
-                    client.Endpoint.EndpointUrl, localeIds, null);
+                    client.Endpoint.EndpointUrl, localeIds, null).ConfigureAwait(false);
                 if (!(endpoints?.Endpoints?.Any() ?? false)) {
                     _logger.Debug("No endpoints at {discoveryUrl}...", discoveryUrl);
                     return;
@@ -317,7 +329,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
                 //
                 try {
                     var response = await client.FindServersOnNetworkAsync(null, 0, 1000,
-                        new StringCollection());
+                        new StringCollection()).ConfigureAwait(false);
                     var servers = response?.Servers ?? new ServerOnNetworkCollection();
                     foreach (var server in servers) {
                         var url = CreateDiscoveryUri(server.DiscoveryUrl, discoveryUrl.Port);
@@ -329,7 +341,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
                     }
                 }
                 catch {
-                    // Old lds, just continue...
+                              // Old lds, just continue...
                     _logger.Debug("{discoveryUrl} does not support ME extension...",
                         discoveryUrl);
                 }
@@ -339,7 +351,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
                 // into the discovery queue
                 //
                 var found = await client.FindServersAsync(null,
-                    client.Endpoint.EndpointUrl, localeIds, null);
+                    client.Endpoint.EndpointUrl, localeIds, null).ConfigureAwait(false);
                 if (found?.Servers != null) {
                     var servers = found.Servers.SelectMany(s => s.DiscoveryUrls);
                     foreach (var server in servers) {
@@ -473,18 +485,19 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
         /// <param name="connection"></param>
         /// <param name="state"></param>
         /// <returns></returns>
-        private Task NotifyStateChangeAsync(ConnectionModel connection,
+        private async Task NotifyStateChangeAsync(ConnectionModel connection,
             EndpointConnectivityState state) {
             var id = new ConnectionIdentifier(connection);
             if (_callbacks.TryGetValue(id, out var list)) {
+                List<CallbackHandle> copy;
                 lock (list) {
-                    if (list.Count > 0) {
-                        return Task.WhenAll(list.Select(cb => cb.Callback.Invoke(state)))
-                            .ContinueWith(_ => Task.CompletedTask);
-                    }
+                    copy = list.ToList();
+                }
+                if (copy.Count > 0) {
+                    await Try.Async(() => Task.WhenAll(
+                        copy.Select(cb => cb.Callback.Invoke(state)))).ConfigureAwait(false);
                 }
             }
-            return Task.CompletedTask;
         }
 
         /// <summary>
@@ -546,10 +559,12 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
         private readonly ConcurrentDictionary<ConnectionIdentifier, HashSet<CallbackHandle>> _callbacks =
             new ConcurrentDictionary<ConnectionIdentifier, HashSet<CallbackHandle>>();
         private readonly SemaphoreSlim _lock = new SemaphoreSlim(1, 1);
+#pragma warning disable CA2213 // Disposable fields should be disposed
 #pragma warning disable IDE0069 // Disposable fields should be disposed
         private readonly CancellationTokenSource _cts =
             new CancellationTokenSource();
         private readonly Timer _timer;
 #pragma warning restore IDE0069 // Disposable fields should be disposed
+#pragma warning restore CA2213 // Disposable fields should be disposed
     }
 }

@@ -5,7 +5,7 @@
 
 namespace Microsoft.Azure.IIoT.Http.Tunnel {
     using Microsoft.Azure.IIoT.Http.Tunnel.Services;
-    using Microsoft.Azure.IIoT.Http.Default;
+    using Microsoft.Azure.IIoT.Http.Clients;
     using Microsoft.Azure.IIoT.Rpc.Default;
     using Microsoft.Azure.IIoT.Rpc;
     using Autofac;

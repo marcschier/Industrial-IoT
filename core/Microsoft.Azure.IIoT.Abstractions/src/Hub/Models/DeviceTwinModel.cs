@@ -36,7 +36,7 @@ namespace Microsoft.Azure.IIoT.Hub.Models {
         /// <summary>
         /// Tags
         /// </summary>
-        public Dictionary<string, VariantValue> Tags { get; set; }
+        public IReadOnlyDictionary<string, VariantValue> Tags { get; set; }
 
         /// <summary>
         /// Settings

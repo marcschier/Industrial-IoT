@@ -457,7 +457,7 @@ namespace DataAccess {
                 for (var ii = 0; ii < s_BlockPathDatabase.Length; ii++) {
                     var blockPath = s_BlockPathDatabase[ii];
 
-                    if (length >= blockPath.Length || blockPath[blockPath.Length - length] != '/') {
+                    if (length >= blockPath.Length || blockPath[^length] != '/') {
                         continue;
                     }
 

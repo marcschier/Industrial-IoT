@@ -41,7 +41,7 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Server {
 
         /// <inheritdoc/>
         public async Task StartAsync() {
-            await _lock.WaitAsync();
+            await _lock.WaitAsync().ConfigureAwait(false);
             try {
                 if (_containerId != null) {
                     return;
@@ -51,16 +51,16 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Server {
                 var param = GetContainerParameters(_ports);
                 var name = $"rabbitmq_{string.Join("_", _ports)}";
                 (_containerId, _owner) = await CreateAndStartContainerAsync(
-                    param, name, "bitnami/rabbitmq:latest");
+                    param, name, "bitnami/rabbitmq:latest").ConfigureAwait(false);
 
                 try {
                     // Check running
-                    await WaitForContainerStartedAsync(_ports.First());
+                    await WaitForContainerStartedAsync(_ports.First()).ConfigureAwait(false);
                     _logger.Information("RabbitMq server running.");
                 }
                 catch {
                     // Stop and retry
-                    await StopAndRemoveContainerAsync(_containerId);
+                    await StopAndRemoveContainerAsync(_containerId).ConfigureAwait(false);
                     _containerId = null;
                     throw;
                 }
@@ -72,10 +72,10 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Server {
 
         /// <inheritdoc/>
         public async Task StopAsync() {
-            await _lock.WaitAsync();
+            await _lock.WaitAsync().ConfigureAwait(false);
             try {
                 if (_containerId != null && _owner) {
-                    await StopAndRemoveContainerAsync(_containerId);
+                    await StopAndRemoveContainerAsync(_containerId).ConfigureAwait(false);
                     _logger.Information("Stopped RabbitMq server...");
                 }
             }

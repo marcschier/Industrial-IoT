@@ -43,7 +43,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
                 throw new ArgumentNullException(nameof(request));
             }
             var result = await CallServiceOnEndpointTwinAsync<ModelUploadStartRequestModel,
-                ModelUploadStartResultModel>("ModelUploadStart_V2", endpointId, request);
+                ModelUploadStartResultModel>("ModelUploadStart_V2", endpointId, request).ConfigureAwait(false);
             return result;
         }
 
@@ -51,7 +51,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
         public async Task<BrowseResultModel> NodeBrowseFirstAsync(string endpointId,
             BrowseRequestModel request) {
             var result = await CallServiceOnEndpointTwinAsync<BrowseRequestModel,
-                BrowseResultModel>("Browse_V2", endpointId, request);
+                BrowseResultModel>("Browse_V2", endpointId, request).ConfigureAwait(false);
             return result;
         }
 
@@ -62,10 +62,10 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
                 throw new ArgumentNullException(nameof(request));
             }
             if (string.IsNullOrEmpty(request.ContinuationToken)) {
-                throw new ArgumentNullException(nameof(request.ContinuationToken));
+                throw new ArgumentException("Missing continuation", nameof(request));
             }
             var result = await CallServiceOnEndpointTwinAsync<BrowseNextRequestModel,
-                BrowseNextResultModel>("BrowseNext_V2", endpointId, request);
+                BrowseNextResultModel>("BrowseNext_V2", endpointId, request).ConfigureAwait(false);
             return result;
         }
 
@@ -76,11 +76,11 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
                 throw new ArgumentNullException(nameof(request));
             }
             if (request.BrowsePaths == null || request.BrowsePaths.Count == 0 ||
-                request.BrowsePaths.Any(p => p == null || p.Length == 0)) {
-                throw new ArgumentNullException(nameof(request.BrowsePaths));
+                request.BrowsePaths.Any(p => p == null || p.Count == 0)) {
+                throw new ArgumentException("Bad browse paths", nameof(request));
             }
             var result = await CallServiceOnEndpointTwinAsync<BrowsePathRequestModel,
-                BrowsePathResultModel>("BrowsePath_V2", endpointId, request);
+                BrowsePathResultModel>("BrowsePath_V2", endpointId, request).ConfigureAwait(false);
             return result;
         }
 
@@ -91,7 +91,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
                 throw new ArgumentNullException(nameof(request));
             }
             var result = await CallServiceOnEndpointTwinAsync<ValueReadRequestModel,
-                ValueReadResultModel>("ValueRead_V2", endpointId, request);
+                ValueReadResultModel>("ValueRead_V2", endpointId, request).ConfigureAwait(false);
             return result;
         }
 
@@ -102,10 +102,10 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
                 throw new ArgumentNullException(nameof(request));
             }
             if (request.Value is null) {
-                throw new ArgumentNullException(nameof(request.Value));
+                throw new ArgumentException("Missing value", nameof(request));
             }
             var result = await CallServiceOnEndpointTwinAsync<ValueWriteRequestModel,
-                ValueWriteResultModel>("ValueWrite_V2", endpointId, request);
+                ValueWriteResultModel>("ValueWrite_V2", endpointId, request).ConfigureAwait(false);
             return result;
         }
 
@@ -116,7 +116,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
                 throw new ArgumentNullException(nameof(request));
             }
             var result = await CallServiceOnEndpointTwinAsync<MethodMetadataRequestModel,
-                MethodMetadataResultModel>("MethodMetadata_V2", endpointId, request);
+                MethodMetadataResultModel>("MethodMetadata_V2", endpointId, request).ConfigureAwait(false);
             return result;
         }
 
@@ -127,7 +127,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
                 throw new ArgumentNullException(nameof(request));
             }
             var result = await CallServiceOnEndpointTwinAsync<MethodCallRequestModel,
-                MethodCallResultModel>("MethodCall_V2", endpointId, request);
+                MethodCallResultModel>("MethodCall_V2", endpointId, request).ConfigureAwait(false);
             return result;
         }
 
@@ -138,13 +138,13 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
                 throw new ArgumentNullException(nameof(request));
             }
             if (request.Attributes == null || request.Attributes.Count == 0) {
-                throw new ArgumentNullException(nameof(request.Attributes));
+                throw new ArgumentException("Missing attributes", nameof(request));
             }
             if (request.Attributes.Any(r => string.IsNullOrEmpty(r.NodeId))) {
-                throw new ArgumentException(nameof(request.Attributes));
+                throw new ArgumentException("Missing attribute node ids", nameof(request));
             }
             var result = await CallServiceOnEndpointTwinAsync<ReadRequestModel,
-                ReadResultModel>("NodeRead_V2", endpointId, request);
+                ReadResultModel>("NodeRead_V2", endpointId, request).ConfigureAwait(false);
             return result;
         }
 
@@ -155,13 +155,13 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
                 throw new ArgumentNullException(nameof(request));
             }
             if (request.Attributes == null || request.Attributes.Count == 0) {
-                throw new ArgumentNullException(nameof(request.Attributes));
+                throw new ArgumentException("Missing attributes", nameof(request));
             }
             if (request.Attributes.Any(r => string.IsNullOrEmpty(r.NodeId))) {
-                throw new ArgumentException(nameof(request.Attributes));
+                throw new ArgumentException("Missing attribute node ids", nameof(request));
             }
             var result = await CallServiceOnEndpointTwinAsync<WriteRequestModel,
-                WriteResultModel>("NodeWrite_V2", endpointId, request);
+                WriteResultModel>("NodeWrite_V2", endpointId, request).ConfigureAwait(false);
             return result;
         }
 
@@ -173,7 +173,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
             }
             var result = await CallServiceOnEndpointTwinAsync<
                 HistoryReadRequestModel<VariantValue>, HistoryReadResultModel<VariantValue>>(
-                "HistoryRead_V2", endpointId, request);
+                "HistoryRead_V2", endpointId, request).ConfigureAwait(false);
             return result;
         }
 
@@ -184,11 +184,11 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
                 throw new ArgumentNullException(nameof(request));
             }
             if (string.IsNullOrEmpty(request.ContinuationToken)) {
-                throw new ArgumentNullException(nameof(request.ContinuationToken));
+                throw new ArgumentException("Missing continuation", nameof(request));
             }
             var result = await CallServiceOnEndpointTwinAsync<
                 HistoryReadNextRequestModel, HistoryReadNextResultModel<VariantValue>>(
-                "HistoryReadNext_V2", endpointId, request);
+                "HistoryReadNext_V2", endpointId, request).ConfigureAwait(false);
             return result;
         }
 
@@ -199,11 +199,11 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
                 throw new ArgumentNullException(nameof(request));
             }
             if (request.Details == null) {
-                throw new ArgumentNullException(nameof(request.Details));
+                throw new ArgumentException("Missing details", nameof(request));
             }
             var result = await CallServiceOnEndpointTwinAsync<
                 HistoryUpdateRequestModel<VariantValue>, HistoryUpdateResultModel>(
-                "HistoryUpdate_V2", endpointId, request);
+                "HistoryUpdate_V2", endpointId, request).ConfigureAwait(false);
             return result;
         }
 
@@ -224,7 +224,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
             var sw = Stopwatch.StartNew();
             var result = await _client.CallMethodAsync(
                 HubResource.Format(null, endpointId, null), method,
-                _serializer.SerializeToString(request));
+                _serializer.SerializeToString(request)).ConfigureAwait(false);
             _logger.Debug("Twin call '{service}' took {elapsed} ms)!",
                 method, sw.ElapsedMilliseconds);
             return _serializer.Deserialize<R>(result);

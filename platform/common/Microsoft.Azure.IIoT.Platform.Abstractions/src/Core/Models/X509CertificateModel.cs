@@ -5,6 +5,7 @@
 
 namespace Microsoft.Azure.IIoT.Platform.Core.Models {
     using System;
+    using System.Collections.Generic;
 
     /// <summary>
     /// Certificate model
@@ -44,6 +45,6 @@ namespace Microsoft.Azure.IIoT.Platform.Core.Models {
         /// <summary>
         /// Raw data
         /// </summary>
-        public byte[] Certificate { get; set; }
+        public IReadOnlyCollection<byte> Certificate { get; set; }
     }
 }

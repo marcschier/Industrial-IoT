@@ -44,11 +44,11 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Services {
                 throw new ArgumentNullException(nameof(trustedId));
             }
 
-            var entity = await _resolver.FindEntityAsync(entityId, ct);
+            var entity = await _resolver.FindEntityAsync(entityId, ct).ConfigureAwait(false);
             if (entity == null) {
                 throw new ResourceNotFoundException("Trusting entity not found");
             }
-            var trusted = await _resolver.FindEntityAsync(trustedId, ct);
+            var trusted = await _resolver.FindEntityAsync(trustedId, ct).ConfigureAwait(false);
             if (trusted == null) {
                 throw new ResourceNotFoundException("Trusted entity not found");
             }
@@ -58,7 +58,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Services {
                     TrustedType = trusted.Type,
                     TrustingId = entity.Id,
                     TrustingType = entity.Type
-                }, ct);
+                }, ct).ConfigureAwait(false);
                 _logger.Information("{@Entity} now trusting {@Trusted}", entity, trusted);
             }
             catch (ResourceConflictException) {
@@ -71,25 +71,25 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Services {
             string entityId, string nextPageLink, int? maxPageSize, CancellationToken ct) {
             // Get all
             var trusted = await _repo.ListAsync(entityId, TrustDirectionType.Trusting,
-                nextPageLink, maxPageSize, ct);
-
-            var result = new X509CertificateListModel {
-                NextPageLink = trusted.NextPageLink,
-                Certificates = new List<X509CertificateModel>()
-            };
+                nextPageLink, maxPageSize, ct).ConfigureAwait(false);
 
             // Foreach entity, resolve certificate chains
+            var certificates = new List<X509CertificateModel>();
             foreach (var relationship in trusted.Relationships) {
 
                 // Get latest certificate from store - it has the id of the entity
                 var trustedCert = await _certificates.FindLatestCertificateAsync(
-                    relationship.TrustedId, ct);
+                    relationship.TrustedId, ct).ConfigureAwait(false);
                 if (trustedCert == null) {
                     continue;
                 }
-                result.Certificates.Add(trustedCert.ToServiceModel());
+                certificates.Add(trustedCert.ToServiceModel());
             }
-            return result;
+
+            return new X509CertificateListModel {
+                NextPageLink = trusted.NextPageLink,
+                Certificates = certificates
+            };
         }
 
         /// <inheritdoc/>
@@ -101,7 +101,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Services {
             if (string.IsNullOrEmpty(untrustedId)) {
                 throw new ArgumentNullException(nameof(untrustedId));
             }
-            await _repo.DeleteAsync(entityId, TrustDirectionType.Trusting, untrustedId, ct);
+            await _repo.DeleteAsync(entityId, TrustDirectionType.Trusting, untrustedId, ct).ConfigureAwait(false);
             _logger.Information("{entityId} trust to {untrustedId} removed.", entityId,
                 untrustedId);
         }

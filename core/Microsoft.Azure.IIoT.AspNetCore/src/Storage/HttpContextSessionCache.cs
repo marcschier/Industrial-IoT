@@ -51,7 +51,7 @@ namespace Microsoft.Azure.IIoT.AspNetCore.Storage {
 
                 // TODO: Handle expiration
 
-                await _ctx.HttpContext.Session.CommitAsync(ct);
+                await _ctx.HttpContext.Session.CommitAsync(ct).ConfigureAwait(false);
             }
             finally {
                 kSessionLock.ExitWriteLock();
@@ -60,7 +60,7 @@ namespace Microsoft.Azure.IIoT.AspNetCore.Storage {
 
         /// <inheritdoc/>
         public async Task<byte[]> GetAsync(string key, CancellationToken ct) {
-            await _ctx.HttpContext.Session.LoadAsync(ct);
+            await _ctx.HttpContext.Session.LoadAsync(ct).ConfigureAwait(false);
             kSessionLock.EnterReadLock();
             try {
                 if (!_ctx.HttpContext.Session.TryGetValue(key, out var blob)) {
@@ -80,7 +80,7 @@ namespace Microsoft.Azure.IIoT.AspNetCore.Storage {
             try {
                 // Reflect changes in the persistent store
                 _ctx.HttpContext.Session.Remove(key);
-                await _ctx.HttpContext.Session.CommitAsync(ct);
+                await _ctx.HttpContext.Session.CommitAsync(ct).ConfigureAwait(false);
             }
             finally {
                 kSessionLock.ExitWriteLock();

@@ -30,19 +30,19 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Events.v2 {
                     await Task.WhenAll(_listeners
                         .Select(l => l.OnApplicationNewAsync(
                             eventData.Context, eventData.Application)
-                        .ContinueWith(t => Task.CompletedTask)));
+                        .ContinueWith(t => Task.CompletedTask))).ConfigureAwait(false);
                     break;
                 case ApplicationEventType.Updated:
                     await Task.WhenAll(_listeners
                         .Select(l => l.OnApplicationUpdatedAsync(
                             eventData.Context, eventData.Application)
-                        .ContinueWith(t => Task.CompletedTask)));
+                        .ContinueWith(t => Task.CompletedTask))).ConfigureAwait(false);
                     break;
                 case ApplicationEventType.Deleted:
                     await Task.WhenAll(_listeners
                         .Select(l => l.OnApplicationDeletedAsync(
                             eventData.Context, eventData.Id, eventData.Application)
-                        .ContinueWith(t => Task.CompletedTask)));
+                        .ContinueWith(t => Task.CompletedTask))).ConfigureAwait(false);
                     break;
             }
         }

@@ -5,6 +5,7 @@
 
 namespace Microsoft.Azure.IIoT.Platform.Vault.Models {
     using System;
+    using System.Linq;
     using Microsoft.Azure.IIoT.Crypto.Models;
 
     /// <summary>
@@ -75,33 +76,33 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Models {
                     var rsa = key.Parameters as RsaParams;
                     return new PrivateKeyModel {
                         Kty = PrivateKeyType.RSA,
-                        D = rsa.D,
-                        DP = rsa.DP,
-                        DQ = rsa.DQ,
-                        E = rsa.E,
-                        N = rsa.N,
-                        P = rsa.P,
-                        Q = rsa.Q,
-                        QI = rsa.QI,
-                        T = rsa.T
+                        D = rsa.D?.ToArray(),
+                        DP = rsa.DP?.ToArray(),
+                        DQ = rsa.DQ?.ToArray(),
+                        E = rsa.E?.ToArray(),
+                        N = rsa.N?.ToArray(),
+                        P = rsa.P?.ToArray(),
+                        Q = rsa.Q?.ToArray(),
+                        QI = rsa.QI?.ToArray(),
+                        T = rsa.T?.ToArray()
                     };
                 case KeyType.ECC:
                     var ecc = key.Parameters as EccParams;
                     return new PrivateKeyModel {
                         Kty = PrivateKeyType.ECC,
-                        D = ecc.D,
+                        D = ecc.D?.ToArray(),
                         CurveName = ToWebKeyModelCurveName(ecc.Curve),
-                        X = ecc.X,
-                        Y = ecc.Y,
-                        T = ecc.T
+                        X = ecc.X?.ToArray(),
+                        Y = ecc.Y?.ToArray(),
+                        T = ecc.T?.ToArray()
                     };
                 case KeyType.AES:
                     var aes = key.Parameters as AesParams;
                     return new PrivateKeyModel {
                         Kty =
                             PrivateKeyType.AES,
-                        K = aes.K,
-                        T = aes.T
+                        K = aes.K?.ToArray(),
+                        T = aes.T?.ToArray()
                     };
                 default:
                     throw new NotSupportedException($"{key.Type} is unknown");
@@ -141,23 +142,23 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Models {
                     return "P-521";
                 case CurveType.P256K:
                     return "P-256K";
-                case CurveType.Brainpool_P160r1:
-                case CurveType.Brainpool_P160t1:
-                case CurveType.Brainpool_P192r1:
-                case CurveType.Brainpool_P192t1:
-                case CurveType.Brainpool_P224r1:
-                case CurveType.Brainpool_P224t1:
-                case CurveType.Brainpool_P256r1:
-                case CurveType.Brainpool_P256t1:
-                case CurveType.Brainpool_P320r1:
-                case CurveType.Brainpool_P320t1:
-                case CurveType.Brainpool_P384r1:
-                case CurveType.Brainpool_P384t1:
-                case CurveType.Brainpool_P512r1:
-                case CurveType.Brainpool_P512t1:
+                case CurveType.BrainpoolP160r1:
+                case CurveType.BrainpoolP160t1:
+                case CurveType.BrainpoolP192r1:
+                case CurveType.BrainpoolP192t1:
+                case CurveType.BrainpoolP224r1:
+                case CurveType.BrainpoolP224t1:
+                case CurveType.BrainpoolP256r1:
+                case CurveType.BrainpoolP256t1:
+                case CurveType.BrainpoolP320r1:
+                case CurveType.BrainpoolP320t1:
+                case CurveType.BrainpoolP384r1:
+                case CurveType.BrainpoolP384t1:
+                case CurveType.BrainpoolP512r1:
+                case CurveType.BrainpoolP512t1:
                     throw new NotSupportedException("Curve not supported");
                 default:
-                    throw new ArgumentException(nameof(curve));
+                    throw new ArgumentException("Unknown curve type", nameof(curve));
             }
         }
 
@@ -177,7 +178,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Models {
                 case "P-256K":
                     return CurveType.P256K;
                 default:
-                    throw new ArgumentException(nameof(curveName));
+                    throw new ArgumentException("Unknown curve", nameof(curveName));
             }
         }
     }

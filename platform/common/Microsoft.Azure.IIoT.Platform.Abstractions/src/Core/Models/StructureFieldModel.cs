@@ -34,7 +34,7 @@ namespace Microsoft.Azure.IIoT.Platform.Core.Models {
         /// <summary>
         /// Array dimensions
         /// </summary>
-        public List<uint> ArrayDimensions { get; set; }
+        public IReadOnlyList<uint> ArrayDimensions { get; set; }
 
         /// <summary>
         /// Max length of a byte or character string

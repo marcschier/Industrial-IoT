@@ -9,6 +9,8 @@ namespace Microsoft.Azure.IIoT.Azure.KeyVault.Clients {
     using Microsoft.Azure.IIoT.Crypto.Models;
     using Microsoft.Azure.IIoT.Serializers;
     using System;
+    using System.Linq;
+    using System.Collections.Generic;
 
     /// <summary>
     /// Keyvault key handle serializer
@@ -24,7 +26,7 @@ namespace Microsoft.Azure.IIoT.Azure.KeyVault.Clients {
         }
 
         /// <inheritdoc/>
-        public byte[] SerializeHandle(KeyHandle handle) {
+        public IReadOnlyCollection<byte> SerializeHandle(KeyHandle handle) {
             if (handle is KeyVaultKeyHandle id) {
                 return _serializer.SerializeToBytes(id).ToArray();
             }
@@ -32,11 +34,11 @@ namespace Microsoft.Azure.IIoT.Azure.KeyVault.Clients {
         }
 
         /// <inheritdoc/>
-        public KeyHandle DeserializeHandle(byte[] token) {
+        public KeyHandle DeserializeHandle(IReadOnlyCollection<byte> token) {
             if (token == null) {
                 return null;
             }
-            return _serializer.Deserialize<KeyVaultKeyHandle>(token);
+            return _serializer.Deserialize<KeyVaultKeyHandle>(token.ToArray());
         }
 
         private readonly IJsonSerializer _serializer;

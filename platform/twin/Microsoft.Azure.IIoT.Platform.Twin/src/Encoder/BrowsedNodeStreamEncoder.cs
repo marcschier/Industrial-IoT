@@ -106,11 +106,11 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge {
                 if (!NotSeen(nodeId)) {
                     continue;
                 }
-                var node = await ReadNodeAsync(nodeId, ct);
+                var node = await ReadNodeAsync(nodeId, ct).ConfigureAwait(false);
                 if (node == null) {
                     continue;
                 }
-                await FetchReferencesAsync(node, ct);
+                await FetchReferencesAsync(node, ct).ConfigureAwait(false);
                 // Write encodeable node
                 _encoder.WriteEncodeable(null, new EncodeableNodeModel(node));
                 _nodes++;
@@ -154,7 +154,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge {
         /// <param name="nodeModel"></param>
         /// <param name="ct"></param>
         /// <returns></returns>
-        public async Task FetchReferencesAsync(BaseNodeModel nodeModel, CancellationToken ct) {
+        internal async Task FetchReferencesAsync(BaseNodeModel nodeModel, CancellationToken ct) {
             try {
                 // Read node with value
                 var response = await _client.ExecuteServiceAsync(_endpoint, _elevation,
@@ -163,7 +163,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge {
                         return session.BrowseAsync(_diagnostics.ToStackModel(), null,
                             nodeModel.NodeId, 0u, Opc.Ua.BrowseDirection.Both,
                             ReferenceTypeIds.References, true, 0u);
-                    });
+                    }).ConfigureAwait(false);
 
                 SessionClientEx.Validate(response.Results, response.DiagnosticInfos);
                 OperationResultEx.Validate("Browse_" + nodeModel.NodeId, Diagnostics,
@@ -182,7 +182,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge {
                         _encoder.Context.UpdateFromSession(session);
                         return session.BrowseNextAsync(_diagnostics.ToStackModel(), false,
                             new ByteStringCollection { response.Results[0].ContinuationPoint });
-                    });
+                    }).ConfigureAwait(false);
                     SessionClientEx.Validate(response.Results, response.DiagnosticInfos);
                     OperationResultEx.Validate("BrowseNext_" + nodeModel.NodeId, Diagnostics,
                         response.Results.Select(r => r.StatusCode), null, false);
@@ -207,7 +207,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge {
                     _priority, ct, async session => {
                         _encoder.Context.UpdateFromSession(session);
                         var node = await RawNodeModel.ReadAsync(session, _diagnostics.ToStackModel(),
-                            nodeId, false, Diagnostics, false);
+                            nodeId, false, Diagnostics, false).ConfigureAwait(false);
                         // Determine whether to read events or historic data later
                         if (node.IsHistorizedNode) {
                             _history.Add(node.LocalId, node.NodeId.AsString(
@@ -222,7 +222,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge {
                              node.NodeClass == Opc.Ua.NodeClass.VariableType) &&
                              session.TypeTree.IsTypeOf(node.NodeId, VariableTypeIds.PropertyType);
                         return node.ToNodeModel(isProperty);
-                    });
+                    }).ConfigureAwait(false);
             }
             catch (Exception ex) {
                 _logger.Error(ex, "Failed reading node object for node {nodeId}.", nodeId);

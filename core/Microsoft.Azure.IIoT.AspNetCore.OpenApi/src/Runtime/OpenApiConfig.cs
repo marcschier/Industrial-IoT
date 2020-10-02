@@ -47,7 +47,7 @@ namespace Microsoft.Azure.IIoT.AspNetCore.OpenApi.Runtime {
             () => GetStringOrDefault(PcsVariable.PCS_AAD_CONFIDENTIAL_CLIENT_SECRET,
             () => GetStringOrDefault("PCS_APPLICATION_SECRET"))))?.Trim();
         /// <inheritdoc/>
-        public string OpenApiAuthorizationUrl =>
+        public string OpenApiAuthorizationEndpoint =>
             GetStringOrDefault(kOpenApi_AuthorizationUrlKey,
                 () => $"{InstanceUrl.TrimEnd('/')}/{TenantId}/oauth2/authorize");
         /// <inheritdoc/>

@@ -5,6 +5,7 @@
 
 namespace Microsoft.Azure.IIoT.Platform.Twin.Models {
     using Microsoft.Azure.IIoT.Platform.Core.Models;
+    using System.Collections.Generic;
     using System;
 
     /// <summary>
@@ -21,7 +22,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Models {
         /// An optional path from NodeId instance to
         /// an actual node.
         /// </summary>
-        public string[] BrowsePath { get; set; }
+        public IReadOnlyList<string> BrowsePath { get; set; }
 
         /// <summary>
         /// Index range to read, e.g. 1:2,0:1 for 2 slices

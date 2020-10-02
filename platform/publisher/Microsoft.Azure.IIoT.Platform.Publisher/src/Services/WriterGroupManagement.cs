@@ -76,13 +76,13 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                     };
                 }
                 return Task.FromResult(updated);
-            }, ct);
+            }, ct).ConfigureAwait(false);
             if (updated) {
                 // If updated notify about dataset writer change
                 await _itemEvents.NotifyAllAsync(
-                    l => l.OnPublishedDataSetEventsStateChangeAsync(context, dataSetWriterId, result));
+                    l => l.OnPublishedDataSetEventsStateChangeAsync(context, dataSetWriterId, result)).ConfigureAwait(false);
                 await _writerEvents.NotifyAllAsync(
-                    l => l.OnDataSetWriterStateChangeAsync(context, dataSetWriterId, null));
+                    l => l.OnDataSetWriterStateChangeAsync(context, dataSetWriterId, null)).ConfigureAwait(false);
             }
         }
 
@@ -120,13 +120,13 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                         };
                     }
                     return Task.FromResult(updated);
-                }, ct);
+                }, ct).ConfigureAwait(false);
             if (updated) {
                 // If updated notify about dataset writer change
                 await _itemEvents.NotifyAllAsync(
-                    l => l.OnPublishedDataSetVariableStateChangeAsync(context, dataSetWriterId, result));
+                    l => l.OnPublishedDataSetVariableStateChangeAsync(context, dataSetWriterId, result)).ConfigureAwait(false);
                 await _writerEvents.NotifyAllAsync(
-                    l => l.OnDataSetWriterStateChangeAsync(context, dataSetWriterId, null));
+                    l => l.OnDataSetWriterStateChangeAsync(context, dataSetWriterId, null)).ConfigureAwait(false);
             }
         }
 
@@ -167,11 +167,11 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                     };
                 }
                 return Task.FromResult(updated);
-            }, ct);
+            }, ct).ConfigureAwait(false);
             if (updated) {
                 // If updated notify about dataset writer state change
                 await _writerEvents.NotifyAllAsync(
-                    l => l.OnDataSetWriterStateChangeAsync(context, dataSetWriterId, writer));
+                    l => l.OnDataSetWriterStateChangeAsync(context, dataSetWriterId, writer)).ConfigureAwait(false);
             }
         }
 
@@ -195,17 +195,20 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                     };
                 }
                 return Task.FromResult(updated);
-            }, ct);
+            }, ct).ConfigureAwait(false);
             if (updated) {
                 // If updated notify about group change
                 await _groupEvents.NotifyAllAsync(
-                    l => l.OnWriterGroupStateChangeAsync(context, group));
+                    l => l.OnWriterGroupStateChangeAsync(context, group)).ConfigureAwait(false);
             }
         }
 
         /// <inheritdoc/>
         public Task OnEndpointNewAsync(RegistryOperationContextModel context,
             EndpointInfoModel endpoint) {
+            if (endpoint is null) {
+                throw new ArgumentNullException(nameof(endpoint));
+            }
             return EnableWritersWithEndpointAsync(endpoint.Id, true,
                 context == null ? null : new PublisherOperationContextModel {
                     AuthorityId = context.AuthorityId,
@@ -223,16 +226,9 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
         /// <inheritdoc/>
         public Task OnEndpointActivatedAsync(RegistryOperationContextModel context,
             EndpointInfoModel endpoint) {
-            return EnableWritersWithEndpointAsync(endpoint.Id, true,
-                context == null ? null : new PublisherOperationContextModel {
-                    AuthorityId = context.AuthorityId,
-                    Time = context.Time
-                });
-        }
-
-        /// <inheritdoc/>
-        public Task OnEndpointEnabledAsync(RegistryOperationContextModel context,
-            EndpointInfoModel endpoint) {
+            if (endpoint is null) {
+                throw new ArgumentNullException(nameof(endpoint));
+            }
             return EnableWritersWithEndpointAsync(endpoint.Id, true,
                 context == null ? null : new PublisherOperationContextModel {
                     AuthorityId = context.AuthorityId,
@@ -243,16 +239,9 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
         /// <inheritdoc/>
         public Task OnEndpointDeactivatedAsync(RegistryOperationContextModel context,
             EndpointInfoModel endpoint) {
-            return EnableWritersWithEndpointAsync(endpoint.Id, false,
-                context == null ? null : new PublisherOperationContextModel {
-                    AuthorityId = context.AuthorityId,
-                    Time = context.Time
-                });
-        }
-
-        /// <inheritdoc/>
-        public Task OnEndpointDisabledAsync(RegistryOperationContextModel context,
-            EndpointInfoModel endpoint) {
+            if (endpoint is null) {
+                throw new ArgumentNullException(nameof(endpoint));
+            }
             return EnableWritersWithEndpointAsync(endpoint.Id, false,
                 context == null ? null : new PublisherOperationContextModel {
                     AuthorityId = context.AuthorityId,
@@ -263,6 +252,9 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
         /// <inheritdoc/>
         public Task OnEndpointDeletedAsync(RegistryOperationContextModel context,
             string endpointId, EndpointInfoModel endpoint) {
+            if (endpoint is null) {
+                throw new ArgumentNullException(nameof(endpoint));
+            }
             return EnableWritersWithEndpointAsync(endpointId, false,
                 context == null ? null : new PublisherOperationContextModel {
                     AuthorityId = context.AuthorityId,
@@ -286,14 +278,14 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
             var results = await _writers.QueryAsync(new DataSetWriterInfoQueryModel {
                 EndpointId = endpointId,
                 ExcludeDisabled = !enable
-            }, null, null, ct);
+            }, null, null, ct).ConfigureAwait(false);
             var continuationToken = results.ContinuationToken;
             do {
                 foreach (var writer in results.DataSetWriters) {
                     await Try.Async(() => EnableDataSetWriterAsync(writer.DataSetWriterId, enable,
-                        context, ct));
+                        context, ct)).ConfigureAwait(false);
                 }
-                results = await _writers.QueryAsync(null, continuationToken, null, ct);
+                results = await _writers.QueryAsync(null, continuationToken, null, ct).ConfigureAwait(false);
                 continuationToken = results.ContinuationToken;
             }
             while (!string.IsNullOrEmpty(continuationToken));
@@ -323,11 +315,11 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                     updated = false;
                 }
                 return Task.FromResult(updated);
-            }, ct);
+            }, ct).ConfigureAwait(false);
             if (updated) {
                 // If updated notify about dataset writer state change
                 await _writerEvents.NotifyAllAsync(
-                    l => l.OnDataSetWriterStateChangeAsync(context, dataSetWriterId, writer));
+                    l => l.OnDataSetWriterStateChangeAsync(context, dataSetWriterId, writer)).ConfigureAwait(false);
             }
         }
 

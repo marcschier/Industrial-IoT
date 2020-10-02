@@ -14,7 +14,7 @@ namespace Microsoft.Azure.IIoT.Crypto.Models {
         /// <summary>
         /// Certificate
         /// </summary>
-        public List<Certificate> Certificates { get; set; }
+        public IReadOnlyList<Certificate> Certificates { get; set; }
 
         /// <summary>
         /// Continuation token

@@ -5,6 +5,8 @@
 
 namespace Microsoft.Azure.IIoT.Hub.Models {
     using Microsoft.Azure.Devices;
+    using System.Collections.Generic;
+    using System;
 
     /// <summary>
     /// Configuration model extensions
@@ -17,10 +19,13 @@ namespace Microsoft.Azure.IIoT.Hub.Models {
         /// <param name="config"></param>
         /// <returns></returns>
         public static Configuration ToConfiguration(this ConfigurationModel config) {
+            if (config is null) {
+                throw new ArgumentNullException(nameof(config));
+            }
             return new Configuration(config.Id) {
                 Content = config.Content.ToContent(),
                 ETag = config.Etag,
-                Labels = config.Labels,
+                Labels = config.Labels.Clone(),
                 Priority = config.Priority,
                 TargetCondition = config.TargetCondition
             };
@@ -32,13 +37,16 @@ namespace Microsoft.Azure.IIoT.Hub.Models {
         /// <param name="config"></param>
         /// <returns></returns>
         public static ConfigurationModel ToModel(this Configuration config) {
+            if (config is null) {
+                throw new ArgumentNullException(nameof(config));
+            }
             return new ConfigurationModel {
                 Id = config.Id,
                 Etag = config.ETag,
                 ContentType = config.ContentType,
                 TargetCondition = config.TargetCondition,
                 Priority = config.Priority,
-                Labels = config.Labels,
+                Labels = config.Labels.Clone(),
                 Content = config.Content.ToModel(),
                 CreatedTimeUtc = config.CreatedTimeUtc,
                 LastUpdatedTimeUtc = config.LastUpdatedTimeUtc,

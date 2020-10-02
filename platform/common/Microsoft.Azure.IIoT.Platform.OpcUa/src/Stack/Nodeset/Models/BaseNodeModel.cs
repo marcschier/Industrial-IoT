@@ -73,12 +73,14 @@ namespace Opc.Ua.Nodeset {
         /// <summary>
         /// Roler permissions
         /// </summary>
-        public List<RolePermissionType> RolePermissions { get; set; }
+        [DataMember]
+        public IReadOnlyList<RolePermissionType> RolePermissions { get; set; }
 
         /// <summary>
         /// User role permissions
         /// </summary>
-        public List<RolePermissionType> UserRolePermissions { get; set; }
+        [DataMember]
+        public IReadOnlyList<RolePermissionType> UserRolePermissions { get; set; }
 
         /// <summary>
         /// An arbitrary handle associated with the node.

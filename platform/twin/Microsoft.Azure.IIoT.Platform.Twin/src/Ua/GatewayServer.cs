@@ -81,7 +81,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Ua {
             _historian = historian ?? throw new ArgumentNullException(nameof(historian));
             _nodes = nodes ?? throw new ArgumentNullException(nameof(nodes));
             _auth = auth ?? throw new ArgumentNullException(nameof(auth));
-            _validator = validator ?? throw new ArgumentNullException(nameof(_validator));
+            _validator = validator ?? throw new ArgumentNullException(nameof(validator));
 
             Sessions = sessions ?? throw new ArgumentNullException(nameof(sessions));
             ServerDiagnostics = new ServerDiagnosticsSummaryDataType();
@@ -156,6 +156,10 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Ua {
             out EndpointDescriptionCollection serverEndpoints,
             out SignedSoftwareCertificateCollection serverSoftwareCertificates,
             out SignatureData serverSignature, out uint maxRequestMessageSize) {
+            if (clientDescription is null) {
+                throw new ArgumentNullException(nameof(clientDescription));
+            }
+
             var context = OnRequestBegin(requestHeader, RequestType.CreateSession);
             try {
                 var requireEncryption = clientCertificate != null || RequireEncryption(
@@ -264,6 +268,14 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Ua {
             StringCollection localeIds, ExtensionObject userIdentityToken,
             SignatureData userTokenSignature, out byte[] serverNonce,
             out StatusCodeCollection results, out DiagnosticInfoCollection diagnosticInfos) {
+            if (requestHeader is null) {
+                throw new ArgumentNullException(nameof(requestHeader));
+            }
+
+            if (clientSoftwareCertificates is null) {
+                throw new ArgumentNullException(nameof(clientSoftwareCertificates));
+            }
+
             var context = OnRequestBegin(requestHeader, RequestType.ActivateSession);
             try {
                 // First validate the provided certificates
@@ -354,6 +366,10 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Ua {
             BrowseDescriptionCollection nodesToBrowse,
             out BrowseResultCollection results,
             out DiagnosticInfoCollection diagnosticInfos) {
+            if (requestHeader is null) {
+                throw new ArgumentNullException(nameof(requestHeader));
+            }
+
             var context = OnRequestBegin(requestHeader, RequestType.Browse);
             try {
                 if (nodesToBrowse == null || nodesToBrowse.Count == 0) {
@@ -388,6 +404,10 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Ua {
             bool releaseContinuationPoints, ByteStringCollection continuationPoints,
             out BrowseResultCollection results,
             out DiagnosticInfoCollection diagnosticInfos) {
+            if (requestHeader is null) {
+                throw new ArgumentNullException(nameof(requestHeader));
+            }
+
             var context = OnRequestBegin(requestHeader, RequestType.BrowseNext);
             try {
                 if (continuationPoints == null || continuationPoints.Count == 0) {
@@ -419,10 +439,13 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Ua {
 
         /// <inheritdoc/>
         public override ResponseHeader TranslateBrowsePathsToNodeIds(
-            RequestHeader requestHeader,
-            BrowsePathCollection browsePaths,
+            RequestHeader requestHeader, BrowsePathCollection browsePaths,
             out BrowsePathResultCollection results,
             out DiagnosticInfoCollection diagnosticInfos) {
+            if (requestHeader is null) {
+                throw new ArgumentNullException(nameof(requestHeader));
+            }
+
             results = null;
             diagnosticInfos = null;
 
@@ -463,6 +486,10 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Ua {
             double maxAge, TimestampsToReturn timestampsToReturn,
             ReadValueIdCollection nodesToRead, out DataValueCollection results,
             out DiagnosticInfoCollection diagnosticInfos) {
+            if (requestHeader is null) {
+                throw new ArgumentNullException(nameof(requestHeader));
+            }
+
             var context = OnRequestBegin(requestHeader, RequestType.Read);
             try {
                 if (nodesToRead == null || nodesToRead.Count == 0) {
@@ -496,6 +523,10 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Ua {
         public override ResponseHeader Write(RequestHeader requestHeader,
             WriteValueCollection nodesToWrite, out StatusCodeCollection results,
             out DiagnosticInfoCollection diagnosticInfos) {
+            if (requestHeader is null) {
+                throw new ArgumentNullException(nameof(requestHeader));
+            }
+
             var context = OnRequestBegin(requestHeader, RequestType.Write);
 
             try {
@@ -532,6 +563,10 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Ua {
             CallMethodRequestCollection methodsToCall,
             out CallMethodResultCollection results,
             out DiagnosticInfoCollection diagnosticInfos) {
+            if (requestHeader is null) {
+                throw new ArgumentNullException(nameof(requestHeader));
+            }
+
             var context = OnRequestBegin(requestHeader, RequestType.Call);
             try {
                 if (methodsToCall == null || methodsToCall.Count == 0) {
@@ -567,6 +602,10 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Ua {
             bool releaseContinuationPoints, HistoryReadValueIdCollection nodesToRead,
             out HistoryReadResultCollection results,
             out DiagnosticInfoCollection diagnosticInfos) {
+            if (requestHeader is null) {
+                throw new ArgumentNullException(nameof(requestHeader));
+            }
+
             var context = OnRequestBegin(requestHeader, RequestType.HistoryRead);
             try {
                 if (nodesToRead == null || nodesToRead.Count == 0) {
@@ -602,6 +641,10 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Ua {
             ExtensionObjectCollection historyUpdateDetails,
             out HistoryUpdateResultCollection results,
             out DiagnosticInfoCollection diagnosticInfos) {
+            if (requestHeader is null) {
+                throw new ArgumentNullException(nameof(requestHeader));
+            }
+
             var context = OnRequestBegin(requestHeader, RequestType.HistoryUpdate);
             try {
                 if (historyUpdateDetails == null || historyUpdateDetails.Count == 0) {
@@ -647,7 +690,9 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Ua {
         }
 
         /// <inheritdoc/>
+#pragma warning disable CA1721 // Property names should not match get methods
         public override ResponseHeader GetEndpoints(RequestHeader requestHeader,
+#pragma warning restore CA1721 // Property names should not match get methods
             string endpointUrl, StringCollection localeIds, StringCollection profileUris,
             out EndpointDescriptionCollection endpoints) {
             ValidateRequest(requestHeader);
@@ -707,11 +752,11 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Ua {
                     .Select(uri => _registry.QueryAllApplicationsAsync(
                         new ApplicationRegistrationQueryModel {
                             ApplicationUri = uri
-                        })));
+                        }))).ConfigureAwait(false);
                 applications = results.SelectMany(t => t);
             }
             else {
-                applications = await _registry.ListAllApplicationsAsync();
+                applications = await _registry.ListAllApplicationsAsync().ConfigureAwait(false);
             }
             var apps = applications.Select(app => ToApplicationDescription(app,
                 FormatTwinUri(endpointUrl, app.ApplicationId, null).ToString()));
@@ -732,7 +777,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Ua {
             if (string.IsNullOrEmpty(applicationId)) {
                 return new EndpointDescriptionCollection();
             }
-            var registration = await _registry.GetApplicationAsync(applicationId, true);
+            var registration = await _registry.GetApplicationAsync(applicationId, true).ConfigureAwait(false);
             // Make endpoints and publish on all transport endpoints
             var server = ToApplicationDescription(registration.Application);
             var endpoints = _endpoints.SelectMany(ep => {
@@ -798,7 +843,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Ua {
                                 Diagnostics = diagnostics,
                                 Elevation = elevation
                             }
-                        });
+                        }).ConfigureAwait(false);
 
                     // Update results
                     diagnosticInfos[i] = codec.Decode(response.ErrorInfo,
@@ -869,7 +914,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Ua {
                                 Diagnostics = diagnostics,
                                 Elevation = elevation
                             }
-                        });
+                        }).ConfigureAwait(false);
 
                     // Update results
                     diagnosticInfos[i] = codec.Decode(response.ErrorInfo,
@@ -933,7 +978,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Ua {
                         new BrowsePathRequestModel {
                             NodeId = browsePaths[i].StartingNode
                                 .AsString(context.Session.MessageContext),
-                            BrowsePaths = new List<string[]> {
+                            BrowsePaths = new List<IReadOnlyList<string>> {
                                 browsePaths[i].RelativePath
                                     .AsString(context.Session.MessageContext)
                             },
@@ -942,7 +987,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Ua {
                                 Diagnostics = diagnostics,
                                 Elevation = elevation
                             }
-                        });
+                        }).ConfigureAwait(false);
 
                     // Update results
                     diagnosticInfos[i] = codec.Decode(response.ErrorInfo,
@@ -1010,7 +1055,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Ua {
                                 Diagnostics = diagnostics,
                                 Elevation = elevation
                             }
-                        });
+                        }).ConfigureAwait(false);
 
                     // Update results
                     diagnosticInfos[i] = codec.Decode(response.ErrorInfo,
@@ -1056,13 +1101,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Ua {
             var codec = _codec.Create(context.Session.MessageContext);
             var elevation = GetRemoteCredentialsFromContext(context, codec.Serializer);
 
-            var batch = new ReadRequestModel {
-                Attributes = new List<AttributeReadRequestModel>(),
-                Header = new RequestHeaderModel {
-                    Diagnostics = diagnostics,
-                    Elevation = elevation
-                }
-            };
+            var attributes = new List<AttributeReadRequestModel>();
             for (var i = 0; i < nodesToRead.Count; i++) {
                 if (nodesToRead[i].AttributeId == Attributes.Value) {
                     // Read value using value read
@@ -1079,7 +1118,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Ua {
                                     Diagnostics = diagnostics,
                                     Elevation = elevation
                                 }
-                            });
+                            }).ConfigureAwait(false);
 
                         // Update results
                         diagnosticInfos[i] = codec.Decode(response.ErrorInfo,
@@ -1107,20 +1146,27 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Ua {
 
                 if (!nodesToRead[i].Processed) {
                     // Read attribute using batch
-                    batch.Attributes.Add(new AttributeReadRequestModel {
+                    attributes.Add(new AttributeReadRequestModel {
                         Attribute = (NodeAttribute)nodesToRead[i].AttributeId,
                         NodeId = nodesToRead[i].NodeId.AsString(context.Session.MessageContext)
                     });
                 }
             }
-            if (batch.Attributes.Count == 0) {
+            var batch = new ReadRequestModel {
+                Attributes = attributes,
+                Header = new RequestHeaderModel {
+                    Diagnostics = diagnostics,
+                    Elevation = elevation
+                }
+            };
+            if (attributes.Count == 0) {
                 Debug.Assert(nodesToRead.All(n => n.Processed));
                 Debug.Assert(results.All(r => r != null));
             }
             else {
                 try {
                     // Do batch read
-                    var batchResponse = await _nodes.NodeReadAsync(endpointId, batch);
+                    var batchResponse = await _nodes.NodeReadAsync(endpointId, batch).ConfigureAwait(false);
                     if ((batchResponse.Results?.Count ?? 0) != batch.Attributes.Count) {
                         // Batch response is missing results
                         throw new IndexOutOfRangeException("Read response is missing results");
@@ -1171,13 +1217,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Ua {
             var codec = _codec.Create(context.Session.MessageContext);
             var elevation = GetRemoteCredentialsFromContext(context, codec.Serializer);
 
-            var batch = new WriteRequestModel {
-                Attributes = new List<AttributeWriteRequestModel>(),
-                Header = new RequestHeaderModel {
-                    Diagnostics = diagnostics,
-                    Elevation = elevation
-                }
-            };
+            var attributes = new List<AttributeWriteRequestModel>();
             for (var i = 0; i < nodesToWrite.Count; i++) {
                 if (nodesToWrite[i].AttributeId == Attributes.Value) {
                     // Read value using value read
@@ -1197,7 +1237,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Ua {
                                     Diagnostics = diagnostics,
                                     Elevation = elevation
                                 }
-                            });
+                            }).ConfigureAwait(false);
 
                         // Update results
                         diagnosticInfos[i] = codec.Decode(response.ErrorInfo,
@@ -1218,7 +1258,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Ua {
 
                 if (!nodesToWrite[i].Processed) {
                     // Read attribute using batch
-                    batch.Attributes.Add(new AttributeWriteRequestModel {
+                    attributes.Add(new AttributeWriteRequestModel {
                         Attribute = (NodeAttribute)nodesToWrite[i].AttributeId,
                         NodeId = nodesToWrite[i].NodeId.AsString(context.Session.MessageContext),
                         Value = codec.Encode(
@@ -1226,13 +1266,20 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Ua {
                     });
                 }
             }
-            if (batch.Attributes.Count == 0) {
+            var batch = new WriteRequestModel {
+                Attributes = attributes,
+                Header = new RequestHeaderModel {
+                    Diagnostics = diagnostics,
+                    Elevation = elevation
+                }
+            };
+            if (attributes.Count == 0) {
                 Debug.Assert(nodesToWrite.All(n => n.Processed));
             }
             else {
                 try {
                     // Do batch write
-                    var batchResponse = await _nodes.NodeWriteAsync(endpointId, batch);
+                    var batchResponse = await _nodes.NodeWriteAsync(endpointId, batch).ConfigureAwait(false);
                     if ((batchResponse.Results?.Count ?? 0) != batch.Attributes.Count) {
                         // Batch response is missing results
                         throw new IndexOutOfRangeException("Write response is missing results");
@@ -1296,7 +1343,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Ua {
                                     Diagnostics = diagnostics,
                                     Elevation = elevation
                                 }
-                            });
+                            }).ConfigureAwait(false);
 
                         // Update results
                         diagnosticInfos[i] = codec.Decode(response.ErrorInfo,
@@ -1321,7 +1368,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Ua {
                                     Diagnostics = diagnostics,
                                     Elevation = elevation
                                 }
-                            });
+                            }).ConfigureAwait(false);
 
                         // Update results
                         diagnosticInfos[i] = codec.Decode(response.ErrorInfo,
@@ -1374,7 +1421,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Ua {
                                 Diagnostics = diagnostics,
                                 Elevation = elevation
                             }
-                        });
+                        }).ConfigureAwait(false);
 
                     // Update results
                     diagnosticInfos[i] = codec.Decode(response.ErrorInfo,
@@ -1423,12 +1470,12 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Ua {
         /// </summary>
         /// <param name="endpointDescription"></param>
         /// <returns></returns>
-        private string ToEndpointId(EndpointDescription endpointDescription) {
+        private static string ToEndpointId(EndpointDescription endpointDescription) {
             if (endpointDescription == null) {
                 throw new ArgumentNullException(nameof(endpointDescription));
             }
             if (string.IsNullOrEmpty(endpointDescription.EndpointUrl)) {
-                throw new ArgumentNullException(nameof(endpointDescription.EndpointUrl));
+                throw new ArgumentException("Missing endpoint url", nameof(endpointDescription));
             }
 
             ParseUri(endpointDescription.EndpointUrl, out _, out var endpointId);
@@ -1448,7 +1495,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Ua {
                 throw new ArgumentNullException(nameof(endpointDescription));
             }
             if (string.IsNullOrEmpty(endpointDescription.EndpointUrl)) {
-                throw new ArgumentNullException(nameof(endpointDescription.EndpointUrl));
+                throw new ArgumentException("Missing endpoint url", nameof(endpointDescription));
             }
             return FormatTwinUri(endpointDescription.EndpointUrl, applicationId, endpointId);
         }
@@ -1461,7 +1508,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Ua {
         /// <param name="applicationId"></param>
         /// <param name="endpointId"></param>
         /// <returns>base uri</returns>
-        private string ParseUri(string endpointUrl, out string applicationId,
+        private static string ParseUri(string endpointUrl, out string applicationId,
             out string endpointId) {
             if (string.IsNullOrEmpty(endpointUrl)) {
                 throw new ArgumentNullException(nameof(endpointUrl));
@@ -1674,14 +1721,14 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Ua {
             ApplicationInstance.MessageDlg = new DummyDialog();
 
             config = ApplicationInstance.FixupAppConfig(config);
-            await config.Validate(config.ApplicationType);
+            await config.Validate(config.ApplicationType).ConfigureAwait(false);
 
             var application = new ApplicationInstance(config);
 
             // check the application certificate.
             var hasAppCertificate =
                 await application.CheckApplicationInstanceCertificate(true,
-                    CertificateFactory.defaultKeySize);
+                    CertificateFactory.defaultKeySize).ConfigureAwait(false);
             if (!hasAppCertificate) {
                 throw new InvalidConfigurationException("OPC UA application certificate can not be validated");
             }
@@ -1695,7 +1742,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Ua {
                 }
             };
 
-            await config.CertificateValidator.Update(config.SecurityConfiguration);
+            await config.CertificateValidator.Update(config.SecurityConfiguration).ConfigureAwait(false);
             Start(config);
             // Calls StartApplication
             // Calls InitializeServiceHosts (see below)
@@ -1717,6 +1764,9 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Ua {
             ApplicationConfiguration configuration,
             out ApplicationDescription serverDescription,
             out EndpointDescriptionCollection endpoints) {
+            if (configuration is null) {
+                throw new ArgumentNullException(nameof(configuration));
+            }
             // set server description - will be returned by ServerDescription property.
             serverDescription = new ApplicationDescription {
                 ApplicationUri = configuration.ApplicationUri,
@@ -1740,6 +1790,10 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Ua {
         /// <inheritdoc/>
         protected override UserTokenPolicyCollection GetUserTokenPolicies(
             ApplicationConfiguration configuration, EndpointDescription description) {
+            if (description is null) {
+                throw new ArgumentNullException(nameof(description));
+            }
+
             var policies = new UserTokenPolicyCollection();
 
             // Allow anonymous access through the endpoints
@@ -1758,7 +1812,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Ua {
                         PolicyId = kGatewayPolicyPrefix + "Jwt",
                         TokenType = UserTokenType.IssuedToken,
                         IssuedTokenType = "http://opcfoundation.org/UA/UserToken#JWT",
-                        IssuerEndpointUrl = scheme.GetAuthorityUrl(),
+                        IssuerEndpointUrl = scheme.GetAuthority(),
                         SecurityPolicyUri =
                             description.SecurityMode == MessageSecurityMode.None ?
                                 SecurityPolicies.Basic256Sha256 : SecurityPolicies.None

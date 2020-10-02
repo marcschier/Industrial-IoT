@@ -175,7 +175,7 @@ namespace MemoryBuffer {
                     }
 
                     // tag ids have the syntax <bufferName>[<address>]
-                    if (id[id.Length - 1] != ']') {
+                    if (id[^1] != ']') {
                         return null;
                     }
 

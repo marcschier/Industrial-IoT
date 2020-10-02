@@ -42,7 +42,7 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service.Controllers {
         [HttpPut("{dataSetWriterId}/messages")]
         public async Task SubscribeAsync(string dataSetWriterId,
             [FromBody] string connectionId) {
-            await _events.SubscribeAsync(dataSetWriterId, connectionId);
+            await _events.SubscribeAsync(dataSetWriterId, connectionId).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -58,7 +58,7 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service.Controllers {
         /// <returns></returns>
         [HttpDelete("{dataSetWriterId}/messages/{connectionId}")]
         public async Task UnsubscribeAsync(string dataSetWriterId, string connectionId) {
-            await _events.UnsubscribeAsync(dataSetWriterId, connectionId);
+            await _events.UnsubscribeAsync(dataSetWriterId, connectionId).ConfigureAwait(false);
         }
 
         private readonly IGroupRegistrationT<WriterGroupsHub> _events;

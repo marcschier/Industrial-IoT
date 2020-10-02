@@ -4,6 +4,8 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Platform.Core.Models {
+    using System.Collections.Generic;
+
     /// <summary>
     /// Simple attribute operand model
     /// </summary>
@@ -18,7 +20,7 @@ namespace Microsoft.Azure.IIoT.Platform.Core.Models {
         /// <summary>
         /// Browse path of attribute operand
         /// </summary>
-        public string[] BrowsePath { get; set; }
+        public IReadOnlyList<string> BrowsePath { get; set; }
 
         /// <summary>
         /// Attribute id

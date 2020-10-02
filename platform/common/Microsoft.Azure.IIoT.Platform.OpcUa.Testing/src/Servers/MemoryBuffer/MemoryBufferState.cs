@@ -439,7 +439,7 @@ namespace MemoryBuffer {
                     _monitoringTable[elementOffet].CopyTo(monitoredItems, 0);
                 }
 
-                monitoredItems[monitoredItems.Length - 1] = monitoredItem;
+                monitoredItems[^1] = monitoredItem;
                 _monitoringTable[elementOffet] = monitoredItems;
                 _itemCount++;
 

@@ -22,10 +22,13 @@ namespace Microsoft.Azure.IIoT.Platform.Edge.Gateway.Service.Filters {
     /// for an easier parsing.
     /// @see https://docs.microsoft.com/en-us/aspnet/core/mvc/controllers/filters
     /// </summary>
-    public class ExceptionsFilterAttribute : ExceptionFilterAttribute {
+    public sealed class ExceptionsFilterAttribute : ExceptionFilterAttribute {
 
         /// <inheritdoc />
         public override void OnException(ExceptionContext context) {
+            if (context is null) {
+                throw new ArgumentNullException(nameof(context));
+            }
             if (context.Exception == null) {
                 base.OnException(context);
                 return;

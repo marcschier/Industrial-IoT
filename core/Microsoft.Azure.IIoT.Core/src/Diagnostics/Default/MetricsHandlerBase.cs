@@ -45,7 +45,7 @@ namespace Microsoft.Azure.IIoT.Diagnostics {
                 return;
             }
             foreach (var batch in GetMetricsRecords(stream)) {
-                await ProcessBatchAsync(batch, ct);
+                await ProcessBatchAsync(batch, ct).ConfigureAwait(false);
             }
         }
 

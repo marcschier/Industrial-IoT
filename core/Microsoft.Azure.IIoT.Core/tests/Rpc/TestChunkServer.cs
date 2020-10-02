@@ -33,7 +33,7 @@ namespace Microsoft.Azure.IIoT.Rpc {
             string json, TimeSpan? timeout, CancellationToken ct) {
             var payload = Encoding.UTF8.GetBytes(json);
             var processed = await _server.InvokeAsync(target, payload,
-                ContentMimeType.Json, this);
+                ContentMimeType.Json, this).ConfigureAwait(false);
             return Encoding.UTF8.GetString(processed);
         }
 

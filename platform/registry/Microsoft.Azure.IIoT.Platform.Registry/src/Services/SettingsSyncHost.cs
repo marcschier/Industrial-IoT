@@ -13,6 +13,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
     using System;
     using System.Threading;
     using System.Threading.Tasks;
+    using System.Collections.Generic;
 
     /// <summary>
     /// Update settings on all module entities
@@ -58,12 +59,14 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
             string continuation = null;
             do {
                 var response = await _twins.QueryDeviceTwinsAsync(
-                    query, continuation, null, ct);
+                    query, continuation, null, ct).ConfigureAwait(false);
                 foreach (var moduleTwin in response.Items) {
                     try {
-                        moduleTwin.Properties.Desired[TwinProperty.ServiceEndpoint] =
+                        var properties = moduleTwin.Properties.Desired.Clone();
+                        properties[TwinProperty.ServiceEndpoint] =
                             _serializer.FromObject(url);
-                        await _twins.PatchAsync(moduleTwin, false, ct);
+                        moduleTwin.Properties.Desired = properties;
+                        await _twins.PatchAsync(moduleTwin, false, ct).ConfigureAwait(false);
                     }
                     catch (Exception ex) {
                         _logger.Error(ex, "Failed to update url for module {device} {module}",

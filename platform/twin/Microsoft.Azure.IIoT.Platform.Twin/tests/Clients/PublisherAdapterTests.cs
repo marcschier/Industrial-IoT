@@ -9,7 +9,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
     using Microsoft.Azure.IIoT.Platform.Registry.Models;
     using Microsoft.Azure.IIoT.Platform.Core.Models;
     using Microsoft.Azure.IIoT.Platform.Publisher.Services;
-    using Microsoft.Azure.IIoT.Platform.Publisher.Storage.Default;
+    using Microsoft.Azure.IIoT.Platform.Publisher.Storage.Services;
     using Microsoft.Azure.IIoT.Platform.Twin;
     using Microsoft.Azure.IIoT.Platform.Twin.Clients;
     using Microsoft.Azure.IIoT.Storage;
@@ -41,11 +41,11 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
                         PublishingInterval = TimeSpan.FromSeconds(2),
                         SamplingInterval = TimeSpan.FromSeconds(1)
                     }
-                });
+                }).ConfigureAwait(false);
 
                 var list = await service.NodePublishListAsync("endpoint1", new PublishedItemListRequestModel {
                     ContinuationToken = null
-                });
+                }).ConfigureAwait(false);
 
                 // Assert
                 Assert.NotNull(list);
@@ -70,11 +70,11 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
                     Item = new PublishedItemModel {
                         NodeId = "i=2258"
                     }
-                });
+                }).ConfigureAwait(false);
 
                 var list = await service.NodePublishListAsync("endpoint1", new PublishedItemListRequestModel {
                     ContinuationToken = null
-                });
+                }).ConfigureAwait(false);
 
                 // Assert
                 Assert.NotNull(list);
@@ -101,15 +101,15 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
                         PublishingInterval = TimeSpan.FromSeconds(2),
                         SamplingInterval = TimeSpan.FromSeconds(1)
                     }
-                });
+                }).ConfigureAwait(false);
 
                 var result2 = await service.NodePublishStopAsync("endpoint1", new PublishStopRequestModel {
                     NodeId = "i=2258"
-                });
+                }).ConfigureAwait(false);
 
                 var list = await service.NodePublishListAsync("endpoint1", new PublishedItemListRequestModel {
                     ContinuationToken = null
-                });
+                }).ConfigureAwait(false);
 
                 // Assert
                 Assert.NotNull(list);
@@ -134,19 +134,19 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
                         PublishingInterval = TimeSpan.FromSeconds(2),
                         SamplingInterval = TimeSpan.FromSeconds(1)
                     }
-                });
+                }).ConfigureAwait(false);
                 result = await service.NodePublishStartAsync("endpoint1", new PublishStartRequestModel {
                     Item = new PublishedItemModel {
                         NodeId = "i=2258",
                         PublishingInterval = TimeSpan.FromSeconds(2),
                         SamplingInterval = TimeSpan.FromSeconds(1)
                     }
-                });
+                }).ConfigureAwait(false);
 
 
                 var list = await service.NodePublishListAsync("endpoint1", new PublishedItemListRequestModel {
                     ContinuationToken = null
-                });
+                }).ConfigureAwait(false);
 
                 // Assert
                 Assert.NotNull(list);
@@ -173,19 +173,19 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
                         PublishingInterval = TimeSpan.FromSeconds(2),
                         SamplingInterval = TimeSpan.FromSeconds(1)
                     }
-                });
+                }).ConfigureAwait(false);
                 result = await service.NodePublishStartAsync("endpoint1", new PublishStartRequestModel {
                     Item = new PublishedItemModel {
                         NodeId = "i=2259",
                         PublishingInterval = TimeSpan.FromSeconds(2),
                         SamplingInterval = TimeSpan.FromSeconds(1)
                     }
-                });
+                }).ConfigureAwait(false);
 
 
                 var list = await service.NodePublishListAsync("endpoint1", new PublishedItemListRequestModel {
                     ContinuationToken = null
-                });
+                }).ConfigureAwait(false);
 
                 // Assert
                 Assert.NotNull(list);
@@ -223,7 +223,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
                             Value = "abcdefg"
                         }
                     }
-                });
+                }).ConfigureAwait(false);
                 result = await service.NodePublishStartAsync("endpoint1", new PublishStartRequestModel {
                     Item = new PublishedItemModel {
                         NodeId = "i=2258"
@@ -234,7 +234,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
                             Value = "123456"
                         }
                     }
-                });
+                }).ConfigureAwait(false);
                 result = await service.NodePublishStartAsync("endpoint1", new PublishStartRequestModel {
                     Item = new PublishedItemModel {
                         NodeId = "i=2258"
@@ -245,12 +245,12 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
                             Value = "asdfasdf"
                         }
                     }
-                });
+                }).ConfigureAwait(false);
 
 
                 var list = await service.NodePublishListAsync("endpoint1", new PublishedItemListRequestModel {
                     ContinuationToken = null
-                });
+                }).ConfigureAwait(false);
 
                 // Assert
                 Assert.NotNull(list);
@@ -279,7 +279,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
                             Value = "abcdefg"
                         }
                     }
-                });
+                }).ConfigureAwait(false);
                 var result2 = await service.NodePublishStopAsync("endpoint1", new PublishStopRequestModel {
                     NodeId = "i=2258",
                     Header = new RequestHeaderModel {
@@ -288,11 +288,11 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
                             Value = "123456"
                         }
                     }
-                });
+                }).ConfigureAwait(false);
 
                 var list = await service.NodePublishListAsync("endpoint1", new PublishedItemListRequestModel {
                     ContinuationToken = null
-                });
+                }).ConfigureAwait(false);
 
                 // Assert
                 Assert.NotNull(list);
@@ -317,18 +317,18 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
                         PublishingInterval = TimeSpan.FromSeconds(2),
                         SamplingInterval = TimeSpan.FromSeconds(1)
                     }
-                });
+                }).ConfigureAwait(false);
                 result = await service.NodePublishStartAsync("endpoint1", new PublishStartRequestModel {
                     Item = new PublishedItemModel {
                         NodeId = "i=2258",
                         PublishingInterval = TimeSpan.FromSeconds(3),
                         SamplingInterval = TimeSpan.FromSeconds(2)
                     }
-                });
+                }).ConfigureAwait(false);
 
                 var list = await service.NodePublishListAsync("endpoint1", new PublishedItemListRequestModel {
                     ContinuationToken = null
-                });
+                }).ConfigureAwait(false);
 
                 // Assert
                 Assert.NotNull(list);
@@ -356,19 +356,19 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
                             PublishingInterval = TimeSpan.FromSeconds(i),
                             SamplingInterval = TimeSpan.FromSeconds(i+1)
                         }
-                    });
+                    }).ConfigureAwait(false);
                     Assert.NotNull(result);
                 }
                 for (var i = 0; i < 50; i++) {
                     var result = await service.NodePublishStopAsync("endpoint1", new PublishStopRequestModel {
                         NodeId = "i=" + (i + 1000)
-                    });
+                    }).ConfigureAwait(false);
                     Assert.NotNull(result);
                 }
 
                 var list = await service.NodePublishListAsync("endpoint1", new PublishedItemListRequestModel {
                     ContinuationToken = null
-                });
+                }).ConfigureAwait(false);
 
                 // Assert
                 Assert.NotNull(list);
@@ -383,19 +383,19 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
                             PublishingInterval = TimeSpan.FromSeconds(i),
                             SamplingInterval = TimeSpan.FromSeconds(i + 1)
                         }
-                    });
+                    }).ConfigureAwait(false);
                     Assert.NotNull(result);
                 }
                 for (var i = 0; i < 50; i++) {
                     var result = await service.NodePublishStopAsync("endpoint1", new PublishStopRequestModel {
                         NodeId = "i=" + (i + 2000)
-                    });
+                    }).ConfigureAwait(false);
                     Assert.NotNull(result);
                 }
 
                 list = await service.NodePublishListAsync("endpoint1", new PublishedItemListRequestModel {
                     ContinuationToken = null
-                });
+                }).ConfigureAwait(false);
 
                 // Assert
                 Assert.NotNull(list);
@@ -413,7 +413,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
 
                 var list = await service.NodePublishListAsync("endpoint1", new PublishedItemListRequestModel {
                     ContinuationToken = null
-                });
+                }).ConfigureAwait(false);
 
                 // Assert
                 Assert.NotNull(list);

@@ -3,7 +3,7 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Crypto.Default {
+namespace Microsoft.Azure.IIoT.Crypto.Services {
     using Microsoft.Azure.IIoT.Crypto.Models;
     using Microsoft.Azure.IIoT.Crypto.Storage;
     using Microsoft.Azure.IIoT.Storage;
@@ -35,9 +35,7 @@ namespace Microsoft.Azure.IIoT.Crypto.Default {
                 IKeyStore keys = mock.Create<KeyDatabase>();
 
                 var now = DateTime.UtcNow;
-#pragma warning disable IDE0067 // Dispose objects before losing scope
-                var rkey = SignatureType.RS256.CreateCsr("CN=me", true, out var request);
-#pragma warning restore IDE0067 // Dispose objects before losing scope
+                using var rkey = SignatureType.RS256.CreateCsr("CN=me", true, out var request);
                 var cert = request.CreateSelfSigned(now, now + TimeSpan.FromDays(5));
 
                 // Run
@@ -45,9 +43,9 @@ namespace Microsoft.Azure.IIoT.Crypto.Default {
                     cert.ToCertificate(new IssuerPolicies {
                         SignatureType = SignatureType.RS256,
                         IssuedLifetime = TimeSpan.FromHours(1)
-                    }));
+                    })).ConfigureAwait(false);
 
-                var found = await store.FindLatestCertificateAsync("rootca");
+                var found = await store.FindLatestCertificateAsync("rootca").ConfigureAwait(false);
 
                 // Assert
                 Assert.NotNull(rootca);
@@ -84,7 +82,7 @@ namespace Microsoft.Azure.IIoT.Crypto.Default {
                 IKeyStore keys = mock.Create<KeyDatabase>();
 
                 var now = DateTime.UtcNow;
-                var rkey = SignatureType.RS256.CreateCsr("CN=me", true, out var request);
+                using var rkey = SignatureType.RS256.CreateCsr("CN=me", true, out var request);
                 var cert = request.CreateSelfSigned(now, now + TimeSpan.FromDays(5));
 
                 // Run
@@ -92,9 +90,9 @@ namespace Microsoft.Azure.IIoT.Crypto.Default {
                     cert.ToCertificate(new IssuerPolicies {
                         SignatureType = SignatureType.RS256,
                         IssuedLifetime = TimeSpan.FromHours(1)
-                    }), rkey.ToKey());
+                    }), rkey.ToKey()).ConfigureAwait(false);
 
-                var found = await store.FindLatestCertificateAsync("rootca");
+                var found = await store.FindLatestCertificateAsync("rootca").ConfigureAwait(false);
                 var export = keys.ExportKeyAsync(found.KeyHandle);
 
                 // Assert
@@ -102,7 +100,7 @@ namespace Microsoft.Azure.IIoT.Crypto.Default {
                 Assert.NotNull(found);
                 Assert.NotNull(rootca.IssuerPolicies);
                 Assert.NotNull(rootca.KeyHandle);
-                await Assert.ThrowsAsync<InvalidOperationException>(() => export);
+                await Assert.ThrowsAsync<InvalidOperationException>(() => export).ConfigureAwait(false);
                 Assert.Null(rootca.Revoked);
                 Assert.Equal(TimeSpan.FromDays(5), rootca.NotAfterUtc - rootca.NotBeforeUtc);
                 Assert.Equal(TimeSpan.FromHours(1), rootca.IssuerPolicies.IssuedLifetime);
@@ -148,9 +146,9 @@ namespace Microsoft.Azure.IIoT.Crypto.Default {
                     new IssuerPolicies {
                         SignatureType = signature,
                         IssuedLifetime = TimeSpan.FromHours(1)
-                    });
+                    }).ConfigureAwait(false);
 
-                var found = await store.FindLatestCertificateAsync("footca");
+                var found = await store.FindLatestCertificateAsync("footca").ConfigureAwait(false);
                 var export = keys.ExportKeyAsync(found.KeyHandle);
 
                 // Assert
@@ -158,7 +156,7 @@ namespace Microsoft.Azure.IIoT.Crypto.Default {
                 Assert.NotNull(found);
                 Assert.NotNull(footca.IssuerPolicies);
                 Assert.NotNull(footca.KeyHandle);
-                await Assert.ThrowsAsync<InvalidOperationException>(() => export);
+                await Assert.ThrowsAsync<InvalidOperationException>(() => export).ConfigureAwait(false);
                 Assert.Null(footca.Revoked);
                 Assert.Equal(TimeSpan.FromDays(5), footca.NotAfterUtc - footca.NotBeforeUtc);
                 Assert.Equal(TimeSpan.FromHours(1), footca.IssuerPolicies.IssuedLifetime);
@@ -187,7 +185,7 @@ namespace Microsoft.Azure.IIoT.Crypto.Default {
         [InlineData(SignatureType.ES384, CurveType.P521, 2048)]
         [InlineData(SignatureType.ES512, CurveType.P256, 2048)]
         [InlineData(SignatureType.ES512, CurveType.P256, 4096)]
-        // TODO: [InlineData(SignatureType.ES256, CurveType.Brainpool_P160r1)]
+        // TODO: [InlineData(SignatureType.ES256, CurveType.BrainpoolP160r1)]
         public async Task CreateECCRootTestAsync(SignatureType signature, CurveType curve, uint keySize) {
 
             using (var mock = Setup()) {
@@ -200,9 +198,9 @@ namespace Microsoft.Azure.IIoT.Crypto.Default {
                 var footca = await service.NewRootCertificateAsync("footca",
                     X500DistinguishedNameEx.Create("CN=me"), DateTime.UtcNow, TimeSpan.FromDays(5),
                     new CreateKeyParams { KeySize = keySize, Type = KeyType.ECC, Curve = curve },
-                    new IssuerPolicies { SignatureType = signature, IssuedLifetime = TimeSpan.FromHours(1) });
+                    new IssuerPolicies { SignatureType = signature, IssuedLifetime = TimeSpan.FromHours(1) }).ConfigureAwait(false);
 
-                var found = await store.FindLatestCertificateAsync("footca");
+                var found = await store.FindLatestCertificateAsync("footca").ConfigureAwait(false);
                 var export = keys.ExportKeyAsync(found.KeyHandle);
 
                 // Assert
@@ -210,7 +208,7 @@ namespace Microsoft.Azure.IIoT.Crypto.Default {
                 Assert.NotNull(found);
                 Assert.NotNull(footca.IssuerPolicies);
                 Assert.NotNull(footca.KeyHandle);
-                await Assert.ThrowsAsync<InvalidOperationException>(() => export);
+                await Assert.ThrowsAsync<InvalidOperationException>(() => export).ConfigureAwait(false);
                 Assert.Null(footca.Revoked);
                 Assert.Equal(TimeSpan.FromDays(5), footca.NotAfterUtc - footca.NotBeforeUtc);
                 Assert.Equal(TimeSpan.FromHours(1), footca.IssuerPolicies.IssuedLifetime);
@@ -251,9 +249,9 @@ namespace Microsoft.Azure.IIoT.Crypto.Default {
                     var footca = await service.NewRootCertificateAsync("footca",
                         X500DistinguishedNameEx.Create("CN=me"), DateTime.UtcNow, TimeSpan.FromDays(5),
                         new CreateKeyParams { KeySize = keySize, Type = KeyType.ECC, Curve = curve },
-                        new IssuerPolicies { SignatureType = signature, IssuedLifetime = TimeSpan.FromHours(1) });
+                        new IssuerPolicies { SignatureType = signature, IssuedLifetime = TimeSpan.FromHours(1) }).ConfigureAwait(false);
 
-                    var found = await store.FindLatestCertificateAsync("footca");
+                    var found = await store.FindLatestCertificateAsync("footca").ConfigureAwait(false);
                     var export = keys.ExportKeyAsync(found.KeyHandle);
                     footca.Verify(footca);
                     Assert.True(footca.IsSelfSigned());
@@ -275,13 +273,13 @@ namespace Microsoft.Azure.IIoT.Crypto.Default {
                 var first = await service.NewRootCertificateAsync("footca",
                     X500DistinguishedNameEx.Create("CN=me"), DateTime.UtcNow, TimeSpan.FromDays(3),
                     new CreateKeyParams { KeySize = 2048, Type = KeyType.ECC, Curve = CurveType.P256 },
-                    new IssuerPolicies { SignatureType = SignatureType.ES256, IssuedLifetime = TimeSpan.FromHours(1) });
+                    new IssuerPolicies { SignatureType = SignatureType.ES256, IssuedLifetime = TimeSpan.FromHours(1) }).ConfigureAwait(false);
                 var footca = await service.NewRootCertificateAsync("footca",
                     X500DistinguishedNameEx.Create("CN=me"), DateTime.UtcNow, TimeSpan.FromDays(5),
                     new CreateKeyParams { KeySize = 2048, Type = KeyType.RSA },
-                    new IssuerPolicies { IssuedLifetime = TimeSpan.FromHours(1) });
+                    new IssuerPolicies { IssuedLifetime = TimeSpan.FromHours(1) }).ConfigureAwait(false);
 
-                var found = await store.FindLatestCertificateAsync("footca");
+                var found = await store.FindLatestCertificateAsync("footca").ConfigureAwait(false);
 
                 // Assert
                 Assert.NotNull(footca);
@@ -328,13 +326,13 @@ namespace Microsoft.Azure.IIoT.Crypto.Default {
                 var rootca = await service.NewRootCertificateAsync("rootca",
                     X500DistinguishedNameEx.Create("CN=thee"), DateTime.UtcNow, TimeSpan.FromDays(5),
                     new CreateKeyParams { KeySize = keySize, Type = KeyType.RSA },
-                    new IssuerPolicies { SignatureType = signature, IssuedLifetime = TimeSpan.FromHours(3) });
+                    new IssuerPolicies { SignatureType = signature, IssuedLifetime = TimeSpan.FromHours(3) }).ConfigureAwait(false);
                 var footca = await service.NewIssuerCertificateAsync("rootca", "footca",
                     X500DistinguishedNameEx.Create("CN=me"), DateTime.UtcNow,
                     new CreateKeyParams { KeySize = 2048, Type = KeyType.RSA },
-                    new IssuerPolicies { IssuedLifetime = TimeSpan.FromHours(1) });
+                    new IssuerPolicies { IssuedLifetime = TimeSpan.FromHours(1) }).ConfigureAwait(false);
 
-                var found = await store.FindLatestCertificateAsync("footca");
+                var found = await store.FindLatestCertificateAsync("footca").ConfigureAwait(false);
 
                 // Assert
                 Assert.NotNull(footca);
@@ -382,16 +380,16 @@ namespace Microsoft.Azure.IIoT.Crypto.Default {
                 var rootca = await service.NewRootCertificateAsync("rootca",
                     X500DistinguishedNameEx.Create("CN=thee"), DateTime.UtcNow, TimeSpan.FromDays(5),
                     new CreateKeyParams { KeySize = keySize, Type = KeyType.RSA },
-                    new IssuerPolicies { SignatureType = signature, IssuedLifetime = TimeSpan.FromHours(3) });
+                    new IssuerPolicies { SignatureType = signature, IssuedLifetime = TimeSpan.FromHours(3) }).ConfigureAwait(false);
                 var footca = await service.NewIssuerCertificateAsync("rootca", "footca",
                     X500DistinguishedNameEx.Create("CN=me"), DateTime.UtcNow,
                     new CreateKeyParams { KeySize = 2048, Type = KeyType.ECC, Curve = CurveType.P384 },
                     new IssuerPolicies {
                         SignatureType = SignatureType.ES384,
                         IssuedLifetime = TimeSpan.FromHours(1)
-                    });
+                    }).ConfigureAwait(false);
 
-                var found = await store.FindLatestCertificateAsync("footca");
+                var found = await store.FindLatestCertificateAsync("footca").ConfigureAwait(false);
 
                 // Assert
                 Assert.NotNull(footca);
@@ -426,7 +424,7 @@ namespace Microsoft.Azure.IIoT.Crypto.Default {
         [InlineData(SignatureType.ES384, CurveType.P521, 2048)]
         [InlineData(SignatureType.ES512, CurveType.P256, 2048)]
         [InlineData(SignatureType.ES512, CurveType.P256, 4096)]
-        // TODO: [InlineData(SignatureType.ES256, CurveType.Brainpool_P160r1)]
+        // TODO: [InlineData(SignatureType.ES256, CurveType.BrainpoolP160r1)]
         public async Task CreateECCRootAndRSAIssuerTestAsync(SignatureType signature, CurveType curve, uint keySize) {
 
             using (var mock = Setup()) {
@@ -438,13 +436,13 @@ namespace Microsoft.Azure.IIoT.Crypto.Default {
                 var rootca = await service.NewRootCertificateAsync("rootca",
                     X500DistinguishedNameEx.Create("CN=thee"), DateTime.UtcNow, TimeSpan.FromDays(5),
                     new CreateKeyParams { KeySize = keySize, Type = KeyType.ECC, Curve = curve },
-                    new IssuerPolicies { SignatureType = signature, IssuedLifetime = TimeSpan.FromHours(3) });
+                    new IssuerPolicies { SignatureType = signature, IssuedLifetime = TimeSpan.FromHours(3) }).ConfigureAwait(false);
                 var footca = await service.NewIssuerCertificateAsync("rootca", "footca",
                     X500DistinguishedNameEx.Create("CN=me"), DateTime.UtcNow,
                     new CreateKeyParams { KeySize = 2048, Type = KeyType.RSA },
-                    new IssuerPolicies { IssuedLifetime = TimeSpan.FromHours(1) });
+                    new IssuerPolicies { IssuedLifetime = TimeSpan.FromHours(1) }).ConfigureAwait(false);
 
-                var found = await store.FindLatestCertificateAsync("footca");
+                var found = await store.FindLatestCertificateAsync("footca").ConfigureAwait(false);
 
                 // Assert
                 Assert.NotNull(footca);
@@ -479,7 +477,7 @@ namespace Microsoft.Azure.IIoT.Crypto.Default {
         [InlineData(SignatureType.ES384, CurveType.P521, 2048)]
         [InlineData(SignatureType.ES512, CurveType.P256, 2048)]
         [InlineData(SignatureType.ES512, CurveType.P256, 4096)]
-        // TODO: [InlineData(SignatureType.ES256, CurveType.Brainpool_P160r1)]
+        // TODO: [InlineData(SignatureType.ES256, CurveType.BrainpoolP160r1)]
         public async Task CreateECCRootAndECCIssuerTestAsync(SignatureType signature, CurveType curve, uint keySize) {
 
             using (var mock = Setup()) {
@@ -491,13 +489,13 @@ namespace Microsoft.Azure.IIoT.Crypto.Default {
                 var rootca = await service.NewRootCertificateAsync("rootca",
                     X500DistinguishedNameEx.Create("CN=thee"), DateTime.UtcNow, TimeSpan.FromDays(5),
                     new CreateKeyParams { KeySize = keySize, Type = KeyType.ECC, Curve = curve },
-                    new IssuerPolicies { SignatureType = signature, IssuedLifetime = TimeSpan.FromHours(3) });
+                    new IssuerPolicies { SignatureType = signature, IssuedLifetime = TimeSpan.FromHours(3) }).ConfigureAwait(false);
                 var footca = await service.NewIssuerCertificateAsync("rootca", "footca",
                     X500DistinguishedNameEx.Create("CN=me"), DateTime.UtcNow,
                     new CreateKeyParams { KeySize = keySize, Type = KeyType.ECC, Curve = curve },
-                    new IssuerPolicies { SignatureType = signature, IssuedLifetime = TimeSpan.FromHours(1) });
+                    new IssuerPolicies { SignatureType = signature, IssuedLifetime = TimeSpan.FromHours(1) }).ConfigureAwait(false);
 
-                var found = await store.FindLatestCertificateAsync("footca");
+                var found = await store.FindLatestCertificateAsync("footca").ConfigureAwait(false);
 
                 // Assert
                 Assert.NotNull(footca);
@@ -537,18 +535,18 @@ namespace Microsoft.Azure.IIoT.Crypto.Default {
                 var rootca = await service.NewRootCertificateAsync("rootca",
                     X500DistinguishedNameEx.Create("CN=thee"), DateTime.UtcNow, TimeSpan.FromDays(5),
                     new CreateKeyParams { KeySize = 2048, Type = KeyType.RSA },
-                    new IssuerPolicies { IssuedLifetime = TimeSpan.FromHours(3) });
+                    new IssuerPolicies { IssuedLifetime = TimeSpan.FromHours(3) }).ConfigureAwait(false);
                 var intca = await service.NewIssuerCertificateAsync("rootca", "intca",
                     X500DistinguishedNameEx.Create("CN=be"), DateTime.UtcNow,
                     new CreateKeyParams { KeySize = 2048, Type = KeyType.RSA },
-                    new IssuerPolicies { IssuedLifetime = TimeSpan.FromHours(2) });
+                    new IssuerPolicies { IssuedLifetime = TimeSpan.FromHours(2) }).ConfigureAwait(false);
                 var footca = await service.NewIssuerCertificateAsync("intca", "footca",
                     X500DistinguishedNameEx.Create("CN=fee"), DateTime.UtcNow,
                     new CreateKeyParams { KeySize = 2048, Type = KeyType.RSA },
-                    new IssuerPolicies { IssuedLifetime = TimeSpan.FromHours(1) });
+                    new IssuerPolicies { IssuedLifetime = TimeSpan.FromHours(1) }).ConfigureAwait(false);
 
-                var found = await store.FindLatestCertificateAsync("footca");
-                var chain = await store.ListCompleteCertificateChainAsync(footca.SerialNumber);
+                var found = await store.FindLatestCertificateAsync("footca").ConfigureAwait(false);
+                var chain = await store.ListCompleteCertificateChainAsync(footca.SerialNumber.ToArray()).ConfigureAwait(false);
 
                 // Assert
                 Assert.NotNull(footca);
@@ -616,13 +614,13 @@ namespace Microsoft.Azure.IIoT.Crypto.Default {
                 var rootca = await service.NewRootCertificateAsync("rootca",
                     X500DistinguishedNameEx.Create("CN=thee"), DateTime.UtcNow, TimeSpan.FromDays(5),
                     new CreateKeyParams { KeySize = keySize, Type = KeyType.RSA },
-                    new IssuerPolicies { SignatureType = signature, IssuedLifetime = TimeSpan.FromHours(3) });
+                    new IssuerPolicies { SignatureType = signature, IssuedLifetime = TimeSpan.FromHours(3) }).ConfigureAwait(false);
                 var footca = await service.CreateCertificateAndPrivateKeyAsync("rootca", "footca",
                     X500DistinguishedNameEx.Create("CN=me"), DateTime.UtcNow,
-                    new CreateKeyParams { KeySize = keySize, Type = KeyType.RSA });
+                    new CreateKeyParams { KeySize = keySize, Type = KeyType.RSA }).ConfigureAwait(false);
 
-                var found = await store.FindLatestCertificateAsync("footca");
-                var privateKey = await keys.ExportKeyAsync(found.KeyHandle);
+                var found = await store.FindLatestCertificateAsync("footca").ConfigureAwait(false);
+                var privateKey = await keys.ExportKeyAsync(found.KeyHandle).ConfigureAwait(false);
 
                 // Assert
                 Assert.NotNull(footca);
@@ -658,7 +656,7 @@ namespace Microsoft.Azure.IIoT.Crypto.Default {
         [InlineData(SignatureType.ES384, CurveType.P521, 2048)]
         [InlineData(SignatureType.ES512, CurveType.P256, 2048)]
         [InlineData(SignatureType.ES512, CurveType.P256, 4096)]
-        // TODO: [InlineData(SignatureType.ES256, CurveType.Brainpool_P160r1)]
+        // TODO: [InlineData(SignatureType.ES256, CurveType.BrainpoolP160r1)]
         public async Task CreateECCCertificateAndPrivateKeyTestAsync(SignatureType signature,
             CurveType curveType, uint keySize) {
 
@@ -672,13 +670,13 @@ namespace Microsoft.Azure.IIoT.Crypto.Default {
                 var rootca = await service.NewRootCertificateAsync("rootca",
                     X500DistinguishedNameEx.Create("CN=thee"), DateTime.UtcNow, TimeSpan.FromDays(5),
                     new CreateKeyParams { KeySize = keySize, Type = KeyType.ECC, Curve = curveType },
-                    new IssuerPolicies { SignatureType = signature, IssuedLifetime = TimeSpan.FromHours(3) });
+                    new IssuerPolicies { SignatureType = signature, IssuedLifetime = TimeSpan.FromHours(3) }).ConfigureAwait(false);
                 var footca = await service.CreateCertificateAndPrivateKeyAsync("rootca", "footca",
                     X500DistinguishedNameEx.Create("CN=me"), DateTime.UtcNow,
-                    new CreateKeyParams { KeySize = keySize, Type = KeyType.ECC, Curve = curveType });
+                    new CreateKeyParams { KeySize = keySize, Type = KeyType.ECC, Curve = curveType }).ConfigureAwait(false);
 
-                var found = await store.FindLatestCertificateAsync("footca");
-                var privateKey = await keys.ExportKeyAsync(found.KeyHandle);
+                var found = await store.FindLatestCertificateAsync("footca").ConfigureAwait(false);
+                var privateKey = await keys.ExportKeyAsync(found.KeyHandle).ConfigureAwait(false);
 
                 // Assert
                 Assert.NotNull(footca);
@@ -719,13 +717,13 @@ namespace Microsoft.Azure.IIoT.Crypto.Default {
                 var rootca = await service.NewRootCertificateAsync("rootca",
                     X500DistinguishedNameEx.Create("CN=thee"), DateTime.UtcNow, TimeSpan.FromDays(5),
                     new CreateKeyParams { KeySize = 2048, Type = KeyType.RSA },
-                    new IssuerPolicies { IssuedLifetime = TimeSpan.FromHours(3) });
+                    new IssuerPolicies { IssuedLifetime = TimeSpan.FromHours(3) }).ConfigureAwait(false);
 
                 using (var key = RSA.Create()) {
                     var footca = await service.CreateSignedCertificateAsync("rootca", "footca",
-                        key.ToPublicKey(), X500DistinguishedNameEx.Create("CN=me"), DateTime.UtcNow);
+                        key.ToPublicKey(), X500DistinguishedNameEx.Create("CN=me"), DateTime.UtcNow).ConfigureAwait(false);
 
-                    var found = await store.FindLatestCertificateAsync("footca");
+                    var found = await store.FindLatestCertificateAsync("footca").ConfigureAwait(false);
 
                     // Assert
                     Assert.NotNull(footca);

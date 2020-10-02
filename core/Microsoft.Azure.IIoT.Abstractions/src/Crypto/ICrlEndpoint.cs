@@ -20,7 +20,8 @@ namespace Microsoft.Azure.IIoT.Crypto {
         /// <param name="serialNumber">Certificate serial number</param>
         /// <param name="ct"></param>
         /// <returns></returns>
-        Task<IEnumerable<Crl>> GetCrlChainAsync(byte[] serialNumber,
+        Task<IEnumerable<Crl>> GetCrlChainAsync(
+            IReadOnlyCollection<byte> serialNumber,
             CancellationToken ct = default);
     }
 }

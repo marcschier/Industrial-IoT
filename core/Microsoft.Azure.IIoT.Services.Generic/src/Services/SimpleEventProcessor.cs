@@ -40,12 +40,12 @@ namespace Microsoft.Azure.IIoT.Services.Generic.Services {
             while (!ct.IsCancellationRequested) {
                 try {
                     while (!ct.IsCancellationRequested) {
-                        var messages = await _consumer.ConsumeAsync(ct);
+                        var messages = await _consumer.ConsumeAsync(ct).ConfigureAwait(false);
                         foreach (var message in messages) {
                             await _handler.HandleAsync(message.Item1, message.Item2,
-                                () => Task.CompletedTask);
+                                () => Task.CompletedTask).ConfigureAwait(false);
                         }
-                        await Try.Async(_handler.OnBatchCompleteAsync);
+                        await Try.Async(_handler.OnBatchCompleteAsync).ConfigureAwait(false);
                     }
                 }
                 catch (OperationCanceledException) { }

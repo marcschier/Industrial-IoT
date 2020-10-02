@@ -45,7 +45,7 @@ namespace Microsoft.Azure.IIoT.Services.Kafka.Clients {
             var status = _status ?? HealthCheckResult.Unhealthy();
             if (status.Status != HealthStatus.Healthy) {
                 var metaData = await Try.Async(() => Task.Run(
-                    () => _admin.GetMetadata(TimeSpan.FromSeconds(3))));
+                    () => _admin.GetMetadata(TimeSpan.FromSeconds(3)))).ConfigureAwait(false);
                 if (metaData != null) {
                     // Reset to health
                     _status = status = HealthCheckResult.Healthy();
@@ -66,7 +66,7 @@ namespace Microsoft.Azure.IIoT.Services.Kafka.Clients {
                     new CreateTopicsOptions {
                         OperationTimeout = TimeSpan.FromSeconds(30),
                         RequestTimeout = TimeSpan.FromSeconds(30)
-                    });
+                    }).ConfigureAwait(false);
             }
             catch (CreateTopicsException e) {
                 if (e.Results.Count > 0 &&

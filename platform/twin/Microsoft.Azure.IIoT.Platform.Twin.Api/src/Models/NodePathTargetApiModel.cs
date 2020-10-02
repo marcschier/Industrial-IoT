@@ -5,6 +5,7 @@
 
 namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Models {
     using Microsoft.Azure.IIoT.Platform.Core.Api.Models;
+    using System.Collections.Generic;
     using System.Runtime.Serialization;
 
     /// <summary>
@@ -17,7 +18,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Models {
         /// The target browse path
         /// </summary>
         [DataMember(Name = "browsePath", Order = 0)]
-        public string[] BrowsePath { get; set; }
+        public IReadOnlyList<string> BrowsePath { get; set; }
 
         /// <summary>
         /// Target node

@@ -5,6 +5,7 @@
 
 namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Models {
     using Microsoft.Azure.IIoT.Platform.Core.Api.Models;
+    using System.Collections.Generic;
     using System.Runtime.Serialization;
 
     /// <summary>
@@ -26,7 +27,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Models {
         /// </summary>
         [DataMember(Name = "methodBrowsePath", Order = 1,
             EmitDefaultValue = false)]
-        public string[] MethodBrowsePath { get; set; }
+        public IReadOnlyList<string> MethodBrowsePath { get; set; }
 
         /// <summary>
         /// Optional request header

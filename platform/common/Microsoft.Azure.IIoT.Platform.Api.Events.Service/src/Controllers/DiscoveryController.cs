@@ -43,7 +43,7 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service.Controllers {
         [HttpPut("{discovererId}/events")]
         public async Task SubscribeByDiscovererIdAsync(string discovererId,
             [FromBody] string connectionId) {
-            await _events.SubscribeAsync(discovererId, connectionId);
+            await _events.SubscribeAsync(discovererId, connectionId).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -60,7 +60,7 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service.Controllers {
         [HttpPut("requests/{requestId}/events")]
         public async Task SubscribeByRequestIdAsync(string requestId,
             [FromBody] string connectionId) {
-            await _events.SubscribeAsync(requestId, connectionId);
+            await _events.SubscribeAsync(requestId, connectionId).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -78,7 +78,7 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service.Controllers {
         [HttpDelete("requests/{requestId}/events/{connectionId}")]
         public async Task UnsubscribeByRequestIdAsync(string requestId,
             string connectionId) {
-            await _events.UnsubscribeAsync(requestId, connectionId);
+            await _events.UnsubscribeAsync(requestId, connectionId).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -95,7 +95,7 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service.Controllers {
         [HttpDelete("{discovererId}/events/{connectionId}")]
         public async Task UnsubscribeByDiscovererIdAsync(string discovererId,
             string connectionId) {
-            await _events.UnsubscribeAsync(discovererId, connectionId);
+            await _events.UnsubscribeAsync(discovererId, connectionId).ConfigureAwait(false);
         }
 
         private readonly IGroupRegistrationT<DiscoverersHub> _events;

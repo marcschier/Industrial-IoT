@@ -25,12 +25,12 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Models {
         /// <summary>
         /// Browse path to event notifier node (Publisher extension)
         /// </summary>
-        public string[] BrowsePath { get; set; }
+        public IReadOnlyList<string> BrowsePath { get; set; }
 
         /// <summary>
         /// Fields to select
         /// </summary>
-        public List<SimpleAttributeOperandModel> SelectedFields { get; set; }
+        public IReadOnlyList<SimpleAttributeOperandModel> SelectedFields { get; set; }
 
         /// <summary>
         /// Filter to use

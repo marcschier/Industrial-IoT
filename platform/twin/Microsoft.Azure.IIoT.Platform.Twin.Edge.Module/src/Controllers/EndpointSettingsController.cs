@@ -31,7 +31,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Controllers {
         /// <summary>
         /// Endoint url for direct server access
         /// </summary>
-        public Dictionary<string, string> AlternativeUrls {
+        public IReadOnlyDictionary<string, string> AlternativeUrls {
             get => _alternativeUrls;
             set => _alternativeUrls = value;
         }
@@ -55,7 +55,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Controllers {
         /// <summary>
         /// Endpoint certificate (Legacy)
         /// </summary>
-        public Dictionary<string, string> Certificate {
+        public IReadOnlyDictionary<string, string> Certificate {
             get => _certificate.EncodeAsDictionary();
             set => _certificate = value.DecodeAsByteArray();
         }
@@ -106,7 +106,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Controllers {
         private string _thumbprint;
 #pragma warning disable IDE0032 // Use auto property
         private SecurityMode? _securityMode;
-        private Dictionary<string, string> _alternativeUrls;
+        private IReadOnlyDictionary<string, string> _alternativeUrls;
 #pragma warning restore IDE0032 // Use auto property
         private readonly ITwinServices _twin;
         private static readonly string kTwinMetricsPrefix = "iiot_edge_twin_";

@@ -32,12 +32,12 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Clients {
             if (!string.IsNullOrEmpty(requestId)) {
                 // Send to user
                 await _callback.MulticastAsync(requestId,
-                    EventTargets.DiscoveryProgressTarget, arguments);
+                    EventTargets.DiscoveryProgressTarget, arguments).ConfigureAwait(false);
             }
             if (!string.IsNullOrEmpty(eventData.DiscovererId)) {
                 // Send to discovery listeners
                 await _callback.MulticastAsync(eventData.DiscovererId,
-                    EventTargets.DiscoveryProgressTarget, arguments);
+                    EventTargets.DiscoveryProgressTarget, arguments).ConfigureAwait(false);
             }
         }
 

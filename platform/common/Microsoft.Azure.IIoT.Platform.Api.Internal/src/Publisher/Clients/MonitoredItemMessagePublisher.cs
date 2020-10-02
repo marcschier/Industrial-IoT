@@ -31,7 +31,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api.Clients {
             if (!string.IsNullOrEmpty(sample.EndpointId)) {
                 // Send to endpoint listeners
                 await _callback.MulticastAsync(sample.EndpointId,
-                    EventTargets.PublisherSampleTarget, arguments);
+                    EventTargets.PublisherSampleTarget, arguments).ConfigureAwait(false);
             }
 
             // TODO: Should we convert to dataset message like below?
@@ -63,7 +63,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api.Clients {
                 };
                 // Send to endpoint listeners
                 await _callback.MulticastAsync(message.DataSetWriterId,
-                    EventTargets.PublisherSampleTarget, arguments);
+                    EventTargets.PublisherSampleTarget, arguments).ConfigureAwait(false);
             }
         }
 

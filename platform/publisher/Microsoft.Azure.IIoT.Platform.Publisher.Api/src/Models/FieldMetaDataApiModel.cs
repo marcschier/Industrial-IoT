@@ -60,7 +60,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api.Models {
         /// </summary>
         [DataMember(Name = "arrayDimensions", Order = 6,
             EmitDefaultValue = false)]
-        public List<uint> ArrayDimensions { get; set; }
+        public IReadOnlyList<uint> ArrayDimensions { get; set; }
 
         /// <summary>
         /// Max String Length constraint.

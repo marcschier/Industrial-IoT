@@ -7,6 +7,7 @@ namespace Microsoft.Azure.IIoT.Crypto.BouncyCastle {
     using Microsoft.Azure.IIoT.Crypto.Models;
     using Org.BouncyCastle.Crypto.Parameters;
     using Org.BouncyCastle.Math;
+    using System.Linq;
 
     /// <summary>
     /// Ecc param ex
@@ -30,7 +31,7 @@ namespace Microsoft.Azure.IIoT.Crypto.BouncyCastle {
         /// <returns></returns>
         internal static ECPrivateKeyParameters ToECPrivateKeyParameters(this EccParams eccParams) {
             return new ECPrivateKeyParameters(
-                new BigInteger(1, eccParams.D),
+                new BigInteger(1, eccParams.D.ToArray()),
                 eccParams.Curve.ToECDomainParameters());
         }
 
@@ -43,8 +44,8 @@ namespace Microsoft.Azure.IIoT.Crypto.BouncyCastle {
             var domainParameters = eccParams.Curve.ToECDomainParameters();
             return new ECPublicKeyParameters(
                 domainParameters.Curve.CreatePoint(
-                    new BigInteger(1, eccParams.X),
-                    new BigInteger(1, eccParams.Y)), domainParameters);
+                    new BigInteger(1, eccParams.X.ToArray()),
+                    new BigInteger(1, eccParams.Y.ToArray())), domainParameters);
         }
 
         /// <summary>

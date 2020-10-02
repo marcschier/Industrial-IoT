@@ -19,7 +19,7 @@ namespace Microsoft.Azure.IIoT.Authentication {
         /// <param name="config"></param>
         /// <returns></returns>
         public static string GetDomain(this IOAuthClientConfig config) {
-            return new Uri(config.GetAuthorityUrl()).DnsSafeHost;
+            return new Uri(config.GetAuthority()).DnsSafeHost;
         }
 
         /// <summary>
@@ -59,6 +59,9 @@ namespace Microsoft.Azure.IIoT.Authentication {
         /// <param name="config"></param>
         /// <returns></returns>
         public static string GetName(this IOAuthClientConfig config) {
+            if (config is null) {
+                return null;
+            }
             return $"{config.GetProviderName()}:{config.ClientId}->{GetAudience(config)}";
         }
 
@@ -85,7 +88,5 @@ namespace Microsoft.Azure.IIoT.Authentication {
             }
             return (string.Empty, string.Empty);
         }
-
-        private const string kDefaultAuthorityUrl = "https://login.microsoftonline.com/";
     }
 }

@@ -15,6 +15,6 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Models {
         /// <summary>
         /// The selected fields of the event
         /// </summary>
-        public List<VariantValue> EventFields { get; set; } // TODO: Update to concrete type
+        public IReadOnlyList<VariantValue> EventFields { get; set; } // TODO: Update to concrete type
     }
 }

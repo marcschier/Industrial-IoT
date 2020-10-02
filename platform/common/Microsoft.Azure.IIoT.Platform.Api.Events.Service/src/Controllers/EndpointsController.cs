@@ -42,7 +42,7 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service.Controllers {
         [HttpPut("{endpointId}/samples")]
         public async Task SubscribeAsync(string endpointId,
             [FromBody] string connectionId) {
-            await _events.SubscribeAsync(endpointId, connectionId);
+            await _events.SubscribeAsync(endpointId, connectionId).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -58,7 +58,7 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service.Controllers {
         /// <returns></returns>
         [HttpDelete("{endpointId}/samples/{connectionId}")]
         public async Task UnsubscribeAsync(string endpointId, string connectionId) {
-            await _events.UnsubscribeAsync(endpointId, connectionId);
+            await _events.UnsubscribeAsync(endpointId, connectionId).ConfigureAwait(false);
         }
 
         private readonly IGroupRegistrationT<PublishersHub> _events;

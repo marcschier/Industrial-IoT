@@ -26,7 +26,7 @@ namespace Microsoft.Azure.IIoT.App.Pages {
         /// </summary>
         private async Task UpdatePublisherConfigAsync() {
             Publisher.TryUpdateData(InputData);
-            await RegistryHelper.UpdatePublisherAsync(Publisher);
+            await RegistryHelper.UpdatePublisherAsync(Publisher).ConfigureAwait(false);
         }
     }
 }

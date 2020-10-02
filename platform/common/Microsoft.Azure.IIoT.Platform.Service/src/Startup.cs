@@ -69,7 +69,13 @@ namespace Microsoft.Azure.IIoT.Platform.Service {
         /// </summary>
         /// <param name="services"></param>
         /// <returns></returns>
+#pragma warning disable CA1822 // Mark members as static
         public void ConfigureServices(IServiceCollection services) {
+#pragma warning restore CA1822 // Mark members as static
+            if (services is null) {
+                throw new ArgumentNullException(nameof(services));
+            }
+
             services.AddHeaderForwarding();
             services.AddHttpContextAccessor();
             services.AddHealthChecks();
@@ -84,6 +90,13 @@ namespace Microsoft.Azure.IIoT.Platform.Service {
         /// <param name="app"></param>
         /// <param name="appLifetime"></param>
         public void Configure(IApplicationBuilder app, IHostApplicationLifetime appLifetime) {
+            if (app is null) {
+                throw new ArgumentNullException(nameof(app));
+            }
+            if (appLifetime is null) {
+                throw new ArgumentNullException(nameof(appLifetime));
+            }
+
             var applicationContainer = app.ApplicationServices.GetAutofacRoot();
 
             app.UsePathBase();
@@ -149,7 +162,7 @@ namespace Microsoft.Azure.IIoT.Platform.Service {
             public void Start() {
                 _cts = new CancellationTokenSource();
 
-                var args = new string[0];
+                var args = Array.Empty<string>();
 
                 // Minimal processes
                 var processes = new List<Task> {
@@ -168,22 +181,23 @@ namespace Microsoft.Azure.IIoT.Platform.Service {
             }
 
             /// <inheritdoc/>
-            public Task StartAsync() {
+            public async Task StartAsync() {
                 // Delay start by 10 seconds to let api boot up first
-                return Task.Delay(TimeSpan.FromSeconds(10)).ContinueWith(_ => Start());
+                await Task.Delay(TimeSpan.FromSeconds(10)).ConfigureAwait(false);
+                Start();
             }
 
             /// <inheritdoc/>
             public async Task StopAsync() {
                 _cts.Cancel();
                 try {
-                    await _runner;
+                    await _runner.ConfigureAwait(false);
                 }
                 catch (AggregateException aex) {
                     if (aex.InnerExceptions.All(e => e is OperationCanceledException)) {
                         return;
                     }
-                    throw aex;
+                    throw;
                 }
             }
 

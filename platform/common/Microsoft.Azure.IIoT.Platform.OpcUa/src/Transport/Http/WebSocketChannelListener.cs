@@ -15,6 +15,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Transport {
     using System.Security.Cryptography.X509Certificates;
     using System.Threading;
     using Autofac;
+    using Microsoft.Azure.IIoT.Utils;
 
     /// <summary>
     /// Enables websocket middleware to pass sockets on to listener
@@ -32,7 +33,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Transport {
     /// <summary>
     /// Manages the websocket connections for a UA websocket server.
     /// </summary>
-    public class WebSocketChannelListener : ITcpChannelListener,
+    public sealed class WebSocketChannelListener : ITcpChannelListener,
         IWebSocketChannelListener, IStartable, IDisposable {
 
         private const string kWssTransport =
@@ -50,10 +51,10 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Transport {
         /// <param name="logger"></param>
         public WebSocketChannelListener(IServer controller,
             IWebListenerConfig config, ILogger logger) {
-            _logger = logger ??
-                throw new ArgumentNullException(nameof(logger));
-            if (controller?.Callback == null) {
-                throw new ArgumentNullException(nameof(controller));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _controller = controller ?? throw new ArgumentNullException(nameof(controller));
+            if (controller.Callback == null) {
+                throw new ArgumentException("Missing callback", nameof(controller));
             }
             _listenerId = Guid.NewGuid().ToString();
             var configuration = EndpointConfiguration.Create();
@@ -68,9 +69,9 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Transport {
             };
             _bufferManager = new BufferManager("Server", int.MaxValue,
                 _quotas.MaxBufferSize);
-            _urls = (config?.ListenUrls?.Length ?? 0) != 0 ? config.ListenUrls :
+            _urls = config != null && (config.ListenUrls?.Length ?? 0) != 0 ? config.ListenUrls :
                 new string[] { "http://localhost:9040" };
-            _controller = controller;
+            _controller = controller ?? throw new ArgumentNullException(nameof(controller));
         }
 
         /// <inheritdoc/>
@@ -102,14 +103,16 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Transport {
 
         /// <inheritdoc/>
         public void ChannelClosed(uint channelId) {
+#pragma warning disable CA2000 // Dispose objects before losing scope
             if (_channels.TryRemove(channelId, out var channel)) {
+#pragma warning restore CA2000 // Dispose objects before losing scope
                 Utils.SilentDispose(channel);
                 _logger.Information("Channel {channelId} closed", channelId);
             }
         }
 
         /// <inheritdoc/>
-        public bool TransferListenerChannel(uint channelId, string serverUri, Uri endpointUrl) {
+        public bool TransferListenerChannel(uint channelId, string server, Uri endpointUrl) {
             throw new NotImplementedException();
         }
 
@@ -126,8 +129,10 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Transport {
 
                     // Wrap socket in channel to read and write.
 #pragma warning disable IDE0068 // Use recommended dispose pattern
+#pragma warning disable CA2000 // Dispose objects before losing scope
                     var socket = new WebSocketMessageSocket(channel, webSocket,
                         _bufferManager, _quotas.MaxBufferSize, _logger);
+#pragma warning restore CA2000 // Dispose objects before losing scope
 #pragma warning restore IDE0068 // Use recommended dispose pattern
                     var channelId = (uint)Interlocked.Increment(ref _lastChannelId);
                     channel.Attach(channelId, socket);

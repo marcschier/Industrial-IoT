@@ -15,7 +15,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Models {
         /// <summary>
         /// Attributes to update or read
         /// </summary>
-        public List<AttributeReadRequestModel> Attributes { get; set; }
+        public IReadOnlyList<AttributeReadRequestModel> Attributes { get; set; }
 
         /// <summary>
         /// Optional header

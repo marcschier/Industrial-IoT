@@ -46,13 +46,13 @@ namespace Microsoft.Azure.IIoT.Azure.ActiveDirectory.Clients {
                 var config = client.config;
 
                 // there should ever only be one account in the cache if we authenticated before...
-                var accounts = await decorator.Client.GetAccountsAsync();
+                var accounts = await decorator.Client.GetAccountsAsync().ConfigureAwait(false);
                 scopes = GetScopes(config, scopes);
                 if (accounts.Any()) {
                     try {
                         // Attempt to get a token from the cache (or refresh it silently if needed)
                         var result = await decorator.Client.AcquireTokenSilent(
-                            scopes, accounts.FirstOrDefault()).ExecuteAsync();
+                            scopes, accounts.FirstOrDefault()).ExecuteAsync().ConfigureAwait(false);
 
                         return result.ToTokenResult();
                     }
@@ -67,7 +67,7 @@ namespace Microsoft.Azure.IIoT.Azure.ActiveDirectory.Clients {
                     }
                 }
                 try {
-                    var token = await GetTokenAsync(decorator.Client, resource, scopes);
+                    var token = await GetTokenAsync(decorator.Client, resource, scopes).ConfigureAwait(false);
                     if (token != null) {
                         _logger.Information(
                            "Successfully acquired token for {resource} with {config}.",

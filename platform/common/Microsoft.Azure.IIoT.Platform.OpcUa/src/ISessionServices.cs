@@ -116,12 +116,12 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa {
         /// <summary>
         /// Effective identities
         /// </summary>
-        public List<IUserIdentity> CurrentIdentities { get; set; }
+        public IReadOnlyList<IUserIdentity> CurrentIdentities { get; set; }
 
         /// <summary>
         /// New set of identitites after token application
         /// </summary>
-        public List<IUserIdentity> NewIdentities { get; set; }
+        public IReadOnlyList<IUserIdentity> NewIdentities { get; set; }
 
         /// <summary>
         /// Exception to throw

@@ -5,6 +5,7 @@
 
 namespace Microsoft.Azure.IIoT.Crypto.Models {
     using System;
+    using System.Linq;
     using System.Security.Cryptography;
 
     /// <summary>
@@ -18,6 +19,9 @@ namespace Microsoft.Azure.IIoT.Crypto.Models {
         /// <param name="aesProvider"></param>
         /// <returns></returns>
         public static Key ToKey(this Aes aesProvider) {
+            if (aesProvider is null) {
+                throw new ArgumentNullException(nameof(aesProvider));
+            }
             return new Key {
                 Type = KeyType.AES,
                 Parameters = new AesParams {
@@ -32,11 +36,14 @@ namespace Microsoft.Azure.IIoT.Crypto.Models {
         /// <param name="key"></param>
         /// <returns></returns>
         public static Aes ToAes(this Key key) {
+            if (key is null) {
+                throw new ArgumentNullException(nameof(key));
+            }
             if (key.Type != KeyType.AES) {
                 throw new ArgumentException("Not an aes key", nameof(key));
             }
             var aes = Aes.Create();
-            aes.Key = (key.Parameters as AesParams).K;
+            aes.Key = (key.Parameters as AesParams).K.ToArray();
             return aes;
         }
 
@@ -45,7 +52,7 @@ namespace Microsoft.Azure.IIoT.Crypto.Models {
         /// </summary>
         /// <returns> True if the object has private key; false otherwise.</returns>
         public static bool HasPrivateKey(this AesParams key) {
-            return key.K != null;
+            return key?.K != null;
         }
 
         /// <summary>

@@ -53,7 +53,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api.Clients {
             await CallServiceOnPublisherAsync("ActivateWriterGroup_V2", placement.PublisherId, new {
                 placement.WriterGroupId,
                 Secret = secret
-            }, ct);
+            }, ct).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
@@ -69,7 +69,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api.Clients {
                 throw new ArgumentNullException(nameof(placement.WriterGroupId));
             }
             await CallServiceOnPublisherAsync("DeactivateWriterGroup_V2",
-                placement.PublisherId, placement.WriterGroupId, ct);
+                placement.PublisherId, placement.WriterGroupId, ct).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -84,7 +84,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api.Clients {
             string supervisorId, object payload, CancellationToken ct) {
             var sw = Stopwatch.StartNew();
             _ = await _client.CallMethodAsync(supervisorId, service,
-                _serializer.SerializeToString(payload), null, ct);
+                _serializer.SerializeToString(payload), null, ct).ConfigureAwait(false);
             _logger.Debug("Calling supervisor service '{service}' on " +
                 "{supervisorId} took {elapsed} ms.", service, supervisorId,
                 sw.ElapsedMilliseconds);

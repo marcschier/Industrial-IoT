@@ -24,6 +24,6 @@ namespace Microsoft.Azure.IIoT.Platform.Core.Models {
         /// <summary>
         /// Fields in the structure or union
         /// </summary>
-        public List<StructureFieldModel> Fields { get; set; }
+        public IReadOnlyList<StructureFieldModel> Fields { get; set; }
     }
 }

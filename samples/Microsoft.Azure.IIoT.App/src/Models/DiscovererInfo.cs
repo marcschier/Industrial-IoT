@@ -7,6 +7,7 @@ namespace Microsoft.Azure.IIoT.App.Models {
     using Microsoft.Azure.IIoT.Platform.Registry.Api.Models;
     using System;
     using System.Collections.Generic;
+    using System.Globalization;
 
     public class DiscovererInfo {
 
@@ -109,7 +110,7 @@ namespace Microsoft.Azure.IIoT.App.Models {
         /// <summary>
         /// List of preset discovery urls to use
         /// </summary>
-        public List<string> EffectiveDiscoveryUrls {
+        public IReadOnlyList<string> EffectiveDiscoveryUrls {
             get => DiscovererModel.DiscoveryConfig?.DiscoveryUrls == null ?
                 new List<string>() : DiscovererModel.DiscoveryConfig.DiscoveryUrls;
         }
@@ -117,47 +118,50 @@ namespace Microsoft.Azure.IIoT.App.Models {
         /// <summary>
         /// List of locales to filter with during discovery
         /// </summary>
-        public List<string> EffectiveLocales {
+        public IReadOnlyList<string> EffectiveLocales {
             get => DiscovererModel.DiscoveryConfig?.Locales == null ?
                 new List<string>() : DiscovererModel.DiscoveryConfig.Locales;
         }
 
         public bool TryUpdateData(DiscovererInfoRequested input) {
+            if (input is null) {
+                throw new ArgumentNullException(nameof(input));
+            }
             try {
                 DiscovererModel.RequestedConfig ??= new DiscoveryConfigApiModel();
 
                 Patch.NetworkProbeTimeout = DiscovererModel.RequestedConfig.NetworkProbeTimeout =
                     string.IsNullOrWhiteSpace(input.RequestedNetworkProbeTimeout) ? TimeSpan.MinValue :
-                    TimeSpan.Parse(input.RequestedNetworkProbeTimeout);
+                    TimeSpan.Parse(input.RequestedNetworkProbeTimeout, CultureInfo.CurrentCulture);
 
                 Patch.MaxNetworkProbes = DiscovererModel.RequestedConfig.MaxNetworkProbes =
-                    string.IsNullOrWhiteSpace(input.RequestedMaxNetworkProbes) ? -1 : 
-                    int.Parse(input.RequestedMaxNetworkProbes);
+                    string.IsNullOrWhiteSpace(input.RequestedMaxNetworkProbes) ? -1 :
+                    int.Parse(input.RequestedMaxNetworkProbes, CultureInfo.CurrentCulture);
 
                 Patch.PortProbeTimeout = DiscovererModel.RequestedConfig.PortProbeTimeout =
                     string.IsNullOrWhiteSpace(input.RequestedPortProbeTimeout) ? TimeSpan.MinValue :
-                    TimeSpan.Parse(input.RequestedPortProbeTimeout);
+                    TimeSpan.Parse(input.RequestedPortProbeTimeout, CultureInfo.CurrentCulture);
 
                 Patch.MaxPortProbes = DiscovererModel.RequestedConfig.MaxPortProbes =
                     string.IsNullOrWhiteSpace(input.RequestedMaxPortProbes) ? -1 :
-                    int.Parse(input.RequestedMaxPortProbes);
+                    int.Parse(input.RequestedMaxPortProbes, CultureInfo.CurrentCulture);
 
                 Patch.IdleTimeBetweenScans = DiscovererModel.RequestedConfig.IdleTimeBetweenScans =
                     string.IsNullOrWhiteSpace(input.RequestedIdleTimeBetweenScans) ? TimeSpan.MinValue :
-                    TimeSpan.Parse(input.RequestedIdleTimeBetweenScans);
+                    TimeSpan.Parse(input.RequestedIdleTimeBetweenScans, CultureInfo.CurrentCulture);
 
                 Patch.AddressRangesToScan = DiscovererModel.RequestedConfig.AddressRangesToScan =
                     string.IsNullOrWhiteSpace(input.RequestedAddressRangesToScan) ? string.Empty :
                     input.RequestedAddressRangesToScan;
 
                 Patch.PortRangesToScan = DiscovererModel.RequestedConfig.PortRangesToScan =
-                    string.IsNullOrWhiteSpace(input.RequestedPortRangesToScan) ? string.Empty : 
+                    string.IsNullOrWhiteSpace(input.RequestedPortRangesToScan) ? string.Empty :
                     input.RequestedPortRangesToScan;
 
-                Patch.DiscoveryUrls = DiscovererModel.RequestedConfig.DiscoveryUrls = 
+                Patch.DiscoveryUrls = DiscovererModel.RequestedConfig.DiscoveryUrls =
                     input.RequestedDiscoveryUrls ?? new List<string>();
 
-                Patch.Locales = DiscovererModel.RequestedConfig.Locales = 
+                Patch.Locales = DiscovererModel.RequestedConfig.Locales =
                     input.RequestedDiscoveryUrls ?? new List<string>();
 
                 return true;

@@ -82,11 +82,11 @@ namespace Microsoft.Azure.IIoT.Utils {
                     throw new TaskCanceledException();
                 }
                 try {
-                    await work();
+                    await work().ConfigureAwait(false);
                     return;
                 }
                 catch (Exception ex) {
-                    await DelayOrThrow(logger, cont, policy, maxRetry, k, ex, ct);
+                    await DelayOrThrow(logger, cont, policy, maxRetry, k, ex, ct).ConfigureAwait(false);
                 }
             }
         }
@@ -109,10 +109,10 @@ namespace Microsoft.Azure.IIoT.Utils {
                     throw new TaskCanceledException();
                 }
                 try {
-                    return await work();
+                    return await work().ConfigureAwait(false);
                 }
                 catch (Exception ex) {
-                    await DelayOrThrow(logger, cont, policy, maxRetry, k, ex, ct);
+                    await DelayOrThrow(logger, cont, policy, maxRetry, k, ex, ct).ConfigureAwait(false);
                 }
             }
         }
@@ -138,7 +138,7 @@ namespace Microsoft.Azure.IIoT.Utils {
                     return;
                 }
                 catch (Exception ex) {
-                    await DelayOrThrow(logger, cont, policy, maxRetry, k, ex, ct);
+                    await DelayOrThrow(logger, cont, policy, maxRetry, k, ex, ct).ConfigureAwait(false);
                 }
             }
         }
@@ -164,7 +164,7 @@ namespace Microsoft.Azure.IIoT.Utils {
                     return work();
                 }
                 catch (Exception ex) {
-                    await DelayOrThrow(logger, cont, policy, maxRetry, k, ex, ct);
+                    await DelayOrThrow(logger, cont, policy, maxRetry, k, ex, ct).ConfigureAwait(false);
                 }
             }
         }
@@ -725,13 +725,13 @@ namespace Microsoft.Azure.IIoT.Utils {
             if (ex is TemporarilyBusyException tbx && tbx.RetryAfter != null) {
                 var delay = tbx.RetryAfter.Value;
                 Log(logger, k, (int)delay.TotalMilliseconds, ex);
-                await Task.Delay(delay, ct);
+                await Task.Delay(delay, ct).ConfigureAwait(false);
             }
             else {
                 var delay = policy(k, ex);
                 Log(logger, k, delay, ex);
                 if (delay != 0) {
-                    await Task.Delay(delay, ct);
+                    await Task.Delay(delay, ct).ConfigureAwait(false);
                 }
             }
         }

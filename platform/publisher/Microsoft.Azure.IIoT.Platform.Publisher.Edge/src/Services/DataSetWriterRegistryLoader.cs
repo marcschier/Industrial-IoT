@@ -14,12 +14,13 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Services {
     using System.Threading;
     using System.Threading.Tasks;
     using System.Linq;
+    using System.Globalization;
 
     /// <summary>
     /// Loads writer group writers from the registry endpoint and reconfigures
     /// the writer group processing engine on the fly.
     /// </summary>
-    public class DataSetWriterRegistryLoader : IDataSetWriterRegistryLoader,
+    public sealed class DataSetWriterRegistryLoader : IDataSetWriterRegistryLoader,
         IDisposable {
 
         /// <inheritdoc/>
@@ -103,8 +104,8 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Services {
                     _logger.Information("Loading DataSet {writerId}...",
                         writerId);
                     var result = await _client.GetDataSetWriterAsync(serviceEndpoint,
-                        writerId, ct);
-                    _state.AddOrUpdate(writerId, DateTime.UtcNow.ToString());
+                        writerId, ct).ConfigureAwait(false);
+                    _state.AddOrUpdate(writerId, DateTime.UtcNow.ToString(CultureInfo.InvariantCulture));
                     return result;
                 }
                 catch (Exception ex) {
@@ -115,7 +116,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Services {
                         writerId);
                     return null;
                 }
-            }));
+            })).ConfigureAwait(false);
 
             _logger.Debug("Downloaded all writers ...");
 

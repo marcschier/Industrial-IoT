@@ -29,7 +29,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Cli {
     /// <summary>
     /// OPC Twin module cli
     /// </summary>
-    public class Program {
+    public static class Program {
 
         private enum Op {
             None,
@@ -49,6 +49,10 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Cli {
         /// Entry point
         /// </summary>
         public static void Main(string[] args) {
+            if (args is null) {
+                throw new ArgumentNullException(nameof(args));
+            }
+
             var op = Op.None;
             var verbose = false;
             string deviceId = null, moduleId = null;
@@ -271,7 +275,7 @@ Options:
             Console.WriteLine("Create or retrieve connection string...");
             var logger = ConsoleLogger.Create(LogEventLevel.Error);
             var cs = await Retry.WithExponentialBackoff(logger,
-                () => AddOrGetAsync(config, diagnostics, deviceId, moduleId));
+                () => AddOrGetAsync(config, diagnostics, deviceId, moduleId)).ConfigureAwait(false);
 
             // Hook event source
             using (var broker = new EventSourceBroker()) {
@@ -293,7 +297,7 @@ Options:
         /// </summary>
         private static async Task AddAsync(IIoTHubConfig config, ILogAnalyticsConfig diagnostics,
             string deviceId, string moduleId) {
-            var cs = await AddOrGetAsync(config, diagnostics, deviceId, moduleId);
+            var cs = await AddOrGetAsync(config, diagnostics, deviceId, moduleId).ConfigureAwait(false);
             Console.WriteLine(cs);
         }
 
@@ -305,7 +309,7 @@ Options:
             var logger = ConsoleLogger.Create(LogEventLevel.Error);
             var registry = new IoTHubServiceClient(
                 config, new NewtonSoftJsonSerializer(), logger);
-            var cs = await registry.GetConnectionStringAsync(deviceId, moduleId);
+            var cs = await registry.GetConnectionStringAsync(deviceId, moduleId).ConfigureAwait(false);
             Console.WriteLine(cs);
         }
 
@@ -318,7 +322,7 @@ Options:
             var registry = new IoTHubServiceClient(
                 config, new NewtonSoftJsonSerializer(), logger);
             await ResetAsync(registry, await registry.GetAsync(deviceId, moduleId,
-                CancellationToken.None));
+                CancellationToken.None).ConfigureAwait(false)).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -329,7 +333,7 @@ Options:
             var logger = ConsoleLogger.Create(LogEventLevel.Error);
             var registry = new IoTHubServiceClient(
                 config, new NewtonSoftJsonSerializer(), logger);
-            await registry.DeleteAsync(deviceId, moduleId, null, CancellationToken.None);
+            await registry.DeleteAsync(deviceId, moduleId, null, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -342,7 +346,7 @@ Options:
 
             var query = "SELECT * FROM devices.modules WHERE " +
                 $"properties.reported.{TwinProperty.Type} = '{IdentityType.Supervisor}'";
-            var supers = await registry.QueryAllDeviceTwinsAsync(query);
+            var supers = await registry.QueryAllDeviceTwinsAsync(query).ConfigureAwait(false);
             foreach (var item in supers) {
                 Console.WriteLine($"{item.Id} {item.ModuleId}");
             }
@@ -358,10 +362,10 @@ Options:
 
             var query = "SELECT * FROM devices.modules WHERE " +
                 $"properties.reported.{TwinProperty.Type} = '{IdentityType.Supervisor}'";
-            var supers = await registry.QueryAllDeviceTwinsAsync(query);
+            var supers = await registry.QueryAllDeviceTwinsAsync(query).ConfigureAwait(false);
             foreach (var item in supers) {
                 Console.WriteLine($"Resetting {item.Id} {item.ModuleId ?? ""}");
-                await ResetAsync(registry, item);
+                await ResetAsync(registry, item).ConfigureAwait(false);
             }
         }
 
@@ -374,22 +378,22 @@ Options:
             var registry = new IoTHubServiceClient(
                 config, new NewtonSoftJsonSerializer(), logger);
             var result = await registry.QueryAllDeviceTwinsAsync(
-                "SELECT * from devices where IS_DEFINED(tags.DeviceType)");
+                "SELECT * from devices where IS_DEFINED(tags.DeviceType)").ConfigureAwait(false);
             foreach (var item in result) {
                 Console.WriteLine($"Deleting {item.Id} {item.ModuleId ?? ""}");
                 await registry.DeleteAsync(item.Id, item.ModuleId, null,
-                    CancellationToken.None);
+                    CancellationToken.None).ConfigureAwait(false);
             }
             if (!includeSupervisors) {
                 return;
             }
             var query = "SELECT * FROM devices.modules WHERE " +
              $"properties.reported.{TwinProperty.Type} = '{IdentityType.Supervisor}'";
-            var supers = await registry.QueryAllDeviceTwinsAsync(query);
+            var supers = await registry.QueryAllDeviceTwinsAsync(query).ConfigureAwait(false);
             foreach (var item in supers) {
                 Console.WriteLine($"Deleting {item.Id} {item.ModuleId ?? ""}");
                 await registry.DeleteAsync(item.Id, item.ModuleId, null,
-                    CancellationToken.None);
+                    CancellationToken.None).ConfigureAwait(false);
             }
         }
 
@@ -398,9 +402,11 @@ Options:
         /// </summary>
         private static async Task ResetAsync(IoTHubServiceClient registry,
             DeviceTwinModel item) {
+            var properties = new Dictionary<string, VariantValue>();
+            var tags = new Dictionary<string, VariantValue>();
             if (item.Tags != null) {
                 foreach (var tag in item.Tags.Keys.ToList()) {
-                    item.Tags[tag] = null;
+                    tags.Add(tag, null);
                 }
             }
             if (item.Properties?.Desired != null) {
@@ -408,7 +414,7 @@ Options:
                     if (property.StartsWith('$')) {
                         continue;
                     }
-                    item.Properties.Desired[property] = null;
+                    properties.Add(property, null);
                 }
             }
             if (item.Properties?.Reported != null) {
@@ -417,11 +423,16 @@ Options:
                         continue;
                     }
                     if (!item.Properties.Desired.ContainsKey(property)) {
-                        item.Properties.Desired.Add(property, null);
+                        properties.Add(property, null);
                     }
                 }
             }
-            await registry.CreateOrUpdateAsync(item, true, CancellationToken.None);
+            item.Tags = tags;
+            item.Properties = new TwinPropertiesModel {
+                Desired = properties
+            };
+            await registry.CreateOrUpdateAsync(item, true,
+                default).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -441,7 +452,7 @@ Options:
                     Capabilities = new DeviceCapabilitiesModel {
                         IotEdge = true
                     }
-                }, false, CancellationToken.None);
+                }, false, CancellationToken.None).ConfigureAwait(false);
             }
             catch (ResourceConflictException) {
                 logger.Information("Gateway {deviceId} exists.", deviceId);
@@ -456,12 +467,12 @@ Options:
                             [nameof(diagnostics.LogWorkspaceKey)] = diagnostics?.LogWorkspaceKey
                         }
                     }
-                }, true, CancellationToken.None);
+                }, true, CancellationToken.None).ConfigureAwait(false);
             }
             catch (ResourceConflictException) {
                 logger.Information("Module {moduleId} exists...", moduleId);
             }
-            var cs = await registry.GetConnectionStringAsync(deviceId, moduleId);
+            var cs = await registry.GetConnectionStringAsync(deviceId, moduleId).ConfigureAwait(false);
             return cs;
         }
 

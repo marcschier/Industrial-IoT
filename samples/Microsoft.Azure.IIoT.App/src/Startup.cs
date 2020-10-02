@@ -14,7 +14,7 @@ namespace Microsoft.Azure.IIoT.App {
     using Microsoft.Azure.IIoT.AspNetCore.Storage;
     using Microsoft.Azure.IIoT.Authentication;
     using Microsoft.Azure.IIoT.Authentication.Runtime;
-    using Microsoft.Azure.IIoT.Http.Default;
+    using Microsoft.Azure.IIoT.Http.Clients;
     using Microsoft.Azure.IIoT.Http.SignalR;
     using Microsoft.Azure.IIoT.Platform.Publisher.Api;
     using Microsoft.Azure.IIoT.Platform.Publisher.Api.Clients;
@@ -95,6 +95,13 @@ namespace Microsoft.Azure.IIoT.App {
         /// <param name="app"></param>
         /// <param name="appLifetime"></param>
         public void Configure(IApplicationBuilder app, IHostApplicationLifetime appLifetime) {
+            if (app is null) {
+                throw new ArgumentNullException(nameof(app));
+            }
+            if (appLifetime is null) {
+                throw new ArgumentNullException(nameof(appLifetime));
+            }
+
             var applicationContainer = app.ApplicationServices.GetAutofacRoot();
 
             app.UsePathBase();
@@ -137,6 +144,9 @@ namespace Microsoft.Azure.IIoT.App {
         /// <param name="services"></param>
         /// <returns></returns>
         public void ConfigureServices(IServiceCollection services) {
+            if (services is null) {
+                throw new ArgumentNullException(nameof(services));
+            }
 
             // services.AddLogging(o => o.AddConsole().AddDebug());
             services.AddHeaderForwarding();

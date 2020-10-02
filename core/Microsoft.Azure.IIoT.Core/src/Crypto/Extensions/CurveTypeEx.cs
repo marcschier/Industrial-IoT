@@ -27,33 +27,33 @@ namespace Microsoft.Azure.IIoT.Crypto.Models {
                     return "P-521";
                 case CurveType.P256K:
                     return "P-256K";
-                case CurveType.Brainpool_P160r1:
+                case CurveType.BrainpoolP160r1:
                     return "Brainpool-P-160-r1";
-                case CurveType.Brainpool_P160t1:
+                case CurveType.BrainpoolP160t1:
                     return "Brainpool-P-160-t1";
-                case CurveType.Brainpool_P192r1:
+                case CurveType.BrainpoolP192r1:
                     return "Brainpool-P-192-r1";
-                case CurveType.Brainpool_P192t1:
+                case CurveType.BrainpoolP192t1:
                     return "Brainpool-P-192-t1";
-                case CurveType.Brainpool_P224r1:
+                case CurveType.BrainpoolP224r1:
                     return "Brainpool-P-224-r1";
-                case CurveType.Brainpool_P224t1:
+                case CurveType.BrainpoolP224t1:
                     return "Brainpool-P-224-t1";
-                case CurveType.Brainpool_P256r1:
+                case CurveType.BrainpoolP256r1:
                     return "Brainpool-P-256-r1";
-                case CurveType.Brainpool_P256t1:
+                case CurveType.BrainpoolP256t1:
                     return "Brainpool-P-256-t1";
-                case CurveType.Brainpool_P320r1:
+                case CurveType.BrainpoolP320r1:
                     return "Brainpool-P-320-r1";
-                case CurveType.Brainpool_P320t1:
+                case CurveType.BrainpoolP320t1:
                     return "Brainpool-P-320-t1";
-                case CurveType.Brainpool_P384r1:
+                case CurveType.BrainpoolP384r1:
                     return "Brainpool-P-384-r1";
-                case CurveType.Brainpool_P384t1:
+                case CurveType.BrainpoolP384t1:
                     return "Brainpool-P-384-t1";
-                case CurveType.Brainpool_P512r1:
+                case CurveType.BrainpoolP512r1:
                     return "Brainpool-P-512-r1";
-                case CurveType.Brainpool_P512t1:
+                case CurveType.BrainpoolP512t1:
                     return "Brainpool-P-512-t1";
             }
             throw new ArgumentException($"Unknown curve {type}");
@@ -76,33 +76,33 @@ namespace Microsoft.Azure.IIoT.Crypto.Models {
                     return 66;
                 case CurveType.P256K:
                     return 32;
-                case CurveType.Brainpool_P160r1:
+                case CurveType.BrainpoolP160r1:
                     break; // TODO
-                case CurveType.Brainpool_P160t1:
+                case CurveType.BrainpoolP160t1:
                     break;
-                case CurveType.Brainpool_P192r1:
+                case CurveType.BrainpoolP192r1:
                     break;
-                case CurveType.Brainpool_P192t1:
+                case CurveType.BrainpoolP192t1:
                     break;
-                case CurveType.Brainpool_P224r1:
+                case CurveType.BrainpoolP224r1:
                     break;
-                case CurveType.Brainpool_P224t1:
+                case CurveType.BrainpoolP224t1:
                     break;
-                case CurveType.Brainpool_P256r1:
+                case CurveType.BrainpoolP256r1:
                     break;
-                case CurveType.Brainpool_P256t1:
+                case CurveType.BrainpoolP256t1:
                     break;
-                case CurveType.Brainpool_P320r1:
+                case CurveType.BrainpoolP320r1:
                     break;
-                case CurveType.Brainpool_P320t1:
+                case CurveType.BrainpoolP320t1:
                     break;
-                case CurveType.Brainpool_P384r1:
+                case CurveType.BrainpoolP384r1:
                     break;
-                case CurveType.Brainpool_P384t1:
+                case CurveType.BrainpoolP384t1:
                     break;
-                case CurveType.Brainpool_P512r1:
+                case CurveType.BrainpoolP512r1:
                     break;
-                case CurveType.Brainpool_P512t1:
+                case CurveType.BrainpoolP512t1:
                     break;
             }
             throw new ArgumentException($"Unknown curve {type}");
@@ -123,33 +123,33 @@ namespace Microsoft.Azure.IIoT.Crypto.Models {
                     return ECCurve.NamedCurves.nistP521;
                 case CurveType.P256K:
                     return ECCurve.CreateFromFriendlyName("secP256r1");
-                case CurveType.Brainpool_P160r1:
+                case CurveType.BrainpoolP160r1:
                     return ECCurve.NamedCurves.brainpoolP160r1;
-                case CurveType.Brainpool_P160t1:
+                case CurveType.BrainpoolP160t1:
                     return ECCurve.NamedCurves.brainpoolP160t1;
-                case CurveType.Brainpool_P192r1:
+                case CurveType.BrainpoolP192r1:
                     return ECCurve.NamedCurves.brainpoolP192r1;
-                case CurveType.Brainpool_P192t1:
+                case CurveType.BrainpoolP192t1:
                     return ECCurve.NamedCurves.brainpoolP192t1;
-                case CurveType.Brainpool_P224r1:
+                case CurveType.BrainpoolP224r1:
                     return ECCurve.NamedCurves.brainpoolP224r1;
-                case CurveType.Brainpool_P224t1:
+                case CurveType.BrainpoolP224t1:
                     return ECCurve.NamedCurves.brainpoolP224t1;
-                case CurveType.Brainpool_P256r1:
+                case CurveType.BrainpoolP256r1:
                     return ECCurve.NamedCurves.brainpoolP256r1;
-                case CurveType.Brainpool_P256t1:
+                case CurveType.BrainpoolP256t1:
                     return ECCurve.NamedCurves.brainpoolP256t1;
-                case CurveType.Brainpool_P320r1:
+                case CurveType.BrainpoolP320r1:
                     return ECCurve.NamedCurves.brainpoolP320r1;
-                case CurveType.Brainpool_P320t1:
+                case CurveType.BrainpoolP320t1:
                     return ECCurve.NamedCurves.brainpoolP320t1;
-                case CurveType.Brainpool_P384r1:
+                case CurveType.BrainpoolP384r1:
                     return ECCurve.NamedCurves.brainpoolP384r1;
-                case CurveType.Brainpool_P384t1:
+                case CurveType.BrainpoolP384t1:
                     return ECCurve.NamedCurves.brainpoolP384t1;
-                case CurveType.Brainpool_P512r1:
+                case CurveType.BrainpoolP512r1:
                     return ECCurve.NamedCurves.brainpoolP512r1;
-                case CurveType.Brainpool_P512t1:
+                case CurveType.BrainpoolP512t1:
                     return ECCurve.NamedCurves.brainpoolP512t1;
             }
             throw new ArgumentException($"Unknown curve {type}");
@@ -191,33 +191,33 @@ namespace Microsoft.Azure.IIoT.Crypto.Models {
                 case "secP256k1":
                     return CurveType.P256K;
                 case nameof(ECCurve.NamedCurves.brainpoolP160r1):
-                    return CurveType.Brainpool_P160r1;
+                    return CurveType.BrainpoolP160r1;
                 case nameof(ECCurve.NamedCurves.brainpoolP160t1):
-                    return CurveType.Brainpool_P160t1;
+                    return CurveType.BrainpoolP160t1;
                 case nameof(ECCurve.NamedCurves.brainpoolP192r1):
-                    return CurveType.Brainpool_P192r1;
+                    return CurveType.BrainpoolP192r1;
                 case nameof(ECCurve.NamedCurves.brainpoolP192t1):
-                    return CurveType.Brainpool_P192t1;
+                    return CurveType.BrainpoolP192t1;
                 case nameof(ECCurve.NamedCurves.brainpoolP224r1):
-                    return CurveType.Brainpool_P224r1;
+                    return CurveType.BrainpoolP224r1;
                 case nameof(ECCurve.NamedCurves.brainpoolP224t1):
-                    return CurveType.Brainpool_P224t1;
+                    return CurveType.BrainpoolP224t1;
                 case nameof(ECCurve.NamedCurves.brainpoolP256r1):
-                    return CurveType.Brainpool_P256r1;
+                    return CurveType.BrainpoolP256r1;
                 case nameof(ECCurve.NamedCurves.brainpoolP256t1):
-                    return CurveType.Brainpool_P256t1;
+                    return CurveType.BrainpoolP256t1;
                 case nameof(ECCurve.NamedCurves.brainpoolP320r1):
-                    return CurveType.Brainpool_P320r1;
+                    return CurveType.BrainpoolP320r1;
                 case nameof(ECCurve.NamedCurves.brainpoolP320t1):
-                    return CurveType.Brainpool_P320t1;
+                    return CurveType.BrainpoolP320t1;
                 case nameof(ECCurve.NamedCurves.brainpoolP384r1):
-                    return CurveType.Brainpool_P384r1;
+                    return CurveType.BrainpoolP384r1;
                 case nameof(ECCurve.NamedCurves.brainpoolP384t1):
-                    return CurveType.Brainpool_P384t1;
+                    return CurveType.BrainpoolP384t1;
                 case nameof(ECCurve.NamedCurves.brainpoolP512r1):
-                    return CurveType.Brainpool_P512r1;
+                    return CurveType.BrainpoolP512r1;
                 case nameof(ECCurve.NamedCurves.brainpoolP512t1):
-                    return CurveType.Brainpool_P512t1;
+                    return CurveType.BrainpoolP512t1;
             }
             throw new ArgumentException(
                 $"Unknown curve {curve.Oid.Value} ({curve.Oid.FriendlyName})");

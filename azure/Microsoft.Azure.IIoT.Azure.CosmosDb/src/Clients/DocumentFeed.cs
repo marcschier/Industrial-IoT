@@ -38,11 +38,11 @@ namespace Microsoft.Azure.IIoT.Azure.CosmosDb.Clients {
             return await Retry.WithExponentialBackoff(_logger, ct, async () => {
                 if (_query.HasMoreResults) {
                     try {
-                        var result = await _query.ReadNextAsync(ct);
+                        var result = await _query.ReadNextAsync(ct).ConfigureAwait(false);
                         result.EnsureSuccessStatusCode();
 
                         ContinuationToken = result.ContinuationToken;
-                        var items = _serializer.Parse(await result.Content.ReadAsMemoryAsync());
+                        var items = _serializer.Parse(await result.Content.ReadAsMemoryAsync().ConfigureAwait(false));
                         return items["Documents"].Values
                             .Select(v => (IDocumentInfo<T>)new DocumentInfo<T>(v));
                     }
@@ -51,7 +51,7 @@ namespace Microsoft.Azure.IIoT.Azure.CosmosDb.Clients {
                     }
                 }
                 return Enumerable.Empty<IDocumentInfo<T>>();
-            });
+            }).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>

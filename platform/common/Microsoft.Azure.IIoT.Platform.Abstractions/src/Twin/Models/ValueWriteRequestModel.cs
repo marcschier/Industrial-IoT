@@ -6,6 +6,7 @@
 namespace Microsoft.Azure.IIoT.Platform.Twin.Models {
     using Microsoft.Azure.IIoT.Platform.Core.Models;
     using Microsoft.Azure.IIoT.Serializers;
+    using System.Collections.Generic;
 
     /// <summary>
     /// Request value write
@@ -21,7 +22,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Models {
         /// An optional path from NodeId instance to
         /// an actual node.
         /// </summary>
-        public string[] BrowsePath { get; set; }
+        public IReadOnlyList<string> BrowsePath { get; set; }
 
         /// <summary>
         /// The data type of the value - from browse.

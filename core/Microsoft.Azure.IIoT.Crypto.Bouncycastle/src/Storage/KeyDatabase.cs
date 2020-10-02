@@ -33,7 +33,7 @@ namespace Microsoft.Azure.IIoT.Crypto.Storage {
         /// <inheritdoc/>
         public async Task<KeyHandle> CreateKeyAsync(string name,
             CreateKeyParams keyParams, KeyStoreProperties store, CancellationToken ct) {
-            return await ImportKeyAsync(name, keyParams.CreateKey(), store, ct);
+            return await ImportKeyAsync(name, keyParams.CreateKey(), store, ct).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
@@ -45,13 +45,13 @@ namespace Microsoft.Azure.IIoT.Crypto.Storage {
                 IsDisabled = false,
                 IsExportable = store?.Exportable ?? false,
             };
-            var result = await _keys.AddAsync(document, ct, name);
+            var result = await _keys.AddAsync(document, name, ct: ct).ConfigureAwait(false);
             return new KeyId(result.Id);
         }
 
         /// <inheritdoc/>
         public Task DeleteKeyAsync(KeyHandle handle, CancellationToken ct) {
-            return _keys.DeleteAsync<KeyDocument>(KeyId.GetId(handle), ct);
+            return _keys.DeleteAsync<KeyDocument>(KeyId.GetId(handle), ct: ct);
         }
 
         /// <inheritdoc/>
@@ -65,7 +65,7 @@ namespace Microsoft.Azure.IIoT.Crypto.Storage {
             var keyId = KeyId.GetId(handle);
             while (true) {
                 try {
-                    var document = await _keys.FindAsync<KeyDocument>(keyId, ct);
+                    var document = await _keys.FindAsync<KeyDocument>(keyId, ct: ct).ConfigureAwait(false);
                     if (document == null) {
                         throw new ResourceNotFoundException($"{keyId} not found");
                     }
@@ -74,7 +74,7 @@ namespace Microsoft.Azure.IIoT.Crypto.Storage {
                             Id = document.Value.Id,
                             IsDisabled = true,
                             KeyJson = document.Value.KeyJson
-                        }, ct);
+                        }, ct: ct).ConfigureAwait(false);
                     }
                     return;
                 }
@@ -87,14 +87,14 @@ namespace Microsoft.Azure.IIoT.Crypto.Storage {
         /// <inheritdoc/>
         public async Task<Key> GetPublicKeyAsync(KeyHandle handle, CancellationToken ct) {
             var document = await _keys.GetAsync<KeyDocument>(
-                KeyId.GetId(handle), ct);
+                KeyId.GetId(handle), ct: ct).ConfigureAwait(false);
             return document.Value.KeyJson.ToKey().GetPublicKey();
         }
 
         /// <inheritdoc/>
         public async Task<Key> ExportKeyAsync(KeyHandle handle, CancellationToken ct) {
             var document = await _keys.GetAsync<KeyDocument>(
-                KeyId.GetId(handle), ct);
+                KeyId.GetId(handle), ct: ct).ConfigureAwait(false);
             if (!document.Value.IsExportable) {
                 throw new InvalidOperationException("Key is not exportable");
             }
@@ -108,7 +108,7 @@ namespace Microsoft.Azure.IIoT.Crypto.Storage {
         public async Task<byte[]> SignAsync(KeyHandle handle, byte[] hash,
             SignatureType algorithm, CancellationToken ct) {
             var document = await _keys.GetAsync<KeyDocument>(
-                KeyId.GetId(handle), ct);
+                KeyId.GetId(handle), ct: ct).ConfigureAwait(false);
             if (document.Value.IsDisabled) {
                 throw new InvalidOperationException("Key is disabled");
             }
@@ -134,7 +134,7 @@ namespace Microsoft.Azure.IIoT.Crypto.Storage {
         /// <inheritdoc/>
         public async Task<bool> VerifyAsync(KeyHandle handle, byte[] hash,
             SignatureType algorithm, byte[] signature, CancellationToken ct) {
-            var document = await _keys.GetAsync<KeyDocument>(KeyId.GetId(handle), ct);
+            var document = await _keys.GetAsync<KeyDocument>(KeyId.GetId(handle), ct: ct).ConfigureAwait(false);
             if (document.Value.IsDisabled) {
                 throw new InvalidOperationException("Key is disabled");
             }

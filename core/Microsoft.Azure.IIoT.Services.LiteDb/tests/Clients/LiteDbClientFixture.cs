@@ -52,7 +52,7 @@ namespace Microsoft.Azure.IIoT.Services.LiteDb.Clients {
                 RegistrationDate = DateTime.UtcNow.AddDays(-1)
             };
 
-            await collection.UpsertAsync(AndersonFamily);
+            await collection.UpsertAsync(AndersonFamily).ConfigureAwait(false);
 
             var WakefieldFamily = new Family {
                 Id = "WakefieldFamily",
@@ -93,7 +93,7 @@ namespace Microsoft.Azure.IIoT.Services.LiteDb.Clients {
                 RegistrationDate = DateTime.UtcNow.AddDays(-30)
             };
 
-            await collection.UpsertAsync(WakefieldFamily);
+            await collection.UpsertAsync(WakefieldFamily).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -104,7 +104,7 @@ namespace Microsoft.Azure.IIoT.Services.LiteDb.Clients {
         public async Task<IDatabase> GetDatabaseAsync() {
             var logger = ConsoleLogger.Create();
             var server = new MemoryDatabase(logger);
-            return await server.OpenAsync("test", null);
+            return await server.OpenAsync("test", null).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -113,11 +113,11 @@ namespace Microsoft.Azure.IIoT.Services.LiteDb.Clients {
         /// <param name="options"></param>
         /// <returns></returns>
         public async Task<IItemContainer> GetDocumentsAsync() {
-            _query = await GetContainerAsync("test");
+            _query = await GetContainerAsync("test").ConfigureAwait(false);
             if (_query == null) {
                 return null;
             }
-            await CreateDocumentsAsync(_query.Container);
+            await CreateDocumentsAsync(_query.Container).ConfigureAwait(false);
             return _query.Container;
         }
 
@@ -127,7 +127,7 @@ namespace Microsoft.Azure.IIoT.Services.LiteDb.Clients {
         /// <param name="options"></param>
         /// <returns></returns>
         public async Task<ContainerWrapper> GetContainerAsync(string name = null) {
-            var database = await Try.Async(() => GetDatabaseAsync());
+            var database = await Try.Async(() => GetDatabaseAsync()).ConfigureAwait(false);
             if (database == null) {
                 return null;
             }
@@ -138,7 +138,7 @@ namespace Microsoft.Azure.IIoT.Services.LiteDb.Clients {
                     name += (char)rand.Next('a', 'z');
                 }
             }
-            var docs = await database.OpenContainerAsync(name);
+            var docs = await database.OpenContainerAsync(name).ConfigureAwait(false);
             return new ContainerWrapper(database, docs);
         }
 

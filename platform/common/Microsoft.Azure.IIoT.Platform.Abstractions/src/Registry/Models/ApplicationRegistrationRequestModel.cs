@@ -40,7 +40,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
         /// <summary>
         /// Localizations
         /// </summary>
-        public Dictionary<string, string> LocalizedNames { get; set; }
+        public IReadOnlyDictionary<string, string> LocalizedNames { get; set; }
 
         /// <summary>
         /// Site of the application
@@ -50,12 +50,12 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
         /// <summary>
         /// Application capabilities
         /// </summary>
-        public HashSet<string> Capabilities { get; set; }
+        public /*IReadOnlySet*/ IReadOnlyCollection<string> Capabilities { get; set; }
 
         /// <summary>
         /// Discovery urls of the application
         /// </summary>
-        public HashSet<string> DiscoveryUrls { get; set; }
+        public /*IReadOnlySet*/ IReadOnlyCollection<string> DiscoveryUrls { get; set; }
 
         /// <summary>
         /// Discovery profile uri

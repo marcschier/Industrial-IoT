@@ -99,7 +99,7 @@ namespace Microsoft.Azure.IIoT.Utils {
             var exceptions = new List<Exception>();
             foreach (var option in options) {
                 try {
-                    return await option();
+                    return await option().ConfigureAwait(false);
                 }
                 catch (Exception ex) {
                     exceptions.Add(ex);
@@ -119,7 +119,7 @@ namespace Microsoft.Azure.IIoT.Utils {
             var exceptions = new List<Exception>();
             foreach (var option in options) {
                 try {
-                    await option();
+                    await option().ConfigureAwait(false);
                     return;
                 }
                 catch (Exception ex) {

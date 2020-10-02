@@ -24,18 +24,18 @@ namespace Microsoft.Azure.IIoT.Services.CouchDb.Clients {
 
         [SkippableFact]
         public async Task FindItemTestAsync() {
-            using (var container = await _fixture.GetContainerAsync()) {
+            using (var container = await _fixture.GetContainerAsync().ConfigureAwait(false)) {
                 Skip.If(container == null);
                 var documents = container.Container;
 
                 var f = new Fixture().Create<Family>();
-                var fr = await documents.AddAsync(f);
+                var fr = await documents.AddAsync(f).ConfigureAwait(false);
                 Assert.Equal(f.Id, fr.Id);
                 Assert.Equal(f.Id, fr.Value.Id);
                 Assert.Equal(f.LastName, fr.Value.LastName);
                 Assert.NotNull(fr.Etag);
 
-                var f2 = await documents.FindAsync<Family>(fr.Id);
+                var f2 = await documents.FindAsync<Family>(fr.Id).ConfigureAwait(false);
                 Assert.Equal(fr.Id, f2.Id);
                 Assert.Equal(fr.Id, f2.Value.Id);
                 Assert.Equal(fr.Value.LastName, f2.Value.LastName);
@@ -46,63 +46,63 @@ namespace Microsoft.Azure.IIoT.Services.CouchDb.Clients {
 
         [SkippableFact]
         public async Task NotFindItemTestAsync() {
-            using (var container = await _fixture.GetContainerAsync()) {
+            using (var container = await _fixture.GetContainerAsync().ConfigureAwait(false)) {
                 Skip.If(container == null);
                 var documents = container.Container;
 
                 var f = new Fixture().Create<Family>();
-                var fr = await documents.AddAsync(f);
+                var fr = await documents.AddAsync(f).ConfigureAwait(false);
                 Assert.Equal(f.Id, fr.Id);
                 Assert.Equal(f.Id, fr.Value.Id);
                 Assert.Equal(f.LastName, fr.Value.LastName);
                 Assert.NotNull(fr.Etag);
 
-                var f2 = await documents.FindAsync<Family>("xyz");
+                var f2 = await documents.FindAsync<Family>("xyz").ConfigureAwait(false);
                 Assert.Null(f2);
             }
         }
 
         [SkippableFact]
         public async Task FindItemBadArgumentTestsAsync() {
-            using (var container = await _fixture.GetContainerAsync()) {
+            using (var container = await _fixture.GetContainerAsync().ConfigureAwait(false)) {
                 Skip.If(container == null);
                 var documents = container.Container;
 
                 await Assert.ThrowsAsync<ArgumentNullException>(
-                () => documents.FindAsync<Family>(null, default, null));
+                () => documents.FindAsync<Family>(null, null, default)).ConfigureAwait(false);
             }
         }
 
         [SkippableFact]
         public async Task AddItemsTestAsync() {
-            using (var container = await _fixture.GetContainerAsync()) {
+            using (var container = await _fixture.GetContainerAsync().ConfigureAwait(false)) {
                 Skip.If(container == null);
                 var documents = container.Container;
 
                 var families = new Fixture().CreateMany<Family>(10).OrderBy(x => x.Id).ToArray();
                 foreach (var f in families) {
-                    await documents.AddAsync(f);
+                    await documents.AddAsync(f).ConfigureAwait(false);
                 }
 
-                var results = await ListAsync<Family, string>(documents, x => x.Id);
+                var results = await ListAsync<Family, string>(documents, x => x.Id).ConfigureAwait(false);
                 Assert.Equal(families.Select(f => f.Id), results.Select(f => f.Value.Id));
             }
         }
 
         [SkippableFact]
         public async Task AddItemTestAsync() {
-            using (var container = await _fixture.GetContainerAsync()) {
+            using (var container = await _fixture.GetContainerAsync().ConfigureAwait(false)) {
                 Skip.If(container == null);
                 var documents = container.Container;
 
                 var f = new Fixture().Create<Family>();
-                var fr = await documents.AddAsync(f);
+                var fr = await documents.AddAsync(f).ConfigureAwait(false);
                 Assert.Equal(f.Id, fr.Id);
                 Assert.Equal(f.Id, fr.Value.Id);
                 Assert.Equal(f.LastName, fr.Value.LastName);
                 Assert.NotNull(fr.Etag);
 
-                var results = await ListAsync<Family>(documents);
+                var results = await ListAsync<Family>(documents).ConfigureAwait(false);
                 Assert.Single(results);
                 Assert.Equal(f.Id, results.Single().Id);
                 Assert.Equal(f.Id, results.Single().Value.Id);
@@ -114,12 +114,12 @@ namespace Microsoft.Azure.IIoT.Services.CouchDb.Clients {
 
         [SkippableFact]
         public async Task AddItemTwiceThrowsAsync() {
-            using (var container = await _fixture.GetContainerAsync()) {
+            using (var container = await _fixture.GetContainerAsync().ConfigureAwait(false)) {
                 Skip.If(container == null);
                 var documents = container.Container;
 
                 var f = new Fixture().Create<Family>();
-                var fr = await documents.AddAsync(f);
+                var fr = await documents.AddAsync(f).ConfigureAwait(false);
                 Assert.Equal(f.Id, fr.Id);
                 Assert.Equal(f.Id, fr.Value.Id);
                 Assert.Equal(f.LastName, fr.Value.LastName);
@@ -127,18 +127,18 @@ namespace Microsoft.Azure.IIoT.Services.CouchDb.Clients {
 
                 var f2 = new Fixture().Create<Family>();
                 f2.Id = f.Id;
-                await Assert.ThrowsAsync<ResourceConflictException>(() => documents.AddAsync(f2));
+                await Assert.ThrowsAsync<ResourceConflictException>(() => documents.AddAsync(f2)).ConfigureAwait(false);
             }
         }
 
         [SkippableFact]
         public async Task AddItemAfterUpsertThrowsAsync() {
-            using (var container = await _fixture.GetContainerAsync()) {
+            using (var container = await _fixture.GetContainerAsync().ConfigureAwait(false)) {
                 Skip.If(container == null);
                 var documents = container.Container;
 
                 var f = new Fixture().Create<Family>();
-                var fr = await documents.UpsertAsync(f);
+                var fr = await documents.UpsertAsync(f).ConfigureAwait(false);
                 Assert.Equal(f.Id, fr.Id);
                 Assert.Equal(f.Id, fr.Value.Id);
                 Assert.Equal(f.LastName, fr.Value.LastName);
@@ -146,35 +146,35 @@ namespace Microsoft.Azure.IIoT.Services.CouchDb.Clients {
 
                 var f2 = new Fixture().Create<Family>();
                 f2.Id = f.Id;
-                await Assert.ThrowsAsync<ResourceConflictException>(() => documents.AddAsync(f2));
+                await Assert.ThrowsAsync<ResourceConflictException>(() => documents.AddAsync(f2)).ConfigureAwait(false);
             }
         }
 
         [SkippableFact]
         public async Task AddItemBadArgumentTestsAsync() {
-            using (var container = await _fixture.GetContainerAsync()) {
+            using (var container = await _fixture.GetContainerAsync().ConfigureAwait(false)) {
                 Skip.If(container == null);
                 var documents = container.Container;
 
                 await Assert.ThrowsAsync<ArgumentNullException>(
-                () => documents.AddAsync<Family>(null, default, "good", null));
+                () => documents.AddAsync<Family>(null, "good", null, default)).ConfigureAwait(false);
                 await Assert.ThrowsAsync<NotSupportedException>(
-                    () => documents.AddAsync(1, default, "badid", null));
+                    () => documents.AddAsync(1, "badid", null, default)).ConfigureAwait(false);
             }
         }
 
         [SkippableFact]
         public async Task UpsertItemsTestAsync() {
-            using (var container = await _fixture.GetContainerAsync()) {
+            using (var container = await _fixture.GetContainerAsync().ConfigureAwait(false)) {
                 Skip.If(container == null);
                 var documents = container.Container;
 
                 var families = new Fixture().CreateMany<Family>(10).OrderBy(x => x.Id).ToArray();
                 foreach (var f in families) {
-                    await documents.UpsertAsync(f);
+                    await documents.UpsertAsync(f).ConfigureAwait(false);
                 }
 
-                var results = await ListAsync<Family, string>(documents, x => x.Id);
+                var results = await ListAsync<Family, string>(documents, x => x.Id).ConfigureAwait(false);
                 Assert.Equal(families.Select(f => f.Id), results.Select(f => f.Value.Id));
                 Assert.Equal(families.Select(f => f.LastName), results.Select(f => f.Value.LastName));
             }
@@ -182,18 +182,18 @@ namespace Microsoft.Azure.IIoT.Services.CouchDb.Clients {
 
         [SkippableFact]
         public async Task UpsertItemTwiceAsync() {
-            using (var container = await _fixture.GetContainerAsync()) {
+            using (var container = await _fixture.GetContainerAsync().ConfigureAwait(false)) {
                 Skip.If(container == null);
                 var documents = container.Container;
 
                 var f = new Fixture().Create<Family>();
-                var fr = await documents.UpsertAsync(f);
+                var fr = await documents.UpsertAsync(f).ConfigureAwait(false);
                 Assert.Equal(f.Id, fr.Id);
                 Assert.Equal(f.Id, fr.Value.Id);
                 Assert.Equal(f.LastName, fr.Value.LastName);
                 Assert.NotNull(fr.Etag);
 
-                var results = await ListAsync<Family>(documents);
+                var results = await ListAsync<Family>(documents).ConfigureAwait(false);
                 Assert.Single(results);
                 Assert.Equal(f.Id, results.Single().Id);
                 Assert.Equal(f.Id, results.Single().Value.Id);
@@ -203,14 +203,14 @@ namespace Microsoft.Azure.IIoT.Services.CouchDb.Clients {
 
                 var f2 = new Fixture().Create<Family>();
                 f2.Id = f.Id;
-                var f3 = await documents.UpsertAsync(f2);
+                var f3 = await documents.UpsertAsync(f2).ConfigureAwait(false);
                 Assert.Equal(f2.Id, f3.Id);
                 Assert.Equal(f2.Id, f3.Value.Id);
                 Assert.Equal(f2.LastName, f3.Value.LastName);
                 Assert.NotNull(f3.Etag);
                 Assert.NotEqual(f3.Etag, fr.Etag);
 
-                results = await ListAsync<Family>(documents);
+                results = await ListAsync<Family>(documents).ConfigureAwait(false);
                 Assert.Single(results);
                 Assert.Equal(f2.Id, results.Single().Id);
                 Assert.Equal(f2.Id, results.Single().Value.Id);
@@ -222,12 +222,12 @@ namespace Microsoft.Azure.IIoT.Services.CouchDb.Clients {
 
         [SkippableFact]
         public async Task UpsertItemTwiceWithEtagAsync() {
-            using (var container = await _fixture.GetContainerAsync()) {
+            using (var container = await _fixture.GetContainerAsync().ConfigureAwait(false)) {
                 Skip.If(container == null);
                 var documents = container.Container;
 
                 var f = new Fixture().Create<Family>();
-                var fr = await documents.UpsertAsync(f);
+                var fr = await documents.UpsertAsync(f).ConfigureAwait(false);
                 Assert.Equal(f.Id, fr.Id);
                 Assert.Equal(f.Id, fr.Value.Id);
                 Assert.Equal(f.LastName, fr.Value.LastName);
@@ -235,14 +235,14 @@ namespace Microsoft.Azure.IIoT.Services.CouchDb.Clients {
 
                 var f2 = new Fixture().Create<Family>();
                 f2.Id = f.Id;
-                var f3 = await documents.UpsertAsync(f2, etag: fr.Etag);
+                var f3 = await documents.UpsertAsync(f2, etag: fr.Etag).ConfigureAwait(false);
                 Assert.Equal(f2.Id, f3.Id);
                 Assert.Equal(f2.Id, f3.Value.Id);
                 Assert.Equal(f2.LastName, f3.Value.LastName);
                 Assert.NotNull(f3.Etag);
                 Assert.NotEqual(f3.Etag, fr.Etag);
 
-                var results = await ListAsync<Family>(documents);
+                var results = await ListAsync<Family>(documents).ConfigureAwait(false);
                 Assert.Single(results);
                 Assert.Equal(f2.Id, results.Single().Id);
                 Assert.Equal(f2.Id, results.Single().Value.Id);
@@ -254,18 +254,18 @@ namespace Microsoft.Azure.IIoT.Services.CouchDb.Clients {
 
         [SkippableFact]
         public async Task UpsertItemFirstTimeWithEtagInsertsAsync() {
-            using (var container = await _fixture.GetContainerAsync()) {
+            using (var container = await _fixture.GetContainerAsync().ConfigureAwait(false)) {
                 Skip.If(container == null);
                 var documents = container.Container;
 
                 var f = new Fixture().Create<Family>();
-                var fr = await documents.UpsertAsync(f, etag: "OldEtag");
+                var fr = await documents.UpsertAsync(f, etag: "OldEtag").ConfigureAwait(false);
                 Assert.Equal(f.Id, fr.Id);
                 Assert.Equal(f.Id, fr.Value.Id);
                 Assert.Equal(f.LastName, fr.Value.LastName);
                 Assert.NotNull(fr.Etag);
 
-                var results = await ListAsync<Family>(documents);
+                var results = await ListAsync<Family>(documents).ConfigureAwait(false);
                 Assert.Single(results);
                 Assert.Equal(fr.Id, results.Single().Id);
                 Assert.Equal(fr.Id, results.Single().Value.Id);
@@ -277,12 +277,12 @@ namespace Microsoft.Azure.IIoT.Services.CouchDb.Clients {
 
         [SkippableFact]
         public async Task UpsertItemTwiceWithBadEtagThrowsAsync() {
-            using (var container = await _fixture.GetContainerAsync()) {
+            using (var container = await _fixture.GetContainerAsync().ConfigureAwait(false)) {
                 Skip.If(container == null);
                 var documents = container.Container;
 
                 var f = new Fixture().Create<Family>();
-                var fr = await documents.UpsertAsync(f);
+                var fr = await documents.UpsertAsync(f).ConfigureAwait(false);
                 Assert.Equal(f.Id, fr.Id);
                 Assert.Equal(f.Id, fr.Value.Id);
                 Assert.Equal(f.LastName, fr.Value.LastName);
@@ -291,18 +291,18 @@ namespace Microsoft.Azure.IIoT.Services.CouchDb.Clients {
                 var f2 = new Fixture().Create<Family>();
                 f2.Id = f.Id;
                 await Assert.ThrowsAsync<ResourceOutOfDateException>(
-                    () => documents.UpsertAsync(f2, etag: "bad"));
+                    () => documents.UpsertAsync(f2, etag: "bad")).ConfigureAwait(false);
             }
         }
 
         [SkippableFact]
         public async Task UpsertItemAfterAddAsync() {
-            using (var container = await _fixture.GetContainerAsync()) {
+            using (var container = await _fixture.GetContainerAsync().ConfigureAwait(false)) {
                 Skip.If(container == null);
                 var documents = container.Container;
 
                 var f = new Fixture().Create<Family>();
-                var fr = await documents.AddAsync(f);
+                var fr = await documents.AddAsync(f).ConfigureAwait(false);
                 Assert.Equal(f.Id, fr.Id);
                 Assert.Equal(f.Id, fr.Value.Id);
                 Assert.Equal(f.LastName, fr.Value.LastName);
@@ -310,14 +310,14 @@ namespace Microsoft.Azure.IIoT.Services.CouchDb.Clients {
 
                 var f2 = new Fixture().Create<Family>();
                 f2.Id = f.Id;
-                var f3 = await documents.UpsertAsync(f2);
+                var f3 = await documents.UpsertAsync(f2).ConfigureAwait(false);
                 Assert.Equal(f2.Id, f3.Id);
                 Assert.Equal(f2.Id, f3.Value.Id);
                 Assert.Equal(f2.LastName, f3.Value.LastName);
                 Assert.NotNull(f3.Etag);
                 Assert.NotEqual(f3.Etag, fr.Etag);
 
-                var results = await ListAsync<Family>(documents);
+                var results = await ListAsync<Family>(documents).ConfigureAwait(false);
                 Assert.Single(results);
                 Assert.Equal(f2.Id, results.Single().Id);
                 Assert.Equal(f2.Id, results.Single().Value.Id);
@@ -329,39 +329,39 @@ namespace Microsoft.Azure.IIoT.Services.CouchDb.Clients {
 
         [SkippableFact]
         public async Task UpsertItemBadArgumentTestsAsync() {
-            using (var container = await _fixture.GetContainerAsync()) {
+            using (var container = await _fixture.GetContainerAsync().ConfigureAwait(false)) {
                 Skip.If(container == null);
                 var documents = container.Container;
 
                 await Assert.ThrowsAsync<ArgumentNullException>(
-                    () => documents.UpsertAsync<Family>(null, default, "good", null));
+                    () => documents.UpsertAsync<Family>(null, "good", null, ct: default)).ConfigureAwait(false);
                 await Assert.ThrowsAsync<NotSupportedException>(
-                    () => documents.UpsertAsync(1, default, "badid", null));
+                    () => documents.UpsertAsync(1, "badid", null, ct: default)).ConfigureAwait(false);
             }
         }
 
         [SkippableFact]
         public async Task ReplaceItemAfterAddAsync() {
-            using (var container = await _fixture.GetContainerAsync()) {
+            using (var container = await _fixture.GetContainerAsync().ConfigureAwait(false)) {
                 Skip.If(container == null);
                 var documents = container.Container;
 
                 var f = new Fixture().Create<Family>();
-                var fr = await documents.AddAsync(f);
+                var fr = await documents.AddAsync(f).ConfigureAwait(false);
                 Assert.Equal(f.Id, fr.Id);
                 Assert.Equal(f.Id, fr.Value.Id);
                 Assert.Equal(f.LastName, fr.Value.LastName);
                 Assert.NotNull(fr.Etag);
 
                 var f2 = new Fixture().Create<Family>();
-                var f3 = await documents.ReplaceAsync(fr, f2);
+                var f3 = await documents.ReplaceAsync(fr, f2).ConfigureAwait(false);
                 Assert.Equal(f.Id, f3.Id);
                 Assert.Equal(f.Id, f3.Value.Id); // Id was overridden with f.id
                 Assert.Equal(f2.LastName, f3.Value.LastName);
                 Assert.NotNull(f3.Etag);
                 Assert.NotEqual(f3.Etag, fr.Etag);
 
-                var results = await ListAsync<Family>(documents);
+                var results = await ListAsync<Family>(documents).ConfigureAwait(false);
                 Assert.Single(results);
                 Assert.Equal(f.Id, results.Single().Id);
                 Assert.Equal(f.Id, results.Single().Value.Id);
@@ -373,26 +373,26 @@ namespace Microsoft.Azure.IIoT.Services.CouchDb.Clients {
 
         [SkippableFact]
         public async Task ReplaceItemAfterUpsertAsync() {
-            using (var container = await _fixture.GetContainerAsync()) {
+            using (var container = await _fixture.GetContainerAsync().ConfigureAwait(false)) {
                 Skip.If(container == null);
                 var documents = container.Container;
 
                 var f = new Fixture().Create<Family>();
-                var fr = await documents.UpsertAsync(f);
+                var fr = await documents.UpsertAsync(f).ConfigureAwait(false);
                 Assert.Equal(f.Id, fr.Id);
                 Assert.Equal(f.Id, fr.Value.Id);
                 Assert.Equal(f.LastName, fr.Value.LastName);
                 Assert.NotNull(fr.Etag);
 
                 var f2 = new Fixture().Create<Family>();
-                var f3 = await documents.ReplaceAsync(fr, f2);
+                var f3 = await documents.ReplaceAsync(fr, f2).ConfigureAwait(false);
                 Assert.Equal(f.Id, f3.Id);
                 Assert.Equal(f.Id, f3.Value.Id); // Id was overridden with f.id
                 Assert.Equal(f2.LastName, f3.Value.LastName);
                 Assert.NotNull(f3.Etag);
                 Assert.NotEqual(f3.Etag, fr.Etag);
 
-                var results = await ListAsync<Family>(documents);
+                var results = await ListAsync<Family>(documents).ConfigureAwait(false);
                 Assert.Single(results);
                 Assert.Equal(f.Id, results.Single().Id);
                 Assert.Equal(f.Id, results.Single().Value.Id);
@@ -404,158 +404,158 @@ namespace Microsoft.Azure.IIoT.Services.CouchDb.Clients {
 
         [SkippableFact]
         public async Task ReplaceItemWithBadEtagThrowsAsync() {
-            using (var container = await _fixture.GetContainerAsync()) {
+            using (var container = await _fixture.GetContainerAsync().ConfigureAwait(false)) {
                 Skip.If(container == null);
                 var documents = container.Container;
 
                 var f = new Fixture().Create<Family>();
-                var fr = await documents.UpsertAsync(f);
+                var fr = await documents.UpsertAsync(f).ConfigureAwait(false);
 
                 var f2 = new Fixture().Create<Family>();
-                var f3 = await documents.ReplaceAsync(fr, f2);
+                var f3 = await documents.ReplaceAsync(fr, f2).ConfigureAwait(false);
                 var f4 = new Fixture().Create<Family>();
                 await Assert.ThrowsAsync<ResourceOutOfDateException>(
-                    () => documents.ReplaceAsync(fr, f4, default, null));
+                    () => documents.ReplaceAsync(fr, f4, null, default)).ConfigureAwait(false);
 
-                await documents.DeleteAsync<Family>(f.Id);
-                var results = await ListAsync<Family>(documents);
+                await documents.DeleteAsync<Family>(f.Id).ConfigureAwait(false);
+                var results = await ListAsync<Family>(documents).ConfigureAwait(false);
                 Assert.Empty(results);
 
                 var f5 = new Fixture().Create<Family>();
                 await Assert.ThrowsAsync<ResourceNotFoundException>(
-                    () => documents.ReplaceAsync(f3, f5, default, null));
+                    () => documents.ReplaceAsync(f3, f5, null, default)).ConfigureAwait(false);
             }
         }
 
         [SkippableFact]
         public async Task ReplaceItemBadArgumentTestsAsync() {
-            using (var container = await _fixture.GetContainerAsync()) {
+            using (var container = await _fixture.GetContainerAsync().ConfigureAwait(false)) {
                 Skip.If(container == null);
                 var documents = container.Container;
 
                 var f = new Fixture().Create<Family>();
-                var fr = await documents.UpsertAsync(f);
+                var fr = await documents.UpsertAsync(f).ConfigureAwait(false);
 
                 await Assert.ThrowsAsync<ArgumentNullException>(
-                    () => documents.ReplaceAsync(fr, null, default, null));
+                    () => documents.ReplaceAsync(fr, null, null, default)).ConfigureAwait(false);
                 await Assert.ThrowsAsync<ArgumentNullException>(
-                    () => documents.ReplaceAsync(null, f, default, null));
+                    () => documents.ReplaceAsync(null, f, null, default)).ConfigureAwait(false);
             }
         }
 
         [SkippableFact]
         public async Task DeleteItemAfterAddAsync() {
-            using (var container = await _fixture.GetContainerAsync()) {
+            using (var container = await _fixture.GetContainerAsync().ConfigureAwait(false)) {
                 Skip.If(container == null);
                 var documents = container.Container;
 
                 var f = new Fixture().Create<Family>();
-                var fr = await documents.AddAsync(f);
+                var fr = await documents.AddAsync(f).ConfigureAwait(false);
                 Assert.Equal(f.Id, fr.Id);
                 Assert.Equal(f.Id, fr.Value.Id);
                 Assert.Equal(f.LastName, fr.Value.LastName);
                 Assert.NotNull(fr.Etag);
 
-                await documents.DeleteAsync(fr);
+                await documents.DeleteAsync(fr).ConfigureAwait(false);
 
-                var results = await ListAsync<Family>(documents);
+                var results = await ListAsync<Family>(documents).ConfigureAwait(false);
                 Assert.Empty(results);
             }
         }
 
         [SkippableFact]
         public async Task DeleteItemAfterUpsertAsync() {
-            using (var container = await _fixture.GetContainerAsync()) {
+            using (var container = await _fixture.GetContainerAsync().ConfigureAwait(false)) {
                 Skip.If(container == null);
                 var documents = container.Container;
 
                 var f = new Fixture().Create<Family>();
-                var fr = await documents.UpsertAsync(f);
+                var fr = await documents.UpsertAsync(f).ConfigureAwait(false);
                 Assert.Equal(f.Id, fr.Id);
                 Assert.Equal(f.Id, fr.Value.Id);
                 Assert.Equal(f.LastName, fr.Value.LastName);
                 Assert.NotNull(fr.Etag);
 
-                await documents.DeleteAsync(fr);
+                await documents.DeleteAsync(fr).ConfigureAwait(false);
 
-                var results = await ListAsync<Family>(documents);
+                var results = await ListAsync<Family>(documents).ConfigureAwait(false);
                 Assert.Empty(results);
             }
         }
 
         [SkippableFact]
         public async Task DeleteItemWithGoodEtagTestAsync() {
-            using (var container = await _fixture.GetContainerAsync()) {
+            using (var container = await _fixture.GetContainerAsync().ConfigureAwait(false)) {
                 Skip.If(container == null);
                 var documents = container.Container;
 
                 var f = new Fixture().Create<Family>();
-                var fr = await documents.AddAsync(f);
+                var fr = await documents.AddAsync(f).ConfigureAwait(false);
                 Assert.Equal(f.Id, fr.Id);
                 Assert.Equal(f.Id, fr.Value.Id);
                 Assert.Equal(f.LastName, fr.Value.LastName);
                 Assert.NotNull(fr.Etag);
 
-                await documents.DeleteAsync<Family>(fr.Id, etag: fr.Etag);
+                await documents.DeleteAsync<Family>(fr.Id, etag: fr.Etag).ConfigureAwait(false);
 
-                var results = await ListAsync<Family>(documents);
+                var results = await ListAsync<Family>(documents).ConfigureAwait(false);
                 Assert.Empty(results);
             }
         }
 
         [SkippableFact]
         public async Task DeleteItemWithNoEtagTestAsync() {
-            using (var container = await _fixture.GetContainerAsync()) {
+            using (var container = await _fixture.GetContainerAsync().ConfigureAwait(false)) {
                 Skip.If(container == null);
                 var documents = container.Container;
 
                 var f = new Fixture().Create<Family>();
-                var fr = await documents.AddAsync(f);
+                var fr = await documents.AddAsync(f).ConfigureAwait(false);
                 Assert.Equal(f.Id, fr.Id);
                 Assert.Equal(f.Id, fr.Value.Id);
                 Assert.Equal(f.LastName, fr.Value.LastName);
                 Assert.NotNull(fr.Etag);
 
-                await documents.DeleteAsync<Family>(fr.Id);
+                await documents.DeleteAsync<Family>(fr.Id).ConfigureAwait(false);
 
-                var results = await ListAsync<Family>(documents);
+                var results = await ListAsync<Family>(documents).ConfigureAwait(false);
                 Assert.Empty(results);
             }
         }
 
         [SkippableFact]
         public async Task DeleteItemWithBadEtagThrowsAsync() {
-            using (var container = await _fixture.GetContainerAsync()) {
+            using (var container = await _fixture.GetContainerAsync().ConfigureAwait(false)) {
                 Skip.If(container == null);
                 var documents = container.Container;
 
                 var f = new Fixture().Create<Family>();
-                var fr = await documents.AddAsync(f);
+                var fr = await documents.AddAsync(f).ConfigureAwait(false);
                 Assert.Equal(f.Id, fr.Id);
                 Assert.Equal(f.Id, fr.Value.Id);
                 Assert.Equal(f.LastName, fr.Value.LastName);
                 Assert.NotNull(fr.Etag);
 
                 await Assert.ThrowsAsync<ResourceOutOfDateException>(
-                    () => documents.DeleteAsync<Family>(fr.Id, etag: "bad"));
+                    () => documents.DeleteAsync<Family>(fr.Id, etag: "bad")).ConfigureAwait(false);
 
             }
         }
 
         [SkippableFact]
         public async Task DeleteItemBadArgumentTestsAsync() {
-            using (var container = await _fixture.GetContainerAsync()) {
+            using (var container = await _fixture.GetContainerAsync().ConfigureAwait(false)) {
                 Skip.If(container == null);
                 var documents = container.Container;
 
                 await Assert.ThrowsAsync<ArgumentNullException>(
-                    () => documents.DeleteAsync<Family>(null, default, null));
+                    () => documents.DeleteAsync<Family>(null, null, default)).ConfigureAwait(false);
                 await Assert.ThrowsAsync<ArgumentNullException>(
-                    () => documents.DeleteAsync<Family>(null, default, null, etag: "good"));
+                    () => documents.DeleteAsync<Family>(null, null, etag: "good", ct: default)).ConfigureAwait(false);
                 await Assert.ThrowsAsync<ArgumentNullException>(
-                    () => documents.DeleteAsync<Family>(string.Empty, default, null, etag: "good"));
+                    () => documents.DeleteAsync<Family>(string.Empty, null, etag: "good", ct: default)).ConfigureAwait(false);
                 await Assert.ThrowsAsync<ResourceNotFoundException>(
-                    () => documents.DeleteAsync<Family>("bbbbb", default, null, etag: "good"));
+                    () => documents.DeleteAsync<Family>("bbbbb", null, etag: "good", ct: default)).ConfigureAwait(false);
             }
         }
 
@@ -573,7 +573,7 @@ namespace Microsoft.Azure.IIoT.Services.CouchDb.Clients {
             var feed = query.GetResults();
             var results = new List<IDocumentInfo<T>>();
             while (feed.HasMore()) {
-                var result = await feed.ReadAsync();
+                var result = await feed.ReadAsync().ConfigureAwait(false);
                 foreach (var item in result) {
                     results.Add(item);
                 }

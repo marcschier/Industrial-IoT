@@ -85,7 +85,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
                 throw new ArgumentNullException(nameof(content));
             }
             if (content.ContinuationToken == null) {
-                throw new ArgumentNullException(nameof(content.ContinuationToken));
+                throw new ArgumentException("Missing continuation", nameof(content));
             }
             var request = _httpClient.NewRequest($"{_serviceUri}/v2/browse/{endpointId}/next",
                 Resource.Platform);
@@ -105,8 +105,8 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
                 throw new ArgumentNullException(nameof(content));
             }
             if (content.BrowsePaths == null || content.BrowsePaths.Count == 0 ||
-                content.BrowsePaths.Any(p => p == null || p.Length == 0)) {
-                throw new ArgumentNullException(nameof(content.BrowsePaths));
+                content.BrowsePaths.Any(p => p == null || p.Count == 0)) {
+                throw new ArgumentException("Bad browse paths", nameof(content));
             }
             var request = _httpClient.NewRequest($"{_serviceUri}/v2/browse/{endpointId}/path",
                 Resource.Platform);
@@ -182,8 +182,8 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
             if (content == null) {
                 throw new ArgumentNullException(nameof(content));
             }
-            if (content.Value is null) {
-                throw new ArgumentNullException(nameof(content.Value));
+            if (content.Value == null) {
+                throw new ArgumentException("Missing value", nameof(content));
             }
             var request = _httpClient.NewRequest($"{_serviceUri}/v2/write/{endpointId}",
                 Resource.Platform);
@@ -254,7 +254,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
                 throw new ArgumentNullException(nameof(content));
             }
             if (content.Item == null) {
-                throw new ArgumentNullException(nameof(content.Item));
+                throw new ArgumentException("Missing item", nameof(content));
             }
             var request = _httpClient.NewRequest($"{_serviceUri}/v2/publish/{endpointId}/start",
                 Resource.Platform);
@@ -322,7 +322,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
                 throw new ArgumentNullException(nameof(content));
             }
             if (content.Details == null) {
-                throw new ArgumentNullException(nameof(content.Details));
+                throw new ArgumentException("Missing details", nameof(content));
             }
             var request = _httpClient.NewRequest(
                 $"{_serviceUri}/v2/history/read/{endpointId}", Resource.Platform);
@@ -342,7 +342,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
                 throw new ArgumentNullException(nameof(content));
             }
             if (string.IsNullOrEmpty(content.ContinuationToken)) {
-                throw new ArgumentNullException(nameof(content.ContinuationToken));
+                throw new ArgumentException("Missing continuation", nameof(content));
             }
             var request = _httpClient.NewRequest(
                 $"{_serviceUri}/v2/history/read/{endpointId}/next", Resource.Platform);
@@ -362,7 +362,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
                 throw new ArgumentNullException(nameof(content));
             }
             if (content.Details == null) {
-                throw new ArgumentNullException(nameof(content.Details));
+                throw new ArgumentException("Missing details", nameof(content));
             }
             var request = _httpClient.NewRequest(
                 $"{_serviceUri}/v2/history/update/{endpointId}", Resource.Platform);
@@ -454,7 +454,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
                 throw new ArgumentNullException(nameof(content));
             }
             if (string.IsNullOrEmpty(content.ContinuationToken)) {
-                throw new ArgumentNullException(nameof(content.ContinuationToken));
+                throw new ArgumentException("Missing continuation", nameof(content));
             }
             var request = _httpClient.NewRequest(
                 $"{_serviceUri}/v2/read/{endpointId}/values/next", Resource.Platform);
@@ -492,7 +492,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
                 throw new ArgumentNullException(nameof(content));
             }
             if (string.IsNullOrEmpty(content.ContinuationToken)) {
-                throw new ArgumentNullException(nameof(content.ContinuationToken));
+                throw new ArgumentException("Missing continuation", nameof(content));
             }
             var request = _httpClient.NewRequest(
                 $"{_serviceUri}/v2/read/{endpointId}/events/next", Resource.Platform);

@@ -12,15 +12,15 @@ namespace Microsoft.Azure.IIoT.App.Pages {
     public partial class Supervisors {
         public string SupervisorId { get; set; }
 
-        protected override async Task GetItems(bool getNextPage) {
-            Items = await RegistryHelper.GetSupervisorListAsync(Items, getNextPage);
+        protected override async Task LoadPageContentAsync(bool getNextPage) {
+            Items = await RegistryHelper.GetSupervisorListAsync(Items, getNextPage).ConfigureAwait(false);
         }
 
-        protected override async Task SubscribeEvents() {
+        protected override async Task SubscribeContentEventsAsync() {
             _events = await RegistryServiceEvents.SubscribeSupervisorEventsAsync(
                     async data => {
-                        await InvokeAsync(() => SupervisorEvent(data));
-                    });
+                        await InvokeAsync(() => SupervisorEvent(data)).ConfigureAwait(false);
+                    }).ConfigureAwait(false);
         }
 
         // <summary>
@@ -37,7 +37,7 @@ namespace Microsoft.Azure.IIoT.App.Pages {
         /// </summary>
         /// <param name="supervisorId"></param>
         private async Task ResetSupervisorUIAsync(string supervisorId) {
-            Status = await RegistryHelper.ResetSupervisorAsync(supervisorId);
+            Status = await RegistryHelper.ResetSupervisorAsync(supervisorId).ConfigureAwait(false);
         }
 
         /// <summary>

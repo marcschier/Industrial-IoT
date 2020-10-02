@@ -14,7 +14,7 @@ namespace Microsoft.Azure.IIoT.Platform.Core.Models {
         /// <summary>
         /// Select statement
         /// </summary>
-        public List<SimpleAttributeOperandModel> SelectClauses { get; set; }
+        public IReadOnlyList<SimpleAttributeOperandModel> SelectClauses { get; set; }
 
         /// <summary>
         /// Where clause

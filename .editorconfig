@@ -281,3 +281,27 @@ dotnet_naming_style.begins_with_k.required_prefix = k
 dotnet_naming_style.begins_with_k.required_suffix =
 dotnet_naming_style.begins_with_k.word_separator =
 dotnet_naming_style.begins_with_k.capitalization = pascal_case
+
+# CA1303: Do not pass literals as localized parameters
+dotnet_diagnostic.CA1303.severity = none
+
+# CA1056: Uri properties should not be strings
+dotnet_diagnostic.CA1056.severity = none
+
+# CA1062: Variant value validation
+dotnet_code_quality.CA1062.null_check_validation_methods = IsNull|CheckNull
+
+# CA1031: Do not catch general exception types
+dotnet_diagnostic.CA1031.severity = none
+
+# CA1054: Uri parameters should not be strings
+dotnet_diagnostic.CA1054.severity = none
+
+# CA1054: Expression is never 'null'
+dotnet_diagnostic.CA1508.severity = none
+
+# CA1054: Tight coupling
+dotnet_diagnostic.CA1506.severity = none
+
+# Default severity for analyzer diagnostics with category 'Naming'
+dotnet_analyzer_diagnostic.category-Naming.severity = none

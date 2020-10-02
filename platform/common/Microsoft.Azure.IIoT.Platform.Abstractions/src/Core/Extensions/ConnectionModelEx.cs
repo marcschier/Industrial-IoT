@@ -43,6 +43,9 @@ namespace Microsoft.Azure.IIoT.Platform.Core.Models {
         /// <param name="model"></param>
         /// <returns></returns>
         public static int CreateConsistentHash(this ConnectionModel model) {
+            if (model is null) {
+                return 0;
+            }
             var hashCode = -1971667340;
             hashCode = (hashCode * -1521134295) +
                 model.Endpoint.CreateConsistentHash();

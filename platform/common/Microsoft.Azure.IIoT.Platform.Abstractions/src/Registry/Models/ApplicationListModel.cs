@@ -19,6 +19,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
         /// <summary>
         /// Applications
         /// </summary>
-        public List<string> Applications { get; set; }
+        public IReadOnlyList<string> Applications { get; set; }
     }
 }

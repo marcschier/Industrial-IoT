@@ -50,8 +50,8 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Clients {
                 }
             }
             var queue = target.Split('/')[0];
-            var client = await _factory.CreateOrGetGetQueueClientAsync(queue);
-            await client.SendAsync(msg);
+            var client = await _factory.CreateOrGetGetQueueClientAsync(queue).ConfigureAwait(false);
+            await client.SendAsync(msg).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
@@ -85,9 +85,9 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Clients {
                 throw new ArgumentNullException(nameof(payload));
             }
             var queue = target.Split('/')[0];
-            var client = await _factory.CreateOrGetGetQueueClientAsync(queue);
+            var client = await _factory.CreateOrGetGetQueueClientAsync(queue).ConfigureAwait(false);
             await client.SendAsync(CreateMessage(
-                target, payload, contentType, eventSchema, contentEncoding));
+                target, payload, contentType, eventSchema, contentEncoding)).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
@@ -110,8 +110,8 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Clients {
             // 256 kb in size.  Hence send all messages individually.
             //
             foreach (var message in messages) {
-                var client = await _factory.CreateOrGetGetQueueClientAsync(queue);
-                await client.SendAsync(message);
+                var client = await _factory.CreateOrGetGetQueueClientAsync(queue).ConfigureAwait(false);
+                await client.SendAsync(message).ConfigureAwait(false);
             }
         }
 

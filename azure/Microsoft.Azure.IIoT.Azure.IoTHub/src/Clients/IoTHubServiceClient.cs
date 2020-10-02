@@ -57,7 +57,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub.Clients {
 
             // First try create device
             try {
-                var device = await _registry.AddDeviceAsync(twin.ToDevice(), ct);
+                var device = await _registry.AddDeviceAsync(twin.ToDevice(), ct).ConfigureAwait(false);
             }
             catch (DeviceAlreadyExistsException)
                 when (!string.IsNullOrEmpty(twin.ModuleId) || forceUpdate) {
@@ -73,7 +73,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub.Clients {
             if (!string.IsNullOrEmpty(twin.ModuleId)) {
                 // Try create module
                 try {
-                    var module = await _registry.AddModuleAsync(twin.ToModule(), ct);
+                    var module = await _registry.AddModuleAsync(twin.ToModule(), ct).ConfigureAwait(false);
                 }
                 catch (DeviceAlreadyExistsException) when (forceUpdate) {
                     // Expected for update
@@ -83,7 +83,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub.Clients {
                     throw e.Translate();
                 }
             }
-            return await PatchAsync(twin, true, ct); // Force update of twin
+            return await PatchAsync(twin, true, ct).ConfigureAwait(false); // Force update of twin
         }
 
         /// <inheritdoc/>
@@ -95,12 +95,12 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub.Clients {
                 var etag = string.IsNullOrEmpty(twin.Etag) || force ? "*" : twin.Etag;
                 if (!string.IsNullOrEmpty(twin.ModuleId)) {
                     update = await _registry.UpdateTwinAsync(twin.Id, twin.ModuleId,
-                        twin.ToTwin(true), etag, ct);
+                        twin.ToTwin(true), etag, ct).ConfigureAwait(false);
                 }
                 else {
                     // Patch device
                     update = await _registry.UpdateTwinAsync(twin.Id,
-                        twin.ToTwin(true), etag, ct);
+                        twin.ToTwin(true), etag, ct).ConfigureAwait(false);
                 }
                 return _serializer.DeserializeTwin(update, HostName);
             }
@@ -118,7 +118,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub.Clients {
                 methodInfo.SetPayloadJson(parameters.JsonPayload);
                 var result = await (string.IsNullOrEmpty(moduleId) ?
                      _client.InvokeDeviceMethodAsync(deviceId, methodInfo, ct) :
-                     _client.InvokeDeviceMethodAsync(deviceId, moduleId, methodInfo, ct));
+                     _client.InvokeDeviceMethodAsync(deviceId, moduleId, methodInfo, ct)).ConfigureAwait(false);
                 return new MethodResultModel {
                     JsonPayload = result.GetPayloadAsJson(),
                     Status = result.Status
@@ -136,7 +136,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub.Clients {
             try {
                 var result = await (string.IsNullOrEmpty(moduleId) ?
                     _registry.UpdateTwinAsync(deviceId, properties.ToTwin(), etag, ct) :
-                    _registry.UpdateTwinAsync(deviceId, moduleId, properties.ToTwin(), etag, ct));
+                    _registry.UpdateTwinAsync(deviceId, moduleId, properties.ToTwin(), etag, ct)).ConfigureAwait(false);
             }
             catch (Exception e) {
                 _logger.Verbose(e, "Update properties failed ");
@@ -150,10 +150,10 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub.Clients {
             try {
                 Twin twin = null;
                 if (string.IsNullOrEmpty(moduleId)) {
-                    twin = await _registry.GetTwinAsync(deviceId, ct);
+                    twin = await _registry.GetTwinAsync(deviceId, ct).ConfigureAwait(false);
                 }
                 else {
-                    twin = await _registry.GetTwinAsync(deviceId, moduleId, ct);
+                    twin = await _registry.GetTwinAsync(deviceId, moduleId, ct).ConfigureAwait(false);
                 }
                 return _serializer.DeserializeTwin(twin, HostName);
             }
@@ -168,10 +168,10 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub.Clients {
             CancellationToken ct) {
             try {
                 if (string.IsNullOrEmpty(moduleId)) {
-                    var device = await _registry.GetDeviceAsync(deviceId, ct);
+                    var device = await _registry.GetDeviceAsync(deviceId, ct).ConfigureAwait(false);
                     return device.ToModel(HostName);
                 }
-                var module = await _registry.GetModuleAsync(deviceId, moduleId, ct);
+                var module = await _registry.GetModuleAsync(deviceId, moduleId, ct).ConfigureAwait(false);
                 return module.ToModel(HostName);
             }
             catch (Exception e) {
@@ -190,7 +190,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub.Clients {
                 }
                 var options = new QueryOptions { ContinuationToken = continuation };
                 var statement = _registry.CreateQuery(query, pageSize);
-                var result = await statement.GetNextAsJsonAsync(options);
+                var result = await statement.GetNextAsJsonAsync(options).ConfigureAwait(false);
                 return new QueryResultModel {
                     ContinuationToken = _serializer.SerializeContinuationToken(query,
                         result.ContinuationToken, pageSize),
@@ -213,7 +213,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub.Clients {
                     }, ct) :
                     _registry.RemoveModuleAsync(new Module(deviceId, moduleId) {
                         ETag = etag ?? "*"
-                    }, ct));
+                    }, ct)).ConfigureAwait(false);
             }
             catch (Exception e) {
                 _logger.Verbose(e, "Delete failed ");

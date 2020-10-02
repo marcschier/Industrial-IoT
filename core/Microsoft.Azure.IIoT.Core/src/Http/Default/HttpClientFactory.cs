@@ -3,7 +3,7 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Http.Default {
+namespace Microsoft.Azure.IIoT.Http.Clients {
     using Serilog;
     using System;
     using System.Collections.Concurrent;
@@ -15,7 +15,7 @@ namespace Microsoft.Azure.IIoT.Http.Default {
     /// of the the one implemented in asp.net core and uses a handler builder
     /// instead of the asp.net builder.
     /// </summary>
-    public sealed class HttpClientFactory : IHttpClientFactory {
+    public sealed class HttpClientFactory : IHttpClientFactory, IDisposable {
 
         /// <summary>
         /// Create factory
@@ -48,6 +48,12 @@ namespace Microsoft.Azure.IIoT.Http.Default {
                 key => ActiveHandlerEntry.Create(_factory, key, OnHandlerExpired));
 
             return new System.Net.Http.HttpClient(entry, false);
+        }
+
+        /// <inheritdoc/>
+        public void Dispose() {
+            _cleanupTimer.Dispose();
+            _cleanupTimerLock.Dispose();
         }
 
         /// <summary>
@@ -116,7 +122,9 @@ namespace Microsoft.Azure.IIoT.Http.Default {
             public static ActiveHandlerEntry Create(IHttpHandlerFactory factory,
                 string name, Action<ActiveHandlerEntry> expirationCallback) {
 #pragma warning disable IDE0067 // Dispose objects before losing scope
+#pragma warning disable CA2000 // Dispose objects before losing scope
                 var lifetime = factory.Create(name, out var handler);
+#pragma warning restore CA2000 // Dispose objects before losing scope
 #pragma warning restore IDE0067 // Dispose objects before losing scope
                 return new ActiveHandlerEntry(name, handler, lifetime, expirationCallback);
             }
@@ -153,8 +161,10 @@ namespace Microsoft.Azure.IIoT.Http.Default {
         /// <param name="active"></param>
         private void OnHandlerExpired(ActiveHandlerEntry active) {
 #pragma warning disable IDE0067 // Dispose objects before losing scope
+#pragma warning disable CA2000 // Dispose objects before losing scope
             _activeHandlers.TryRemove(active.Name, out _);
             _expiredHandlers.Enqueue(new ExpiredHandlerEntry(active));
+#pragma warning restore CA2000 // Dispose objects before losing scope
 #pragma warning restore IDE0067 // Dispose objects before losing scope
             StartCleanupTimer();
         }
@@ -193,7 +203,9 @@ namespace Microsoft.Azure.IIoT.Http.Default {
                     var initialCount = _expiredHandlers.Count;
                     for (var i = 0; i < initialCount; i++) {
 #pragma warning disable IDE0068 // Use recommended dispose pattern
+#pragma warning disable CA2000 // Dispose objects before losing scope
                         _expiredHandlers.TryDequeue(out var entry);
+#pragma warning restore CA2000 // Dispose objects before losing scope
 #pragma warning restore IDE0068 // Use recommended dispose pattern
                         if (entry.CanDispose) {
                             try {

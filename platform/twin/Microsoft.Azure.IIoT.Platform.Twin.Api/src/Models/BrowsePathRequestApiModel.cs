@@ -29,7 +29,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Models {
         /// </summary>
         [DataMember(Name = "browsePaths", Order = 1)]
         [Required]
-        public List<string[]> BrowsePaths { get; set; }
+        public IReadOnlyList<IReadOnlyList<string>> BrowsePaths { get; set; }
 
         /// <summary>
         /// Whether to read variable values on target nodes.

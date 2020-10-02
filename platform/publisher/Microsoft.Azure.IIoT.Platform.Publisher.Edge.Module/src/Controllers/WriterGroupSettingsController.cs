@@ -79,7 +79,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Module.Controllers {
         /// <summary>
         /// Publishing offset for uadp messages
         /// </summary>
-        public Dictionary<string, double> PublishingOffset {
+        public IReadOnlyDictionary<string, double> PublishingOffset {
             get => _emitter.PublishingOffset.EncodeAsDictionary();
             set => _emitter.PublishingOffset = value.DecodeAsList();
         }

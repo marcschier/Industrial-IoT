@@ -65,12 +65,12 @@ namespace Microsoft.Azure.IIoT.Diagnostics {
                 duration.Restart();
                 try {
                     using (var stream = new MemoryStream()) {
-                        await _registry.CollectAndExportAsTextAsync(stream, default);
+                        await _registry.CollectAndExportAsTextAsync(stream, default).ConfigureAwait(false);
 
                         foreach (var handler in _handlers) {
                             stream.Position = 0;
                             await Try.Async(() => handler.PushAsync(
-                                new NoCloseAdapter(stream), default));
+                                new NoCloseAdapter(stream), default)).ConfigureAwait(false);
                         }
                     }
                 }
@@ -91,7 +91,7 @@ namespace Microsoft.Azure.IIoT.Diagnostics {
                 var sleepTime = interval - elapsed;
                 if (sleepTime > TimeSpan.Zero) {
                     try {
-                        await Task.Delay(sleepTime, ct);
+                        await Task.Delay(sleepTime, ct).ConfigureAwait(false);
                     }
                     catch (OperationCanceledException) {
                         // Post one more time

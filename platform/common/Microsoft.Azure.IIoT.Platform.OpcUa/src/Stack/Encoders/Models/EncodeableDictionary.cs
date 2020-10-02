@@ -14,7 +14,7 @@ namespace Opc.Ua.Encoders {
         /// <summary>
         /// Event fields
         /// </summary>
-        public KeyValuePairCollection Fields { get; set; }
+        public KeyValuePairCollection Fields { get; private set; }
 
         /// <inheritdoc/>
         public ExpandedNodeId TypeId =>
@@ -29,24 +29,29 @@ namespace Opc.Ua.Encoders {
             nameof(EncodeableDictionary) + "_Encoding_DefaultXml";
 
         /// <inheritdoc/>
-        public ExpandedNodeId JsonEncodingId =>
-            nameof(EncodeableDictionary) + "_Encoding_DefaultJson";
+        public EncodeableDictionary(KeyValuePairCollection fields) {
+            Fields = fields ?? new KeyValuePairCollection();
+        }
 
-        /// <summary>
-        /// Create
-        /// </summary>
-        public EncodeableDictionary() {
-            Fields = new KeyValuePairCollection();
+        /// <inheritdoc/>
+        public EncodeableDictionary()
+            : this(null) {
         }
 
         /// <inheritdoc/>
         public virtual void Encode(IEncoder encoder) {
+            if (encoder is null) {
+                throw new System.ArgumentNullException(nameof(encoder));
+            }
             //  todo: check if "EventFields" is appropriate
             encoder.WriteEncodeableArray("EventFields", Fields.ToArray(), typeof(KeyValuePair));
         }
 
         /// <inheritdoc/>
         public virtual void Decode(IDecoder decoder) {
+            if (decoder is null) {
+                throw new System.ArgumentNullException(nameof(decoder));
+            }
             Fields = (KeyValuePairCollection)decoder.ReadEncodeableArray(
                 "EventFields", typeof(KeyValuePair));
         }

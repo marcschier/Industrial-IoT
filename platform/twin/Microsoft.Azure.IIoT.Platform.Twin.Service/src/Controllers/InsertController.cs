@@ -51,7 +51,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Service.Controllers {
                 throw new ArgumentNullException(nameof(request));
             }
             var writeResult = await _historian.HistoryInsertValuesAsync(
-                endpointId, request.ToServiceModel(d => d.ToServiceModel()));
+                endpointId, request.ToServiceModel(d => d.ToServiceModel())).ConfigureAwait(false);
             return writeResult.ToApiModel();
         }
 
@@ -74,7 +74,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Service.Controllers {
                 throw new ArgumentNullException(nameof(request));
             }
             var writeResult = await _historian.HistoryInsertEventsAsync(
-                endpointId, request.ToServiceModel(d => d.ToServiceModel()));
+                endpointId, request.ToServiceModel(d => d.ToServiceModel())).ConfigureAwait(false);
             return writeResult.ToApiModel();
         }
 

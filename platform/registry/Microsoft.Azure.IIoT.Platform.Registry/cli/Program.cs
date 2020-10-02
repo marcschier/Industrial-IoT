@@ -17,11 +17,13 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Cli {
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
+    using System.Collections.Generic;
+    using Microsoft.Azure.IIoT.Serializers;
 
     /// <summary>
     /// Test client for opc ua services
     /// </summary>
-    public class Program {
+    public static class Program {
         private enum Op {
             None,
             MakeSupervisor,
@@ -33,6 +35,10 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Cli {
         /// Test client entry point
         /// </summary>
         public static void Main(string[] args) {
+            if (args is null) {
+                throw new ArgumentNullException(nameof(args));
+            }
+
             AppDomain.CurrentDomain.UnhandledException +=
                 (s, e) => Console.WriteLine("unhandled: " + e.ExceptionObject);
             var op = Op.None;
@@ -140,11 +146,11 @@ Operations (Mutually exclusive):
             await registry.CreateOrUpdateAsync(new DeviceTwinModel {
                 Id = deviceId,
                 ModuleId = moduleId
-            }, true, CancellationToken.None);
+            }, true, CancellationToken.None).ConfigureAwait(false);
 
-            var module = await registry.GetRegistrationAsync(deviceId, moduleId, CancellationToken.None);
+            var module = await registry.GetRegistrationAsync(deviceId, moduleId, CancellationToken.None).ConfigureAwait(false);
             Console.WriteLine(JsonConvert.SerializeObject(module));
-            var twin = await registry.GetAsync(deviceId, moduleId, CancellationToken.None);
+            var twin = await registry.GetAsync(deviceId, moduleId, CancellationToken.None).ConfigureAwait(false);
             Console.WriteLine(JsonConvert.SerializeObject(twin));
             var cs = ConnectionString.Parse(config.IoTHubConnString);
             Console.WriteLine("Connection string:");
@@ -163,20 +169,34 @@ Operations (Mutually exclusive):
 
             var query = "SELECT * FROM devices.modules WHERE " +
                 $"properties.reported.{TwinProperty.Type} = '{IdentityType.Supervisor}'";
-            var supers = await registry.QueryAllDeviceTwinsAsync(query);
+            var supers = await registry.QueryAllDeviceTwinsAsync(query).ConfigureAwait(false);
             foreach (var item in supers) {
-                foreach (var tag in item.Tags.Keys.ToList()) {
-                    item.Tags[tag] = null;
-                }
-                foreach (var property in item.Properties.Desired.Keys.ToList()) {
-                    item.Properties.Desired[property] = null;
-                }
-                foreach (var property in item.Properties.Reported.Keys.ToList()) {
-                    if (!item.Properties.Desired.ContainsKey(property)) {
-                        item.Properties.Desired.Add(property, null);
+                var properties = new Dictionary<string, VariantValue>();
+                var tags = new Dictionary<string, VariantValue>();
+                if (item.Tags != null) {
+                    foreach (var tag in item.Tags.Keys.ToList()) {
+                        tags.Add(tag, null);
                     }
                 }
-                await registry.CreateOrUpdateAsync(item, true, CancellationToken.None);
+                if (item.Properties?.Desired != null) {
+                    foreach (var property in item.Properties.Desired.Keys.ToList()) {
+                        properties.Add(property, null);
+                    }
+                }
+                if (item.Properties?.Reported != null) {
+                    foreach (var property in item.Properties.Reported.Keys.ToList()) {
+                        if (!item.Properties.Desired.ContainsKey(property)) {
+                            properties.Add(property, null);
+                        }
+                    }
+                }
+
+                item.Tags = tags;
+                item.Properties = new TwinPropertiesModel {
+                    Desired = properties
+                };
+                await registry.CreateOrUpdateAsync(item, true,
+                    default).ConfigureAwait(false);
             }
         }
 
@@ -190,9 +210,9 @@ Operations (Mutually exclusive):
                 config, new NewtonSoftJsonSerializer(), logger);
 
             var result = await registry.QueryAllDeviceTwinsAsync(
-                "SELECT * from devices where IS_DEFINED(tags.DeviceType)");
+                "SELECT * from devices where IS_DEFINED(tags.DeviceType)").ConfigureAwait(false);
             foreach (var item in result) {
-                await registry.DeleteAsync(item.Id, item.ModuleId, null, CancellationToken.None);
+                await registry.DeleteAsync(item.Id, item.ModuleId, null, CancellationToken.None).ConfigureAwait(false);
             }
         }
     }

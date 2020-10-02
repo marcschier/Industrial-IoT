@@ -5,6 +5,7 @@
 
 namespace Microsoft.Azure.IIoT.Crypto {
     using Microsoft.Azure.IIoT.Crypto.Models;
+    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
 
@@ -32,7 +33,8 @@ namespace Microsoft.Azure.IIoT.Crypto {
         /// <param name="ct"></param>
         /// <returns></returns>
         Task<Certificate> GetCertificateAsync(
-            byte[] serialNumber, CancellationToken ct = default);
+            IReadOnlyCollection<byte> serialNumber,
+            CancellationToken ct = default);
 
         /// <summary>
         /// Get the chain of trust for a given certificate.

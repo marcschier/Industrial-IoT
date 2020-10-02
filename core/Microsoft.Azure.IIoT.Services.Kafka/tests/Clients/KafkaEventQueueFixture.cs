@@ -17,7 +17,7 @@ namespace Microsoft.Azure.IIoT.Services.Kafka.Clients {
     using System.Threading.Tasks;
     using System.Linq;
 
-    public class KafkaEventQueueFixture : IDisposable {
+    public sealed class KafkaEventQueueFixture : IDisposable {
 
         /// <summary>
         /// Create fixture
@@ -48,7 +48,7 @@ namespace Microsoft.Azure.IIoT.Services.Kafka.Clients {
         /// </summary>
         /// <param name="topic"></param>
         /// <returns></returns>
-        public KafkaEventQueueHarness GetHarness(string topic) {
+        internal KafkaEventQueueHarness GetHarness(string topic) {
             return new KafkaEventQueueHarness(topic, _container != null);
         }
 
@@ -89,15 +89,15 @@ namespace Microsoft.Azure.IIoT.Services.Kafka.Clients {
         public TimeSpan? CheckpointInterval => TimeSpan.FromMinutes(1);
     }
 
-    public class KafkaEventQueueHarness : IDisposable {
+    internal sealed class KafkaEventQueueHarness : IDisposable {
 
-        public event TelemetryEventHandler OnEvent;
-        public event EventHandler OnComplete;
+        internal event TelemetryEventHandler OnEvent;
+        internal event EventHandler OnComplete;
 
         /// <summary>
         /// Create fixture
         /// </summary>
-        public KafkaEventQueueHarness(string topic, bool serverUp) {
+        internal KafkaEventQueueHarness(string topic, bool serverUp) {
             if (!serverUp) {
                 _container = null;
                 return;
@@ -206,9 +206,9 @@ namespace Microsoft.Azure.IIoT.Services.Kafka.Clients {
         private readonly IContainer _container;
     }
 
-    public class TelemetryEventArgs : EventArgs {
+    internal class TelemetryEventArgs : EventArgs {
 
-        public TelemetryEventArgs(string schema, string source,
+        internal TelemetryEventArgs(string schema, string source,
             byte[] data, IDictionary<string, string> properties) {
             HandlerSchema = schema;
             Source = source;
@@ -224,7 +224,7 @@ namespace Microsoft.Azure.IIoT.Services.Kafka.Clients {
             Target = properties.TryGetValue(EventProperties.Target, out var v) ? v : null;
             Properties = properties
                 .Where(k => k.Key != EventProperties.Target)
-                .Where(k => !k.Key.StartsWith("x-"))
+                .Where(k => !k.Key.StartsWith("x-", StringComparison.Ordinal))
                 .ToDictionary(k => k.Key, v => v.Value);
         }
 
@@ -235,8 +235,8 @@ namespace Microsoft.Azure.IIoT.Services.Kafka.Clients {
         public string DeviceId { get; }
         public string ModuleId { get; }
         public byte[] Data { get; }
-        public IDictionary<string, string> Properties { get; }
+        public IReadOnlyDictionary<string, string> Properties { get; }
     }
 
-    public delegate void TelemetryEventHandler(object sender, TelemetryEventArgs args);
+    internal delegate void TelemetryEventHandler(object sender, TelemetryEventArgs args);
 }

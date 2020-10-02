@@ -130,7 +130,7 @@ namespace Microsoft.Extensions.DependencyInjection {
                     if (httpContextAccessor != null) {
                         httpContextAccessor.HttpContext = context;
                     }
-                    await next();
+                    await next().ConfigureAwait(false);
                 }
                 context.RequestServices = oldServiceProvider;
             });
@@ -148,7 +148,7 @@ namespace Microsoft.Extensions.DependencyInjection {
             // Map the route to the branch
             app.Map(path, builder => {
                 builder.Use(async (context, next) => {
-                    await branch.Invoke(context);
+                    await branch.Invoke(context).ConfigureAwait(false);
                 });
             });
             return app;

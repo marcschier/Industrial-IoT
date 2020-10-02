@@ -58,7 +58,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api {
                 throw new ArgumentNullException(nameof(callback));
             }
             var hub = await _client.GetHubAsync($"{_serviceUri}/v2/groups/events",
-                Resource.Platform);
+                Resource.Platform).ConfigureAwait(false);
             var registration = hub.Register(EventTargets.GroupEventTarget, callback);
             return new AsyncDisposable(registration);
         }
@@ -71,11 +71,11 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api {
                 throw new ArgumentNullException(nameof(callback));
             }
             var hub = await _client.GetHubAsync($"{_serviceUri}/v2/groups/events",
-                Resource.Platform);
+                Resource.Platform).ConfigureAwait(false);
             var registration = hub.Register(EventTargets.DataSetMessageTarget, callback);
             try {
                 await SubscribeDataSetWriterMessagesAsync(dataSetWriterId, hub.ConnectionId,
-                    CancellationToken.None);
+                    CancellationToken.None).ConfigureAwait(false);
                 return new AsyncDisposable(registration,
                     () => UnsubscribeDataSetWriterMessagesAsync(dataSetWriterId,
                         hub.ConnectionId, CancellationToken.None));
@@ -93,7 +93,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api {
                 throw new ArgumentNullException(nameof(callback));
             }
             var hub = await _client.GetHubAsync($"{_serviceUri}/v2/writers/events",
-                Resource.Platform);
+                Resource.Platform).ConfigureAwait(false);
             var registration = hub.Register(EventTargets.WriterEventTarget, callback);
             return new AsyncDisposable(registration);
         }
@@ -106,11 +106,11 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api {
                 throw new ArgumentNullException(nameof(callback));
             }
             var hub = await _client.GetHubAsync($"{_serviceUri}/v2/writers/events",
-                Resource.Platform);
+                Resource.Platform).ConfigureAwait(false);
             var registration = hub.Register(EventTargets.DataSetEventTarget, callback);
             try {
                 await SubscribeDataSetItemStatusAsync(dataSetWriterId, hub.ConnectionId,
-                    CancellationToken.None);
+                    CancellationToken.None).ConfigureAwait(false);
                 return new AsyncDisposable(registration,
                     () => UnsubscribeDataSetItemStatusAsync(dataSetWriterId,
                         hub.ConnectionId, CancellationToken.None));
@@ -129,11 +129,11 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api {
                 throw new ArgumentNullException(nameof(callback));
             }
             var hub = await _client.GetHubAsync($"{_serviceUri}/v2/publishers/events",
-                Resource.Platform);
+                Resource.Platform).ConfigureAwait(false);
             var registration = hub.Register(EventTargets.PublisherSampleTarget, callback);
             try {
                 await NodePublishSubscribeByEndpointAsync(endpointId, hub.ConnectionId,
-                    CancellationToken.None);
+                    CancellationToken.None).ConfigureAwait(false);
                 return new AsyncDisposable(registration,
                     () => NodePublishUnsubscribeByEndpointAsync(endpointId,
                         hub.ConnectionId, CancellationToken.None));

@@ -41,12 +41,12 @@ namespace Microsoft.Azure.IIoT.Storage.Default {
         /// <inheritdoc/>
         public async Task<IItemContainer> OpenAsync(string postfix,
             ContainerOptions options) {
-            var database = await _server.OpenAsync(_database);
+            var database = await _server.OpenAsync(_database).ConfigureAwait(false);
             var name = _container;
             if (!string.IsNullOrEmpty(postfix)) {
                 name += "-" + postfix;
             }
-            return await database.OpenContainerAsync(name, options);
+            return await database.OpenContainerAsync(name, options).ConfigureAwait(false);
         }
 
         private readonly IDatabaseServer _server;

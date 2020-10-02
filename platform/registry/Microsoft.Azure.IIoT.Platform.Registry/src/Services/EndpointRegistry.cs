@@ -55,20 +55,20 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
             if (string.IsNullOrEmpty(endpointId)) {
                 throw new ArgumentException(nameof(endpointId));
             }
-            return await _database.FindAsync(endpointId, ct);
+            return await _database.FindAsync(endpointId, ct).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
         public async Task<EndpointInfoListModel> ListEndpointsAsync(string continuation,
             int? pageSize, CancellationToken ct) {
-            return await _database.QueryAsync(null, continuation, pageSize, ct);
+            return await _database.QueryAsync(null, continuation, pageSize, ct).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
         public async Task<EndpointInfoListModel> QueryEndpointsAsync(
             EndpointInfoQueryModel model, int? pageSize,
             CancellationToken ct) {
-            return await _database.QueryAsync(model, null, pageSize, ct);
+            return await _database.QueryAsync(model, null, pageSize, ct).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
@@ -88,11 +88,11 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                 }
                 existing.Updated = context;
                 return Task.FromResult(true);
-            }, ct);
+            }, ct).ConfigureAwait(false);
 
             // Send update to through broker
             await _broker.NotifyAllAsync(l => l.OnEndpointUpdatedAsync(context,
-                endpoint));
+                endpoint)).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
@@ -103,7 +103,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
             }
 
             // Get existing endpoint - get should always throw
-            var endpoint = await _database.FindAsync(endpointId, ct);
+            var endpoint = await _database.FindAsync(endpointId, ct).ConfigureAwait(false);
 
             if (endpoint == null) {
                 throw new ResourceNotFoundException(
@@ -115,7 +115,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
             }
 
             var rawCertificates = await _certificates.GetEndpointCertificateAsync(
-                endpoint, ct);
+                endpoint, ct).ConfigureAwait(false);
             return rawCertificates.ToCertificateChain();
         }
 
@@ -136,11 +136,11 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
             string applicationId, ApplicationInfoModel application) {
             // Get all endpoint registrations and for each one, call delete, if failure,
             // stop half way and throw and do not complete.
-            var endpoints = await GetEndpointsAsync(applicationId, true);
+            var endpoints = await GetEndpointsAsync(applicationId, true).ConfigureAwait(false);
             foreach (var endpoint in endpoints) {
-                await _database.DeleteAsync(endpoint.Id, ep => Task.FromResult(true));
+                await _database.DeleteAsync(endpoint.Id, ep => Task.FromResult(true)).ConfigureAwait(false);
                 await _broker.NotifyAllAsync(l => l.OnEndpointDeletedAsync(context,
-                    endpoint.Id, endpoint));
+                    endpoint.Id, endpoint)).ConfigureAwait(false);
             }
         }
 
@@ -148,7 +148,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
         public async Task<IEnumerable<EndpointInfoModel>> GetApplicationEndpoints(
             string applicationId, bool includeDeleted, bool filterInactiveTwins, CancellationToken ct) {
             // Include deleted twins if the application itself is deleted.  Otherwise omit.
-            var endpoints = await GetEndpointsAsync(applicationId, includeDeleted, ct);
+            var endpoints = await GetEndpointsAsync(applicationId, includeDeleted, ct).ConfigureAwait(false);
             if (!filterInactiveTwins) {
                 return endpoints;
             }
@@ -171,7 +171,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
             var existing = Enumerable.Empty<EndpointInfoModel>();
             if (!string.IsNullOrEmpty(applicationId)) {
                 // Merge with existing endpoints of the application
-                existing = await GetEndpointsAsync(applicationId, true);
+                existing = await GetEndpointsAsync(applicationId, true).ConfigureAwait(false);
             }
 
             var remove = new HashSet<EndpointInfoModel>(existing,
@@ -200,18 +200,18 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                         // Only touch applications the discoverer owns.
                         if (item.DiscovererId == discovererId) {
                             if (hardDelete) {
-                                var existingEndpoint = await _database.FindAsync(item.Id);
-                                await _database.DeleteAsync(item.Id, ep => Task.FromResult(true));
+                                var existingEndpoint = await _database.FindAsync(item.Id).ConfigureAwait(false);
+                                await _database.DeleteAsync(item.Id, ep => Task.FromResult(true)).ConfigureAwait(false);
                                 await _broker.NotifyAllAsync(l => l.OnEndpointDeletedAsync(context,
-                                    item.Id, item));
+                                    item.Id, item)).ConfigureAwait(false);
                             }
                             else if (item.IsDisabled()) {
                                 var endpoint = await _database.UpdateAsync(item.Id, existing => {
                                     existing.Patch(item);
                                     return Task.FromResult(true);
-                                });
+                                }).ConfigureAwait(false);
                                 await _broker.NotifyAllAsync(
-                                    l => l.OnEndpointUpdatedAsync(context, endpoint));
+                                    l => l.OnEndpointUpdatedAsync(context, endpoint)).ConfigureAwait(false);
                             }
                             else {
                                 unchanged++;
@@ -245,9 +245,9 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                         var endpoint = await _database.UpdateAsync(exists.Id, existing => {
                             existing.Patch(patch);
                             return Task.FromResult(true);
-                        });
+                        }).ConfigureAwait(false);
                         await _broker.NotifyAllAsync(
-                            l => l.OnEndpointUpdatedAsync(context, endpoint));
+                            l => l.OnEndpointUpdatedAsync(context, endpoint)).ConfigureAwait(false);
                         updated++;
                         continue;
                     }
@@ -266,14 +266,14 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                     var endpoint = await _database.AddOrUpdateAsync(item.Id, existing => {
                         update = true;
                         return Task.FromResult(existing.Patch(item));
-                    });
+                    }).ConfigureAwait(false);
                     if (update) {
                         await _broker.NotifyAllAsync(
-                            l => l.OnEndpointUpdatedAsync(context, endpoint));
+                            l => l.OnEndpointUpdatedAsync(context, endpoint)).ConfigureAwait(false);
                         updated++;
                         continue;
                     }
-                    await _broker.NotifyAllAsync(l => l.OnEndpointNewAsync(context, endpoint));
+                    await _broker.NotifyAllAsync(l => l.OnEndpointNewAsync(context, endpoint)).ConfigureAwait(false);
                     added++;
                 }
                 catch (Exception ex) {
@@ -301,7 +301,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
             return await _database.QueryAllAsync(new EndpointInfoQueryModel {
                 IncludeNotSeenSince = includeDeleted,
                 ApplicationId = applicationId
-            }, ct);
+            }, ct).ConfigureAwait(false);
         }
 
         private readonly ICertificateServices<EndpointInfoModel> _certificates;

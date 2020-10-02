@@ -65,6 +65,6 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Models {
         /// <summary>
         /// Locales to use
         /// </summary>
-        public List<string> LocaleIds { get; set; }
+        public IReadOnlyList<string> LocaleIds { get; set; }
     }
 }

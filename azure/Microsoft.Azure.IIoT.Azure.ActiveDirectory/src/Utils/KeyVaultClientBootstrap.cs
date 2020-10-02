@@ -17,7 +17,7 @@ namespace Microsoft.Azure.IIoT.Azure.ActiveDirectory.Utils {
     /// Retrieve a working Keyvault client to bootstrap keyvault
     /// communcation
     /// </summary>
-    public class KeyVaultClientBootstrap : IDisposable {
+    public sealed class KeyVaultClientBootstrap : IDisposable {
 
         /// <summary>
         /// Get client
@@ -60,7 +60,7 @@ namespace Microsoft.Azure.IIoT.Azure.ActiveDirectory.Utils {
                         scope = resource + "/" + scope;
                     }
                     var token = await provider.GetTokenForAsync(
-                        Http.Resource.KeyVault, scope.YieldReturn());
+                        Http.Resource.KeyVault, scope.YieldReturn()).ConfigureAwait(false);
                     return token?.RawToken;
                 });
             }).AsSelf().AsImplementedInterfaces();

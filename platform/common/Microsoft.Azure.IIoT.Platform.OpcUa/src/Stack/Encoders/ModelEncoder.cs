@@ -14,7 +14,7 @@ namespace Opc.Ua.Encoders {
     /// <summary>
     /// Encoder wrapper to encode model
     /// </summary>
-    public class ModelEncoder : IEncoder, IDisposable {
+    public sealed class ModelEncoder : IEncoder, IDisposable {
 
         /// <summary>
         /// Create wrapper
@@ -49,7 +49,7 @@ namespace Opc.Ua.Encoders {
             _wrapped.Context;
 
         /// <inheritdoc />
-        public bool UseReversibleEncoding => 
+        public bool UseReversibleEncoding =>
             _wrapped.UseReversibleEncoding;
 
         /// <inheritdoc />
@@ -71,8 +71,10 @@ namespace Opc.Ua.Encoders {
 
         /// <inheritdoc />
         public void WriteNodeIdArray(string fieldName, IList<NodeId> values) {
-            foreach (var node in values) {
-                _callback?.Invoke(node);
+            if (values != null) {
+                foreach (var node in values) {
+                    _callback?.Invoke(node);
+                }
             }
             _wrapped.WriteNodeIdArray(fieldName, values);
         }
@@ -80,8 +82,10 @@ namespace Opc.Ua.Encoders {
         /// <inheritdoc />
         public void WriteExpandedNodeIdArray(string fieldName,
             IList<ExpandedNodeId> values) {
-            foreach (var node in values) {
-                _callback?.Invoke(node);
+            if (values != null) {
+                foreach (var node in values) {
+                    _callback?.Invoke(node);
+                }
             }
             _wrapped.WriteExpandedNodeIdArray(fieldName, values);
         }
@@ -102,8 +106,8 @@ namespace Opc.Ua.Encoders {
         }
 
         /// <inheritdoc />
-        public void PushNamespace(string namespaceUri) {
-            _wrapped.PushNamespace(namespaceUri);
+        public void PushNamespace(string ns) {
+            _wrapped.PushNamespace(ns);
         }
 
         /// <inheritdoc />
@@ -378,27 +382,28 @@ namespace Opc.Ua.Encoders {
         /// <returns></returns>
         private static IEncoder CreateEncoder(string contentType, Stream stream,
             ServiceMessageContext context) {
-            if (stream == null) {
-                throw new ArgumentNullException(nameof(stream));
+            if (contentType is null) {
+                throw new ArgumentNullException(nameof(contentType));
             }
-            switch (contentType.ToLowerInvariant()) {
-                case ContentMimeType.Json:
-                case ContentMimeType.UaJson:
-                    return new JsonEncoderEx(new StreamWriter(stream),
-                        context ?? new ServiceMessageContext(),
-                        JsonEncoderEx.JsonEncoding.Array) {
-                        UseAdvancedEncoding = true,
-                        IgnoreDefaultValues = true
-                    };
-                case ContentMimeType.UaBinary:
-                    return new BinaryEncoder(stream,
-                        context ?? new ServiceMessageContext());
-                case ContentMimeType.UaXml:
-                    return new XmlEncoder((Type)null, XmlWriter.Create(stream),
-                        context ?? new ServiceMessageContext());
-                default:
-                    throw new ArgumentException(nameof(contentType));
+            context ??= new ServiceMessageContext();
+            if (contentType.EqualsIgnoreCase(ContentMimeType.Json) ||
+                contentType.EqualsIgnoreCase(ContentMimeType.UaJson)) {
+                return new JsonEncoderEx(new StreamWriter(stream),
+                    context, JsonEncoderEx.JsonEncoding.Array) {
+                    UseAdvancedEncoding = true,
+                    IgnoreDefaultValues = true
+                };
             }
+            if (contentType.EqualsIgnoreCase(ContentMimeType.UaBinary)) {
+                return new BinaryEncoder(stream, context);
+            }
+            if (contentType.EqualsIgnoreCase(ContentMimeType.UaXml)) {
+#pragma warning disable CA2000 // Dispose objects before losing scope
+                return new XmlEncoder((Type)null, XmlWriter.Create(stream),
+                    context);
+#pragma warning restore CA2000 // Dispose objects before losing scope
+            }
+            throw new ArgumentException("Bad content type", nameof(contentType));
         }
 
         /// <summary>

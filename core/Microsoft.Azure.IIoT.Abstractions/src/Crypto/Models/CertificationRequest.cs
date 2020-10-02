@@ -25,12 +25,12 @@ namespace Microsoft.Azure.IIoT.Crypto.Models {
         /// <summary>
         /// Extensions
         /// </summary>
-        public List<X509Extension> Extensions { get; set; }
+        public IReadOnlyList<X509Extension> Extensions { get; set; }
 
         /// <summary>
         /// Get raw asn1 data
         /// </summary>
-        public byte[] RawData { get; set; }
+        public IReadOnlyCollection<byte> RawData { get; set; }
     }
 }
 

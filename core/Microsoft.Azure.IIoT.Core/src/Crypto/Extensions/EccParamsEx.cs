@@ -5,6 +5,7 @@
 
 namespace Microsoft.Azure.IIoT.Crypto.Models {
     using System;
+    using System.Linq;
     using System.Security.Cryptography;
 
     /// <summary>
@@ -38,6 +39,10 @@ namespace Microsoft.Azure.IIoT.Crypto.Models {
         /// <returns>An EC parameter object</returns>
         public static ECParameters ToECParameters(this EccParams ecParameters,
             bool includePrivateParameters = true) {
+            if (ecParameters is null) {
+                throw new ArgumentNullException(nameof(ecParameters));
+            }
+
             KeyEx.VerifyNonZero(ecParameters.X);
             KeyEx.VerifyNonZero(ecParameters.Y);
 
@@ -48,7 +53,7 @@ namespace Microsoft.Azure.IIoT.Crypto.Models {
             }
             return new ECParameters {
                 Curve = ecParameters.Curve.ToECCurve(),
-                D = ecParameters.D,
+                D = ecParameters.D?.ToArray(),
                 Q = new ECPoint {
                     X = KeyEx.ForceLength(ecParameters.X, keyParameterSize),
                     Y = KeyEx.ForceLength(ecParameters.Y, keyParameterSize)
@@ -62,6 +67,10 @@ namespace Microsoft.Azure.IIoT.Crypto.Models {
         /// <param name="key"></param>
         /// <returns></returns>
         public static Key GetPublicKey(this EccParams key) {
+            if (key is null) {
+                throw new ArgumentNullException(nameof(key));
+            }
+
             return new Key {
                 Type = KeyType.ECC,
                 Parameters = new EccParams {
@@ -78,7 +87,7 @@ namespace Microsoft.Azure.IIoT.Crypto.Models {
         /// </summary>
         /// <returns> True if the object has private key; false otherwise.</returns>
         public static bool HasPrivateKey(this EccParams key) {
-            return key.D != null;
+            return key?.D != null;
         }
 
         /// <summary>
@@ -87,6 +96,9 @@ namespace Microsoft.Azure.IIoT.Crypto.Models {
         /// <param name="ec"></param>
         /// <returns></returns>
         public static Key ToKey(this ECDsa ec) {
+            if (ec is null) {
+                throw new ArgumentNullException(nameof(ec));
+            }
             return ToKey(ec.ExportParameters(true));
         }
 
@@ -96,6 +108,9 @@ namespace Microsoft.Azure.IIoT.Crypto.Models {
         /// <param name="ec"></param>
         /// <returns></returns>
         public static Key ToPublicKey(this ECDsa ec) {
+            if (ec is null) {
+                throw new ArgumentNullException(nameof(ec));
+            }
             return ToKey(ec.ExportParameters(false));
         }
 
@@ -105,6 +120,9 @@ namespace Microsoft.Azure.IIoT.Crypto.Models {
         /// <param name="key"></param>
         /// <returns></returns>
         public static ECDsa ToECDsa(this Key key) {
+            if (key is null) {
+                throw new ArgumentNullException(nameof(key));
+            }
             if (key.Type != KeyType.ECC) {
                 throw new ArgumentException("Not an ecc key", nameof(key));
             }

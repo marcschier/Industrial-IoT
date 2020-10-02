@@ -60,8 +60,8 @@ namespace Microsoft.Azure.IIoT.Services.Kafka.Clients {
                 Value = payload,
                 Headers = CreateHeader(target, properties)
             };
-            var topic = await EnsureTopicAsync(target);
-            await _producer.ProduceAsync(topic, ev, ct);
+            var topic = await EnsureTopicAsync(target).ConfigureAwait(false);
+            await _producer.ProduceAsync(topic, ev, ct).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
@@ -105,8 +105,8 @@ namespace Microsoft.Azure.IIoT.Services.Kafka.Clients {
                 Value = payload,
                 Headers = CreateHeader(target, contentType, eventSchema, contentEncoding)
             };
-            var topic = await EnsureTopicAsync(target);
-            await _producer.ProduceAsync(topic, ev, ct);
+            var topic = await EnsureTopicAsync(target).ConfigureAwait(false);
+            await _producer.ProduceAsync(topic, ev, ct).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
@@ -119,7 +119,7 @@ namespace Microsoft.Azure.IIoT.Services.Kafka.Clients {
                 throw new ArgumentNullException(nameof(batch));
             }
             var header = CreateHeader(target, contentType, eventSchema, contentEncoding);
-            var topic = await EnsureTopicAsync(target);
+            var topic = await EnsureTopicAsync(target).ConfigureAwait(false);
             foreach (var payload in batch) {
                 var ev = new Message<string, byte[]> {
                     Key = GetKey(target, eventSchema, null),
@@ -128,7 +128,7 @@ namespace Microsoft.Azure.IIoT.Services.Kafka.Clients {
                 };
                 _producer.Produce(topic, ev);
             }
-            await Task.Run(() => _producer.Flush(ct));
+            await Task.Run(() => _producer.Flush(ct)).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
@@ -230,7 +230,7 @@ namespace Microsoft.Azure.IIoT.Services.Kafka.Clients {
         private Task<string> EnsureTopicAsync(string target) {
             return _topics.GetOrAdd(target, async k => {
                 var topic = target.Split('/')[0];
-                await _admin.EnsureTopicExistsAsync(topic);
+                await _admin.EnsureTopicExistsAsync(topic).ConfigureAwait(false);
                 return topic;
             });
         }

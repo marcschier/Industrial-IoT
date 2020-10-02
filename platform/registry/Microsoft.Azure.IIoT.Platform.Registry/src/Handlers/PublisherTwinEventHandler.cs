@@ -44,7 +44,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Handlers {
                 TwinProperty.Type, null);
             if ((ev.Event != DeviceTwinEventType.Delete && ev.IsPatch) || string.IsNullOrEmpty(type)) {
                 try {
-                    ev.Twin = await _iothub.GetAsync(ev.Twin.Id, ev.Twin.ModuleId);
+                    ev.Twin = await _iothub.GetAsync(ev.Twin.Id, ev.Twin.ModuleId).ConfigureAwait(false);
                     ev.IsPatch = false;
                     type = ev.Twin.Properties?.Reported?.GetValueOrDefault<string>(
                         TwinProperty.Type, null);
@@ -63,15 +63,15 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Handlers {
                         break;
                     case DeviceTwinEventType.Create:
                         await _broker.NotifyAllAsync(l => l.OnPublisherNewAsync(ctx,
-                            ev.Twin.ToPublisherRegistration(false).ToServiceModel()));
+                            ev.Twin.ToPublisherRegistration(false).ToServiceModel())).ConfigureAwait(false);
                         break;
                     case DeviceTwinEventType.Update:
                         await _broker.NotifyAllAsync(l => l.OnPublisherUpdatedAsync(ctx,
-                            ev.Twin.ToPublisherRegistration(false).ToServiceModel()));
+                            ev.Twin.ToPublisherRegistration(false).ToServiceModel())).ConfigureAwait(false);
                         break;
                     case DeviceTwinEventType.Delete:
                         await _broker.NotifyAllAsync(l => l.OnPublisherDeletedAsync(ctx,
-                            HubResource.Format(ev.Twin.Hub, ev.Twin.Id, ev.Twin.ModuleId)));
+                            HubResource.Format(ev.Twin.Hub, ev.Twin.Id, ev.Twin.ModuleId))).ConfigureAwait(false);
                         break;
                 }
                 ev.Handled = true;

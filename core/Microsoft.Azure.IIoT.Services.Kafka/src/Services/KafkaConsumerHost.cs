@@ -58,7 +58,7 @@ namespace Microsoft.Azure.IIoT.Services.Kafka.Services {
             };
             var topic = _config.ConsumerTopic ?? "^.*";
             if (!topic.StartsWith("^")) {
-                await _admin.EnsureTopicExistsAsync(topic);
+                await _admin.EnsureTopicExistsAsync(topic).ConfigureAwait(false);
             }
             while (!ct.IsCancellationRequested) {
                 try {
@@ -84,8 +84,8 @@ namespace Microsoft.Azure.IIoT.Services.Kafka.Services {
                             }
                             await _consumer.HandleAsync(ev.Value, new EventHeader(
                                 ev.Headers, result.Topic),
-                                    () => CommitAsync(consumer, result));
-                            await Try.Async(_consumer.OnBatchCompleteAsync);
+                                    () => CommitAsync(consumer, result)).ConfigureAwait(false);
+                            await Try.Async(_consumer.OnBatchCompleteAsync).ConfigureAwait(false);
                         }
                         consumer.Close();
                     }

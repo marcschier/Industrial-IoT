@@ -35,7 +35,7 @@ namespace Microsoft.Azure.IIoT.Authentication.Clients {
             }
             foreach (var source in _tokenSources.Where(p => p.Resource == resource)) {
                 try {
-                    var token = await source.GetTokenAsync(scopes);
+                    var token = await source.GetTokenAsync(scopes).ConfigureAwait(false);
                     if (token != null) {
                         return token;
                     }
@@ -54,7 +54,7 @@ namespace Microsoft.Azure.IIoT.Authentication.Clients {
             }
             await Task.WhenAll(_tokenSources
                 .Where(p => p.Resource == resource)
-                .Select(p => p.InvalidateAsync()));
+                .Select(p => p.InvalidateAsync())).ConfigureAwait(false);
         }
 
         private readonly List<ITokenSource> _tokenSources;

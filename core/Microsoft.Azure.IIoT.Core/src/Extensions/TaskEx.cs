@@ -17,15 +17,18 @@ namespace System.Threading.Tasks {
         public static async Task<T> FallbackWhen<T>(this Task<T> task,
             Func<T, bool> condition, Func<Task<T>> fallback) {
 #pragma warning restore IDE1006 // Naming Styles
+            if (task is null) {
+                throw new ArgumentNullException(nameof(task));
+            }
             try {
-                var result = await task;
-                if (!condition(result)) {
+                var result = await task.ConfigureAwait(false);
+                if (!(condition?.Invoke(result) ?? false)) {
                     return result;
                 }
-                return await fallback();
+                return await fallback().ConfigureAwait(false);
             }
             catch {
-                return await fallback();
+                return await fallback().ConfigureAwait(false);
             }
         }
 
@@ -33,22 +36,22 @@ namespace System.Threading.Tasks {
         /// Timeout after some time
         /// </summary>
 #pragma warning disable IDE1006 // Naming Styles
-        public static Task<T> WithTimeoutOf<T>(this Task<T> task,
+        public static async Task<T> WithTimeoutOf<T>(this Task<T> task,
             TimeSpan timeout) {
 #pragma warning restore IDE1006 // Naming Styles
-            var cts = new CancellationTokenSource(timeout);
-            return Task.Run(() => task, cts.Token);
+            using var cts = new CancellationTokenSource(timeout);
+            return await Task.Run(() => task, cts.Token).ConfigureAwait(false);
         }
 
         /// <summary>
         /// Timeout after some time
         /// </summary>
 #pragma warning disable IDE1006 // Naming Styles
-        public static Task WithTimeoutOf(this Task task,
+        public static async Task WithTimeoutOf(this Task task,
             TimeSpan timeout) {
 #pragma warning restore IDE1006 // Naming Styles
-            var cts = new CancellationTokenSource(timeout);
-            return Task.Run(() => task, cts.Token);
+            using var cts = new CancellationTokenSource(timeout);
+            await Task.Run(() => task, cts.Token).ConfigureAwait(false);
         }
 
         /// <summary>

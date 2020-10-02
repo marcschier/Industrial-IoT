@@ -20,7 +20,7 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
     /// <summary>
     /// Event bus built on top of rabbitmq
     /// </summary>
-    public class RabbitMqEventBus : IEventBus, IDisposable {
+    public sealed class RabbitMqEventBus : IEventBus, IDisposable {
 
         /// <summary>
         /// Create mass transit bus event bus
@@ -68,12 +68,8 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
         }
 
         /// <inheritdoc/>
-        public Task CloseAsync() {
-            return Task.CompletedTask;
-        }
-
-        /// <inheritdoc/>
         public void Dispose() {
+            _lock.Dispose();
         }
 
         /// <inheritdoc/>
@@ -82,11 +78,13 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
                 throw new ArgumentNullException(nameof(handler));
             }
             var eventName = typeof(T).GetMoniker();
-            await _lock.WaitAsync();
+            await _lock.WaitAsync().ConfigureAwait(false);
             try {
                 var tag = Guid.NewGuid().ToString();
                 if (!_consumers.TryGetValue(eventName, out var consumer)) {
+#pragma warning disable CA2000 // Dispose objects before losing scope
                     consumer = new Consumer<T>(this, eventName);
+#pragma warning restore CA2000 // Dispose objects before losing scope
                     _consumers.TryAdd(eventName, consumer);
                 }
                 consumer.Add(tag, handler);
@@ -103,7 +101,7 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
                 throw new ArgumentNullException(nameof(token));
             }
             string eventName = null;
-            await _lock.WaitAsync();
+            await _lock.WaitAsync().ConfigureAwait(false);
             try {
                 var found = false;
                 foreach (var consumer in _consumers) {
@@ -188,7 +186,7 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
                 ReadOnlyMemory<byte> body) {
                 var evt = _outer._serializer.Deserialize<T>(body);
                 List<IEventHandler<T>> handlers;
-                await _lock.WaitAsync();
+                await _lock.WaitAsync().ConfigureAwait(false);
                 try {
                     handlers = _subscriptions.Values.ToList();
                 }
@@ -196,7 +194,7 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
                     _lock.Release();
                 }
                 foreach (var handler in handlers) {
-                    await handler.HandleAsync(evt);
+                    await handler.HandleAsync(evt).ConfigureAwait(false);
                     _outer._logger.Verbose(
                         "<-----  {@message} received and handled! ", evt);
                 }
@@ -205,6 +203,7 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
             /// <inheritdoc/>
             public void Dispose() {
                 _channel.Dispose();
+                _lock.Dispose();
             }
 
             private readonly RabbitMqEventBus _outer;

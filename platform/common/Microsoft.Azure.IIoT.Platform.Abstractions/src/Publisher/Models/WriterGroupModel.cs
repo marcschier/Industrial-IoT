@@ -51,7 +51,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Models {
         /// <summary>
         /// The data set writers generating dataset messages in the group
         /// </summary>
-        public List<DataSetWriterModel> DataSetWriters { get; set; }
+        public IReadOnlyList<DataSetWriterModel> DataSetWriters { get; set; }
 
         /// <summary>
         /// Network message configuration
@@ -61,7 +61,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Models {
         /// <summary>
         /// Locales to use
         /// </summary>
-        public List<string> LocaleIds { get; set; }
+        public IReadOnlyList<string> LocaleIds { get; set; }
 
         /// <summary>
         /// Header layout uri
@@ -81,7 +81,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Models {
         /// <summary>
         /// Security key services to use
         /// </summary>
-        public List<ConnectionModel> SecurityKeyServices { get; set; }
+        public IReadOnlyList<ConnectionModel> SecurityKeyServices { get; set; }
 
         /// <summary>
         /// Max network message size

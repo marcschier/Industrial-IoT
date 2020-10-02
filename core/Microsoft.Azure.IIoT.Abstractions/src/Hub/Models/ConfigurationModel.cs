@@ -30,7 +30,7 @@ namespace Microsoft.Azure.IIoT.Hub.Models {
         /// <summary>
         /// Gets or sets labels for the configuration
         /// </summary>
-        public IDictionary<string, string> Labels { get; set; }
+        public IReadOnlyDictionary<string, string> Labels { get; set; }
 
         /// <summary>
         /// Gets or sets Content for the configuration

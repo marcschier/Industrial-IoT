@@ -18,7 +18,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
     /// <summary>
     /// A generic session manager services for servers.
     /// </summary>
-    public class SessionServices : ISessionServices {
+    public sealed class SessionServices : ISessionServices {
 
         /// <summary>
         /// Create session manager object
@@ -162,11 +162,14 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
         }
 
         /// <inheritdoc/>
-        public virtual bool ActivateSession(RequestContextModel context,
+        public bool ActivateSession(RequestContextModel context,
             NodeId authenticationToken, SignatureData clientSignature,
             List<SoftwareCertificate> clientSoftwareCertificates,
             ExtensionObject userIdentityToken, SignatureData userTokenSignature,
             StringCollection localeIds, out byte[] serverNonce) {
+            if (context is null) {
+                throw new ArgumentNullException(nameof(context));
+            }
 
             // find session.
             GatewaySession session = null;
@@ -195,7 +198,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
         }
 
         /// <inheritdoc/>
-        public virtual void CloseSession(NodeId sessionId) {
+        public void CloseSession(NodeId sessionId) {
             var authenticationToken = _sessions.FirstOrDefault(
                 s => s.Value.Id == sessionId);
             // If not found, key is null
@@ -207,7 +210,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
         }
 
         /// <inheritdoc/>
-        public virtual RequestContextModel GetContext(RequestHeader requestHeader,
+        public RequestContextModel GetContext(RequestHeader requestHeader,
             RequestType requestType) {
             if (requestHeader == null) {
                 throw new ArgumentNullException(nameof(requestHeader));
@@ -248,7 +251,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
         /// <param name="authenticationToken"></param>
         /// <param name="requestType"></param>
         /// <returns></returns>
-        protected virtual IUserIdentity ValidateSessionLessRequest(NodeId authenticationToken,
+        private static IUserIdentity ValidateSessionLessRequest(NodeId authenticationToken,
             RequestType requestType) {
             // Not supported!
             throw new ServiceResultException(StatusCodes.BadSessionIdInvalid);
@@ -533,7 +536,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
                     throw arg.ValidationException;
                 }
                 if (arg.NewIdentities != null) {
-                    Identities = arg.NewIdentities;
+                    Identities = arg.NewIdentities.ToList();
                     return true;
                 }
                 return false; // No new identities

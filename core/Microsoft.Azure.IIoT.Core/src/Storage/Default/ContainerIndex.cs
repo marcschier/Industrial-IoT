@@ -41,14 +41,14 @@ namespace Microsoft.Azure.IIoT.Storage.Default {
         public async Task<uint> AllocateAsync(CancellationToken ct) {
             while (true) {
                 // Get current value
-                var cur = await _container.FindAsync<Bitmap>(_id, ct);
+                var cur = await _container.FindAsync<Bitmap>(_id, ct: ct).ConfigureAwait(false);
                 if (cur == null) {
                     // Add new index
                     try {
                         var idx = new Bitmap();
                         var value = idx.Allocate();
-                        await _container.AddAsync(idx, ct, _id,
-                            kWithStrongConsistency);
+                        await _container.AddAsync(idx, _id, kWithStrongConsistency,
+                            ct).ConfigureAwait(false);
                         return value;
                     }
                     catch (ResourceConflictException) {
@@ -60,8 +60,8 @@ namespace Microsoft.Azure.IIoT.Storage.Default {
                     try {
                         var idx = new Bitmap(cur.Value);
                         var value = idx.Allocate();
-                        await _container.ReplaceAsync(cur, idx, ct,
-                            kWithStrongConsistency);
+                        await _container.ReplaceAsync(cur, idx, kWithStrongConsistency,
+                            ct).ConfigureAwait(false);
                         return value; // Success - return index
                     }
                     catch (ResourceOutOfDateException) {
@@ -75,16 +75,16 @@ namespace Microsoft.Azure.IIoT.Storage.Default {
         public async Task FreeAsync(uint index, CancellationToken ct) {
             while (true) {
                 // Get current value
-                var cur = await _container.FindAsync<Bitmap>(_id, ct,
-                    kWithStrongConsistency);
+                var cur = await _container.FindAsync<Bitmap>(_id, kWithStrongConsistency,
+                    ct).ConfigureAwait(false);
                 if (cur == null) {
                     return;
                 }
                 try {
                     var idx = new Bitmap(cur.Value);
                     if (idx.Free(index)) {
-                        await _container.ReplaceAsync(cur, idx, ct,
-                            kWithStrongConsistency);
+                        await _container.ReplaceAsync(cur, idx, kWithStrongConsistency,
+                            ct).ConfigureAwait(false);
                     }
                     return;
                 }

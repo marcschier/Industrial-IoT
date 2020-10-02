@@ -5,6 +5,7 @@
 
 namespace Microsoft.Azure.IIoT.Crypto.Models {
     using System;
+    using System.Collections.Generic;
 
     /// <summary>
     /// Represents a crl in lieu of .net having one.
@@ -14,7 +15,7 @@ namespace Microsoft.Azure.IIoT.Crypto.Models {
         /// <summary>
         /// Crl number
         /// </summary>
-        public byte[] SerialNumber { get; set; }
+        public IReadOnlyCollection<byte> SerialNumber { get; set; }
 
         /// <summary>
         /// The subject name of the Issuer for the CRL.
@@ -34,6 +35,6 @@ namespace Microsoft.Azure.IIoT.Crypto.Models {
         /// <summary>
         /// The raw asn.1 data for the CRL.
         /// </summary>
-        public byte[] RawData { get; set; }
+        public IReadOnlyCollection<byte> RawData { get; set; }
     }
 }

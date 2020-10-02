@@ -5,6 +5,7 @@
 
 namespace Microsoft.Azure.IIoT.Rpc {
     using System;
+    using System.Globalization;
     using System.Reflection;
 
     /// <summary>
@@ -31,13 +32,17 @@ namespace Microsoft.Azure.IIoT.Rpc {
         /// </summary>
         /// <param name="type"></param>
         /// <returns></returns>
-        public static string GetName(Type type) {
+        public static string GetHubName(Type type) {
+            if (type is null) {
+                throw new ArgumentNullException(nameof(type));
+            }
             var name = type.GetCustomAttribute<HubNameAttribute>(false)?.Name;
             if (string.IsNullOrEmpty(name)) {
-                name = type.Name.ToLowerInvariant();
+                name = type.Name;
                 if (name.EndsWith(nameof(Hub), StringComparison.OrdinalIgnoreCase)) {
                     name = name.Replace(nameof(Hub), "", StringComparison.OrdinalIgnoreCase);
                 }
+                name = name.ToLower(CultureInfo.CurrentCulture);
             }
             return name;
         }

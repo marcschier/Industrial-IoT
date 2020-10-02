@@ -61,7 +61,7 @@ namespace Microsoft.Azure.IIoT.AspNetCore.Authentication {
                         // Will not be enabled for authorization
                         return;
                     }
-                    options.Authority = config.GetAuthorityUrl();
+                    options.Authority = config.GetAuthority();
                     options.SaveToken = true; // Save token to allow request on behalf
                     options.RequireHttpsMetadata =
                        !new Uri(options.Authority).DnsSafeHost.EqualsIgnoreCase("localhost");
@@ -73,7 +73,7 @@ namespace Microsoft.Azure.IIoT.AspNetCore.Authentication {
                         ValidateAudience = !string.IsNullOrEmpty(config.Audience),
                         ValidAudience = config.Audience
                     };
-                    options.MetadataAddress = config.GetAuthorityUrl() + "/.well-known/openid-configuration";
+                    options.MetadataAddress = config.GetAuthority() + "/.well-known/openid-configuration";
                     options.Events = new JwtBearerEvents {
                         OnTokenValidated = ctx => {
                             if (ctx.SecurityToken is JwtSecurityToken accessToken) {

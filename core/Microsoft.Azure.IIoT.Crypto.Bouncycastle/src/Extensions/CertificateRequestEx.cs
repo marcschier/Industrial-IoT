@@ -8,6 +8,7 @@ namespace System.Security.Cryptography.X509Certificates {
     using Microsoft.Azure.IIoT.Crypto.BouncyCastle;
     using Microsoft.Azure.IIoT.Crypto.Models;
     using System.Collections.Generic;
+    using System.Linq;
 
     /// <summary>
     /// Certificate request
@@ -41,7 +42,8 @@ namespace System.Security.Cryptography.X509Certificates {
         /// <param name="buffer"></param>
         /// <param name="signatureType"></param>
         /// <returns></returns>
-        public static CertificateRequest ToCertificateRequest(this byte[] buffer,
+        public static CertificateRequest ToCertificateRequest(
+            this IReadOnlyCollection<byte> buffer,
             SignatureType signatureType = SignatureType.RS256) {
             var csr = buffer.ToCertificationRequestInfo();
             var key = csr.GetPublicKey();
@@ -60,6 +62,10 @@ namespace System.Security.Cryptography.X509Certificates {
         /// <param name="request"></param>
         /// <returns></returns>
         public static Key GetPublicKey(this CertificateRequest request) {
+            if (request is null) {
+                throw new ArgumentNullException(nameof(request));
+            }
+
             var csr = request.CreateSigningRequest().ToCertificationRequestInfo();
             return csr.GetPublicKey();
         }
@@ -75,7 +81,11 @@ namespace System.Security.Cryptography.X509Certificates {
         /// <param name="serialNumber"></param>
         /// <returns></returns>
         public static X509Certificate2 Create(this CertificateRequest request, IDigestSigner signer,
-            Certificate issuer, DateTime notBefore, DateTime notAfter, byte[] serialNumber) {
+            Certificate issuer, DateTime notBefore, DateTime notAfter,
+            IReadOnlyCollection<byte> serialNumber) {
+            if (issuer is null) {
+                throw new ArgumentNullException(nameof(issuer));
+            }
             return Create(request, signer, issuer.Subject, issuer.KeyHandle,
                 issuer.IssuerPolicies.SignatureType.Value, notBefore, notAfter, serialNumber);
         }
@@ -94,11 +104,14 @@ namespace System.Security.Cryptography.X509Certificates {
         /// <returns></returns>
         public static X509Certificate2 Create(this CertificateRequest request, IDigestSigner signer,
             X500DistinguishedName issuer, KeyHandle signingKey, SignatureType signatureType,
-            DateTime notBefore, DateTime notAfter, byte[] serialNumber) {
+            DateTime notBefore, DateTime notAfter, IReadOnlyCollection<byte> serialNumber) {
+            if (request is null) {
+                throw new ArgumentNullException(nameof(request));
+            }
             var signatureGenerator = signer.CreateX509SignatureGenerator(
                 signingKey, signatureType);
             var signedCert = request.Create(issuer, signatureGenerator, notBefore,
-                notAfter, serialNumber);
+                notAfter, serialNumber.ToArray());
             return signedCert;
         }
     }

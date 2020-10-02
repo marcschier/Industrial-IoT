@@ -67,10 +67,12 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Module {
             if (Host.IsContainer) {
                 // Set timer to kill the entire process after 5 minutes.
 #pragma warning disable IDE0067 // Dispose objects before losing scope
+#pragma warning disable CA2000 // Dispose objects before losing scope
                 var _ = new Timer(o => {
                     Log.Logger.Fatal("Killing non responsive module process!");
                     Process.GetCurrentProcess().Kill();
                 }, null, TimeSpan.FromMinutes(5), TimeSpan.FromMinutes(5));
+#pragma warning restore CA2000 // Dispose objects before losing scope
 #pragma warning restore IDE0067 // Dispose objects before losing scope
             }
         }
@@ -93,7 +95,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Module {
                         var version = GetType().Assembly.GetReleaseVersion().ToString();
                         logger.Information("Starting module OpcPublisher version {version}.",
                             version);
-                        await module.StartAsync(IdentityType.Publisher, version);
+                        await module.StartAsync(IdentityType.Publisher, version).ConfigureAwait(false);
                         if (hostScope.TryResolve(out server)) {
                             server.Start();
                         }
@@ -101,7 +103,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Module {
                             identity.DeviceId ?? "", identity.ModuleId ?? "").Inc();
                         sessionManager = hostScope.Resolve<ISessionManager>();
                         OnRunning?.Invoke(this, true);
-                        await Task.WhenAny(_reset.Task, _exit.Task);
+                        await Task.WhenAny(_reset.Task, _exit.Task).ConfigureAwait(false);
                         if (_exit.Task.IsCompleted) {
                             logger.Information("Module exits...");
                             return _exitCode;
@@ -116,10 +118,10 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Module {
                         kPublisherModuleStart.WithLabels(
                             identity.DeviceId ?? "", identity.ModuleId ?? "").Set(0);
                         if (server != null) {
-                            await server.StopAsync();
+                            await server.StopAsync().ConfigureAwait(false);
                         }
-                        await sessionManager?.StopAsync();
-                        await module.StopAsync();
+                        await (sessionManager?.StopAsync()).ConfigureAwait(false);
+                        await module.StopAsync().ConfigureAwait(false);
                         OnRunning?.Invoke(this, false);
                         kPublisherModuleStart.WithLabels(
                             identity.DeviceId ?? "", identity.ModuleId ?? "").Set(0);

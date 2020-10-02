@@ -24,13 +24,17 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Models {
         /// <returns></returns>
         public static IEnumerable<MonitoredItemNotificationModel> ToMonitoredItemNotifications(
             this DataChangeNotification notification, IEnumerable<MonitoredItem> monitoredItems) {
+            if (notification is null) {
+                throw new ArgumentNullException(nameof(notification));
+            }
+
             for (var i = 0; i < notification.MonitoredItems.Count; i++) {
                 var monitoredItem = monitoredItems.SingleOrDefault(
                         m => m.ClientHandle == notification?.MonitoredItems[i]?.ClientHandle);
                 if (monitoredItem == null) {
                     continue;
                 }
-                var message = notification?.MonitoredItems[i]?
+                var message = notification.MonitoredItems[i]?
                     .ToMonitoredItemNotification(monitoredItem);
                 if (message == null) {
                     continue;
@@ -154,13 +158,12 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Models {
                     BrowseNames.ReceiveTime, monitoredItem),
                 StatusCode = eventFields.GetEventValue<StatusCode>(
                     BrowseNames.StatusCode, monitoredItem),
-                Value = new EncodeableDictionary {
-                    Fields = new KeyValuePairCollection(eventFields.EventFields
+                Value = new EncodeableDictionary(
+                    new KeyValuePairCollection(eventFields.EventFields
                         .Select((value, i) => new Opc.Ua.KeyValuePair {
                             Key = monitoredItem.GetFieldName(i),
                             Value = value
-                        }))
-                }
+                        })))
             };
         }
 
@@ -169,6 +172,9 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Models {
         /// </summary>
         public static T GetEventValue<T>(this EventFieldList eventFields, string name,
             MonitoredItem monitoredItem, T defaultValue = default) {
+            if (monitoredItem is null) {
+                throw new ArgumentNullException(nameof(monitoredItem));
+            }
             // get value
             var value = monitoredItem.GetFieldValue(eventFields, ObjectTypes.BaseEventType, name);
             if (value != null) {

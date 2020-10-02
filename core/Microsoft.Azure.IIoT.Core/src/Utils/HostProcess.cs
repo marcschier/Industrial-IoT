@@ -32,7 +32,7 @@ namespace Microsoft.Azure.IIoT.Utils {
 
         /// <inheritdoc/>
         public async Task StartAsync() {
-            await _lock.WaitAsync();
+            await _lock.WaitAsync().ConfigureAwait(false);
             try {
                 if (_host != null) {
                     _logger.Debug("{host} host already running.", Name);
@@ -54,7 +54,7 @@ namespace Microsoft.Azure.IIoT.Utils {
 
         /// <inheritdoc/>
         public async Task StopAsync() {
-            await _lock.WaitAsync();
+            await _lock.WaitAsync().ConfigureAwait(false);
             try {
                 if (_host == null) {
                     return;

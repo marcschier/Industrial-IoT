@@ -19,6 +19,9 @@ namespace Microsoft.Azure.IIoT.Crypto.Storage.Models {
         /// <param name="document"></param>
         /// <returns></returns>
         public static CertificateDocument Clone(this CertificateDocument document) {
+            if (document is null) {
+                return null;
+            }
             return new CertificateDocument {
                 DisabledSince = document.DisabledSince,
                 Issuer = document.Issuer,
@@ -52,6 +55,12 @@ namespace Microsoft.Azure.IIoT.Crypto.Storage.Models {
         /// <returns></returns>
         public static CertificateDocument ToDocument(this Certificate cert,
             string certificateName, string id, IKeyHandleSerializer serializer) {
+            if (cert is null) {
+                throw new ArgumentNullException(nameof(cert));
+            }
+            if (serializer is null) {
+                throw new ArgumentNullException(nameof(serializer));
+            }
 
             var ski = cert.GetSubjectKeyIdentifierExtension();
             var aki = cert.GetAuthorityKeyIdentifierExtension();

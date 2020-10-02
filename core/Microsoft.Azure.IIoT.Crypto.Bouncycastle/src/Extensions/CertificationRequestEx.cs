@@ -21,6 +21,9 @@ namespace System.Security.Cryptography.X509Certificates {
         /// <returns></returns>
         public static CertificationRequest ToCertificationRequest(
             this CertificateRequest request) {
+            if (request is null) {
+                throw new ArgumentNullException(nameof(request));
+            }
             return new CertificationRequest {
                 Subject = request.SubjectName,
                 Extensions = request.CertificateExtensions.ToList(),
@@ -37,6 +40,9 @@ namespace System.Security.Cryptography.X509Certificates {
         /// <returns></returns>
         public static CertificateRequest ToCertificateRequest(this CertificationRequest request,
             SignatureType signatureType = SignatureType.RS256) {
+            if (request is null) {
+                throw new ArgumentNullException(nameof(request));
+            }
             return request.PublicKey.CreateCertificateRequest(request.Subject, signatureType);
         }
 
@@ -45,7 +51,8 @@ namespace System.Security.Cryptography.X509Certificates {
         /// </summary>
         /// <param name="buffer"></param>
         /// <returns></returns>
-        public static CertificationRequest ToCertificationRequest(this byte[] buffer) {
+        public static CertificationRequest ToCertificationRequest(
+            this IReadOnlyCollection<byte> buffer) {
             var csr = buffer.ToCertificationRequestInfo();
             var key = csr.GetPublicKey();
             var extensions = new List<X509Extension>();

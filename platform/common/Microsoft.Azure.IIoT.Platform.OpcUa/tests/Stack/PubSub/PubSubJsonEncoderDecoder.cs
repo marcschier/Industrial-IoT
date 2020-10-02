@@ -23,7 +23,9 @@ namespace Opc.Ua.PubSub.Tests {
                 { "3", new DataValue("abcd") }
             };
 
-            var message = new DataSetMessage {
+            var message = new DataSetMessage(new DataSet(payload, (uint)(
+                    DataSetFieldContentMask.StatusCode |
+                    DataSetFieldContentMask.SourceTimestamp))) {
                 DataSetWriterId = "WriterId",
                 MetaDataVersion = new ConfigurationVersionDataType { MajorVersion = 1, MinorVersion = 1 },
                 SequenceNumber = ++_currentSequenceNumber,
@@ -34,10 +36,7 @@ namespace Opc.Ua.PubSub.Tests {
                     JsonDataSetMessageContentMask.SequenceNumber |
                     JsonDataSetMessageContentMask.MetaDataVersion |
                     JsonDataSetMessageContentMask.Timestamp |
-                    JsonDataSetMessageContentMask.Status),
-                Payload = new DataSet(payload, (uint)(
-                    DataSetFieldContentMask.StatusCode |
-                    DataSetFieldContentMask.SourceTimestamp))
+                    JsonDataSetMessageContentMask.Status)
             };
 
             var networkMessage = new NetworkMessage {
@@ -47,7 +46,10 @@ namespace Opc.Ua.PubSub.Tests {
                 PublisherId = "PublisherId"
             };
 
-            networkMessage.Messages.Add(message);
+            var messages = new List<DataSetMessage> {
+                message
+            };
+            networkMessage.Messages = messages;
             networkMessage.MessageContentMask = (uint)(
                 JsonNetworkMessageContentMask.PublisherId |
                 JsonNetworkMessageContentMask.NetworkMessageHeader |
@@ -85,7 +87,12 @@ namespace Opc.Ua.PubSub.Tests {
                 ["..."] = new DataValue(new Variant(new Variant("imbricated")))
             };
 
-            var message = new DataSetMessage {
+            var message = new DataSetMessage(new DataSet(payload, (uint)(
+                    DataSetFieldContentMask.StatusCode |
+                    DataSetFieldContentMask.SourceTimestamp |
+                    DataSetFieldContentMask.ServerTimestamp |
+                    DataSetFieldContentMask.SourcePicoSeconds |
+                    DataSetFieldContentMask.ServerPicoSeconds))) {
                 DataSetWriterId = "WriterId",
                 MetaDataVersion = new ConfigurationVersionDataType { MajorVersion = 1, MinorVersion = 1 },
                 SequenceNumber = ++_currentSequenceNumber,
@@ -97,13 +104,7 @@ namespace Opc.Ua.PubSub.Tests {
                     JsonDataSetMessageContentMask.SequenceNumber |
                     JsonDataSetMessageContentMask.MetaDataVersion |
                     JsonDataSetMessageContentMask.Timestamp |
-                    JsonDataSetMessageContentMask.Status),
-                Payload = new DataSet(payload, (uint)(
-                    DataSetFieldContentMask.StatusCode |
-                    DataSetFieldContentMask.SourceTimestamp |
-                    DataSetFieldContentMask.ServerTimestamp |
-                    DataSetFieldContentMask.SourcePicoSeconds |
-                    DataSetFieldContentMask.ServerPicoSeconds))
+                    JsonDataSetMessageContentMask.Status)
             };
 
             var networkMessage = new NetworkMessage {
@@ -114,7 +115,10 @@ namespace Opc.Ua.PubSub.Tests {
                 DataSetClassId = "1234"
             };
 
-            networkMessage.Messages.Add(message);
+            var messages = new List<DataSetMessage> {
+                message
+            };
+            networkMessage.Messages = messages;
             networkMessage.MessageContentMask = (uint)(
                 JsonNetworkMessageContentMask.PublisherId |
                 JsonNetworkMessageContentMask.NetworkMessageHeader |
@@ -146,11 +150,11 @@ namespace Opc.Ua.PubSub.Tests {
         private void ConvertToOpcUaUniversalTime(NetworkMessage networkMessage) {
             // convert DataSet Payload DataValue timestamps to OpcUa Utc
             foreach (var dataSetMessage in networkMessage.Messages) {
-                var expectedPayload = new Dictionary<string, DataValue>();
                 foreach (var entry in dataSetMessage.Payload) {
-                    expectedPayload[entry.Key] = new DataValue(entry.Value).ToOpcUaUniversalTime();
+                    dataSetMessage.AddOrUpdatePayload(entry.Key,
+                        new DataValue(entry.Value).ToOpcUaUniversalTime());
                 }
-                dataSetMessage.Payload = new DataSet(expectedPayload, (uint)(
+                dataSetMessage.SetFieldContentMask((uint)(
                     DataSetFieldContentMask.StatusCode |
                     DataSetFieldContentMask.SourceTimestamp));
             }

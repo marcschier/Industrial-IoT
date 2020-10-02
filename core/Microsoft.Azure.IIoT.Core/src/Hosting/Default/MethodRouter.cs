@@ -25,7 +25,13 @@ namespace Microsoft.Azure.IIoT.Hosting.Services {
         /// Property Di to prevent circular dependency between host and controller
         /// </summary>
         public IEnumerable<IMethodController> Controllers {
+            get {
+                return Enumerable.Empty<IMethodController>();
+            }
             set {
+                if (value is null) {
+                    return;
+                }
                 foreach (var controller in value) {
                     AddToCallTable(controller);
                 }
@@ -36,7 +42,13 @@ namespace Microsoft.Azure.IIoT.Hosting.Services {
         /// Property Di to prevent circular dependency between host and invoker
         /// </summary>
         public IEnumerable<IMethodInvoker> ExternalInvokers {
+            get {
+                return _calltable.Values;
+            }
             set {
+                if (value is null) {
+                    return;
+                }
                 foreach (var invoker in value) {
                     _calltable.AddOrUpdate(invoker.MethodName, invoker);
                 }
@@ -62,11 +74,15 @@ namespace Microsoft.Azure.IIoT.Hosting.Services {
         /// <inheritdoc/>
         public async Task<byte[]> InvokeAsync(string target, string method, byte[] payload,
             string contentType) {
-            if (!_calltable.TryGetValue(method.ToLowerInvariant(), out var invoker)) {
+            if (string.IsNullOrEmpty(method)) {
+                throw new ArgumentNullException(nameof(method));
+            }
+            if (!_calltable.TryGetValue(method.ToUpperInvariant(), out var invoker)) {
                 throw new NotSupportedException(
                     $"Unknown controller method {method} called.");
             }
-            return await invoker.InvokeAsync(target, payload, contentType, this);
+            return await invoker.InvokeAsync(target, payload, contentType,
+                this).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -99,12 +115,12 @@ namespace Microsoft.Azure.IIoT.Hosting.Services {
                 if (name.EndsWith("Async", StringComparison.Ordinal)) {
                     name = name[0..^5];
                 }
-                name = name.ToLowerInvariant();
+                name = name.ToUpperInvariant();
 
                 // Register for all defined versions
                 foreach (var version in versions) {
                     var versionedName = name + version;
-                    versionedName = versionedName.ToLowerInvariant();
+                    versionedName = versionedName.ToUpperInvariant();
                     if (!_calltable.TryGetValue(versionedName, out var invoker)) {
                         invoker = new DynamicInvoker(_logger);
                         _calltable.Add(versionedName, invoker);
@@ -158,7 +174,7 @@ namespace Microsoft.Azure.IIoT.Hosting.Services {
                 foreach (var invoker in _invokers) {
                     try {
                         return await invoker.InvokeAsync(target, payload, contentType,
-                            handler);
+                            handler).ConfigureAwait(false);
                     }
                     catch (Exception ex) {
                         // Save last, and continue
@@ -229,7 +245,7 @@ namespace Microsoft.Azure.IIoT.Hosting.Services {
                 try {
                     object[] inputs;
                     if (_methodParams.Length == 0) {
-                        inputs = new object[0];
+                        inputs = Array.Empty<object>();
                     }
                     else if (_methodParams.Length == 1) {
                         var data = _serializer.Deserialize(payload, _methodParams[0].ParameterType);
@@ -282,7 +298,7 @@ namespace Microsoft.Azure.IIoT.Hosting.Services {
                            _serializer.SerializeToString(ex) : null, status);
                     }
                     return _serializer.SerializeToBytes(tr.Result).ToArray();
-                });
+                }, TaskScheduler.Current);
             }
 
             /// <summary>
@@ -303,8 +319,8 @@ namespace Microsoft.Azure.IIoT.Hosting.Services {
                         throw new MethodCallStatusException(ex != null ?
                             _serializer.SerializeToString(ex) : null, status);
                     }
-                    return new byte[0];
-                });
+                    return Array.Empty<byte>();
+                }, TaskScheduler.Current);
             }
 
             private static readonly MethodInfo kMethodResponseAsContinuation =

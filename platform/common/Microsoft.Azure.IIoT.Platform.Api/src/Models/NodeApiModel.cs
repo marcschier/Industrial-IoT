@@ -211,7 +211,7 @@ namespace Microsoft.Azure.IIoT.Platform.Core.Api.Models {
         /// </summary>
         [DataMember(Name = "arrayDimensions", Order = 24,
             EmitDefaultValue = false)]
-        public uint[] ArrayDimensions { get; set; }
+        public IReadOnlyList<uint> ArrayDimensions { get; set; }
 
         /// <summary>
         /// Whether the value of a variable is historizing.

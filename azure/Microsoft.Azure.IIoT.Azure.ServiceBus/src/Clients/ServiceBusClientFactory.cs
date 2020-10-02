@@ -17,7 +17,8 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Clients {
     /// <summary>
     /// Create service bus clients
     /// </summary>
-    public class ServiceBusClientFactory : IServiceBusClientFactory, IDisposable, IAsyncDisposable {
+    public sealed class ServiceBusClientFactory : IServiceBusClientFactory,
+        IDisposable, IAsyncDisposable {
 
         /// <summary>
         /// Create factory
@@ -38,12 +39,12 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Clients {
             if (string.IsNullOrEmpty(name)) {
                 name = Dns.GetHostName();
             }
-            await _subscriptionLock.WaitAsync();
+            await _subscriptionLock.WaitAsync().ConfigureAwait(false);
             try {
                 var key = $"{topic}/subscriptions/{name}";
                 if (!_subscriptionClients.TryGetValue(key, out var client) ||
                     client.IsClosedOrClosing) {
-                    client = await NewSubscriptionClientAsync(topic, name);
+                    client = await NewSubscriptionClientAsync(topic, name).ConfigureAwait(false);
                     _subscriptionClients.AddOrUpdate(key, client);
 
                     //
@@ -67,11 +68,11 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Clients {
         /// <inheritdoc/>
         public async Task<ITopicClient> CreateOrGetTopicClientAsync(string topic) {
             topic = GetEntityName(topic);
-            await _topicLock.WaitAsync();
+            await _topicLock.WaitAsync().ConfigureAwait(false);
             try {
                 if (!_topicClients.TryGetValue(topic, out var client) ||
                     client.IsClosedOrClosing) {
-                    client = await NewTopicClientAsync(topic);
+                    client = await NewTopicClientAsync(topic).ConfigureAwait(false);
                     _topicClients.AddOrUpdate(topic, client);
                 }
                 return client;
@@ -84,11 +85,11 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Clients {
         /// <inheritdoc/>
         public async Task<IQueueClient> CreateOrGetGetQueueClientAsync(string queue) {
             queue = GetEntityName(queue);
-            await _queueLock.WaitAsync();
+            await _queueLock.WaitAsync().ConfigureAwait(false);
             try {
                 if (!_queueClients.TryGetValue(queue, out var client) ||
                     client.IsClosedOrClosing) {
-                    client = await NewQueueClientAsync(queue);
+                    client = await NewQueueClientAsync(queue).ConfigureAwait(false);
                     _queueClients.AddOrUpdate(queue, client);
                 }
                 return client;
@@ -103,7 +104,11 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Clients {
             await Task.WhenAll(
                 CloseAllAsync(_queueLock, _queueClients),
                 CloseAllAsync(_topicLock, _topicClients),
-                CloseAllAsync(_subscriptionLock, _subscriptionClients));
+                CloseAllAsync(_subscriptionLock, _subscriptionClients)).ConfigureAwait(false);
+
+            _queueLock.Dispose();
+            _topicLock.Dispose();
+            _subscriptionLock.Dispose();
         }
 
         /// <inheritdoc/>
@@ -122,31 +127,31 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Clients {
             var managementClient = new ManagementClient(_config.ServiceBusConnString);
             while (true) {
                 try {
-                    var exists = await managementClient.TopicExistsAsync(topic);
+                    var exists = await managementClient.TopicExistsAsync(topic).ConfigureAwait(false);
                     if (!exists) {
                         await managementClient.CreateTopicAsync(new TopicDescription(topic) {
                             EnablePartitioning = true,
                             EnableBatchedOperations = true
-                        });
+                        }).ConfigureAwait(false);
                     }
-                    exists = await managementClient.SubscriptionExistsAsync(topic, name);
+                    exists = await managementClient.SubscriptionExistsAsync(topic, name).ConfigureAwait(false);
                     if (!exists) {
                         await managementClient.CreateSubscriptionAsync(
                             new SubscriptionDescription(topic, name) {
                                 EnableBatchedOperations = true,
                                 LockDuration = TimeSpan.FromSeconds(10)
-                            });
+                            }).ConfigureAwait(false);
                     }
                     return new SubscriptionClient(_config.ServiceBusConnString, topic, name,
                         ReceiveMode.PeekLock, RetryPolicy.Default);
                 }
                 catch (ServiceBusException ex) {
                     if (IsRetryableException(ex)) {
-                        await Task.Delay(2000);
+                        await Task.Delay(2000).ConfigureAwait(false);
                         continue;
                     }
                     _logger.Error(ex, "Failed to create subscription client.");
-                    throw ex;
+                    throw;
                 }
             }
         }
@@ -160,12 +165,12 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Clients {
             var managementClient = new ManagementClient(_config.ServiceBusConnString);
             while (true) {
                 try {
-                    var exists = await managementClient.QueueExistsAsync(name);
+                    var exists = await managementClient.QueueExistsAsync(name).ConfigureAwait(false);
                     if (!exists) {
                         await managementClient.CreateQueueAsync(new QueueDescription(name) {
                             EnablePartitioning = true,
                             EnableBatchedOperations = true
-                        });
+                        }).ConfigureAwait(false);
                     }
                     return new QueueClient(
                         _config.ServiceBusConnString, GetEntityName(name), ReceiveMode.PeekLock,
@@ -173,11 +178,11 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Clients {
                 }
                 catch (ServiceBusException ex) {
                     if (IsRetryableException(ex)) {
-                        await Task.Delay(2000);
+                        await Task.Delay(2000).ConfigureAwait(false);
                         continue; // 429
                     }
                     _logger.Error(ex, "Failed to create queue client.");
-                    throw ex;
+                    throw;
                 }
             }
         }
@@ -191,23 +196,23 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Clients {
             var managementClient = new ManagementClient(_config.ServiceBusConnString);
             while (true) {
                 try {
-                    var exists = await managementClient.TopicExistsAsync(name);
+                    var exists = await managementClient.TopicExistsAsync(name).ConfigureAwait(false);
                     if (!exists) {
                         await managementClient.CreateTopicAsync(new TopicDescription(name) {
                             EnablePartitioning = true,
                             EnableBatchedOperations = true
-                        });
+                        }).ConfigureAwait(false);
                     }
                     return new TopicClient(_config.ServiceBusConnString, GetEntityName(name),
                         RetryPolicy.Default);
                 }
                 catch (ServiceBusException ex) {
                     if (IsRetryableException(ex)) {
-                        await Task.Delay(2000);
+                        await Task.Delay(2000).ConfigureAwait(false);
                         continue; // 429
                     }
                     _logger.Error(ex, "Failed to create topic client.");
-                    throw ex;
+                    throw;
                 }
             }
         }
@@ -235,10 +240,10 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Clients {
         /// <returns></returns>
         private static async Task CloseAllAsync<T>(SemaphoreSlim clientLock,
             Dictionary<string, T> clients) where T : IClientEntity {
-            await clientLock.WaitAsync();
+            await clientLock.WaitAsync().ConfigureAwait(false);
             try {
                 foreach (var client in clients.Values) {
-                    await Try.Async(() => client.CloseAsync());
+                    await Try.Async(() => client.CloseAsync()).ConfigureAwait(false);
                 }
                 clients.Clear();
             }
@@ -260,7 +265,7 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Clients {
             if (string.IsNullOrEmpty(name)) {
                 name = "iiotmessaging";
             }
-            return name.ToLowerInvariant();
+            return name.ToUpperInvariant();
         }
 
         private readonly IServiceBusConfig _config;

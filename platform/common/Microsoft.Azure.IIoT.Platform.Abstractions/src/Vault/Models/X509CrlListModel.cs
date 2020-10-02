@@ -14,7 +14,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Models {
         /// <summary>
         /// Chain
         /// </summary>
-        public List<X509CrlModel> Crls { get; set; }
+        public IReadOnlyList<X509CrlModel> Crls { get; set; }
 
         /// <summary>
         /// Next link

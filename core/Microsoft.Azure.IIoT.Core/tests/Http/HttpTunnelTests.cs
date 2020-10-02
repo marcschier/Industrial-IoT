@@ -7,7 +7,7 @@ namespace Microsoft.Azure.IIoT.Http.Tunnel.Services {
     using Microsoft.Azure.IIoT.Rpc;
     using Microsoft.Azure.IIoT.Rpc.Default;
     using Microsoft.Azure.IIoT.Http;
-    using Microsoft.Azure.IIoT.Http.Default;
+    using Microsoft.Azure.IIoT.Http.Clients;
     using Microsoft.Azure.IIoT.Serializers;
     using Microsoft.Azure.IIoT.Serializers.NewtonSoft;
     using Microsoft.Azure.IIoT.Hub;
@@ -33,9 +33,10 @@ namespace Microsoft.Azure.IIoT.Http.Tunnel.Services {
             // Setup
             var logger = Log.Logger;
             var eventBridge = new EventBridge();
-            var factory = new HttpTunnelEventClientFactory(eventBridge, _serializer, null,
+            using var factory = new HttpTunnelEventClientFactory(eventBridge, _serializer, null,
                 fixture.Create<IIdentity>(), logger);
-            var client = new HttpClientFactory(factory, logger).CreateClient("msft");
+            using var clientFactory = new HttpClientFactory(factory, logger);
+            var client = clientFactory.CreateClient("msft");
 
             var adapter = new MethodHandlerAdapter(factory.YieldReturn());
             var chunkServer = new TestChunkServer(_serializer, 100, (target, method, buffer, type) => {
@@ -43,25 +44,26 @@ namespace Microsoft.Azure.IIoT.Http.Tunnel.Services {
                 return adapter.InvokeAsync(target, method, buffer, type).Result;
             });
 
+            using var serverFactory = new HttpClientFactory(logger);
             var server = new HttpTunnelServer(
-                new Http.Default.HttpClient(new HttpClientFactory(logger), logger),
+                new Http.Clients.HttpClient(serverFactory, logger),
                 chunkServer.CreateClient(), _serializer, logger);
             eventBridge.Handler = server;
 
             // Act
 
-            var result = await client.GetAsync("https://www.microsoft.com");
+            using var result = await client.GetAsync(new Uri("https://www.microsoft.com")).ConfigureAwait(false);
 
             // Assert
 
             Assert.NotNull(result);
             Assert.True(result.IsSuccessStatusCode);
             Assert.NotNull(result.Content);
-            var payload = await result.Content.ReadAsStringAsync();
+            var payload = await result.Content.ReadAsStringAsync().ConfigureAwait(false);
             Assert.NotNull(payload);
             Assert.NotNull(result.Headers);
             Assert.True(result.Headers.Any());
-            Assert.Contains("<!DOCTYPE html>", payload);
+            Assert.Contains("<!DOCTYPE html>", payload, StringComparison.InvariantCulture);
         }
 
 
@@ -72,9 +74,10 @@ namespace Microsoft.Azure.IIoT.Http.Tunnel.Services {
             // Setup
             var logger = Log.Logger;
             var eventBridge = new EventBridge();
-            var factory = new HttpTunnelEventClientFactory(eventBridge, _serializer, null,
+            using var factory = new HttpTunnelEventClientFactory(eventBridge, _serializer, null,
                 fixture.Create<IIdentity>(), logger);
-            var client = new HttpClientFactory(factory, logger).CreateClient("msft");
+            using var clientFactory = new HttpClientFactory(factory, logger);
+            var client = clientFactory.CreateClient("msft");
 
             var adapter = new MethodHandlerAdapter(factory.YieldReturn());
             var chunkServer = new TestChunkServer(_serializer, 1000, (target, method, buffer, type) => {
@@ -99,14 +102,14 @@ namespace Microsoft.Azure.IIoT.Http.Tunnel.Services {
 
             // Act
 
-            var result = await client.GetAsync("https://test/test/test?test=test");
+            using var result = await client.GetAsync(new Uri("https://test/test/test?test=test")).ConfigureAwait(false);
 
             // Assert
 
             Assert.NotNull(result);
             Assert.Equal(System.Net.HttpStatusCode.OK, result.StatusCode);
             Assert.NotNull(result.Content);
-            var payload = await result.Content.ReadAsByteArrayAsync();
+            var payload = await result.Content.ReadAsByteArrayAsync().ConfigureAwait(false);
             Assert.Equal(response.Content.Length, payload.Length);
             Assert.Equal(responseBuffer, payload);
             Assert.NotNull(result.Headers);
@@ -128,9 +131,10 @@ namespace Microsoft.Azure.IIoT.Http.Tunnel.Services {
             // Setup
             var logger = Log.Logger;
             var eventBridge = new EventBridge();
-            var factory = new HttpTunnelEventClientFactory(eventBridge, _serializer, null,
+            using var factory = new HttpTunnelEventClientFactory(eventBridge, _serializer, null,
                 fixture.Create<IIdentity>(), logger);
-            var client = new HttpClientFactory(factory, logger).CreateClient("msft");
+            using var clientFactory = new HttpClientFactory(factory, logger);
+            var client = clientFactory.CreateClient("msft");
 
             var adapter = new MethodHandlerAdapter(factory.YieldReturn());
             var chunkServer = new TestChunkServer(_serializer, 100000, (target, method, buffer, type) => {
@@ -163,14 +167,15 @@ namespace Microsoft.Azure.IIoT.Http.Tunnel.Services {
 
             // Act
 
-            var result = await client.PostAsync(uri, new ByteArrayContent(requestBuffer));
+            using var content = new ByteArrayContent(requestBuffer);
+            using var result = await client.PostAsync(uri, content).ConfigureAwait(false);
 
             // Assert
 
             Assert.NotNull(result);
             Assert.Equal(System.Net.HttpStatusCode.OK, result.StatusCode);
             Assert.NotNull(result.Content);
-            var payload = await result.Content.ReadAsByteArrayAsync();
+            var payload = await result.Content.ReadAsByteArrayAsync().ConfigureAwait(false);
             Assert.Equal(response.Content.Length, payload.Length);
             Assert.Equal(responseBuffer, payload);
             Assert.NotNull(result.Headers);
@@ -191,9 +196,10 @@ namespace Microsoft.Azure.IIoT.Http.Tunnel.Services {
             // Setup
             var logger = Log.Logger;
             var eventBridge = new EventBridge();
-            var factory = new HttpTunnelEventClientFactory(eventBridge, _serializer, null,
+            using var factory = new HttpTunnelEventClientFactory(eventBridge, _serializer, null,
                 fixture.Create<IIdentity>(), logger);
-            var client = new HttpClientFactory(factory, logger).CreateClient("msft");
+            using var clientFactory = new HttpClientFactory(factory, logger);
+            var client = clientFactory.CreateClient("msft");
 
             var adapter = new MethodHandlerAdapter(factory.YieldReturn());
             var chunkServer = new TestChunkServer(_serializer, 128 * 1024, (target, method, buffer, type) => {
@@ -224,7 +230,8 @@ namespace Microsoft.Azure.IIoT.Http.Tunnel.Services {
 
             // Act
 
-            var result = await client.PutAsync(uri, new ByteArrayContent(requestBuffer));
+            using var content = new ByteArrayContent(requestBuffer);
+            using var result = await client.PutAsync(uri, content).ConfigureAwait(false);
 
             // Assert
 
@@ -242,9 +249,10 @@ namespace Microsoft.Azure.IIoT.Http.Tunnel.Services {
             // Setup
             var logger = Log.Logger;
             var eventBridge = new EventBridge();
-            var factory = new HttpTunnelEventClientFactory(eventBridge, _serializer, null,
+            using var factory = new HttpTunnelEventClientFactory(eventBridge, _serializer, null,
                 fixture.Create<IIdentity>(), logger);
-            var client = new HttpClientFactory(factory, logger).CreateClient("msft");
+            using var clientFactory = new HttpClientFactory(factory, logger);
+            var client = clientFactory.CreateClient("msft");
 
             var adapter = new MethodHandlerAdapter(factory.YieldReturn());
             var chunkServer = new TestChunkServer(_serializer, 128 * 1024, (target, method, buffer, type) => {
@@ -273,7 +281,7 @@ namespace Microsoft.Azure.IIoT.Http.Tunnel.Services {
 
             // Act
 
-            var result = await client.DeleteAsync(uri);
+            using var result = await client.DeleteAsync(uri).ConfigureAwait(false);
 
             // Assert
 
@@ -284,7 +292,7 @@ namespace Microsoft.Azure.IIoT.Http.Tunnel.Services {
             Assert.Empty(result.Headers);
         }
 
-        public class EventBridge : IEventClient {
+        private class EventBridge : IEventClient {
 
             /// <summary>
             /// Handler
