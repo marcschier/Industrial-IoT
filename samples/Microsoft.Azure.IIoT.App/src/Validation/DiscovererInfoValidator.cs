@@ -11,7 +11,6 @@ namespace Microsoft.Azure.IIoT.App.Validation {
     using Microsoft.Azure.IIoT.Net.Models;
 
     public class DiscovererInfoValidator : AbstractValidator<DiscovererInfoRequested> {
-        private static readonly ValidationUtils utils = new ValidationUtils();
 
         public DiscovererInfoValidator() {
             RuleFor(p => p.RequestedAddressRangesToScan)
@@ -46,10 +45,9 @@ namespace Microsoft.Azure.IIoT.App.Validation {
                 .Must(BeAValidDiscoveryUrl)
                 .WithMessage("Invalid input value for discovery url. Clear and insert a new value");
         }
-       
+
         private bool BeValidAddressRanges(string value) {
-            if (utils.ShouldUseDefaultValue(value))
-            {
+            if (ValidationUtils.ShouldUseDefaultValue(value)) {
                 return true;
             }
 
@@ -57,8 +55,7 @@ namespace Microsoft.Azure.IIoT.App.Validation {
         }
 
         private bool BeValidPortRanges(string value) {
-            if (utils.ShouldUseDefaultValue(value))
-            {
+            if (ValidationUtils.ShouldUseDefaultValue(value)) {
                 return true;
             }
 
@@ -66,13 +63,11 @@ namespace Microsoft.Azure.IIoT.App.Validation {
         }
 
         private bool BeAPositiveInteger(string value) {
-            if (utils.ShouldUseDefaultValue(value))
-            {
+            if (ValidationUtils.ShouldUseDefaultValue(value)) {
                 return true;
             }
 
-            if (int.TryParse(value, out int res))
-            {
+            if (int.TryParse(value, out var res)) {
                 return res > 0;
             }
 
@@ -80,12 +75,11 @@ namespace Microsoft.Azure.IIoT.App.Validation {
         }
 
         private bool BeAValidTimeFormat(string value) {
-            if (utils.ShouldUseDefaultValue(value))
-            {
+            if (ValidationUtils.ShouldUseDefaultValue(value)) {
                 return true;
             }
 
-            if (TimeSpan.TryParse(value, out TimeSpan res)){
+            if (TimeSpan.TryParse(value, out var res)) {
                 return res.TotalMilliseconds > 0;
             }
 
@@ -97,7 +91,7 @@ namespace Microsoft.Azure.IIoT.App.Validation {
                 return !(value.Contains(null) || value.Contains(string.Empty));
             }
 
-            return true;    
+            return true;
         }
     }
 }

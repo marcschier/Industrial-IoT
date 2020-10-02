@@ -11,8 +11,6 @@ namespace Microsoft.Azure.IIoT.App.Validation {
 
     public class PublisherInfoValidator : AbstractValidator<PublisherInfoRequested> {
 
-        private static readonly ValidationUtils kUtils = new ValidationUtils();
-
         public PublisherInfoValidator() {
             RuleFor(p => p.RequestedLogLevel)
                 .Must(BeTraceLevel)
@@ -20,7 +18,7 @@ namespace Microsoft.Azure.IIoT.App.Validation {
         }
 
         private bool BeTraceLevel(string value) {
-            if (kUtils.ShouldUseDefaultValue(value)) {
+            if (ValidationUtils.ShouldUseDefaultValue(value)) {
                 return true;
             }
 

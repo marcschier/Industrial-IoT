@@ -100,25 +100,26 @@ namespace Opc.Ua {
         /// Initializes the collection with another collection.
         /// </summary>
         public KeyDataValuePairCollection(IEnumerable<KeyDataValuePair> collection) : base(collection) { }
-      // /// <summary>
-      // /// Converts an array to a collection.
-      // /// </summary>
-      // public static implicit operator KeyDataValuePairCollection(KeyDataValuePair[] values) {
-      //     if (values != null) {
-      //         return new KeyDataValuePairCollection(values);
-      //     }
-      //     return new KeyDataValuePairCollection();
-      // }
-      //
-      // /// <summary>
-      // /// Converts a collection to an array.
-      // /// </summary>
-      // public static explicit operator KeyDataValuePair[](KeyDataValuePairCollection values) {
-      //     if (values != null) {
-      //         return values.ToArray();
-      //     }
-      //     return null;
-      // }
+
+        /// <summary>
+        /// Converts an array to a collection.
+        /// </summary>
+        public static implicit operator KeyDataValuePairCollection(KeyDataValuePair[] values) {
+            if (values != null) {
+                return new KeyDataValuePairCollection(values);
+            }
+            return new KeyDataValuePairCollection();
+        }
+
+        /// <summary>
+        /// Converts a collection to an array.
+        /// </summary>
+        public static explicit operator KeyDataValuePair[](KeyDataValuePairCollection values) {
+            if (values != null) {
+                return values.ToArray();
+            }
+            return null;
+        }
 
         /// <summary cref="object.MemberwiseClone" />
         public new object MemberwiseClone() {

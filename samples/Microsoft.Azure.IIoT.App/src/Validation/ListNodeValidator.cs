@@ -9,8 +9,6 @@ namespace Microsoft.Azure.IIoT.App.Validation {
 
     public class ListNodeValidator : AbstractValidator<ListNodeRequested> {
 
-        private static readonly ValidationUtils utils = new ValidationUtils();
-
         public ListNodeValidator() {
             RuleFor(p => p.RequestedPublishingInterval)
                 .Must(BeAValidIntervalMs)
@@ -26,11 +24,11 @@ namespace Microsoft.Azure.IIoT.App.Validation {
         }
 
         private bool BeAValidIntervalMs(string value) {
-            if (utils.ShouldUseDefaultValue(value)) {
+            if (ValidationUtils.ShouldUseDefaultValue(value)) {
                 return true;
             }
 
-            if (double.TryParse(value, out double result)) {
+            if (double.TryParse(value, out var result)) {
                 return result > 0;
             }
 
@@ -38,11 +36,11 @@ namespace Microsoft.Azure.IIoT.App.Validation {
         }
 
         private bool BeAValidIntervalSec(string value) {
-            if (utils.ShouldUseDefaultValue(value)) {
+            if (ValidationUtils.ShouldUseDefaultValue(value)) {
                 return true;
             }
 
-            if (double.TryParse(value, out double result)) {
+            if (double.TryParse(value, out var result)) {
                 return result > 0;
             }
 
