@@ -75,6 +75,28 @@ namespace System.Collections.Generic {
         }
 
         /// <summary>
+        /// Safe sequence equals
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="seq"></param>
+        /// <param name="that"></param>
+        /// <param name="func"></param>
+        /// <returns></returns>
+        public static bool SequenceEqualsSafe<T>(this IEnumerable<T> seq,
+            IEnumerable<T> that, Func<T, T, bool> func) {
+            if (seq == that) {
+                return true;
+            }
+            if (seq == null || that == null) {
+                if (!(that?.Any() ?? false)) {
+                    return !(seq?.Any() ?? false);
+                }
+                return false;
+            }
+            return seq.SequenceEqual(that, Compare.Using(func));
+        }
+
+        /// <summary>
         /// Safe set equals
         /// </summary>
         /// <typeparam name="T"></typeparam>

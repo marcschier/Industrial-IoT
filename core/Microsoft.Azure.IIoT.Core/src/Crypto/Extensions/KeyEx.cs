@@ -209,8 +209,8 @@ namespace Microsoft.Azure.IIoT.Crypto.Models {
             if (value == null) {
                 throw new ArgumentNullException(nameof(value));
             }
-            if (!value.All(b => b != 0)) {
-                throw new ArgumentException("Value has 0", nameof(value));
+            if (value.All(b => b == 0)) {
+                throw new ArgumentException("Value all 0", nameof(value));
             }
         }
 

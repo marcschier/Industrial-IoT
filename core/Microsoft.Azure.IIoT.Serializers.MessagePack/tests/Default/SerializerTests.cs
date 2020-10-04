@@ -258,13 +258,13 @@ namespace Microsoft.Azure.IIoT.Serializers.MessagePack {
         }
 
         [Fact]
-        public void TestDataContract2() {
-            var str = Serializer.SerializeToBytes(new DataContractModel2());
+        public void TestDataContract3() {
+            var str = Serializer.SerializeToBytes(new DataContractModel3());
             Assert.True(str.SequenceEqual(new byte[] { 146, 8, 192 }));
         }
 
         [DataContract]
-        public class DataContractModel2 {
+        public class DataContractModel3 {
 
             [DataMember(Name = "a", Order = 0, EmitDefaultValue = false)]
             public int Test1 { get; set; } = 8;
@@ -305,6 +305,84 @@ namespace Microsoft.Azure.IIoT.Serializers.MessagePack {
             public DataContractEnum? Test3 { get; set; } = DataContractEnum.Test1;
 
             public int Test4 { get; set; } = 4;
+        }
+
+        [Fact]
+        public void TestDataContract2() {
+            var v1 = new DataContractModel2 {
+                Bytes = new byte[] { 1, 2, 3, 4, 5, 6, 7, 8 },
+                Dictionary = new Dictionary<string, string> {
+                    ["test1"] = "3test",
+                    ["test2"] = "2test",
+                    ["test3"] = "4test",
+                    ["test4"] = "6test",
+                },
+                Strings = new List<string> { "a", "b", "c", "dddd" },
+                Test1 = 444,
+                Test2 = "sfgasfkadflf",
+                StringsOfStrings = new List<IReadOnlyList<string>> {
+                    new List<string> { "aa", "bg", "ca", "ddddg" },
+                    new List<string> { "a3333", "b", "c", "dddd" },
+                    new List<string> { "a", "b3333", "c", "dddd" },
+                    new List<string> { "a", "b", "c3333", "dddd" },
+                    new List<string> { "a", "b", "c", "dddd3333" },
+                }
+            };
+            var v2 = Serializer.Deserialize<DataContractModel2>(
+                Serializer.SerializeToBytes(v1).ToArray());
+            Assert.Equal(v1, v2);
+        }
+
+        [DataContract]
+        public class DataContractModel2 {
+
+            [DataMember(EmitDefaultValue = false)]
+            public int Test1 { get; set; }
+
+            [DataMember(EmitDefaultValue = false)]
+            public string Test2 { get; set; }
+
+            [DataMember(EmitDefaultValue = false)]
+            public IReadOnlyCollection<byte> Bytes { get; set; }
+
+            [DataMember(EmitDefaultValue = false)]
+            public IReadOnlyList<string> Strings { get; set; }
+
+            [DataMember(EmitDefaultValue = false)]
+            public IReadOnlyList<IReadOnlyList<string>> StringsOfStrings { get; set; }
+
+            [DataMember(EmitDefaultValue = false)]
+            public IReadOnlyDictionary<string, string> Dictionary { get; set; }
+
+            public override bool Equals(object obj) {
+                if (obj is DataContractModel2 model) {
+                    if (Test1 != model.Test1) {
+                        return false;
+                    }
+                    if (Test2 != model.Test2) {
+                        return false;
+                    }
+                    if (!Bytes.SequenceEqualsSafe(model.Bytes)) {
+                        return false;
+                    }
+                    if (!Strings.SequenceEqualsSafe(model.Strings)) {
+                        return false;
+                    }
+                    if (!StringsOfStrings.SequenceEqualsSafe(
+                        model.StringsOfStrings, (x, y) => x.SequenceEqualsSafe(y))) {
+                        return false;
+                    }
+                    if (!Dictionary.DictionaryEqualsSafe(model.Dictionary)) {
+                        return false;
+                    }
+                    return true;
+                }
+                return false;
+            }
+
+            public override int GetHashCode() {
+                return 0;
+            }
         }
 
         [Fact]

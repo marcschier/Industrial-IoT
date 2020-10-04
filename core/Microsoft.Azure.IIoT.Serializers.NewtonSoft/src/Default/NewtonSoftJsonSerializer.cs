@@ -41,6 +41,7 @@ namespace Microsoft.Azure.IIoT.Serializers.NewtonSoft {
         public NewtonSoftJsonSerializer(
             IEnumerable<IJsonSerializerConverterProvider> providers = null) {
             var settings = new JsonSerializerSettings();
+            settings.Converters.Add(new ReadonlyBufferConverter());
             if (providers != null) {
                 foreach (var provider in providers) {
                     settings.Converters.AddRange(provider.GetConverters());
@@ -421,6 +422,61 @@ namespace Microsoft.Azure.IIoT.Serializers.NewtonSoft {
             }
 
             private readonly NewtonSoftJsonSerializer _serializer;
+        }
+
+        /// <summary>
+        /// Readonly buffer converter
+        /// </summary>
+        internal sealed class ReadonlyBufferConverter : JsonConverter {
+
+            /// <inheritdoc/>
+            public override bool CanRead => true;
+
+            /// <inheritdoc/>
+            public override bool CanWrite => true;
+
+            /// <inheritdoc/>
+            public override bool CanConvert(Type objectType) {
+                if (objectType == typeof(sbyte[])) {
+                    return false;
+                }
+                if (!typeof(IReadOnlyCollection<byte>).IsAssignableFrom(objectType)) {
+                    return false;
+                }
+                return true;
+            }
+
+            /// <inheritdoc/>
+            public override object ReadJson(JsonReader reader, Type objectType,
+                object existingValue, JsonSerializer serializer) {
+                switch (reader.Value) {
+                    case null:
+                        //
+                        // Either really null or content is an array of bytes
+                        // Read as int array to avoid infinite recursion.
+                        //
+                        var arr = serializer.Deserialize<int[]>(reader);
+                        if (arr != null) {
+                            return Array.ConvertAll(arr, i => (byte)i);
+                        }
+                        return null;
+                    case byte[] buffer:
+                        return buffer;
+                    case string base64:
+                        return Convert.FromBase64String(base64);
+                    default:
+                        throw new FormatException("Current value is not buffer");
+                }
+            }
+
+            /// <inheritdoc/>
+            public override void WriteJson(JsonWriter writer,
+                object value, JsonSerializer serializer) {
+                if (!(value is byte[] buffer)) {
+                    buffer = ((IReadOnlyCollection<byte>)value).ToArray();
+                }
+                writer.WriteValue(buffer);
+            }
         }
 
         /// <summary>

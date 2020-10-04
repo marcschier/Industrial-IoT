@@ -73,6 +73,7 @@ namespace Microsoft.Azure.IIoT.Api.Json {
                 new MultipleRequest(new SeededRequest(type, null)))).ToArray();
 
             var buffer = _serializer.SerializeToBytes(instance);
+            var s = _serializer.SerializePretty(instance);
             var result = _serializer.Deserialize(buffer.ToArray(), type.MakeArrayType());
 
             result.Should().BeEquivalentTo(instance);
