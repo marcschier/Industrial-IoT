@@ -82,9 +82,7 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
             try {
                 var tag = Guid.NewGuid().ToString();
                 if (!_consumers.TryGetValue(eventName, out var consumer)) {
-#pragma warning disable CA2000 // Dispose objects before losing scope
                     consumer = new Consumer<T>(this, eventName);
-#pragma warning restore CA2000 // Dispose objects before losing scope
                     _consumers.TryAdd(eventName, consumer);
                 }
                 consumer.Add(tag, handler);

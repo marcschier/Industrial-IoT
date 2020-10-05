@@ -36,7 +36,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry {
                 return null;
             }
             if (deviceId.StartsWith(kWriterGroupDeviceIdPrefix)) {
-                return deviceId.Substring(kWriterGroupDeviceIdPrefix.Length);
+                return deviceId[kWriterGroupDeviceIdPrefix.Length..];
             }
             return null;
         }

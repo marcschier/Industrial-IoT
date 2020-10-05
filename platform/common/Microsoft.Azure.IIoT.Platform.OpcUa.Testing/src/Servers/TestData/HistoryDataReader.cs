@@ -85,11 +85,9 @@ namespace TestData {
         /// <param name="dataEncoding">The data encoding to use for structured values.</param>
         /// <param name="values">The values to return.</param>
         public void BeginReadRaw(
-#pragma warning disable RECS0154 // Parameter is never used
 #pragma warning disable IDE0060 // Remove unused parameter
             ServerSystemContext context,
 #pragma warning restore IDE0060 // Remove unused parameter
-#pragma warning restore RECS0154 // Parameter is never used
             ReadRawModifiedDetails request,
             TimestampsToReturn timestampsToReturn,
             NumericRange indexRange,
@@ -131,11 +129,9 @@ namespace TestData {
         /// <param name="values">The values to return.</param>
         /// <returns>False if the operation halted because the maximum number of values was discovered.</returns>
         public bool NextReadRaw(
-#pragma warning disable RECS0154 // Parameter is never used
 #pragma warning disable IDE0060 // Remove unused parameter
             ServerSystemContext context,
 #pragma warning restore IDE0060 // Remove unused parameter
-#pragma warning restore RECS0154 // Parameter is never used
             TimestampsToReturn timestampsToReturn,
             NumericRange indexRange,
             QualifiedName dataEncoding,

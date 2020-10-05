@@ -550,7 +550,7 @@ namespace Opc.Ua.Encoders {
             if (!TryGetToken(property, out var token)) {
                 return null;
             }
-            if (!(Activator.CreateInstance(systemType) is IEncodeable value)) {
+            if (Activator.CreateInstance(systemType) is not IEncodeable value) {
                 return null;
             }
             if (token is JObject o) {
@@ -573,7 +573,7 @@ namespace Opc.Ua.Encoders {
             if (token.Type == JTokenType.String) {
                 var val = (string)token;
                 var index = val.LastIndexOf('_');
-                if (index != -1 && int.TryParse(val.Substring(index + 1),
+                if (index != -1 && int.TryParse(val[(index + 1)..],
                     out var numeric)) {
                     return (Enum)Enum.ToObject(enumType, numeric);
                 }
@@ -1591,7 +1591,7 @@ namespace Opc.Ua.Encoders {
 
         private IDictionary<string, T> ReadDictionary<T>(string property,
             Func<T> reader) {
-            if (!TryGetToken(property, out var token) || !(token is JObject o)) {
+            if (!TryGetToken(property, out var token) || token is not JObject o) {
                 return null;
             }
             var dictionary = new Dictionary<string, T>();

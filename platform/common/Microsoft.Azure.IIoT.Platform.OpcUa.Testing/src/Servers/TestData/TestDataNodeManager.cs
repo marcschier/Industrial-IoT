@@ -178,7 +178,7 @@ namespace TestData {
         /// </summary>
         protected override NodeState AddBehaviourToPredefinedNode(ISystemContext context, NodeState predefinedNode) {
 
-            if (!(predefinedNode is BaseObjectState passiveNode)) {
+            if (predefinedNode is not BaseObjectState passiveNode) {
                 return predefinedNode;
             }
 
@@ -306,7 +306,7 @@ namespace TestData {
             }
 
 
-            if (!(context.OperationContext.Session.RestoreHistoryContinuationPoint(continuationPoint) is HistoryDataReader reader)) {
+            if (context.OperationContext.Session.RestoreHistoryContinuationPoint(continuationPoint) is not HistoryDataReader reader) {
                 return null;
             }
 
@@ -385,9 +385,7 @@ namespace TestData {
                 }
 
                 // create a reader.
-#pragma warning disable IDE0068 // Use recommended dispose pattern
                 reader = new HistoryDataReader(nodeToRead.NodeId, datasource);
-#pragma warning restore IDE0068 // Use recommended dispose pattern
 
                 // start reading.
                 reader.BeginReadRaw(
@@ -430,7 +428,7 @@ namespace TestData {
 
             // only care about variables.
 
-            if (!(monitoredNode.Node is BaseDataVariableState source)) {
+            if (monitoredNode.Node is not BaseDataVariableState source) {
                 return false;
             }
 
@@ -628,9 +626,7 @@ namespace TestData {
         private TestDataSystem _system;
         private long _lastUsedId;
         private Timer _systemStatusTimer;
-#pragma warning disable IDE0069 // Disposable fields should be disposed
         private TestSystemConditionState _systemStatusCondition;
-#pragma warning restore IDE0069 // Disposable fields should be disposed
 
 #if CONDITION_SAMPLES
         private DialogConditionState _dialog;

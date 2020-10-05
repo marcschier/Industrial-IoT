@@ -555,8 +555,8 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
                     throw ServiceResultException.Create(StatusCodes.BadUserAccessDenied,
                         "Invalid user identity token provided.");
                 }
-                if (!(BaseVariableState.DecodeExtensionObject(null, typeof(UserIdentityToken),
-                    identityToken, false) is UserIdentityToken token)) {
+                if (BaseVariableState.DecodeExtensionObject(null, typeof(UserIdentityToken),
+                    identityToken, false) is not UserIdentityToken token) {
                     throw ServiceResultException.Create(StatusCodes.BadUserAccessDenied,
                         "Invalid user identity token provided.");
                 }

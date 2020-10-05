@@ -47,7 +47,7 @@ namespace Opc.Ua.Nodeset {
 
         /// <inheritdoc/>
         public override bool Equals(object obj) {
-            if (!(obj is VariableTypeNodeModel model)) {
+            if (obj is not VariableTypeNodeModel model) {
                 return false;
             }
             if (!Utils.IsEqual(Value ?? Variant.Null, model.Value ?? Variant.Null)) {

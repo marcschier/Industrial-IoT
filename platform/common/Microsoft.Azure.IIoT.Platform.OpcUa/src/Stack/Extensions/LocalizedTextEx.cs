@@ -42,7 +42,7 @@ namespace Opc.Ua.Extensions {
             if (delim == -1) {
                 return new LocalizedText(str);
             }
-            return new LocalizedText(str.Substring(delim + 1), str.Substring(0, delim));
+            return new LocalizedText(str[(delim + 1)..], str.Substring(0, delim));
         }
     }
 }

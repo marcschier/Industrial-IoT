@@ -88,14 +88,14 @@ namespace System {
             var index = localPath.IndexOf("sock", StringComparison.InvariantCultureIgnoreCase);
             if (index  != -1) {
                 fileDevice = localPath.Substring(0, index + 4);
-                pathAndQuery = localPath.Substring(index + 4);
+                pathAndQuery = localPath[(index + 4)..];
             }
             else {
                 // Find fake port delimiter
                 index = localPath.IndexOf(':');
                 if (index != -1) {
                     fileDevice = localPath.Substring(0, index);
-                    pathAndQuery = localPath.Substring(index + 1);
+                    pathAndQuery = localPath[(index + 1)..];
                 }
                 else {
                     builder.Path = "/";
@@ -107,7 +107,7 @@ namespace System {
             // Find first path character and strip off everything before...
             index = pathAndQuery.IndexOf('/');
             if (index > 0) {
-                pathAndQuery = pathAndQuery.Substring(index, pathAndQuery.Length - index);
+                pathAndQuery = pathAndQuery[index..];
             }
             builder.Path = pathAndQuery;
             httpRequestUri = builder.Uri;

@@ -294,9 +294,7 @@ namespace Microsoft.Extensions.Configuration {
             /// <param name="key"></param>
             /// <returns></returns>
             private static string GetSecretNameForKey(string key) {
-#pragma warning disable CA1308 // Normalize strings to uppercase
                 return key.Replace("_", "-", StringComparison.Ordinal).ToLowerInvariant();
-#pragma warning restore CA1308 // Normalize strings to uppercase
             }
 
             /// <summary>

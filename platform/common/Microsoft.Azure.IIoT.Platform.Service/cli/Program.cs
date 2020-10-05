@@ -121,9 +121,7 @@ namespace Microsoft.Azure.IIoT.Test.Scenarios.Cli {
             _registry = _scope.Resolve<IRegistryServiceApi>();
             _publisher = _scope.Resolve<IPublisherServiceApi>();
             _vault = _scope.Resolve<IVaultServiceApi>();
-#pragma warning disable CA2000 // Dispose objects before losing scope
             if (_scope.TryResolve(out _metrics)) {
-#pragma warning restore CA2000 // Dispose objects before losing scope
                 _metrics.Start();
             }
         }

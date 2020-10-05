@@ -66,14 +66,10 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Module {
 
             if (Host.IsContainer) {
                 // Set timer to kill the entire process after 5 minutes.
-#pragma warning disable IDE0067 // Dispose objects before losing scope
-#pragma warning disable CA2000 // Dispose objects before losing scope
                 var _ = new Timer(o => {
                     Log.Logger.Fatal("Killing non responsive module process!");
                     Process.GetCurrentProcess().Kill();
                 }, null, TimeSpan.FromMinutes(5), TimeSpan.FromMinutes(5));
-#pragma warning restore CA2000 // Dispose objects before losing scope
-#pragma warning restore IDE0067 // Dispose objects before losing scope
             }
         }
 

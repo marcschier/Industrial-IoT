@@ -61,10 +61,6 @@ namespace Opc.Ua.Aggregates {
             GC.SuppressFinalize(this);
         }
 
-        /// <summary>
-        /// An overrideable version of the Dispose.
-        /// </summary>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2213:DisposableFieldsShouldBeDisposed", MessageId = "_requestTimer")]
         protected virtual void Dispose(bool disposing) {
             if (disposing) {
                 // TBD

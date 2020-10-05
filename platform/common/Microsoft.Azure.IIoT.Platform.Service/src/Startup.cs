@@ -69,9 +69,7 @@ namespace Microsoft.Azure.IIoT.Platform.Service {
         /// </summary>
         /// <param name="services"></param>
         /// <returns></returns>
-#pragma warning disable CA1822 // Mark members as static
         public void ConfigureServices(IServiceCollection services) {
-#pragma warning restore CA1822 // Mark members as static
             if (services is null) {
                 throw new ArgumentNullException(nameof(services));
             }

@@ -91,7 +91,7 @@ namespace Opc.Ua.Design.Schema {
         /// <param name="mergedInstance"></param>
         /// <param name="variableType"></param>
         private static void MergeIn(this InstanceDesign mergedInstance, VariableTypeDesign variableType) {
-            if (!(mergedInstance is VariableDesign mergedVariable)) {
+            if (mergedInstance is not VariableDesign mergedVariable) {
                 throw new ArgumentException(nameof(mergedInstance));
             }
             mergedVariable.TypeDefinition = variableType.SymbolicId;
@@ -132,7 +132,7 @@ namespace Opc.Ua.Design.Schema {
         /// <param name="mergedInstance"></param>
         /// <param name="objectType"></param>
         private static void MergeIn(this InstanceDesign mergedInstance, ObjectTypeDesign objectType) {
-            if (!(mergedInstance is ObjectDesign mergedObject)) {
+            if (mergedInstance is not ObjectDesign mergedObject) {
                 throw new ArgumentException(nameof(mergedInstance));
             }
             mergedObject.TypeDefinition = objectType.SymbolicId;
@@ -150,7 +150,7 @@ namespace Opc.Ua.Design.Schema {
         /// <param name="mergedInstance"></param>
         /// <param name="variable"></param>
         private static void MergeIn(this InstanceDesign mergedInstance, VariableDesign variable) {
-            if (!(mergedInstance is VariableDesign mergedVariable)) {
+            if (mergedInstance is not VariableDesign mergedVariable) {
                 throw new ArgumentException(nameof(mergedInstance));
             }
             if (variable.TypeDefinition != null &&
@@ -193,7 +193,7 @@ namespace Opc.Ua.Design.Schema {
         /// <param name="mergedInstance"></param>
         /// <param name="method"></param>
         private static void MergeIn(this InstanceDesign mergedInstance, MethodDesign method) {
-            if (!(mergedInstance is MethodDesign mergedMethod)) {
+            if (mergedInstance is not MethodDesign mergedMethod) {
                 throw new ArgumentException(nameof(mergedInstance));
             }
             if (method.NonExecutableSpecified) {
@@ -208,7 +208,7 @@ namespace Opc.Ua.Design.Schema {
         /// <param name="mergedInstance"></param>
         /// <param name="objectDesign"></param>
         private static void MergeIn(this InstanceDesign mergedInstance, ObjectDesign objectDesign) {
-            if (!(mergedInstance is ObjectDesign mergedObject)) {
+            if (mergedInstance is not ObjectDesign mergedObject) {
                 throw new ArgumentException(nameof(mergedInstance));
             }
             if (objectDesign.TypeDefinition != null &&

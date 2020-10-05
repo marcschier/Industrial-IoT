@@ -265,7 +265,7 @@ namespace Opc.Ua.Nodeset {
 
         /// <inheritdoc/>
         public bool IsEqual(IEncodeable encodeable) {
-            if (!(encodeable is EncodeableNodeModel model)) {
+            if (encodeable is not EncodeableNodeModel model) {
                 return false;
             }
             return Utils.IsEqual(model.Node, Node);

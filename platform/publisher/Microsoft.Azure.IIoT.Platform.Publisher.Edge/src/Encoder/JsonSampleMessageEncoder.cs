@@ -156,7 +156,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Services {
                 if (messageSize + chunkSizeInBytes + 1 >= maxMessageSize) {
                     yield return CreateNetworkMessage(values, content);
                     content.Clear();
-                    content.Append("[");
+                    content.Append('[');
                     messageSize = 1;
                     values = 0;
                 }
@@ -164,7 +164,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Services {
                 // Append body
                 content.Append(json);
                 messageSize += chunkSizeInBytes;
-                content.Append(",");
+                content.Append(',');
                 messageSize++;
                 values++;
                 Interlocked.Increment(ref _notificationsProcessedCount);

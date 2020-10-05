@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net5.0</TargetFramework>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <ServerGarbageCollection>true</ServerGarbageCollection>
    </PropertyGroup>
@@ -14,9 +14,9 @@
     <None Remove="pki\**" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="3.1.8" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.CommandLine" Version="3.1.8" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="3.1.8" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="5.0.0-rc.1.20451.14" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.CommandLine" Version="5.0.0-rc.1.20451.14" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="5.0.0-rc.1.20451.14" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\platform\common\Microsoft.Azure.IIoT.Platform.Api.Internal\src\Microsoft.Azure.IIoT.Platform.Api.Internal.csproj" />

@@ -34,7 +34,7 @@ namespace Microsoft.Azure.IIoT.Platform.Core.Models {
                         break;
                     }
                     rawCertificates = rawCertificates.AsSpan()
-                        .Slice(cur.RawData.Length)
+[cur.RawData.Length..]
                         .ToArray();
                 }
                 return new X509CertificateChainModel {

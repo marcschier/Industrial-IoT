@@ -34,7 +34,7 @@ namespace Opc.Ua.Nodeset {
 
         /// <inheritdoc/>
         public override bool Equals(object obj) {
-            if (!(obj is ReferenceTypeNodeModel model)) {
+            if (obj is not ReferenceTypeNodeModel model) {
                 return false;
             }
             if (!Utils.IsEqual(InverseName, model.InverseName)) {

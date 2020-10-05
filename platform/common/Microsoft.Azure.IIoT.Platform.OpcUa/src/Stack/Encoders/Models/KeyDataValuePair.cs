@@ -58,7 +58,7 @@ namespace Opc.Ua {
             if (ReferenceEquals(this, encodeable)) {
                 return true;
             }
-            if (!(encodeable is KeyDataValuePair value)) {
+            if (encodeable is not KeyDataValuePair value) {
                 return false;
             }
             if (!Utils.IsEqual(Key, value.Key)) {

@@ -44,9 +44,7 @@ namespace Microsoft.Azure.IIoT.App.Pages {
         }
         private Drawer DrawerType { get; set; }
 
-#pragma warning disable CA1721 // Property names should not match get methods
         protected override async Task LoadPageContentAsync(bool getNextPage) {
-#pragma warning restore CA1721 // Property names should not match get methods
             EndpointModel = await registryService.GetEndpointAsync(EndpointId).ConfigureAwait(false);
             Credential = await GetSecureItemAsync<CredentialModel>(CommonHelper.CredentialKey).ConfigureAwait(false);
             await BrowseTreeAsync(BrowseDirection.Forward, 0, getNextPage, string.Empty, new List<string>()).ConfigureAwait(false);

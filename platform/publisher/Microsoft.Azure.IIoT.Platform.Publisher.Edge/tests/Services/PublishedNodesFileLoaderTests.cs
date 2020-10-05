@@ -653,7 +653,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Services {
             for (var i = 1; i < 10000; i++) {
                 pn.Append("{ \"Id\": \"i=");
                 pn.Append(i);
-                pn.Append("\"");
+                pn.Append('"');
                 pn.Append(i % 2 == 1 ? ",\"OpcPublishingInterval\": 1000" : null);
                 pn.Append("},");
             }

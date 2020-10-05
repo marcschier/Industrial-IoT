@@ -226,7 +226,7 @@ namespace Opc.Ua.Design.Schema {
 
                         if (definition == null || definition.Targets == null || definition.Targets.Count == 0) {
                             found = true;
-                            line = line.Substring(index + token.Length);
+                            line = line[(index + token.Length)..];
                             index = -1;
                             continue;
                         }
@@ -257,7 +257,7 @@ namespace Opc.Ua.Design.Schema {
                         found = true;
                     }
 
-                    line = line.Substring(index + token.Length);
+                    line = line[(index + token.Length)..];
                     index = -1;
                 }
 

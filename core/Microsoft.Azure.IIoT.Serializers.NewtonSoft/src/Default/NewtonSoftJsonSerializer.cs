@@ -472,7 +472,7 @@ namespace Microsoft.Azure.IIoT.Serializers.NewtonSoft {
             /// <inheritdoc/>
             public override void WriteJson(JsonWriter writer,
                 object value, JsonSerializer serializer) {
-                if (!(value is byte[] buffer)) {
+                if (value is not byte[] buffer) {
                     buffer = ((IReadOnlyCollection<byte>)value).ToArray();
                 }
                 writer.WriteValue(buffer);

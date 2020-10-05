@@ -24,7 +24,7 @@ namespace System.Security.Claims {
             // Check for UPN, then if that doesn't exist check for name identity
             return claims.FirstOrDefault(x => string.Equals(x.Type, UpnClaimSchema,
                     StringComparison.OrdinalIgnoreCase)) ??
-                claims.FirstOrDefault(x => string.Equals(x.Type, nameClaimSchema,
+                claims.FirstOrDefault(x => string.Equals(x.Type, kNameClaimSchema,
                     StringComparison.OrdinalIgnoreCase));
         }
 
@@ -46,20 +46,20 @@ namespace System.Security.Claims {
         /// <returns></returns>
         public static bool IsApplicationToken(this IEnumerable<Claim> claims) {
             return claims.GetUserIdentifierClaim() == null &&
-                claims.FirstOrDefault(x => string.Equals(x.Type, appIdClaimName,
+                claims.FirstOrDefault(x => string.Equals(x.Type, kAppIdClaimName,
                     StringComparison.OrdinalIgnoreCase))?.Value != null &&
-                !string.Equals(claims.FirstOrDefault(x => string.Equals(x.Type, applicationTokenScope,
+                !string.Equals(claims.FirstOrDefault(x => string.Equals(x.Type, kApplicationTokenScope,
                     StringComparison.OrdinalIgnoreCase))?.Value,
-                        userImpersonation, StringComparison.OrdinalIgnoreCase);
+                        kUserImpersonation, StringComparison.OrdinalIgnoreCase);
         }
 
-        private const string nameClaimSchema =
+        private const string kNameClaimSchema =
             "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name";
-        private const string appIdClaimName =
+        private const string kAppIdClaimName =
             "appid";
-        private const string applicationTokenScope =
+        private const string kApplicationTokenScope =
             "http://schemas.microsoft.com/identity/claims/scope";
-        private const string userImpersonation =
+        private const string kUserImpersonation =
             "user_impersonation";
     }
 }

@@ -61,7 +61,7 @@ namespace Opc.Ua.Encoders {
             if (this == encodeable) {
                 return true;
             }
-            if (!(encodeable is EncodeableDictionary eventFieldList)) {
+            if (encodeable is not EncodeableDictionary eventFieldList) {
                 return false;
             }
             if (!Utils.IsEqual(Fields, eventFieldList.Fields)) {

@@ -495,6 +495,9 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub.Mock {
                 IReadOnlyDictionary<string, VariantValue> source) {
 
                 if (target == null) {
+                    if (source == null) {
+                        return new Dictionary<string, VariantValue>();
+                    }
                     return source.ToDictionary(k => k.Key, v => v.Value);
                 }
                 var copy = target.ToDictionary(k => k.Key, v => v.Value);

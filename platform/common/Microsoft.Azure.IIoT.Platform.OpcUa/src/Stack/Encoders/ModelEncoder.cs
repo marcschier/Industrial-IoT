@@ -398,10 +398,8 @@ namespace Opc.Ua.Encoders {
                 return new BinaryEncoder(stream, context);
             }
             if (contentType.EqualsIgnoreCase(ContentMimeType.UaXml)) {
-#pragma warning disable CA2000 // Dispose objects before losing scope
                 return new XmlEncoder((Type)null, XmlWriter.Create(stream),
                     context);
-#pragma warning restore CA2000 // Dispose objects before losing scope
             }
             throw new ArgumentException("Bad content type", nameof(contentType));
         }

@@ -127,7 +127,7 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Services {
                                 eventName);
                         }
                         else {
-                            throw ex;
+                            throw;
                         }
                     }
                     handlers = new Dictionary<string, Subscription>();

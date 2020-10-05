@@ -69,7 +69,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
 
         /// <inheritdoc/>
         public override bool Equals(object obj) {
-            if (!(obj is EntityRegistration registration)) {
+            if (obj is not EntityRegistration registration) {
                 return false;
             }
             if (DeviceId != registration.DeviceId) {

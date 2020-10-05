@@ -659,14 +659,10 @@ namespace Microsoft.Azure.IIoT.Platform.Discovery.Edge.Services {
         private readonly SemaphoreSlim _lock = new SemaphoreSlim(1, 1);
         private readonly List<DiscoveryRequest> _pending =
             new List<DiscoveryRequest>();
-#pragma warning disable CA2213 // Disposable fields should be disposed
-#pragma warning disable IDE0069 // Disposable fields should be disposed
         private readonly BlockingCollection<DiscoveryRequest> _queue =
             new BlockingCollection<DiscoveryRequest>();
         private readonly CancellationTokenSource _cts = new CancellationTokenSource();
         private DiscoveryRequest _request = new DiscoveryRequest();
-#pragma warning restore IDE0069 // Disposable fields should be disposed
-#pragma warning restore CA2213 // Disposable fields should be disposed
         private const string kDiscoveryMetricsPrefix = "iiot_edge_discovery_";
 
         private static readonly Counter kDiscoverAsync = Metrics

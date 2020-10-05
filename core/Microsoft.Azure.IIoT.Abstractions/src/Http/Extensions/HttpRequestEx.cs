@@ -16,6 +16,30 @@ namespace Microsoft.Azure.IIoT.Http {
     public static class HttpRequestEx {
 
         /// <summary>
+        /// Set request timeout
+        /// </summary>
+        /// <param name="request"></param>
+        /// <param name="timeout"></param>
+        /// <returns></returns>
+        public static IHttpRequest SetTimeout(this IHttpRequest request,
+            TimeSpan? timeout) {
+            request.Options.Set(kTimeoutKey, timeout);
+            return request;
+        }
+
+        /// <summary>
+        /// Get request timeout
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        public static TimeSpan? GetTimeout(this IHttpRequest request) {
+            if (!request.Options.TryGetValue(kTimeoutKey, out var timeout)) {
+                return null;
+            }
+            return timeout;
+        }
+
+        /// <summary>
         /// Add header value
         /// </summary>
         /// <param name="request"></param>
@@ -104,6 +128,8 @@ namespace Microsoft.Azure.IIoT.Http {
             return request;
         }
 
+        private static readonly HttpRequestOptionsKey<TimeSpan?> kTimeoutKey =
+            new HttpRequestOptionsKey<TimeSpan?>("Timeout");
         private static readonly Encoding kDefaultEncoding = new UTF8Encoding();
     }
 }

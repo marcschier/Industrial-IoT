@@ -57,7 +57,7 @@ namespace CouchDB.Driver.Query {
 
         private string Process(Expression e) {
             _sb.Clear();
-            _sb.Append("{");
+            _sb.Append('{');
             Visit(e);
 
             // If no Where() calls
@@ -65,7 +65,7 @@ namespace CouchDB.Driver.Query {
                 // If no other methods calls - ToList()
                 if (_sb.Length > 1) {
                     _sb.Length--;
-                    _sb.Append(",");
+                    _sb.Append(',');
                 }
                 _sb.Append("\"selector\":{}");
             }
@@ -73,7 +73,7 @@ namespace CouchDB.Driver.Query {
                 _sb.Length--;
             }
 
-            _sb.Append("}");
+            _sb.Append('}');
             var body = _sb.ToString();
             return body;
         }
@@ -126,7 +126,7 @@ namespace CouchDB.Driver.Query {
         protected override Expression VisitBinary(BinaryExpression b) {
 
             void VisitBinaryComparisonOperator(ExpressionType type, Expression b) {
-                _sb.Append("{");
+                _sb.Append('{');
                 switch (type) {
                     case ExpressionType.NotEqual:
                         _sb.Append("\"$ne\":");
@@ -148,10 +148,10 @@ namespace CouchDB.Driver.Query {
                             $"The binary operator '{type}' is not supported");
                 }
                 Visit(b);
-                _sb.Append("}");
+                _sb.Append('}');
             }
 
-            _sb.Append("{");
+            _sb.Append('{');
             switch (b.NodeType) {
                 case ExpressionType.Equal:
                     switch (b.Left) {
@@ -175,8 +175,8 @@ namespace CouchDB.Driver.Query {
                         // $mod operator = prop % divisor = remainder
                         case BinaryExpression mb
                             when mb.NodeType == ExpressionType.Modulo:
-                            if (!(mb.Left is MemberExpression c) ||
-                                !(c.Member is PropertyInfo r) ||
+                            if (mb.Left is not MemberExpression c ||
+                                c.Member is not PropertyInfo r ||
                                 r.PropertyType != typeof(int)) {
                                 throw new NotSupportedException(
                                     "The document field must be an integer.");
@@ -184,7 +184,7 @@ namespace CouchDB.Driver.Query {
                             Visit(mb.Left);
                             _sb.Append(":{\"$mod\":[");
                             Visit(mb.Right);
-                            _sb.Append(",");
+                            _sb.Append(',');
                             Visit(b.Right);
                             _sb.Append("]}}");
                             return b;
@@ -192,7 +192,7 @@ namespace CouchDB.Driver.Query {
                             Visit(b.Left);
                             break;
                     }
-                    _sb.Append(":");
+                    _sb.Append(':');
                     Visit(b.Right);
                     break;
                 case ExpressionType.And:
@@ -250,13 +250,13 @@ namespace CouchDB.Driver.Query {
 #endif
                         default:
                             Visit(b.Left);
-                            _sb.Append(":");
+                            _sb.Append(':');
                             VisitBinaryComparisonOperator(b.NodeType, b.Right);
                             break;
                     }
                     break;
             }
-            _sb.Append("}");
+            _sb.Append('}');
             return b;
         }
 
@@ -279,23 +279,23 @@ namespace CouchDB.Driver.Query {
                         case BinaryExpression b
                             when b.NodeType == ExpressionType.Or ||
                                  b.NodeType == ExpressionType.OrElse:
-                            _sb.Append("{");
+                            _sb.Append('{');
                             VisitBinaryCombinationOperator(b, true);
-                            _sb.Append("}");
+                            _sb.Append('}');
                             break;
                         case MethodCallExpression m
                             when m.Method.Name == "In":
-                            _sb.Append("{");
+                            _sb.Append('{');
                             Visit(m.Arguments[0]);
                             _sb.Append(":{\"$in\":");
                             Visit(m.Arguments[1]);
                             _sb.Append("}}");
                             break;
                         default:
-                            _sb.Append("{");
+                            _sb.Append('{');
                             _sb.Append("\"$not\":");
                             Visit(u.Operand);
-                            _sb.Append("}");
+                            _sb.Append('}');
                             break;
                     }
                     break;
@@ -323,7 +323,7 @@ namespace CouchDB.Driver.Query {
                 _sb.Append("\"selector\":");
                 var lambdaBody = m.GetLambda().Body;
                 Visit(lambdaBody);
-                _sb.Append(",");
+                _sb.Append(',');
                 _isSelectorSet = true;
                 return m;
             }
@@ -358,7 +358,7 @@ namespace CouchDB.Driver.Query {
                 if (lambda.Body is NewExpression n) {
                     foreach (var a in n.Arguments) {
                         Visit(a);
-                        _sb.Append(",");
+                        _sb.Append(',');
                     }
                     _sb.Length--;
                 }
@@ -402,7 +402,7 @@ namespace CouchDB.Driver.Query {
 
             // IEnumerable extensions
             if (genericDefinition == Method.EnumerableContains) {
-                _sb.Append("{");
+                _sb.Append('{');
                 Visit(m.Arguments[0]);
                 _sb.Append(":{\"$all\":");
                 Visit(m.Arguments[1]);
@@ -412,7 +412,7 @@ namespace CouchDB.Driver.Query {
 
             // String extensions
             if (m.Method == Method.IsMatch) {
-                _sb.Append("{");
+                _sb.Append('{');
                 Visit(m.Arguments[0]);
                 _sb.Append(":{\"$regex\":");
                 Visit(m.Arguments[1]);
@@ -425,7 +425,7 @@ namespace CouchDB.Driver.Query {
                 (m.Method.Name == nameof(List<object>.Contains) &&
                 m.Method.DeclaringType.IsGenericType &&
                 m.Method.DeclaringType.GetGenericTypeDefinition() == typeof(List<>))) {
-                _sb.Append("{");
+                _sb.Append('{');
                 Visit(m.Object);
                 _sb.Append(":{\"$all\":[");
                 Visit(m.Arguments[0]);
@@ -459,7 +459,7 @@ namespace CouchDB.Driver.Query {
                     default:
                         return;
                 }
-                _sb.Append(",");
+                _sb.Append(',');
             }
 
             InspectOrdering(m);
@@ -487,14 +487,14 @@ namespace CouchDB.Driver.Query {
                         break;
                     case "ThenByDescending":
                         InspectOrdering(o.Arguments[0]);
-                        _sb.Append("{");
+                        _sb.Append('{');
                         Visit(lambdaBody);
                         _sb.Append(":\"desc\"}");
                         break;
                     default:
                         return;
                 }
-                _sb.Append(",");
+                _sb.Append(',');
             }
 
             InspectOrdering(m);
@@ -517,16 +517,16 @@ namespace CouchDB.Driver.Query {
             }
             switch (constant) {
                 case IEnumerable enumerable:
-                    _sb.Append("[");
+                    _sb.Append('[');
                     var needsComma = false;
                     foreach (var item in enumerable) {
                         if (needsComma) {
-                            _sb.Append(",");
+                            _sb.Append(',');
                         }
                         VisitConstantValue(item);
                         needsComma = true;
                     }
-                    _sb.Append("]");
+                    _sb.Append(']');
                     break;
                 case Guid _:
                     _sb.Append(JsonConvert.SerializeObject(constant));
@@ -546,18 +546,18 @@ namespace CouchDB.Driver.Query {
             void InspectBinaryChildren(BinaryExpression e, ExpressionType nodeType) {
                 if (e.Left is BinaryExpression lb && lb.NodeType == nodeType) {
                     InspectBinaryChildren(lb, nodeType);
-                    _sb.Append(",");
+                    _sb.Append(',');
                     Visit(e.Right);
                     return;
                 }
                 if (e.Right is BinaryExpression rb && rb.NodeType == nodeType) {
                     Visit(e.Left);
-                    _sb.Append(",");
+                    _sb.Append(',');
                     InspectBinaryChildren(rb, nodeType);
                     return;
                 }
                 Visit(e.Left);
-                _sb.Append(",");
+                _sb.Append(',');
                 Visit(e.Right);
             }
 
@@ -572,7 +572,7 @@ namespace CouchDB.Driver.Query {
                     break;
             }
             InspectBinaryChildren(b, b.NodeType);
-            _sb.Append("]");
+            _sb.Append(']');
         }
 
         /// <summary>

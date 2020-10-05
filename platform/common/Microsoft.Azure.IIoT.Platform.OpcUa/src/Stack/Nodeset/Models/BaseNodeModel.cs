@@ -191,7 +191,7 @@ namespace Opc.Ua.Nodeset {
 
         /// <inheritdoc/>
         public override bool Equals(object obj) {
-            if (!(obj is BaseNodeModel model)) {
+            if (obj is not BaseNodeModel model) {
                 return false;
             }
             if (!Handle.EqualsSafe(model.Handle)) {

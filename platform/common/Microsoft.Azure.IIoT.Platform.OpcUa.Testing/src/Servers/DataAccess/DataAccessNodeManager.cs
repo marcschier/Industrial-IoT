@@ -219,7 +219,7 @@ namespace DataAccess {
 
             try {
                 // check if the node id has been parsed.
-                if (!(handle.ParsedNodeId is ParsedNodeId parsedNodeId)) {
+                if (handle.ParsedNodeId is not ParsedNodeId parsedNodeId) {
                     return null;
                 }
 

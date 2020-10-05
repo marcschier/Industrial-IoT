@@ -47,7 +47,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Models {
             if (obj is string s) {
                 return s == ToString();
             }
-            if (!(obj is ConnectionIdentifier key)) {
+            if (obj is not ConnectionIdentifier key) {
                 return false;
             }
             if (!Connection.IsSameAs(key.Connection)) {

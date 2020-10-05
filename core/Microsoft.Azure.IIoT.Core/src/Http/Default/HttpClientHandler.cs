@@ -164,7 +164,7 @@ namespace Microsoft.Azure.IIoT.Http.Clients {
                     throw new HttpRequestException($"Header is invalid {header}.");
                 }
                 var name = header.Substring(0, headerSeparatorPosition).Trim();
-                var value = header.Substring(headerSeparatorPosition + 1).Trim();
+                var value = header[(headerSeparatorPosition + 1)..].Trim();
                 var wasAdded = response.Headers.TryAddWithoutValidation(name, value);
                 if (!wasAdded) {
                     if (name.EqualsIgnoreCase(kContentLength)) {

@@ -469,11 +469,7 @@ namespace Microsoft.Azure.IIoT.Net.Scanner {
             private readonly SemaphoreSlim _lock;
             private readonly BaseConnectProbe _outer;
             private State _state;
-#pragma warning disable CA2213 // Disposable fields should be disposed
-#pragma warning disable IDE0069 // Disposable fields should be disposed
             private Socket _socket;
-#pragma warning restore IDE0069 // Disposable fields should be disposed
-#pragma warning restore CA2213 // Disposable fields should be disposed
         }
 
         private readonly CancellationTokenSource _cts = new CancellationTokenSource();

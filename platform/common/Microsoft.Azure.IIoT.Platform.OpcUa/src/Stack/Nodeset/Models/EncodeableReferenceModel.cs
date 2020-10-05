@@ -62,7 +62,7 @@ namespace Opc.Ua.Nodeset {
             if (ReferenceEquals(this, encodeable)) {
                 return true;
             }
-            if (!(encodeable is EncodeableReferenceModel encodeableReference)) {
+            if (encodeable is not EncodeableReferenceModel encodeableReference) {
                 return false;
             }
             if (!Utils.IsEqual(encodeableReference.Reference, Reference)) {

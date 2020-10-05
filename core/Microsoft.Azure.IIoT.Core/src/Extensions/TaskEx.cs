@@ -57,36 +57,28 @@ namespace System.Threading.Tasks {
         /// <summary>
         /// Timeout after 1 minute
         /// </summary>
-#pragma warning disable IDE1006 // Naming Styles
         public static Task<T> With1MinuteTimeout<T>(this Task<T> task) {
-#pragma warning restore IDE1006 // Naming Styles
             return task.WithTimeoutOf(TimeSpan.FromMinutes(1));
         }
 
         /// <summary>
         /// Timeout after 1 minute
         /// </summary>
-#pragma warning disable IDE1006 // Naming Styles
         public static Task With1MinuteTimeout(this Task task) {
-#pragma warning restore IDE1006 // Naming Styles
             return task.WithTimeoutOf(TimeSpan.FromMinutes(1));
         }
 
         /// <summary>
         /// Timeout after 2 minutes
         /// </summary>
-#pragma warning disable IDE1006 // Naming Styles
         public static Task<T> With2MinuteTimeout<T>(this Task<T> task) {
-#pragma warning restore IDE1006 // Naming Styles
             return task.WithTimeoutOf(TimeSpan.FromMinutes(2));
         }
 
         /// <summary>
         /// Timeout after 2 minutes
         /// </summary>
-#pragma warning disable IDE1006 // Naming Styles
         public static Task With2MinuteTimeout(this Task task) {
-#pragma warning restore IDE1006 // Naming Styles
             return task.WithTimeoutOf(TimeSpan.FromMinutes(2));
         }
     }

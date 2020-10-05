@@ -77,7 +77,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Transport {
                 foreach (var value in values) {
                     if (value.StartsWith("Bearer ", StringComparison.Ordinal)) {
                         request.RequestHeader.AuthenticationToken =
-                            new NodeId(value.Substring("Bearer ".Length).Trim());
+                            new NodeId(value["Bearer ".Length..].Trim());
                     }
                 }
             }

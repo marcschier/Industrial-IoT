@@ -141,9 +141,7 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Clients {
         public async Task BadArgumentsAndInvalidStateTests2Async() {
             var fix = new Fixture();
             var prefix = fix.Create<string>();
-#pragma warning disable CA2000 // Dispose objects before losing scope
             var harness = _fixture.GetHarness(prefix);
-#pragma warning restore CA2000 // Dispose objects before losing scope
             try {
                 var host = harness.GetEventBusHost();
                 Skip.If(host == null);

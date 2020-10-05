@@ -28,7 +28,7 @@ namespace Opc.Ua.Nodeset {
 
         /// <inheritdoc/>
         public override bool Equals(object obj) {
-            if (!(obj is ObjectNodeModel model)) {
+            if (obj is not ObjectNodeModel model) {
                 return false;
             }
             if (EventNotifier != model.EventNotifier) {

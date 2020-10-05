@@ -415,7 +415,7 @@ namespace Opc.Ua.Models {
 
         /// <inheritdoc/>
         public bool IsEqual(IEncodeable encodeable) {
-            if (!(encodeable is NodeAttributeSet node)) {
+            if (encodeable is not NodeAttributeSet node) {
                 return false;
             }
             if (ReferenceEquals(node._attributes, _attributes)) {

@@ -78,7 +78,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
                     _logger.Error(ex, "Starting server caused exception.");
                     _server?.Dispose();
                     _server = null;
-                    throw ex;
+                    throw;
                 }
                 finally {
                     _lock.Release();

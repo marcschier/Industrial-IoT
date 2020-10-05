@@ -27,10 +27,7 @@ namespace Opc.Ua.Encoders {
         /// <param name="stream"></param>
         /// <param name="context"></param>
         public ModelDecoder(Stream stream, string contentType,
-            ServiceMessageContext context = null) :
-#pragma warning disable CA2000 // Dispose objects before losing scope
-            this(CreateDecoder(contentType, stream, context)) {
-#pragma warning restore CA2000 // Dispose objects before losing scope
+            ServiceMessageContext context = null) : this(CreateDecoder(contentType, stream, context)) {
         }
 
         /// <summary>
@@ -354,10 +351,8 @@ namespace Opc.Ua.Encoders {
                     return new BinaryDecoder(stream,
                         context ?? new ServiceMessageContext());
                 case ContentMimeType.UaXml:
-#pragma warning disable CA2000 // Dispose objects before losing scope
                     return new XmlDecoder(null, XmlReader.Create(stream),
                         context ?? new ServiceMessageContext());
-#pragma warning restore CA2000 // Dispose objects before losing scope
                 default:
                     throw new ArgumentException("unknown content type",
                         nameof(contentType));

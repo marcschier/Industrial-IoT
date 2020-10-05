@@ -1252,7 +1252,7 @@ namespace Opc.Ua.Encoders {
             if (value is T[] t) {
                 return t;
             }
-            if (!(value is Array arr)) {
+            if (value is not Array arr) {
                 return ToTypedScalar<T>(value).YieldReturn().ToArray();
             }
             if (arr.Length == 0) {

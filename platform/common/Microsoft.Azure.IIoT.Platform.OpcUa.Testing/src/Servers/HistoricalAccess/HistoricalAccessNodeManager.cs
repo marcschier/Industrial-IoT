@@ -341,7 +341,7 @@ namespace HistoricalAccess {
             }
 
 
-            if (!(monitoredItem.Filter is AggregateFilter filter) || filter.StartTime >= DateTime.UtcNow.AddMilliseconds(-filter.ProcessingInterval)) {
+            if (monitoredItem.Filter is not AggregateFilter filter || filter.StartTime >= DateTime.UtcNow.AddMilliseconds(-filter.ProcessingInterval)) {
                 base.ReadInitialValue(context, handle, monitoredItem);
                 return;
             }
@@ -432,7 +432,7 @@ namespace HistoricalAccess {
 
             // check if an archive item.
 
-            if (!(handle.Node is ArchiveItemState item)) {
+            if (handle.Node is not ArchiveItemState item) {
                 // no historial data so must start in the future.
                 while (filterToUse.StartTime < DateTime.UtcNow) {
                     filterToUse.StartTime = filterToUse.StartTime.AddMilliseconds(filterToUse.ProcessingInterval);
@@ -823,7 +823,7 @@ namespace HistoricalAccess {
 
                     // load the archive.
 
-                    if (!(handle.Node is ArchiveItemState item)) {
+                    if (handle.Node is not ArchiveItemState item) {
                         continue;
                     }
 
@@ -881,7 +881,7 @@ namespace HistoricalAccess {
                     // process each item.
                     for (var jj = 0; jj < nodeToUpdate.UpdateValues.Count; jj++) {
 
-                        if (!(ExtensionObject.ToEncodeable(nodeToUpdate.UpdateValues[jj].Value as ExtensionObject) is Annotation annotation)) {
+                        if (ExtensionObject.ToEncodeable(nodeToUpdate.UpdateValues[jj].Value as ExtensionObject) is not Annotation annotation) {
                             result.OperationResults.Add(StatusCodes.BadTypeMismatch);
                             continue;
                         }
@@ -928,7 +928,7 @@ namespace HistoricalAccess {
 
                     // load the archive.
 
-                    if (!(handle.Node is ArchiveItemState item)) {
+                    if (handle.Node is not ArchiveItemState item) {
                         continue;
                     }
 
@@ -969,7 +969,7 @@ namespace HistoricalAccess {
 
                     // load the archive.
 
-                    if (!(handle.Node is ArchiveItemState item)) {
+                    if (handle.Node is not ArchiveItemState item) {
                         continue;
                     }
 
@@ -1176,7 +1176,7 @@ namespace HistoricalAccess {
             var timeFlowsBackward = details.EndTime < details.StartTime;
 
 
-            if (!(handle.Node is ArchiveItemState item)) {
+            if (handle.Node is not ArchiveItemState item) {
                 throw new ServiceResultException(StatusCodes.BadNotSupported);
             }
 
@@ -1256,7 +1256,7 @@ namespace HistoricalAccess {
             _ = nodeToRead.ParsedIndexRange != NumericRange.Empty || !QualifiedName.IsNull(nodeToRead.DataEncoding);
 
 
-            if (!(handle.Node is ArchiveItemState item)) {
+            if (handle.Node is not ArchiveItemState item) {
                 throw new ServiceResultException(StatusCodes.BadNotSupported);
             }
 
@@ -1452,7 +1452,7 @@ namespace HistoricalAccess {
             }
 
 
-            if (!(session.RestoreHistoryContinuationPoint(continuationPoint) is HistoryReadRequest request)) {
+            if (session.RestoreHistoryContinuationPoint(continuationPoint) is not HistoryReadRequest request) {
                 return null;
             }
 

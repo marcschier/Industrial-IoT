@@ -134,7 +134,7 @@ namespace Opc.Ua.PubSub {
             if (ReferenceEquals(this, encodeable)) {
                 return true;
             }
-            if (!(encodeable is DataSetMessage wrapper)) {
+            if (encodeable is not DataSetMessage wrapper) {
                 return false;
             }
             if (!Utils.IsEqual(wrapper.MessageContentMask, MessageContentMask) ||

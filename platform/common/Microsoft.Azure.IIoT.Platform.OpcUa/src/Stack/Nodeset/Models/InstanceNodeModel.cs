@@ -73,7 +73,7 @@ namespace Opc.Ua.Nodeset {
 
         /// <inheritdoc/>
         public override bool Equals(object obj) {
-            if (!(obj is InstanceNodeModel model)) {
+            if (obj is not InstanceNodeModel model) {
                 return false;
             }
             if (NumericId != model.NumericId) {

@@ -150,9 +150,7 @@ namespace Microsoft.Azure.IIoT.Crypto.Models {
             var parameters = key.Parameters as RsaParams;
             var rsa = RSA.Create();
             rsa.ImportParameters(parameters.ToRSAParameters());
-#pragma warning disable CA5385 // Use Rivest–Shamir–Adleman (RSA) Algorithm With Sufficient Key Size
             return rsa;
-#pragma warning restore CA5385 // Use Rivest–Shamir–Adleman (RSA) Algorithm With Sufficient Key Size
         }
 
         /// <summary>

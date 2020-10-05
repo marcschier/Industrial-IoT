@@ -486,7 +486,7 @@ namespace System.Security.Cryptography.Asn1 {
                 dest = _buffer.AsSpan(_offset);
                 remainingData.Slice(0, MaxCERContentSize).CopyTo(dest);
 
-                remainingData = remainingData.Slice(MaxCERContentSize);
+                remainingData = remainingData[MaxCERContentSize..];
                 _offset += MaxCERContentSize;
             }
 
@@ -666,7 +666,7 @@ namespace System.Security.Cryptography.Asn1 {
                 remainingData.Slice(0, MaxCERSegmentSize).CopyTo(dest);
 
                 _offset += MaxCERSegmentSize;
-                remainingData = remainingData.Slice(MaxCERSegmentSize);
+                remainingData = remainingData[MaxCERSegmentSize..];
             }
 
             WriteTag(primitiveOctetString);
@@ -788,7 +788,7 @@ namespace System.Security.Cryptography.Asn1 {
                 //          nodes reached by X = 0 and X = 1.
 
                 // skip firstComponent and the trailing .
-                var remaining = oidValue.Slice(2);
+                var remaining = oidValue[2..];
 
                 var subIdentifier = ParseSubIdentifier(ref remaining);
                 subIdentifier += 40 * firstComponent;
@@ -839,7 +839,7 @@ namespace System.Security.Cryptography.Asn1 {
                 value += AtoI(oidValue[position]);
             }
 
-            oidValue = oidValue.Slice(Math.Min(oidValue.Length, endIndex + 1));
+            oidValue = oidValue[Math.Min(oidValue.Length, endIndex + 1)..];
             return value;
         }
 
@@ -1117,7 +1117,7 @@ namespace System.Security.Cryptography.Asn1 {
                     Debug.Assert(fraction[0] == (byte)'0');
                     Debug.Assert(fraction[1] == (byte)'.');
 
-                    fraction = fraction.Slice(1, bytesWritten - 1);
+                    fraction = fraction[1..bytesWritten];
                 }
             }
 
@@ -1157,7 +1157,7 @@ namespace System.Security.Cryptography.Asn1 {
             }
 
             _offset += IntegerPortionLength;
-            fraction.CopyTo(baseSpan.Slice(IntegerPortionLength));
+            fraction.CopyTo(baseSpan[IntegerPortionLength..]);
             _offset += fraction.Length;
 
             _buffer[_offset] = (byte)'Z';

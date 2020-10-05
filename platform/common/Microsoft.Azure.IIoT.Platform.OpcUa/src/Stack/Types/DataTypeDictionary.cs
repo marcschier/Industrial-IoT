@@ -235,7 +235,7 @@ namespace Opc.Ua.Types {
                 return;
             }
             var parentType = ResolveType(baseType);
-            if (!(parentType is ComplexType complexParent)) {
+            if (parentType is not ComplexType complexParent) {
                 throw new FormatException($"The base type '{baseType}' for complex type " +
                     $"'{complexType.Name}' is not a complex type.");
             }

@@ -50,8 +50,8 @@ namespace System {
         /// <param name="ex"></param>
         /// <returns></returns>
         public static T GetFirstOf<T>(this Exception ex) where T : Exception {
-            if (ex is T) {
-                return (T)ex;
+            if (ex is T t) {
+                return t;
             }
             if (ex is AggregateException ae) {
                 ae = ae.Flatten();

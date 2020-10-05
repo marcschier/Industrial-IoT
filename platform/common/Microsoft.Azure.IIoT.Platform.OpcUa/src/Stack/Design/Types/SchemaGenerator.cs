@@ -121,7 +121,7 @@ namespace Opc.Ua.Design.Schema {
         /// </summary>
         private string LoadTemplate_BinaryNamespaceImports(Template template, GeneratorContext context) {
 
-            if (!(context.Target is Namespace ns)) {
+            if (context.Target is not Namespace ns) {
                 return null;
             }
 
@@ -158,7 +158,7 @@ namespace Opc.Ua.Design.Schema {
             }
 
 
-            if (!(context.Target is DataTypeDesign dataType)) {
+            if (context.Target is not DataTypeDesign dataType) {
                 return null;
             }
 
@@ -209,7 +209,7 @@ namespace Opc.Ua.Design.Schema {
             }
 
 
-            if (!(context.Target is DataTypeDesign dataType)) {
+            if (context.Target is not DataTypeDesign dataType) {
                 return false;
             }
 
@@ -376,12 +376,12 @@ namespace Opc.Ua.Design.Schema {
         /// </summary>
         private string LoadTemplate_BinaryTypeFields(Template template, GeneratorContext context) {
 
-            if (!(context.Target is Parameter field)) {
+            if (context.Target is not Parameter field) {
                 return null;
             }
 
 
-            if (!(field.Parent is DataTypeDesign dataType)) {
+            if (field.Parent is not DataTypeDesign dataType) {
                 return null;
             }
 
@@ -414,7 +414,7 @@ namespace Opc.Ua.Design.Schema {
 
         private string LoadTemplate_BinaryDocumentation(Template template, GeneratorContext context) {
 
-            if (!(context.Target is DataTypeDesign dataType)) {
+            if (context.Target is not DataTypeDesign dataType) {
                 return null;
             }
 

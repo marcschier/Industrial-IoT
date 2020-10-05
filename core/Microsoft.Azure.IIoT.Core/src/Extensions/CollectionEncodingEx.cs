@@ -112,7 +112,7 @@ namespace Microsoft.Azure.IIoT.Utils {
                 }
                 var part = str.Substring(0, 512);
                 result.Add($"part_{i}", part);
-                str = str.Substring(512);
+                str = str[512..];
             }
             return result;
         }

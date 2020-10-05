@@ -229,7 +229,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge {
                     var node = nodeReference.NodeId.ToNodeId(session.NamespaceUris);
                     var value = await RawNodeModel.ReadValueAsync(session,
                         (request.Header?.Diagnostics).ToStackModel(), node, diagnostics, false).ConfigureAwait(false);
-                    if (!(value?.Value is ExtensionObject[] argumentsList)) {
+                    if (value?.Value is not ExtensionObject[] argumentsList) {
                         continue;
                     }
 
@@ -512,7 +512,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge {
                 if (NodeId.IsNull(dataTypeId)) {
                     // Read data type
                     // TODO Async
-                    if (!(session.ReadNode(writeNode) is VariableNode variable) ||
+                    if (session.ReadNode(writeNode) is not VariableNode variable ||
                         NodeId.IsNull(variable.DataType)) {
                         throw new ArgumentException("Data type missing", nameof(request));
                     }
@@ -646,7 +646,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge {
                 }
                 var codec = _codec.Create(session.MessageContext);
                 var details = codec.Decode(request.Details, BuiltInType.ExtensionObject);
-                if (!(details.Value is ExtensionObject readDetails)) {
+                if (details.Value is not ExtensionObject readDetails) {
                     throw new ArgumentException("Bad details", nameof(request));
                 }
                 var response = await session.HistoryReadAsync(
@@ -724,7 +724,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge {
                         request.Header?.Diagnostics, diagnostics).ConfigureAwait(false);
                 }
                 var details = codec.Decode(request.Details, BuiltInType.ExtensionObject);
-                if (!(details.Value is ExtensionObject extensionObject)) {
+                if (details.Value is not ExtensionObject extensionObject) {
                     throw new ArgumentException("Bad details", nameof(request));
                 }
                 if (extensionObject.Body is HistoryUpdateDetails updateDetails) {

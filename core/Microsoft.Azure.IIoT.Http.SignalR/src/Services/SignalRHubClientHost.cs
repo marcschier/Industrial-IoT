@@ -37,7 +37,7 @@ namespace Microsoft.Azure.IIoT.Http.SignalR.Services {
         public SignalRHubClientHost(string endpointUrl, bool? useMessagePack,
             ILogger logger, string resourceId, ITokenProvider provider = null,
             IJsonSerializerSettingsProvider jsonSettings = null,
-            IMessagePackFormatterResolverProvider msgPack = null) {
+            IMessagePackSerializerOptionsProvider msgPack = null) {
             if (string.IsNullOrEmpty(endpointUrl)) {
                 throw new ArgumentNullException(nameof(endpointUrl));
             }
@@ -81,7 +81,7 @@ namespace Microsoft.Azure.IIoT.Http.SignalR.Services {
             catch (Exception ex) {
                 _started = false;
                 _logger.Error(ex, "Error starting SignalR client host.");
-                throw ex;
+                throw;
             }
             finally {
                 _lock.Release();
@@ -135,7 +135,7 @@ namespace Microsoft.Azure.IIoT.Http.SignalR.Services {
                 .WithAutomaticReconnect();
             if (_useMessagePack && _msgPack != null) {
                 builder = builder.AddMessagePackProtocol(options => {
-                    options.FormatterResolvers = _msgPack.GetResolvers().ToList();
+                    options.SerializerOptions = _msgPack.Options;
                 });
             }
             else {
@@ -175,7 +175,7 @@ namespace Microsoft.Azure.IIoT.Http.SignalR.Services {
                 return;
             }
             await Try.Async(() => connection?.StopAsync()).ConfigureAwait(false);
-            await Try.Async(() => connection?.DisposeAsync()).ConfigureAwait(false);
+            await Try.Async(() => connection?.DisposeAsync().AsTask()).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -196,7 +196,7 @@ namespace Microsoft.Azure.IIoT.Http.SignalR.Services {
 
         private readonly SemaphoreSlim _lock = new SemaphoreSlim(1, 1);
         private readonly IJsonSerializerSettingsProvider _jsonSettings;
-        private readonly IMessagePackFormatterResolverProvider _msgPack;
+        private readonly IMessagePackSerializerOptionsProvider _msgPack;
         private readonly Uri _endpointUri;
         private readonly bool _useMessagePack;
         private readonly ILogger _logger;

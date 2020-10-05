@@ -363,7 +363,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub.Mock.SqlParser {
             var identifier = identifierNode.GetText();
             if (identifier.StartsWith("[[", StringComparison.OrdinalIgnoreCase) &&
                 identifier.EndsWith("]]", StringComparison.OrdinalIgnoreCase)) {
-                return identifier.Substring(2, identifier.Length - 4);
+                return identifier[2..^2];
             }
             return identifier;
         }

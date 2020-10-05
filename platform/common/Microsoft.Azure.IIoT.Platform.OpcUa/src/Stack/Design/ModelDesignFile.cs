@@ -497,7 +497,7 @@ namespace Opc.Ua.Design {
                 type.ClassName = type.SymbolicName.Name;
 
                 if (type.ClassName.EndsWith("Type", StringComparison.Ordinal)) {
-                    type.ClassName = type.ClassName.Substring(0, type.ClassName.Length - 4);
+                    type.ClassName = type.ClassName[0..^4];
                 }
             }
             // assign missing fields for object types.
@@ -816,7 +816,7 @@ namespace Opc.Ua.Design {
                     }
                     if (index != -1) {
                         id = parameter.Identifier =
-                            Convert.ToInt32(name.Substring(index + 1), CultureInfo.InvariantCulture);
+                            Convert.ToInt32(name[(index + 1)..], CultureInfo.InvariantCulture);
                         parameter.IdentifierInName = true;
                     }
                 }
@@ -1505,7 +1505,7 @@ namespace Opc.Ua.Design {
                     true, descriptions);
             }
             foreach (var node in nodes.Items) {
-                if (!(node is DataTypeDesign dataType)) {
+                if (node is not DataTypeDesign dataType) {
                     continue;
                 }
                 if (dataType.BasicDataType == BasicDataType.UserDefined) {
@@ -2435,7 +2435,7 @@ namespace Opc.Ua.Design {
                 }
 
                 if (!string.IsNullOrEmpty(basePath)) {
-                    childPath = childPath.Substring(basePath.Length + 1);
+                    childPath = childPath[(basePath.Length + 1)..];
                     childPath = $"{basePath}{NodeDesign.kPathChar}{childPath}";
                 }
 
@@ -2648,13 +2648,13 @@ namespace Opc.Ua.Design {
                 case IList<Argument> arguments:
                     foreach (var argument in arguments) {
                         var namespaceUri = Namespaces.OpcUa;
-                        if (!(argument.DataType.Identifier is string name)) {
+                        if (argument.DataType.Identifier is not string name) {
                             continue;
                         }
                         var index = name.LastIndexOf(':');
                         if (index != -1) {
                             namespaceUri = name.Substring(0, index);
-                            name = name.Substring(index + 1);
+                            name = name[(index + 1)..];
                         }
                         argument.DataType = CreateNodeId(
                             new XmlQualifiedName(name, namespaceUri), namespaceUris);
@@ -2800,11 +2800,11 @@ namespace Opc.Ua.Design {
                 if (!string.IsNullOrEmpty(xsitype)) {
                     var index = xsitype.IndexOf(':', StringComparison.Ordinal);
                     if (index > 0) {
-                        qname = new XmlQualifiedName(xsitype.Substring(index + 1),
+                        qname = new XmlQualifiedName(xsitype[(index + 1)..],
                             element.GetNamespaceOfPrefix(xsitype.Substring(0, index)));
                     }
                     else {
-                        qname = new XmlQualifiedName(xsitype.Substring(index + 1),
+                        qname = new XmlQualifiedName(xsitype[(index + 1)..],
                             element.NamespaceURI);
                     }
                 }

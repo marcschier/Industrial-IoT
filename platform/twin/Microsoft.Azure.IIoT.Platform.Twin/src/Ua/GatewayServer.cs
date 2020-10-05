@@ -690,9 +690,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Ua {
         }
 
         /// <inheritdoc/>
-#pragma warning disable CA1721 // Property names should not match get methods
         public override ResponseHeader GetEndpoints(RequestHeader requestHeader,
-#pragma warning restore CA1721 // Property names should not match get methods
             string endpointUrl, StringCollection localeIds, StringCollection profileUris,
             out EndpointDescriptionCollection endpoints) {
             ValidateRequest(requestHeader);
@@ -1857,7 +1855,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Ua {
             if (args == null) {
                 throw new ArgumentNullException(nameof(args));
             }
-            if (!(sender is IServerSession session)) {
+            if (sender is not IServerSession session) {
                 return; // need session access
             }
             if (args.ValidationException != null) {

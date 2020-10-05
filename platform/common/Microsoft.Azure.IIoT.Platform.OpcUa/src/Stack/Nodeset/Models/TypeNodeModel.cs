@@ -40,7 +40,7 @@ namespace Opc.Ua.Nodeset {
 
         /// <inheritdoc/>
         public override bool Equals(object obj) {
-            if (!(obj is TypeNodeModel model)) {
+            if (obj is not TypeNodeModel model) {
                 return false;
             }
             if (!Utils.IsEqual(SuperTypeId, model.SuperTypeId)) {

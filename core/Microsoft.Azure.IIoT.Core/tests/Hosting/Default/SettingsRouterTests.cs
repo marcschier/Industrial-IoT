@@ -17,7 +17,7 @@ namespace Microsoft.Azure.IIoT.Hosting.Services {
     public class SettingsRouterTests {
 
         [Fact]
-        public async Task TestSettingDesiredPropertyAndCheckReported1() {
+        public async Task TestSettingDesiredPropertyAndCheckReported1Async() {
 
             var harness = new ModuleHostHarness();
             var controller = new TestController1();
@@ -38,7 +38,7 @@ namespace Microsoft.Azure.IIoT.Hosting.Services {
         }
 
         [Fact]
-        public async Task TestSetting2DesiredPropertyAndCheckReported1() {
+        public async Task TestSetting2DesiredPropertyAndCheckReported1Async() {
 
             var harness = new ModuleHostHarness();
             var controller = new TestController1();
@@ -64,7 +64,7 @@ namespace Microsoft.Azure.IIoT.Hosting.Services {
         }
 
         [Fact]
-        public async Task TestSetting3DesiredPropertyAndCheckReported1() {
+        public async Task TestSetting3DesiredPropertyAndCheckReported1Async() {
 
             var harness = new ModuleHostHarness();
             var controller = new TestController1();
@@ -124,7 +124,7 @@ namespace Microsoft.Azure.IIoT.Hosting.Services {
         }
 
         [Fact]
-        public async Task TestPresetSettingIsReportedOnModuleStart() {
+        public async Task TestPresetSettingIsReportedOnModuleStartAsync() {
 
             var harness = new ModuleHostHarness();
             var controller = new TestController1();
@@ -143,7 +143,7 @@ namespace Microsoft.Azure.IIoT.Hosting.Services {
         }
 
         [Fact]
-        public async Task TestSettingDesiredPropertyToNullAndCheckReported1() {
+        public async Task TestSettingDesiredPropertyToNullAndCheckReported1Async() {
 
             var harness = new ModuleHostHarness();
             var controller = new TestController1();

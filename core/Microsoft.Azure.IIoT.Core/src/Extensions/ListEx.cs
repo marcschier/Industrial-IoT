@@ -10,7 +10,7 @@ namespace System.Collections.Generic {
     /// </summary>
     public static class ListEx {
 
-        private static readonly Random rng = new Random();
+        private static readonly Random kRng = new Random();
 
         /// <summary>
         /// Shuffle list
@@ -24,7 +24,7 @@ namespace System.Collections.Generic {
             var n = list.Count;
             while (n > 1) {
                 n--;
-                var k = rng.Next(n + 1);
+                var k = kRng.Next(n + 1);
                 var value = list[k];
                 list[k] = list[n];
                 list[n] = value;

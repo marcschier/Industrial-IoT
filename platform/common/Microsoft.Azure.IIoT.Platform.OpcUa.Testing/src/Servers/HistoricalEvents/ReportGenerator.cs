@@ -164,7 +164,7 @@ namespace HistoricalEvents {
 
                     if (index >= 0) {
                         if (kWellNames[ii].Substring(0, index) == areaName) {
-                            well.Name = kWellNames[ii].Substring(index + 1);
+                            well.Name = kWellNames[ii][(index + 1)..];
                             wells.Add(well);
                         }
                     }

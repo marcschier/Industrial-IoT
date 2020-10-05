@@ -44,7 +44,7 @@ namespace Opc.Ua.Nodeset {
 
         /// <inheritdoc/>
         public override bool Equals(object obj) {
-            if (!(obj is MethodNodeModel model)) {
+            if (obj is not MethodNodeModel model) {
                 return false;
             }
             if (Executable != model.Executable) {

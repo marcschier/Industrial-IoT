@@ -81,14 +81,12 @@ namespace HistoricalAccess {
             return dataset;
         }
 
-#pragma warning disable RECS0154 // Parameter is never used
 #pragma warning disable IDE0060 // Remove unused parameter
         /// <summary>
         /// Loads the item configuaration.
         /// </summary>
         public bool LoadConfiguration(ISystemContext context, ArchiveItem item)
 #pragma warning restore IDE0060 // Remove unused parameter
-#pragma warning restore RECS0154 // Parameter is never used
         {
             using (var reader = item.OpenArchive()) {
                 while (!reader.EndOfStream) {
@@ -469,7 +467,7 @@ namespace HistoricalAccess {
 
             if (index >= 0) {
                 field = field.Substring(0, index);
-                line = line.Substring(index + 1);
+                line = line[(index + 1)..];
             }
 
             field = field.Trim();
@@ -481,14 +479,12 @@ namespace HistoricalAccess {
             return field;
         }
 
-#pragma warning disable RECS0154 // Parameter is never used
 #pragma warning disable IDE0060 // Remove unused parameter
         /// <summary>
         /// Extracts an integer value from the line.
         /// </summary>
         private bool ExtractField(int lineCount, ref string line, out string value)
 #pragma warning restore IDE0060 // Remove unused parameter
-#pragma warning restore RECS0154 // Parameter is never used
         {
             value = string.Empty;
             var field = ExtractField(ref line);
@@ -535,7 +531,7 @@ namespace HistoricalAccess {
             }
 
             if (field.StartsWith("0x", StringComparison.CurrentCulture)) {
-                field = field.Substring(2);
+                field = field[2..];
             }
 
             try {

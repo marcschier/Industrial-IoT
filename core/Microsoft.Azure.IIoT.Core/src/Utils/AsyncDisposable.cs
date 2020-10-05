@@ -65,10 +65,8 @@ namespace Microsoft.Azure.IIoT.Utils {
         /// </summary>
         /// <param name="tasks"></param>
         /// <returns></returns>
-#pragma warning disable IDE1006 // Naming Styles
         public Task<IAsyncDisposable[]> WhenAll(
             params Task<IAsyncDisposable>[] tasks) {
-#pragma warning restore IDE1006 // Naming Styles
             return WhenAll((IEnumerable<Task<IAsyncDisposable>>)tasks);
         }
 

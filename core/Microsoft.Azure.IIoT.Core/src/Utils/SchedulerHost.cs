@@ -124,11 +124,9 @@ namespace Microsoft.Azure.IIoT.Utils {
                 _timer.Change(_outer._interval, Timeout.InfiniteTimeSpan);
             }
 
-#pragma warning disable IDE0069 // Disposable fields should be disposed
             private readonly CancellationTokenSource _cts = new CancellationTokenSource();
             private readonly SchedulerHost _outer;
             private readonly Timer _timer;
-#pragma warning restore IDE0069 // Disposable fields should be disposed
         }
 
         private readonly ILogger _logger;

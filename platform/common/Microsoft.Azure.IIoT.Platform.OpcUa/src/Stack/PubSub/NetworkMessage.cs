@@ -107,7 +107,7 @@ namespace Opc.Ua.PubSub {
             if (ReferenceEquals(this, encodeable)) {
                 return true;
             }
-            if (!(encodeable is NetworkMessage wrapper)) {
+            if (encodeable is not NetworkMessage wrapper) {
                 return false;
             }
             if (!Utils.IsEqual(wrapper.MessageContentMask, MessageContentMask) ||

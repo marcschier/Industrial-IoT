@@ -45,7 +45,7 @@ namespace Microsoft.Azure.IIoT.Utils {
             catch (Exception ex) {
                 _logger.Error(ex, "Error starting {host} host.", Name);
                 _host = null;
-                throw ex;
+                throw;
             }
             finally {
                 _lock.Release();

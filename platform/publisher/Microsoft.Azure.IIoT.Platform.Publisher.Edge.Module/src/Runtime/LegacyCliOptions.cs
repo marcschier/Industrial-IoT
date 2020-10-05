@@ -23,9 +23,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Module.Runtime {
     /// <summary>
     /// Class that represents a dictionary with all command line arguments from the legacy version of the OPC Publisher
     /// </summary>
-#pragma warning disable CA1710 // Identifiers should have correct suffix
     public class LegacyCliOptions : Dictionary<string, string>, ILegacyCliModelProvider {
-#pragma warning restore CA1710 // Identifiers should have correct suffix
 
         /// <summary>
         /// Creates a new instance of the the legacy CLI options based on existing configuration values.

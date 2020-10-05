@@ -243,7 +243,7 @@ namespace MemoryBuffer {
 
 
             // use default behavoir for non-tag sources.
-            if (!(source is MemoryTagState tag)) {
+            if (source is not MemoryTagState tag) {
                 return base.CreateMonitoredItem(
                     context,
                     source,
@@ -298,7 +298,7 @@ namespace MemoryBuffer {
 
             // get the monitored node for the containing buffer.
 
-            if (!(tag.Parent is MemoryBufferState buffer)) {
+            if (tag.Parent is not MemoryBufferState buffer) {
                 return StatusCodes.BadInternalError;
             }
 
@@ -376,7 +376,7 @@ namespace MemoryBuffer {
 
             // get the monitored item.
 
-            if (!(monitoredItem is MemoryBufferMonitoredItem datachangeItem)) {
+            if (monitoredItem is not MemoryBufferMonitoredItem datachangeItem) {
                 return StatusCodes.BadMonitoredItemIdInvalid;
             }
 
@@ -411,7 +411,7 @@ namespace MemoryBuffer {
 
             // check for valid handle.
 
-            if (!(monitoredItem.ManagerHandle is MemoryBufferState buffer)) {
+            if (monitoredItem.ManagerHandle is not MemoryBufferState buffer) {
                 return base.DeleteMonitoredItem(
                     context,
                     monitoredItem,
@@ -423,7 +423,7 @@ namespace MemoryBuffer {
 
             // get the monitored item.
 
-            if (!(monitoredItem is MemoryBufferMonitoredItem datachangeItem)) {
+            if (monitoredItem is not MemoryBufferMonitoredItem datachangeItem) {
                 return StatusCodes.BadMonitoredItemIdInvalid;
             }
 
@@ -445,7 +445,7 @@ namespace MemoryBuffer {
 
             // check for valid handle.
 
-            if (!(monitoredItem.ManagerHandle is MemoryBufferState buffer)) {
+            if (monitoredItem.ManagerHandle is not MemoryBufferState buffer) {
                 return base.SetMonitoringMode(
                     context,
                     monitoredItem,
@@ -458,7 +458,7 @@ namespace MemoryBuffer {
 
             // get the monitored item.
 
-            if (!(monitoredItem is MemoryBufferMonitoredItem datachangeItem)) {
+            if (monitoredItem is not MemoryBufferMonitoredItem datachangeItem) {
                 return StatusCodes.BadMonitoredItemIdInvalid;
             }
 

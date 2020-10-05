@@ -42,11 +42,7 @@ namespace MemoryBuffer {
         /// </summary>
         public MemoryBufferState(ISystemContext context, MemoryBufferInstance configuration) :
             base(null) {
-
-#pragma warning disable RECS0021 // Warns about calls to virtual member functions occuring in the constructor
             Initialize(context);
-#pragma warning restore RECS0021 // Warns about calls to virtual member functions occuring in the constructor
-
             var dataType = "UInt32";
             var name = dataType;
             var count = 10;
@@ -198,11 +194,9 @@ namespace MemoryBuffer {
         /// Handles the read operation for an invidual tag.
         /// </summary>
         public ServiceResult ReadTagValue(
-#pragma warning disable RECS0154 // Parameter is never used
 #pragma warning disable IDE0060 // Remove unused parameter
             ISystemContext context,
 #pragma warning restore IDE0060 // Remove unused parameter
-#pragma warning restore RECS0154 // Parameter is never used
             NodeState node,
             NumericRange indexRange,
             QualifiedName dataEncoding,
@@ -210,7 +204,7 @@ namespace MemoryBuffer {
             ref StatusCode statusCode,
             ref DateTime timestamp) {
 
-            if (!(node is MemoryTagState tag)) {
+            if (node is not MemoryTagState tag) {
                 return StatusCodes.BadNodeIdUnknown;
             }
 
@@ -246,11 +240,9 @@ namespace MemoryBuffer {
         /// Handles a write operation for an individual tag.
         /// </summary>
         public ServiceResult WriteTagValue(
-#pragma warning disable RECS0154 // Parameter is never used
 #pragma warning disable IDE0060 // Remove unused parameter
             ISystemContext context,
 #pragma warning restore IDE0060 // Remove unused parameter
-#pragma warning restore RECS0154 // Parameter is never used
             NodeState node,
             NumericRange indexRange,
             QualifiedName dataEncoding,
@@ -258,7 +250,7 @@ namespace MemoryBuffer {
             ref StatusCode statusCode,
             ref DateTime timestamp) {
 
-            if (!(node is MemoryTagState tag)) {
+            if (node is not MemoryTagState tag) {
                 return StatusCodes.BadNodeIdUnknown;
             }
 

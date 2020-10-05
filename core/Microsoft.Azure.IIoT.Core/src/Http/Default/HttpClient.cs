@@ -91,15 +91,16 @@ namespace Microsoft.Azure.IIoT.Http.Clients {
         private async Task<IHttpResponse> SendAsync(IHttpRequest httpRequest,
             HttpMethod httpMethod, CancellationToken ct) {
 
-            if (!(httpRequest is HttpRequest wrapper)) {
+            if (httpRequest is not HttpRequest wrapper) {
                 throw new InvalidOperationException("Bad request");
             }
 
             using (var client = _factory.CreateClient(httpRequest.ResourceId ??
                 HttpHandlerFactory.DefaultResourceId)) {
 
-                if (httpRequest.Options.Timeout.HasValue) {
-                    client.Timeout = httpRequest.Options.Timeout.Value;
+                var timeout = httpRequest.GetTimeout();
+                if (timeout.HasValue) {
+                    client.Timeout = timeout.Value;
                 }
 
                 var sw = Stopwatch.StartNew();
@@ -113,7 +114,7 @@ namespace Microsoft.Azure.IIoT.Http.Clients {
                             StatusCode = response.StatusCode,
                             Headers = response.Headers,
                             ContentHeaders = response.Content.Headers,
-                            Content = await response.Content.ReadAsByteArrayAsync().ConfigureAwait(false)
+                            Content = await response.Content.ReadAsByteArrayAsync(ct).ConfigureAwait(false)
                         };
                         if (result.IsError()) {
                             _logger.Warning("{method} to {uri} returned {code} (took {elapsed}).",

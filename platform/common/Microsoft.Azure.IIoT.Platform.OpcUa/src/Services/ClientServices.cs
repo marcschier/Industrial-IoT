@@ -559,12 +559,8 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
         private readonly ConcurrentDictionary<ConnectionIdentifier, HashSet<CallbackHandle>> _callbacks =
             new ConcurrentDictionary<ConnectionIdentifier, HashSet<CallbackHandle>>();
         private readonly SemaphoreSlim _lock = new SemaphoreSlim(1, 1);
-#pragma warning disable CA2213 // Disposable fields should be disposed
-#pragma warning disable IDE0069 // Disposable fields should be disposed
         private readonly CancellationTokenSource _cts =
             new CancellationTokenSource();
         private readonly Timer _timer;
-#pragma warning restore IDE0069 // Disposable fields should be disposed
-#pragma warning restore CA2213 // Disposable fields should be disposed
     }
 }

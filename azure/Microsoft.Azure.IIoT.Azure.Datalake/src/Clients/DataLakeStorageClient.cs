@@ -471,7 +471,7 @@ namespace Microsoft.Azure.IIoT.Azure.Datalake.Clients {
                             continue;
                         }
                         if (item.Name.StartsWith(path, StringComparison.InvariantCultureIgnoreCase)) {
-                            results.Add(item.Name.Substring(path.Length + 1));
+                            results.Add(item.Name[(path.Length + 1)..]);
                         }
                     }
                 }
@@ -490,7 +490,7 @@ namespace Microsoft.Azure.IIoT.Azure.Datalake.Clients {
                     await foreach (var item in _filesystem.GetPathsAsync(path, cancellationToken: ct)) {
                         if (item.IsDirectory ?? false) {
                             if (item.Name.StartsWith(path, StringComparison.InvariantCultureIgnoreCase)) {
-                                results.Add(item.Name.Substring(path.Length + 1));
+                                results.Add(item.Name[(path.Length + 1)..]);
                             }
                         }
                     }

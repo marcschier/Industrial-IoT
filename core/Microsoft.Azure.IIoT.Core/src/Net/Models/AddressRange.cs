@@ -128,7 +128,7 @@ namespace Microsoft.Azure.IIoT.Net.Models {
 
         /// <inheritdoc/>
         public override bool Equals(object obj) {
-            if (!(obj is AddressRange range)) {
+            if (obj is not AddressRange range) {
                 return false;
             }
             return Low == range.Low && High == range.High;
@@ -352,12 +352,12 @@ namespace Microsoft.Azure.IIoT.Net.Models {
                 }
                 first = false;
                 sb.Append(ip);
-                sb.Append("/");
+                sb.Append('/');
                 sb.Append(subnetSize);
                 if (Nic != kNullNicName) {
                     sb.Append(" [");
                     sb.Append(Nic);
-                    sb.Append("]");
+                    sb.Append(']');
                 }
                 start += 1L << (32 - subnetSize);
             }

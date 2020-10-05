@@ -58,7 +58,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
             if (endpointId == null || !endpointId.StartsWith("uat")) {
                 return false;
             }
-            return endpointId.Substring(3).IsBase16();
+            return endpointId[3..].IsBase16();
         }
 
         /// <summary>

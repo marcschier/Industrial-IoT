@@ -124,6 +124,7 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Provider {
             var aadConfig = new AadSpClientConfig(Config.Configuration);
             if (!string.IsNullOrEmpty(aadConfig.ClientId) &&
                 !string.IsNullOrEmpty(aadConfig.ClientSecret)) {
+#pragma warning disable CS0618 // Type or member is obsolete
                 authentication = authentication.AddAzureAD(options => {
                     options.Instance = aadConfig.InstanceUrl;
                     options.Domain = aadConfig.GetDomain();
@@ -132,6 +133,7 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Provider {
                     options.ClientSecret = aadConfig.ClientSecret;
                     options.CallbackPath = "/signin-oidc";
                 });
+#pragma warning restore CS0618 // Type or member is obsolete
             }
 
             // Attach more in the future ...

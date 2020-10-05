@@ -34,7 +34,7 @@ namespace Opc.Ua.Nodeset {
 
         /// <inheritdoc/>
         public override bool Equals(object obj) {
-            if (!(obj is ViewNodeModel model)) {
+            if (obj is not ViewNodeModel model) {
                 return false;
             }
             if (ContainsNoLoops != model.ContainsNoLoops) {

@@ -59,7 +59,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Transport {
             // Decode request
             var message = _encoder.Decode(context.Request.ContentType,
                 context.Request.Body);
-            if (!(message is IServiceRequest request)) {
+            if (message is not IServiceRequest request) {
                 _logger.Debug("Bad UA service request.");
                 return false;
             }

@@ -231,13 +231,13 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Clients {
                 throw new ArgumentNullException(nameof(content));
             }
             if (content.DiscoveryUrl == null) {
-                throw new ArgumentNullException(nameof(content.DiscoveryUrl));
+                throw new ArgumentException("Missing discovery url", nameof(content));
             }
             var request = _httpClient.NewRequest($"{_serviceUri}/v2/applications",
                 Resource.Platform);
             _serializer.SerializeToRequest(request, content);
-            if (request.Options.Timeout == null) {
-                request.Options.Timeout = TimeSpan.FromMinutes(3);
+            if (request.GetTimeout() == null) {
+                request.SetTimeout(TimeSpan.FromMinutes(3));
             }
             var response = await _httpClient.PostAsync(request, ct).ConfigureAwait(false);
             response.Validate();
@@ -251,8 +251,8 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Clients {
             var request = _httpClient.NewRequest($"{_serviceUri}/v2/applications/discover",
                 Resource.Platform);
             _serializer.SerializeToRequest(request, content);
-            if (request.Options.Timeout == null) {
-                request.Options.Timeout = TimeSpan.FromMinutes(3);
+            if (request.GetTimeout() == null) {
+                request.SetTimeout(TimeSpan.FromMinutes(3));
             }
             var response = await _httpClient.PostAsync(request, ct).ConfigureAwait(false);
             response.Validate();

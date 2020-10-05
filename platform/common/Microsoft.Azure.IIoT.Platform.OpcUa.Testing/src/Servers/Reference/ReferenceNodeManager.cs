@@ -1746,7 +1746,7 @@ namespace Reference {
 
             var typeInfo = TypeInfo.Construct(value);
 
-            if (!(node is MultiStateValueDiscreteState variable) ||
+            if (node is not MultiStateValueDiscreteState variable ||
                 typeInfo == null ||
                 typeInfo == Opc.Ua.TypeInfo.Unknown ||
                 !TypeInfo.IsNumericType(typeInfo.BuiltInType)) {
@@ -1833,15 +1833,15 @@ namespace Reference {
             ref DateTime timestamp) {
             var typeInfo = TypeInfo.Construct(value);
 
-            if (!(node is PropertyState<Opc.Ua.Range> variable) ||
-                !(value is ExtensionObject extensionObject) ||
+            if (node is not PropertyState<Opc.Ua.Range> variable ||
+                value is not ExtensionObject extensionObject ||
                 typeInfo == null ||
                 typeInfo == Opc.Ua.TypeInfo.Unknown) {
                 return StatusCodes.BadTypeMismatch;
             }
 
-            if (!(extensionObject.Body is Opc.Ua.Range newRange) ||
-                !(variable.Parent is AnalogItemState parent)) {
+            if (extensionObject.Body is not Opc.Ua.Range newRange ||
+                variable.Parent is not AnalogItemState parent) {
                 return StatusCodes.BadTypeMismatch;
             }
 

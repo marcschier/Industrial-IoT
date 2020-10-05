@@ -58,7 +58,7 @@ namespace Microsoft.Azure.IIoT.Net.Models {
 
         /// <inheritdoc/>
         public override bool Equals(object obj) {
-            if (!(obj is PortRange range)) {
+            if (obj is not PortRange range) {
                 return false;
             }
             return _lower == range._lower && _upper == range._upper;

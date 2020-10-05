@@ -103,9 +103,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Transport {
 
         /// <inheritdoc/>
         public void ChannelClosed(uint channelId) {
-#pragma warning disable CA2000 // Dispose objects before losing scope
             if (_channels.TryRemove(channelId, out var channel)) {
-#pragma warning restore CA2000 // Dispose objects before losing scope
                 Utils.SilentDispose(channel);
                 _logger.Information("Channel {channelId} closed", channelId);
             }
@@ -128,12 +126,8 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Transport {
                     channel.SetRequestReceivedCallback(OnRequestReceived);
 
                     // Wrap socket in channel to read and write.
-#pragma warning disable IDE0068 // Use recommended dispose pattern
-#pragma warning disable CA2000 // Dispose objects before losing scope
                     var socket = new WebSocketMessageSocket(channel, webSocket,
                         _bufferManager, _quotas.MaxBufferSize, _logger);
-#pragma warning restore CA2000 // Dispose objects before losing scope
-#pragma warning restore IDE0068 // Use recommended dispose pattern
                     var channelId = (uint)Interlocked.Increment(ref _lastChannelId);
                     channel.Attach(channelId, socket);
                     if (!_channels.TryAdd(channelId, channel)) {

@@ -9,9 +9,7 @@ namespace Opc.Ua {
     /// <summary>
     /// Represents id based access to node attributes
     /// </summary>
-#pragma warning disable CA1710 // Identifiers should have correct suffix
     public interface INodeAttributes : IEnumerable<KeyValuePair<uint, DataValue>> {
-#pragma warning restore CA1710 // Identifiers should have correct suffix
 
         /// <summary>
         /// Indexed access to values

@@ -117,7 +117,7 @@ namespace DataAccess {
             NodeState node,
             ref object value) {
 
-            if (!(context.SystemHandle is UnderlyingSystem system)) {
+            if (context.SystemHandle is not UnderlyingSystem system) {
                 return StatusCodes.BadCommunicationError;
             }
 
@@ -165,7 +165,7 @@ namespace DataAccess {
             // check if the parent segments need to be returned.
             if (browser.IsRequired(ReferenceTypeIds.Organizes, true)) {
 
-                if (!(context.SystemHandle is UnderlyingSystem system)) {
+                if (context.SystemHandle is not UnderlyingSystem system) {
                     return;
                 }
 

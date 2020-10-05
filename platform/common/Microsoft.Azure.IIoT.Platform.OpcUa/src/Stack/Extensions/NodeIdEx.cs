@@ -198,7 +198,7 @@ namespace Opc.Ua.Extensions {
             if (nsUri != null) {
                 buffer.Append(nsUri);
                 // Append node id as fragment
-                buffer.Append("#");
+                buffer.Append('#');
             }
             switch (idType) {
                 case IdType.Numeric:
@@ -209,7 +209,7 @@ namespace Opc.Ua.Extensions {
                     }
                     buffer.Append("i=");
                     if (identifier == null) {
-                        buffer.Append("0"); // null
+                        buffer.Append('0'); // null
                         break;
                     }
                     buffer.AppendFormat(CultureInfo.InvariantCulture,
@@ -299,11 +299,11 @@ namespace Opc.Ua.Extensions {
 
             var and = value?.IndexOf('&', StringComparison.InvariantCulture) ?? -1;
             if (and != -1) {
-                var remainder = value.Substring(and);
+                var remainder = value[and..];
                 // See if the query contains the server identfier
                 if (remainder.StartsWith("&srv=", StringComparison.Ordinal)) {
                     // The uri denotes an id in a namespace on a server
-                    srvUri = remainder.Substring(5);
+                    srvUri = remainder[5..];
                 }
                 else {
                     throw new FormatException($"{value} does not contain ?srv=");
@@ -327,7 +327,7 @@ namespace Opc.Ua.Extensions {
                 if (text[1] == '=' ||
                     text[1] == '_') {
                     try {
-                        return ParseIdentifier(text[0], text.Substring(2));
+                        return ParseIdentifier(text[0], text[2..]);
                     }
                     catch (FormatException) {
                     }
@@ -402,7 +402,7 @@ namespace Opc.Ua.Extensions {
         private static bool TryGetDataTypeName(object identifier, out string name) {
             name = null;
             try {
-                if (!(identifier is uint uid)) {
+                if (identifier is not uint uid) {
                     return false;
                 }
                 if (uid <= int.MaxValue) {

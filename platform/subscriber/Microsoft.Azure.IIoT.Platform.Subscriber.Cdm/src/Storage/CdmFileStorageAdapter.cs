@@ -74,7 +74,7 @@ namespace Microsoft.Azure.IIoT.Platform.Subscriber.Cdm.Storage {
             }
             catch (Exception ex) {
                 _logger.Error(ex, "Failed to read data from {corpus}", corpusPath);
-                throw ex;
+                throw;
             }
         }
 
@@ -93,7 +93,7 @@ namespace Microsoft.Azure.IIoT.Platform.Subscriber.Cdm.Storage {
             }
             catch (Exception ex) {
                 _logger.Error(ex, "Failed to write data to {corpus}", corpusPath);
-                throw ex;
+                throw;
             }
         }
 
@@ -115,7 +115,7 @@ namespace Microsoft.Azure.IIoT.Platform.Subscriber.Cdm.Storage {
             }
             catch (Exception ex) {
                 _logger.Error(ex, "Failed to write data to {corpus}", corpusPath);
-                throw ex;
+                throw;
             }
         }
 
@@ -128,7 +128,7 @@ namespace Microsoft.Azure.IIoT.Platform.Subscriber.Cdm.Storage {
             }
             catch (Exception ex) {
                 _logger.Error(ex, "Failed to get files in {corpus}", folderCorpusPath);
-                throw ex;
+                throw;
             }
         }
 
@@ -200,7 +200,7 @@ namespace Microsoft.Azure.IIoT.Platform.Subscriber.Cdm.Storage {
         /// <returns></returns>
         private string FormatCorpusPath(string corpusPath) {
             if (corpusPath.StartsWith("adls:")) {
-                corpusPath = corpusPath.Substring(5);
+                corpusPath = corpusPath[5..];
             }
             return corpusPath.TrimStart('/');
         }

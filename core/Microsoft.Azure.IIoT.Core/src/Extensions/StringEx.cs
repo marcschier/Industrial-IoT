@@ -167,7 +167,7 @@ namespace System {
 
             static string CamelCase(string[] words, int i) {
                 return words[i].Substring(0, 1)
-                    .ToUpper(CultureInfo.InvariantCulture) + words[i].Substring(1);
+                    .ToUpper(CultureInfo.InvariantCulture) + words[i][1..];
             }
             var result = CamelCase(words, 0);
             for (var i = 1; i < words.Length; i++) {
@@ -196,7 +196,7 @@ namespace System {
                 start += findStart.Length;
             }
             if (string.IsNullOrEmpty(findEnd)) {
-                return value.Substring(start);
+                return value[start..];
             }
             var end = value.IndexOf(findEnd, start, StringComparison.Ordinal);
             if (end == -1) {
@@ -235,7 +235,7 @@ namespace System {
                 if (options == StringSplitOptions.RemoveEmptyEntries && next == value.Length) {
                     yield break;
                 }
-                yield return value.Substring(next);
+                yield return value[next..];
             }
         }
 

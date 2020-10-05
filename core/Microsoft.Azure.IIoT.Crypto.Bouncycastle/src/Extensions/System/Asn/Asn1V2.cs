@@ -579,7 +579,7 @@ namespace System.Security.Cryptography.Asn1 {
 
             if (bytes.Length % 2 != 0) {
                 DecoderFallback.CreateFallbackBuffer().Fallback(
-                    bytes.Slice(bytes.Length - 1).ToArray(),
+                    bytes[^1..].ToArray(),
                     bytes.Length - 1);
 
                 Debug.Fail("Fallback should have thrown");

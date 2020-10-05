@@ -28,7 +28,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Models {
                 var dn = Utils.ParseDistinguishedName(cert.Subject);
                 var prefix = dn
                     .FirstOrDefault(x => x.StartsWith("CN=",
-                    StringComparison.OrdinalIgnoreCase)).Substring(3);
+                    StringComparison.OrdinalIgnoreCase))[3..];
                 return prefix + " [" + cert.Thumbprint + "]";
             }
             catch {

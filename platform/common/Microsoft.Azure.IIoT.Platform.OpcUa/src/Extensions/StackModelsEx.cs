@@ -439,10 +439,8 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa {
                     throw new ServiceResultException(StatusCodes.BadNotSupported,
                         $"User/passord token format is not supported.");
                 case CredentialType.X509Certificate:
-#pragma warning disable CA2000 // Dispose objects before losing scope
                     return new UserIdentity(new X509Certificate2(
                         authentication.Value?.ConvertTo<byte[]>()));
-#pragma warning restore CA2000 // Dispose objects before losing scope
                 case CredentialType.JwtToken:
                     return new UserIdentity(new IssuedIdentityToken {
                         DecryptedTokenData = authentication.Value?.ConvertTo<byte[]>()

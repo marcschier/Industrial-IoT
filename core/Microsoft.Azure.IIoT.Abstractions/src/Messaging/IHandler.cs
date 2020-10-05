@@ -8,7 +8,5 @@ namespace Microsoft.Azure.IIoT.Messaging {
     /// <summary>
     /// Handles things
     /// </summary>
-#pragma warning disable CA1040 // Avoid empty interfaces
     public interface IHandler { }
-#pragma warning restore CA1040 // Avoid empty interfaces
 }

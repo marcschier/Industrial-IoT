@@ -77,7 +77,7 @@ namespace HistoricalAccess {
             index = Name.LastIndexOf('.');
 
             if (index > 0) {
-                Name = Name.Substring(index + 1);
+                Name = Name[(index + 1)..];
             }
         }
 

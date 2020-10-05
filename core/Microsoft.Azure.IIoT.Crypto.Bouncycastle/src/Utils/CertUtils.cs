@@ -197,7 +197,7 @@ namespace Microsoft.Azure.IIoT.Crypto.Utils {
 
             buffer.Append(subjectName.Substring(0, index + 3));
             buffer.Append(hostname ?? Dns.GetHostName());
-            buffer.Append(subjectName.Substring(index + "DC=localhost".Length));
+            buffer.Append(subjectName[(index + "DC=localhost".Length)..]);
 
             return buffer.ToString();
         }

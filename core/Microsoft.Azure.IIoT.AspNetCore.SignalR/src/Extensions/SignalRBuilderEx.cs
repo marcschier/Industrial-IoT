@@ -71,9 +71,8 @@ namespace Microsoft.Extensions.DependencyInjection {
             builder.Services.AddTransient<IConfigureOptions<MessagePackHubProtocolOptions>>(services =>
                 new ConfigureNamedOptions<MessagePackHubProtocolOptions>(Options.DefaultName, options => {
                     var provider = services.GetService<IMessagePackSerializerOptionsProvider>();
-                    var resolvers = provider?.Resolvers;
-                    if (resolvers != null) {
-                        options.FormatterResolvers = resolvers.ToList();
+                    if (provider != null) {
+                        options.SerializerOptions = provider.Options;
                     }
                 }));
             return builder;

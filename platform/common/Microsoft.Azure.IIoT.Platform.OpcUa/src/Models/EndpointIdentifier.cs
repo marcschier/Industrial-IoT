@@ -32,7 +32,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Models {
             if (obj is string s) {
                 return s == ToString();
             }
-            if (!(obj is EndpointIdentifier key)) {
+            if (obj is not EndpointIdentifier key) {
                 return false;
             }
             if (!Endpoint.IsSameAs(key.Endpoint)) {

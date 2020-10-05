@@ -561,7 +561,7 @@ namespace HistoricalEvents {
             }
 
 
-            if (!(session.RestoreHistoryContinuationPoint(continuationPoint) is HistoryReadRequest request)) {
+            if (session.RestoreHistoryContinuationPoint(continuationPoint) is not HistoryReadRequest request) {
                 return null;
             }
 
@@ -621,9 +621,7 @@ namespace HistoricalEvents {
         }
 
         private readonly HistoricalEventsServerConfiguration _configuration;
-#pragma warning disable IDE0069 // Disposable fields should be disposed
         private Timer _simulationTimer;
-#pragma warning restore IDE0069 // Disposable fields should be disposed
         private readonly ReportGenerator _generator;
     }
 }

@@ -49,7 +49,7 @@ namespace Opc.Ua.Nodeset {
 
         /// <inheritdoc/>
         public override bool Equals(object obj) {
-            if (!(obj is NodeReferenceModel reference)) {
+            if (obj is not NodeReferenceModel reference) {
                 return false;
             }
             if (!Utils.IsEqual(reference.ReferenceTypeId, ReferenceTypeId)) {

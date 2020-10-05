@@ -13,6 +13,8 @@ namespace Microsoft.Azure.IIoT.Utils {
     /// <summary>
     /// Retry helper class with different retry policies
     /// </summary>
+#pragma warning disable CA1068 // CancellationToken parameters must come last
+#pragma warning disable IDE1006 // Naming Styles
     public static class Retry {
 
         /// <summary>Retry count max</summary>
@@ -754,4 +756,6 @@ namespace Microsoft.Azure.IIoT.Utils {
             }
         }
     }
+#pragma warning restore IDE1006 // Naming Styles
+#pragma warning restore CA1068 // CancellationToken parameters must come last
 }

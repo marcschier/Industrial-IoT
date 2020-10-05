@@ -60,11 +60,7 @@ namespace Microsoft.Azure.IIoT.Http.Tunnel.Services {
         /// <inheritdoc/>
         public TimeSpan Create(string name, out HttpMessageHandler handler) {
             var resource = name == HttpHandlerFactory.DefaultResourceId ? null : name;
-#pragma warning disable IDE0067 // Dispose objects before losing scope
-#pragma warning disable CA2000 // Dispose objects before losing scope
             var del = new HttpHandlerDelegate(new HttpTunnelClientHandler(this),
-#pragma warning restore CA2000 // Dispose objects before losing scope
-#pragma warning restore IDE0067 // Dispose objects before losing scope
                 resource, _handlers.Where(h => h.IsFor?.Invoke(resource) ?? true),
                 null, _logger);
             handler = del;
@@ -153,9 +149,7 @@ namespace Microsoft.Azure.IIoT.Http.Tunnel.Services {
                 var buffers = SerializeRequest(tunnelRequest, payload);
 
                 var requestId = Guid.NewGuid().ToString();
-#pragma warning disable CA2000 // Dispose objects before losing scope
                 var requestTask = new RequestTask(kDefaultTimeout, ct);
-#pragma warning restore CA2000 // Dispose objects before losing scope
                 if (!_outer._outstanding.TryAdd(requestId, requestTask)) {
                     throw new InvalidOperationException("Could not add completion.");
                 }

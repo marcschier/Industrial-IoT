@@ -134,7 +134,7 @@ namespace Opc.Ua.Extensions {
                             "Reference path starts in < but does not end in >");
                     }
                 }
-                var reference = element.Substring(index, to - index);
+                var reference = element[index..to];
                 // TODO: Deescape &<, &>, &/, &., &:, &&
                 index = to + 1;
                 pathElement.ReferenceTypeId = reference.ToNodeId(context);
@@ -145,7 +145,7 @@ namespace Opc.Ua.Extensions {
                     }
                 }
             }
-            var target = element.Substring(index);
+            var target = element[index..];
             // TODO: Deescape &<, &>, &/, &., &:, &&
             if (string.IsNullOrEmpty(target)) {
                 throw new FormatException("Bad target name is empty");

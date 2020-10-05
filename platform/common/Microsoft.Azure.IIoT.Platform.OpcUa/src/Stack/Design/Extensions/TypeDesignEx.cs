@@ -99,7 +99,7 @@ namespace Opc.Ua.Design.Schema {
         /// <param name="type"></param>
         /// <param name="merge"></param>
         private static void MergeIn(this TypeDesign type, VariableTypeDesign merge) {
-            if (!(type is VariableTypeDesign varType)) {
+            if (type is not VariableTypeDesign varType) {
                 throw new FormatException(nameof(merge));
             }
             if (merge.DecodedValue != null) {
@@ -137,7 +137,7 @@ namespace Opc.Ua.Design.Schema {
         /// <param name="type"></param>
         /// <param name="merge"></param>
         private static void MergeIn(this TypeDesign type, ObjectTypeDesign merge) {
-            if (!(type is ObjectTypeDesign objType)) {
+            if (type is not ObjectTypeDesign objType) {
                 throw new FormatException(nameof(merge));
             }
             if (merge.SupportsEventsSpecified) {

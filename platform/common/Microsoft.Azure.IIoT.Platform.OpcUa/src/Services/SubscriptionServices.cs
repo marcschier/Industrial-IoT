@@ -163,9 +163,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
             public async Task<SubscriptionNotificationModel> GetSnapshotAsync() {
                 await _lock.WaitAsync().ConfigureAwait(false);
                 try {
-#pragma warning disable CA2000 // Dispose objects before losing scope
                     var subscription = GetSubscription(null, null, false);
-#pragma warning restore CA2000 // Dispose objects before losing scope
                     if (subscription == null) {
                         return null;
                     }
@@ -855,10 +853,10 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
                     if (eventArgs?.NotificationValue == null || monitoredItem?.Subscription?.Session == null) {
                         return;
                     }
-                    if (!(eventArgs.NotificationValue is MonitoredItemNotification notification)) {
+                    if (eventArgs.NotificationValue is not MonitoredItemNotification notification) {
                         return;
                     }
-                    if (!(notification.Value is DataValue value)) {
+                    if (notification.Value is not DataValue value) {
                         return;
                     }
 
@@ -946,7 +944,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
 
             /// <inheritdoc/>
             public override bool Equals(object obj) {
-                if (!(obj is MonitoredItemWrapper item)) {
+                if (obj is not MonitoredItemWrapper item) {
                     return false;
                 }
                 if (Template.Id != item.Template.Id) {

@@ -96,7 +96,7 @@ namespace Opc.Ua.Encoders {
             if (contentType.EqualsIgnoreCase(ContentMimeType.UaBinary)) {
                 return new BinaryDecoder(stream, _context);
             }
-#pragma warning disable CA2000 // Dispose objects before losing scope
+
             if (contentType.EqualsIgnoreCase(ContentMimeType.UaXml)) {
                 return new XmlDecoder(null, XmlReader.Create(stream), _context);
             }
@@ -104,7 +104,7 @@ namespace Opc.Ua.Encoders {
                 return new JsonDecoder(null, new JsonTextReader(
                     new StreamReader(stream)), _context);
             }
-#pragma warning restore CA2000 // Dispose objects before losing scope
+
             throw new ArgumentException("Bad content type", nameof(contentType));
         }
 
@@ -126,7 +126,7 @@ namespace Opc.Ua.Encoders {
                     UseReversibleEncoding = false
                 };
             }
-#pragma warning disable CA2000 // Dispose objects before losing scope
+
             if (contentType.EqualsIgnoreCase(ContentMimeType.UaJsonReference)) {
                 return new JsonEncoder(_context, true, new StreamWriter(stream));
             }
@@ -141,7 +141,7 @@ namespace Opc.Ua.Encoders {
                     new XmlQualifiedName("ua", Namespaces.OpcUaXsd),
                         XmlWriter.Create(stream), _context);
             }
-#pragma warning restore CA2000 // Dispose objects before losing scope
+
             throw new ArgumentException("Bad content type", nameof(contentType));
         }
 

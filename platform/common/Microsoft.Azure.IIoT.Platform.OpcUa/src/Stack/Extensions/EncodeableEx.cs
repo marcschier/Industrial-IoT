@@ -20,9 +20,7 @@ namespace Opc.Ua.Extensions {
         /// <returns></returns>
         public static XmlElement AsXmlElement(this IEncodeable encodeable,
             ServiceMessageContext context) {
-#pragma warning disable IDE0067 // Dispose objects before losing scope
             var encoder = new XmlEncoder(context);
-#pragma warning restore IDE0067 // Dispose objects before losing scope
             encoder.WriteExtensionObjectBody(encodeable);
             var document = new XmlDocument {
                 InnerXml = encoder.Close()

@@ -158,7 +158,7 @@ namespace DataAccess {
                 var index = segmentPath.LastIndexOf('/');
 
                 if (index != -1) {
-                    segmentName = segmentName.Substring(index + 1);
+                    segmentName = segmentName[(index + 1)..];
                 }
 
                 if (string.IsNullOrEmpty(segmentName)) {
@@ -221,7 +221,7 @@ namespace DataAccess {
                             continue;
                         }
 
-                        blockPath = blockPath.Substring(length + 1);
+                        blockPath = blockPath[(length + 1)..];
                     }
 
                     // extract segment name.
@@ -285,14 +285,14 @@ namespace DataAccess {
                             continue;
                         }
 
-                        blockPath = blockPath.Substring(length + 1);
+                        blockPath = blockPath[(length + 1)..];
                     }
 
                     // check if there are no more segments in the path.
                     var index = blockPath.IndexOf('/');
 
                     if (index == -1) {
-                        blockPath = blockPath.Substring(index + 1);
+                        blockPath = blockPath[(index + 1)..];
 
                         if (!blocks.Contains(blockPath)) {
                             blocks.Add(blockPath);
@@ -376,7 +376,7 @@ namespace DataAccess {
                     }
 
                     if (blockType.StartsWith(blockId, StringComparison.Ordinal)) {
-                        blockType = blockType.Substring(length + 1);
+                        blockType = blockType[(length + 1)..];
                         break;
                     }
 

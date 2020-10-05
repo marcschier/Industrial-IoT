@@ -174,9 +174,7 @@ namespace Opc.Ua.Nodeset {
             state.UserWriteMask = nodeModel.UserWriteMask ?? AttributeWriteMask.None;
             state.Initialized = true;
             foreach (var child in nodeModel.GetChildren(context)) {
-#pragma warning disable CA2000 // Dispose objects before losing scope
                 state.AddChild(child.ToNodeState(context, state) as BaseInstanceState);
-#pragma warning restore CA2000 // Dispose objects before losing scope
             }
             foreach (var reference in nodeModel.References) {
                 state.AddReference(reference.ReferenceTypeId, reference.IsInverse,

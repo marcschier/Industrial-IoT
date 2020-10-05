@@ -213,7 +213,7 @@ namespace Opc.Ua.Design.Schema {
                     if (browsePath.StartsWith(parent.SymbolicId.Name, StringComparison.Ordinal) &&
                         browsePath[parent.SymbolicId.Name.Length] == NodeDesign.kPathChar[0]) {
                         // Get relative browse path from parent
-                        browsePath = browsePath.Substring(parent.SymbolicId.Name.Length + 1);
+                        browsePath = browsePath[(parent.SymbolicId.Name.Length + 1)..];
                     }
                     // Get instance using browse path
                     if (parent.Hierarchy.Nodes.TryGetValue(browsePath, out var instance)) {

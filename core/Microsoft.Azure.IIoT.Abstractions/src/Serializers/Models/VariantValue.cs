@@ -214,8 +214,6 @@ namespace Microsoft.Azure.IIoT.Serializers {
             return TypeCode.String;
         }
 
-#pragma warning disable CA1062 // Validate arguments of public methods
-#pragma warning disable CA2225 // Operator overloads have named alternates
         /// <inheritdoc/>
         public bool ToBoolean(IFormatProvider provider) {
             if (TryGetBoolean(out var value, false, provider)) {
@@ -620,8 +618,6 @@ namespace Microsoft.Azure.IIoT.Serializers {
         /// <inheritdoc/>
         public static implicit operator VariantValue(TimeSpan? value) =>
             new PrimitiveValue(value);
-#pragma warning restore CA2225 // Operator overloads have named alternates
-#pragma warning restore CA1062 // Validate arguments of public methods
 
         /// <inheritdoc/>
         public virtual object ToType(Type conversionType, IFormatProvider provider) {
@@ -736,9 +732,8 @@ namespace Microsoft.Azure.IIoT.Serializers {
             if (o is VariantValue v) {
                 return Comparer.Equals(this, v);
             }
-#pragma warning disable CA1062 // Validate arguments of public methods
+
             return VariantValueComparer.EqualValues(this, o);
-#pragma warning restore CA1062 // Validate arguments of public methods
         }
 
         /// <inheritdoc/>
@@ -774,7 +769,7 @@ namespace Microsoft.Azure.IIoT.Serializers {
                 else {
                     sb.Append(raw.ToString());
                 }
-                sb.Append("\"");
+                sb.Append('"');
             }
 
             // Append tests to inspect value recognition
@@ -801,7 +796,7 @@ namespace Microsoft.Azure.IIoT.Serializers {
             AppendProperty(sb, nameof(IsDateTime), IsDateTime);
             AppendProperty(sb, nameof(IsTimeSpan), IsTimeSpan);
             sb.AppendLine();
-            sb.Append("}");
+            sb.Append('}');
 
             return sb.ToString();
         }
@@ -1514,12 +1509,12 @@ namespace Microsoft.Azure.IIoT.Serializers {
                 case float _:
                 case double _:
                 case decimal _:
-                case BigInteger b:
+                case BigInteger _:
                     if (strict) {
                         return false;
                     }
                     try {
-                        o = (byte)b;
+                        o = (byte)raw;
                         return true;
                     }
                     catch {
@@ -2037,10 +2032,7 @@ namespace Microsoft.Azure.IIoT.Serializers {
             new VariantValueComparer();
 
         /// <inheritdoc/>
-#pragma warning disable CA1034 // Nested types should not be visible
-        public class VariantValueComparer : IEqualityComparer<VariantValue>,
-#pragma warning restore CA1034 // Nested types should not be visible
-            IComparer<VariantValue> {
+        public class VariantValueComparer : IEqualityComparer<VariantValue>, IComparer<VariantValue> {
 
             /// <inheritdoc/>
             public bool Equals(VariantValue x, VariantValue y) {

@@ -127,9 +127,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
             _publisher = _scope.Resolve<IPublisherServiceApi>();
             _vault = _scope.Resolve<IVaultServiceApi>();
             _serializer = _scope.Resolve<IJsonSerializer>();
-#pragma warning disable CA2000 // Dispose objects before losing scope
             if (_scope.TryResolve(out _metrics)) {
-#pragma warning restore CA2000 // Dispose objects before losing scope
                 _metrics.Start();
             }
         }

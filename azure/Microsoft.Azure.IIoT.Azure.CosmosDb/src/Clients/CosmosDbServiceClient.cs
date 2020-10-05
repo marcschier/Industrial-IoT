@@ -39,12 +39,10 @@ namespace Microsoft.Azure.IIoT.Azure.CosmosDb.Clients {
                 databaseId = "default";
             }
             var cs = ConnectionString.Parse(_config.DbConnectionString);
-#pragma warning disable CA2000 // Dispose objects before losing scope
             var client = new CosmosClient(cs.Endpoint, cs.SharedAccessKey,
                 new CosmosClientOptions {
                     ConsistencyLevel = options?.Consistency.ToConsistencyLevel()
                 });
-#pragma warning restore CA2000 // Dispose objects before losing scope
             var response = await client.CreateDatabaseIfNotExistsAsync(databaseId,
                 _config.ThroughputUnits).ConfigureAwait(false);
             return new DocumentDatabase(response.Database, _serializer, _logger);

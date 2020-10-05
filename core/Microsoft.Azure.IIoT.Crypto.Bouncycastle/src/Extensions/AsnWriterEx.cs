@@ -38,7 +38,7 @@ namespace Microsoft.Azure.IIoT.Crypto.Models {
                 if (newStart == integer.Length) {
                     newStart--;
                 }
-                integer = integer.Slice(newStart);
+                integer = integer[newStart..];
             }
             writer.WriteInteger(new System.Numerics.BigInteger(integer, true, true));
         }

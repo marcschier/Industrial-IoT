@@ -212,19 +212,15 @@ namespace Microsoft.Azure.IIoT.Services.Docker {
         /// </summary>
         /// <returns></returns>
         private static DockerClient CreateDockerClient() {
-#pragma warning disable CA2000 // Dispose objects before losing scope
             return new DockerClientConfiguration(new Uri(
                 RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
                     ? "npipe://./pipe/docker_engine"
                     : "unix:///var/run/docker.sock"
             )).CreateClient();
-#pragma warning restore CA2000 // Dispose objects before losing scope
         }
 
-#pragma warning disable IDE0052 // Remove unread private members
         private readonly ILogger _logger;
         private readonly IHealthCheck _check;
-#pragma warning restore IDE0052 // Remove unread private members
         private readonly SemaphoreSlim _lock = new SemaphoreSlim(1, 1);
     }
 }

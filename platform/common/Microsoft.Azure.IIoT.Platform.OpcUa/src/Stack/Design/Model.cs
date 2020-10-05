@@ -58,18 +58,18 @@ namespace Opc.Ua.Design {
                 var model = design.DeserializeFromXml<ModelDesign>();
                 return new ModelDesignFile(model, assigner, resolver ?? new CompositeModelResolver());
             }
-            catch (Exception ex) {
+            catch {
                 // Try to load as type dictionary
                 if (!design.CanSeek) {
                     // Stream is already partitially read - need to reset - if we cannot throw
-                    throw ex;
+                    throw;
                 }
                 try {
                     design.Seek(0, SeekOrigin.Begin);
                     return LoadTypeDictionary(design, assigner, resolver);
                 }
                 catch {
-                    throw ex;
+                    throw;
                 }
             }
         }

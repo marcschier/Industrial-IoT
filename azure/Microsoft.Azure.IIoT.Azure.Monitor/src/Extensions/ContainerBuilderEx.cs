@@ -62,16 +62,10 @@ namespace Microsoft.Azure.IIoT.Azure.AppInsights {
             }
 
             var telemetryInitializer = new ApplicationInsightsTelemetryInitializer(processIdentity);
-
-#pragma warning disable CA2000 // Dispose objects before losing scope
             var telemetryConfig = TelemetryConfiguration.CreateDefault();
-#pragma warning restore CA2000 // Dispose objects before losing scope
             telemetryConfig.InstrumentationKey = diagnosticsConfig.InstrumentationKey;
             telemetryConfig.TelemetryInitializers.Add(telemetryInitializer);
-
-#pragma warning disable CA2000 // Dispose objects before losing scope
             var depModule = new DependencyTrackingTelemetryModule();
-#pragma warning restore CA2000 // Dispose objects before losing scope
 
             // Prevent Correlation Id to be sent to certain endpoints.
             depModule.ExcludeComponentCorrelationHttpHeadersOnDomains.Add("core.windows.net");

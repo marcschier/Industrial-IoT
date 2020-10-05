@@ -43,7 +43,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Models {
                 // use the common name as the application name.
                 foreach (var entry in subjectNameEntries) {
                     if (entry.StartsWith("CN=", StringComparison.InvariantCulture)) {
-                        entity.Name = entry.Substring(3).Trim();
+                        entity.Name = entry[3..].Trim();
                         break;
                     }
                 }

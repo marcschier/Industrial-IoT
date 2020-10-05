@@ -116,7 +116,7 @@ namespace Opc.Ua.Design {
                     }
                     try {
                         var name = line.Substring(0, index).Trim();
-                        var id = line.Substring(index + 1).Trim();
+                        var id = line[(index + 1)..].Trim();
                         if (id.StartsWith("\"", StringComparison.Ordinal)) {
                             identifiers[name] = id[1..^1];
                         }

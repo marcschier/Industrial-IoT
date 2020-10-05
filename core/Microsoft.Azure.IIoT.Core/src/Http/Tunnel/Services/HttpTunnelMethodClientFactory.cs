@@ -45,11 +45,7 @@ namespace Microsoft.Azure.IIoT.Http.Tunnel.Services {
         /// <inheritdoc/>
         public TimeSpan Create(string name, out HttpMessageHandler handler) {
             var resource = name == HttpHandlerFactory.DefaultResourceId ? null : name;
-#pragma warning disable IDE0067 // Dispose objects before losing scope
-#pragma warning disable CA2000 // Dispose objects before losing scope
             var del = new HttpHandlerDelegate(new HttpTunnelClientHandler(this),
-#pragma warning restore CA2000 // Dispose objects before losing scope
-#pragma warning restore IDE0067 // Dispose objects before losing scope
                 resource, _handlers.Where(h => h.IsFor?.Invoke(resource) ?? true),
                 null, _logger);
             handler = del;

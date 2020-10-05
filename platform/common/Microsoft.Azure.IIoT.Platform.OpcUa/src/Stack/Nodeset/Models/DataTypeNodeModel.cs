@@ -33,7 +33,7 @@ namespace Opc.Ua.Nodeset {
 
         /// <inheritdoc/>
         public override bool Equals(object obj) {
-            if (!(obj is DataTypeNodeModel model)) {
+            if (obj is not DataTypeNodeModel model) {
                 return false;
             }
             if (!Utils.IsEqual(Definition, model.Definition)) {

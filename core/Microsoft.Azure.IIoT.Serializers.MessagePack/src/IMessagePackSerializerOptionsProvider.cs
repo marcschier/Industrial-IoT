@@ -7,7 +7,7 @@
 namespace Microsoft.Azure.IIoT.Serializers {
     using global::MessagePack;
     using System.Collections.Generic;
-#if !MessagePack2
+#if MessagePack1
     using MessagePackSerializerOptions = global::MessagePack.IFormatterResolver;
 #endif
 

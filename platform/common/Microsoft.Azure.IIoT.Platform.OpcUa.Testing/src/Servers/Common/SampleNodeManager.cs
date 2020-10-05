@@ -150,7 +150,7 @@ namespace Opc.Ua.Sample {
         /// <returns>Non-null if the handle belongs to the node manager.</returns>
         protected virtual NodeState IsHandleInNamespace(object managerHandle) {
 
-            if (!(managerHandle is NodeState source)) {
+            if (managerHandle is not NodeState source) {
                 return null;
             }
 
@@ -591,7 +591,7 @@ namespace Opc.Ua.Sample {
         /// </summary>
         protected void AddTypesToTypeTree(NodeId typeId) {
 
-            if (!(Find(typeId) is BaseTypeState type)) {
+            if (Find(typeId) is not BaseTypeState type) {
                 return;
             }
 
@@ -681,7 +681,7 @@ namespace Opc.Ua.Sample {
                 foreach (var current in references) {
                     // check for valid handle.
 
-                    if (!(GetManagerHandle(SystemContext, current.Key, null) is NodeState source)) {
+                    if (GetManagerHandle(SystemContext, current.Key, null) is not NodeState source) {
                         continue;
                     }
 
@@ -851,7 +851,7 @@ namespace Opc.Ua.Sample {
                 // check for previous continuation point.
 
                 // fetch list of references.
-                if (!(continuationPoint.Data is INodeBrowser browser)) {
+                if (continuationPoint.Data is not INodeBrowser browser) {
                     // create a new browser.
                     browser = source.CreateBrowser(
                         systemContext,
@@ -1078,7 +1078,7 @@ namespace Opc.Ua.Sample {
 
                     // check for valid handle.
 
-                    if (!(GetManagerHandle(systemContext, nodeToRead.NodeId, operationCache) is NodeState source)) {
+                    if (GetManagerHandle(systemContext, nodeToRead.NodeId, operationCache) is not NodeState source) {
                         continue;
                     }
 
@@ -1191,7 +1191,7 @@ namespace Opc.Ua.Sample {
 
                     // check for valid handle.
 
-                    if (!(GetManagerHandle(systemContext, nodeToRead.NodeId, operationCache) is NodeState source)) {
+                    if (GetManagerHandle(systemContext, nodeToRead.NodeId, operationCache) is not NodeState source) {
                         continue;
                     }
 
@@ -1200,7 +1200,7 @@ namespace Opc.Ua.Sample {
 
                     // only variables supported.
 
-                    if (!(source is BaseVariableState variable)) {
+                    if (source is not BaseVariableState variable) {
                         errors[ii] = StatusCodes.BadHistoryOperationUnsupported;
                         continue;
                     }
@@ -1264,7 +1264,7 @@ namespace Opc.Ua.Sample {
             HistoryReadResult result) {
             // check for variable.
 
-            if (!(source is BaseVariableState variable)) {
+            if (source is not BaseVariableState variable) {
                 return StatusCodes.BadHistoryOperationUnsupported;
             }
 
@@ -1382,7 +1382,7 @@ namespace Opc.Ua.Sample {
 
                     // check for valid handle.
 
-                    if (!(GetManagerHandle(systemContext, nodeToWrite.NodeId, operationCache) is NodeState source)) {
+                    if (GetManagerHandle(systemContext, nodeToWrite.NodeId, operationCache) is not NodeState source) {
                         continue;
                     }
 
@@ -1473,7 +1473,7 @@ namespace Opc.Ua.Sample {
 
                     // check for valid handle.
 
-                    if (!(GetManagerHandle(systemContext, nodeToUpdate.NodeId, operationCache) is NodeState source)) {
+                    if (GetManagerHandle(systemContext, nodeToUpdate.NodeId, operationCache) is not NodeState source) {
                         continue;
                     }
 
@@ -1541,7 +1541,7 @@ namespace Opc.Ua.Sample {
 
                     // check for valid handle.
 
-                    if (!(GetManagerHandle(systemContext, methodToCall.ObjectId, operationCache) is NodeState source)) {
+                    if (GetManagerHandle(systemContext, methodToCall.ObjectId, operationCache) is not NodeState source) {
                         continue;
                     }
 
@@ -1721,7 +1721,7 @@ namespace Opc.Ua.Sample {
 
                 // check if the object supports subscritions.
 
-                if (!(sourceId is BaseObjectState instance) || instance.EventNotifier != EventNotifiers.SubscribeToEvents) {
+                if (sourceId is not BaseObjectState instance || instance.EventNotifier != EventNotifiers.SubscribeToEvents) {
                     return StatusCodes.BadNotSupported;
                 }
 
@@ -1859,7 +1859,7 @@ namespace Opc.Ua.Sample {
                     if (monitoredItem.MonitoringAllEvents) {
                         for (var jj = 0; jj < RootNotifiers.Count; jj++) {
 
-                            if (!(RootNotifiers[jj].Handle is MonitoredNode monitoredNode)) {
+                            if (RootNotifiers[jj].Handle is not MonitoredNode monitoredNode) {
                                 continue;
                             }
 
@@ -1876,7 +1876,7 @@ namespace Opc.Ua.Sample {
                         }
 
 
-                        if (!(source.Handle is MonitoredNode monitoredNode)) {
+                        if (source.Handle is not MonitoredNode monitoredNode) {
                             continue;
                         }
 
@@ -1921,7 +1921,7 @@ namespace Opc.Ua.Sample {
 
                     // check for valid handle.
 
-                    if (!(GetManagerHandle(systemContext, itemToMonitor.NodeId, operationCache) is NodeState source)) {
+                    if (GetManagerHandle(systemContext, itemToMonitor.NodeId, operationCache) is not NodeState source) {
                         continue;
                     }
 
@@ -2041,7 +2041,7 @@ namespace Opc.Ua.Sample {
 
             // only supported for variables.
 
-            if (!(source is BaseVariableState variable)) {
+            if (source is not BaseVariableState variable) {
                 return StatusCodes.BadMonitoredItemFilterUnsupported;
             }
 
@@ -2063,7 +2063,7 @@ namespace Opc.Ua.Sample {
 
             if (filter.DeadbandType == (uint)DeadbandType.Percent) {
 
-                if (!(variable.FindChild(context, BrowseNames.EURange) is BaseVariableState euRange)) {
+                if (variable.FindChild(context, BrowseNames.EURange) is not BaseVariableState euRange) {
                     return StatusCodes.BadMonitoredItemFilterUnsupported;
                 }
 
@@ -2146,7 +2146,7 @@ namespace Opc.Ua.Sample {
 
             // create monitored node.
 
-            if (!(source.Handle is MonitoredNode monitoredNode)) {
+            if (source.Handle is not MonitoredNode monitoredNode) {
                 source.Handle = monitoredNode = new MonitoredNode(Server, this, source);
             }
 
@@ -2226,11 +2226,9 @@ namespace Opc.Ua.Sample {
         /// <summary>
         /// Creates a new sampled item.
         /// </summary>
-#pragma warning disable RECS0154 // Parameter is never used
 #pragma warning disable IDE0060 // Remove unused parameter
         private void CreateSampledItem(double samplingInterval, DataChangeMonitoredItem monitoredItem) {
 #pragma warning restore IDE0060 // Remove unused parameter
-#pragma warning restore RECS0154 // Parameter is never used
             _sampledItems.Add(monitoredItem);
 
             if (_samplingTimer == null) {
@@ -2340,7 +2338,7 @@ namespace Opc.Ua.Sample {
 
             // check for valid handle.
 
-            if (!(monitoredItem.ManagerHandle is MonitoredNode monitoredNode)) {
+            if (monitoredItem.ManagerHandle is not MonitoredNode monitoredNode) {
                 return ServiceResult.Good;
             }
 
@@ -2463,7 +2461,7 @@ namespace Opc.Ua.Sample {
 
             // check for valid handle.
 
-            if (!(monitoredItem.ManagerHandle is MonitoredNode monitoredNode)) {
+            if (monitoredItem.ManagerHandle is not MonitoredNode monitoredNode) {
                 return ServiceResult.Good;
             }
 
@@ -2552,7 +2550,7 @@ namespace Opc.Ua.Sample {
 
             // check for valid handle.
 
-            if (!(monitoredItem.ManagerHandle is MonitoredNode monitoredNode)) {
+            if (monitoredItem.ManagerHandle is not MonitoredNode monitoredNode) {
                 return ServiceResult.Good;
             }
 
@@ -2608,9 +2606,7 @@ namespace Opc.Ua.Sample {
 
         private IList<string> _namespaceUris;
         private ushort[] _namespaceIndexes;
-#pragma warning disable IDE0069 // Disposable fields should be disposed
         private Timer _samplingTimer;
-#pragma warning restore IDE0069 // Disposable fields should be disposed
         private readonly List<DataChangeMonitoredItem> _sampledItems;
         private readonly double _minimumSamplingInterval;
     }

@@ -83,7 +83,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Transport {
 
         /// <inheritdoc/>
         public bool SendAsync(IMessageSocketAsyncEventArgs args) {
-            if (!(args is WebSocketAsyncEventArgs eventArgs)) {
+            if (args is not WebSocketAsyncEventArgs eventArgs) {
                 throw new ArgumentException(nameof(args));
             }
             if (_open.IsCancellationRequested) {

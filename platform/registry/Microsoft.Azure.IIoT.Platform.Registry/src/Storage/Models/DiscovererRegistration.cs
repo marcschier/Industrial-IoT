@@ -111,7 +111,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
 
         /// <inheritdoc/>
         public override bool Equals(object obj) {
-            if (!(obj is DiscovererRegistration registration)) {
+            if (obj is not DiscovererRegistration registration) {
                 return false;
             }
             if (!base.Equals(registration)) {

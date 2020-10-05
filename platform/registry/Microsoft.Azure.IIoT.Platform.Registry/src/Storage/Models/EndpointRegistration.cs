@@ -151,9 +151,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
                     value == EntityActivationState.ActivatedAndConnected) {
                     Activated = true;
                 }
-#pragma warning disable RECS0093 // Convert 'if' to '&&' expression
                 else if (value == EntityActivationState.Deactivated) {
-#pragma warning restore RECS0093 // Convert 'if' to '&&' expression
                     Activated = false;
                 }
             }
@@ -161,7 +159,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
 
         /// <inheritdoc/>
         public override bool Equals(object obj) {
-            if (!(obj is EndpointRegistration registration)) {
+            if (obj is not EndpointRegistration registration) {
                 return false;
             }
             if (!base.Equals(registration)) {

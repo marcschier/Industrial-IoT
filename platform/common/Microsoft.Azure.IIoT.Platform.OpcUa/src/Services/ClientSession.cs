@@ -61,11 +61,9 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
             _urlQueue = new ConcurrentQueue<string>(_connection.Endpoint.GetAllUrls());
             _queue = new PriorityQueue<int, SessionOperation>();
             _enqueueEvent = new TaskCompletionSource<bool>(
-                TaskContinuationOptions.RunContinuationsAsynchronously);
-#pragma warning disable RECS0002 // Convert anonymous method to method group
+                TaskCreationOptions.RunContinuationsAsynchronously);
             _processor = Task.Factory.StartNew(() => RunAsync(), _cts.Token,
                 TaskCreationOptions.LongRunning, TaskScheduler.Default).Unwrap();
-#pragma warning restore RECS0002 // Convert anonymous method to method group
             _logger.Information("Session created.");
         }
 
@@ -148,10 +146,8 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
 
             if (!_cts.IsCancellationRequested) {
                 _lastActivity = DateTime.UtcNow;
-#pragma warning disable CA2000 // Dispose objects before losing scope
                 var op = new ScheduledOperation<T>(serviceCall, handler, elevation,
                     timeout ?? _opTimeout, ct);
-#pragma warning restore CA2000 // Dispose objects before losing scope
                 _queue.Enqueue(priority, op);
                 // Notify of new operation enqueued.
                 _enqueueEvent.TrySetResult(true);
@@ -254,9 +250,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
                         try {
                             _logger.Debug("Reconnecting session via {endpoint}...",
                                 _endpointUrl);
-#pragma warning disable RECS0002 // Convert anonymous method to method group
                             await Task.Run(() => _session.Reconnect(), _cts.Token).ConfigureAwait(false);
-#pragma warning restore RECS0002 // Convert anonymous method to method group
                             _logger.Debug("Session reconnected via {endpoint}.",
                                 _endpointUrl);
                             reconnect = false;
@@ -496,7 +490,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
                 // Wait on a fresh task or on the not yet completed on
                 if (tcs.Task.IsCompleted) {
                     var newEvent = new TaskCompletionSource<bool>(
-                        TaskContinuationOptions.RunContinuationsAsynchronously);
+                        TaskCreationOptions.RunContinuationsAsynchronously);
                     if (Interlocked.CompareExchange(ref _enqueueEvent, newEvent, tcs) == tcs) {
                         // Exchanged safely now we can wait for it.
                         tcs = newEvent;

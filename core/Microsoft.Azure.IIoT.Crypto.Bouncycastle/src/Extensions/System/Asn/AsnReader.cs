@@ -174,7 +174,7 @@ namespace System.Security.Cryptography.Asn1 {
 
         internal Asn1Tag ReadTagAndLength(out int? contentsLength, out int bytesRead) {
             if (TryPeekTag(_data.Span, out var tag, out var tagBytesRead) &&
-                TryReadLength(_data.Slice(tagBytesRead).Span, _ruleSet, out var length, out var lengthBytesRead)) {
+                TryReadLength(_data[tagBytesRead..].Span, _ruleSet, out var length, out var lengthBytesRead)) {
                 var allBytesRead = tagBytesRead + lengthBytesRead;
 
                 if (tag.IsConstructed) {
@@ -239,7 +239,7 @@ namespace System.Security.Cryptography.Asn1 {
                 // EndOfContents marker to balance it out.
                 if (length == null) {
                     depth++;
-                    tmpReader._data = tmpReader._data.Slice(bytesRead);
+                    tmpReader._data = tmpReader._data[bytesRead..];
                     totalLen += bytesRead;
                 }
                 else {
@@ -247,7 +247,7 @@ namespace System.Security.Cryptography.Asn1 {
                     var tlv = Slice(tmpReader._data, 0, bytesRead + length.Value);
 
                     // No exception? Then slice the data and continue.
-                    tmpReader._data = tmpReader._data.Slice(tlv.Length);
+                    tmpReader._data = tmpReader._data[tlv.Length..];
                     totalLen += tlv.Length;
                 }
             }
@@ -270,7 +270,7 @@ namespace System.Security.Cryptography.Asn1 {
             _ = ReadTagAndLength(out var length, out var bytesRead);
 
             if (length == null) {
-                var contentsLength = SeekEndOfContents(_data.Slice(bytesRead));
+                var contentsLength = SeekEndOfContents(_data[bytesRead..]);
                 return Slice(_data, 0, bytesRead + contentsLength + kEndOfContentsEncodedLength);
             }
 
@@ -291,7 +291,7 @@ namespace System.Security.Cryptography.Asn1 {
             _ = ReadTagAndLength(out var length, out var bytesRead);
 
             if (length == null) {
-                return Slice(_data, bytesRead, SeekEndOfContents(_data.Slice(bytesRead)));
+                return Slice(_data, bytesRead, SeekEndOfContents(_data[bytesRead..]));
             }
 
             return Slice(_data, bytesRead, length.Value);
@@ -305,7 +305,7 @@ namespace System.Security.Cryptography.Asn1 {
         /// <seealso cref="PeekEncodedValue"/>
         public ReadOnlyMemory<byte> GetEncodedValue() {
             var encodedValue = PeekEncodedValue();
-            _data = _data.Slice(encodedValue.Length);
+            _data = _data[encodedValue.Length..];
             return encodedValue;
         }
 
@@ -349,7 +349,7 @@ namespace System.Security.Cryptography.Asn1 {
                 Slice(_data, headerLength, length.Value).Span,
                 _ruleSet);
 
-            _data = _data.Slice(headerLength + length.Value);
+            _data = _data[(headerLength + length.Value)..];
             return value;
         }
 
@@ -392,7 +392,7 @@ namespace System.Security.Cryptography.Asn1 {
             var contents =
                 GetIntegerContents(expectedTag, UniversalTagNumber.Integer, out var headerLength);
 
-            _data = _data.Slice(headerLength + contents.Length);
+            _data = _data[(headerLength + contents.Length)..];
             return contents;
         }
 
@@ -423,7 +423,7 @@ namespace System.Security.Cryptography.Asn1 {
                 ArrayPool<byte>.Shared.Return(tmp);
             }
 
-            _data = _data.Slice(headerLength + contents.Length);
+            _data = _data[(headerLength + contents.Length)..];
             return value;
         }
 
@@ -451,7 +451,7 @@ namespace System.Security.Cryptography.Asn1 {
                 accum |= contentSpan[i];
             }
 
-            _data = _data.Slice(headerLength + contents.Length);
+            _data = _data[(headerLength + contents.Length)..];
             value = accum;
             return true;
         }
@@ -476,7 +476,7 @@ namespace System.Security.Cryptography.Asn1 {
 
             // Ignore any padding zeros.
             if (contentSpan.Length > 1 && contentSpan[0] == 0) {
-                contentSpan = contentSpan.Slice(1);
+                contentSpan = contentSpan[1..];
             }
 
             if (contentSpan.Length > sizeLimit) {
@@ -491,7 +491,7 @@ namespace System.Security.Cryptography.Asn1 {
                 accum |= contentSpan[i];
             }
 
-            _data = _data.Slice(headerLength + contentLength);
+            _data = _data[(headerLength + contentLength)..];
             value = accum;
             return true;
         }
@@ -647,7 +647,7 @@ namespace System.Security.Cryptography.Asn1 {
             }
 
             normalizedLastByte = maskedByte;
-            value = source.Slice(1);
+            value = source[1..];
         }
 
         private delegate void BitStringCopyAction(
@@ -741,7 +741,7 @@ namespace System.Security.Cryptography.Asn1 {
                             out var normalizedLastByte);
 
                         var localLen = headerLength + encodedValue.Length;
-                        tmpReader._data = tmpReader._data.Slice(localLen);
+                        tmpReader._data = tmpReader._data[localLen..];
 
                         bytesRead += localLen;
                         totalLength += contents.Length;
@@ -749,7 +749,7 @@ namespace System.Security.Cryptography.Asn1 {
 
                         if (copyAction != null) {
                             copyAction(contents, normalizedLastByte, curDest);
-                            curDest = curDest.Slice(contents.Length);
+                            curDest = curDest[contents.Length..];
                         }
                     }
                     else if (tag == Asn1Tag.EndOfContents && isIndefinite) {
@@ -759,7 +759,7 @@ namespace System.Security.Cryptography.Asn1 {
 
                         if (readerStack?.Count > 0) {
                             (var topReader, var wasIndefinite, var pushedBytesRead) = readerStack.Pop();
-                            topReader._data = topReader._data.Slice(bytesRead);
+                            topReader._data = topReader._data[bytesRead..];
 
                             bytesRead += pushedBytesRead;
                             isIndefinite = wasIndefinite;
@@ -803,7 +803,7 @@ namespace System.Security.Cryptography.Asn1 {
                     (var topReader, var wasIndefinite, var pushedBytesRead) = readerStack.Pop();
 
                     tmpReader = topReader;
-                    tmpReader._data = tmpReader._data.Slice(bytesRead);
+                    tmpReader._data = tmpReader._data[bytesRead..];
 
                     isIndefinite = wasIndefinite;
                     bytesRead += pushedBytesRead;
@@ -935,7 +935,7 @@ namespace System.Security.Cryptography.Asn1 {
                 }
 
                 // Skip the tag+length (header) and the unused bit count byte (1) and the contents.
-                _data = _data.Slice(headerLength + value.Length + 1);
+                _data = _data[(headerLength + value.Length + 1)..];
             }
 
             return isPrimitive;
@@ -975,7 +975,7 @@ namespace System.Security.Cryptography.Asn1 {
 
                 bytesWritten = value.Length;
                 // contents doesn't include the unusedBitCount value, so add one byte for that.
-                _data = _data.Slice(headerLength + value.Length + 1);
+                _data = _data[(headerLength + value.Length + 1)..];
                 return true;
             }
 
@@ -990,7 +990,7 @@ namespace System.Security.Cryptography.Asn1 {
                 out bytesWritten);
 
             if (read) {
-                _data = _data.Slice(headerLength + bytesRead);
+                _data = _data[(headerLength + bytesRead)..];
             }
 
             return read;
@@ -1121,7 +1121,7 @@ namespace System.Security.Cryptography.Asn1 {
             var contents =
                 GetIntegerContents(expectedTag, UniversalTagNumber.Enumerated, out var headerLength);
 
-            _data = _data.Slice(headerLength + contents.Length);
+            _data = _data[(headerLength + contents.Length)..];
             return contents;
         }
 
@@ -1218,7 +1218,7 @@ namespace System.Security.Cryptography.Asn1 {
             UniversalTagNumber universalTagNumber,
             out ReadOnlyMemory<byte> contents) {
             if (TryGetPrimitiveOctetStringBytes(expectedTag, out _, out _, out var headerLength, out contents, universalTagNumber)) {
-                _data = _data.Slice(headerLength + contents.Length);
+                _data = _data[(headerLength + contents.Length)..];
                 return true;
             }
 
@@ -1311,7 +1311,7 @@ namespace System.Security.Cryptography.Asn1 {
                         var contents = Slice(tmpReader._data, headerLength, length.Value);
 
                         var localLen = headerLength + contents.Length;
-                        tmpReader._data = tmpReader._data.Slice(localLen);
+                        tmpReader._data = tmpReader._data[localLen..];
 
                         bytesRead += localLen;
                         totalLength += contents.Length;
@@ -1324,7 +1324,7 @@ namespace System.Security.Cryptography.Asn1 {
 
                         if (write) {
                             contents.Span.CopyTo(curDest);
-                            curDest = curDest.Slice(contents.Length);
+                            curDest = curDest[contents.Length..];
                         }
                     }
                     else if (tag == Asn1Tag.EndOfContents && isIndefinite) {
@@ -1334,7 +1334,7 @@ namespace System.Security.Cryptography.Asn1 {
 
                         if (readerStack?.Count > 0) {
                             (var topReader, var wasIndefinite, var pushedBytesRead) = readerStack.Pop();
-                            topReader._data = topReader._data.Slice(bytesRead);
+                            topReader._data = topReader._data[bytesRead..];
 
                             bytesRead += pushedBytesRead;
                             isIndefinite = wasIndefinite;
@@ -1378,7 +1378,7 @@ namespace System.Security.Cryptography.Asn1 {
                     (var topReader, var wasIndefinite, var pushedBytesRead) = readerStack.Pop();
 
                     tmpReader = topReader;
-                    tmpReader._data = tmpReader._data.Slice(bytesRead);
+                    tmpReader._data = tmpReader._data[bytesRead..];
 
                     isIndefinite = wasIndefinite;
                     bytesRead += pushedBytesRead;
@@ -1438,7 +1438,7 @@ namespace System.Security.Cryptography.Asn1 {
 
                 contents.Span.CopyTo(destination);
                 bytesWritten = contents.Length;
-                _data = _data.Slice(headerLength + contents.Length);
+                _data = _data[(headerLength + contents.Length)..];
                 return true;
             }
 
@@ -1452,7 +1452,7 @@ namespace System.Security.Cryptography.Asn1 {
                 out bytesWritten);
 
             if (copied) {
-                _data = _data.Slice(headerLength + bytesRead);
+                _data = _data[(headerLength + bytesRead)..];
             }
 
             return copied;
@@ -1472,7 +1472,7 @@ namespace System.Security.Cryptography.Asn1 {
                 throw new CryptographicException(SR.Cryptography_Der_Invalid_Encoding);
             }
 
-            _data = _data.Slice(headerLength);
+            _data = _data[headerLength..];
         }
 
         private static void ReadSubIdentifier(
@@ -1554,7 +1554,7 @@ namespace System.Security.Cryptography.Asn1 {
                     BinaryPrimitives.WriteInt64LittleEndian(accumValueBytes, accum);
                     Debug.Assert(accumValueBytes[7] == 0);
                     accumValueBytes.Slice(0, SemanticByteCount).CopyTo(writeSpan);
-                    writeSpan = writeSpan.Slice(SemanticByteCount);
+                    writeSpan = writeSpan[SemanticByteCount..];
 
                     accum = 0;
                     nextStop -= ContentByteCount;
@@ -1654,7 +1654,7 @@ namespace System.Security.Cryptography.Asn1 {
                 builder.Append(firstIdentifier.ToString(CultureInfo.InvariantCulture));
             }
 
-            contents = contents.Slice(bytesRead);
+            contents = contents[bytesRead..];
 
             while (!contents.IsEmpty) {
                 ReadSubIdentifier(contents, out bytesRead, out smallValue, out largeValue);
@@ -1670,7 +1670,7 @@ namespace System.Security.Cryptography.Asn1 {
                     builder.Append(largeValue.Value.ToString(CultureInfo.InvariantCulture));
                 }
 
-                contents = contents.Slice(bytesRead);
+                contents = contents[bytesRead..];
             }
 
             totalBytesRead = headerLength + length.Value;
@@ -1684,7 +1684,7 @@ namespace System.Security.Cryptography.Asn1 {
         public string ReadObjectIdentifierAsString(Asn1Tag expectedTag) {
             var oidValue = ReadObjectIdentifierAsString(expectedTag, out var bytesRead);
 
-            _data = _data.Slice(bytesRead);
+            _data = _data[bytesRead..];
 
             return oidValue;
         }
@@ -1698,7 +1698,7 @@ namespace System.Security.Cryptography.Asn1 {
             var oid = skipFriendlyName ? new Oid(oidValue, oidValue) : new Oid(oidValue);
 
             // Don't slice until the return object has been created.
-            _data = _data.Slice(bytesRead);
+            _data = _data[bytesRead..];
 
             return oid;
         }
@@ -1813,7 +1813,7 @@ namespace System.Security.Cryptography.Asn1 {
                     }
                 }
 
-                _data = _data.Slice(bytesRead);
+                _data = _data[bytesRead..];
                 return str;
             }
             finally {
@@ -1847,7 +1847,7 @@ namespace System.Security.Cryptography.Asn1 {
                     out charsWritten);
 
                 if (copied) {
-                    _data = _data.Slice(bytesRead);
+                    _data = _data[bytesRead..];
                 }
 
                 return copied;
@@ -1938,7 +1938,7 @@ namespace System.Security.Cryptography.Asn1 {
                 out bytesWritten);
 
             if (copied) {
-                _data = _data.Slice(bytesRead);
+                _data = _data[bytesRead..];
             }
 
             return copied;
@@ -1990,13 +1990,13 @@ namespace System.Security.Cryptography.Asn1 {
             var suffix = 0;
 
             if (length == null) {
-                length = SeekEndOfContents(_data.Slice(headerLength));
+                length = SeekEndOfContents(_data[headerLength..]);
                 suffix = kEndOfContentsEncodedLength;
             }
 
             var contents = Slice(_data, headerLength, length.Value);
 
-            _data = _data.Slice(headerLength + contents.Length + suffix);
+            _data = _data[(headerLength + contents.Length + suffix)..];
             return new AsnReader(contents, _ruleSet);
         }
 
@@ -2026,7 +2026,7 @@ namespace System.Security.Cryptography.Asn1 {
             var suffix = 0;
 
             if (length == null) {
-                length = SeekEndOfContents(_data.Slice(headerLength));
+                length = SeekEndOfContents(_data[headerLength..]);
                 suffix = kEndOfContentsEncodedLength;
             }
 
@@ -2052,7 +2052,7 @@ namespace System.Security.Cryptography.Asn1 {
                 }
             }
 
-            _data = _data.Slice(headerLength + contents.Length + suffix);
+            _data = _data[(headerLength + contents.Length + suffix)..];
             return new AsnReader(contents, _ruleSet);
         }
 
@@ -2112,7 +2112,7 @@ namespace System.Security.Cryptography.Asn1 {
             Debug.Assert(offset >= 0);
 
             if (length == null) {
-                return source.Slice(offset);
+                return source[offset..];
             }
 
             var lengthVal = length.Value;

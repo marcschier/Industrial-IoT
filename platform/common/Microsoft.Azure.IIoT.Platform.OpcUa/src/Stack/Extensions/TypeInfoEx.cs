@@ -46,7 +46,7 @@ namespace Opc.Ua {
             if (value == null) {
                 value = typeInfo.GetDefaultValue();
             }
-            if (!(value is Variant var)) {
+            if (value is not Variant var) {
                 var aex = new List<Exception>();
                 if (typeInfo.BuiltInType == BuiltInType.Enumeration) {
                     typeInfo = new TypeInfo(BuiltInType.Int32, typeInfo.ValueRank);

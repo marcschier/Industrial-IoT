@@ -772,7 +772,7 @@ namespace Opc.Ua.Test {
                                 if (text != null) {
                                     sortedDictionary.Add(text, list.ToArray());
                                 }
-                                text = text3.Substring(1);
+                                text = text3[1..];
                                 list = new List<string>();
                             }
                             else {

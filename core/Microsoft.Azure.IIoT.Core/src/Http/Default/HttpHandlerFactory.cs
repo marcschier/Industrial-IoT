@@ -53,11 +53,8 @@ namespace Microsoft.Azure.IIoT.Http.Clients {
             if (resource != null && resource.StartsWith(Resource.Local)) {
                 resource = resource.Remove(0, Resource.Local.Length);
             }
-#pragma warning disable IDE0067 // Dispose objects before losing scope
-#pragma warning disable CA2000 // Dispose objects before losing scope
+
             var del = new HttpHandlerDelegate(new HttpClientHandler(), resource,
-#pragma warning restore CA2000 // Dispose objects before losing scope
-#pragma warning restore IDE0067 // Dispose objects before losing scope
                 _handlers.Where(h => h.IsFor?.Invoke(resource) ?? true),
                 _proxy, _logger);
             handler = del;

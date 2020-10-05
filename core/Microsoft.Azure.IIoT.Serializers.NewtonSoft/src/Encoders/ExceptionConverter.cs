@@ -69,7 +69,7 @@ namespace Newtonsoft.Json {
         /// <param name="serializer"></param>
         public override void WriteJson(JsonWriter writer, object value,
             JsonSerializer serializer) {
-            if (!(value is Exception ex)) {
+            if (value is not Exception ex) {
                 writer.WriteNull();
             }
             else {

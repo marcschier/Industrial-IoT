@@ -239,7 +239,7 @@ namespace Microsoft.Azure.IIoT.Services.LiteDb.Clients {
                 throw new ArgumentNullException(nameof(continuationToken));
             }
             if (_queryStore.TryGetValue(continuationToken, out var feed)) {
-                if (!(feed is DocumentResultFeed<T> result)) {
+                if (feed is not DocumentResultFeed<T> result) {
                     throw new BadRequestException(
                         $"Continuation token: {continuationToken} type mismatch");
                 }

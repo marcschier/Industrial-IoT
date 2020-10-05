@@ -89,13 +89,12 @@ namespace TestData {
             ref object value) {
             try {
 
-
-                if (!(node.FindChild(context, Opc.Ua.BrowseNames.EURange) is BaseVariableState euRange)) {
+                if (node.FindChild(context, Opc.Ua.BrowseNames.EURange) is not BaseVariableState euRange) {
                     return ServiceResult.Good;
                 }
 
 
-                if (!(euRange.Value is Opc.Ua.Range range)) {
+                if (euRange.Value is not Opc.Ua.Range range) {
                     return ServiceResult.Good;
                 }
 
@@ -126,8 +125,8 @@ namespace TestData {
 
                 return ServiceResult.Good;
             }
-            catch (Exception e) {
-                throw e;
+            catch {
+                throw;
             }
         }
 
@@ -195,7 +194,7 @@ namespace TestData {
             ref StatusCode statusCode,
             ref DateTime timestamp) {
 
-            if (!(node is BaseVariableState variable)) {
+            if (node is not BaseVariableState variable) {
                 return ServiceResult.Good;
             }
 
@@ -204,7 +203,7 @@ namespace TestData {
             }
 
 
-            if (!(context.SystemHandle is TestDataSystem system)) {
+            if (context.SystemHandle is not TestDataSystem system) {
                 return StatusCodes.BadOutOfService;
             }
 

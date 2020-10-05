@@ -123,7 +123,7 @@ namespace Opc.Ua.PubSub {
             if (ReferenceEquals(this, encodeable)) {
                 return true;
             }
-            if (!(encodeable is MonitoredItemMessage wrapper)) {
+            if (encodeable is not MonitoredItemMessage wrapper) {
                 return false;
             }
             if (!Utils.IsEqual(wrapper.MessageContentMask, MessageContentMask) ||
