@@ -871,7 +871,9 @@ namespace Microsoft.Azure.IIoT.Services.LiteDb.Clients {
             Assert.Collection(results2, a => Assert.Equal(5, a.Value), a => Assert.Equal(8, a.Value));
 
             var query3 = documents.CreateQuery<Family>()
+#pragma warning disable CA1829 // Use Length/Count property instead of Count() when available
                 .Select(family => family.Children.Count());
+#pragma warning restore CA1829 // Use Length/Count property instead of Count() when available
             var results3 = await RunAsync(query3).ConfigureAwait(false);
             Assert.Collection(results3, a => Assert.Equal(1, a.Value), a => Assert.Equal(2, a.Value));
         }

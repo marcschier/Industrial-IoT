@@ -33,7 +33,7 @@ namespace Microsoft.Azure.IIoT.App.Pages {
                 samples => InvokeAsync(() => GetPublishedNodeData(samples))).ConfigureAwait(false);
         }
 
-        private bool IsIdGiven(string id) {
+        private static bool IsIdGiven(string id) {
             return !string.IsNullOrEmpty(id);
         }
 

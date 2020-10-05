@@ -3956,7 +3956,7 @@ Commands and Options
         /// <summary>
         /// Print help
         /// </summary>
-        private void PrintEventDataSetHelp() {
+        private static void PrintEventDataSetHelp() {
             Console.WriteLine(
                 @"
 Manage dataset event definitions

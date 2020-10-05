@@ -18,7 +18,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub.Mock {
     /// <summary>
     /// A mocked iot sdk client
     /// </summary>
-    public class IoTHubClient : IIoTEdgeClient, IIdentity, IDisposable,
+    public sealed class IoTHubClient : IIoTEdgeClient, IIdentity, IDisposable,
         IIoTClientCallback {
 
         /// <inheritdoc />

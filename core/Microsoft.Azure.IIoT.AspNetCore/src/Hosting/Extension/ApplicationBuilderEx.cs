@@ -155,18 +155,18 @@ namespace Microsoft.Extensions.DependencyInjection {
         }
 
         /// <inheritdoc/>
+#pragma warning disable IDE0060 // Remove unused parameter
+#pragma warning disable CA1822 // Mark members as static
         private sealed class EmptyStartup {
 
             /// <inheritdoc/>
-#pragma warning disable IDE0060 // Remove unused parameter
             public void ConfigureServices(IServiceCollection services) { }
-#pragma warning restore IDE0060 // Remove unused parameter
 
             /// <inheritdoc/>
-#pragma warning disable IDE0060 // Remove unused parameter
             public void Configure(IApplicationBuilder app) { }
-#pragma warning restore IDE0060 // Remove unused parameter
         }
+#pragma warning restore CA1822 // Mark members as static
+#pragma warning restore IDE0060 // Remove unused parameter
 
         /// <inheritdoc/>
         private sealed class DummyServer : IServer, IServerAddressesFeature {

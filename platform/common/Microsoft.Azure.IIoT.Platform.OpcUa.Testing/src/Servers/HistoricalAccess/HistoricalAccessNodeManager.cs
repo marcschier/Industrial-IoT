@@ -1248,7 +1248,7 @@ namespace HistoricalAccess {
         /// <summary>
         /// Creates a new history request.
         /// </summary>
-        private HistoryReadRequest CreateHistoryReadRequest(
+        private static HistoryReadRequest CreateHistoryReadRequest(
             ServerSystemContext context,
             ReadAtTimeDetails details,
             NodeHandle handle,
@@ -1442,7 +1442,7 @@ namespace HistoricalAccess {
         /// <summary>
         /// Loads a history continuation point.
         /// </summary>
-        private HistoryReadRequest LoadContinuationPoint(
+        private static HistoryReadRequest LoadContinuationPoint(
             ServerSystemContext context,
             byte[] continuationPoint) {
             var session = context.OperationContext.Session;
@@ -1451,8 +1451,8 @@ namespace HistoricalAccess {
                 return null;
             }
 
-
-            if (session.RestoreHistoryContinuationPoint(continuationPoint) is not HistoryReadRequest request) {
+            if (session.RestoreHistoryContinuationPoint(continuationPoint) 
+                is not HistoryReadRequest request) {
                 return null;
             }
 
@@ -1462,7 +1462,7 @@ namespace HistoricalAccess {
         /// <summary>
         /// Saves a history continuation point.
         /// </summary>
-        private byte[] SaveContinuationPoint(
+        private static byte[] SaveContinuationPoint(
             ServerSystemContext context,
             HistoryReadRequest request) {
             var session = context.OperationContext.Session;

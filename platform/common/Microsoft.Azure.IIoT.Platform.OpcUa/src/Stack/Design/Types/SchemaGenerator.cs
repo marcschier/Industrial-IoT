@@ -497,7 +497,7 @@ namespace Opc.Ua.Design.Schema {
         /// <summary>
         /// Initializes a template to use for substitution.
         /// </summary>
-        protected void AddTemplate(
+        protected static void AddTemplate(
             Template template,
             string replacement,
             string templatePath,

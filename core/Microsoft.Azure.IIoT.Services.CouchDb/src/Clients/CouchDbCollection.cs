@@ -52,7 +52,7 @@ namespace Microsoft.Azure.IIoT.Services.CouchDb.Clients {
                 throw new ArgumentNullException(nameof(id));
             }
             try {
-                var doc = await _db.FindAsync(id).ConfigureAwait(false);
+                var doc = await _db.FindAsync(id, cancellationToken: ct).ConfigureAwait(false);
                 return doc?.ToDocumentInfo<T>();
             }
             catch (Exception ex) {
@@ -102,10 +102,10 @@ namespace Microsoft.Azure.IIoT.Services.CouchDb.Clients {
                 throw new ArgumentNullException(nameof(newItem));
             }
             if (string.IsNullOrEmpty(existing.Id)) {
-                throw new ArgumentNullException(nameof(existing.Id));
+                throw new ArgumentException("Missing id", nameof(existing));
             }
             if (string.IsNullOrEmpty(existing.Etag)) {
-                throw new ArgumentNullException(nameof(existing.Etag));
+                throw new ArgumentException("Missing etag", nameof(existing));
             }
             if (typeof(T).IsValueType) {
                 throw new NotSupportedException(typeof(T).Name);
@@ -144,10 +144,10 @@ namespace Microsoft.Azure.IIoT.Services.CouchDb.Clients {
                 throw new ArgumentNullException(nameof(item));
             }
             if (string.IsNullOrEmpty(item.Id)) {
-                throw new ArgumentException("Id is missing", nameof(item.Id));
+                throw new ArgumentException("Id is missing", nameof(item));
             }
             if (string.IsNullOrEmpty(item.Etag)) {
-                throw new ArgumentException("Etag is missing", nameof(item.Etag));
+                throw new ArgumentException("Etag is missing", nameof(item));
             }
             if (typeof(T).IsValueType) {
                 throw new NotSupportedException(typeof(T).Name);
@@ -503,7 +503,7 @@ namespace Microsoft.Azure.IIoT.Services.CouchDb.Clients {
             /// <param name="results"></param>
             /// <param name="filter"></param>
             /// <returns></returns>
-            private IEnumerable<IDocumentInfo<TResult>> ProcessServerResults(
+            private static IEnumerable<IDocumentInfo<TResult>> ProcessServerResults(
                 IEnumerable<IDocumentInfo<TServer>> results, IQueryable<TResult> filter) {
                 var serverResults = results.Select(d => d.Value).AsQueryable();
                 // TODO - change expression to replace type with wrapper
@@ -824,7 +824,7 @@ namespace Microsoft.Azure.IIoT.Services.CouchDb.Clients {
 
             /// <inheritdoc/>
             public async Task<int> CountAsync(CancellationToken ct = default) {
-                return await Complete(true).CountAsync().ConfigureAwait(false);
+                return await Complete(true).CountAsync(ct).ConfigureAwait(false);
             }
 
             /// <summary>

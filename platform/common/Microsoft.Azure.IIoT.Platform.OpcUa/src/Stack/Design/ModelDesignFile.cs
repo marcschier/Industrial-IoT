@@ -653,7 +653,7 @@ namespace Opc.Ua.Design {
         /// </summary>
         /// <param name="instance"></param>
         /// <returns></returns>
-        private void ImportInstance(InstanceDesign instance) {
+        private static void ImportInstance(InstanceDesign instance) {
             // set the reference type.
             if (instance.ReferenceType == null) {
                 if (instance is PropertyDesign) {
@@ -2300,12 +2300,12 @@ namespace Opc.Ua.Design {
             if (root.Hierarchy != null && root is TypeDesign) {
                 if (root.Hierarchy.Nodes.TryGetValue(string.Empty, out var hierarchyNode)) {
                     if (hierarchyNode.Identifier != null) {
-                        if (hierarchyNode.Identifier is uint) {
-                            hierarchyNode.Instance.NumericId = (uint)hierarchyNode.Identifier;
+                        if (hierarchyNode.Identifier is uint numericId) {
+                            hierarchyNode.Instance.NumericId = numericId;
                             hierarchyNode.Instance.NumericIdSpecified = false;
                         }
-                        else if (hierarchyNode.Identifier is string) {
-                            hierarchyNode.Instance.StringId = (string)hierarchyNode.Identifier;
+                        else if (hierarchyNode.Identifier is string stringId) {
+                            hierarchyNode.Instance.StringId = stringId;
                         }
                     }
                     root.Instance = hierarchyNode.Instance.Model = CreateNode(

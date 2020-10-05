@@ -71,14 +71,19 @@ namespace Microsoft.Azure.IIoT.Http.SignalR {
 
         /// <inheritdoc/>
         public void Dispose() {
-            DisposeAsync().GetAwaiter().GetResult();
+            CloseAsync().GetAwaiter().GetResult();
+        }
+
+        /// <inheritdoc/>
+        public async ValueTask DisposeAsync() {
+            await CloseAsync();
         }
 
         /// <summary>
         /// Dispose
         /// </summary>
         /// <returns></returns>
-        public async ValueTask DisposeAsync() {
+        private async Task CloseAsync() {
             if (_disposed) {
                 return;
             }
@@ -131,7 +136,7 @@ namespace Microsoft.Azure.IIoT.Http.SignalR {
                 IJsonSerializerSettingsProvider jsonSettings = null) {
 
                 if (string.IsNullOrEmpty(endpointUrl)) {
-                    throw new ArgumentException(nameof(endpointUrl));
+                    throw new ArgumentNullException(nameof(endpointUrl));
                 }
                 var host = new SignalRHubClientHost(endpointUrl,
                     config.UseMessagePackProtocol,

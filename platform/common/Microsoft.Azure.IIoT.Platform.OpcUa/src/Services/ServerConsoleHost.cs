@@ -16,7 +16,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
     /// <summary>
     /// Console host for servers
     /// </summary>
-    public class ServerConsoleHost : IServerHost {
+    public sealed class ServerConsoleHost : IServerHost {
 
         /// <inheritdoc/>
         public X509Certificate2 Certificate { get; private set; }

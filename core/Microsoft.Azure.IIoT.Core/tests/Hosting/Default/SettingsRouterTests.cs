@@ -177,7 +177,7 @@ namespace Microsoft.Azure.IIoT.Hosting.Services {
 
             public string TestSetting3 { get; set; } = "yearn";
 
-            public Task ThrowAsync() {
+            public static Task ThrowAsync() {
                 return Task.FromException(new Exception());
             }
 

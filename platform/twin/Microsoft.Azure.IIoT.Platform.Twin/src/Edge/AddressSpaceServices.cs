@@ -922,7 +922,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge {
         /// <param name="targets"></param>
         /// <param name="path"></param>
         /// <returns></returns>
-        private async Task AddTargetsToBrowseResultAsync(Session session, IVariantEncoder codec,
+        private static async Task AddTargetsToBrowseResultAsync(Session session, IVariantEncoder codec,
             RequestHeader header, bool readValues, bool rawMode, List<NodePathTargetModel> result,
             List<OperationResultModel> diagnostics, BrowsePathTargetCollection targets,
             string[] path) {
@@ -958,7 +958,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge {
         /// <param name="diagnostics"></param>
         /// <param name="operations"></param>
         /// <returns></returns>
-        private async Task<NodeId> ResolveBrowsePathToNodeAsync(Session session,
+        private static async Task<NodeId> ResolveBrowsePathToNodeAsync(Session session,
             NodeId rootId, string paramName, string[] paths, DiagnosticsModel diagnostics,
             List<OperationResultModel> operations) {
             if (paths == null || paths.Length == 0) {

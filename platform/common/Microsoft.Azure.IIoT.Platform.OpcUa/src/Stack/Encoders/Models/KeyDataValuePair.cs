@@ -27,13 +27,13 @@ namespace Opc.Ua {
         public DataValue Value { get; set; }
 
         /// <summary cref="IEncodeable.TypeId" />
-        public virtual ExpandedNodeId TypeId { get; } = null;
+        public virtual ExpandedNodeId TypeId { get; }
 
         /// <summary cref="IEncodeable.BinaryEncodingId" />
-        public virtual ExpandedNodeId BinaryEncodingId { get; } = null;
+        public virtual ExpandedNodeId BinaryEncodingId { get; }
 
         /// <summary cref="IEncodeable.XmlEncodingId" />
-        public virtual ExpandedNodeId XmlEncodingId { get; } = null;
+        public virtual ExpandedNodeId XmlEncodingId { get; }
 
         /// <summary cref="IEncodeable.Encode(IEncoder)" />
         public virtual void Encode(IEncoder encoder) {

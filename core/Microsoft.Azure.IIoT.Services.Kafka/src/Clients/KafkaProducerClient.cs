@@ -128,7 +128,7 @@ namespace Microsoft.Azure.IIoT.Services.Kafka.Clients {
                 };
                 _producer.Produce(topic, ev);
             }
-            await Task.Run(() => _producer.Flush(ct)).ConfigureAwait(false);
+            await Task.Run(() => _producer.Flush(ct), ct).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
@@ -170,7 +170,7 @@ namespace Microsoft.Azure.IIoT.Services.Kafka.Clients {
         /// <param name="target"></param>
         /// <param name="partitionKey"></param>
         /// <returns></returns>
-        private string GetKey(string target, string schema, string partitionKey) {
+        private static string GetKey(string target, string schema, string partitionKey) {
             var key = string.IsNullOrEmpty(partitionKey) ? target : partitionKey;
             if (!string.IsNullOrEmpty(schema)) {
                 key += schema;

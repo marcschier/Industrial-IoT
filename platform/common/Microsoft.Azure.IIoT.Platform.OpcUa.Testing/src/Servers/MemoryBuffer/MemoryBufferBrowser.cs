@@ -132,7 +132,9 @@ namespace MemoryBuffer {
                 var name = BrowseName.Name;
 
                 for (var ii = 0; ii < name.Length; ii++) {
+#pragma warning disable CA2249 // Consider using 'string.Contains' instead of 'string.IndexOf'
                     if ("0123456789ABCDEF".IndexOf(name[ii]) == -1) {
+#pragma warning restore CA2249 // Consider using 'string.Contains' instead of 'string.IndexOf'
                         return null;
                     }
                 }

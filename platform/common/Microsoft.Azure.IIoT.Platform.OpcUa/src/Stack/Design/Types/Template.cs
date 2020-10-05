@@ -120,7 +120,7 @@ namespace Opc.Ua.Design.Schema {
         /// <summary>
         /// Returns the new line characters.
         /// </summary>
-        public string NewLine => "\r\n";
+        public const string NewLine = "\r\n";
 
         /// <summary>
         /// The table of tokens to replace.
@@ -136,8 +136,8 @@ namespace Opc.Ua.Design.Schema {
         /// Adds a replacement value for a token.
         /// </summary>
         public void AddReplacement(string token, object replacement) {
-            if (replacement is bool) {
-                Replacements.Add(token, ((bool)replacement) ? "true" : "false");
+            if (replacement is bool boolean) {
+                Replacements.Add(token, boolean ? "true" : "false");
             }
             else {
                 Replacements.Add(token, string.Format("{0}", replacement));
@@ -478,7 +478,7 @@ namespace Opc.Ua.Design.Schema {
         /// <summary>
         /// Determines if the target exists in the string at the specified index.
         /// </summary>
-        protected bool StrCmp(string source, int index, string target) {
+        protected static bool StrCmp(string source, int index, string target) {
             for (var ii = 0; ii < target.Length; ii++) {
                 if (index + ii >= source.Length || source[index + ii] != target[ii]) {
                     return false;

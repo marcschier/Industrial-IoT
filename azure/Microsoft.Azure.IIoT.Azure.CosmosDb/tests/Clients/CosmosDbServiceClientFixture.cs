@@ -22,7 +22,7 @@ namespace Microsoft.Azure.IIoT.Azure.CosmosDb.Clients {
         /// </summary>
         /// <param name="collection">collection</param>
         /// <returns>None</returns>
-        private async Task CreateDocumentsAsync(IItemContainer collection) {
+        private static async Task CreateDocumentsAsync(IItemContainer collection) {
             var AndersonFamily = new Family {
                 Id = "AndersenFamily",
                 LastName = "Andersen",
@@ -103,7 +103,7 @@ namespace Microsoft.Azure.IIoT.Azure.CosmosDb.Clients {
         /// </summary>
         /// <param name="options"></param>
         /// <returns></returns>
-        public async Task<IDatabase> GetDatabaseAsync() {
+        public static async Task<IDatabase> GetDatabaseAsync() {
             var logger = ConsoleLogger.Create();
             var config = new ConfigurationBuilder()
                 .AddFromDotEnvFile()

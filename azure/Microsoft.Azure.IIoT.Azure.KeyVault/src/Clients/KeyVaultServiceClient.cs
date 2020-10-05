@@ -312,8 +312,7 @@ namespace Microsoft.Azure.IIoT.Azure.KeyVault.Clients {
                 if (!enabled) {
                     return;
                 }
-                await _keyVaultClient.UpdateCertificateAsync(
-                    id, null, new CertificateAttributes { Enabled = false }).ConfigureAwait(false);
+                await _keyVaultClient.UpdateCertificateAsync(id, null, new CertificateAttributes { Enabled = false }, cancellationToken: ct).ConfigureAwait(false);
             }
             catch (KeyVaultErrorException ex) {
                 throw new ExternalDependencyException(
@@ -344,7 +343,7 @@ namespace Microsoft.Azure.IIoT.Azure.KeyVault.Clients {
                     throw new ResourceNotFoundException("Issuer cert not found.");
                 }
                 var caCert = await _certificates.FindCertificateAsync(
-                    caCertBundle.CertificateIdentifier.Identifier).ConfigureAwait(false);
+                    caCertBundle.CertificateIdentifier.Identifier, ct).ConfigureAwait(false);
                 if (caCert?.IssuerPolicies == null) {
                     throw new ArgumentException("Certificate cannot issue.");
                 }
@@ -433,8 +432,7 @@ namespace Microsoft.Azure.IIoT.Azure.KeyVault.Clients {
             if (caCertBundle == null) {
                 throw new ResourceNotFoundException("Issuer cert not found.");
             }
-            var caCert = await _certificates.FindCertificateAsync(
-                caCertBundle.CertificateIdentifier.Identifier).ConfigureAwait(false);
+            var caCert = await _certificates.FindCertificateAsync(caCertBundle.CertificateIdentifier.Identifier, ct).ConfigureAwait(false);
             if (caCert?.IssuerPolicies == null) {
                 throw new ArgumentException("Certificate cannot issue.");
             }
@@ -478,8 +476,7 @@ namespace Microsoft.Azure.IIoT.Azure.KeyVault.Clients {
                 if (caCertBundle == null) {
                     throw new ResourceNotFoundException("Issuer cert not found.");
                 }
-                var caCert = await _certificates.FindCertificateAsync(
-                    caCertBundle.CertificateIdentifier.Identifier).ConfigureAwait(false);
+                var caCert = await _certificates.FindCertificateAsync(caCertBundle.CertificateIdentifier.Identifier, ct).ConfigureAwait(false);
                 if (caCert?.IssuerPolicies == null) {
                     throw new ArgumentException("Certificate cannot issue.");
                 }

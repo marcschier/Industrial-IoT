@@ -609,13 +609,13 @@ namespace Microsoft.Azure.IIoT.Hosting.Services {
         [Version(1)]
         public class TestControllerV1 : IMethodController {
 
-            public Task<TestModel> Test1Async(TestModel request) {
+            public static Task<TestModel> Test1Async(TestModel request) {
                 return Task.FromResult(request);
             }
-            public Task<byte[]> Test2Async(byte[] request) {
+            public static Task<byte[]> Test2Async(byte[] request) {
                 return Task.FromResult(request);
             }
-            public Task<byte[]> Test3Async(byte[] request, int value) {
+            public static Task<byte[]> Test3Async(byte[] request, int value) {
                 if (value == 0) {
                     throw new ArgumentNullException(nameof(value));
                 }
@@ -640,7 +640,7 @@ namespace Microsoft.Azure.IIoT.Hosting.Services {
         [Version(2)]
         public class TestControllerV2 : IMethodController {
 
-            public Task<byte[]> Test2Async(byte[] request) {
+            public static Task<byte[]> Test2Async(byte[] request) {
                 if (request == null) {
                     throw new ArgumentNullException(nameof(request));
                 }
@@ -648,7 +648,7 @@ namespace Microsoft.Azure.IIoT.Hosting.Services {
                     new ArgumentNullException(nameof(request)));
             }
 
-            public Task<int> Test3Async(byte[] request, int value) {
+            public static Task<int> Test3Async(byte[] request, int value) {
                 if (request == null) {
                     throw new ArgumentNullException(nameof(request));
                 }
@@ -660,7 +660,7 @@ namespace Microsoft.Azure.IIoT.Hosting.Services {
         [Version(2)]
         public class TestControllerV1And2 : IMethodController {
 
-            public Task<byte[]> Test8Async(byte[] request) {
+            public static Task<byte[]> Test8Async(byte[] request) {
                 return Task.FromResult(request);
             }
         }

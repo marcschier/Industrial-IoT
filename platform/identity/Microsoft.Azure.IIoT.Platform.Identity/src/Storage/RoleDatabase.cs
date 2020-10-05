@@ -18,7 +18,7 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Storage {
     /// <summary>
     /// Represents a store for Identity roles
     /// </summary>
-    public class RoleDatabase : IRoleClaimStore<RoleModel> {
+    public sealed class RoleDatabase : IRoleClaimStore<RoleModel> {
 
         /// <summary>
         /// Create role database
@@ -105,7 +105,7 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Storage {
                 .Where(x => x.NormalizedName == normalizedRoleName)
                 .GetResults();
             if (results.HasMore()) {
-                var documents = await results.ReadAsync().ConfigureAwait(false);
+                var documents = await results.ReadAsync(ct).ConfigureAwait(false);
                 return documents.FirstOrDefault().Value.ToServiceModel();
             }
             return null;

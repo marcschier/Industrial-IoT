@@ -39,7 +39,7 @@ namespace Microsoft.Azure.IIoT.App.Models {
         /// <summary>
         /// is Ad-Hoc Discovery.
         /// </summary>
-        public bool isAdHocDiscovery { get; set; } = false;
+        public bool IsAdHocDiscovery { get; set; }
 
         /// <summary>
         /// Id of discovery request

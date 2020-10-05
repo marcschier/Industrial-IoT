@@ -20,7 +20,7 @@ namespace Microsoft.Azure.IIoT.Utils {
             base(inner) { }
 
         /// <inheritdoc/>
-        public override void Dispose() {
+        protected override void Dispose(bool disposing) {
         }
 
         /// <inheritdoc/>

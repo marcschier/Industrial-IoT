@@ -65,7 +65,7 @@ namespace Microsoft.Azure.IIoT.Utils {
         /// </summary>
         /// <param name="tasks"></param>
         /// <returns></returns>
-        public Task<IAsyncDisposable[]> WhenAll(
+        public static Task<IAsyncDisposable[]> WhenAll(
             params Task<IAsyncDisposable>[] tasks) {
             return WhenAll((IEnumerable<Task<IAsyncDisposable>>)tasks);
         }

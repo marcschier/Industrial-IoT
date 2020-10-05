@@ -42,8 +42,11 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
         }
 
         /// <inheritdoc/>
-        protected override void OnDisposing() {
-            _endpoint.OnServiceEndpointUpdated -= OnServiceEndpointUpdated;
+        protected override void Dispose(bool disposing) {
+            if (disposing) {
+                _endpoint.OnServiceEndpointUpdated -= OnServiceEndpointUpdated;
+            }
+            base.Dispose(disposing);
         }
 
         /// <inheritdoc/>

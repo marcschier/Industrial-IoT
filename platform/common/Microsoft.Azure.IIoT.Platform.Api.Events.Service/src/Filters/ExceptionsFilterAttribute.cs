@@ -142,7 +142,7 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service.Filters {
         /// <param name="code"></param>
         /// <param name="exception"></param>
         /// <returns></returns>
-        private ObjectResult GetResponse(HttpStatusCode code, Exception exception) {
+        private static ObjectResult GetResponse(HttpStatusCode code, Exception exception) {
             var result = new ObjectResult(exception) {
                 StatusCode = (int)code
             };

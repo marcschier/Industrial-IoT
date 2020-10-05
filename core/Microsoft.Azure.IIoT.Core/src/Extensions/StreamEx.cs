@@ -3,6 +3,8 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
+using System;
+
 namespace System.IO {
     using System.IO.Compression;
     using System.Text;
@@ -112,7 +114,8 @@ namespace System.IO {
             var offset = 0;
             try {
                 while (true) {
-                    var read = await stream.ReadAsync(body, offset, body.Length - offset).ConfigureAwait(false);
+                    var read = await stream.ReadAsync(
+                        body.AsMemory(offset, body.Length - offset)).ConfigureAwait(false);
                     if (read <= 0) {
                         break;
                     }

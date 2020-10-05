@@ -96,7 +96,7 @@ namespace Microsoft.Azure.IIoT.Http.Tunnel.Services {
                 // Get content
                 byte[] payload = null;
                 if (request.Content != null) {
-                    payload = await request.Content.ReadAsByteArrayAsync().ConfigureAwait(false);
+                    payload = await request.Content.ReadAsByteArrayAsync(ct).ConfigureAwait(false);
                     trequest.Body = payload;
                     trequest.ContentHeaders = request.Content.Headers?
                         .ToDictionary(h => h.Key, h => h.Value.ToList());

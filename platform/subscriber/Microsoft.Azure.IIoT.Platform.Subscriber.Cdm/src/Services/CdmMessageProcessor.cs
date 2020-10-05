@@ -194,7 +194,7 @@ namespace Microsoft.Azure.IIoT.Platform.Subscriber.Cdm.Services {
         }
 
         /// <inheritdoc/>
-        private string GetNormalizedKey(string key) {
+        private static string GetNormalizedKey(string key) {
             key = string.Join("", key.Split(Path.GetInvalidFileNameChars()));
             return key.Replace('#', '_').Replace('.', '_')
                 .Replace('/', '_').Replace(':', '_')
@@ -595,7 +595,7 @@ namespace Microsoft.Azure.IIoT.Platform.Subscriber.Cdm.Services {
         /// <param name="logger"></param>
         /// <param name="level"></param>
         /// <param name="msg"></param>
-        private void LogCdm(ILogger logger, CdmStatusLevel level, string msg) {
+        private static void LogCdm(ILogger logger, CdmStatusLevel level, string msg) {
             switch (level) {
                 case CdmStatusLevel.Error:
                     logger.Error("{msg}", msg);

@@ -43,7 +43,7 @@ namespace Microsoft.Azure.IIoT.Azure.CosmosDb.Clients {
             var result = new List<string>();
             var resultSetIterator = _database.GetContainerQueryIterator<ContainerProperties>();
             while (resultSetIterator.HasMoreResults) {
-                foreach (var container in await resultSetIterator.ReadNextAsync().ConfigureAwait(false)) {
+                foreach (var container in await resultSetIterator.ReadNextAsync(ct).ConfigureAwait(false)) {
                     result.Add(container.Id);
                 }
             }

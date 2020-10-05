@@ -27,31 +27,31 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Clients {
         /// <summary>
         /// Workload uri
         /// </summary>
-        internal string WorkloadUri =>
+        internal static string WorkloadUri =>
             Environment.GetEnvironmentVariable("IOTEDGE_WORKLOADURI")?.TrimEnd('/');
 
         /// <summary>
         /// Module generation
         /// </summary>
-        internal string ModuleGenerationId =>
+        internal static string ModuleGenerationId =>
             Environment.GetEnvironmentVariable("IOTEDGE_MODULEGENERATIONID");
 
         /// <summary>
         /// Module identifier
         /// </summary>
-        internal string ModuleId =>
+        internal static string ModuleId =>
             Environment.GetEnvironmentVariable("IOTEDGE_MODULEID");
 
         /// <summary>
         /// Api to use
         /// </summary>
-        internal string ApiVersion =>
+        internal static string ApiVersion =>
             Environment.GetEnvironmentVariable("IOTEDGE_APIVERSION") ?? "2019-01-30";
 
         /// <summary>
         /// Uri of the security daemon.
         /// </summary>
-        internal string ModuleWorkloadUri =>
+        internal static string ModuleWorkloadUri =>
             $"{WorkloadUri}/modules/{ModuleId}/genid/{ModuleGenerationId}";
 
         /// <summary>

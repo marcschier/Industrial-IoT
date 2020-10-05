@@ -14,7 +14,7 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
     using System.Runtime.Serialization;
     using Autofac;
 
-    public class RabbitMqEventBusFixture : IDisposable {
+    public sealed class RabbitMqEventBusFixture : IDisposable {
 
         /// <summary>
         /// Create fixture
@@ -46,6 +46,9 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
         /// <returns></returns>
         public RabbitMqEventBusHarness GetHarness(string bus,
             Action<ContainerBuilder> configure = null) {
+            if (_container == null) {
+                return null;
+            }
             return new RabbitMqEventBusHarness(bus, configure);
         }
 
@@ -74,7 +77,7 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
         private readonly RabbitMqConfig _config;
     }
 
-    public class RabbitMqEventBusHarness : IDisposable {
+    public sealed class RabbitMqEventBusHarness : IDisposable {
 
         /// <summary>
         /// Create fixture

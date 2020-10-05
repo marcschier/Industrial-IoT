@@ -113,7 +113,7 @@ namespace Microsoft.Azure.IIoT.Hosting.Services {
         /// Create hub container
         /// </summary>
         /// <returns></returns>
-        private IContainer CreateHubContainer() {
+        private static IContainer CreateHubContainer() {
             var builder = new ContainerBuilder();
             builder.AddDebugDiagnostics();
             builder.RegisterModule<IoTHubMockService>();
@@ -129,7 +129,7 @@ namespace Microsoft.Azure.IIoT.Hosting.Services {
         /// <param name="device"></param>
         /// <param name="controllers"></param>
         /// <returns></returns>
-        private IContainer CreateModuleContainer(IDeviceTwinServices hub, DeviceModel device,
+        private static IContainer CreateModuleContainer(IDeviceTwinServices hub, DeviceModel device,
             IEnumerable<object> controllers) {
             var builder = new ContainerBuilder();
             builder.AddDebugDiagnostics();

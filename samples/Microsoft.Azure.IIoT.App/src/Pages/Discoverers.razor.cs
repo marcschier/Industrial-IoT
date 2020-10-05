@@ -12,13 +12,13 @@ namespace Microsoft.Azure.IIoT.App.Pages {
     using Microsoft.Azure.IIoT.Platform.Registry.Api.Models;
 
     public sealed partial class Discoverers {
-        public bool IsSearching { get; set; } = false;
+        public bool IsSearching { get; set; }
         public DiscovererInfo DiscovererData { get; set; }
         private string EventResult { get; set; }
         private string ScanResult { get; set; } = "displayNone";
 
         private IAsyncDisposable Discovery { get; set; }
-        private bool IsDiscoveryEventSubscribed { get; set; } = false;
+        private bool IsDiscoveryEventSubscribed { get; set; }
 
         protected override async Task LoadPageContentAsync(bool getNextPage) {
             Items = await RegistryHelper.GetDiscovererListAsync(Items, getNextPage).ConfigureAwait(false);
@@ -188,7 +188,7 @@ namespace Microsoft.Azure.IIoT.App.Pages {
         /// </summary>
         async Task ClickHandlerAsync(DiscovererInfo discoverer) {
            CloseDrawer();
-           if (discoverer.isAdHocDiscovery) {
+           if (discoverer.IsAdHocDiscovery) {
                await SetAdHocScanAsync(discoverer).ConfigureAwait(false);
            }
            else {

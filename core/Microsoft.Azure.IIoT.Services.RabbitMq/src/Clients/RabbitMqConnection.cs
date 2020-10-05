@@ -251,7 +251,7 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
                     throw new ObjectDisposedException(nameof(RabbitMqChannel));
                 }
                 if (_channel != null) {
-                    while (_consumer == null && _completions.Count != 0) {
+                    while (_consumer == null && !_completions.IsEmpty) {
                         foreach (var entry in _completions.ToList()) {
                             if (_completions.TryRemove(entry.Key, out var a)) {
                                 Try.Op(() => a.Invoke(

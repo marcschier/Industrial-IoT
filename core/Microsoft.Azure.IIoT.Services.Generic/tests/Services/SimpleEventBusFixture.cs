@@ -12,13 +12,15 @@ namespace Microsoft.Azure.IIoT.Services.Generic.Services {
     using System.Runtime.Serialization;
     using Autofac;
 
-    public class SimpleEventBusFixture : IDisposable {
+    public sealed class SimpleEventBusFixture : IDisposable {
 
         /// <summary>
         /// Create test harness
         /// </summary>
         /// <returns></returns>
+#pragma warning disable CA1822 // Mark members as static
         public SimpleEventBusHarness GetHarness(string bus,
+#pragma warning restore CA1822 // Mark members as static
             Action<ContainerBuilder> configure = null) {
             return new SimpleEventBusHarness(bus, configure);
         }
@@ -28,12 +30,15 @@ namespace Microsoft.Azure.IIoT.Services.Generic.Services {
         }
     }
 
-    public class SimpleEventBusHarness : IDisposable {
+    public sealed class SimpleEventBusHarness : IDisposable {
 
         /// <summary>
         /// Create fixture
         /// </summary>
         public SimpleEventBusHarness(string bus, Action<ContainerBuilder> configure = null) {
+            if (bus is null) {
+                throw new ArgumentNullException(nameof(bus));
+            }
             try {
                 var builder = new ContainerBuilder();
 

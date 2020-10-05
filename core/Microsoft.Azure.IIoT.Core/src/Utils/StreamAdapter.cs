@@ -157,14 +157,20 @@ namespace Microsoft.Azure.IIoT.Utils {
         }
 
         /// <inheritdoc/>
-        public new virtual void Dispose() {
-            _inner.Dispose();
+        protected override void Dispose(bool disposing) {
+            if (!_disposedValue) {
+                if (disposing) {
+                    _inner.Dispose();
+                }
+                _disposedValue = true;
+            }
         }
 
         /// <summary>
         /// The inner stream
         /// </summary>
         protected readonly Stream _inner;
+        private bool _disposedValue;
     }
 
 }

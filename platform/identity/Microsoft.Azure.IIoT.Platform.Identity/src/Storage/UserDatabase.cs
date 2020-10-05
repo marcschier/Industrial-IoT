@@ -18,7 +18,7 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Storage {
     /// <summary>
     /// Represents a store for Identity users
     /// </summary>
-    public class UserDatabase : IUserStore<UserModel>,
+    public sealed class UserDatabase : IUserStore<UserModel>,
         IUserClaimStore<UserModel>, IUserLoginStore<UserModel>,
         IUserRoleStore<UserModel>, IUserPasswordStore<UserModel>,
         IUserSecurityStampStore<UserModel>, IUserTwoFactorStore<UserModel>,
@@ -116,7 +116,7 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Storage {
                 .Where(x => x.NormalizedUserName == normalizedUserName)
                 .GetResults();
             if (results.HasMore()) {
-                var documents = await results.ReadAsync().ConfigureAwait(false);
+                var documents = await results.ReadAsync(ct).ConfigureAwait(false);
                 return documents.FirstOrDefault().Value.ToServiceModel();
             }
             return null;
@@ -136,7 +136,7 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Storage {
                 //   .Where(x => x.ProviderKey == providerKey) // TODO
                 .GetResults();
             if (results.HasMore()) {
-                var documents = await results.ReadAsync().ConfigureAwait(false);
+                var documents = await results.ReadAsync(ct).ConfigureAwait(false);
                 return documents.FirstOrDefault().Value.ToServiceModel();
             }
             return null;
@@ -153,7 +153,7 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Storage {
                 .Where(x => x.NormalizedEmail == normalizedEmail)
                 .GetResults();
             if (results.HasMore()) {
-                var documents = await results.ReadAsync().ConfigureAwait(false);
+                var documents = await results.ReadAsync(ct).ConfigureAwait(false);
                 return documents.FirstOrDefault().Value.ToServiceModel();
             }
             return null;
@@ -172,7 +172,7 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Storage {
                 .GetResults();
             var users = new List<UserModel>();
             if (results.HasMore()) {
-                var documents = await results.ReadAsync().ConfigureAwait(false);
+                var documents = await results.ReadAsync(ct).ConfigureAwait(false);
                 users.AddRange(documents.Select(d => d.Value.ToServiceModel()));
             }
             return users;
@@ -188,8 +188,9 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Storage {
             var foundRole = await _roleStore.FindByNameAsync(
                 normalizedRoleName, ct).ConfigureAwait(false);
             if (foundRole == null) {
-                throw new ArgumentException(nameof(normalizedRoleName),
-                    $"The role {normalizedRoleName} does not exist");
+                throw new ArgumentException(
+                    $"The role {normalizedRoleName} does not exist", 
+                    nameof(normalizedRoleName));
             }
             await UpdateUserDocumentAsync(user, document => {
                 document.Roles.Add(normalizedRoleName);
@@ -337,7 +338,7 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Storage {
                 .GetResults();
             var users = new List<UserModel>();
             if (results.HasMore()) {
-                var documents = await results.ReadAsync().ConfigureAwait(false);
+                var documents = await results.ReadAsync(ct).ConfigureAwait(false);
                 users.AddRange(documents.Select(d => d.Value.ToServiceModel()));
             }
             return users;

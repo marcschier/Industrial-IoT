@@ -207,7 +207,7 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Provider.Controllers {
             return vm;
         }
 
-        private ScopeViewModel CreateScopeViewModel(IdentityResource identity, bool check) {
+        private static ScopeViewModel CreateScopeViewModel(IdentityResource identity, bool check) {
             return new ScopeViewModel {
                 Value = identity.Name,
                 DisplayName = identity.DisplayName ?? identity.Name,
@@ -229,7 +229,7 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Provider.Controllers {
                 Checked = check || apiScope.Required
             };
         }
-        private ScopeViewModel GetOfflineAccessScope(bool check) {
+        private static ScopeViewModel GetOfflineAccessScope(bool check) {
             return new ScopeViewModel {
                 Value = IdentityServer4.IdentityServerConstants.StandardScopes.OfflineAccess,
                 DisplayName = ConsentOptions.OfflineAccessDisplayName,

@@ -20,7 +20,9 @@ namespace Microsoft.Azure.IIoT.Services.Generic.Services {
         /// Create test harness
         /// </summary>
         /// <returns></returns>
+#pragma warning disable CA1822 // Mark members as static
         internal SimpleEventQueueHarness GetHarness(string target) {
+#pragma warning restore CA1822 // Mark members as static
             return new SimpleEventQueueHarness(target);
         }
 

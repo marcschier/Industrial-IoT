@@ -219,7 +219,7 @@ namespace Opc.Ua.Models {
         /// </summary>
         /// <param name="decoder"></param>
         /// <param name="attributeId"></param>
-        public object Decode(IDecoder decoder, uint attributeId) {
+        public static object Decode(IDecoder decoder, uint attributeId) {
             decoder.PushNamespace(Namespaces.OpcUa);
             try {
                 var field = GetBrowseName(attributeId);
@@ -328,7 +328,7 @@ namespace Opc.Ua.Models {
         /// <param name="encoder"></param>
         /// <param name="attribute"></param>
         /// <param name="value"></param>
-        public void Encode(IEncoder encoder, uint attribute, object value) {
+        public static void Encode(IEncoder encoder, uint attribute, object value) {
             encoder.PushNamespace(Namespaces.OpcUa);
             try {
                 var field = GetBrowseName(attribute);
@@ -635,7 +635,7 @@ namespace Opc.Ua.Models {
         /// </summary>
         /// <param name="nodeClass"></param>
         /// <returns></returns>
-        private int NodeClassId(NodeClass nodeClass) {
+        private static int NodeClassId(NodeClass nodeClass) {
             switch (nodeClass) {
                 case NodeClass.Object:
                     return Object;

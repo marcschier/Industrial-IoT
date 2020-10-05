@@ -170,7 +170,7 @@ namespace Microsoft.Azure.IIoT.Http.SignalR.Services {
         /// Close connection
         /// </summary>
         /// <returns></returns>
-        private async Task DisposeAsync(HubConnection connection) {
+        private static async Task DisposeAsync(HubConnection connection) {
             if (connection == null) {
                 return;
             }

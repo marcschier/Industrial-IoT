@@ -14,7 +14,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Events.v2 {
     /// <summary>
     /// Discoverer registry change listener
     /// </summary>
-    public class DiscovererEventBusSubscriber : IEventHandler<DiscovererEventModel>,
+    public sealed class DiscovererEventBusSubscriber : IEventHandler<DiscovererEventModel>,
         IDisposable {
 
         /// <summary>

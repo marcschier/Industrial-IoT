@@ -26,7 +26,7 @@ namespace Microsoft.Azure.IIoT.Services.CouchDb.Clients {
             _config = config ?? throw new ArgumentNullException(nameof(config));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             if (_config.HostName == null) {
-                throw new ArgumentNullException(nameof(_config.HostName));
+                throw new ArgumentNullException("Host name missing", nameof(_config));
             }
         }
 

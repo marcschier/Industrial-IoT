@@ -124,7 +124,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
         /// Helper to create registration
         /// </summary>
         /// <returns></returns>
-        private WriterGroupRegistration CreateRegistration() {
+        private static WriterGroupRegistration CreateRegistration() {
             var fix = new Fixture();
 
             fix.Customizations.Add(new TypeRelay(typeof(VariantValue), typeof(VariantValue)));

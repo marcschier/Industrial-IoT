@@ -47,7 +47,9 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
         /// Create test harness
         /// </summary>
         /// <returns></returns>
+#pragma warning disable CA1822 // Mark members as static
         internal RabbitMqEventQueueHarness GetHarness(string queue) {
+#pragma warning restore CA1822 // Mark members as static
             return new RabbitMqEventQueueHarness(queue);
         }
 

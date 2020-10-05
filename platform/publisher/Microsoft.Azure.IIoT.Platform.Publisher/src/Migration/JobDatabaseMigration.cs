@@ -70,7 +70,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Migration {
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
-        private WriterGroupModel ToServiceModel(JobDocument value) {
+        private static WriterGroupModel ToServiceModel(JobDocument value) {
             var model = value.JobConfiguration.Job.WriterGroup;
             if (model == null) {
                 return null;

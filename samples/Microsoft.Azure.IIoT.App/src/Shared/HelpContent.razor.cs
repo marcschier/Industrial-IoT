@@ -11,6 +11,8 @@ namespace Microsoft.Azure.IIoT.App.Shared {
     public partial class HelpContent {
         [CascadingParameter] BlazoredModalInstance BlazoredModal { get; set; }
 
-        void Close() => BlazoredModal.Close(ModalResult.Ok(true));
+        void Close() {
+            BlazoredModal.Close(ModalResult.Ok(true));
+        }
     }
 }

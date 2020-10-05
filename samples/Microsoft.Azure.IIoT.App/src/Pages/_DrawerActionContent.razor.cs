@@ -11,7 +11,9 @@ namespace Microsoft.Azure.IIoT.App.Pages {
     using System.Threading.Tasks;
     using System.Linq;
 
+#pragma warning disable IDE1006 // Naming Styles
     public partial class _DrawerActionContent {
+#pragma warning restore IDE1006 // Naming Styles
         [Parameter]
         public ListNode NodeData { get; set; }
 
@@ -73,7 +75,7 @@ namespace Microsoft.Azure.IIoT.App.Pages {
             }
         }
 
-        private async Task CallAsync(string nodeId, string[] values) {
+        private async Task CallAsync(string[] values) {
             Response = await BrowseManager.MethodCallAsync(_parameters, values, EndpointId, NodeData.Id, Credential).ConfigureAwait(false);
             ResponseClass = "list-group-item margin body-action-content visible";
         }

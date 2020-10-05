@@ -68,7 +68,7 @@ namespace Microsoft.Azure.IIoT.Net.Models {
             var list = new List<uint>();
             range.FillNextBatch(list, 1000);
 
-            Assert.Single(list);
+            _ = Assert.Single(list);
             Assert.Equal(IPAddress.Loopback, (IPv4Address)list.Single());
             Assert.Equal(IPAddress.Loopback, (IPv4Address)range.High);
             Assert.Equal(IPAddress.Loopback, (IPv4Address)range.Low);
@@ -116,10 +116,10 @@ namespace Microsoft.Azure.IIoT.Net.Models {
 
         [Fact]
         public void TestParsing1() {
-            AddressRange.TryParse("0.0.0.0/24", out var range1);
+            _ = AddressRange.TryParse("0.0.0.0/24", out var range1);
             var range2 = new AddressRange(0, 255);
 
-            Assert.Single(range1);
+            _ = Assert.Single(range1);
             Assert.Equal(range2, range1.Single());
             Assert.Equal("custom", range1.First().Nic);
             Assert.Equal("0.0.0.0/24", range1.First().ToString());
@@ -127,10 +127,10 @@ namespace Microsoft.Azure.IIoT.Net.Models {
 
         [Fact]
         public void TestParsing1WithRange() {
-            AddressRange.TryParse("0.0.0.0-0.0.0.255", out var range1);
+            _ = AddressRange.TryParse("0.0.0.0-0.0.0.255", out var range1);
             var range2 = new AddressRange(0, 255);
 
-            Assert.Single(range1);
+            _ = Assert.Single(range1);
             Assert.Equal(range2, range1.Single());
             Assert.Equal("custom", range1.First().Nic);
             Assert.Equal("0.0.0.0/24", range1.First().ToString());
@@ -138,10 +138,10 @@ namespace Microsoft.Azure.IIoT.Net.Models {
 
         [Fact]
         public void TestParsing1WithNic() {
-            AddressRange.TryParse("0.0.0.0/24[abc]", out var range1);
+            _ = AddressRange.TryParse("0.0.0.0/24[abc]", out var range1);
             var range2 = new AddressRange(0, 255);
 
-            Assert.Single(range1);
+            _ = Assert.Single(range1);
             Assert.Equal(range2, range1.Single());
             Assert.Equal("abc", range1.First().Nic);
             Assert.Equal("0.0.0.0/24 [abc]", range1.First().ToString());
@@ -149,10 +149,10 @@ namespace Microsoft.Azure.IIoT.Net.Models {
 
         [Fact]
         public void TestParsing2() {
-            AddressRange.TryParse("0.0.0.0/24,0.0.0.0/24", out var range1);
+            _ = AddressRange.TryParse("0.0.0.0/24,0.0.0.0/24", out var range1);
             var range2 = new AddressRange(0, 255);
 
-            Assert.Single(range1);
+            _ = Assert.Single(range1);
             Assert.Equal(range2, range1.First());
             Assert.Equal("custom", range1.First().Nic);
             Assert.Equal("0.0.0.0/24", range1.First().ToString());
@@ -160,30 +160,30 @@ namespace Microsoft.Azure.IIoT.Net.Models {
 
         [Fact]
         public void TestParsing2WithNic() {
-            AddressRange.TryParse("0.0.0.0/24[xyz],0.0.0.0/24[abc def ]", out var range1);
+            _ = AddressRange.TryParse("0.0.0.0/24[xyz],0.0.0.0/24[abc def ]", out var range1);
             var range2 = new AddressRange(0, 255);
 
-            Assert.Single(range1);
+            _ = Assert.Single(range1);
             Assert.Equal(range2, range1.First());
             Assert.Equal("xyz", range1.First().Nic);
         }
 
         [Fact]
         public void TestParsing3() {
-            AddressRange.TryParse("0.0.0.0/24;0.0.0.0/24;;;", out var range1);
+            _ = AddressRange.TryParse("0.0.0.0/24;0.0.0.0/24;;;", out var range1);
             var range2 = new AddressRange(0, 255);
 
-            Assert.Single(range1);
+            _ = Assert.Single(range1);
             Assert.Equal(range2, range1.First());
             Assert.Equal("custom", range1.First().Nic);
         }
 
         [Fact]
         public void TestParsing3b() {
-            AddressRange.TryParse("0.0.0.0/24;0.0.0.0-0.0.0.255;;;", out var range1);
+            _ = AddressRange.TryParse("0.0.0.0/24;0.0.0.0-0.0.0.255;;;", out var range1);
             var range2 = new AddressRange(0, 255);
 
-            Assert.Single(range1);
+            _ = Assert.Single(range1);
             Assert.Equal(range2, range1.First());
             Assert.Equal("custom", range1.First().Nic);
             Assert.Equal("0.0.0.0/24", range1.First().ToString());
@@ -191,20 +191,20 @@ namespace Microsoft.Azure.IIoT.Net.Models {
 
         [Fact]
         public void TestParsing4() {
-            AddressRange.TryParse("0.0.0.0/24[abc];0.0.0.0/24[abc];;;", out var range1);
+            _ = AddressRange.TryParse("0.0.0.0/24[abc];0.0.0.0/24[abc];;;", out var range1);
             var range2 = new AddressRange(0, 255);
 
-            Assert.Single(range1);
+            _ = Assert.Single(range1);
             Assert.Equal(range2, range1.First());
             Assert.Equal("abc", range1.First().Nic);
         }
 
         [Fact]
         public void TestParsing5() {
-            AddressRange.TryParse("0.0.0.0/24 [abc];0.0.0.0-0.0.0.255[abc];;;", out var range1);
+            _ = AddressRange.TryParse("0.0.0.0/24 [abc];0.0.0.0-0.0.0.255[abc];;;", out var range1);
             var range2 = new AddressRange(0, 255);
 
-            Assert.Single(range1);
+            _ = Assert.Single(range1);
             Assert.Equal(range2, range1.First());
             Assert.Equal("abc", range1.First().Nic);
         }
@@ -212,7 +212,7 @@ namespace Microsoft.Azure.IIoT.Net.Models {
         [Fact]
         public void TestParsing6() {
             var str = "1.1.1.1/24[abc];2.2.2.2/24[cde];3.3.3.3/24 [efg]";
-            AddressRange.TryParse(str, out var ranges);
+            _ = AddressRange.TryParse(str, out var ranges);
 
             var range1 = new AddressRange(16843008, 16843263);
             var range2 = new AddressRange(33686016, 33686271);
@@ -238,7 +238,7 @@ namespace Microsoft.Azure.IIoT.Net.Models {
         [Fact]
         public void TestParsing7() {
             var str = "192.168.1.0-192.168.2.9[abc]";
-            AddressRange.TryParse(str, out var ranges);
+            _ = AddressRange.TryParse(str, out var ranges);
 
             var range1 = new AddressRange(3232235776, 3232236031);
             var range2 = new AddressRange(3232236032, 3232236039);
@@ -265,18 +265,18 @@ namespace Microsoft.Azure.IIoT.Net.Models {
         [Fact]
         public void TestParseFormatExceptions() {
 
-            Assert.Throws<FormatException>(() => AddressRange.Parse("0.0.0.0/24;x/2;;"));
-            Assert.Throws<FormatException>(() => AddressRange.Parse("0.0.=0/24"));
-            Assert.Throws<FormatException>(() => AddressRange.Parse("0.0.0.0-0..0"));
-            Assert.Throws<FormatException>(() => AddressRange.Parse("0.0.0.0-0.0."));
-            Assert.Throws<FormatException>(() => AddressRange.Parse("0.0.0.0/16-0.0.0.0/22"));
-            Assert.Throws<FormatException>(() => AddressRange.Parse("0.0.0.0-0.0.0.222/3"));
-            Assert.Throws<FormatException>(() => AddressRange.Parse("0.0.0.0[]"));
-            Assert.Throws<FormatException>(() => AddressRange.Parse("0.0.0.0"));
-            Assert.Throws<FormatException>(() => AddressRange.Parse("0.0.0.0.0/2"));
-            Assert.Throws<FormatException>(() => AddressRange.Parse("0.0.0.0/88"));
-            Assert.Throws<FormatException>(() => AddressRange.Parse("0.0.0.0/88[333]"));
-            Assert.Throws<FormatException>(() => AddressRange.Parse("0..0/88"));
+            _ = Assert.Throws<FormatException>(() => AddressRange.Parse("0.0.0.0/24;x/2;;"));
+            _ = Assert.Throws<FormatException>(() => AddressRange.Parse("0.0.=0/24"));
+            _ = Assert.Throws<FormatException>(() => AddressRange.Parse("0.0.0.0-0..0"));
+            _ = Assert.Throws<FormatException>(() => AddressRange.Parse("0.0.0.0-0.0."));
+            _ = Assert.Throws<FormatException>(() => AddressRange.Parse("0.0.0.0/16-0.0.0.0/22"));
+            _ = Assert.Throws<FormatException>(() => AddressRange.Parse("0.0.0.0-0.0.0.222/3"));
+            _ = Assert.Throws<FormatException>(() => AddressRange.Parse("0.0.0.0[]"));
+            _ = Assert.Throws<FormatException>(() => AddressRange.Parse("0.0.0.0"));
+            _ = Assert.Throws<FormatException>(() => AddressRange.Parse("0.0.0.0.0/2"));
+            _ = Assert.Throws<FormatException>(() => AddressRange.Parse("0.0.0.0/88"));
+            _ = Assert.Throws<FormatException>(() => AddressRange.Parse("0.0.0.0/88[333]"));
+            _ = Assert.Throws<FormatException>(() => AddressRange.Parse("0..0/88"));
         }
 
     }

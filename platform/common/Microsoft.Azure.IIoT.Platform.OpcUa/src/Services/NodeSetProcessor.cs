@@ -99,7 +99,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
         /// <param name="node"></param>
         /// <param name="context"></param>
         /// <returns></returns>
-        private async Task HandleAsync(INodeHandler handler, BaseNodeModel node,
+        private static async Task HandleAsync(INodeHandler handler, BaseNodeModel node,
             ISystemContext context) {
             if (node == null) {
                 return;

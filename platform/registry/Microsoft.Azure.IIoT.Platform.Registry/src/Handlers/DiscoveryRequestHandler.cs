@@ -17,9 +17,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Handlers {
     /// </summary>
     public sealed class DiscoveryRequestHandler : IEventHandler<DiscoveryRequestModel> {
 
-        /// <inheritdoc/>
-        public string ContentType => MessageSchemaTypes.DiscoveryRequest;
-
         /// <summary>
         /// Create handler
         /// </summary>

@@ -194,7 +194,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Storage.Default {
             }
             while (true) {
                 var document = await _documents.FindAsync<ApplicationRegistration>(
-                    applicationId).ConfigureAwait(false);
+                    applicationId, ct: ct).ConfigureAwait(false);
                 if (document == null) {
                     return null;
                 }

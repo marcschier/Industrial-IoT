@@ -13,7 +13,7 @@ namespace Opc.Ua.PubSub.Tests {
 
     public class PubSubJsonEncoderDecoder {
 
-        private uint _currentSequenceNumber = 0;
+        private uint _currentSequenceNumber;
 
         [Fact]
         public void EncodeDecodeNetworkMessage() {
@@ -147,7 +147,7 @@ namespace Opc.Ua.PubSub.Tests {
         /// <summary>
         /// Convert timestamps of payload to OpcUa Utc.
         /// </summary>
-        private void ConvertToOpcUaUniversalTime(NetworkMessage networkMessage) {
+        private static void ConvertToOpcUaUniversalTime(NetworkMessage networkMessage) {
             // convert DataSet Payload DataValue timestamps to OpcUa Utc
             foreach (var dataSetMessage in networkMessage.Messages) {
                 foreach (var entry in dataSetMessage.Payload) {

@@ -173,7 +173,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Storage.Services {
             }
             while (true) {
                 var document = await _documents.FindAsync<WriterGroupDocument>(
-                    writerGroupId).ConfigureAwait(false);
+                    writerGroupId, ct: ct).ConfigureAwait(false);
                 if (document == null) {
                     return null;
                 }

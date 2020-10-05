@@ -138,7 +138,7 @@ namespace Microsoft.Azure.IIoT.Http.Tunnel.Services {
                 // Get content
                 byte[] payload = null;
                 if (request.Content != null) {
-                    payload = await request.Content.ReadAsByteArrayAsync().ConfigureAwait(false);
+                    payload = await request.Content.ReadAsByteArrayAsync(ct).ConfigureAwait(false);
                     payload = payload.Zip();
 
                     tunnelRequest.ContentHeaders = request.Content.Headers?
@@ -156,10 +156,11 @@ namespace Microsoft.Azure.IIoT.Http.Tunnel.Services {
 
                 // Send events
                 for (var messageId = 0; messageId < buffers.Count; messageId++) {
-                    await _outer._client.SendEventAsync(_outer._identity.AsHubResource(),
-                        buffers[messageId], requestId + "_" + messageId.ToString(),
-                        HttpTunnelRequestModel.SchemaName,
-                            ContentMimeType.Binary).ConfigureAwait(false);
+                    await _outer._client.SendEventAsync(
+                        _outer._identity.AsHubResource(), buffers[messageId], 
+                        requestId + "_" + messageId.ToString(),
+                        HttpTunnelRequestModel.SchemaName, 
+                        ContentMimeType.Binary, ct).ConfigureAwait(false);
                 }
 
                 // Wait for completion

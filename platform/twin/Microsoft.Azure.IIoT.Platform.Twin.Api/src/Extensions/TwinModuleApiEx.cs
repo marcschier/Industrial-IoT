@@ -180,10 +180,12 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api {
             this ITwinModuleApi service, EndpointApiModel endpoint,
             BrowseRequestApiModel request, CancellationToken ct = default) {
             if (request.MaxReferencesToReturn != null) {
-                return await service.NodeBrowseFirstAsync(endpoint, request).ConfigureAwait(false);
+                return await service.NodeBrowseFirstAsync(endpoint, request, 
+                    ct).ConfigureAwait(false);
             }
             while (true) {
-                var result = await service.NodeBrowseFirstAsync(endpoint, request, ct).ConfigureAwait(false);
+                var result = await service.NodeBrowseFirstAsync(endpoint, request,
+                    ct).ConfigureAwait(false);
                 while (result.ContinuationToken != null) {
                     try {
                         var next = await service.NodeBrowseNextAsync(endpoint,
@@ -218,7 +220,8 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api {
         /// <param name="ct"></param>
         /// <returns></returns>
         public static Task<HistoryReadResponseApiModel<VariantValue>> HistoryReadRawAsync(
-            this IHistoryModuleApi api, string endpointUrl, HistoryReadRequestApiModel<VariantValue> request,
+            this IHistoryModuleApi api, string endpointUrl,
+            HistoryReadRequestApiModel<VariantValue> request,
             CancellationToken ct = default) {
             return api.HistoryReadRawAsync(NewEndpoint(endpointUrl), request, ct);
         }
@@ -232,7 +235,8 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api {
         /// <param name="ct"></param>
         /// <returns></returns>
         public static Task<HistoryReadNextResponseApiModel<VariantValue>> HistoryReadRawNextAsync(
-            this IHistoryModuleApi api, string endpointUrl, HistoryReadNextRequestApiModel request,
+            this IHistoryModuleApi api, string endpointUrl,
+            HistoryReadNextRequestApiModel request,
             CancellationToken ct = default) {
             return api.HistoryReadRawNextAsync(NewEndpoint(endpointUrl), request, ct);
         }
@@ -246,7 +250,8 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api {
         /// <param name="ct"></param>
         /// <returns></returns>
         public static Task<HistoryUpdateResponseApiModel> HistoryUpdateRawAsync(
-            this IHistoryModuleApi api, string endpointUrl, HistoryUpdateRequestApiModel<VariantValue> request,
+            this IHistoryModuleApi api, string endpointUrl, 
+            HistoryUpdateRequestApiModel<VariantValue> request,
             CancellationToken ct = default) {
             return api.HistoryUpdateRawAsync(NewEndpoint(endpointUrl), request, ct);
         }

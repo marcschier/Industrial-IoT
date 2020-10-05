@@ -15,8 +15,8 @@ namespace Microsoft.Azure.IIoT.Serializers.MessagePack {
 
     public class MessagePackInteropTests {
 
-        public ISerializer Json => new NewtonSoftJsonSerializer();
-        public ISerializer MsgPack => new MessagePackSerializer();
+        public static ISerializer Json => new NewtonSoftJsonSerializer();
+        public static ISerializer MsgPack => new MessagePackSerializer();
 
         public static IEnumerable<(VariantValue, object)> GetStrings() {
             yield return ("", "");

@@ -86,7 +86,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                     try {
                         var info = variable.AsDataSetVariable(context);
                         var result = await _dataSets.AddDataSetVariableAsync(
-                            writer.DataSetWriterId, info).ConfigureAwait(false);
+                            writer.DataSetWriterId, info, ct).ConfigureAwait(false);
                         results.Add(new DataSetAddVariableResultModel {
                             GenerationId = result.GenerationId,
                             Id = result.Id
@@ -148,7 +148,8 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                         //
                         dataSetVariable.Id = dataSetVariable.PublishedVariableNodeId.ToSha256Hash();
                         var result = await _dataSets.AddOrUpdateDataSetVariableAsync(
-                            endpointId, dataSetVariable.Id, _ => Task.FromResult(dataSetVariable)).ConfigureAwait(false);
+                            endpointId, dataSetVariable.Id, 
+                            _ => Task.FromResult(dataSetVariable), ct).ConfigureAwait(false);
                         results.Add(new DataSetAddVariableResultModel {
                             GenerationId = result.GenerationId,
                             Id = result.Id
@@ -242,14 +243,16 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                         SecurityPolicy = ep.SecurityPolicy,
                     }, 1, ct).ConfigureAwait(false);
 
-                var endpoint = endpoints.Items?.FirstOrDefault(); // Pick the first returned.
-                if (string.IsNullOrEmpty(endpoint?.Id)) {
+                if (endpoints.Items == null ||
+                    endpoints.Items.Count == 0 ||
+                    string.IsNullOrEmpty(endpoints.Items[0].Id)) {
                     _logger.Error(
                         "Dataset source endpoint not in registry - skip writer {writer} " +
                         "in group {group}.", dataSetWriter.DataSetWriterId, group.WriterGroupId);
                     continue;
                 }
 
+                var endpoint = endpoints.Items[0];
                 var groupOfWriter = group;
                 if (endpoint.SiteId != null) {
                     //
@@ -262,7 +265,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                         await _groups.UpdateAsync(group.WriterGroupId, existing => {
                             existing.SiteId = group.SiteId;
                             return Task.FromResult(true);
-                        }).ConfigureAwait(false);
+                        }, ct).ConfigureAwait(false);
                         await _groupEvents.NotifyAllAsync(
                             l => l.OnWriterGroupUpdatedAsync(context, group)).ConfigureAwait(false);
 
@@ -351,7 +354,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
 
             // This will fail if there is already a event dataset
             var result = await _dataSets.AddEventDataSetAsync(dataSetWriterId,
-                request.AsEventDataSet(context)).ConfigureAwait(false);
+                request.AsEventDataSet(context), ct).ConfigureAwait(false);
 
             // If successful notify about dataset writer change
             await _itemEvents.NotifyAllAsync(
@@ -377,7 +380,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
 
             // This will succeed
             var result = await _dataSets.AddDataSetVariableAsync(dataSetWriterId,
-                request.AsDataSetVariable(context)).ConfigureAwait(false);
+                request.AsDataSetVariable(context), ct).ConfigureAwait(false);
 
             // If successful notify about dataset writer change
             await _itemEvents.NotifyAllAsync(
@@ -412,7 +415,8 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
 
             // Check writer group in same site
             if (!string.IsNullOrEmpty(request.WriterGroupId)) {
-                var group = await _groups.FindAsync(request.WriterGroupId).ConfigureAwait(false);
+                var group = await _groups.FindAsync(request.WriterGroupId, 
+                    ct).ConfigureAwait(false);
                 if (group == null) {
                     throw new ArgumentException(
                         "Dataset writer group not found.", nameof(request));
@@ -428,7 +432,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
             }
 
             var result = await _writers.AddAsync(
-                request.AsDataSetWriterInfo(context)).ConfigureAwait(false);
+                request.AsDataSetWriterInfo(context), ct).ConfigureAwait(false);
 
             // If successful notify about dataset writer creation
             await _writerEvents.NotifyAllAsync(
@@ -457,7 +461,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                 throw new ArgumentException("Site id missing", nameof(request));
             }
             var result = await _groups.AddAsync(
-                request.AsWriterGroupInfo(context)).ConfigureAwait(false);
+                request.AsWriterGroupInfo(context), ct).ConfigureAwait(false);
 
             // If successful notify about group creation
             await _groupEvents.NotifyAllAsync(

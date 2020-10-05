@@ -93,7 +93,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Hosting {
         /// <inheritdoc/>
         public async Task ReportAsync(IEnumerable<KeyValuePair<string, VariantValue>> properties,
             CancellationToken ct) {
-            await _lock.WaitAsync().ConfigureAwait(false);
+            await _lock.WaitAsync(ct).ConfigureAwait(false);
             try {
                 if (_client != null) {
                     var collection = new TwinCollection();
@@ -110,7 +110,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Hosting {
 
         /// <inheritdoc/>
         public async Task ReportAsync(string propertyId, VariantValue value, CancellationToken ct) {
-            await _lock.WaitAsync().ConfigureAwait(false);
+            await _lock.WaitAsync(ct).ConfigureAwait(false);
             try {
                 if (_client != null) {
                     var collection = new TwinCollection {
@@ -283,7 +283,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Hosting {
         /// <param name="value"></param>
         /// <param name="processed"></param>
         /// <returns></returns>
-        private bool ProcessEdgeHostSettings(string key, VariantValue value,
+        private static bool ProcessEdgeHostSettings(string key, VariantValue value,
             IDictionary<string, VariantValue> processed = null) {
             switch (key.ToLowerInvariant()) {
                 case TwinProperty.Version:

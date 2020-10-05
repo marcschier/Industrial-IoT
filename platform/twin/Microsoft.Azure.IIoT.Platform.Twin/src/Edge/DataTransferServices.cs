@@ -72,7 +72,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge {
         /// Dispose
         /// </summary>
         public void Dispose() {
-            if (_tasks.Count != 0) {
+            if (!_tasks.IsEmpty) {
                 Task.WaitAll(_tasks.Values.Select(t => t.CancelAsync()).ToArray());
                 _tasks.Clear();
             }
@@ -166,7 +166,8 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge {
                         }
                         else {
                             // Otherwise set shared access token
-                            var token = await _outer._tokens.GenerateTokenAsync(request.Uri.ToString()).ConfigureAwait(false);
+                            var token = await _outer._tokens.GenerateTokenAsync(
+                                request.Uri.ToString(), ct).ConfigureAwait(false);
                             request.Headers.Authorization = AuthenticationHeaderValue.Parse(token);
                         }
                         request.SetStreamContent(file, MimeType);

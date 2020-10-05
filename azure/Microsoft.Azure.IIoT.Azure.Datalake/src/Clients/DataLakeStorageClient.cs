@@ -529,7 +529,11 @@ namespace Microsoft.Azure.IIoT.Azure.Datalake.Clients {
             /// <inheritdoc/>
             public override AccessToken GetToken(
                 TokenRequestContext requestContext, CancellationToken ct) {
-                return GetTokenAsync(requestContext, ct).Result;
+                var result = _provider.GetTokenForAsync(Resource.Storage).Result;
+                if (result == null) {
+                    return default;
+                }
+                return new AccessToken(result.RawToken, result.ExpiresOn);
             }
 
             /// <inheritdoc/>

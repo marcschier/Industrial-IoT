@@ -290,7 +290,7 @@ namespace Microsoft.Azure.IIoT.AspNetCore.Http.Tunnel {
             }
 
             /// <inheritdoc/>
-            public bool AllowSynchronousIO { get; set; } = false;
+            public bool AllowSynchronousIO { get; set; }
         }
 
         private readonly ILogger _logger;

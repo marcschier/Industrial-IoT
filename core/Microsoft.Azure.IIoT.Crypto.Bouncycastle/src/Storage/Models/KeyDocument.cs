@@ -42,7 +42,7 @@ namespace Microsoft.Azure.IIoT.Crypto.Storage.Models {
         /// Type
         /// </summary>
         [DataMember]
-        public string Type => nameof(Key);
+        public static string Type => nameof(Key);
     }
 }
 

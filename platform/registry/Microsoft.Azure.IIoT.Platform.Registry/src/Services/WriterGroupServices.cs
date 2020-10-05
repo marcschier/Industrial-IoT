@@ -351,8 +351,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                 }
 
                 // Get all gateways in site
-                var gatewaysInSite = await _gateways.QueryAllGatewaysAsync(
-                    new GatewayQueryModel { SiteId = writerGroup.SiteId, Connected = true }).ConfigureAwait(false);
+                var gatewaysInSite = await _gateways.QueryAllGatewaysAsync(new GatewayQueryModel { SiteId = writerGroup.SiteId, Connected = true }, ct: ct).ConfigureAwait(false);
                 var candidateGateways = gatewaysInSite.Select(s => s.Id).ToList();
                 if (candidateGateways.Count == 0) {
                     // No candidates found to assign to

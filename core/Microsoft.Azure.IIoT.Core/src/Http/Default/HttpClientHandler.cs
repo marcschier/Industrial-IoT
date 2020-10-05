@@ -3,6 +3,9 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
+
+using System;
+
 namespace Microsoft.Azure.IIoT.Http.Clients {
     using Microsoft.Azure.IIoT.Utils;
     using System;
@@ -40,8 +43,8 @@ namespace Microsoft.Azure.IIoT.Http.Clients {
         /// <param name="request"></param>
         /// <param name="ct"></param>
         /// <returns></returns>
-        private async Task<HttpResponseMessage> SendOverUnixDomainSocketAsync(string udsPath,
-            HttpRequestMessage request, CancellationToken ct) {
+        private static async Task<HttpResponseMessage> SendOverUnixDomainSocketAsync(
+            string udsPath, HttpRequestMessage request, CancellationToken ct) {
             if (request == null) {
                 throw new ArgumentNullException(nameof(request));
             }
@@ -50,13 +53,13 @@ namespace Microsoft.Azure.IIoT.Http.Clients {
             }
             using (var socket = new Socket(AddressFamily.Unix, SocketType.Stream,
                 ProtocolType.Unspecified)) {
-                await socket.ConnectAsync(new UdsEndPoint(udsPath)).ConfigureAwait(false);
+                await socket.ConnectAsync(new UdsEndPoint(udsPath), ct).ConfigureAwait(false);
                 using (var stream = new HttpLineReader(new NetworkStream(socket, true))) {
                     var requestBytes = GetRequestBuffer(request);
-                    await stream.WriteAsync(requestBytes, 0, requestBytes.Length, ct)
+                    await stream.WriteAsync(requestBytes.AsMemory(0, requestBytes.Length), ct)
                         .ConfigureAwait(false);
                     if (request.Content != null) {
-                        await request.Content.CopyToAsync(stream).ConfigureAwait(false);
+                        await request.Content.CopyToAsync(stream, ct).ConfigureAwait(false);
                     }
                     return await ReadResponseAsync(stream, ct).ConfigureAwait(false);
                 }
@@ -73,7 +76,7 @@ namespace Microsoft.Azure.IIoT.Http.Clients {
                 throw new ArgumentNullException(nameof(request));
             }
             if (request.RequestUri == null) {
-                throw new ArgumentNullException(nameof(request.RequestUri));
+                throw new ArgumentException("Missing request uri", nameof(request));
             }
 
             if (string.IsNullOrEmpty(request.Headers.Host)) {
@@ -194,7 +197,7 @@ namespace Microsoft.Azure.IIoT.Http.Clients {
                 _path = path ?? throw new ArgumentNullException(nameof(path));
                 _encodedPath = Encoding.UTF8.GetBytes(_path);
 
-                if (path.Length == 0 || _encodedPath.Length > s_nativePathLength) {
+                if (path.Length == 0 || _encodedPath.Length > kNativePathLength) {
                     throw new ArgumentOutOfRangeException(nameof(path), path);
                 }
             }
@@ -209,14 +212,14 @@ namespace Microsoft.Azure.IIoT.Http.Clients {
                 }
 
                 if (socketAddress.Family != AddressFamily.Unix ||
-                    socketAddress.Size > s_nativeAddressSize) {
+                    socketAddress.Size > kNativeAddressSize) {
                     throw new ArgumentOutOfRangeException(nameof(socketAddress));
                 }
 
-                if (socketAddress.Size > s_nativePathOffset) {
-                    _encodedPath = new byte[socketAddress.Size - s_nativePathOffset];
+                if (socketAddress.Size > kNativePathOffset) {
+                    _encodedPath = new byte[socketAddress.Size - kNativePathOffset];
                     for (var i = 0; i < _encodedPath.Length; i++) {
-                        _encodedPath[i] = socketAddress[s_nativePathOffset + i];
+                        _encodedPath[i] = socketAddress[kNativePathOffset + i];
                     }
 
                     _path = Encoding.UTF8.GetString(_encodedPath, 0, _encodedPath.Length);
@@ -229,14 +232,14 @@ namespace Microsoft.Azure.IIoT.Http.Clients {
 
             /// <inheritdoc/>
             public override SocketAddress Serialize() {
-                var result = new SocketAddress(AddressFamily.Unix, s_nativeAddressSize);
-                Debug.Assert(_encodedPath.Length + s_nativePathOffset <= result.Size,
+                var result = new SocketAddress(AddressFamily.Unix, kNativeAddressSize);
+                Debug.Assert(_encodedPath.Length + kNativePathOffset <= result.Size,
                     "Expected path to fit in address");
 
                 for (var index = 0; index < _encodedPath.Length; index++) {
-                    result[s_nativePathOffset + index] = _encodedPath[index];
+                    result[kNativePathOffset + index] = _encodedPath[index];
                 }
-                result[s_nativePathOffset + _encodedPath.Length] = 0;
+                result[kNativePathOffset + _encodedPath.Length] = 0;
                 // path must be null-terminated
                 return result;
             }
@@ -254,14 +257,14 @@ namespace Microsoft.Azure.IIoT.Http.Clients {
                 return _path;
             }
 
-            private static readonly int s_nativePathOffset = 2;
+            private static readonly int kNativePathOffset = 2;
             // = offsetof(struct sockaddr_un, sun_path). It's the same on Linux and OSX
-            private static readonly int s_nativePathLength = 91;
+            private static readonly int kNativePathLength = 91;
             // sockaddr_un.sun_path
             // at http://pubs.opengroup.org/onlinepubs/9699919799/basedefs/sys_un.h.html,
             // -1 for terminator
-            private static readonly int s_nativeAddressSize =
-                s_nativePathOffset + s_nativePathLength;
+            private static readonly int kNativeAddressSize =
+                kNativePathOffset + kNativePathLength;
 
             private readonly string _path;
             private readonly byte[] _encodedPath;
@@ -291,7 +294,7 @@ namespace Microsoft.Azure.IIoT.Http.Clients {
                 var crFound = false;
                 var builder = new StringBuilder();
                 while (true) {
-                    var length = await _inner.ReadAsync(buffer, 0, buffer.Length, ct)
+                    var length = await _inner.ReadAsync(buffer.AsMemory(0, buffer.Length), ct)
                         .ConfigureAwait(false);
                     if (length == 0) {
                         throw new IOException("Unexpected end of stream.");

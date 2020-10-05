@@ -16,23 +16,23 @@ namespace Microsoft.Azure.IIoT.Storage.Default {
 
         /// <inheritdoc/>
         public Task<byte[]> GetAsync(string key, CancellationToken ct) {
-            return Task.FromResult((byte[])_cache.Get(key));
+            return Task.FromResult((byte[])kCache.Get(key));
         }
 
         /// <inheritdoc/>
         public Task RemoveAsync(string key, CancellationToken ct) {
-            _cache.Remove(key);
+            kCache.Remove(key);
             return Task.CompletedTask;
         }
 
         /// <inheritdoc/>
         public Task SetAsync(string key, byte[] value,
             DateTimeOffset expiration, CancellationToken ct) {
-            _cache.Set(key, value, expiration);
+            kCache.Set(key, value, expiration);
             return Task.CompletedTask;
         }
 
-        private static readonly MemCache _cache =
+        private static readonly MemCache kCache =
             new MemCache(typeof(MemoryCache).Name);
     }
 }

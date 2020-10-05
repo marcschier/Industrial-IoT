@@ -21,20 +21,20 @@ namespace Microsoft.Azure.IIoT.Platform.Core.Models {
         /// <param name="validate"></param>
         /// <returns></returns>
         public static X509CertificateChainModel ToCertificateChain(
-            this byte[] rawCertificates, bool validate = true) {
+            this IReadOnlyCollection<byte> rawCertificates, bool validate = true) {
             if (rawCertificates == null) {
                 return null;
             }
             var certificates = new List<X509Certificate2>();
             try {
                 while (true) {
-                    var cur = new X509Certificate2(rawCertificates);
+                    var cur = new X509Certificate2(rawCertificates.ToArray());
                     certificates.Add(cur);
-                    if (cur.RawData.Length >= rawCertificates.Length) {
+                    if (cur.RawData.Length >= rawCertificates.Count) {
                         break;
                     }
-                    rawCertificates = rawCertificates.AsSpan()
-[cur.RawData.Length..]
+                    rawCertificates = rawCertificates
+                        .Skip(cur.RawData.Length)
                         .ToArray();
                 }
                 return new X509CertificateChainModel {
@@ -54,14 +54,17 @@ namespace Microsoft.Azure.IIoT.Platform.Core.Models {
         /// </summary>
         /// <param name="rawCertificates"></param>
         /// <returns></returns>
-        public static string ToThumbprint(this byte[] rawCertificates) {
+        public static string ToThumbprint(this IReadOnlyCollection<byte> rawCertificates) {
             try {
-                return rawCertificates.ToCertificateChain(false)?.Chain
-                    .LastOrDefault()?.Thumbprint;
+                var chain = rawCertificates.ToCertificateChain(false)?.Chain;
+                if (chain == null || chain.Count == 0) {
+                    return null;
+                }
+                return chain[chain.Count - 1].Thumbprint;
             }
             catch {
-                // Fall back to sha1 which was the previous thumprint algorithm
-                return rawCertificates.ToSha256Hash();
+                // Fall back to sha256 which was the previous thumprint algorithm
+                return rawCertificates.ToArray().ToSha256Hash();
             }
         }
 
@@ -80,7 +83,7 @@ namespace Microsoft.Azure.IIoT.Platform.Core.Models {
                      new X509Certificate2Collection(chain.SkipLast(1).ToArray()));
                 validator.Build(chain.Last());
                 var result = new List<X509ChainStatus>();
-                foreach(var item in validator.ChainElements) {
+                foreach (var item in validator.ChainElements) {
                     var state = X509ChainStatusFlags.NoError;
                     foreach (var status in item.ChainElementStatus) {
                         state |= status.Status;

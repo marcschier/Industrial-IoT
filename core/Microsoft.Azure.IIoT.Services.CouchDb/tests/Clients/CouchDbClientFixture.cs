@@ -13,14 +13,14 @@ namespace Microsoft.Azure.IIoT.Services.CouchDb.Clients {
     using System.Runtime.Serialization;
     using System.Collections.Generic;
 
-    public class CouchDbClientFixture : IDisposable {
+    public sealed class CouchDbClientFixture : IDisposable {
 
         /// <summary>
         /// Creates the documents used in this Sample
         /// </summary>
         /// <param name="collection">collection</param>
         /// <returns>None</returns>
-        private async Task CreateDocumentsAsync(IItemContainer collection) {
+        private static async Task CreateDocumentsAsync(IItemContainer collection) {
             var AndersonFamily = new Family {
                 Id = "AndersenFamily",
                 LastName = "Andersen",
@@ -101,7 +101,7 @@ namespace Microsoft.Azure.IIoT.Services.CouchDb.Clients {
         /// </summary>
         /// <param name="options"></param>
         /// <returns></returns>
-        public async Task<IDatabase> GetDatabaseAsync() {
+        public static async Task<IDatabase> GetDatabaseAsync() {
             var logger = ConsoleLogger.Create();
             var server = new CouchDbClient(new CouchDbConfig(null), logger);
             return await server.OpenAsync("test", null).ConfigureAwait(false);
@@ -155,7 +155,7 @@ namespace Microsoft.Azure.IIoT.Services.CouchDb.Clients {
         private ContainerWrapper _query;
     }
 
-    public class ContainerWrapper : IDisposable {
+    public sealed class ContainerWrapper : IDisposable {
         private readonly IDatabase _database;
 
         public IItemContainer Container { get; }

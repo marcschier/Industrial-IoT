@@ -14,7 +14,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Events.v2 {
     /// <summary>
     /// Writer Group registry change listener
     /// </summary>
-    public class WriterGroupEventBusSubscriber : IEventHandler<WriterGroupEventModel>,
+    public sealed class WriterGroupEventBusSubscriber : IEventHandler<WriterGroupEventModel>,
         IDisposable {
 
         /// <summary>

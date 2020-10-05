@@ -130,7 +130,7 @@ namespace Microsoft.Azure.IIoT.Azure.CosmosDb.Clients {
                 throw new ArgumentNullException(nameof(existing));
             }
             if (string.IsNullOrEmpty(existing.Id)) {
-                throw new ArgumentNullException(nameof(existing.Id));
+                throw new ArgumentException("Missing id", nameof(existing));
             }
             if (newItem == null) {
                 throw new ArgumentNullException(nameof(newItem));

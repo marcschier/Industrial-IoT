@@ -313,7 +313,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
             }
         }
 
-        public AutoMock CreateMock(out string hub, out string site, out string super,
+        public static AutoMock CreateMock(out string hub, out string site, out string super,
             out List<ApplicationInfoModel> apps, bool noSite = false, bool noAdd = false) {
             var fix = new Fixture();
             fix.Customizations.Add(new TypeRelay(typeof(VariantValue), typeof(VariantValue)));

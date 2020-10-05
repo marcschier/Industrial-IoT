@@ -139,7 +139,7 @@ namespace Microsoft.Azure.IIoT.Azure.ActiveDirectory.Clients {
         /// <param name="config"></param>
         /// <param name="scopes"></param>
         /// <returns></returns>
-        private IEnumerable<string> GetScopes(IOAuthClientConfig config,
+        private static IEnumerable<string> GetScopes(IOAuthClientConfig config,
             IEnumerable<string> scopes) {
             var requestedScopes = new HashSet<string>();
             if (scopes != null) {

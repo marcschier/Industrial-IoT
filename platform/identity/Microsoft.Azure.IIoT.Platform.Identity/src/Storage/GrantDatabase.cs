@@ -81,7 +81,7 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Storage {
         /// <param name="filter"></param>
         /// <param name="query"></param>
         /// <returns></returns>
-        private IResultFeed<IDocumentInfo<GrantDocumentModel>> CreateQuery(
+        private static IResultFeed<IDocumentInfo<GrantDocumentModel>> CreateQuery(
             IQuery<GrantDocumentModel> query, PersistedGrantFilter filter) {
 
             if (filter.ClientId != null) {

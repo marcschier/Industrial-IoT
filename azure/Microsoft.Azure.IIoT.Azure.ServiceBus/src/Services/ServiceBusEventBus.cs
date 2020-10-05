@@ -20,7 +20,7 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Services {
     /// <summary>
     /// Event bus built on top of service bus
     /// </summary>
-    public class ServiceBusEventBus : IEventBus, IDisposable {
+    public sealed class ServiceBusEventBus : IEventBus, IDisposable {
 
         /// <summary>
         /// Create service bus event bus
@@ -208,7 +208,7 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Services {
         /// <returns></returns>
         private async Task ProcessEventAsync(Message message, CancellationToken token) {
             IEnumerable<Subscription> subscriptions = null;
-            await _lock.WaitAsync().ConfigureAwait(false);
+            await _lock.WaitAsync(token).ConfigureAwait(false);
             try {
                 if (!_handlers.TryGetValue(message.Label, out var handlers)) {
                     return;

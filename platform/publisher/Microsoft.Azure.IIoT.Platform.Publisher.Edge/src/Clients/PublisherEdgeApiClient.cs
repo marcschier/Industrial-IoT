@@ -43,7 +43,8 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Clients {
                 throw new ArgumentNullException(nameof(dataSetWriterId));
             }
             var request = _httpClient.NewRequest($"{uri}/v2/writers/{dataSetWriterId}");
-            var token = await _tokenProvider.GenerateTokenAsync(request.Uri.ToString()).ConfigureAwait(false);
+            var token = await _tokenProvider.GenerateTokenAsync(request.Uri.ToString(),
+                ct).ConfigureAwait(false);
             request.Headers.Authorization = AuthenticationHeaderValue.Parse(token);
             _serializer.SetAcceptHeaders(request);
             var response = await _httpClient.GetAsync(request, ct).ConfigureAwait(false);

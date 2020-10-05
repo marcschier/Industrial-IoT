@@ -78,7 +78,7 @@ namespace Microsoft.Azure.IIoT.Authentication.Clients {
         /// </summary>
         /// <param name="resource"></param>
         /// <returns></returns>
-        private string GetKey(string resource) {
+        private static string GetKey(string resource) {
             return resource + nameof(CachingTokenProvider);
         }
 

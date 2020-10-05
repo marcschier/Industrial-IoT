@@ -16,7 +16,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Transport {
     /// <summary>
     /// Handles reading and writing of message chunks over a socket.
     /// </summary>
-    public class WebSocketMessageSocket : IMessageSocket {
+    public sealed class WebSocketMessageSocket : IMessageSocket {
 
         /// <summary>
         /// Attaches the object to an existing socket.

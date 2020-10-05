@@ -83,7 +83,7 @@ namespace Microsoft.Azure.IIoT.Platform.Discovery.Edge.Services {
                 _progress.OnDiscoveryError(request, ex);
                 throw ex;
             }
-            await _lock.WaitAsync().ConfigureAwait(false);
+            await _lock.WaitAsync(ct).ConfigureAwait(false);
             try {
                 if (_pending.Count != 0) {
                     _progress.OnDiscoveryPending(task.Request, _pending.Count);
@@ -101,7 +101,7 @@ namespace Microsoft.Azure.IIoT.Platform.Discovery.Edge.Services {
             if (request == null) {
                 throw new ArgumentNullException(nameof(request));
             }
-            await _lock.WaitAsync().ConfigureAwait(false);
+            await _lock.WaitAsync(ct).ConfigureAwait(false);
             try {
                 foreach (var task in _pending.Where(r => r.Request.Id == request.Id)) {
                     // Cancel the task

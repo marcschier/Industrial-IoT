@@ -33,7 +33,7 @@ namespace Microsoft.Azure.IIoT.Azure.EventHub.Clients {
         public EventHubQueueClient(IEventHubClientConfig config,
             ITokenProvider provider = null) {
             if (string.IsNullOrEmpty(config?.EventHubConnString)) {
-                throw new ArgumentException(nameof(config));
+                throw new ArgumentException("Missing connection string", nameof(config));
             }
             if (provider != null && provider.Supports(Resource.EventHub)) {
                 var cs = ConnectionString.Parse(config.EventHubConnString);
@@ -200,7 +200,7 @@ namespace Microsoft.Azure.IIoT.Azure.EventHub.Clients {
         /// <param name="eventSchema"></param>
         /// <param name="contentEncoding"></param>
         /// <returns></returns>
-        private EventData CreateEvent(byte[] data, string target,
+        private static EventData CreateEvent(byte[] data, string target,
             string contentType, string eventSchema, string contentEncoding) {
             var ev = new EventData(data);
             ev.Properties.Add(EventProperties.Target, target);
@@ -227,7 +227,11 @@ namespace Microsoft.Azure.IIoT.Azure.EventHub.Clients {
             /// <inheritdoc/>
             public override AccessToken GetToken(
                 TokenRequestContext requestContext, CancellationToken ct) {
-                return GetTokenAsync(requestContext, ct).Result;
+                var result = _provider.GetTokenForAsync(Resource.EventHub).Result;
+                if (result == null) {
+                    return default;
+                }
+                return new AccessToken(result.RawToken, result.ExpiresOn);
             }
 
             /// <inheritdoc/>

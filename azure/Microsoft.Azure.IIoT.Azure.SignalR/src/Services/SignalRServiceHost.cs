@@ -51,9 +51,11 @@ namespace Microsoft.Azure.IIoT.Azure.SignalR.Services {
             var hub = _hub;
             try {
                 if (hub == null) {
-                    hub = await _serviceManager.CreateHubContextAsync(Resource).ConfigureAwait(false);
+                    hub = await _serviceManager.CreateHubContextAsync(Resource, 
+                        cancellationToken: ct).ConfigureAwait(false);
                 }
-                await hub.Clients.All.SendCoreAsync("ping", Array.Empty<object>(), ct).ConfigureAwait(false);
+                await hub.Clients.All.SendCoreAsync("ping", Array.Empty<object>(), 
+                    ct).ConfigureAwait(false);
                 return HealthCheckResult.Healthy();
             }
             catch (Exception ex) {

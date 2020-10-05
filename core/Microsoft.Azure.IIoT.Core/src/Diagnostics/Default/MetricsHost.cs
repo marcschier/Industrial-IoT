@@ -75,7 +75,7 @@ namespace Microsoft.Azure.IIoT.Diagnostics.Services {
 
         /// <inheritdoc/>
         public void Dispose() {
-            Dispose(disposing: true);
+            Dispose(true);
             GC.SuppressFinalize(this);
         }
 

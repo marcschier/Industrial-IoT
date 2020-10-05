@@ -231,7 +231,7 @@ namespace Alarms {
 
             // initialize the dialog information.
             node.Prompt.Value = "Please specify a new state for the source.";
-            node.ResponseOptionSet.Value = s_ResponseOptions;
+            node.ResponseOptionSet.Value = _responseOptions;
             node.DefaultResponse.Value = 2;
             node.CancelResponse.Value = 2;
             node.OkResponse.Value = 0;
@@ -252,7 +252,7 @@ namespace Alarms {
         /// <summary>
         /// The responses used with the dialog condition.
         /// </summary>
-        private readonly LocalizedText[] s_ResponseOptions = {
+        private readonly LocalizedText[] _responseOptions = {
             "Online",
             "Offline",
             "No Change"

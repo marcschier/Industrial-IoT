@@ -321,7 +321,7 @@ namespace Opc.Ua.Nodeset {
         /// </summary>
         /// <param name="definition"></param>
         /// <returns></returns>
-        private Type GetDefinitionType(string definition) {
+        private static Type GetDefinitionType(string definition) {
             if (string.IsNullOrEmpty(definition)) {
                 return null;
             }

@@ -276,21 +276,5 @@ namespace Microsoft.Azure.IIoT.Platform.Core.Api.Models {
         [DataMember(Name = "children", Order = 32,
             EmitDefaultValue = false)]
         public bool? Children { get; set; }
-
-
-        // Legacy
-
-        /// <ignore/>
-        [IgnoreDataMember]
-        [Obsolete]
-        public string Id => NodeId;
-        /// <ignore/>
-        [IgnoreDataMember]
-        [Obsolete]
-        public bool? HasChildren => Children;
-        /// <ignore/>
-        [IgnoreDataMember]
-        [Obsolete]
-        public string Name => BrowseName;
     }
 }

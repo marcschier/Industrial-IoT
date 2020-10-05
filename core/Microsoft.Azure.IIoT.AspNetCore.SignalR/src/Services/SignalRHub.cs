@@ -14,7 +14,7 @@ namespace Microsoft.Azure.IIoT.Messaging.SignalR.Services {
     /// <summary>
     /// Signalr hub for hosting inside Asp.net core host.
     /// </summary>
-    public class SignalRHub<THub> : ICallbackInvokerT<THub>,
+    public sealed class SignalRHub<THub> : ICallbackInvokerT<THub>,
         IGroupRegistrationT<THub> where THub : Hub {
 
         /// <inheritdoc/>

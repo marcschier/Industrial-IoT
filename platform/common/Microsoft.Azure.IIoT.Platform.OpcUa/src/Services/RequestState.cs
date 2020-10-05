@@ -11,9 +11,9 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
     using System.Linq;
 
     /// <summary>
-    /// Simple implementation of request manager
+    /// Implementation of request state
     /// </summary>
-    public class RequestState : IDisposable {
+    public sealed class RequestState : IDisposable {
 
         /// <summary>
         /// Frees any unmanaged resources.

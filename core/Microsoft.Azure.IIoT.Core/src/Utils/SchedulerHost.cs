@@ -34,8 +34,8 @@ namespace Microsoft.Azure.IIoT.Utils {
 
         /// <inheritdoc/>
         public void Dispose() {
-            Try.Async(StopAsync).Wait();
-            OnDisposing();
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
 
         /// <inheritdoc/>
@@ -63,9 +63,17 @@ namespace Microsoft.Azure.IIoT.Utils {
         }
 
         /// <summary>
-        /// Disposing
+        /// Dispose
         /// </summary>
-        protected virtual void OnDisposing() { }
+        /// <param name="disposing"></param>
+        protected virtual void Dispose(bool disposing) {
+            if (!_disposedValue) {
+                if (disposing) {
+                    Try.Async(StopAsync).Wait();
+                }
+                _disposedValue = true;
+            }
+        }
 
         /// <summary>
         /// Run the task operation
@@ -129,6 +137,7 @@ namespace Microsoft.Azure.IIoT.Utils {
             private readonly Timer _timer;
         }
 
+        private bool _disposedValue;
         private readonly ILogger _logger;
         private readonly TimeSpan _interval;
         private readonly TimeSpan _startup;

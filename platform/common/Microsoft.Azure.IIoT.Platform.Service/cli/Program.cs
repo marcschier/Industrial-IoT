@@ -632,7 +632,7 @@ namespace Microsoft.Azure.IIoT.Test.Scenarios.Cli {
         /// <summary>
         /// Print result
         /// </summary>
-        private void PrintResult<T>(CliOptions options, T status) {
+        private static void PrintResult<T>(CliOptions options, T status) {
             Console.WriteLine("==================");
             Console.WriteLine(JsonConvert.SerializeObject(status,
                 options.GetValueOrDefault("-F", "--format", Formatting.Indented)));

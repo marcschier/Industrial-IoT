@@ -242,7 +242,7 @@ namespace Microsoft.Azure.IIoT.Crypto.Services {
             CancellationToken ct) {
             var id = await _repo.DisableCertificateAsync(certificate, ct).ConfigureAwait(false);
             try {
-                var cert = await _repo.FindCertificateAsync(id).ConfigureAwait(false);
+                var cert = await _repo.FindCertificateAsync(id, ct).ConfigureAwait(false);
                 if (cert == null) {
                     return;
                 }

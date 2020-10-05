@@ -9,7 +9,7 @@ namespace Microsoft.Azure.IIoT.Utils {
     /// <summary>
     /// Disposable wrapper
     /// </summary>
-    public class Disposable : IDisposable {
+    public sealed class Disposable : IDisposable {
 
         /// <summary>
         /// Create disposable

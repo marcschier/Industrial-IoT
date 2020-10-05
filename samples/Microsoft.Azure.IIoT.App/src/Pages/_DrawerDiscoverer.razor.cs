@@ -26,7 +26,7 @@ namespace Microsoft.Azure.IIoT.App.Pages {
         /// OnInitialized
         /// </summary>
         protected override void OnInitialized() {
-            if (DiscovererData.isAdHocDiscovery) {
+            if (DiscovererData.IsAdHocDiscovery) {
                 ButtonLabel = "Apply & Scan";
                 IdleTimeView = "displayNone";
 
@@ -44,7 +44,7 @@ namespace Microsoft.Azure.IIoT.App.Pages {
         private async Task UpdateDiscovererConfigAsync() {
             DiscovererData.TryUpdateData(InputData);
             await Onclick.InvokeAsync(DiscovererData).ConfigureAwait(false);
-            if (!DiscovererData.isAdHocDiscovery) {
+            if (!DiscovererData.IsAdHocDiscovery) {
                 Status = await RegistryHelper.UpdateDiscovererAsync(DiscovererData).ConfigureAwait(false);
             }
         }

@@ -276,7 +276,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Clients {
                 throw new ArgumentNullException(nameof(content));
             }
             if (string.IsNullOrEmpty(content.ApplicationUri)) {
-                throw new ArgumentNullException(nameof(content.ApplicationUri));
+                throw new ArgumentException("Missing application uri", nameof(content));
             }
             var request = _httpClient.NewRequest($"{_serviceUri}/v2/applications",
                 Resource.Platform);

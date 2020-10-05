@@ -97,7 +97,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Parser {
             throw new Exception();
         }
 
-        private FilterOperator ToOperator(ITerminalNode comparison) {
+        private static FilterOperator ToOperator(ITerminalNode comparison) {
             switch (comparison.Symbol.TokenIndex) {
                 case FilterLexer.GREATER_THAN:
                     return FilterOperator.GreaterThan;
@@ -145,11 +145,11 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Parser {
             return rhs;
         }
 
-        private LiteralOperand Evaluate(FilterParser.Lit_opContext lit_opContext) {
+        private static LiteralOperand Evaluate(FilterParser.Lit_opContext lit_opContext) {
             return new LiteralOperand(lit_opContext.GetText());
         }
 
-        private SimpleAttributeOperand Evaluate(FilterParser.Attr_opContext attr_opContext) {
+        private static SimpleAttributeOperand Evaluate(FilterParser.Attr_opContext attr_opContext) {
             _ = attr_opContext.nodeId().STRING_LITERAL().GetText();
             _ = attr_opContext.nodeId().browsePathElement();
             _ = Enum.Parse<NodeAttribute>(attr_opContext.attributeId().GetText(), true);

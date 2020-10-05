@@ -41,10 +41,10 @@ namespace Microsoft.Azure.IIoT.Platform.Subscriber.Cdm.Storage {
                 throw new ArgumentNullException(nameof(storage));
             }
             if (string.IsNullOrEmpty(config?.StorageDrive)) {
-                throw new ArgumentNullException(nameof(config.StorageDrive));
+                throw new ArgumentException("Missing storage drive", nameof(config));
             }
             if (string.IsNullOrEmpty(config?.StorageFolder)) {
-                throw new ArgumentNullException(nameof(config.StorageFolder));
+                throw new ArgumentException("Missing storage folder", nameof(config));
             }
             _hostName = storage.Endpoint;
             _fileSystem = config.StorageDrive;
@@ -198,7 +198,7 @@ namespace Microsoft.Azure.IIoT.Platform.Subscriber.Cdm.Storage {
         /// </summary>
         /// <param name="corpusPath">The corpusPath.</param>
         /// <returns></returns>
-        private string FormatCorpusPath(string corpusPath) {
+        private static string FormatCorpusPath(string corpusPath) {
             if (corpusPath.StartsWith("adls:")) {
                 corpusPath = corpusPath[5..];
             }
@@ -212,7 +212,7 @@ namespace Microsoft.Azure.IIoT.Platform.Subscriber.Cdm.Storage {
         /// <param name="fileSystem"></param>
         /// <param name="folder"></param>
         /// <returns></returns>
-        private async Task<IFolder> OpenRootFolderAsync(IFileStorage storage,
+        private static async Task<IFolder> OpenRootFolderAsync(IFileStorage storage,
             string fileSystem, string folder) {
             var fs = await storage.CreateOrOpenDriveAsync(fileSystem).ConfigureAwait(false);
             return await fs.CreateOrOpenSubFolderAsync(folder).ConfigureAwait(false);
@@ -240,7 +240,7 @@ namespace Microsoft.Azure.IIoT.Platform.Subscriber.Cdm.Storage {
         private async Task<IFile> GetSharedCorpusFileAsync(string corpusPath) {
             var pathElements = FormatCorpusPath(corpusPath).Split('/');
             if (pathElements.Length == 0) {
-                throw new ArgumentException(nameof(corpusPath));
+                throw new ArgumentException("Bad path", nameof(corpusPath));
             }
             var root = await _folder.ConfigureAwait(false);
             for (var i = 0; i < pathElements.Length - 1; i++) {
@@ -257,7 +257,7 @@ namespace Microsoft.Azure.IIoT.Platform.Subscriber.Cdm.Storage {
         private async Task<IFileLock> GetLockedCorpusFileAsync(string corpusPath) {
             var pathElements = FormatCorpusPath(corpusPath).Split('/');
             if (pathElements.Length == 0) {
-                throw new ArgumentException(nameof(corpusPath));
+                throw new ArgumentException("Bad path", nameof(corpusPath));
             }
             var root = await _folder.ConfigureAwait(false);
             for (var i = 0; i < pathElements.Length - 1; i++) {
@@ -275,7 +275,7 @@ namespace Microsoft.Azure.IIoT.Platform.Subscriber.Cdm.Storage {
         private async Task<IFolder> GetCorpusFolderAsync(string corpusPath) {
             var pathElements = FormatCorpusPath(corpusPath).Split('/');
             if (pathElements.Length == 0) {
-                throw new ArgumentException(nameof(corpusPath));
+                throw new ArgumentException("Bad path", nameof(corpusPath));
             }
             var root = await _folder.ConfigureAwait(false);
             for (var i = 0; i < pathElements.Length - 1; i++) {

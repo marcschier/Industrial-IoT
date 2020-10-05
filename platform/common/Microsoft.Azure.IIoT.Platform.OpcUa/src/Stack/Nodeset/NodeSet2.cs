@@ -292,7 +292,7 @@ namespace Opc.Ua.Nodeset {
         /// Decode using decoder
         /// </summary>
         /// <param name="encoder"></param>
-        public void Decode(IDecoder encoder) {
+        public static void Decode(IDecoder encoder) {
             _ = new SystemContext {
                 NamespaceUris = encoder.Context.NamespaceUris,
                 ServerUris = encoder.Context.ServerUris,
@@ -977,7 +977,7 @@ namespace Opc.Ua.Nodeset {
         /// </summary>
         /// <param name="arrayDimensions"></param>
         /// <returns></returns>
-        private string EncodeArrayDimensions(IEnumerable<uint> arrayDimensions) {
+        private static string EncodeArrayDimensions(IEnumerable<uint> arrayDimensions) {
             if (arrayDimensions == null) {
                 return string.Empty;
             }
@@ -996,7 +996,7 @@ namespace Opc.Ua.Nodeset {
         /// </summary>
         /// <param name="arrayDimensions"></param>
         /// <returns></returns>
-        private uint[] DecodeArrayDimensions(string arrayDimensions) {
+        private static uint[] DecodeArrayDimensions(string arrayDimensions) {
             if (string.IsNullOrEmpty(arrayDimensions)) {
                 return null;
             }
@@ -1015,7 +1015,7 @@ namespace Opc.Ua.Nodeset {
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        private IEnumerable<Schema.LocalizedText> EncodeLocalizedText(
+        private static IEnumerable<Schema.LocalizedText> EncodeLocalizedText(
             IEnumerable<Ua.LocalizedText> input) {
             if (input != null) {
                 foreach (var text in input) {
@@ -1034,7 +1034,7 @@ namespace Opc.Ua.Nodeset {
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        private IEnumerable<Ua.LocalizedText> DecodeLocalizedText(
+        private static IEnumerable<Ua.LocalizedText> DecodeLocalizedText(
             IEnumerable<Schema.LocalizedText> input) {
             if (input != null) {
                 foreach (var text in input) {

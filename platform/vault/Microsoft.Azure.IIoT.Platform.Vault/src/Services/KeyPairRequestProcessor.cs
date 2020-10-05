@@ -59,7 +59,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Services {
                 throw new ArgumentException("Missing subject", nameof(request));
             }
             // Get entity
-            var entity = await _entities.FindEntityAsync(request.EntityId).ConfigureAwait(false);
+            var entity = await _entities.FindEntityAsync(request.EntityId, ct).ConfigureAwait(false);
             if (entity == null) {
                 throw new ResourceNotFoundException("Entity not found");
             }
@@ -116,7 +116,8 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Services {
                 throw new ResourceNotFoundException("Request not found");
             }
             try {
-                var entity = await _entities.FindEntityAsync(request.Entity.Id).ConfigureAwait(false);
+                var entity = await _entities.FindEntityAsync(request.Entity.Id,
+                    ct).ConfigureAwait(false);
                 if (entity != null) {
                     throw new ResourceInvalidStateException("Entity removed.");
                 }

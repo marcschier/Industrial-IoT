@@ -27,7 +27,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.History.StartStop {
             Certificate = _server.Certificate?.RawData?.ToThumbprint()
         };
 
-        private HistoryReadValuesTests<string> GetTests(EndpointInfoModel endpoint,
+        private static HistoryReadValuesTests<string> GetTests(EndpointInfoModel endpoint,
             IContainer services) {
             return new HistoryReadValuesTests<string>(
                 () => services.Resolve<IHistorianServices<string>>(), endpoint.Id);

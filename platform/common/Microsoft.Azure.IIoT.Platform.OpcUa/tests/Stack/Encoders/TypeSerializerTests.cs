@@ -4,15 +4,15 @@
 // ------------------------------------------------------------
 
 namespace Opc.Ua.Encoders {
+    using Microsoft.Azure.IIoT;
+    using Opc.Ua.Extensions;
     using Opc.Ua.Models;
     using System;
-    using Xunit;
     using System.Globalization;
-    using Microsoft.Azure.IIoT;
-    using System.Text;
-    using Xunit.Abstractions;
     using System.Linq;
-    using Opc.Ua.Extensions;
+    using System.Text;
+    using Xunit;
+    using Xunit.Abstractions;
 
     public class TypeSerializerTests {
 
@@ -559,7 +559,7 @@ namespace Opc.Ua.Encoders {
         [InlineData(ContentMimeType.UaBinary, ContentMimeType.UaBinary)]
         [InlineData(ContentMimeType.UaXml, ContentMimeType.UaXml)]
         public void ReadWriteUInt64(string encoderType, string decoderType) {
-            UInt64 expected = 123456789123456789;
+            ulong expected = 123456789123456789;
             CreateSerializers(out var encoder, out var decoder);
 
             var buffer = encoder.Encode(encoderType, e => e.WriteUInt64("test", expected));
@@ -579,7 +579,7 @@ namespace Opc.Ua.Encoders {
         [InlineData(ContentMimeType.UaBinary, ContentMimeType.UaBinary)]
         [InlineData(ContentMimeType.UaXml, ContentMimeType.UaXml)]
         public void ReadWriteInt64(string encoderType, string decoderType) {
-            Int64 expected = -123456789123456789;
+            var expected = -123456789123456789;
             CreateSerializers(out var encoder, out var decoder);
 
             var buffer = encoder.Encode(encoderType, e => e.WriteInt64("test", expected));
@@ -601,7 +601,7 @@ namespace Opc.Ua.Encoders {
         [InlineData(ContentMimeType.UaJson, ContentMimeType.UaJson)]
         [InlineData(ContentMimeType.UaXml, ContentMimeType.UaXml)]
         public void ReadWriteUInt64AsString(string encoderType, string decoderType) {
-            UInt64 expected = 123456789123456789;
+            ulong expected = 123456789123456789;
             CreateSerializers(out var encoder, out var decoder);
 
             var buffer = encoder.Encode(encoderType, e => e.WriteString("test", "123456789123456789"));
@@ -774,7 +774,7 @@ namespace Opc.Ua.Encoders {
         /// <summary>
         /// Return true if encoder produces non reversible output.
         /// </summary>
-        private bool IsNonReversibleEncoding(string encoderType) {
+        private static bool IsNonReversibleEncoding(string encoderType) {
             return
                 encoderType.Equals(ContentMimeType.UaNonReversibleJsonReference) ||
                 encoderType.Equals(ContentMimeType.UaNonReversibleJson);

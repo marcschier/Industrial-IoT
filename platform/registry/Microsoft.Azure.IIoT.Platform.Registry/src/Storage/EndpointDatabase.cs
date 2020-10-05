@@ -178,8 +178,8 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Storage.Default {
                 throw new ArgumentNullException(nameof(endpointId));
             }
             while (true) {
-                var document = await _documents.FindAsync<EndpointRegistration>(
-                    endpointId).ConfigureAwait(false);
+                var document = await _documents.FindAsync<EndpointRegistration>(endpointId,
+                    ct: ct).ConfigureAwait(false);
                 if (document == null) {
                     return null;
                 }

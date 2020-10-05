@@ -180,7 +180,7 @@ namespace Microsoft.Azure.IIoT.Services.Generic.Services {
         /// <param name="eventSchema"></param>
         /// <param name="contentEncoding"></param>
         /// <returns></returns>
-        private IDictionary<string, string> CreateProperties(
+        private static IDictionary<string, string> CreateProperties(
             string contentType, string eventSchema, string contentEncoding) {
             var header = new Dictionary<string, string>();
             if (!string.IsNullOrEmpty(contentType)) {

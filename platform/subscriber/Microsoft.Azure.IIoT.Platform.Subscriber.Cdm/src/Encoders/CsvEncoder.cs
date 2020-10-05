@@ -94,7 +94,7 @@ namespace Microsoft.Azure.IIoT.Platform.Subscriber.Cdm.Storage {
         /// </summary>
         /// <param name="o"></param>
         /// <returns></returns>
-        private string FormatValue(object o) {
+        private static string FormatValue(object o) {
             switch (o) {
                 case null:
                     return "";

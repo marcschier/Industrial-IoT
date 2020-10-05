@@ -206,7 +206,7 @@ namespace Microsoft.Azure.IIoT.AspNetCore.Authentication.Clients {
         /// <param name="user">User to get token for</param>
         /// <param name="scopes">Scopes for api to call</param>
         /// <param name="tenant"></param>
-        private async Task<AuthenticationResult> AcquireTokenSilentAsync(
+        private static async Task<AuthenticationResult> AcquireTokenSilentAsync(
             IConfidentialClientApplication application, ClaimsPrincipal user,
             IEnumerable<string> scopes, string tenant) {
             var account = await GetUserAccountAsync(application, user).ConfigureAwait(false);
@@ -247,7 +247,7 @@ namespace Microsoft.Azure.IIoT.AspNetCore.Authentication.Clients {
         /// <param name="config"></param>
         /// <param name="scopes"></param>
         /// <returns></returns>
-        private IEnumerable<string> GetScopes(IOAuthClientConfig config,
+        private static IEnumerable<string> GetScopes(IOAuthClientConfig config,
             IEnumerable<string> scopes) {
             var requestedScopes = new HashSet<string>();
             if (scopes != null) {

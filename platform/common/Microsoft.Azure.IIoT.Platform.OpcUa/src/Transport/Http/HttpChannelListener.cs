@@ -31,7 +31,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Transport {
     /// Decodes and forwards http based requests to the server and returns
     /// server responses to clients.
     /// </summary>
-    public class HttpChannelListener : IHttpChannelListener, IStartable,
+    public sealed class HttpChannelListener : IHttpChannelListener, IStartable,
         IDisposable {
 
         /// <summary>

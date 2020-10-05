@@ -17,7 +17,7 @@ namespace Opc.Ua.Encoders {
     /// <summary>
     /// Reads objects from reader or string
     /// </summary>
-    public class JsonDecoderEx : IDecoder, IDisposable {
+    public sealed class JsonDecoderEx : IDecoder, IDisposable {
 
         /// <inheritdoc/>
         public EncodingType EncodingType => EncodingType.Json;
@@ -53,7 +53,7 @@ namespace Opc.Ua.Encoders {
         public JsonDecoderEx(JObject root, ServiceMessageContext context = null) {
             Context = context ?? new ServiceMessageContext();
             _reader = null;
-            _stack.Push(root ?? throw new ArgumentException(nameof(root)));
+            _stack.Push(root ?? throw new ArgumentNullException(nameof(root)));
         }
 
         /// <summary>
@@ -66,7 +66,7 @@ namespace Opc.Ua.Encoders {
             bool useReaderAsIs) {
             Context = context ?? new ServiceMessageContext();
             _reader = useReaderAsIs ? reader : new JsonLoader(
-                reader ?? throw new ArgumentException(nameof(reader)));
+                reader ?? throw new ArgumentNullException(nameof(reader)));
         }
 
         /// <inheritdoc/>
@@ -1624,7 +1624,7 @@ namespace Opc.Ua.Encoders {
         /// <param name="o"></param>
         /// <param name="properties"></param>
         /// <returns></returns>
-        private bool HasAnyOf(JObject o, params string[] properties) {
+        private static bool HasAnyOf(JObject o, params string[] properties) {
             foreach (var property in properties) {
                 if (o.TryGetValue(property,
                     StringComparison.InvariantCultureIgnoreCase, out _)) {

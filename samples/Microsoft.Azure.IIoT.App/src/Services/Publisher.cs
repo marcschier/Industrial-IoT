@@ -82,8 +82,8 @@ namespace Microsoft.Azure.IIoT.App.Services {
         /// <param name="samplingInterval"></param>
         /// <param name="publishingInterval"></param>
         /// <returns>ErrorStatus</returns>
-        public async Task<bool> StartPublishingAsync(string endpointId, string nodeId, string displayName,
-            TimeSpan? samplingInterval, TimeSpan? publishingInterval, TimeSpan? heartBeatInterval, CredentialModel credential = null) {
+        public async Task<bool> StartPublishingAsync(string endpointId, string nodeId, TimeSpan? samplingInterval,
+            TimeSpan? publishingInterval, TimeSpan? heartBeatInterval, CredentialModel credential = null) {
 
             try {
                 var requestApiModel = new PublishStartRequestApiModel() {

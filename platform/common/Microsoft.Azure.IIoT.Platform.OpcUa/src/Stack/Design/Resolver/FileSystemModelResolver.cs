@@ -160,7 +160,7 @@ namespace Opc.Ua.Design.Resolver {
         /// <param name="fileName"></param>
         /// <param name="file"></param>
         /// <returns></returns>
-        private bool TryLoadIdentifiers(Namespace ns, string fileName,
+        private static bool TryLoadIdentifiers(Namespace ns, string fileName,
             out IdentifierFile file) {
 
             if (!File.Exists(fileName)) {

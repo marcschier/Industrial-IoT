@@ -44,7 +44,7 @@ namespace Microsoft.Azure.IIoT.Azure.CosmosDb.Clients {
 
         /// <inheritdoc/>
         public async Task<int> CountAsync(CancellationToken ct) {
-            return await _queryable.CountAsync().ConfigureAwait(false);
+            return await _queryable.CountAsync(ct).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>

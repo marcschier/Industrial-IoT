@@ -151,7 +151,7 @@ namespace Microsoft.Azure.IIoT.App.Pages {
             var publishingInterval = IsTimeIntervalSet(item?.PublishingInterval) ? item.PublishingInterval : TimeSpan.FromMilliseconds(1000);
             var samplingInterval = IsTimeIntervalSet(item?.SamplingInterval) ? item.SamplingInterval : TimeSpan.FromMilliseconds(1000);
             var heartbeatInterval = IsTimeIntervalSet(item?.HeartbeatInterval) ? item.HeartbeatInterval : null;
-            var result = await Publisher.StartPublishingAsync(endpointId, node.Id, node.NodeName, samplingInterval, publishingInterval, heartbeatInterval, Credential).ConfigureAwait(false);
+            var result = await Publisher.StartPublishingAsync(endpointId, node.Id, samplingInterval, publishingInterval, heartbeatInterval, Credential).ConfigureAwait(false);
             if (result) {
                 node.PublishedItem = new PublishedItemApiModel() {
                     NodeId = node.Id,

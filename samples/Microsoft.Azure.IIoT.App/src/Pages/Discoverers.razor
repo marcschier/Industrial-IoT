@@ -31,12 +31,12 @@
     <h1>Asset Discovery</h1>
     <a class="adhocmargin" href="javascript: void(0)" @onclick="@(() => OpenDrawer(new DiscovererInfo {
         DiscovererModel = new DiscovererApiModel(),
-        isAdHocDiscovery = true
+        IsAdHocDiscovery = true
     }))">
         Run ad-hoc discovery
     </a>
     @if (DiscovererData != null) {
-        if (DiscovererData.IsSearching && DiscovererData.isAdHocDiscovery) {
+        if (DiscovererData.IsSearching && DiscovererData.IsAdHocDiscovery) {
             <div class="spinnermargin loader"></div>
         }
         else {

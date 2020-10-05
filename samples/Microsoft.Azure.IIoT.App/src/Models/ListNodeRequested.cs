@@ -10,17 +10,17 @@ namespace Microsoft.Azure.IIoT.App.Models {
     public class ListNodeRequested {
 
         public ListNodeRequested(PublishedItemApiModel publishedItem) {
-            if (publishedItem?.PublishingInterval.HasValue ?? false
+            if ((publishedItem?.PublishingInterval.HasValue ?? false)
                 && publishedItem.PublishingInterval.Value != TimeSpan.MinValue) {
                 RequestedPublishingInterval = publishedItem.PublishingInterval.Value.TotalMilliseconds.ToString();
             }
 
-            if (publishedItem?.SamplingInterval.HasValue ?? false
+            if ((publishedItem?.SamplingInterval.HasValue ?? false)
                 && publishedItem.SamplingInterval.Value != TimeSpan.MinValue) {
                 RequestedSamplingInterval = publishedItem.SamplingInterval.Value.TotalMilliseconds.ToString();
             }
 
-            if (publishedItem?.HeartbeatInterval.HasValue ?? false
+            if ((publishedItem?.HeartbeatInterval.HasValue ?? false)
                 && publishedItem.HeartbeatInterval.Value != TimeSpan.MinValue) {
                 RequestedHeartbeatInterval = publishedItem.HeartbeatInterval.Value.TotalSeconds.ToString();
             }

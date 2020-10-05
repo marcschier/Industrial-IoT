@@ -113,10 +113,10 @@ namespace Microsoft.Azure.IIoT.Services.LiteDb.Clients {
                 throw new ArgumentNullException(nameof(existing));
             }
             if (string.IsNullOrEmpty(existing.Id)) {
-                throw new ArgumentNullException(nameof(existing.Id));
+                throw new ArgumentException("Missing id", nameof(existing));
             }
             if (string.IsNullOrEmpty(existing.Etag)) {
-                throw new ArgumentNullException(nameof(existing.Etag));
+                throw new ArgumentException("Missing etag", nameof(existing));
             }
             if (typeof(T).IsValueType) {
                 throw new NotSupportedException(typeof(T).Name);
@@ -179,7 +179,7 @@ namespace Microsoft.Azure.IIoT.Services.LiteDb.Clients {
                 throw new ArgumentNullException(nameof(item));
             }
             if (string.IsNullOrEmpty(item.Id)) {
-                throw new ArgumentNullException(nameof(item.Id));
+                throw new ArgumentException("Missing id", nameof(item));
             }
             if (typeof(T).IsValueType) {
                 throw new NotSupportedException(typeof(T).Name);

@@ -189,8 +189,8 @@ namespace Opc.Ua.Design.Schema {
         /// <param name="identifier"></param>
         public static void SetIdentifier(this NodeDesign node, object identifier) {
             // set identifier for node.
-            if (identifier is uint) {
-                node.NumericId = (uint)identifier;
+            if (identifier is uint id) {
+                node.NumericId = id;
                 node.NumericIdSpecified = true;
                 node.StringId = null;
             }

@@ -38,18 +38,6 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Handler {
         }
 
         /// <inheritdoc/>
-        public Task OnApplicationEnabledAsync(RegistryOperationContextModel context,
-            ApplicationInfoModel application) {
-            return Task.CompletedTask;
-        }
-
-        /// <inheritdoc/>
-        public Task OnApplicationDisabledAsync(RegistryOperationContextModel context,
-            ApplicationInfoModel application) {
-            return Task.CompletedTask;
-        }
-
-        /// <inheritdoc/>
         public Task OnApplicationDeletedAsync(RegistryOperationContextModel context,
             string applicationId, ApplicationInfoModel application) {
             return RemoveAllRequestsForEntityAsync(applicationId, context);
@@ -69,18 +57,6 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Handler {
 
         /// <inheritdoc/>
         public Task OnEndpointDeactivatedAsync(RegistryOperationContextModel context,
-            EndpointInfoModel endpoint) {
-            return Task.CompletedTask;
-        }
-
-        /// <inheritdoc/>
-        public Task OnEndpointDisabledAsync(RegistryOperationContextModel context,
-            EndpointInfoModel endpoint) {
-            return Task.CompletedTask;
-        }
-
-        /// <inheritdoc/>
-        public Task OnEndpointEnabledAsync(RegistryOperationContextModel context,
             EndpointInfoModel endpoint) {
             return Task.CompletedTask;
         }

@@ -24,7 +24,9 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Clients {
         /// Create test harness
         /// </summary>
         /// <returns></returns>
+#pragma warning disable CA1822 // Mark members as static
         internal ServiceBusEventQueueHarness GetHarness(string queue) {
+#pragma warning restore CA1822 // Mark members as static
             return new ServiceBusEventQueueHarness(queue);
         }
 

@@ -303,7 +303,7 @@ namespace Microsoft.Azure.IIoT.Serializers.NewtonSoft {
                         // Part of an object - update object
                         var property = o.Properties().FirstOrDefault(p => p.Value == Token);
                         if (property == null) {
-                            throw new ArgumentOutOfRangeException("No parent found");
+                            throw new ArgumentOutOfRangeException(nameof(value), "No parent found");
                         }
                         Token = FromObject(value);
                         property.Value = Token;
@@ -317,7 +317,7 @@ namespace Microsoft.Azure.IIoT.Serializers.NewtonSoft {
                                 return;
                             }
                         }
-                        throw new ArgumentOutOfRangeException("No parent found");
+                        throw new ArgumentOutOfRangeException(nameof(value), "No parent found");
                     case JProperty p:
                         Token = FromObject(value);
                         p.Value = Token;

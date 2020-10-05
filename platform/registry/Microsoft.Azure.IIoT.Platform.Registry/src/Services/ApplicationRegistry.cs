@@ -145,8 +145,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
             if (application == null) {
                 return null;
             }
-            var endpoints = await _endpoints.GetApplicationEndpoints(applicationId,
-                application.NotSeenSince != null, filterInactiveTwins).ConfigureAwait(false);
+            var endpoints = await _endpoints.GetApplicationEndpoints(applicationId, application.NotSeenSince != null, filterInactiveTwins, ct).ConfigureAwait(false);
             return new ApplicationRegistrationModel {
                 Application = application,
                 Endpoints = endpoints.ToList()

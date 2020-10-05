@@ -18,7 +18,7 @@ namespace Microsoft.Azure.IIoT.Services.CouchDb.Clients {
         public const string Name = "Server";
     }
 
-    public class CouchDbServerFixture : IDisposable {
+    public sealed class CouchDbServerFixture : IDisposable {
 
         public static bool Up { get; private set; }
 

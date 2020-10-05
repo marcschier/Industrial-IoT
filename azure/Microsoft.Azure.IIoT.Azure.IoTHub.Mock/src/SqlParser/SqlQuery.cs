@@ -93,7 +93,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub.Mock.SqlParser {
         /// <param name="records"></param>
         /// <param name="context"></param>
         /// <returns></returns>
-        private IEnumerable<VariantValue> Project(IEnumerable<VariantValue> records,
+        private static IEnumerable<VariantValue> Project(IEnumerable<VariantValue> records,
             SqlSelectParser.ParseContext context) {
             if (context == null) {
                 throw new ArgumentNullException(nameof(context));
@@ -327,7 +327,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub.Mock.SqlParser {
         /// <param name="lhs"></param>
         /// <param name="rhs"></param>
         /// <returns></returns>
-        private Expression CreateBinaryExpression(string op, Expression lhs, Expression rhs) {
+        private static Expression CreateBinaryExpression(string op, Expression lhs, Expression rhs) {
             switch (op.ToLowerInvariant()) {
                 case "=":
                     return Expression.Equal(lhs, rhs);
@@ -422,7 +422,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub.Mock.SqlParser {
         /// </summary>
         /// <param name="stringLiteralContext"></param>
         /// <returns></returns>
-        private string ParseStringValue(ITerminalNode stringLiteralContext) {
+        private static string ParseStringValue(ITerminalNode stringLiteralContext) {
             return stringLiteralContext.GetText().TrimQuotes();
         }
 

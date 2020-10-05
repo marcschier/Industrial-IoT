@@ -44,17 +44,17 @@ namespace Opc.Ua.Encoders {
         /// <summary>
         /// Encode using microsoft variant
         /// </summary>
-        public bool UseAdvancedEncoding { get; set; } = false;
+        public bool UseAdvancedEncoding { get; set; }
 
         /// <summary>
         /// Ignore null values
         /// </summary>
-        public bool IgnoreNullValues { get; set; } = false;
+        public bool IgnoreNullValues { get; set; }
 
         /// <summary>
         /// Ignore default primitive values
         /// </summary>
-        public bool IgnoreDefaultValues { get; set; } = false;
+        public bool IgnoreDefaultValues { get; set; }
 
         /// <summary>
         /// State of the writer
@@ -1281,7 +1281,7 @@ namespace Opc.Ua.Encoders {
         /// <typeparam name="T"></typeparam>
         /// <param name="value"></param>
         /// <returns></returns>
-        private T ToTypedScalar<T>(object value) {
+        private static T ToTypedScalar<T>(object value) {
             try {
                 if (value == null) {
                     return default;
@@ -1499,7 +1499,9 @@ namespace Opc.Ua.Encoders {
         private readonly JsonEncoding _encoding;
         private readonly Stack<string> _namespaces;
         private ushort[] _namespaceMappings;
+#pragma warning disable IDE0052 // Remove unread private members
         private ushort[] _serverMappings;
+#pragma warning restore IDE0052 // Remove unread private members
         private uint _nestingLevel;
     }
 }

@@ -361,7 +361,7 @@ namespace Opc.Ua.Models {
             }
             decoder.PushNamespace(Namespaces.OpcUa);
             // now read node class
-            var nodeClass = (NodeClass)_attributeMap.Decode(decoder, Attributes.NodeClass);
+            var nodeClass = (NodeClass)AttributeMap.Decode(decoder, Attributes.NodeClass);
             if (nodeClass == NodeClass.Unspecified) {
                 throw new ServiceResultException(StatusCodes.BadNodeClassInvalid);
             }
@@ -370,7 +370,7 @@ namespace Opc.Ua.Models {
                 if (attributeId == Attributes.NodeClass) {
                     continue; // Read already first
                 }
-                var value = _attributeMap.Decode(decoder, attributeId);
+                var value = AttributeMap.Decode(decoder, attributeId);
                 if (value != null) {
                     if (value is DataValue dataValue) {
                         _attributes[attributeId] = dataValue;
@@ -393,7 +393,7 @@ namespace Opc.Ua.Models {
             }
             encoder.PushNamespace(Namespaces.OpcUa);
             // Write node class as first element since we need to look it up on decode.
-            _attributeMap.Encode(encoder, Attributes.NodeClass, NodeClass);
+            AttributeMap.Encode(encoder, Attributes.NodeClass, NodeClass);
             var optional = false;
             foreach (var attributeId in _attributeMap.GetNodeClassAttributes(NodeClass)) {
                 if (attributeId == Attributes.NodeClass) {
@@ -406,7 +406,7 @@ namespace Opc.Ua.Models {
                 if (value == null) {
                     value = _attributeMap.GetDefault(NodeClass, attributeId, ref optional);
                 }
-                _attributeMap.Encode(encoder, attributeId, value);
+                AttributeMap.Encode(encoder, attributeId, value);
             }
             encoder.WriteEncodeableArray(nameof(References),
                 References.Select(r => new EncodeableReferenceModel(r)));

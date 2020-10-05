@@ -551,7 +551,7 @@ namespace HistoricalEvents {
         /// <summary>
         /// Loads a history continuation point.
         /// </summary>
-        private HistoryReadRequest LoadContinuationPoint(
+        private static HistoryReadRequest LoadContinuationPoint(
             ServerSystemContext context,
             byte[] continuationPoint) {
             var session = context.OperationContext.Session;
@@ -560,8 +560,8 @@ namespace HistoricalEvents {
                 return null;
             }
 
-
-            if (session.RestoreHistoryContinuationPoint(continuationPoint) is not HistoryReadRequest request) {
+            if (session.RestoreHistoryContinuationPoint(continuationPoint) 
+                is not HistoryReadRequest request) {
                 return null;
             }
 
@@ -571,7 +571,7 @@ namespace HistoricalEvents {
         /// <summary>
         /// Saves a history continuation point.
         /// </summary>
-        private byte[] SaveContinuationPoint(
+        private static byte[] SaveContinuationPoint(
             ServerSystemContext context,
             HistoryReadRequest request) {
             var session = context.OperationContext.Session;
@@ -585,8 +585,6 @@ namespace HistoricalEvents {
             request.ContinuationPoint = id.ToByteArray();
             return request.ContinuationPoint;
         }
-
-
 
 
         /// <summary>

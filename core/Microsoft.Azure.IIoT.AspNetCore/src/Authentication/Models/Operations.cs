@@ -14,25 +14,25 @@ namespace Microsoft.Azure.IIoT.AspNetCore.Authentication {
         /// <summary>
         /// Create
         /// </summary>
-        public static OperationAuthorizationRequirement Create =
+        public static readonly OperationAuthorizationRequirement Create =
             new OperationAuthorizationRequirement { Name = nameof(Create) };
 
         /// <summary>
         /// Read
         /// </summary>
-        public static OperationAuthorizationRequirement Read =
+        public static readonly OperationAuthorizationRequirement Read =
             new OperationAuthorizationRequirement { Name = nameof(Read) };
 
         /// <summary>
         /// Update
         /// </summary>
-        public static OperationAuthorizationRequirement Update =
+        public static readonly OperationAuthorizationRequirement Update =
             new OperationAuthorizationRequirement { Name = nameof(Update) };
 
         /// <summary>
         /// Delete
         /// </summary>
-        public static OperationAuthorizationRequirement Delete =
+        public static readonly OperationAuthorizationRequirement Delete =
             new OperationAuthorizationRequirement { Name = nameof(Delete) };
     }
 }

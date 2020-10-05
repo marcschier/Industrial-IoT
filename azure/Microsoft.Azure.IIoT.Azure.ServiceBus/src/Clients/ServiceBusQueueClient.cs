@@ -173,7 +173,7 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Clients {
         /// <param name="target"></param>
         /// <param name="partitionKey"></param>
         /// <returns></returns>
-        private string GetKey(string target, string schema, string partitionKey) {
+        private static string GetKey(string target, string schema, string partitionKey) {
             var key = string.IsNullOrEmpty(partitionKey) ? target : partitionKey;
             if (!string.IsNullOrEmpty(schema)) {
                 key += schema;

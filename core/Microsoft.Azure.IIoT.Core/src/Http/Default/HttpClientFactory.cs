@@ -216,7 +216,7 @@ namespace Microsoft.Azure.IIoT.Http.Clients {
                     Monitor.Exit(_cleanupActiveLock);
                 }
             }
-            if (_expiredHandlers.Count > 0) {
+            if (!_expiredHandlers.IsEmpty) {
                 StartCleanupTimer();
             }
         }

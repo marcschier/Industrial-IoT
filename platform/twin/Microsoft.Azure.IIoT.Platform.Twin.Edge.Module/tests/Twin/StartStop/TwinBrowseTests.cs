@@ -36,7 +36,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Twin.StartStop {
             Certificate = _server.Certificate?.RawData?.ToThumbprint()
         };
 
-        private BrowseServicesTests<string> GetTests(EndpointInfoModel endpoint,
+        private static BrowseServicesTests<string> GetTests(EndpointInfoModel endpoint,
             IContainer services) {
             return new BrowseServicesTests<string>(
                 () => services.Resolve<IBrowseServices<string>>(), endpoint.Id);

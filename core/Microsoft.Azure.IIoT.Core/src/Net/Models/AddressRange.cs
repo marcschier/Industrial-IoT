@@ -298,7 +298,6 @@ namespace Microsoft.Azure.IIoT.Net.Models {
         private static IEnumerable<AddressRange> Merge(IEnumerable<AddressRange> ranges) {
             var results = new Stack<AddressRange>();
             if (ranges != null) {
-                ranges.OrderBy(k => k.Low);
                 foreach (var range in ranges.OrderBy(k => k.Low)) {
                     if (results.Count == 0) {
                         results.Push(range);

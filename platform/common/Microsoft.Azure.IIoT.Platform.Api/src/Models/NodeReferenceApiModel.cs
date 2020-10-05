@@ -34,27 +34,5 @@ namespace Microsoft.Azure.IIoT.Platform.Core.Api.Models {
         [DataMember(Name = "target", Order = 2)]
         [Required]
         public NodeApiModel Target { get; set; }
-
-        // Legacy
-
-        /// <ignore/>
-        [IgnoreDataMember]
-        [Obsolete]
-        public string TypeId => ReferenceTypeId;
-
-        /// <ignore/>
-        [IgnoreDataMember]
-        [Obsolete]
-        public string BrowseName => Target?.BrowseName;
-
-        /// <ignore/>
-        [IgnoreDataMember]
-        [Obsolete]
-        public string DisplayName => Target?.DisplayName;
-
-        /// <ignore/>
-        [IgnoreDataMember]
-        [Obsolete]
-        public string TypeDefinition => Target?.TypeDefinitionId;
     }
 }

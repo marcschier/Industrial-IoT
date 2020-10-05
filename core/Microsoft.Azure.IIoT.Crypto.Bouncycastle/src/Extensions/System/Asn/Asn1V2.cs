@@ -285,7 +285,7 @@ namespace System.Security.Cryptography.Asn1 {
                 return false;
             }
 
-            return obj is Asn1Tag && Equals((Asn1Tag)obj);
+            return obj is Asn1Tag tag && Equals(tag);
         }
 
         public override int GetHashCode() {

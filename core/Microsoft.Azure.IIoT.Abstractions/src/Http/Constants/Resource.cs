@@ -13,7 +13,7 @@ namespace Microsoft.Azure.IIoT.Http {
         /// <summary>
         /// No authentication required
         /// </summary>
-        public static readonly string None = null;
+        public static readonly string None;
 
         /// <summary>
         /// The resource is local to the client

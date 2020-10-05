@@ -41,7 +41,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Hosting {
                      CreateMessage(ev, contentEncoding, contentType, eventSchema))
                 .ToList();
             try {
-                await _client.SendEventBatchAsync(target, messages).ConfigureAwait(false);
+                await _client.SendEventBatchAsync(target, messages, ct).ConfigureAwait(false);
             }
             finally {
                 messages.ForEach(m => m?.Dispose());

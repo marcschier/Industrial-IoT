@@ -44,7 +44,7 @@ namespace Microsoft.Azure.IIoT.Diagnostics {
 
                     // Kick off the actual processing to a new thread and return
                     // a Task for the processing thread.
-                    return Task.Run(() => RunAsync(ct));
+                    return Task.Run(() => RunAsync(ct), ct);
                 }
                 _logger.Information("Metrics collection is disabled.");
                 return Task.CompletedTask;

@@ -3,8 +3,6 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-using Org.BouncyCastle.Crypto.Tls;
-
 namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Services {
     using Microsoft.Azure.IIoT.Platform.Publisher.Edge.Models;
     using Microsoft.Azure.IIoT.Platform.Publisher.Models;
@@ -407,8 +405,8 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Services {
         /// <param name="user"></param>
         /// <param name="password"></param>
         /// <returns></returns>
-        private OpcAuthenticationMode ToUserNamePasswordCredential(CredentialModel credential,
-            out string user, out string password) {
+        private static OpcAuthenticationMode ToUserNamePasswordCredential(
+            CredentialModel credential, out string user, out string password) {
 
             if (credential?.Type != CredentialType.UserName) {
                 user = null;

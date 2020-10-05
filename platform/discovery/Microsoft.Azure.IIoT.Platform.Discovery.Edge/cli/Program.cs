@@ -294,20 +294,6 @@ Operations (Mutually exclusive):
             }
 
             /// <inheritdoc/>
-            public Task OnApplicationDisabledAsync(RegistryOperationContextModel context,
-                ApplicationInfoModel application) {
-                Console.WriteLine($"Disabled {application.ApplicationId}");
-                return Task.CompletedTask;
-            }
-
-            /// <inheritdoc/>
-            public Task OnApplicationEnabledAsync(RegistryOperationContextModel context,
-                ApplicationInfoModel application) {
-                Console.WriteLine($"Enabled {application.ApplicationId}");
-                return Task.CompletedTask;
-            }
-
-            /// <inheritdoc/>
             public Task OnApplicationNewAsync(RegistryOperationContextModel context,
                 ApplicationInfoModel application) {
                 Console.WriteLine($"Created {application.ApplicationId}");
@@ -339,20 +325,6 @@ Operations (Mutually exclusive):
             public Task OnEndpointDeletedAsync(RegistryOperationContextModel context,
                 string endpointId, EndpointInfoModel endpoint) {
                 Console.WriteLine($"Deleted {endpointId}");
-                return Task.CompletedTask;
-            }
-
-            /// <inheritdoc/>
-            public Task OnEndpointDisabledAsync(RegistryOperationContextModel context,
-                EndpointInfoModel endpoint) {
-                Console.WriteLine($"Disabled {endpoint.Id}");
-                return Task.CompletedTask;
-            }
-
-            /// <inheritdoc/>
-            public Task OnEndpointEnabledAsync(RegistryOperationContextModel context,
-                EndpointInfoModel endpoint) {
-                Console.WriteLine($"Enabled {endpoint.Id}");
                 return Task.CompletedTask;
             }
 

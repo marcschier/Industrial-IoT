@@ -338,18 +338,18 @@ namespace Plc {
         /// <summary>
         /// Following variables listed here are simulated.
         /// </summary>
-        protected BaseDataVariableState _step = null;
-        protected BaseDataVariableState _alternatingBoolean = null;
-        protected BaseDataVariableState _randomUnsignedInt32 = null;
-        protected BaseDataVariableState _randomSignedInt32 = null;
-        protected BaseDataVariableState _spikeData = null;
-        protected BaseDataVariableState _dipData = null;
-        protected BaseDataVariableState _posTrendData = null;
-        protected BaseDataVariableState _negTrendData = null;
+        protected BaseDataVariableState _step;
+        protected BaseDataVariableState _alternatingBoolean;
+        protected BaseDataVariableState _randomUnsignedInt32;
+        protected BaseDataVariableState _randomSignedInt32;
+        protected BaseDataVariableState _spikeData;
+        protected BaseDataVariableState _dipData;
+        protected BaseDataVariableState _posTrendData;
+        protected BaseDataVariableState _negTrendData;
 
         /// <summary>
         /// This variable can be changed by OPCUA client.
         /// </summary>
-        protected BaseDataVariableState _daeTemp = null;
+        protected BaseDataVariableState _daeTemp;
     }
 }

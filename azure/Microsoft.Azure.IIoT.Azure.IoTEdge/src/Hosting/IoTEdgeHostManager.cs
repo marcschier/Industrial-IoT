@@ -20,7 +20,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Hosting {
     /// <summary>
     /// Identity manager manages host processes
     /// </summary>
-    public class IoTEdgeHostManager : IDisposable, IModuleHostManager {
+    public sealed class IoTEdgeHostManager : IDisposable, IModuleHostManager {
 
         /// <inheritdoc/>
         public IEnumerable<(string, bool)> Hosts {
@@ -52,7 +52,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Hosting {
 
         /// <inheritdoc/>
         public async Task StartAsync(string id, string secret, string type, CancellationToken ct) {
-            await _lock.WaitAsync().ConfigureAwait(false);
+            await _lock.WaitAsync(ct).ConfigureAwait(false);
             try {
                 if (_hosts.TryGetValue(id, out var host) && host.Running) {
                     _logger.Debug("{id} host already running.", id);
@@ -87,7 +87,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Hosting {
         /// <inheritdoc/>
         public async Task StopAsync(string id, CancellationToken ct) {
             IdentityHostProcess host;
-            await _lock.WaitAsync().ConfigureAwait(false);
+            await _lock.WaitAsync(ct).ConfigureAwait(false);
             try {
                 if (!_hosts.TryGetValue(id, out host)) {
                     _logger.Debug("{id} entity host not running.", id);

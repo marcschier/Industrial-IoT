@@ -40,7 +40,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Storage {
             if (request == null) {
                 throw new ArgumentNullException(nameof(request));
             }
-            var recordId = await _index.AllocateAsync().ConfigureAwait(false);
+            var recordId = await _index.AllocateAsync(ct).ConfigureAwait(false);
             while (true) {
                 request.Index = recordId;
                 request.Record.State = CertificateRequestState.New;
@@ -66,8 +66,8 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Storage {
                 throw new ArgumentNullException(nameof(requestId));
             }
             while (true) {
-                var document = await _requests.FindAsync<RequestDocument>(
-                    requestId).ConfigureAwait(false);
+                var document = await _requests.FindAsync<RequestDocument>(requestId, 
+                    ct: ct).ConfigureAwait(false);
                 if (document == null) {
                     throw new ResourceNotFoundException("Request not found");
                 }
@@ -93,8 +93,8 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Storage {
                 throw new ArgumentNullException(nameof(requestId));
             }
             while (true) {
-                var document = await _requests.FindAsync<RequestDocument>(
-                    requestId).ConfigureAwait(false);
+                var document = await _requests.FindAsync<RequestDocument>(requestId, 
+                    ct: ct).ConfigureAwait(false);
                 if (document == null) {
                     return null;
                 }

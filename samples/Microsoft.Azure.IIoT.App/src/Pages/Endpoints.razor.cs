@@ -40,7 +40,7 @@ namespace Microsoft.Azure.IIoT.App.Pages {
             return Task.CompletedTask;
         }
 
-        private bool IsEndpointSeen(EndpointInfo endpoint) {
+        private static bool IsEndpointSeen(EndpointInfo endpoint) {
             return endpoint.EndpointModel?.NotSeenSince == null;
         }
 
@@ -53,7 +53,7 @@ namespace Microsoft.Azure.IIoT.App.Pages {
         /// </summary>
         /// <param name="endpoint">The endpoint info</param>
         /// <returns>True if the endpoint is activated, false otherwise</returns>
-        private bool IsEndpointActivated(EndpointInfo endpoint) {
+        private static bool IsEndpointActivated(EndpointInfo endpoint) {
             return endpoint.EndpointModel.ActivationState == EntityActivationState.Activated ||
                  endpoint.EndpointModel.ActivationState == EntityActivationState.ActivatedAndConnected;
         }

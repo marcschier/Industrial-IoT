@@ -155,7 +155,8 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Storage.Services {
             }
             while (true) {
                 var document = await _documents.FindAsync<DataSetEntityDocument>(
-                    DataSetEntityDocumentEx.GetDocumentId(dataSetWriterId)).ConfigureAwait(false);
+                    DataSetEntityDocumentEx.GetDocumentId(dataSetWriterId),
+                        ct: ct).ConfigureAwait(false);
                 if (document == null) {
                     return null;
                 }
@@ -328,7 +329,8 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Storage.Services {
             }
             while (true) {
                 var document = await _documents.FindAsync<DataSetEntityDocument>(
-                    DataSetEntityDocumentEx.GetDocumentId(dataSetWriterId, variableId)).ConfigureAwait(false);
+                    DataSetEntityDocumentEx.GetDocumentId(dataSetWriterId, variableId), 
+                        ct: ct).ConfigureAwait(false);
                 if (document == null) {
                     return null;
                 }

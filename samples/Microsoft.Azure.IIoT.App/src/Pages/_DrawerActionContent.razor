@@ -82,7 +82,7 @@
              }
             <hr />
             <div>
-                <button @onclick="@(async() => await CallAsync(NodeData.Id, Values))" type="button" class="btn btn-primary shadow-none">Apply</button>
+                <button @onclick="@(async() => await CallAsync(Values))" type="button" class="btn btn-primary shadow-none">Apply</button>
             </div>
             <div class="@ResponseClass">
                 @if (BrowseManager.MethodCallResponse != null)
