@@ -251,8 +251,10 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
         /// <param name="authenticationToken"></param>
         /// <param name="requestType"></param>
         /// <returns></returns>
+#pragma warning disable IDE0060 // Remove unused parameter
         private static IUserIdentity ValidateSessionLessRequest(NodeId authenticationToken,
             RequestType requestType) {
+#pragma warning restore IDE0060 // Remove unused parameter
             // Not supported!
             throw new ServiceResultException(StatusCodes.BadSessionIdInvalid);
         }

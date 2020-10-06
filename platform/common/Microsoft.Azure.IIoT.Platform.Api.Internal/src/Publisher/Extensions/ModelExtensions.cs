@@ -1090,7 +1090,6 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api.Models {
                 GenerationId = model.GenerationId,
                 WriterGroupId = model.WriterGroupId,
                 BatchSize = model.BatchSize,
-                SiteId = model.SiteId,
                 HeaderLayoutUri = model.HeaderLayoutUri,
                 KeepAliveTime = model.KeepAliveTime,
                 LocaleIds = model.LocaleIds?.ToList(),
@@ -1125,7 +1124,6 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api.Models {
                 GenerationId = model.GenerationId,
                 WriterGroupId = model.WriterGroupId,
                 BatchSize = model.BatchSize,
-                SiteId = model.SiteId,
                 HeaderLayoutUri = model.HeaderLayoutUri,
                 KeepAliveTime = model.KeepAliveTime,
                 LocaleIds = model.LocaleIds?.ToList(),
@@ -1178,7 +1176,6 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api.Models {
                 GenerationId = model.GenerationId,
                 Created = model.Created.ToApiModel(),
                 Updated = model.Updated.ToApiModel(),
-                SiteId = model.SiteId,
                 SecurityMode = (Core.Api.Models.SecurityMode?)model.SecurityMode
             };
         }
@@ -1212,7 +1209,6 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api.Models {
                 GenerationId = model.GenerationId,
                 Created = model.Created.ToServiceModel(),
                 Updated = model.Updated.ToServiceModel(),
-                SiteId = model.SiteId,
                 SecurityMode = (Platform.Core.Models.SecurityMode?)model.SecurityMode
             };
         }
@@ -2098,7 +2094,6 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api.Models {
                 return null;
             }
             return new WriterGroupAddRequestApiModel {
-                SiteId = model.SiteId,
                 BatchSize = model.BatchSize,
                 HeaderLayoutUri = model.HeaderLayoutUri,
                 KeepAliveTime = model.KeepAliveTime,
@@ -2122,7 +2117,6 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api.Models {
                 return null;
             }
             return new WriterGroupAddRequestModel {
-                SiteId = model.SiteId,
                 BatchSize = model.BatchSize,
                 HeaderLayoutUri = model.HeaderLayoutUri,
                 KeepAliveTime = model.KeepAliveTime,
@@ -2245,7 +2239,6 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api.Models {
                 Schema = (MessageSchema?)model.Schema,
                 State = (WriterGroupState?)model.State,
                 GroupVersion = model.GroupVersion,
-                SiteId = model.SiteId
             };
         }
 
@@ -2265,7 +2258,6 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api.Models {
                 Schema = (Platform.Publisher.Models.MessageSchema?)model.Schema,
                 State = (Platform.Publisher.Models.WriterGroupState?)model.State,
                 GroupVersion = model.GroupVersion,
-                SiteId = model.SiteId
             };
         }
 

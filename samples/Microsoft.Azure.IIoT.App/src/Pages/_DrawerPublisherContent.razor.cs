@@ -9,7 +9,11 @@ namespace Microsoft.Azure.IIoT.App.Pages {
     using Microsoft.Azure.IIoT.Platform.Twin.Api.Models;
     using Microsoft.Azure.IIoT.App.Models;
 
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+#pragma warning disable IDE1006 // Naming Styles
     public partial class _DrawerPublisherContent {
+#pragma warning restore IDE1006 // Naming Styles
+#pragma warning restore IDE0079 // Remove unnecessary suppression
         [Parameter]
         public ListNode NodeData { get; set; }
 

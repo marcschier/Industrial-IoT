@@ -39,10 +39,10 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
                 throw new ArgumentNullException(nameof(registration));
             }
             if (string.IsNullOrEmpty(registration.SupervisorId)) {
-                throw new ArgumentNullException(nameof(registration.SupervisorId));
+                throw new ArgumentException("Missing supervisor id", nameof(registration));
             }
             if (string.IsNullOrEmpty(registration.Id)) {
-                throw new ArgumentNullException(nameof(registration.Id));
+                throw new ArgumentException("Missing registration id", nameof(registration));
             }
             if (string.IsNullOrEmpty(secret)) {
                 throw new ArgumentNullException(nameof(secret));
@@ -63,10 +63,10 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
                 throw new ArgumentNullException(nameof(registration));
             }
             if (string.IsNullOrEmpty(registration.SupervisorId)) {
-                throw new ArgumentNullException(nameof(registration.SupervisorId));
+                throw new ArgumentException("Missing supervisor id", nameof(registration));
             }
             if (string.IsNullOrEmpty(registration.Id)) {
-                throw new ArgumentNullException(nameof(registration.Id));
+                throw new ArgumentException("Missing registration id", nameof(registration));
             }
             await CallServiceOnSupervisorAsync("DeactivateEndpoint_V2", registration.SupervisorId,
                 registration.Id, ct).ConfigureAwait(false);

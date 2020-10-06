@@ -5,6 +5,7 @@
 
 namespace Microsoft.Azure.IIoT.App.Data {
     using Microsoft.Azure.IIoT.Platform.Registry.Api.Models;
+    using Microsoft.Azure.IIoT.Platform.Directory.Api.Models;
     using System.Collections.Generic;
     using System.Linq;
 

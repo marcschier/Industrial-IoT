@@ -74,14 +74,6 @@
             </div>
         </div>
         <div class="label">
-            Site:
-            <div class="body">
-                @(string.IsNullOrEmpty(ApplicationData.SiteId)
-                    ? CommonHelper.None
-                    : ApplicationData.SiteId)
-            </div>
-        </div>
-        <div class="label">
             Gateway Server Uri:
             <div class="body">
                 @(string.IsNullOrEmpty(ApplicationData.GatewayServerUri)

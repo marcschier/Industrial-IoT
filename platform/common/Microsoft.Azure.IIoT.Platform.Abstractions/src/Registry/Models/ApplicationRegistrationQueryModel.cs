@@ -52,11 +52,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
         public string GatewayServerUri { get; set; }
 
         /// <summary>
-        /// Supervisor or site the application belongs to.
-        /// </summary>
-        public string SiteOrGatewayId { get; set; }
-
-        /// <summary>
         /// Whether to include applications that were soft deleted
         /// </summary>
         public bool? IncludeNotSeenSince { get; set; }

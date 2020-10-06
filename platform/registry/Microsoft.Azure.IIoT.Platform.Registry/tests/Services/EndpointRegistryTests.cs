@@ -176,7 +176,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
 
                 // Assert
                 Assert.True(records.Items.Count >= 1);
-                Assert.True(records.Items.First().IsSameAs(endpoints.First()));
+                Assert.True(records.Items[0].IsSameAs(endpoints.First()));
             }
         }
 
@@ -207,7 +207,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
 
                 // Assert
                 Assert.True(records.Items.Count >= 1);
-                Assert.True(records.Items.First().IsSameAs(endpoints.First()));
+                Assert.True(records.Items[0].IsSameAs(endpoints.First()));
             }
         }
         public static AutoMock CreateMock(out string hubName, out string site, out string super,
@@ -225,7 +225,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                 .Without(x => x)
                 .Do(x => x = fix
                     .Build<EndpointInfoModel>()
-                    .With(y => y.SiteId, sitex)
                     .With(y => y.SupervisorId, superx)
                     .Create())
                 .CreateMany(10)
@@ -247,7 +246,5 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
             }
             return mock;
         }
-
-        private readonly IJsonSerializer _serializer = new NewtonSoftJsonSerializer();
     }
 }

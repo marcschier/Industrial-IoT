@@ -26,10 +26,9 @@ namespace Microsoft.Azure.IIoT.App.Services {
         /// <param name="publisherService"></param>
         /// <param name="serializer"></param>
         /// <param name="logger"></param>
-        public Publisher(ITwinServiceApi twinService, IJsonSerializer serializer, ILogger logger, UICommon commonHelper) {
+        public Publisher(ITwinServiceApi twinService, IJsonSerializer serializer, ILogger logger) {
             _serializer = serializer ?? throw new ArgumentNullException(nameof(serializer));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            _commonHelper = commonHelper ?? throw new ArgumentNullException(nameof(commonHelper));
             _twinService = twinService ?? throw new ArgumentNullException(nameof(twinService));
         }
 
@@ -152,6 +151,5 @@ namespace Microsoft.Azure.IIoT.App.Services {
         private readonly IJsonSerializer _serializer;
         private readonly ITwinServiceApi _twinService;
         private readonly ILogger _logger;
-        private readonly UICommon _commonHelper;
     }
 }

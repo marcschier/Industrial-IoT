@@ -212,11 +212,9 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                     return Task.FromResult(group);
                 }, ct).ConfigureAwait(false);
             if (updated) {
-                if (!string.IsNullOrEmpty(group.SiteId)) {
-                    // Notify update here - otherwise will update site id later and notify.
-                    await _groupEvents.NotifyAllAsync(
-                        l => l.OnWriterGroupUpdatedAsync(context, group)).ConfigureAwait(false);
-                }
+                // Notify update  
+                await _groupEvents.NotifyAllAsync(
+                    l => l.OnWriterGroupUpdatedAsync(context, group)).ConfigureAwait(false);
             }
             else {
                 // Notify group was added
@@ -253,51 +251,9 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                 }
 
                 var endpoint = endpoints.Items[0];
-                var groupOfWriter = group;
-                if (endpoint.SiteId != null) {
-                    //
-                    // We have a site - if the group had no site make sure it is updated
-                    // to reflect the writer endpoint site.
-                    //
-                    if (group.SiteId == null) {
-                        // Group has no site yet - use this site
-                        group.SiteId = endpoint.SiteId;
-                        await _groups.UpdateAsync(group.WriterGroupId, existing => {
-                            existing.SiteId = group.SiteId;
-                            return Task.FromResult(true);
-                        }, ct).ConfigureAwait(false);
-                        await _groupEvents.NotifyAllAsync(
-                            l => l.OnWriterGroupUpdatedAsync(context, group)).ConfigureAwait(false);
 
-                        _logger.Information("Updated group {group} to move to site {site}.",
-                            groupOfWriter.WriterGroupId, group.SiteId);
-                    }
-
-                    //
-                    // Need to create a new group for the site of this writer. Also use a
-                    // new writer group id here so we have a unique one.
-                    //
-                    else if (group.SiteId != endpoint.SiteId) {
-                        groupOfWriter = group.Clone();
-                        groupOfWriter.SiteId = endpoint.SiteId;
-                        groupOfWriter.WriterGroupId = null;  // Assign
-                        groupOfWriter = await _groups.AddAsync(groupOfWriter, ct).ConfigureAwait(false);
-
-                        await _groupEvents.NotifyAllAsync(
-                            l => l.OnWriterGroupAddedAsync(context, groupOfWriter)).ConfigureAwait(false);
-
-                        // Must also be activated at the end
-                        groupsToActivate.Add(groupOfWriter.WriterGroupId);
-
-                        _logger.Warning("Dataset writer {writer} was in site {site} but " +
-                            "its group was in {other} - added new group {group}.",
-                            dataSetWriter.DataSetWriterId, groupOfWriter.SiteId,
-                            group.SiteId, groupOfWriter.WriterGroupId);
-                    }
-                }
-
-                // now that we have a group - add the writer to this group
-                var writer = dataSetWriter.AsDataSetWriterInfo(groupOfWriter.WriterGroupId,
+                // Add the writer to this group
+                var writer = dataSetWriter.AsDataSetWriterInfo(group.WriterGroupId,
                     endpoint.Id, context);
                 writer.DataSetWriterId ??= Guid.NewGuid().ToString();
                 writer = await _writers.AddOrUpdateAsync(writer.DataSetWriterId, existing => {
@@ -421,14 +377,10 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                     throw new ArgumentException(
                         "Dataset writer group not found.", nameof(request));
                 }
-                if (group.SiteId != endpoint.SiteId) {
-                    throw new ArgumentException(
-                        "Dataset writer group not in same site as endpoint", nameof(request));
-                }
             }
             else {
                 // Use default writer group for site
-                request.WriterGroupId = endpoint.SiteId;
+                request.WriterGroupId = kDefaultGroupId;
             }
 
             var result = await _writers.AddAsync(
@@ -439,9 +391,9 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                 l => l.OnDataSetWriterAddedAsync(context, result)).ConfigureAwait(false);
 
             // Make sure the default group is created if it does not exist yet
-            if (request.WriterGroupId == endpoint.SiteId) {
+            if (request.WriterGroupId == kDefaultGroupId) {
                 await Try.Async(() => EnsureDefaultWriterGroupExistsAsync(
-                     endpoint.SiteId, context, ct)).ConfigureAwait(false);
+                     context, ct)).ConfigureAwait(false);
             }
 
             return new DataSetWriterAddResultModel {
@@ -457,9 +409,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
             if (request == null) {
                 throw new ArgumentNullException(nameof(request));
             }
-            if (string.IsNullOrEmpty(request.SiteId)) {
-                throw new ArgumentException("Site id missing", nameof(request));
-            }
+
             var result = await _groups.AddAsync(
                 request.AsWriterGroupInfo(context), ct).ConfigureAwait(false);
 
@@ -1103,7 +1053,8 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                     User = writerInfo.DataSet?.User.Clone()
                 };
             // Find event
-            var events = await _dataSets.FindEventDataSetAsync(writerInfo.DataSetWriterId, ct).ConfigureAwait(false);
+            var events = await _dataSets.FindEventDataSetAsync(writerInfo.DataSetWriterId, 
+                ct).ConfigureAwait(false);
             if (events != null) {
                 return writerInfo.AsDataSetWriter(connection, null, events);
             }
@@ -1127,13 +1078,13 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
         /// <summary>
         /// Ensure default writer group exists
         /// </summary>
-        /// <param name="siteId"></param>
         /// <param name="context"></param>
         /// <param name="ct"></param>
+        /// 
         /// <returns></returns>
         private async Task<WriterGroupInfoModel> EnsureDefaultWriterGroupExistsAsync(
-            string siteId, PublisherOperationContextModel context, CancellationToken ct) {
-            var group = await _groups.AddOrUpdateAsync(siteId,
+            PublisherOperationContextModel context, CancellationToken ct) {
+            var group = await _groups.AddOrUpdateAsync(kDefaultGroupId,
                 existing => {
                     if (existing != null) {
                         existing = null; // No need to update
@@ -1141,9 +1092,8 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                     else {
                         // Add new
                         existing = new WriterGroupInfoModel {
-                            Name = $"Default Writer Group ({siteId})",
-                            WriterGroupId = siteId,
-                            SiteId = siteId,
+                            Name = $"Default Writer Group",
+                            WriterGroupId = kDefaultGroupId,
                             Created = context,
                             Updated = context,
                             Schema = MessageSchema.PubSub,
@@ -1163,7 +1113,8 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                     l => l.OnWriterGroupAddedAsync(context, group)).ConfigureAwait(false);
 
                 // Always auto-activate publishing of default groups.
-                await ActivateDeactivateWriterGroupAsync(siteId, true, context, ct).ConfigureAwait(false);
+                await ActivateDeactivateWriterGroupAsync(kDefaultGroupId, true,
+                    context, ct).ConfigureAwait(false);
             }
             return group;
         }
@@ -1186,9 +1137,6 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
             ct.ThrowIfCancellationRequested();
             if (endpoint == null) {
                 throw new ArgumentException("Endpoint not found.", nameof(endpointId));
-            }
-            if (string.IsNullOrEmpty(endpoint?.SiteId)) {
-                throw new ResourceInvalidStateException("Endpoint has not site id.");
             }
 
             var added = false;
@@ -1213,7 +1161,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                                 writer.DataSet.SubscriptionSettings.PublishingInterval =
                                     publishingInterval;
                             }
-                            writer.WriterGroupId = endpoint.SiteId;
+                            writer.WriterGroupId = kDefaultGroupId;
                         }
                     }
                     else {
@@ -1230,7 +1178,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                                     }
                             },
                             DataSetWriterId = endpointId,
-                            WriterGroupId = endpoint.SiteId,
+                            WriterGroupId = kDefaultGroupId,
                             Created = context,
                             Updated = context
                         };
@@ -1238,8 +1186,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                     return Task.FromResult(writer);
                 }, ct).ConfigureAwait(false);
 
-            var group = await EnsureDefaultWriterGroupExistsAsync(
-                endpoint.SiteId, context, ct).ConfigureAwait(false);
+            var group = await EnsureDefaultWriterGroupExistsAsync(context, ct).ConfigureAwait(false);
             if (writer != null) {
                 if (added) {
                     _logger.Information("Added default group for {endpointId}", endpointId);
@@ -1307,6 +1254,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
             }
         }
 
+        private const string kDefaultGroupId = "$default";
         private const int kMaxBatchSize = 1000;
         private readonly ILogger _logger;
         private readonly IDataSetEntityRepository _dataSets;

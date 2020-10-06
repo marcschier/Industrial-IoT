@@ -89,13 +89,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Models {
         [DataMember(Name = "supervisorId", Order = 10,
             EmitDefaultValue = false)]
         public string SupervisorId { get; set; }
-
-        /// <summary>
-        /// Site or gateway id to filter with
-        /// </summary>
-        [DataMember(Name = "siteOrGatewayId", Order = 11,
-            EmitDefaultValue = false)]
-        public string SiteOrGatewayId { get; set; }
     }
 }
 

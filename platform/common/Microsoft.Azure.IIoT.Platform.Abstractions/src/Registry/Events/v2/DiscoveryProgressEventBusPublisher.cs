@@ -12,7 +12,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Events.v2 {
     /// <summary>
     /// Discoverer progress processor
     /// </summary>
-    public class DiscoveryProgressEventBusPublisher : IDiscoveryProgressProcessor {
+    public class DiscoveryProgressEventBusPublisher : IDiscovererProgressProcessor {
 
         /// <summary>
         /// Create event discoverer

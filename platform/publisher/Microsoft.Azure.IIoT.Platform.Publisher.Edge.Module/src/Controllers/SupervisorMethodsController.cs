@@ -12,6 +12,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Module.Controllers {
     using Microsoft.Azure.IIoT.Rpc;
     using System;
     using System.Threading.Tasks;
+    using Microsoft.Azure.IIoT.Platform.Directory;
 
     /// <summary>
     /// Supervisor controller
@@ -30,30 +31,6 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Module.Controllers {
             IActivationServices<string> activator) {
             _supervisor = supervisor ?? throw new ArgumentNullException(nameof(supervisor));
             _activator = activator ?? throw new ArgumentNullException(nameof(activator));
-        }
-
-        /// <summary>
-        /// Reset supervisor
-        /// </summary>
-        /// <returns></returns>
-        public async Task<bool> ResetAsync() {
-            await _supervisor.ResetAsync().ConfigureAwait(false);
-            return true;
-        }
-
-        /// <summary>
-        /// Get status
-        /// </summary>
-        /// <returns></returns>
-        public async Task<SupervisorStatusApiModel> GetStatusAsync() {
-            var result = await _supervisor.GetStatusAsync().ConfigureAwait(false);
-            var response = result.ToApiModel();
-
-            // Fix up raw device identities back to writer group identities
-            foreach (var entity in response.Entities) {
-                entity.Id = PublisherRegistryEx.ToWriterGroupId(entity.Id);
-            }
-            return response;
         }
 
         /// <summary>

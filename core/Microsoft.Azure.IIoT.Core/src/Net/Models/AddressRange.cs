@@ -60,7 +60,7 @@ namespace Microsoft.Azure.IIoT.Net.Models {
                 throw new ArgumentNullException(nameof(address));
             }
             if (suffix > 32) {
-                throw new ArgumentException(nameof(suffix));
+                throw new ArgumentException("Suffix too large", nameof(suffix));
             }
             var curAddr = (uint)IPAddress.NetworkToHostOrder(
                 (int)BitConverter.ToUInt32(

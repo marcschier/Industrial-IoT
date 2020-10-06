@@ -22,15 +22,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry {
                 .AsImplementedInterfaces();
             builder.RegisterType<EventBrokerStubT<IApplicationRegistryListener>>()
                 .AsImplementedInterfaces();
-            builder.RegisterType<EventBrokerStubT<IGatewayRegistryListener>>()
-                .AsImplementedInterfaces();
-            builder.RegisterType<EventBrokerStubT<IPublisherRegistryListener>>()
-                .AsImplementedInterfaces();
-            builder.RegisterType<EventBrokerStubT<ISupervisorRegistryListener>>()
-                .AsImplementedInterfaces();
-            builder.RegisterType<EventBrokerStubT<IDiscovererRegistryListener>>()
-                .AsImplementedInterfaces();
-            builder.RegisterType<EventBrokerStubT<IDiscoveryProgressProcessor>>()
+            builder.RegisterType<EventBrokerStubT<IDiscovererProgressProcessor>>()
                 .AsImplementedInterfaces();
 
             base.Load(builder);

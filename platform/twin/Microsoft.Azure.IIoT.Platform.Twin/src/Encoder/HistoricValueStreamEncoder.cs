@@ -117,12 +117,12 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge {
             bool eventSource;
             try {
                 var node = await _client.ExecuteServiceAsync(_endpoint, _elevation,
-                    _priority, ct, async session => {
+                    _priority, async session => {
                         _encoder.Context.UpdateFromSession(session);
                         var nodeId = _nodeId.ToNodeId(session.MessageContext);
                         return await RawNodeModel.ReadAsync(session, null,
                             nodeId, true, _diagnostics, false).ConfigureAwait(false);
-                    }).ConfigureAwait(false);
+                    }, ct).ConfigureAwait(false);
 
                 if (node.EventNotifier.HasValue &&
                     (node.EventNotifier.Value &
@@ -309,29 +309,29 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge {
         /// <param name="ct"></param>
         /// <returns></returns>
         private Task<EventFilter> ReadEventFilterAsync(CancellationToken ct) {
-            return _client.ExecuteServiceAsync(_endpoint, _elevation, _priority, ct,
-                async session => {
-                    _encoder.Context.UpdateFromSession(session);
-                    var nodeId = _nodeId.ToNodeId(session.MessageContext);
-                    var filterNode = await session.TranslateBrowsePathsToNodeIdsAsync(null,
-                        new BrowsePathCollection {
+            return _client.ExecuteServiceAsync(_endpoint, _elevation, _priority, async session => {
+                _encoder.Context.UpdateFromSession(session);
+                var nodeId = _nodeId.ToNodeId(session.MessageContext);
+                var filterNode = await session.TranslateBrowsePathsToNodeIdsAsync(null,
+                    new BrowsePathCollection {
                             new BrowsePath {
                                 StartingNode = nodeId,
                                 RelativePath = new RelativePath(
                                     BrowseNames.HistoricalEventFilter)
                             }
-                    }).ConfigureAwait(false);
-                    if (!filterNode.Results.Any() || !filterNode.Results[0].Targets.Any()) {
-                        return null;
-                    }
-                    var read = await RawNodeModel.ReadValueAsync(session, null,
-                        (NodeId)filterNode.Results[0].Targets[0].TargetId, _diagnostics, false).ConfigureAwait(false);
-                    if (ExtensionObject.ToEncodeable(read.Value.Value as ExtensionObject)
-                        is EventFilter eventFilter) {
-                        return eventFilter;
-                    }
+                }).ConfigureAwait(false);
+                if (!filterNode.Results.Any() || !filterNode.Results[0].Targets.Any()) {
                     return null;
-                });
+                }
+                var read = await RawNodeModel.ReadValueAsync(session, null,
+                    (NodeId)filterNode.Results[0].Targets[0].TargetId, _diagnostics, false).ConfigureAwait(false);
+                if (ExtensionObject.ToEncodeable(read.Value.Value as ExtensionObject)
+                    is EventFilter eventFilter) {
+                    return eventFilter;
+                }
+                return null;
+            },
+                ct);
         }
 
         /// <summary>
@@ -344,27 +344,27 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge {
         /// <returns></returns>
         private Task<(byte[] continuationToken, T history)> ReadHistoryAsync<T>(
             object details, CancellationToken ct, byte[] continuationToken = null) {
-            return _client.ExecuteServiceAsync(_endpoint, _elevation, _priority, ct,
-                async session => {
-                    _encoder.Context.UpdateFromSession(session);
-                    var nodeId = _nodeId.ToNodeId(session.MessageContext);
-                    var response = await session.HistoryReadAsync(null,
-                        new ExtensionObject(details), TimestampsToReturn.Source, false,
-                        new HistoryReadValueIdCollection {
+            return _client.ExecuteServiceAsync(_endpoint, _elevation, _priority, async session => {
+                _encoder.Context.UpdateFromSession(session);
+                var nodeId = _nodeId.ToNodeId(session.MessageContext);
+                var response = await session.HistoryReadAsync(null,
+                    new ExtensionObject(details), TimestampsToReturn.Source, false,
+                    new HistoryReadValueIdCollection {
                             new HistoryReadValueId {
                                 NodeId = nodeId,
                                 ContinuationPoint = continuationToken
                             }
-                        }).ConfigureAwait(false);
-                    SessionClientEx.Validate(response.Results, response.DiagnosticInfos);
-                    OperationResultEx.Validate("HistoryRead_" + nodeId, _diagnostics,
-                        response.Results.Select(r => r.StatusCode), null, false);
+                    }).ConfigureAwait(false);
+                SessionClientEx.Validate(response.Results, response.DiagnosticInfos);
+                OperationResultEx.Validate("HistoryRead_" + nodeId, _diagnostics,
+                    response.Results.Select(r => r.StatusCode), null, false);
 
-                    continuationToken = response.Results[0].ContinuationPoint;
-                    var encodeable = ExtensionObject.ToEncodeable(
-                        response.Results[0].HistoryData);
-                    return (continuationToken, encodeable is T t ? t : default);
-                });
+                continuationToken = response.Results[0].ContinuationPoint;
+                var encodeable = ExtensionObject.ToEncodeable(
+                    response.Results[0].HistoryData);
+                return (continuationToken, encodeable is T t ? t : default);
+            },
+                ct);
         }
 
         private int _count;

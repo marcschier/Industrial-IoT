@@ -32,7 +32,6 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Models {
                 KeepAliveTime = model.KeepAliveTime,
                 State = model.State.Clone(),
                 GenerationId = model.GenerationId,
-                SiteId = model.SiteId,
                 LocaleIds = model.LocaleIds?.ToList(),
                 MaxNetworkMessageSize = model.MaxNetworkMessageSize,
                 MessageSettings = model.MessageSettings.Clone(),
@@ -69,7 +68,6 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Models {
                 Schema = model.Schema,
                 Name = model.Name,
                 Priority = model.Priority,
-                SiteId = model.SiteId,
                 State = model.State.Clone(),
                 MessageSettings = model.MessageSettings == null ? null :
                     new WriterGroupMessageSettingsModel {

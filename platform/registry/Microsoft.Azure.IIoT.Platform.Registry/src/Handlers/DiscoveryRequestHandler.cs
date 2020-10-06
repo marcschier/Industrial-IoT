@@ -22,7 +22,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Handlers {
         /// </summary>
         /// <param name="discovery"></param>
         /// <param name="processor"></param>
-        public DiscoveryRequestHandler(IDiscoveryServices discovery,
+        public DiscoveryRequestHandler(IDiscovererServices discovery,
             ITaskProcessor processor) {
             _discovery = discovery ?? throw new ArgumentNullException(nameof(discovery));
             _processor = processor ?? throw new ArgumentNullException(nameof(processor));
@@ -35,7 +35,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Handlers {
             return Task.CompletedTask;
         }
 
-        private readonly IDiscoveryServices _discovery;
+        private readonly IDiscovererServices _discovery;
         private readonly ITaskProcessor _processor;
     }
 }

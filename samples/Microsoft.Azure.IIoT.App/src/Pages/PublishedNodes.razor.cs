@@ -22,7 +22,7 @@ namespace Microsoft.Azure.IIoT.App.Pages {
         [Parameter]
         public string SupervisorId { get; set; } = string.Empty;
 
-        private const string _valueGood = "Good";
+        private const string kValueGood = "Good";
 
         protected override async Task LoadPageContentAsync(bool getNextPage) {
             Items = await PublisherHelper.PublishedAsync(EndpointId, true).ConfigureAwait(false);
@@ -45,7 +45,7 @@ namespace Microsoft.Azure.IIoT.App.Pages {
             foreach (var node in Items.Results) {
                 if (node.PublishedItem.NodeId == samples.NodeId) {
                     node.Value = samples.Value?.ToJson()?.TrimQuotes();
-                    node.Status = string.IsNullOrEmpty(samples.Status) ? _valueGood : samples.Status;
+                    node.Status = string.IsNullOrEmpty(samples.Status) ? kValueGood : samples.Status;
                     node.Timestamp = samples.Timestamp.Value.ToLocalTime().ToString();
                     StateHasChanged();
                 }

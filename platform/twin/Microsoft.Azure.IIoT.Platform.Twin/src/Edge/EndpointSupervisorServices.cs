@@ -55,23 +55,6 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge {
         }
 
         /// <inheritdoc/>
-        public Task<SupervisorStatusModel> GetStatusAsync(CancellationToken ct) {
-            var entities = _hosts.Hosts
-                .Select(h => new EntityActivationStatusModel {
-                    Id = h.Item1,
-                    ActivationState = h.Item2 ?
-                        EntityActivationState.ActivatedAndConnected :
-                        EntityActivationState.Activated
-                });
-            var status = new SupervisorStatusModel {
-                Entities = entities.ToList(),
-                DeviceId = _identity.DeviceId,
-                ModuleId = _identity.ModuleId
-            };
-            return Task.FromResult(status);
-        }
-
-        /// <inheritdoc/>
         public Task ResetAsync(CancellationToken ct) {
             _process.Reset();
             return Task.CompletedTask;

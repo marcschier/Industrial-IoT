@@ -34,11 +34,6 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Models {
         public string GenerationId { get; set; }
 
         /// <summary>
-        /// Site id this writer group applies to
-        /// </summary>
-        public string SiteId { get; set; }
-
-        /// <summary>
         /// Message encoding to generate (publisher extension)
         /// </summary>
         public MessageEncoding? Encoding { get; set; }

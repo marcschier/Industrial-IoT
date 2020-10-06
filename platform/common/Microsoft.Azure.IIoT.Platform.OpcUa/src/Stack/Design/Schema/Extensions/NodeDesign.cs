@@ -82,6 +82,6 @@ namespace Opc.Ua.Design.Schema {
         /// <summary>
         /// path char - todo internal
         /// </summary>
-        public const string kPathChar = "_";
+        public const char PathChar = '_';
     }
 }

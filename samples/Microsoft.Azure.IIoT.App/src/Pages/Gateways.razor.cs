@@ -6,8 +6,8 @@
 namespace Microsoft.Azure.IIoT.App.Pages {
     using System.Threading.Tasks;
     using Microsoft.Azure.IIoT.App.Data;
-    using Microsoft.Azure.IIoT.Platform.Registry.Api.Models;
-    using Microsoft.Azure.IIoT.Platform.Registry.Api;
+    using Microsoft.Azure.IIoT.Platform.Directory.Api.Models;
+    using Microsoft.Azure.IIoT.Platform.Directory.Api;
 
     public partial class Gateways {
         protected override async Task LoadPageContentAsync(bool getNextPage) {
@@ -15,7 +15,7 @@ namespace Microsoft.Azure.IIoT.App.Pages {
         }
 
         protected override async Task SubscribeContentEventsAsync() {
-            _events = await RegistryServiceEvents.SubscribeGatewayEventsAsync(
+            _events = await DirectoryServiceEvents.SubscribeGatewayEventsAsync(
                     ev => InvokeAsync(() => GatewayEvent(ev))).ConfigureAwait(false);
         }
 

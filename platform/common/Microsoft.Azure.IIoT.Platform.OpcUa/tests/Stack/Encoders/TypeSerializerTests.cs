@@ -17,7 +17,7 @@ namespace Opc.Ua.Encoders {
     public class TypeSerializerTests {
 
         public TypeSerializerTests(ITestOutputHelper output) {
-            this.output = output;
+            _output = output;
         }
 
         [Theory]
@@ -791,13 +791,13 @@ namespace Opc.Ua.Encoders {
                 case ContentMimeType.UaNonReversibleJson:
                 case ContentMimeType.UaXml:
                     var formattedBuffer = Encoding.UTF8.GetString(buffer);
-                    output.WriteLine(formattedBuffer);
+                    _output.WriteLine(formattedBuffer);
                     break;
                 default:
                     break;
             }
         }
 
-        private readonly ITestOutputHelper output;
+        private readonly ITestOutputHelper _output;
     }
 }

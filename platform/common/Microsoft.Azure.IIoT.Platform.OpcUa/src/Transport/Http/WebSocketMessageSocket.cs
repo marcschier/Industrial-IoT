@@ -84,7 +84,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Transport {
         /// <inheritdoc/>
         public bool SendAsync(IMessageSocketAsyncEventArgs args) {
             if (args is not WebSocketAsyncEventArgs eventArgs) {
-                throw new ArgumentException(nameof(args));
+                throw new ArgumentException("Not a websocket arg", nameof(args));
             }
             if (_open.IsCancellationRequested) {
                 throw new InvalidOperationException("The websocket connection is closed.");

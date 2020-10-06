@@ -27,7 +27,7 @@ namespace Microsoft.Azure.IIoT.Hosting.Services {
         /// <param name="controllers"></param>
         /// <param name="test"></param>
         /// <returns></returns>
-        public async Task RunTestAsync(
+        public static async Task RunTestAsync(
             IEnumerable<object> controllers, Func<string, string, IContainer, Task> test) {
 
             var deviceId = "TestDevice";

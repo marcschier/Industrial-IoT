@@ -23,11 +23,6 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Models {
         public byte? Priority { get; set; }
 
         /// <summary>
-        /// Site id this writer group applies to (mandatory)
-        /// </summary>
-        public string SiteId { get; set; }
-
-        /// <summary>
         /// Message encoding to generate (publisher extension)
         /// </summary>
         public MessageEncoding? Encoding { get; set; }

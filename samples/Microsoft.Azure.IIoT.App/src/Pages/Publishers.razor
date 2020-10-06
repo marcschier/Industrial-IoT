@@ -11,6 +11,8 @@
 @using Microsoft.Azure.IIoT.App.Components.Drawer;
 @using Microsoft.Azure.IIoT.App.Components.ErrorMessage;
 @using Microsoft.Azure.IIoT.App.Components.Loader;
+@using Microsoft.Azure.IIoT.Platform.Directory.Api;
+@using Microsoft.Azure.IIoT.Platform.Directory.Api.Models;
 @using Microsoft.Azure.IIoT.Platform.Registry.Api;
 @using Microsoft.Azure.IIoT.Platform.Registry.Api.Models
 @using Microsoft.Azure.IIoT.App.Common;
@@ -21,6 +23,8 @@
 @inject Registry RegistryHelper
 @inject IRegistryServiceApi RegistryService
 @inject RegistryServiceEvents RegistryServiceEvents
+@inject IDirectoryServiceApi DirectoryService
+@inject DirectoryServiceEvents DirectoryServiceEvents
 @inject UICommon CommonHelper
 
 @inherits ItemsCollection<PublisherApiModel>
@@ -78,6 +82,6 @@
 
 <ErrorMessage PageError="@Items.Error" Status="@null"></ErrorMessage>
 
-<LoadMore Result=@Items IsLoading=@IsLoading LoadMoreItems=@(async() => await LoadMoreItems()) />
+<LoadMore Result=@Items IsLoading=@IsLoading LoadMoreItems=@(async() => await LoadMoreItemsAsync()) />
 
 <Spinner IsLoading=@IsLoading></Spinner>

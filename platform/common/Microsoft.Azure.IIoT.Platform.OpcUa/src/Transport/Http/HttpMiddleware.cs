@@ -15,18 +15,16 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Transport {
     /// Decodes and forwards http based requests to the server and returns
     /// server responses to clients.
     /// </summary>
-    public class HttpMiddleware {
+    public class HttpMiddleware : IMiddleware {
 
         /// <summary>
         /// Creates middleware to forward requests to controller
         /// </summary>
-        /// <param name="next"></param>
         /// <param name="encoder"></param>
         /// <param name="listener"></param>
         /// <param name="logger"></param>
-        public HttpMiddleware(RequestDelegate next, IMessageSerializer encoder,
+        public HttpMiddleware(IMessageSerializer encoder,
             IHttpChannelListener listener, ILogger logger) {
-            _next = next;
             _encoder = encoder ??
                 throw new ArgumentNullException(nameof(encoder));
             _logger = logger ??
@@ -39,11 +37,12 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Transport {
         /// Middleware invoke entry point which forwards to controller
         /// </summary>
         /// <param name="context"></param>
+        /// <param name="next"></param>
         /// <returns></returns>
-        public async Task Invoke(HttpContext context) {
+        public async Task InvokeAsync(HttpContext context, RequestDelegate next) {
             var handled = await ProcessAsync(context).ConfigureAwait(false);
             if (!handled) {
-                await _next(context).ConfigureAwait(false);
+                await next(context).ConfigureAwait(false);
             }
         }
 
@@ -83,7 +82,6 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Transport {
             return true;
         }
 
-        private readonly RequestDelegate _next;
         private readonly ILogger _logger;
         private readonly IHttpChannelListener _listener;
         private readonly IMessageSerializer _encoder;

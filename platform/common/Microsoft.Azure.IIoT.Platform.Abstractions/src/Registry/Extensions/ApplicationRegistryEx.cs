@@ -103,23 +103,5 @@ namespace Microsoft.Azure.IIoT.Platform.Registry {
                     app.ApplicationId, app.GenerationId, null, ct)).ConfigureAwait(false);
             }
         }
-
-        /// <summary>
-        /// List all sites
-        /// </summary>
-        /// <param name="service"></param>
-        /// <param name="ct"></param>
-        /// <returns></returns>
-        public static async Task<List<string>> ListAllSitesAsync(
-            this IApplicationRegistry service, CancellationToken ct = default) {
-            var sites = new List<string>();
-            var result = await service.ListSitesAsync(null, null, ct).ConfigureAwait(false);
-            sites.AddRange(result.Sites);
-            while (result.ContinuationToken != null) {
-                result = await service.ListSitesAsync(result.ContinuationToken, null, ct).ConfigureAwait(false);
-                sites.AddRange(result.Sites);
-            }
-            return sites;
-        }
     }
 }

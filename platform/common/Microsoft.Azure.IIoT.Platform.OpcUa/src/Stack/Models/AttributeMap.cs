@@ -12,14 +12,15 @@ namespace Opc.Ua.Models {
     /// Represents validity and default value map for attributes
     /// </summary>
     public class AttributeMap {
-        private const int Object = 0;
-        private const int Variable = 1;
-        private const int Method = 2;
-        private const int ObjectType = 3;
-        private const int VariableType = 4;
-        private const int ReferenceType = 5;
-        private const int DataType = 6;
-        private const int View = 7;
+
+        internal const int Object = 0;
+        internal const int Variable = 1;
+        internal const int Method = 2;
+        internal const int ObjectType = 3;
+        internal const int VariableType = 4;
+        internal const int ReferenceType = 5;
+        internal const int DataType = 6;
+        internal const int View = 7;
 
         /// <summary>
         /// Get built in type of attribute
@@ -397,7 +398,7 @@ namespace Opc.Ua.Models {
                         }
                         break;
                     default:
-                        throw new ArgumentException(nameof(attribute));
+                        throw new ArgumentException("Unknown attribute", nameof(attribute));
                 }
             }
             finally {

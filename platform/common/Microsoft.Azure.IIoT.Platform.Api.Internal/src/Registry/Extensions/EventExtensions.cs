@@ -57,62 +57,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Models {
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
-        public static DiscovererEventApiModel ToApiModel(
-            this DiscovererEventModel model) {
-            return new DiscovererEventApiModel {
-                EventType = (DiscovererEventType)model.EventType,
-                Id = model.Id,
-                Discoverer = model.Discoverer.ToApiModel()
-            };
-        }
-
-        /// <summary>
-        /// Convert to api model
-        /// </summary>
-        /// <param name="model"></param>
-        /// <returns></returns>
-        public static SupervisorEventApiModel ToApiModel(
-            this SupervisorEventModel model) {
-            return new SupervisorEventApiModel {
-                EventType = (SupervisorEventType)model.EventType,
-                Id = model.Id,
-                Supervisor = model.Supervisor.ToApiModel()
-            };
-        }
-
-        /// <summary>
-        /// Convert to api model
-        /// </summary>
-        /// <param name="model"></param>
-        /// <returns></returns>
-        public static GatewayEventApiModel ToApiModel(
-            this GatewayEventModel model) {
-            return new GatewayEventApiModel {
-                EventType = (GatewayEventType)model.EventType,
-                Id = model.Id,
-                Gateway = model.Gateway.ToApiModel()
-            };
-        }
-
-        /// <summary>
-        /// Convert to api model
-        /// </summary>
-        /// <param name="model"></param>
-        /// <returns></returns>
-        public static PublisherEventApiModel ToApiModel(
-            this PublisherEventModel model) {
-            return new PublisherEventApiModel {
-                EventType = (PublisherEventType)model.EventType,
-                Id = model.Id,
-                Publisher = model.Publisher.ToApiModel()
-            };
-        }
-
-        /// <summary>
-        /// Convert to api model
-        /// </summary>
-        /// <param name="model"></param>
-        /// <returns></returns>
         public static EndpointEventApiModel ToApiModel(
             this EndpointEventModel model) {
             return new EndpointEventApiModel {

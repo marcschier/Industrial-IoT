@@ -5,30 +5,32 @@
 
 namespace Microsoft.Azure.IIoT.Platform.Registry {
     using Microsoft.Azure.IIoT.Platform.Registry.Models;
-    using System.Threading;
     using System.Threading.Tasks;
 
     /// <summary>
-    /// Application discovery services
+    /// Discovery services
     /// </summary>
     public interface IDiscoveryServices {
 
         /// <summary>
-        /// Kick of an application discovery
+        /// Register server from discovery url.
         /// </summary>
         /// <param name="request"></param>
-        /// <param name="ct"></param>
         /// <returns></returns>
-        Task DiscoverAsync(DiscoveryRequestModel request,
-            CancellationToken ct = default);
+        Task RegisterAsync(ServerRegistrationRequestModel request);
 
         /// <summary>
-        /// Cancel request
+        /// Discover using discovery request.
         /// </summary>
         /// <param name="request"></param>
-        /// <param name="ct"></param>
         /// <returns></returns>
-        Task CancelAsync(DiscoveryCancelModel request,
-            CancellationToken ct = default);
+        Task DiscoverAsync(DiscoveryRequestModel request);
+
+        /// <summary>
+        /// Cancel discovery request
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        Task CancelAsync(DiscoveryCancelModel request);
     }
 }

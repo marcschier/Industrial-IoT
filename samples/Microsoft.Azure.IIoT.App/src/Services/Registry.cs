@@ -14,6 +14,8 @@ namespace Microsoft.Azure.IIoT.App.Services {
     using System.Threading.Tasks;
     using Serilog;
     using Microsoft.Azure.IIoT.Exceptions;
+    using Microsoft.Azure.IIoT.Platform.Directory.Api;
+    using Microsoft.Azure.IIoT.Platform.Directory.Api.Models;
 
     public class Registry {
 
@@ -23,8 +25,10 @@ namespace Microsoft.Azure.IIoT.App.Services {
         /// <param name="registryService"></param>
         /// <param name="logger"></param>
         /// <param name="commonHelper"></param>
-        public Registry(IRegistryServiceApi registryService, ILogger logger, UICommon commonHelper) {
+        public Registry(IRegistryServiceApi registryService, IDirectoryServiceApi directoryService, 
+            ILogger logger, UICommon commonHelper) {
             _registryService = registryService ?? throw new ArgumentNullException(nameof(registryService));
+            _directoryService = directoryService ?? throw new ArgumentNullException(nameof(directoryService));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _commonHelper = commonHelper ?? throw new ArgumentNullException(nameof(commonHelper));
         }
@@ -95,20 +99,19 @@ namespace Microsoft.Azure.IIoT.App.Services {
                 var discoverers = new DiscovererListApiModel();
 
                 if (!getNextPage || string.IsNullOrEmpty(previousPage?.ContinuationToken)) {
-                    discoverers = await _registryService.QueryDiscoverersAsync(discovererModel, _commonHelper.PageLengthSmall).ConfigureAwait(false);
+                    discoverers = await _directoryService.QueryDiscoverersAsync(discovererModel, _commonHelper.PageLengthSmall).ConfigureAwait(false);
                 }
                 else {
-                    discoverers = await _registryService.ListDiscoverersAsync(previousPage.ContinuationToken, _commonHelper.PageLengthSmall).ConfigureAwait(false);
+                    discoverers = await _directoryService.ListDiscoverersAsync(previousPage.ContinuationToken, _commonHelper.PageLengthSmall).ConfigureAwait(false);
                 }
 
                 if (discoverers != null) {
                     if (discoverers.Items != null && discoverers.Items.Any()) {
                         foreach (var disc in discoverers.Items) {
-                            var discoverer = await _registryService.GetDiscovererAsync(disc.Id).ConfigureAwait(false);
+                            var discoverer = await _directoryService.GetDiscovererAsync(disc.Id).ConfigureAwait(false);
                             var info = new DiscovererInfo {
                                 DiscovererModel = discoverer,
                                 HasApplication = false,
-                                ScanStatus = discoverer.Discovery != DiscoveryMode.Off && discoverer.Discovery != null
                             };
                             applicationModel.DiscovererId = discoverer.Id;
                             var applications = await _registryService.QueryApplicationsAsync(applicationModel, 1).ConfigureAwait(false);
@@ -195,7 +198,7 @@ namespace Microsoft.Azure.IIoT.App.Services {
         public async Task<string> SetDiscoveryAsync(DiscovererInfo discoverer) {
             try {
                 var discoveryMode = DiscoveryMode.Off;
-                if (discoverer.DiscovererModel.DiscoveryConfig?.DiscoveryUrls != null && discoverer.ScanStatus) {
+                if (discoverer.Current?.DiscoveryUrls != null && discoverer.ScanStatus) {
                     discoveryMode = DiscoveryMode.Url;
                 }
                 else {
@@ -209,31 +212,6 @@ namespace Microsoft.Azure.IIoT.App.Services {
             }
             catch (Exception exception) {
                 _logger.Error(exception, "Failed to set discovery mode.");
-                var errorMessageTrace = string.Concat(exception.Message,
-                    exception.InnerException?.Message ?? "--", exception?.StackTrace ?? "--");
-                return errorMessageTrace;
-            }
-            return null;
-        }
-
-        /// <summary>
-        /// UpdateDiscovererAsync
-        /// </summary>
-        /// <param name="discoverer"></param>
-        /// <param name="config"></param>
-        /// <returns></returns>
-        public async Task<string> UpdateDiscovererAsync(DiscovererInfo discoverer) {
-            try {
-                await _registryService.UpdateDiscovererAsync(discoverer.DiscovererModel.Id, new DiscovererUpdateApiModel {
-                    DiscoveryConfig = discoverer.Patch
-                }).ConfigureAwait(false);
-                discoverer.Patch = new DiscoveryConfigApiModel();
-            }
-            catch (UnauthorizedAccessException) {
-                return "Unauthorized access: Bad User Access Denied.";
-            }
-            catch (Exception exception) {
-                _logger.Error(exception, "Failed to update discoverer");
                 var errorMessageTrace = string.Concat(exception.Message,
                     exception.InnerException?.Message ?? "--", exception?.StackTrace ?? "--");
                 return errorMessageTrace;
@@ -281,15 +259,15 @@ namespace Microsoft.Azure.IIoT.App.Services {
                 var gateways = new GatewayListApiModel();
 
                 if (getNextPage && string.IsNullOrEmpty(previousPage?.ContinuationToken)) {
-                    gateways = await _registryService.QueryGatewaysAsync(gatewayModel, _commonHelper.PageLength).ConfigureAwait(false);
+                    gateways = await _directoryService.QueryGatewaysAsync(gatewayModel, _commonHelper.PageLength).ConfigureAwait(false);
                 }
                 else {
-                    gateways = await _registryService.ListGatewaysAsync(previousPage.ContinuationToken, _commonHelper.PageLength).ConfigureAwait(false);
+                    gateways = await _directoryService.ListGatewaysAsync(previousPage.ContinuationToken, _commonHelper.PageLength).ConfigureAwait(false);
                 }
 
                 if (gateways != null) {
                     foreach (var gw in gateways.Items) {
-                        var gateway = (await _registryService.GetGatewayAsync(gw.Id).ConfigureAwait(false)).Gateway;
+                        var gateway = (await _directoryService.GetGatewayAsync(gw.Id).ConfigureAwait(false)).Gateway;
                         pageResult.Results.Add(gateway);
                     }
                 }
@@ -324,15 +302,15 @@ namespace Microsoft.Azure.IIoT.App.Services {
                 var publishers = new PublisherListApiModel();
 
                 if (getNextPage && string.IsNullOrEmpty(previousPage?.ContinuationToken)) {
-                    publishers = await _registryService.QueryPublishersAsync(publisherModel, _commonHelper.PageLengthSmall).ConfigureAwait(false);
+                    publishers = await _directoryService.QueryPublishersAsync(publisherModel, _commonHelper.PageLengthSmall).ConfigureAwait(false);
                 }
                 else {
-                    publishers = await _registryService.ListPublishersAsync(previousPage.ContinuationToken, _commonHelper.PageLengthSmall).ConfigureAwait(false);
+                    publishers = await _directoryService.ListPublishersAsync(previousPage.ContinuationToken, _commonHelper.PageLengthSmall).ConfigureAwait(false);
                 }
 
                 if (publishers != null) {
                     foreach (var pub in publishers.Items) {
-                        var publisher = await _registryService.GetPublisherAsync(pub.Id).ConfigureAwait(false);
+                        var publisher = await _directoryService.GetPublisherAsync(pub.Id).ConfigureAwait(false);
                         pageResult.Results.Add(publisher);
                     }
                 }
@@ -361,7 +339,7 @@ namespace Microsoft.Azure.IIoT.App.Services {
         /// <returns></returns>
         public async Task<string> UpdatePublisherAsync(PublisherInfo publisher) {
             try {
-                await _registryService.UpdatePublisherAsync(publisher.PublisherModel.Id, new PublisherUpdateApiModel {
+                await _directoryService.UpdatePublisherAsync(publisher.PublisherModel.Id, new PublisherUpdateApiModel {
                     LogLevel = publisher.PublisherModel.LogLevel
                 }).ConfigureAwait(false);
             }
@@ -414,15 +392,15 @@ namespace Microsoft.Azure.IIoT.App.Services {
                 var supervisors = new SupervisorListApiModel();
 
                 if (getNextPage && string.IsNullOrEmpty(previousPage?.ContinuationToken)) {
-                    supervisors = await _registryService.QuerySupervisorsAsync(model, _commonHelper.PageLength).ConfigureAwait(false);
+                    supervisors = await _directoryService.QuerySupervisorsAsync(model, _commonHelper.PageLength).ConfigureAwait(false);
                 }
                 else {
-                    supervisors = await _registryService.ListSupervisorsAsync(previousPage.ContinuationToken, _commonHelper.PageLengthSmall).ConfigureAwait(false);
+                    supervisors = await _directoryService.ListSupervisorsAsync(previousPage.ContinuationToken, _commonHelper.PageLengthSmall).ConfigureAwait(false);
                 }
 
                 if (supervisors != null) {
                     foreach (var sup in supervisors.Items) {
-                        var supervisor = await _registryService.GetSupervisorAsync(sup.Id).ConfigureAwait(false);
+                        var supervisor = await _directoryService.GetSupervisorAsync(sup.Id).ConfigureAwait(false);
                         pageResult.Results.Add(supervisor);
                     }
                 }
@@ -443,45 +421,10 @@ namespace Microsoft.Azure.IIoT.App.Services {
             return pageResult;
         }
 
-        /// <summary>
-        /// GetSupervisorStatusAsync
-        /// </summary>
-        /// <param name="supervisorId"></param>
-        /// <returns>SupervisorStatusApiModel</returns>
-        public async Task<SupervisorStatusApiModel> GetSupervisorStatusAsync(string supervisorId) {
-            var supervisorStatus = new SupervisorStatusApiModel();
-
-            try {
-                supervisorStatus = await _registryService.GetSupervisorStatusAsync(supervisorId).ConfigureAwait(false);
-            }
-            catch (Exception exception) {
-                _logger.Error(exception, "Failed to get status");
-            }
-
-            return supervisorStatus;
-        }
-
-        /// <summary>
-        /// ResetSupervisorAsync
-        /// </summary>
-        /// <param name="supervisorId"></param>
-        /// <returns>bool</returns>
-        public async Task<string> ResetSupervisorAsync(string supervisorId) {
-            _ = new SupervisorStatusApiModel();
-
-            try {
-                await _registryService.ResetSupervisorAsync(supervisorId).ConfigureAwait(false);
-                return string.Empty;
-            }
-            catch (Exception exception) {
-                _logger.Error(exception, "Failed to reset supervisor");
-                return exception.Message;
-            }
-        }
-
         private readonly IRegistryServiceApi _registryService;
+        private readonly IDirectoryServiceApi _directoryService;
         private readonly ILogger _logger;
         private readonly UICommon _commonHelper;
-        public string PathAll = "All";
+        public const string PathAll = "All";
     }
 }

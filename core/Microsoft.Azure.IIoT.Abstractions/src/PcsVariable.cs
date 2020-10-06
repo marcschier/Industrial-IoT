@@ -205,6 +205,9 @@ namespace Microsoft.Azure.IIoT {
         /// <summary> OPC registry service endpoint url </summary>
         public const string PCS_TWIN_REGISTRY_URL =
             "PCS_TWIN_REGISTRY_URL";
+        /// <summary> OPC registry service endpoint url </summary>
+        public const string PCS_DIRECTORY_SERVICE_URL =
+            "PCS_DIRECTORY_SERVICE_URL";
         /// <summary> OPC vault service endpoint url </summary>
         public const string PCS_VAULT_SERVICE_URL =
             "PCS_VAULT_SERVICE_URL";

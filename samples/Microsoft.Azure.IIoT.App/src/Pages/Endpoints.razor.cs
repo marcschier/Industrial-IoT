@@ -4,13 +4,14 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.App.Pages {
+    using Microsoft.Azure.IIoT.App.Data;
+    using Microsoft.Azure.IIoT.App.Models;
+    using Microsoft.Azure.IIoT.App.Services;
+    using Microsoft.Azure.IIoT.Platform.Registry.Api;
+    using Microsoft.Azure.IIoT.Platform.Registry.Api.Models;
+    using Microsoft.AspNetCore.Components;
     using System;
     using System.Threading.Tasks;
-    using Microsoft.AspNetCore.Components;
-    using Microsoft.Azure.IIoT.App.Data;
-    using Microsoft.Azure.IIoT.Platform.Registry.Api.Models;
-    using Microsoft.Azure.IIoT.Platform.Registry.Api;
-    using Microsoft.Azure.IIoT.App.Models;
 
     public partial class Endpoints {
 
@@ -44,8 +45,8 @@ namespace Microsoft.Azure.IIoT.App.Pages {
             return endpoint.EndpointModel?.NotSeenSince == null;
         }
 
-        private bool IsIdGiven(string id) {
-            return !string.IsNullOrEmpty(id) && id != RegistryHelper.PathAll;
+        private static bool IsIdGiven(string id) {
+            return !string.IsNullOrEmpty(id) && id != Registry.PathAll;
         }
 
         /// <summary>
@@ -63,7 +64,7 @@ namespace Microsoft.Azure.IIoT.App.Pages {
         /// </summary>
         /// <param name="endpoint">The endpoint info</param>
         /// <returns>The css string</returns>
-        private string GetEndpointVisibilityString(EndpointInfo endpoint) {
+        private static string GetEndpointVisibilityString(EndpointInfo endpoint) {
             if (!IsEndpointSeen(endpoint)) {
                 return "enabled-false";
             }

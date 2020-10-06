@@ -25,11 +25,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
         public string EndpointUrl { get; set; }
 
         /// <summary>
-        /// Site of endpoint
-        /// </summary>
-        public string SiteId { get; set; }
-
-        /// <summary>
         /// Supervisor that manages the endpoint.
         /// </summary>
         public string SupervisorId { get; set; }

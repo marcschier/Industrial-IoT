@@ -173,7 +173,7 @@ namespace Microsoft.Azure.IIoT.Platform.Subscriber.Cdm.Services {
         }
 
         /// <inheritdoc/>
-        private string GetNormalizedEntityName(MonitoredItemMessageModel sample) {
+        private static string GetNormalizedEntityName(MonitoredItemMessageModel sample) {
             if (string.IsNullOrEmpty(sample.PublisherId) ||
                 string.IsNullOrEmpty(sample.DataSetWriterId) ||
                 string.IsNullOrEmpty(sample.NodeId)) {
@@ -184,7 +184,7 @@ namespace Microsoft.Azure.IIoT.Platform.Subscriber.Cdm.Services {
         }
 
         /// <inheritdoc/>
-        private string GetNormalizedEntityName(DataSetMessageModel dataSet) {
+        private static string GetNormalizedEntityName(DataSetMessageModel dataSet) {
             if (string.IsNullOrEmpty(dataSet.PublisherId) ||
                 string.IsNullOrEmpty(dataSet.DataSetWriterId)) {
                 return null;

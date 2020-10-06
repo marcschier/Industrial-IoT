@@ -39,25 +39,25 @@ namespace Opc.Ua.Design.Schema {
         /// Type definition
         /// </summary>
         [XmlIgnore]
-        public TypeDesign TypeDefinitionNode;
+        public TypeDesign TypeDefinitionNode { get; set; }
 
         /// <summary>
         /// Instance declartion
         /// </summary>
         [XmlIgnore]
-        public InstanceDesign InstanceDeclarationNode;
+        public InstanceDesign InstanceDeclarationNode { get; set; }
 
         /// <summary>
         /// Overridden node
         /// </summary>
         [XmlIgnore]
-        public InstanceDesign OveriddenNode;
+        public InstanceDesign OveriddenNode { get; set; }
 
         /// <summary>
         /// Identifier requirements
         /// </summary>
         [XmlIgnore]
-        public bool IdentifierRequired;
+        public bool IdentifierRequired { get; set; }
 
         /// <summary>
         /// Clone helper

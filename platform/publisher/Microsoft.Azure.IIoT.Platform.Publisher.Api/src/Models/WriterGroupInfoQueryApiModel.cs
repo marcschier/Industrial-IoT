@@ -20,13 +20,6 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api.Models {
         public string Name { get; set; }
 
         /// <summary>
-        /// Return only groups in this site
-        /// </summary>
-        [DataMember(Name = "siteId", Order = 1,
-            EmitDefaultValue = false)]
-        public string SiteId { get; set; }
-
-        /// <summary>
         /// With the specified group version
         /// </summary>
         [DataMember(Name = "groupVersion", Order = 2,

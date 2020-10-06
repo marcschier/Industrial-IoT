@@ -51,24 +51,6 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Controllers {
         }
 
         /// <summary>
-        /// Reset supervisor
-        /// </summary>
-        /// <returns></returns>
-        public async Task<bool> ResetAsync() {
-            await _supervisor.ResetAsync().ConfigureAwait(false);
-            return true;
-        }
-
-        /// <summary>
-        /// Get status
-        /// </summary>
-        /// <returns></returns>
-        public async Task<SupervisorStatusApiModel> GetStatusAsync() {
-            var result = await _supervisor.GetStatusAsync().ConfigureAwait(false);
-            return result.ToApiModel();
-        }
-
-        /// <summary>
         /// Browse
         /// </summary>
         /// <param name="endpoint"></param>

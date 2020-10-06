@@ -9,7 +9,9 @@ namespace Microsoft.Azure.IIoT.App.Pages {
     using Microsoft.Azure.IIoT.Platform.Registry.Api.Models;
     using System.Threading.Tasks;
 
+#pragma warning disable IDE1006 // Naming Styles
     public partial class _DrawerEndpointContent {
+#pragma warning restore IDE1006 // Naming Styles
         [Parameter]
         public EndpointInfo EndpointData { get; set; }
         public ApplicationRegistrationApiModel Application{ get; set; }

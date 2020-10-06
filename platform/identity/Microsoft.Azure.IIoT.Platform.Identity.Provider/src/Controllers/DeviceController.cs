@@ -29,7 +29,6 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Provider.Controllers {
         private readonly IDeviceFlowInteractionService _interaction;
         private readonly IEventService _events;
         private readonly IOptions<IdentityServerOptions> _options;
-        private readonly ILogger<DeviceController> _logger;
 
         /// <summary>
         /// Create controller
@@ -40,16 +39,16 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Provider.Controllers {
         public DeviceController(
             IDeviceFlowInteractionService interaction,
             IEventService eventService,
-            IOptions<IdentityServerOptions> options,
-            ILogger<DeviceController> logger) {
+            IOptions<IdentityServerOptions> options) {
             _interaction = interaction;
             _events = eventService;
             _options = options;
-            _logger = logger;
         }
 
         [HttpGet]
+#pragma warning disable IDE1006 // Naming Styles
         public async Task<IActionResult> Index() {
+#pragma warning restore IDE1006 // Naming Styles
             var userCodeParamName = _options.Value.UserInteraction.DeviceVerificationUserCodeParameter;
             string userCode = Request.Query[userCodeParamName];
             if (string.IsNullOrWhiteSpace(userCode)) {
@@ -72,7 +71,9 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Provider.Controllers {
         /// <returns></returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
+#pragma warning disable IDE1006 // Naming Styles
         public async Task<IActionResult> UserCodeCapture(string userCode) {
+#pragma warning restore IDE1006 // Naming Styles
             var vm = await BuildViewModelAsync(userCode);
             if (vm == null) {
                 return View("Error");
@@ -88,7 +89,9 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Provider.Controllers {
         /// <returns></returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
+#pragma warning disable IDE1006 // Naming Styles
         public async Task<IActionResult> Callback(DeviceAuthorizationInputModel model) {
+#pragma warning restore IDE1006 // Naming Styles
             if (model == null) {
                 throw new ArgumentNullException(nameof(model));
             }
@@ -106,7 +109,9 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Provider.Controllers {
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
+#pragma warning disable IDE1006 // Naming Styles
         private async Task<ProcessConsentResult> ProcessConsent(
+#pragma warning restore IDE1006 // Naming Styles
             DeviceAuthorizationInputModel model) {
             var result = new ProcessConsentResult();
 

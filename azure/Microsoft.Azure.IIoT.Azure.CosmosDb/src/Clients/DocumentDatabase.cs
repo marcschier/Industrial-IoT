@@ -84,7 +84,7 @@ namespace Microsoft.Azure.IIoT.Azure.CosmosDb.Clients {
             if (!_collections.TryGetValue(id, out var collection)) {
                 var container = await EnsureCollectionExistsAsync(id, options).ConfigureAwait(false);
                 collection = _collections.GetOrAdd(id, k => new DocumentCollection(container,
-                    _serializer, !string.IsNullOrEmpty(options?.PartitionKey), _logger));
+                    _serializer, _logger));
             }
             return collection;
         }

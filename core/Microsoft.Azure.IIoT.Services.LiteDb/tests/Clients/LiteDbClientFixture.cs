@@ -126,7 +126,7 @@ namespace Microsoft.Azure.IIoT.Services.LiteDb.Clients {
         /// </summary>
         /// <param name="options"></param>
         /// <returns></returns>
-        public async Task<ContainerWrapper> GetContainerAsync(string name = null) {
+        public static async Task<ContainerWrapper> GetContainerAsync(string name = null) {
             var database = await Try.Async(() => GetDatabaseAsync()).ConfigureAwait(false);
             if (database == null) {
                 return null;

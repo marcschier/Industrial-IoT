@@ -34,7 +34,7 @@ namespace Microsoft.Azure.IIoT.Services.CouchDb.Clients {
                 id = "default";
             }
             var db = await _client.GetOrCreateDatabaseAsync<CouchDbDocument>(id).ConfigureAwait(false);
-            return new CouchDbCollection(id, db, options, _logger);
+            return new CouchDbCollection(id, db, _logger);
         }
 
         /// <inheritdoc/>

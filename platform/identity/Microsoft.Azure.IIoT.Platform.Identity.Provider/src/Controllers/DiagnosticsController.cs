@@ -16,7 +16,9 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Provider.Controllers {
     [ExceptionsFilter]
     [Authorize]
     public class DiagnosticsController : Controller {
+#pragma warning disable IDE1006 // Naming Styles
         public async Task<IActionResult> Index() {
+#pragma warning restore IDE1006 // Naming Styles
             var localAddresses = new string[] { "127.0.0.1", "::1", HttpContext.Connection.LocalIpAddress.ToString() };
             if (!localAddresses.Contains(HttpContext.Connection.RemoteIpAddress.ToString())) {
                 return NotFound();

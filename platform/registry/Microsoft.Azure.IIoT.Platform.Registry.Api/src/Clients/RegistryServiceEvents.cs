@@ -76,54 +76,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api {
         }
 
         /// <inheritdoc/>
-        public async Task<IAsyncDisposable> SubscribeGatewayEventsAsync(
-            Func<GatewayEventApiModel, Task> callback) {
-            if (callback == null) {
-                throw new ArgumentNullException(nameof(callback));
-            }
-            var hub = await _client.GetHubAsync($"{_serviceUri}/v2/gateways/events",
-                Resource.Platform).ConfigureAwait(false);
-            var registration = hub.Register(EventTargets.GatewayEventTarget, callback);
-            return new AsyncDisposable(registration);
-        }
-
-        /// <inheritdoc/>
-        public async Task<IAsyncDisposable> SubscribeSupervisorEventsAsync(
-            Func<SupervisorEventApiModel, Task> callback) {
-            if (callback == null) {
-                throw new ArgumentNullException(nameof(callback));
-            }
-            var hub = await _client.GetHubAsync($"{_serviceUri}/v2/supervisors/events",
-                Resource.Platform).ConfigureAwait(false);
-            var registration = hub.Register(EventTargets.SupervisorEventTarget, callback);
-            return new AsyncDisposable(registration);
-        }
-
-        /// <inheritdoc/>
-        public async Task<IAsyncDisposable> SubscribeDiscovererEventsAsync(
-            Func<DiscovererEventApiModel, Task> callback) {
-            if (callback == null) {
-                throw new ArgumentNullException(nameof(callback));
-            }
-            var hub = await _client.GetHubAsync($"{_serviceUri}/v2/discovery/events",
-                Resource.Platform).ConfigureAwait(false);
-            var registration = hub.Register(EventTargets.DiscovererEventTarget, callback);
-            return new AsyncDisposable(registration);
-        }
-
-        /// <inheritdoc/>
-        public async Task<IAsyncDisposable> SubscribePublisherEventsAsync(
-            Func<PublisherEventApiModel, Task> callback) {
-            if (callback == null) {
-                throw new ArgumentNullException(nameof(callback));
-            }
-            var hub = await _client.GetHubAsync($"{_serviceUri}/v2/publishers/events",
-                Resource.Platform).ConfigureAwait(false);
-            var registration = hub.Register(EventTargets.PublisherEventTarget, callback);
-            return new AsyncDisposable(registration);
-        }
-
-        /// <inheritdoc/>
         public async Task<IAsyncDisposable> SubscribeDiscoveryProgressByDiscovererIdAsync(
             string discovererId, Func<DiscoveryProgressApiModel, Task> callback) {
             if (callback == null) {

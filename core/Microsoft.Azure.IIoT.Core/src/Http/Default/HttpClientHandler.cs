@@ -4,8 +4,6 @@
 // ------------------------------------------------------------
 
 
-using System;
-
 namespace Microsoft.Azure.IIoT.Http.Clients {
     using Microsoft.Azure.IIoT.Utils;
     using System;

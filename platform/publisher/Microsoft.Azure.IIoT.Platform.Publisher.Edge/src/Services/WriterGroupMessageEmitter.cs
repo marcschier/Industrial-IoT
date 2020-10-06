@@ -233,8 +233,6 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Services {
             internal DataFlowProcessingEngine(WriterGroupMessageEmitter outer) {
                 _cts = new CancellationTokenSource();
                 _outer = outer ?? throw new ArgumentNullException(nameof(outer));
-                _logger = _outer._logger?.ForContext<WriterGroupDataCollector>() ??
-                    throw new ArgumentNullException(nameof(outer));
 
                 // Snapshot the current configuration
                 _publishingInterval = outer.PublishingInterval ?? TimeSpan.Zero;
@@ -429,7 +427,6 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Services {
             private readonly TransformManyBlock<DataSetWriterMessageModel[], NetworkMessageModel> _encode;
             private readonly BatchBlock<DataSetWriterMessageModel> _batch;
             private readonly ActionBlock<NetworkMessageModel> _emit;
-            private readonly ILogger _logger;
             private readonly CancellationTokenSource _cts;
             private readonly Timer _publishingIntervalTimer;
             private readonly WriterGroupMessageEmitter _outer;

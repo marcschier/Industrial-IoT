@@ -32,8 +32,11 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa {
         public static async Task<ApplicationConfiguration> ToApplicationConfigurationAsync(
             this IClientServicesConfig opcConfig, IIdentity identity,
             CertificateValidationEventHandler handler) {
-            if (string.IsNullOrWhiteSpace(opcConfig?.ApplicationName)) {
-                throw new ArgumentNullException(nameof(opcConfig.ApplicationName));
+            if (opcConfig is null) {
+                throw new ArgumentNullException(nameof(opcConfig));
+            }
+            if (string.IsNullOrWhiteSpace(opcConfig.ApplicationName)) {
+                throw new ArgumentException("Missing application name", nameof(opcConfig));
             }
 
             // wait with the configuration until network is up

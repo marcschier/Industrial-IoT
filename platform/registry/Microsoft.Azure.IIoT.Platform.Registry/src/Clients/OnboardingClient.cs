@@ -13,7 +13,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Clients {
     /// <summary>
     /// Onboarding client triggers registry onboarding in the jobs agent.
     /// </summary>
-    public sealed class OnboardingClient : IOnboardingServices {
+    public sealed class OnboardingClient : IDiscoveryServices {
 
         /// <summary>
         /// Create onboarding client
@@ -29,7 +29,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Clients {
                 throw new ArgumentNullException(nameof(request));
             }
             if (request.DiscoveryUrl == null) {
-                throw new ArgumentNullException(nameof(request.DiscoveryUrl));
+                throw new ArgumentException("Missing discovery uri", nameof(request));
             }
             if (string.IsNullOrEmpty(request.Id)) {
                 request.Id = Guid.NewGuid().ToString();

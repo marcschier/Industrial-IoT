@@ -69,14 +69,14 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Models {
         /// <example>DA</example>
         [DataMember(Name = "capabilities", Order = 7,
             EmitDefaultValue = false)]
-        public /*IReadOnlySet*/ IReadOnlyCollection<string> Capabilities { get; set; }
+        public IReadOnlySet<string> Capabilities { get; set; }
 
         /// <summary>
         /// Discovery urls of the server
         /// </summary>
         [DataMember(Name = "discoveryUrls", Order = 8,
             EmitDefaultValue = false)]
-        public /*IReadOnlySet*/ IReadOnlyCollection<string> DiscoveryUrls { get; set; }
+        public IReadOnlySet<string> DiscoveryUrls { get; set; }
 
         /// <summary>
         /// Discovery profile uri
@@ -97,16 +97,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Models {
         /// </summary>
         [DataMember(Name = "hostAddresses", Order = 11,
             EmitDefaultValue = false)]
-        public /*IReadOnlySet*/ IReadOnlyCollection<string> HostAddresses { get; set; }
-
-        /// <summary>
-        /// Site of the application
-        /// </summary>
-        /// <example>productionlineA</example>
-        /// <example>cellB</example>
-        [DataMember(Name = "siteId", Order = 12,
-            EmitDefaultValue = false)]
-        public string SiteId { get; set; }
+        public IReadOnlySet<string> HostAddresses { get; set; }
 
         /// <summary>
         /// Discoverer that registered the application

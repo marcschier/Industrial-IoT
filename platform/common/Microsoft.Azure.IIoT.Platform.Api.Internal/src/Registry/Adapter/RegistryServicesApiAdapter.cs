@@ -16,8 +16,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Clients {
     /// Registry services adapter to run dependent services outside of cloud.
     /// </summary>
     public sealed class RegistryServicesApiAdapter : IEndpointRegistry,
-        ISupervisorRegistry, IApplicationRegistry, IPublisherRegistry,
-        IDiscoveryServices, ISupervisorDiagnostics, IPublisherDiagnostics {
+        IApplicationRegistry, IDiscovererServices {
 
         /// <summary>
         /// Create registry services
@@ -64,90 +63,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Clients {
         }
 
         /// <inheritdoc/>
-        public async Task<SupervisorListModel> ListSupervisorsAsync(
-            string continuation, int? pageSize, CancellationToken ct) {
-            var result = await _client.ListSupervisorsAsync(continuation,
-                pageSize, ct).ConfigureAwait(false);
-            return result.ToServiceModel();
-        }
-
-        /// <inheritdoc/>
-        public async Task<SupervisorListModel> QuerySupervisorsAsync(
-            SupervisorQueryModel query, int? pageSize,
-            CancellationToken ct) {
-            var result = await _client.QuerySupervisorsAsync(query.ToApiModel(),
-                pageSize, ct).ConfigureAwait(false);
-            return result.ToServiceModel();
-        }
-
-        /// <inheritdoc/>
-        public async Task<SupervisorModel> GetSupervisorAsync(string id,
-            CancellationToken ct) {
-            var result = await _client.GetSupervisorAsync(id, ct).ConfigureAwait(false);
-            return result.ToServiceModel();
-        }
-
-        /// <inheritdoc/>
-        public async Task<SupervisorStatusModel> GetSupervisorStatusAsync(string id,
-            CancellationToken ct) {
-            var result = await _client.GetSupervisorStatusAsync(id, ct).ConfigureAwait(false);
-            return result.ToServiceModel();
-        }
-
-        /// <inheritdoc/>
-        public Task ResetSupervisorAsync(string id, CancellationToken ct) {
-            return _client.ResetSupervisorAsync(id, ct);
-        }
-
-        /// <inheritdoc/>
-        public Task UpdateSupervisorAsync(string supervisorId,
-            SupervisorUpdateModel request, CancellationToken ct) {
-            return _client.UpdateSupervisorAsync(supervisorId, request.ToApiModel(), ct);
-        }
-
-        /// <inheritdoc/>
-        public async Task<PublisherListModel> ListPublishersAsync(
-            string continuation, int? pageSize, CancellationToken ct) {
-            var result = await _client.ListPublishersAsync(continuation,
-                pageSize, ct).ConfigureAwait(false);
-            return result.ToServiceModel();
-        }
-
-        /// <inheritdoc/>
-        public async Task<PublisherListModel> QueryPublishersAsync(
-            PublisherQueryModel query, int? pageSize,
-            CancellationToken ct) {
-            var result = await _client.QueryPublishersAsync(query.ToApiModel(),
-                pageSize, ct).ConfigureAwait(false);
-            return result.ToServiceModel();
-        }
-
-        /// <inheritdoc/>
-        public async Task<PublisherModel> GetPublisherAsync(string id,
-            CancellationToken ct) {
-            var result = await _client.GetPublisherAsync(id, ct).ConfigureAwait(false);
-            return result.ToServiceModel();
-        }
-
-        /// <inheritdoc/>
-        public async Task<SupervisorStatusModel> GetPublisherStatusAsync(string id,
-            CancellationToken ct) {
-            var result = await _client.GetPublisherStatusAsync(id, ct).ConfigureAwait(false);
-            return result.ToServiceModel();
-        }
-
-        /// <inheritdoc/>
-        public Task ResetPublisherAsync(string id, CancellationToken ct) {
-            return _client.ResetPublisherAsync(id, ct);
-        }
-
-        /// <inheritdoc/>
-        public async Task UpdatePublisherAsync(string id, PublisherUpdateModel request,
-            CancellationToken ct) {
-            await _client.UpdatePublisherAsync(id, request.ToApiModel(), ct).ConfigureAwait(false);
-        }
-
-        /// <inheritdoc/>
         public async Task<ApplicationRegistrationResultModel> RegisterApplicationAsync(
             ApplicationRegistrationRequestModel request, CancellationToken ct) {
             var result = await _client.RegisterAsync(request.ToApiModel(), ct).ConfigureAwait(false);
@@ -169,23 +84,18 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Clients {
         }
 
         /// <inheritdoc/>
-        public async Task<ApplicationSiteListModel> ListSitesAsync(
-            string continuation, int? pageSize, CancellationToken ct) {
-            var result = await _client.ListSitesAsync(continuation, pageSize, ct).ConfigureAwait(false);
-            return result.ToServiceModel();
-        }
-
-        /// <inheritdoc/>
         public async Task<ApplicationInfoListModel> ListApplicationsAsync(
             string continuation, int? pageSize, CancellationToken ct) {
-            var result = await _client.ListApplicationsAsync(continuation, pageSize, ct).ConfigureAwait(false);
+            var result = await _client.ListApplicationsAsync(continuation, 
+                pageSize, ct).ConfigureAwait(false);
             return result.ToServiceModel();
         }
 
         /// <inheritdoc/>
         public async Task<ApplicationInfoListModel> QueryApplicationsAsync(
             ApplicationRegistrationQueryModel query, int? pageSize, CancellationToken ct) {
-            var result = await _client.QueryApplicationsAsync(query.ToApiModel(), pageSize, ct).ConfigureAwait(false);
+            var result = await _client.QueryApplicationsAsync(query.ToApiModel(),
+                pageSize, ct).ConfigureAwait(false);
             return result.ToServiceModel();
         }
 
@@ -210,12 +120,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Clients {
         /// <inheritdoc/>
         public Task CancelAsync(DiscoveryCancelModel request, CancellationToken ct) {
             return _client.CancelAsync(request.ToApiModel(), ct);
-        }
-
-        /// <inheritdoc/>
-        public Task SynchronizeActivationAsync(CancellationToken ct) {
-            // TODO
-            throw new NotImplementedException();
         }
 
         private readonly IRegistryServiceApi _client;

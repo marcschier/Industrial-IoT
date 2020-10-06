@@ -35,12 +35,10 @@ namespace Microsoft.Azure.IIoT.App.Services {
         /// <param name="twinService"></param>
         /// <param name="logger"></param>
         /// <param name="serializer"></param>
-        /// <param name="commonHelper"></param>
-        public Browser(ITwinServiceApi twinService, IJsonSerializer serializer, ILogger logger, UICommon commonHelper) {
+        public Browser(ITwinServiceApi twinService, IJsonSerializer serializer, ILogger logger) {
             _twinService = twinService ?? throw new ArgumentNullException(nameof(twinService));
             _serializer = serializer ?? throw new ArgumentNullException(nameof(serializer));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            _commonHelper = commonHelper ?? throw new ArgumentNullException(nameof(commonHelper));
         }
 
         /// <summary>
@@ -67,7 +65,7 @@ namespace Microsoft.Azure.IIoT.App.Services {
             var model = new BrowseRequestApiModel {
                             TargetNodesOnly = true,
                             ReadVariableValues = true,
-                            MaxReferencesToReturn = _MAX_REFERENCES
+                            MaxReferencesToReturn = kMaxReferences
                         };
 
             if (direction == BrowseDirection.Forward) {
@@ -390,8 +388,7 @@ namespace Microsoft.Azure.IIoT.App.Services {
         private readonly ITwinServiceApi _twinService;
         private readonly IJsonSerializer _serializer;
         private readonly ILogger _logger;
-        private readonly UICommon _commonHelper;
-        private const int _MAX_REFERENCES = 10;
+        private const int kMaxReferences = 10;
         private static string _displayName;
     }
 }

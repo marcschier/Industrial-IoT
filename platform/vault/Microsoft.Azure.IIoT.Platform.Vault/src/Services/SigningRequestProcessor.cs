@@ -43,10 +43,10 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Services {
                 throw new ArgumentNullException(nameof(request));
             }
             if (string.IsNullOrEmpty(request.EntityId)) {
-                throw new ArgumentNullException(nameof(request.EntityId));
+                throw new ArgumentException("Missing entity id", nameof(request));
             }
             if (string.IsNullOrEmpty(request.GroupId)) {
-                throw new ArgumentNullException(nameof(request.GroupId));
+                throw new ArgumentException("Missing group id", nameof(request));
             }
 
             var entity = await _entities.FindEntityAsync(request.EntityId, 

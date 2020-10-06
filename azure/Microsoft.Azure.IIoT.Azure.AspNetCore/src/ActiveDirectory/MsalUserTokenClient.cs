@@ -277,7 +277,7 @@ namespace Microsoft.Azure.IIoT.AspNetCore.Authentication.Clients {
                 if (account == null) {
                     var loginHint = user.GetLoginHint();
                     if (loginHint == null) {
-                        throw new ArgumentNullException(nameof(loginHint));
+                        throw new ArgumentException("Missing login hint", nameof(user));
                     }
                     var accounts = await application.GetAccountsAsync().ConfigureAwait(false);
                     account = accounts.FirstOrDefault(a => a.Username == loginHint);

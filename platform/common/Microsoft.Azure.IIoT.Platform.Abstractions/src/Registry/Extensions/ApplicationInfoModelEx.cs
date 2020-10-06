@@ -8,7 +8,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
     using System.Collections.Generic;
     using System.Linq;
     using System;
-    using Microsoft.Azure.IIoT.Hub;
 
     /// <summary>
     /// Service model extensions for discovery service
@@ -36,29 +35,25 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
             if (model == null) {
                 throw new ArgumentNullException(nameof(model));
             }
-            var siteOrGatewayId = model.SiteId;
-            if (siteOrGatewayId == null && model.DiscovererId != null) {
-                siteOrGatewayId = HubResource.Parse(model.DiscovererId, out _, out _);
-            }
-            return CreateApplicationId(siteOrGatewayId, model.ApplicationUri,
+            return CreateApplicationId(model.DiscovererId, model.ApplicationUri,
                 model.ApplicationType);
         }
 
         /// <summary>
         /// Create unique application id
         /// </summary>
-        /// <param name="siteOrGatewayId"></param>
+        /// <param name="discovererId"></param>
         /// <param name="applicationUri"></param>
         /// <param name="applicationType"></param>
         /// <returns></returns>
-        public static string CreateApplicationId(string siteOrGatewayId,
+        public static string CreateApplicationId(string discovererId,
             string applicationUri, ApplicationType? applicationType) {
             if (string.IsNullOrEmpty(applicationUri)) {
                 return null;
             }
             applicationUri = applicationUri.ToUpperInvariant();
             var type = applicationType ?? ApplicationType.Server;
-            var id = $"{siteOrGatewayId ?? ""}-{type}-{applicationUri}";
+            var id = $"{discovererId ?? ""}-{type}-{applicationUri}";
             var prefix = applicationType == ApplicationType.Client ? "uac" : "uas";
             return prefix + id.ToSha256Hash();
         }
@@ -129,7 +124,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
                     .ToHashSetSafe(),
                 NotSeenSince = model.NotSeenSince,
                 ProductUri = model.ProductUri,
-                SiteId = model.SiteId,
                 GatewayServerUri = model.GatewayServerUri,
                 Created = model.Created.Clone(),
                 Updated = model.Updated.Clone(),
@@ -159,7 +153,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
                 LocalizedNames = model.LocalizedNames,
                 Locale = model.Locale,
                 ProductUri = model.ProductUri,
-                SiteId = model.SiteId,
                 Context = context
             };
         }
@@ -189,7 +182,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
                 Locale = request.Locale,
                 Capabilities = request.Capabilities,
                 GatewayServerUri = request.GatewayServerUri,
-                SiteId = request.SiteId,
                 Created = context,
                 NotSeenSince = disabled ? DateTime.UtcNow : (DateTime?)null,
                 GenerationId = null,
@@ -249,7 +241,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
             application.DiscoveryUrls = model.DiscoveryUrls;
             application.NotSeenSince = model.NotSeenSince;
             application.ProductUri = model.ProductUri;
-            application.SiteId = model.SiteId;
             application.DiscovererId = model.DiscovererId;
             application.GatewayServerUri = model.GatewayServerUri;
             application.Created = model.Created;
@@ -275,21 +266,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
         }
 
         /// <summary>
-        /// Returns the site or supervisor id
-        /// </summary>
-        /// <param name="model"></param>
-        /// <returns></returns>
-        public static string GetSiteOrGatewayId(this ApplicationInfoModel model) {
-            if (model is null) {
-                return null;
-            }
-            if (string.IsNullOrEmpty(model.SiteId)) {
-                return model.DiscovererId;
-            }
-            return model.SiteId;
-        }
-
-        /// <summary>
         /// Compares for logical equality - applications are logically equivalent if they
         /// have the same uri, type, and site location or supervisor that registered.
         /// </summary>
@@ -297,7 +273,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
 
             /// <inheritdoc />
             public bool Equals(ApplicationInfoModel x, ApplicationInfoModel y) {
-                if (x.GetSiteOrGatewayId() != y.GetSiteOrGatewayId()) {
+                if (x.DiscovererId != y.DiscovererId) {
                     return false;
                 }
                 if (x.ApplicationType != y.ApplicationType) {
@@ -314,7 +290,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
                 var hash = new HashCode();
                 hash.Add(obj.ApplicationType);
                 hash.Add(obj.ApplicationUri?.ToUpperInvariant());
-                hash.Add(obj.GetSiteOrGatewayId());
+                hash.Add(obj.DiscovererId);
                 return hash.ToHashCode();
             }
         }
@@ -328,7 +304,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
             /// <inheritdoc />
             public bool Equals(ApplicationInfoModel x, ApplicationInfoModel y) {
                 return
-                    x.GetSiteOrGatewayId() == y.GetSiteOrGatewayId() &&
+                    x.DiscovererId == y.DiscovererId &&
                     x.ApplicationType == y.ApplicationType &&
                     x.ApplicationUri.EqualsIgnoreCase(y.ApplicationUri) &&
                     x.DiscoveryProfileUri == y.DiscoveryProfileUri &&
@@ -345,6 +321,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
             /// <inheritdoc />
             public int GetHashCode(ApplicationInfoModel obj) {
                 var hash = new HashCode();
+                hash.Add(obj.DiscovererId);
                 hash.Add(obj.ApplicationType);
                 hash.Add(obj.ApplicationUri?.ToUpperInvariant());
                 hash.Add(obj.ProductUri);

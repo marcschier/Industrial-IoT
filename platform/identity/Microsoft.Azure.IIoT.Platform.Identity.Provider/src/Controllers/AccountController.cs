@@ -65,7 +65,9 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Provider.Controllers {
         /// Entry point into the login workflow
         /// </summary>
         [HttpGet]
+#pragma warning disable IDE1006 // Naming Styles
         public async Task<IActionResult> Login(string returnUrl) {
+#pragma warning restore IDE1006 // Naming Styles
             // build a model so we know what to show on the login page
             var vm = await BuildLoginViewModelAsync(returnUrl);
 
@@ -85,7 +87,9 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Provider.Controllers {
         /// </summary>
         [HttpPost]
         [ValidateAntiForgeryToken]
+#pragma warning disable IDE1006 // Naming Styles
         public async Task<IActionResult> Login(LoginInputModel model, string button) {
+#pragma warning restore IDE1006 // Naming Styles
             // check if we are in the context of an authorization request
             var context = await _interaction.GetAuthorizationContextAsync(model.ReturnUrl);
 
@@ -157,7 +161,9 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Provider.Controllers {
         /// Show logout page
         /// </summary>
         [HttpGet]
+#pragma warning disable IDE1006 // Naming Styles
         public async Task<IActionResult> Logout(string logoutId) {
+#pragma warning restore IDE1006 // Naming Styles
             // build a model so the logout page knows what to display
             var vm = await BuildLogoutViewModelAsync(logoutId);
 
@@ -175,7 +181,9 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Provider.Controllers {
         /// </summary>
         [HttpPost]
         [ValidateAntiForgeryToken]
+#pragma warning disable IDE1006 // Naming Styles
         public async Task<IActionResult> Logout(LogoutInputModel model) {
+#pragma warning restore IDE1006 // Naming Styles
             // build a model so the logged out page knows what to display
             var vm = await BuildLoggedOutViewModelAsync(model.LogoutId);
 

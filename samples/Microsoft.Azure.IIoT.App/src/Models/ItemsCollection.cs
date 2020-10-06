@@ -54,7 +54,7 @@ namespace Microsoft.Azure.IIoT.App.Models {
         /// More items should be loaded
         /// </summary>
         /// <returns></returns>
-        protected async Task LoadMoreItems() {
+        protected async Task LoadMoreItemsAsync() {
             IsLoading = true;
             if (!string.IsNullOrEmpty(Items.ContinuationToken)) {
                 await LoadPageContentAsync(true).ConfigureAwait(false);

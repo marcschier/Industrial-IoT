@@ -35,14 +35,12 @@ namespace Microsoft.Azure.IIoT.Services.CouchDb.Clients {
         /// </summary>
         /// <param name="name"></param>
         /// <param name="db"></param>
-        /// <param name="options"></param>
         /// <param name="logger"></param>
         internal CouchDbCollection(string name, ICouchDatabase<CouchDbDocument> db,
-            ContainerOptions options, ILogger logger) {
+            ILogger logger) {
             Name = name ?? throw new ArgumentNullException(nameof(name));
             _db = db ?? throw new ArgumentNullException(nameof(db));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            _options = options ?? new ContainerOptions();
         }
 
         /// <inheritdoc/>
@@ -850,7 +848,6 @@ namespace Microsoft.Azure.IIoT.Services.CouchDb.Clients {
         // default query result limit is 25, make sure we return larger by default
         private const int kMinQueryResultSize = 200;
         private readonly ICouchDatabase<CouchDbDocument> _db;
-        private readonly ContainerOptions _options;
         private readonly ILogger _logger;
 
         private readonly ConcurrentDictionary<string, Task<IndexResult>> _cache =

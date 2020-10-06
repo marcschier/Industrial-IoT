@@ -126,7 +126,7 @@ namespace Microsoft.Azure.IIoT.Services.CouchDb.Clients {
         /// </summary>
         /// <param name="options"></param>
         /// <returns></returns>
-        public async Task<ContainerWrapper> GetContainerAsync(string name = null) {
+        public static async Task<ContainerWrapper> GetContainerAsync(string name = null) {
             try {
                 var database = await GetDatabaseAsync().ConfigureAwait(false);
                 if (name == null) {

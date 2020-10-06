@@ -98,7 +98,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
             return model.Endpoint.HasSameSecurityProperties(that.Endpoint) &&
                 model.EndpointUrl == that.EndpointUrl &&
                 model.AuthenticationMethods.IsSameAs(that.AuthenticationMethods) &&
-                model.SiteId == that.SiteId &&
                 model.DiscovererId == that.DiscovererId &&
                 model.SupervisorId == that.SupervisorId &&
                 model.SecurityLevel == that.SecurityLevel;
@@ -114,8 +113,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
                 return false;
             }
             return
-                model.ActivationState == EntityActivationState.Activated ||
-                model.ActivationState == EntityActivationState.ActivatedAndConnected;
+                model.ActivationState == EntityActivationState.Activated;
         }
 
         /// <summary>
@@ -128,7 +126,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
                 return false;
             }
             return
-                model.ActivationState == EntityActivationState.ActivatedAndConnected;
+                model.EndpointState != null;
         }
 
         /// <summary>
@@ -165,7 +163,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
                 AuthenticationMethods = model.AuthenticationMethods?
                     .Select(c => c.Clone()).ToList(),
                 SecurityLevel = model.SecurityLevel,
-                SiteId = model.SiteId,
                 SupervisorId = model.SupervisorId,
                 DiscovererId = model.DiscovererId
             };
@@ -188,29 +185,9 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
             endpoint.AuthenticationMethods = model.AuthenticationMethods?
                 .Select(c => c.Clone()).ToList();
             endpoint.SecurityLevel = model.SecurityLevel;
-            endpoint.SiteId = model.SiteId;
             endpoint.SupervisorId = model.SupervisorId;
             endpoint.DiscovererId = model.DiscovererId;
             return endpoint;
-        }
-
-        /// <summary>
-        /// Get site or gateway id from endpoint
-        /// </summary>
-        /// <param name="endpoint"></param>
-        /// <returns></returns>
-        public static string GetSiteOrGatewayId(this EndpointInfoModel endpoint) {
-            if (endpoint == null) {
-                return null;
-            }
-            var siteOrGatewayId = endpoint?.SiteId;
-            if (siteOrGatewayId == null) {
-                var id = endpoint?.DiscovererId ?? endpoint?.SupervisorId;
-                if (id != null) {
-                    siteOrGatewayId = HubResource.Parse(id, out _, out _);
-                }
-            }
-            return siteOrGatewayId;
         }
 
         /// <summary>

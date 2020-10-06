@@ -16,18 +16,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry {
     public interface IApplicationRepository {
 
         /// <summary>
-        /// Get list of registered application sites to group
-        /// applications visually
-        /// </summary>
-        /// <param name="continuation"></param>
-        /// <param name="pageSize"></param>
-        /// <param name="ct"></param>
-        /// <returns></returns>
-        Task<ApplicationSiteListModel> ListSitesAsync(
-            string continuation = null, int? pageSize = null,
-            CancellationToken ct = default);
-
-        /// <summary>
         /// Query applications
         /// </summary>
         /// <param name="query"></param>

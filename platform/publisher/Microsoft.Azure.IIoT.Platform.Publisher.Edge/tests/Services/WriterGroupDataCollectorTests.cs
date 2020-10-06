@@ -56,7 +56,6 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Services {
                 // Act
                 var result1 = await groups.AddWriterGroupAsync(new WriterGroupAddRequestModel {
                     Name = "TestGroup",
-                    SiteId = "fakesite" // See below
                 }).ConfigureAwait(false);
 
                 // Add a single writer to endpoint
@@ -136,7 +135,6 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Services {
                 // Act
                 var result1 = await groups.AddWriterGroupAsync(new WriterGroupAddRequestModel {
                     Name = "TestGroup",
-                    SiteId = "fakesite" // See below
                 }).ConfigureAwait(false);
 
                 // Add a single writer to endpoint
@@ -189,7 +187,6 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Services {
                 // Act
                 var result1 = await groups.AddWriterGroupAsync(new WriterGroupAddRequestModel {
                     Name = "TestGroup",
-                    SiteId = "fakesite" // See below
                 }).ConfigureAwait(false);
 
                 // Add a single writer to endpoint
@@ -264,7 +261,6 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Services {
                 // Act
                 var result1 = await groups.AddWriterGroupAsync(new WriterGroupAddRequestModel {
                     Name = "TestGroup",
-                    SiteId = "fakesite" // See below
                 }).ConfigureAwait(false);
 
                 // Add a single writer to endpoint
@@ -369,7 +365,6 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Services {
                     // This is the key - after 5 seconds it should click
                     PublishingInterval = intervalInSec == 0 ?
                         (TimeSpan?)null : TimeSpan.FromSeconds(intervalInSec),
-                    SiteId = "fakesite" // See below
                 }).ConfigureAwait(false);
 
                 // Add a single writer to endpoint
@@ -457,7 +452,6 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Services {
                     .Returns(Task.FromResult(new EndpointInfoModel {
                             EndpointUrl = url,
                             Id = "endpoint1",
-                            SiteId = "fakesite",
                             Endpoint = new EndpointModel {
                                 Url = url,
                                 AlternativeUrls = _hostEntry?.AddressList

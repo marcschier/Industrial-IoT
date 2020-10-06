@@ -219,8 +219,6 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Service {
                 .AsImplementedInterfaces();
             builder.RegisterType<RegistryServicesApiAdapter>()
                 .AsImplementedInterfaces();
-            builder.RegisterType<EntityInfoResolver>()
-                .AsImplementedInterfaces();
 
             // Vault services
             builder.RegisterType<RequestDatabase>()

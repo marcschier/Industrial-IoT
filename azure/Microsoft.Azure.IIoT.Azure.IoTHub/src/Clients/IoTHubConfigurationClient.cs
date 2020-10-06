@@ -27,7 +27,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub.Clients {
         /// <param name="logger"></param>
         public IoTHubConfigurationClient(IIoTHubConfig config, ILogger logger) {
             if (string.IsNullOrEmpty(config?.IoTHubConnString)) {
-                throw new ArgumentNullException(nameof(config.IoTHubConnString));
+                throw new ArgumentException("Missing connection string", nameof(config));
             }
 
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));

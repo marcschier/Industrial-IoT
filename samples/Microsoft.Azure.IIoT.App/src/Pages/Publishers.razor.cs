@@ -7,8 +7,8 @@ namespace Microsoft.Azure.IIoT.App.Pages {
     using System;
     using System.Threading.Tasks;
     using Microsoft.Azure.IIoT.App.Data;
-    using Microsoft.Azure.IIoT.Platform.Registry.Api.Models;
-    using Microsoft.Azure.IIoT.Platform.Registry.Api;
+    using Microsoft.Azure.IIoT.Platform.Directory.Api.Models;
+    using Microsoft.Azure.IIoT.Platform.Directory.Api;
     using Microsoft.Azure.IIoT.App.Models;
 
     public partial class Publishers {
@@ -20,7 +20,7 @@ namespace Microsoft.Azure.IIoT.App.Pages {
         }
 
         protected override async Task SubscribeContentEventsAsync() {
-            _events = await RegistryServiceEvents.SubscribePublisherEventsAsync(
+            _events = await DirectoryServiceEvents.SubscribePublisherEventsAsync(
                     ev => InvokeAsync(() => PublisherEvent(ev))).ConfigureAwait(false);
         }
 

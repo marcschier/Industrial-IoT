@@ -15,16 +15,11 @@ namespace Microsoft.Azure.IIoT.Services.CouchDb.Clients {
     using Xunit;
 
     [Collection(CouchDbServerCollection.Name)]
-    public class CouchDbContainerTests : IClassFixture<CouchDbClientFixture> {
-        private readonly CouchDbClientFixture _fixture;
-
-        public CouchDbContainerTests(CouchDbClientFixture fixture) {
-            _fixture = fixture;
-        }
+    public class CouchDbContainerTests  {
 
         [SkippableFact]
         public async Task FindItemTestAsync() {
-            using (var container = await _fixture.GetContainerAsync().ConfigureAwait(false)) {
+            using (var container = await CouchDbClientFixture.GetContainerAsync().ConfigureAwait(false)) {
                 Skip.If(container == null);
                 var documents = container.Container;
 
@@ -46,7 +41,7 @@ namespace Microsoft.Azure.IIoT.Services.CouchDb.Clients {
 
         [SkippableFact]
         public async Task NotFindItemTestAsync() {
-            using (var container = await _fixture.GetContainerAsync().ConfigureAwait(false)) {
+            using (var container = await CouchDbClientFixture.GetContainerAsync().ConfigureAwait(false)) {
                 Skip.If(container == null);
                 var documents = container.Container;
 
@@ -64,7 +59,7 @@ namespace Microsoft.Azure.IIoT.Services.CouchDb.Clients {
 
         [SkippableFact]
         public async Task FindItemBadArgumentTestsAsync() {
-            using (var container = await _fixture.GetContainerAsync().ConfigureAwait(false)) {
+            using (var container = await CouchDbClientFixture.GetContainerAsync().ConfigureAwait(false)) {
                 Skip.If(container == null);
                 var documents = container.Container;
 
@@ -75,7 +70,7 @@ namespace Microsoft.Azure.IIoT.Services.CouchDb.Clients {
 
         [SkippableFact]
         public async Task AddItemsTestAsync() {
-            using (var container = await _fixture.GetContainerAsync().ConfigureAwait(false)) {
+            using (var container = await CouchDbClientFixture.GetContainerAsync().ConfigureAwait(false)) {
                 Skip.If(container == null);
                 var documents = container.Container;
 
@@ -91,7 +86,7 @@ namespace Microsoft.Azure.IIoT.Services.CouchDb.Clients {
 
         [SkippableFact]
         public async Task AddItemTestAsync() {
-            using (var container = await _fixture.GetContainerAsync().ConfigureAwait(false)) {
+            using (var container = await CouchDbClientFixture.GetContainerAsync().ConfigureAwait(false)) {
                 Skip.If(container == null);
                 var documents = container.Container;
 
@@ -114,7 +109,7 @@ namespace Microsoft.Azure.IIoT.Services.CouchDb.Clients {
 
         [SkippableFact]
         public async Task AddItemTwiceThrowsAsync() {
-            using (var container = await _fixture.GetContainerAsync().ConfigureAwait(false)) {
+            using (var container = await CouchDbClientFixture.GetContainerAsync().ConfigureAwait(false)) {
                 Skip.If(container == null);
                 var documents = container.Container;
 
@@ -133,7 +128,7 @@ namespace Microsoft.Azure.IIoT.Services.CouchDb.Clients {
 
         [SkippableFact]
         public async Task AddItemAfterUpsertThrowsAsync() {
-            using (var container = await _fixture.GetContainerAsync().ConfigureAwait(false)) {
+            using (var container = await CouchDbClientFixture.GetContainerAsync().ConfigureAwait(false)) {
                 Skip.If(container == null);
                 var documents = container.Container;
 
@@ -152,7 +147,7 @@ namespace Microsoft.Azure.IIoT.Services.CouchDb.Clients {
 
         [SkippableFact]
         public async Task AddItemBadArgumentTestsAsync() {
-            using (var container = await _fixture.GetContainerAsync().ConfigureAwait(false)) {
+            using (var container = await CouchDbClientFixture.GetContainerAsync().ConfigureAwait(false)) {
                 Skip.If(container == null);
                 var documents = container.Container;
 
@@ -165,7 +160,7 @@ namespace Microsoft.Azure.IIoT.Services.CouchDb.Clients {
 
         [SkippableFact]
         public async Task UpsertItemsTestAsync() {
-            using (var container = await _fixture.GetContainerAsync().ConfigureAwait(false)) {
+            using (var container = await CouchDbClientFixture.GetContainerAsync().ConfigureAwait(false)) {
                 Skip.If(container == null);
                 var documents = container.Container;
 
@@ -182,7 +177,7 @@ namespace Microsoft.Azure.IIoT.Services.CouchDb.Clients {
 
         [SkippableFact]
         public async Task UpsertItemTwiceAsync() {
-            using (var container = await _fixture.GetContainerAsync().ConfigureAwait(false)) {
+            using (var container = await CouchDbClientFixture.GetContainerAsync().ConfigureAwait(false)) {
                 Skip.If(container == null);
                 var documents = container.Container;
 
@@ -222,7 +217,7 @@ namespace Microsoft.Azure.IIoT.Services.CouchDb.Clients {
 
         [SkippableFact]
         public async Task UpsertItemTwiceWithEtagAsync() {
-            using (var container = await _fixture.GetContainerAsync().ConfigureAwait(false)) {
+            using (var container = await CouchDbClientFixture.GetContainerAsync().ConfigureAwait(false)) {
                 Skip.If(container == null);
                 var documents = container.Container;
 
@@ -254,7 +249,7 @@ namespace Microsoft.Azure.IIoT.Services.CouchDb.Clients {
 
         [SkippableFact]
         public async Task UpsertItemFirstTimeWithEtagInsertsAsync() {
-            using (var container = await _fixture.GetContainerAsync().ConfigureAwait(false)) {
+            using (var container = await CouchDbClientFixture.GetContainerAsync().ConfigureAwait(false)) {
                 Skip.If(container == null);
                 var documents = container.Container;
 
@@ -277,7 +272,7 @@ namespace Microsoft.Azure.IIoT.Services.CouchDb.Clients {
 
         [SkippableFact]
         public async Task UpsertItemTwiceWithBadEtagThrowsAsync() {
-            using (var container = await _fixture.GetContainerAsync().ConfigureAwait(false)) {
+            using (var container = await CouchDbClientFixture.GetContainerAsync().ConfigureAwait(false)) {
                 Skip.If(container == null);
                 var documents = container.Container;
 
@@ -297,7 +292,7 @@ namespace Microsoft.Azure.IIoT.Services.CouchDb.Clients {
 
         [SkippableFact]
         public async Task UpsertItemAfterAddAsync() {
-            using (var container = await _fixture.GetContainerAsync().ConfigureAwait(false)) {
+            using (var container = await CouchDbClientFixture.GetContainerAsync().ConfigureAwait(false)) {
                 Skip.If(container == null);
                 var documents = container.Container;
 
@@ -329,7 +324,7 @@ namespace Microsoft.Azure.IIoT.Services.CouchDb.Clients {
 
         [SkippableFact]
         public async Task UpsertItemBadArgumentTestsAsync() {
-            using (var container = await _fixture.GetContainerAsync().ConfigureAwait(false)) {
+            using (var container = await CouchDbClientFixture.GetContainerAsync().ConfigureAwait(false)) {
                 Skip.If(container == null);
                 var documents = container.Container;
 
@@ -342,7 +337,7 @@ namespace Microsoft.Azure.IIoT.Services.CouchDb.Clients {
 
         [SkippableFact]
         public async Task ReplaceItemAfterAddAsync() {
-            using (var container = await _fixture.GetContainerAsync().ConfigureAwait(false)) {
+            using (var container = await CouchDbClientFixture.GetContainerAsync().ConfigureAwait(false)) {
                 Skip.If(container == null);
                 var documents = container.Container;
 
@@ -373,7 +368,7 @@ namespace Microsoft.Azure.IIoT.Services.CouchDb.Clients {
 
         [SkippableFact]
         public async Task ReplaceItemAfterUpsertAsync() {
-            using (var container = await _fixture.GetContainerAsync().ConfigureAwait(false)) {
+            using (var container = await CouchDbClientFixture.GetContainerAsync().ConfigureAwait(false)) {
                 Skip.If(container == null);
                 var documents = container.Container;
 
@@ -404,7 +399,7 @@ namespace Microsoft.Azure.IIoT.Services.CouchDb.Clients {
 
         [SkippableFact]
         public async Task ReplaceItemWithBadEtagThrowsAsync() {
-            using (var container = await _fixture.GetContainerAsync().ConfigureAwait(false)) {
+            using (var container = await CouchDbClientFixture.GetContainerAsync().ConfigureAwait(false)) {
                 Skip.If(container == null);
                 var documents = container.Container;
 
@@ -429,7 +424,7 @@ namespace Microsoft.Azure.IIoT.Services.CouchDb.Clients {
 
         [SkippableFact]
         public async Task ReplaceItemBadArgumentTestsAsync() {
-            using (var container = await _fixture.GetContainerAsync().ConfigureAwait(false)) {
+            using (var container = await CouchDbClientFixture.GetContainerAsync().ConfigureAwait(false)) {
                 Skip.If(container == null);
                 var documents = container.Container;
 
@@ -445,7 +440,7 @@ namespace Microsoft.Azure.IIoT.Services.CouchDb.Clients {
 
         [SkippableFact]
         public async Task DeleteItemAfterAddAsync() {
-            using (var container = await _fixture.GetContainerAsync().ConfigureAwait(false)) {
+            using (var container = await CouchDbClientFixture.GetContainerAsync().ConfigureAwait(false)) {
                 Skip.If(container == null);
                 var documents = container.Container;
 
@@ -465,7 +460,7 @@ namespace Microsoft.Azure.IIoT.Services.CouchDb.Clients {
 
         [SkippableFact]
         public async Task DeleteItemAfterUpsertAsync() {
-            using (var container = await _fixture.GetContainerAsync().ConfigureAwait(false)) {
+            using (var container = await CouchDbClientFixture.GetContainerAsync().ConfigureAwait(false)) {
                 Skip.If(container == null);
                 var documents = container.Container;
 
@@ -485,7 +480,7 @@ namespace Microsoft.Azure.IIoT.Services.CouchDb.Clients {
 
         [SkippableFact]
         public async Task DeleteItemWithGoodEtagTestAsync() {
-            using (var container = await _fixture.GetContainerAsync().ConfigureAwait(false)) {
+            using (var container = await CouchDbClientFixture.GetContainerAsync().ConfigureAwait(false)) {
                 Skip.If(container == null);
                 var documents = container.Container;
 
@@ -505,7 +500,7 @@ namespace Microsoft.Azure.IIoT.Services.CouchDb.Clients {
 
         [SkippableFact]
         public async Task DeleteItemWithNoEtagTestAsync() {
-            using (var container = await _fixture.GetContainerAsync().ConfigureAwait(false)) {
+            using (var container = await CouchDbClientFixture.GetContainerAsync().ConfigureAwait(false)) {
                 Skip.If(container == null);
                 var documents = container.Container;
 
@@ -525,7 +520,7 @@ namespace Microsoft.Azure.IIoT.Services.CouchDb.Clients {
 
         [SkippableFact]
         public async Task DeleteItemWithBadEtagThrowsAsync() {
-            using (var container = await _fixture.GetContainerAsync().ConfigureAwait(false)) {
+            using (var container = await CouchDbClientFixture.GetContainerAsync().ConfigureAwait(false)) {
                 Skip.If(container == null);
                 var documents = container.Container;
 
@@ -544,7 +539,7 @@ namespace Microsoft.Azure.IIoT.Services.CouchDb.Clients {
 
         [SkippableFact]
         public async Task DeleteItemBadArgumentTestsAsync() {
-            using (var container = await _fixture.GetContainerAsync().ConfigureAwait(false)) {
+            using (var container = await CouchDbClientFixture.GetContainerAsync().ConfigureAwait(false)) {
                 Skip.If(container == null);
                 var documents = container.Container;
 

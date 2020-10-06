@@ -71,7 +71,7 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Runtime {
             if (config is IOpenIdClientConfig openId) {
                 var uri = openId.ClientUri?.TrimEnd('/');
                 if (string.IsNullOrEmpty(uri)) {
-                    throw new ArgumentNullException(nameof(openId.ClientUri));
+                    throw new ArgumentException("Missing clienti uri", nameof(config));
                 }
                 client.ClientUri = uri;
                 client.AllowedGrantTypes = GrantTypes.Hybrid;

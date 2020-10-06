@@ -9,13 +9,11 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service.Controllers {
     using Microsoft.Azure.IIoT.Platform.Registry.Api.Models;
     using Microsoft.Azure.IIoT.Platform.Core.Api.Models;
     using Microsoft.Azure.IIoT.Platform.Registry;
-    using Microsoft.Azure.IIoT.Http;
     using Microsoft.Azure.IIoT.AspNetCore.OpenApi;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using System;
-    using System.Linq;
     using System.Threading.Tasks;
     using System.ComponentModel.DataAnnotations;
 
@@ -51,7 +49,8 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service.Controllers {
             if (string.IsNullOrEmpty(endpointId)) {
                 throw new ArgumentNullException(nameof(endpointId));
             }
-            var result = await _endpoints.GetEndpointCertificateAsync(endpointId).ConfigureAwait(false);
+            var result = await _endpoints.GetEndpointCertificateAsync(
+                endpointId).ConfigureAwait(false);
             return result.ToApiModel();
         }
 

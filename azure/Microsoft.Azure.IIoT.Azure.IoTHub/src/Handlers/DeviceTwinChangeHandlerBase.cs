@@ -42,14 +42,15 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub.Handlers {
             if (_handlers.Count == 0) {
                 return;
             }
+
             if (!properties.TryGetValue("opType", out var opType) ||
-                !properties.TryGetValue("operationTimestamp", out var ts)) {
+                !properties.TryGetValue("operationTimestamp", out var ts) ||
+                !DateTime.TryParse(ts, out var timestamp)) {
                 return;
             }
 
             var deviceId = HubResource.Parse(source, out var hub, out var moduleId);
 
-            DateTime.TryParse(ts, out var timestamp);
             if (timestamp + TimeSpan.FromSeconds(10) < DateTime.UtcNow) {
                 // Drop twin events that are too far in our past.
                 _logger.Debug("Skipping {event} from {deviceId}({moduleId}) from {ts}.",

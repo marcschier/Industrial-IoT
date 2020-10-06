@@ -19,8 +19,8 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Events.v2 {
         /// Create event subscriber
         /// </summary>
         /// <param name="listeners"></param>
-        public DiscoveryProgressEventBusSubscriber(IEnumerable<IDiscoveryProgressProcessor> listeners) {
-            _listeners = listeners?.ToList() ?? new List<IDiscoveryProgressProcessor>();
+        public DiscoveryProgressEventBusSubscriber(IEnumerable<IDiscovererProgressProcessor> listeners) {
+            _listeners = listeners?.ToList() ?? new List<IDiscovererProgressProcessor>();
         }
 
         /// <inheritdoc/>
@@ -30,6 +30,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Events.v2 {
                 .ContinueWith(t => Task.CompletedTask))).ConfigureAwait(false);
         }
 
-        private readonly List<IDiscoveryProgressProcessor> _listeners;
+        private readonly List<IDiscovererProgressProcessor> _listeners;
     }
 }

@@ -3,9 +3,8 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-using System;
-
 namespace System.IO {
+    using System;
     using System.IO.Compression;
     using System.Text;
     using System.Threading;

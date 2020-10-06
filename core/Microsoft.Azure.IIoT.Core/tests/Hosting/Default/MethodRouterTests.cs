@@ -28,9 +28,9 @@ namespace Microsoft.Azure.IIoT.Hosting.Services {
         private readonly IJsonSerializer _serializer = new NewtonSoftJsonSerializer();
 
         [Fact]
-        public async Task TestTest1Invocation() {
+        public async Task TestTest1InvocationAsync() {
             var harness = new ModuleHostHarness();
-            await harness.RunTestAsync(GetControllers(), async (device, module, services) => {
+            await ModuleHostHarness.RunTestAsync(GetControllers(), async (device, module, services) => {
                 var hub = services.Resolve<IDeviceTwinServices>();
 
                 var buffer = new byte[1049];
@@ -49,9 +49,9 @@ namespace Microsoft.Azure.IIoT.Hosting.Services {
         }
 
         [Fact]
-        public async Task TestTest2Invocation() {
+        public async Task TestTest2InvocationAsync() {
             var harness = new ModuleHostHarness();
-            await harness.RunTestAsync(GetControllers(), async (device, module, services) => {
+            await ModuleHostHarness.RunTestAsync(GetControllers(), async (device, module, services) => {
                 var hub = services.Resolve<IDeviceTwinServices>();
 
                 var buffer = new byte[1049];
@@ -69,9 +69,9 @@ namespace Microsoft.Azure.IIoT.Hosting.Services {
         }
 
         [Fact]
-        public async Task TestTest3Invocation() {
+        public async Task TestTest3InvocationAsync() {
             var harness = new ModuleHostHarness();
-            await harness.RunTestAsync(GetControllers(), async (device, module, services) => {
+            await ModuleHostHarness.RunTestAsync(GetControllers(), async (device, module, services) => {
                 var hub = services.Resolve<IDeviceTwinServices>();
 
                 var buffer = new byte[1049];
@@ -92,9 +92,9 @@ namespace Microsoft.Azure.IIoT.Hosting.Services {
         }
 
         [Fact]
-        public async Task TestTest3InvocationV2() {
+        public async Task TestTest3InvocationV2Async() {
             var harness = new ModuleHostHarness();
-            await harness.RunTestAsync(GetControllers(), async (device, module, services) => {
+            await ModuleHostHarness.RunTestAsync(GetControllers(), async (device, module, services) => {
                 var hub = services.Resolve<IDeviceTwinServices>();
 
                 var buffer = new byte[1049];
@@ -116,9 +116,9 @@ namespace Microsoft.Azure.IIoT.Hosting.Services {
         }
 
         [Fact]
-        public async Task TestTestNoParametersInvocationNoParam() {
+        public async Task TestTestNoParametersInvocationNoParamAsync() {
             var harness = new ModuleHostHarness();
-            await harness.RunTestAsync(GetControllers(), async (device, module, services) => {
+            await ModuleHostHarness.RunTestAsync(GetControllers(), async (device, module, services) => {
                 var hub = services.Resolve<IDeviceTwinServices>();
 
                 var response = await hub.CallMethodAsync(device, module, new MethodParameterModel {
@@ -133,9 +133,9 @@ namespace Microsoft.Azure.IIoT.Hosting.Services {
         }
 
         [Fact]
-        public async Task TestTestNoReturnInvocationNoReturn() {
+        public async Task TestTestNoReturnInvocationNoReturnAsync() {
             var harness = new ModuleHostHarness();
-            await harness.RunTestAsync(GetControllers(), async (device, module, services) => {
+            await ModuleHostHarness.RunTestAsync(GetControllers(), async (device, module, services) => {
                 var hub = services.Resolve<IDeviceTwinServices>();
 
                 var response = await hub.CallMethodAsync(device, module, new MethodParameterModel {
@@ -149,10 +149,10 @@ namespace Microsoft.Azure.IIoT.Hosting.Services {
         }
 
         [Fact]
-        public async Task TestTestNoParametersAndNoReturnInvocationNoParamAndNoReturn() {
+        public async Task TestTestNoParametersAndNoReturnInvocationNoParamAndNoReturnAsync() {
             var harness = new ModuleHostHarness();
             var controller = new TestControllerV1();
-            await harness.RunTestAsync(controller.YieldReturn(), async (device, module, services) => {
+            await ModuleHostHarness.RunTestAsync(controller.YieldReturn(), async (device, module, services) => {
                 var hub = services.Resolve<IDeviceTwinServices>();
 
                 var response = await hub.CallMethodAsync(device, module, new MethodParameterModel {
@@ -167,9 +167,9 @@ namespace Microsoft.Azure.IIoT.Hosting.Services {
         }
 
         [Fact]
-        public async Task TestTest1InvocationWithSmallBufferUsingMethodClient() {
+        public async Task TestTest1InvocationWithSmallBufferUsingMethodClientAsync() {
             var harness = new ModuleHostHarness();
-            await harness.RunTestAsync(GetControllers(), async (device, module, services) => {
+            await ModuleHostHarness.RunTestAsync(GetControllers(), async (device, module, services) => {
                 var hub = services.Resolve<IMethodClient>();
 
                 var buffer = new byte[1049];
@@ -184,9 +184,9 @@ namespace Microsoft.Azure.IIoT.Hosting.Services {
         }
 
         [Fact]
-        public async Task TestTest1InvocationWithLargeBufferUsingMethodClient() {
+        public async Task TestTest1InvocationWithLargeBufferUsingMethodClientAsync() {
             var harness = new ModuleHostHarness();
-            await harness.RunTestAsync(GetControllers(), async (device, module, services) => {
+            await ModuleHostHarness.RunTestAsync(GetControllers(), async (device, module, services) => {
                 var hub = services.Resolve<IMethodClient>();
 
                 var buffer = new byte[300809];
@@ -201,9 +201,9 @@ namespace Microsoft.Azure.IIoT.Hosting.Services {
         }
 
         [Fact]
-        public async Task TestTest2InvocationWithLargeBufferUsingMethodClient() {
+        public async Task TestTest2InvocationWithLargeBufferUsingMethodClientAsync() {
             var harness = new ModuleHostHarness();
-            await harness.RunTestAsync(GetControllers(), async (device, module, services) => {
+            await ModuleHostHarness.RunTestAsync(GetControllers(), async (device, module, services) => {
                 var hub = services.Resolve<IMethodClient>();
 
                 var buffer = new byte[300809];
@@ -219,9 +219,9 @@ namespace Microsoft.Azure.IIoT.Hosting.Services {
         }
 
         [Fact]
-        public async Task TestTest3InvocationWithLargeBufferUsingMethodClient() {
+        public async Task TestTest3InvocationWithLargeBufferUsingMethodClientAsync() {
             var harness = new ModuleHostHarness();
-            await harness.RunTestAsync(GetControllers(), async (device, module, services) => {
+            await ModuleHostHarness.RunTestAsync(GetControllers(), async (device, module, services) => {
                 var hub = services.Resolve<IMethodClient>();
 
                 var buffer = new byte[300809];
@@ -241,9 +241,9 @@ namespace Microsoft.Azure.IIoT.Hosting.Services {
         }
 
         [Fact]
-        public async Task TestTest3InvocationV2WithLargeBufferUsingMethodClient() {
+        public async Task TestTest3InvocationV2WithLargeBufferUsingMethodClientAsync() {
             var harness = new ModuleHostHarness();
-            await harness.RunTestAsync(GetControllers(), async (device, module, services) => {
+            await ModuleHostHarness.RunTestAsync(GetControllers(), async (device, module, services) => {
                 var hub = services.Resolve<IMethodClient>();
 
                 var buffer = new byte[300809];
@@ -264,9 +264,9 @@ namespace Microsoft.Azure.IIoT.Hosting.Services {
         }
 
         [Fact]
-        public async Task TestTestNoParametersInvocationNoParamUsingMethodClient() {
+        public async Task TestTestNoParametersInvocationNoParamUsingMethodClientAsync() {
             var harness = new ModuleHostHarness();
-            await harness.RunTestAsync(GetControllers(), async (device, module, services) => {
+            await ModuleHostHarness.RunTestAsync(GetControllers(), async (device, module, services) => {
                 var hub = services.Resolve<IMethodClient>();
 
                 var response = await hub.CallMethodAsync(
@@ -279,9 +279,9 @@ namespace Microsoft.Azure.IIoT.Hosting.Services {
         }
 
         [Fact]
-        public async Task TestTestNoParametersInvocationNullParamUsingMethodClient() {
+        public async Task TestTestNoParametersInvocationNullParamUsingMethodClientAsync() {
             var harness = new ModuleHostHarness();
-            await harness.RunTestAsync(GetControllers(), async (device, module, services) => {
+            await ModuleHostHarness.RunTestAsync(GetControllers(), async (device, module, services) => {
                 var hub = services.Resolve<IMethodClient>();
 
                 var response = await hub.CallMethodAsync(
@@ -294,9 +294,9 @@ namespace Microsoft.Azure.IIoT.Hosting.Services {
         }
 
         [Fact]
-        public async Task TestTestNoReturnInvocationNoReturnUsingMethodClient() {
+        public async Task TestTestNoReturnInvocationNoReturnUsingMethodClientAsync() {
             var harness = new ModuleHostHarness();
-            await harness.RunTestAsync(GetControllers(), async (device, module, services) => {
+            await ModuleHostHarness.RunTestAsync(GetControllers(), async (device, module, services) => {
                 var hub = services.Resolve<IMethodClient>();
 
                 var response = await hub.CallMethodAsync(
@@ -311,7 +311,7 @@ namespace Microsoft.Azure.IIoT.Hosting.Services {
         public async Task TestTestNoParametersAndNoReturnInvocationNoParamAndNoReturnUsingMethodClientAsync() {
             var harness = new ModuleHostHarness();
             var controller = new TestControllerV1();
-            await harness.RunTestAsync(controller.YieldReturn(), async (device, module, services) => {
+            await ModuleHostHarness.RunTestAsync(controller.YieldReturn(), async (device, module, services) => {
                 var hub = services.Resolve<IMethodClient>();
 
                 var response = await hub.CallMethodAsync(
@@ -324,7 +324,7 @@ namespace Microsoft.Azure.IIoT.Hosting.Services {
         }
 
         [Fact]
-        public void TestTest1InvocationNonChunked() {
+        public void TestTest1InvocationNonChunkedAsync() {
             var router = GetRouter();
 
             var buffer = new byte[1049];
@@ -340,7 +340,7 @@ namespace Microsoft.Azure.IIoT.Hosting.Services {
         }
 
         [Fact]
-        public void TestTest1InvocationChunked() {
+        public void TestTest1InvocationChunkedAsync() {
             var router = GetRouter();
             var client = new ChunkMethodClient(new TestMethodClient(router),
                 _serializer, Log.Logger);
@@ -412,7 +412,7 @@ namespace Microsoft.Azure.IIoT.Hosting.Services {
         }
 
         [Fact]
-        public void TestTest2InvocationNonChunkedFailsWithLargeBuffer() {
+        public void TestTest2InvocationNonChunkedFailsWithLargeBufferAsync() {
             var router = GetRouter();
             var expected = new byte[96 * 1024];
             kRand.NextBytes(expected);
@@ -490,7 +490,7 @@ namespace Microsoft.Azure.IIoT.Hosting.Services {
         }
 
         [Fact]
-        public void TestTest3InvocationNonChunked() {
+        public void TestTest3InvocationNonChunkedAsync() {
             var router = GetRouter();
             var expected = new byte[1049];
             kRand.NextBytes(expected);
@@ -508,7 +508,7 @@ namespace Microsoft.Azure.IIoT.Hosting.Services {
         }
 
         [Fact]
-        public void TestTest2InvocationV2NonChunked() {
+        public void TestTest2InvocationV2NonChunkedAsync() {
             var router = GetRouter();
             var buffer = new byte[1049];
             kRand.NextBytes(buffer);
@@ -524,7 +524,7 @@ namespace Microsoft.Azure.IIoT.Hosting.Services {
         }
 
         [Fact]
-        public void TestTest3InvocationV2NonChunked() {
+        public void TestTest3InvocationV2NonChunkedAsync() {
             var router = GetRouter();
             var buffer = new byte[1049];
             kRand.NextBytes(buffer);

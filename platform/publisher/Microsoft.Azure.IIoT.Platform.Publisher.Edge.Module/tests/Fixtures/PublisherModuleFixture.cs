@@ -255,17 +255,11 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Module.Tests {
                 .AsImplementedInterfaces();
 
             // Supervisor clients
-            builder.RegisterType<PublisherModuleActivationClient>()
-                .AsImplementedInterfaces();
-            builder.RegisterType<PublisherModuleDiagnosticsClient>()
-                .AsImplementedInterfaces();
             builder.RegisterType<VariantEncoderFactory>()
                 .AsImplementedInterfaces();
 
             // Add services
             builder.RegisterModule<RegistryServices>();
-            builder.RegisterType<WriterGroupServices>()
-                .AsImplementedInterfaces();
             builder.RegisterType<ApplicationDatabase>()
                 .AsImplementedInterfaces();
             builder.RegisterType<EndpointDatabase>()

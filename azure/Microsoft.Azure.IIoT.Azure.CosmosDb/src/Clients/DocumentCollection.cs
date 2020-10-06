@@ -27,20 +27,16 @@ namespace Microsoft.Azure.IIoT.Azure.CosmosDb.Clients {
         /// <inheritdoc/>
         public string Name => _container.Id;
 
-
         /// <summary>
         /// Create collection
         /// </summary>
-        /// <param name="partitioned"></param>
         /// <param name="serializer"></param>
         /// <param name="container"></param>
         /// <param name="logger"></param>
-        internal DocumentCollection(Container container, ISerializer serializer, bool partitioned,
-            ILogger logger) {
+        internal DocumentCollection(Container container, ISerializer serializer, ILogger logger) {
             _container = container ?? throw new ArgumentNullException(nameof(container));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _serializer = serializer ?? throw new ArgumentNullException(nameof(serializer));
-            _partitioned = partitioned;
         }
 
         /// <inheritdoc/>
@@ -251,7 +247,6 @@ namespace Microsoft.Azure.IIoT.Azure.CosmosDb.Clients {
         }
 
         private readonly ILogger _logger;
-        private readonly bool _partitioned;
         private readonly Container _container;
         private readonly ISerializer _serializer;
     }

@@ -48,12 +48,6 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Storage.Services {
         public uint? GroupVersion { get; set; }
 
         /// <summary>
-        /// Site the group can be applied to
-        /// </summary>
-        [DataMember]
-        public string SiteId { get; set; }
-
-        /// <summary>
         /// Priority of the writer group
         /// </summary>
         [DataMember]

@@ -16,11 +16,6 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Models {
         public string Name { get; set; }
 
         /// <summary>
-        /// Return only groups in this site
-        /// </summary>
-        public string SiteId { get; set; }
-
-        /// <summary>
         /// With the specified group version
         /// </summary>
         public uint? GroupVersion { get; set; }

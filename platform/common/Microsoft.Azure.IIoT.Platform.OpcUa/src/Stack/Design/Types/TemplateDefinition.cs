@@ -87,7 +87,9 @@ namespace Opc.Ua.Design.Schema {
             return template.WriteTemplate(context);
         }
 
+#pragma warning disable IDE1006 // Naming Styles
         private event LoadTemplateEventHandler _loadTemplate;
         private event WriteTemplateEventHandler _writeTemplate;
+#pragma warning restore IDE1006 // Naming Styles
     }
 }

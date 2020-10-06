@@ -53,13 +53,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Models {
         public string Locale { get; set; }
 
         /// <summary>
-        /// Site of the application
-        /// </summary>
-        [DataMember(Name = "siteId", Order = 5,
-            EmitDefaultValue = false)]
-        public string SiteId { get; set; }
-
-        /// <summary>
         /// Localized names key off locale id.
         /// </summary>
         [DataMember(Name = "localizedNames", Order = 6,
@@ -73,14 +66,14 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Models {
         /// <example>DA</example>
         [DataMember(Name = "capabilities", Order = 7,
             EmitDefaultValue = false)]
-        public /*IReadOnlySet*/ IReadOnlyCollection<string> Capabilities { get; set; }
+        public IReadOnlySet<string> Capabilities { get; set; }
 
         /// <summary>
         /// Discovery urls of the server.
         /// </summary>
         [DataMember(Name = "discoveryUrls", Order = 8,
             EmitDefaultValue = false)]
-        public /*IReadOnlySet*/ IReadOnlyCollection<string> DiscoveryUrls { get; set; }
+        public IReadOnlySet<string> DiscoveryUrls { get; set; }
 
         /// <summary>
         /// The discovery profile uri of the server.

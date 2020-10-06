@@ -8,6 +8,8 @@ namespace Microsoft.Azure.IIoT.App.Pages {
     using Microsoft.Azure.IIoT.App.Data;
     using Microsoft.Azure.IIoT.Platform.Registry.Api.Models;
     using Microsoft.Azure.IIoT.Platform.Registry.Api;
+    using Microsoft.Azure.IIoT.Platform.Directory.Api.Models;
+    using Microsoft.Azure.IIoT.Platform.Directory.Api;
 
     public partial class Supervisors {
         public string SupervisorId { get; set; }
@@ -17,7 +19,7 @@ namespace Microsoft.Azure.IIoT.App.Pages {
         }
 
         protected override async Task SubscribeContentEventsAsync() {
-            _events = await RegistryServiceEvents.SubscribeSupervisorEventsAsync(
+            _events = await DirectoryServiceEvents.SubscribeSupervisorEventsAsync(
                     async data => {
                         await InvokeAsync(() => SupervisorEvent(data)).ConfigureAwait(false);
                     }).ConfigureAwait(false);
@@ -30,14 +32,6 @@ namespace Microsoft.Azure.IIoT.App.Pages {
         private void OpenDrawer(string supervisorId) {
             IsOpen = true;
             SupervisorId = supervisorId;
-        }
-
-        /// <summary>
-        /// Reset Supervisor
-        /// </summary>
-        /// <param name="supervisorId"></param>
-        private async Task ResetSupervisorUIAsync(string supervisorId) {
-            Status = await RegistryHelper.ResetSupervisorAsync(supervisorId).ConfigureAwait(false);
         }
 
         /// <summary>

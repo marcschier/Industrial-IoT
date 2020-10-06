@@ -31,7 +31,6 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Models {
                     // Assigned at application processing time - leave null
                     ApplicationId = null,
                     DiscovererId = null,
-                    SiteId = null,
                     GenerationId = null,
                     Created = null,
                     Updated = null,
@@ -56,7 +55,6 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Models {
                 Endpoints = new List<EndpointInfoModel> {
                     new EndpointInfoModel {
                         // Assigned at endpoint processing time - leave null
-                        SiteId = null,
                         DiscovererId = null,
                         SupervisorId = null,
                         ApplicationId = null,

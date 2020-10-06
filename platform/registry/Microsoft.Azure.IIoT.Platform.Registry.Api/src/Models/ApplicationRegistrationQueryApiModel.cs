@@ -70,13 +70,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Models {
         public string GatewayServerUri { get; set; }
 
         /// <summary>
-        /// Supervisor or site the application belongs to.
-        /// </summary>
-        [DataMember(Name = "siteOrGatewayId", Order = 8,
-           EmitDefaultValue = false)]
-        public string SiteOrGatewayId { get; set; }
-
-        /// <summary>
         /// Whether to include apps that were soft deleted
         /// </summary>
         [DataMember(Name = "includeNotSeenSince", Order = 9,

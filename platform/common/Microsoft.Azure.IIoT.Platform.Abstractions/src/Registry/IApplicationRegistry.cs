@@ -74,18 +74,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry {
             CancellationToken ct = default);
 
         /// <summary>
-        /// Get list of registered application sites to group
-        /// applications visually
-        /// </summary>
-        /// <param name="continuation"></param>
-        /// <param name="pageSize"></param>
-        /// <param name="ct"></param>
-        /// <returns></returns>
-        Task<ApplicationSiteListModel> ListSitesAsync(
-            string continuation = null, int? pageSize = null,
-            CancellationToken ct = default);
-
-        /// <summary>
         /// Unregister application and all associated endpoints.
         /// </summary>
         /// <param name="applicationId"></param>

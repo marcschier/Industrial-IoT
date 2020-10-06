@@ -8,6 +8,10 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service.Api {
     using Microsoft.Azure.IIoT.Platform.Registry.Api.Models;
     using Microsoft.Azure.IIoT.Platform.Registry.Events.v2.Models;
     using Microsoft.Azure.IIoT.Platform.Registry.Models;
+    using Microsoft.Azure.IIoT.Platform.Directory.Api;
+    using Microsoft.Azure.IIoT.Platform.Directory.Api.Models;
+    using Microsoft.Azure.IIoT.Platform.Directory.Events.v2.Models;
+    using Microsoft.Azure.IIoT.Platform.Directory.Models;
     using Microsoft.Azure.IIoT.Messaging;
     using System.Threading.Tasks;
     using Xunit;
@@ -27,12 +31,12 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service.Api {
         public async Task TestPublishPublisherEventAndReceiveAsync() {
 
             var bus = _factory.Resolve<IEventBus>();
-            var client = _factory.Resolve<IRegistryServiceEvents>();
+            var client = _factory.Resolve<IDirectoryServiceEvents>();
 
             var expected = new PublisherEventModel {
                 Publisher = new PublisherModel {
                     Connected = null,
-                    LogLevel = IIoT.Platform.Registry.Models.TraceLogLevel.Verbose
+                    LogLevel = IIoT.Platform.Directory.Models.TraceLogLevel.Verbose
                 }
             };
             var result = new TaskCompletionSource<PublisherEventApiModel>();
@@ -48,7 +52,7 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service.Api {
                 var received = result.Task.Result;
                 Assert.Null(received?.Publisher?.Connected);
                 Assert.Equal(expected.Publisher.LogLevel,
-                    (IIoT.Platform.Registry.Models.TraceLogLevel)received.Publisher.LogLevel);
+                    (IIoT.Platform.Directory.Models.TraceLogLevel)received.Publisher.LogLevel);
             }
         }
 
@@ -59,11 +63,11 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service.Api {
         public async Task TestPublishPublisherEventAndReceiveMultipleAsync(int total) {
 
             var bus = _factory.Resolve<IEventBus>();
-            var client = _factory.Resolve<IRegistryServiceEvents>();
+            var client = _factory.Resolve<IDirectoryServiceEvents>();
 
             var expected = new PublisherEventModel {
                 Publisher = new PublisherModel {
-                    LogLevel = IIoT.Platform.Registry.Models.TraceLogLevel.Verbose
+                    LogLevel = IIoT.Platform.Directory.Models.TraceLogLevel.Verbose
                 }
             };
             var result = new TaskCompletionSource<bool>();
@@ -89,16 +93,12 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service.Api {
         public async Task TestPublishDiscovererEventAndReceiveAsync() {
 
             var bus = _factory.Resolve<IEventBus>();
-            var client = _factory.Resolve<IRegistryServiceEvents>();
+            var client = _factory.Resolve<IDirectoryServiceEvents>();
 
             var expected = new DiscovererEventModel {
                 Discoverer = new DiscovererModel {
                     Connected = true,
-                    Discovery = IIoT.Platform.Registry.Models.DiscoveryMode.Local,
-                    DiscoveryConfig = new DiscoveryConfigModel {
-                        IdleTimeBetweenScans = TimeSpan.FromSeconds(5)
-                    },
-                    LogLevel = IIoT.Platform.Registry.Models.TraceLogLevel.Verbose
+                    LogLevel = IIoT.Platform.Directory.Models.TraceLogLevel.Verbose
                 }
             };
             var result = new TaskCompletionSource<DiscovererEventApiModel>();
@@ -112,12 +112,7 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service.Api {
 
                 Assert.True(result.Task.IsCompleted);
                 var received = result.Task.Result;
-                Assert.NotNull(received?.Discoverer?.DiscoveryConfig);
                 Assert.Equal(true, received?.Discoverer?.Connected);
-                Assert.Equal(TimeSpan.FromSeconds(5),
-                    expected.Discoverer.DiscoveryConfig.IdleTimeBetweenScans);
-                Assert.Equal(expected.Discoverer.LogLevel,
-                    (IIoT.Platform.Registry.Models.TraceLogLevel)received.Discoverer.LogLevel);
             }
         }
 
@@ -128,11 +123,11 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service.Api {
         public async Task TestPublishDiscovererEventAndReceiveMultipleAsync(int total) {
 
             var bus = _factory.Resolve<IEventBus>();
-            var client = _factory.Resolve<IRegistryServiceEvents>();
+            var client = _factory.Resolve<IDirectoryServiceEvents>();
 
             var expected = new DiscovererEventModel {
                 Discoverer = new DiscovererModel {
-                    LogLevel = IIoT.Platform.Registry.Models.TraceLogLevel.Verbose
+                    LogLevel = IIoT.Platform.Directory.Models.TraceLogLevel.Verbose
                 }
             };
             var result = new TaskCompletionSource<bool>();
@@ -159,12 +154,12 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service.Api {
         public async Task TestPublishSupervisorEventAndReceiveAsync() {
 
             var bus = _factory.Resolve<IEventBus>();
-            var client = _factory.Resolve<IRegistryServiceEvents>();
+            var client = _factory.Resolve<IDirectoryServiceEvents>();
 
             var expected = new SupervisorEventModel {
                 Supervisor = new SupervisorModel {
                     Connected = true,
-                    LogLevel = IIoT.Platform.Registry.Models.TraceLogLevel.Verbose
+                    LogLevel = IIoT.Platform.Directory.Models.TraceLogLevel.Verbose
                 }
             };
             var result = new TaskCompletionSource<SupervisorEventApiModel>();
@@ -181,7 +176,7 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service.Api {
                 Assert.NotNull(received?.Supervisor);
                 Assert.Equal(true, received?.Supervisor?.Connected);
                 Assert.Equal(expected.Supervisor.LogLevel,
-                    (IIoT.Platform.Registry.Models.TraceLogLevel)received.Supervisor.LogLevel);
+                    (IIoT.Platform.Directory.Models.TraceLogLevel)received.Supervisor.LogLevel);
             }
         }
 
@@ -192,11 +187,11 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service.Api {
         public async Task TestPublishSupervisorEventAndReceiveMultipleAsync(int total) {
 
             var bus = _factory.Resolve<IEventBus>();
-            var client = _factory.Resolve<IRegistryServiceEvents>();
+            var client = _factory.Resolve<IDirectoryServiceEvents>();
 
             var expected = new SupervisorEventModel {
                 Supervisor = new SupervisorModel {
-                    LogLevel = IIoT.Platform.Registry.Models.TraceLogLevel.Verbose
+                    LogLevel = IIoT.Platform.Directory.Models.TraceLogLevel.Verbose
                 }
             };
             var result = new TaskCompletionSource<bool>();
@@ -227,7 +222,6 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service.Api {
 
             var expected = new ApplicationEventModel {
                 Application = new ApplicationInfoModel {
-                    SiteId = "TestSigfsdfg  ff",
                     ApplicationType = IIoT.Platform.Core.Models.ApplicationType.Client,
                     NotSeenSince = DateTime.UtcNow,
                     Capabilities = new HashSet<string>{ "ag", "sadf", "" },
@@ -246,7 +240,6 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service.Api {
                 var received = result.Task.Result;
                 Assert.NotNull(received?.Application);
                 Assert.Equal(expected.Application.NotSeenSince, received.Application.NotSeenSince);
-                Assert.Equal(expected.Application.SiteId, received.Application.SiteId);
                 Assert.True(expected.Application.Capabilities
                     .SequenceEqualsSafe(received.Application.Capabilities));
                 Assert.Equal(expected.Application.ApplicationType,
@@ -265,7 +258,6 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service.Api {
 
             var expected = new ApplicationEventModel {
                 Application = new ApplicationInfoModel {
-                    SiteId = "TestSigfsdfg  ff",
                     ApplicationType = IIoT.Platform.Core.Models.ApplicationType.Client,
                     NotSeenSince = DateTime.UtcNow,
                     Capabilities = new HashSet<string> { "ag", "sadf", "" },
@@ -299,7 +291,7 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service.Api {
             var expected = new EndpointEventModel {
                 Endpoint = new EndpointInfoModel {
                     ApplicationId = "TestSigfsdfg  ff",
-                    ActivationState = IIoT.Platform.Registry.Models.EntityActivationState.ActivatedAndConnected,
+                    ActivationState = IIoT.Platform.Registry.Models.EntityActivationState.Activated,
                     NotSeenSince = DateTime.UtcNow
                 }
             };
@@ -334,7 +326,7 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service.Api {
             var expected = new EndpointEventModel {
                 Endpoint = new EndpointInfoModel {
                     ApplicationId = "TestSigfsdfg  ff",
-                    ActivationState = IIoT.Platform.Registry.Models.EntityActivationState.ActivatedAndConnected,
+                    ActivationState = IIoT.Platform.Registry.Models.EntityActivationState.Activated,
                     NotSeenSince = DateTime.UtcNow
                 }
             };
@@ -361,10 +353,10 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service.Api {
         public async Task TestPublishGatewayEventAndReceiveAsync() {
 
             var bus = _factory.Resolve<IEventBus>();
-            var client = _factory.Resolve<IRegistryServiceEvents>();
+            var client = _factory.Resolve<IDirectoryServiceEvents>();
 
             var expected = new GatewayEventModel {
-                EventType = IIoT.Platform.Registry.Events.v2.Models.GatewayEventType.Deleted,
+                EventType = IIoT.Platform.Directory.Events.v2.Models.GatewayEventType.Deleted,
                 Gateway = new GatewayModel {
                     SiteId = "TestSigfsdfg  ff",
                 }
@@ -382,7 +374,7 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service.Api {
                 var received = result.Task.Result;
                 Assert.NotNull(received?.Gateway);
                 Assert.Equal(expected.Gateway.SiteId, received.Gateway.SiteId);
-                Assert.Equal(IIoT.Platform.Registry.Api.Models.GatewayEventType.Deleted,
+                Assert.Equal(IIoT.Platform.Directory.Api.Models.GatewayEventType.Deleted,
                     received.EventType);
             }
         }
@@ -393,7 +385,7 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service.Api {
         public async Task TestPublishGatewayEventAndReceiveMultipleAsync(int total) {
 
             var bus = _factory.Resolve<IEventBus>();
-            var client = _factory.Resolve<IRegistryServiceEvents>();
+            var client = _factory.Resolve<IDirectoryServiceEvents>();
 
             var expected = new GatewayEventModel {
                 Gateway = new GatewayModel {

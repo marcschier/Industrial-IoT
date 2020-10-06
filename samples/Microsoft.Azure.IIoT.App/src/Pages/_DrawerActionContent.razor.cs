@@ -11,9 +11,12 @@ namespace Microsoft.Azure.IIoT.App.Pages {
     using System.Threading.Tasks;
     using System.Linq;
 
+#pragma warning disable IDE0079 // Remove unnecessary suppression
 #pragma warning disable IDE1006 // Naming Styles
     public partial class _DrawerActionContent {
 #pragma warning restore IDE1006 // Naming Styles
+#pragma warning restore IDE0079 // Remove unnecessary suppression
+
         [Parameter]
         public ListNode NodeData { get; set; }
 
@@ -32,7 +35,7 @@ namespace Microsoft.Azure.IIoT.App.Pages {
         private string Value { get; set; } = string.Empty;
         private string[] Values { get; set; }
         private ActionType TypeOfAction { get; set; } = ActionType.Nothing;
-        private MethodMetadataResponseApiModel _parameters { get; set; }
+        private MethodMetadataResponseApiModel Parameters { get; set; }
         private string ResponseClass { get; set; } = "list-group-item text-left margin body-action-content hidden";
 
         private async Task SelectActionAsync(string nodeId, ChangeEventArgs action) {
@@ -69,14 +72,14 @@ namespace Microsoft.Azure.IIoT.App.Pages {
 
         private async Task ParameterAsync() {
             Response = await BrowseManager.GetParameterAsync(EndpointId, NodeData.Id, Credential).ConfigureAwait(false);
-            _parameters = BrowseManager.Parameter;
-            if (_parameters.InputArguments != null) {
-                Values = new string[_parameters.InputArguments.Count];
+            Parameters = BrowseManager.Parameter;
+            if (Parameters.InputArguments != null) {
+                Values = new string[Parameters.InputArguments.Count];
             }
         }
 
         private async Task CallAsync(string[] values) {
-            Response = await BrowseManager.MethodCallAsync(_parameters, values, EndpointId, NodeData.Id, Credential).ConfigureAwait(false);
+            Response = await BrowseManager.MethodCallAsync(Parameters, values, EndpointId, NodeData.Id, Credential).ConfigureAwait(false);
             ResponseClass = "list-group-item margin body-action-content visible";
         }
     }

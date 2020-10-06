@@ -58,8 +58,8 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Models {
                     return schema == MessageSchema.PubSub;
                 case null:
                 default:
-                    throw new ArgumentException(nameof(mimeType),
-                        $"Unknown type {mimeType}");
+                    throw new ArgumentException($"Unknown type {mimeType}", 
+                        nameof(mimeType));
             }
         }
 
@@ -80,8 +80,8 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Models {
                 case MessageSchemaTypes.MonitoredItemMessageJson:
                     return encoding == MessageEncoding.Json;
                 default:
-                    throw new ArgumentException(nameof(mimeType),
-                        $"Unknown type {mimeType}");
+                    throw new ArgumentException($"Unknown type {mimeType}",
+                        nameof(mimeType));
             }
         }
 
@@ -101,8 +101,8 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Models {
                 case MessageSchemaTypes.MonitoredItemMessageJson:
                     return true; // TODO -
                 default:
-                    throw new ArgumentException(nameof(mimeType),
-                        $"Unknown type {mimeType}");
+                    throw new ArgumentException($"Unknown type {mimeType}",
+                        nameof(mimeType));
             }
         }
     }

@@ -32,7 +32,7 @@ namespace Microsoft.Azure.IIoT.Azure.SignalR.Services {
 
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             if (string.IsNullOrEmpty(config?.SignalRConnString)) {
-                throw new ArgumentNullException(nameof(config.SignalRConnString));
+                throw new ArgumentException("Missing connection string", nameof(config));
             }
             if (!config.SignalRServerLess) {
                 throw new ArgumentException(

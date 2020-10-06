@@ -16,7 +16,8 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Default {
     /// all event versions to event bus
     /// </summary>
     public sealed class EndpointEventBroker :
-        IRegistryEventBroker<IEndpointRegistryListener>, IRegistryEvents<IEndpointRegistryListener> {
+        IRegistryEventBroker<IEndpointRegistryListener>, 
+        IRegistryEvents<IEndpointRegistryListener> {
 
         /// <summary>
         /// Create broker

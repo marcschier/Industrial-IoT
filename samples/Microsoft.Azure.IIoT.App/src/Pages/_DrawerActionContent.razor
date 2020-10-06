@@ -64,11 +64,11 @@
         }
         else if (TypeOfAction == ActionType.Call)
         {
-            @if (_parameters?.InputArguments != null)
+            @if (Parameters?.InputArguments != null)
             {
                 <form>
                     @{int index = 0;}
-                    @foreach (var parameter in _parameters.InputArguments)
+                    @foreach (var parameter in Parameters.InputArguments)
                     {
                         //I need the local variable otherwise the bind ValueArray[index] has always the value at the end of the loop
                         int i = index;

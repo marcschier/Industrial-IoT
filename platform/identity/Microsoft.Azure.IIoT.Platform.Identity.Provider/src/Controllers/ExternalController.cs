@@ -88,7 +88,9 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Provider.Controllers {
         /// Post processing of external authentication
         /// </summary>
         [HttpGet]
+#pragma warning disable IDE1006 // Naming Styles
         public async Task<IActionResult> Callback() {
+#pragma warning restore IDE1006 // Naming Styles
             // read external identity from the temporary cookie
             var result = await HttpContext.AuthenticateAsync(IdentityServerConstants.ExternalCookieAuthenticationScheme);
             if (result?.Succeeded != true) {

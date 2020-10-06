@@ -256,8 +256,8 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
                 var delay = Task.Delay(keepAliveCheckInterval, ct);
                 await Task.WhenAny(delay, _triggerKeepAlive.Task).ConfigureAwait(false);
                 _logger.Debug("Runner Keepalive reset due to {delay} {trigger}",
-                    delay.IsCompleted ? "checkAlive" : String.Empty,
-                    _triggerKeepAlive.Task.IsCompleted ? "triggerKeepAlive" : String.Empty);
+                    delay.IsCompleted ? "checkAlive" : string.Empty,
+                    _triggerKeepAlive.Task.IsCompleted ? "triggerKeepAlive" : string.Empty);
             }
         }
 
@@ -569,7 +569,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
                             }
                         }
                         catch (Exception ex) {
-                            _logger.Warning(ex,"Failed to add peer certificate {Thumbprint}, '{Subject}' " +
+                            _logger.Warning(ex, "Failed to add peer certificate {Thumbprint}, '{Subject}' " +
                                 "to trusted store", e.Certificate.Thumbprint, e.Certificate.Subject);
                         }
                     }

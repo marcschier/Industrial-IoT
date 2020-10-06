@@ -4,7 +4,6 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Platform.Edge {
-    using Microsoft.Azure.IIoT.Platform.Registry.Models;
     using System.Threading;
     using System.Threading.Tasks;
 
@@ -12,14 +11,6 @@ namespace Microsoft.Azure.IIoT.Platform.Edge {
     /// Enables retrieving status
     /// </summary>
     public interface ISupervisorServices {
-
-        /// <summary>
-        /// Get supervisor status
-        /// </summary>
-        /// <param name="ct"></param>
-        /// <returns></returns>
-        Task<SupervisorStatusModel> GetStatusAsync(
-            CancellationToken ct = default);
 
         /// <summary>
         /// Detach inactive entity

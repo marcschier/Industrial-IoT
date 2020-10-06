@@ -78,7 +78,7 @@ namespace Microsoft.Azure.IIoT.Net {
 
             var padding = (length ?? copy) - copy;
             if (padding < 0) {
-                throw new ArgumentException(nameof(copy));
+                throw new ArgumentException("Bad padding", nameof(copy));
             }
 
             var buf = data.Subset(offset, copy);

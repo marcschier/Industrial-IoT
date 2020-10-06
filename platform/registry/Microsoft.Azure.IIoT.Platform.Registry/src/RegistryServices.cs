@@ -30,26 +30,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry {
             builder.RegisterType<ApplicationRegistry>()
                 .AsImplementedInterfaces().InstancePerLifetimeScope();
 
-            builder.RegisterType<SupervisorEventBroker>()
-                .AsImplementedInterfaces().InstancePerLifetimeScope();
-            builder.RegisterType<SupervisorRegistry>()
-                .AsImplementedInterfaces().InstancePerLifetimeScope();
-
-            builder.RegisterType<PublisherEventBroker>()
-                .AsImplementedInterfaces().InstancePerLifetimeScope();
-            builder.RegisterType<PublisherRegistry>()
-                .AsImplementedInterfaces().InstancePerLifetimeScope();
-
-            builder.RegisterType<DiscovererEventBroker>()
-                .AsImplementedInterfaces().InstancePerLifetimeScope();
-            builder.RegisterType<DiscovererRegistry>()
-                .AsImplementedInterfaces().InstancePerLifetimeScope();
-
-            builder.RegisterType<GatewayEventBroker>()
-                .AsImplementedInterfaces().InstancePerLifetimeScope();
-            builder.RegisterType<GatewayRegistry>()
-                .AsImplementedInterfaces().InstancePerLifetimeScope();
-
             base.Load(builder);
         }
     }

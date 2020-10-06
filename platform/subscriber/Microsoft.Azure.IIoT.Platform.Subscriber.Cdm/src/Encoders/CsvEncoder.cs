@@ -65,7 +65,7 @@ namespace Microsoft.Azure.IIoT.Platform.Subscriber.Cdm.Storage {
         /// <param name="value"></param>
         /// <param name="separator"></param>
         /// <param name="sb"></param>
-        private void AddValueToCsvStringBuilder(object value,
+        private static void AddValueToCsvStringBuilder(object value,
             string separator, StringBuilder sb) {
 
             if (value != null) {

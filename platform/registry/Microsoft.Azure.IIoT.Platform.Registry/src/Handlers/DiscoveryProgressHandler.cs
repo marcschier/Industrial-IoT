@@ -28,7 +28,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Handlers {
         /// <param name="handlers"></param>
         /// <param name="serializer"></param>
         /// <param name="logger"></param>
-        public DiscoveryProgressHandler(IEnumerable<IDiscoveryProgressProcessor> handlers,
+        public DiscoveryProgressHandler(IEnumerable<IDiscovererProgressProcessor> handlers,
             IJsonSerializer serializer, ILogger logger) {
             _serializer = serializer ??
                 throw new ArgumentNullException(nameof(serializer));
@@ -66,6 +66,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Handlers {
 
         private readonly IJsonSerializer _serializer;
         private readonly ILogger _logger;
-        private readonly List<IDiscoveryProgressProcessor> _handlers;
+        private readonly List<IDiscovererProgressProcessor> _handlers;
     }
 }

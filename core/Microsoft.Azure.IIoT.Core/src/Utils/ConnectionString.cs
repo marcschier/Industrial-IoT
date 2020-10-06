@@ -99,8 +99,7 @@ namespace Microsoft.Azure.IIoT.Utils {
         /// <returns></returns>
         public static ConnectionString Parse(string connectionString) {
             if (string.IsNullOrEmpty(connectionString)) {
-                throw new ArgumentException("Connection string must not be null",
-                    nameof(ConnectionString));
+                throw new ArgumentNullException(nameof(connectionString));
             }
             var cs = new ConnectionString();
             foreach (var elem in connectionString.Split(new char[] { ';' },

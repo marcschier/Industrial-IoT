@@ -12,6 +12,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Module.Controllers {
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using Microsoft.Azure.IIoT.Platform.Directory;
 
     /// <summary>
     /// Synchronizes dataset writers with cloud endpoint

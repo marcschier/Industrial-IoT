@@ -230,10 +230,12 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa {
                 throw new ArgumentNullException(nameof(details));
             }
             if (details.EndTime == null && details.StartTime == null) {
-                throw new ArgumentException("Start time and end time cannot both be null", nameof(details));
+                throw new ArgumentException("Start time and end time cannot both be null", 
+                    nameof(details));
             }
-            if ((details.StartTime == null || details.EndTime == null) && ((details.NumEvents ?? 0) == 0)) {
-                throw new ArgumentException("Value bound must be set", nameof(details.NumEvents));
+            if ((details.StartTime == null || details.EndTime == null) &&
+                ((details.NumEvents ?? 0) == 0)) {
+                throw new ArgumentException("Value bound must be set", nameof(details));
             }
             return codec.Encode(new ExtensionObject(new ReadEventDetails {
                 EndTime = details.EndTime ?? DateTime.MinValue,
@@ -249,18 +251,21 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa {
         /// <param name="codec"></param>
         /// <param name="details"></param>
         /// <returns></returns>
-        public static VariantValue Encode(this IVariantEncoder codec, ReadProcessedValuesDetailsModel details) {
+        public static VariantValue Encode(this IVariantEncoder codec, 
+            ReadProcessedValuesDetailsModel details) {
             if (details == null) {
                 throw new ArgumentNullException(nameof(details));
             }
             if (details.EndTime == null && details.StartTime == null) {
-                throw new ArgumentException("Start time and end time cannot both be null", nameof(details));
+                throw new ArgumentException("Start time and end time cannot both be null", 
+                    nameof(details));
             }
             var aggregate = details.AggregateTypeId?.ToNodeId(codec.Context);
             return codec.Encode(new ExtensionObject(new ReadProcessedDetails {
                 EndTime = details.EndTime ?? DateTime.MinValue,
                 StartTime = details.StartTime ?? DateTime.MinValue,
-                AggregateType = aggregate == null ? null : new NodeIdCollection(aggregate.YieldReturn()),
+                AggregateType = aggregate == null ? null : 
+                    new NodeIdCollection(aggregate.YieldReturn()),
                 ProcessingInterval = details.ProcessingInterval ?? 0,
                 AggregateConfiguration = details.AggregateConfiguration.ToStackModel()
             })); // Reapplies the aggregate namespace uri during encoding using the context's table
@@ -272,15 +277,18 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa {
         /// <param name="codec"></param>
         /// <param name="details"></param>
         /// <returns></returns>
-        public static VariantValue Encode(this IVariantEncoder codec, ReadValuesDetailsModel details) {
+        public static VariantValue Encode(this IVariantEncoder codec, 
+            ReadValuesDetailsModel details) {
             if (details == null) {
                 throw new ArgumentNullException(nameof(details));
             }
             if (details.EndTime == null && details.StartTime == null) {
-                throw new ArgumentException("Start time and end time cannot both be null", nameof(details));
+                throw new ArgumentException("Start time and end time cannot both be null", 
+                    nameof(details));
             }
-            if ((details.StartTime == null || details.EndTime == null) && ((details.NumValues ?? 0) == 0)) {
-                throw new ArgumentException("Value bound must be set", nameof(details.NumValues));
+            if ((details.StartTime == null || details.EndTime == null) && 
+                ((details.NumValues ?? 0) == 0)) {
+                throw new ArgumentException("Value bound must be set", nameof(details));
             }
             return codec.Encode(new ExtensionObject(new ReadRawModifiedDetails {
                 EndTime = details.EndTime ?? DateTime.MinValue,
@@ -297,15 +305,18 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa {
         /// <param name="codec"></param>
         /// <param name="details"></param>
         /// <returns></returns>
-        public static VariantValue Encode(this IVariantEncoder codec, ReadModifiedValuesDetailsModel details) {
+        public static VariantValue Encode(this IVariantEncoder codec, 
+            ReadModifiedValuesDetailsModel details) {
             if (details == null) {
                 throw new ArgumentNullException(nameof(details));
             }
             if (details.EndTime == null && details.StartTime == null) {
-                throw new ArgumentException("Start time and end time cannot both be null", nameof(details));
+                throw new ArgumentException("Start time and end time cannot both be null",
+                    nameof(details));
             }
-            if ((details.StartTime == null || details.EndTime == null) && ((details.NumValues ?? 0) == 0)) {
-                throw new ArgumentException("Value bound must be set", nameof(details.NumValues));
+            if ((details.StartTime == null || details.EndTime == null) && 
+                ((details.NumValues ?? 0) == 0)) {
+                throw new ArgumentException("Value bound must be set", nameof(details));
             }
             return codec.Encode(new ExtensionObject(new ReadRawModifiedDetails {
                 EndTime = details.EndTime ?? DateTime.MinValue,
@@ -358,7 +369,8 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa {
         /// <param name="codec"></param>
         /// <param name="result"></param>
         /// <returns></returns>
-        public static HistoricEventModel[] DecodeEvents(this IVariantEncoder codec, VariantValue result) {
+        public static HistoricEventModel[] DecodeEvents(this IVariantEncoder codec,
+            VariantValue result) {
             var extensionObject = codec.DecodeExtensionObject(result);
             if (extensionObject?.Body is HistoryEvent ev) {
                 return ev.Events.Select(d => new HistoricEventModel {

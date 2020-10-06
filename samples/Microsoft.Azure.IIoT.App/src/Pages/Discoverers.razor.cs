@@ -10,6 +10,8 @@ namespace Microsoft.Azure.IIoT.App.Pages {
     using Microsoft.Azure.IIoT.App.Data;
     using Microsoft.Azure.IIoT.Platform.Registry.Api;
     using Microsoft.Azure.IIoT.Platform.Registry.Api.Models;
+    using Microsoft.Azure.IIoT.Platform.Directory.Api;
+    using Microsoft.Azure.IIoT.Platform.Directory.Api.Models;
 
     public sealed partial class Discoverers {
         public bool IsSearching { get; set; }
@@ -25,7 +27,7 @@ namespace Microsoft.Azure.IIoT.App.Pages {
         }
 
         protected override async Task SubscribeContentEventsAsync() {
-           _events = await RegistryServiceEvents.SubscribeDiscovererEventsAsync(
+           _events = await DirectoryServiceEvents.SubscribeDiscovererEventsAsync(
                    ev => InvokeAsync(() => DiscovererEvent(ev))).ConfigureAwait(false);
         }
 

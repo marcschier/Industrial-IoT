@@ -435,10 +435,10 @@ namespace Opc.Ua.Design {
                 var name = new StringBuilder();
                 foreach (var c in node.BrowseName) {
                     if (char.IsWhiteSpace(c)) {
-                        name.Append(NodeDesign.kPathChar);
+                        name.Append(NodeDesign.PathChar);
                         continue;
                     }
-                    if (char.IsLetterOrDigit(c) || c == NodeDesign.kPathChar[0]) {
+                    if (char.IsLetterOrDigit(c) || c == NodeDesign.PathChar) {
                         name.Append(c);
                         continue;
                     }
@@ -805,7 +805,7 @@ namespace Opc.Ua.Design {
                 }
 
                 // update id if specified in name.
-                var index = name.LastIndexOf(NodeDesign.kPathChar[0]);
+                var index = name.LastIndexOf(NodeDesign.PathChar);
 
                 if (index != -1) {
                     foreach (var c in name) {
@@ -2179,9 +2179,9 @@ namespace Opc.Ua.Design {
                 return mergedReference;
             }
 
-            var currentPathParts = currentPath.Split(new char[] { NodeDesign.kPathChar[0] }, StringSplitOptions.RemoveEmptyEntries);
-            var sourceIdParts = sourceId.Name.Split(new char[] { NodeDesign.kPathChar[0] }, StringSplitOptions.RemoveEmptyEntries);
-            var targetIdParts = reference.TargetId.Name.Split(new char[] { NodeDesign.kPathChar[0] }, StringSplitOptions.RemoveEmptyEntries);
+            var currentPathParts = currentPath.Split(new char[] { NodeDesign.PathChar }, StringSplitOptions.RemoveEmptyEntries);
+            var sourceIdParts = sourceId.Name.Split(new char[] { NodeDesign.PathChar }, StringSplitOptions.RemoveEmptyEntries);
+            var targetIdParts = reference.TargetId.Name.Split(new char[] { NodeDesign.PathChar }, StringSplitOptions.RemoveEmptyEntries);
 
             // find the common root in the type declaration.
             string[] targetPath = null;
@@ -2240,7 +2240,7 @@ namespace Opc.Ua.Design {
             if (targetRoot != null) {
                 foreach (var item in targetRoot) {
                     if (builder.Length > 0) {
-                        builder.Append(NodeDesign.kPathChar);
+                        builder.Append(NodeDesign.PathChar);
                     }
                     builder.Append(item);
                 }
@@ -2248,7 +2248,7 @@ namespace Opc.Ua.Design {
             if (targetPath != null) {
                 foreach (var item in targetPath) {
                     if (builder.Length > 0) {
-                        builder.Append(NodeDesign.kPathChar);
+                        builder.Append(NodeDesign.PathChar);
                     }
                     builder.Append(item);
                 }
@@ -2436,7 +2436,7 @@ namespace Opc.Ua.Design {
 
                 if (!string.IsNullOrEmpty(basePath)) {
                     childPath = childPath[(basePath.Length + 1)..];
-                    childPath = $"{basePath}{NodeDesign.kPathChar}{childPath}";
+                    childPath = $"{basePath}{NodeDesign.PathChar}{childPath}";
                 }
 
                 // Follow the modelling rules

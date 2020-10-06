@@ -20,7 +20,7 @@ namespace Microsoft.Azure.IIoT.Platform.Core.Models {
         /// Alternative endpoints that can be used for accessing
         /// the server.
         /// </summary>
-        public /*IReadOnlySet*/ IReadOnlyCollection<string> AlternativeUrls { get; set; }
+        public IReadOnlySet<string> AlternativeUrls { get; set; }
 
         /// <summary>
         /// Endpoint security policy to use - null = Best.

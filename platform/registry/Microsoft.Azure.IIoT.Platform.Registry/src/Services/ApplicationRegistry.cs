@@ -50,7 +50,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                 throw new ArgumentNullException(nameof(request));
             }
             if (request.ApplicationUri == null) {
-                throw new ArgumentNullException(nameof(request.ApplicationUri));
+                throw new ArgumentException("Missing application uri", nameof(request));
             }
 
             var context = request.Context.Validate();
@@ -206,18 +206,9 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
         }
 
         /// <inheritdoc/>
-        public Task<ApplicationSiteListModel> ListSitesAsync(
-            string continuation, int? pageSize, CancellationToken ct) {
-            return _database.ListSitesAsync(continuation, pageSize, ct);
-        }
-
-        /// <inheritdoc/>
-        public async Task ProcessDiscoveryEventsAsync(string siteId, string discovererId,
+        public async Task ProcessDiscoveryEventsAsync(string discovererId,
             string supervisorId, DiscoveryResultModel result,
             IEnumerable<DiscoveryEventModel> events) {
-            if (string.IsNullOrEmpty(siteId)) {
-                throw new ArgumentNullException(nameof(siteId));
-            }
             if (string.IsNullOrEmpty(discovererId)) {
                 throw new ArgumentNullException(nameof(discovererId));
             }
@@ -238,7 +229,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
             //
             var existing = await _database.QueryAllAsync(
                 new ApplicationRegistrationQueryModel {
-                    SiteOrGatewayId = siteId,
                     DiscovererId = discovererId
                 }).ConfigureAwait(false);
 
@@ -249,9 +239,8 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
             //
             var eventList = events.ToList();
             eventList.ForEach(ev => {
-                ev.Application.SiteId = siteId;
                 ev.Application.DiscovererId = discovererId;
-                ev.Application.ApplicationId = ApplicationInfoModelEx.CreateApplicationId(siteId,
+                ev.Application.ApplicationId = ApplicationInfoModelEx.CreateApplicationId(discovererId,
                     ev.Application.ApplicationUri, ev.Application.ApplicationType);
             });
 
@@ -264,7 +253,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                         // Ensure the site id and discoverer id in the found endpoints
                         // have correct values, same as applications earlier.
                         //
-                        ev.Endpoint.SiteId = siteId;
                         ev.Endpoint.DiscovererId = discovererId;
                         ev.Endpoint.SupervisorId = supervisorId;
                         ev.Endpoint.ApplicationId = group.Key;
@@ -351,7 +339,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                     // Now - add all new endpoints
                     endpoints.TryGetValue(application.ApplicationId, out var epFound);
                     await _bulk.ProcessDiscoveryEventsAsync(epFound, result, discovererId,
-                        supervisorId, siteId, null, false).ConfigureAwait(false);
+                        supervisorId, null, false).ConfigureAwait(false);
                     added++;
                 }
                 catch (ResourceConflictException) {
@@ -384,7 +372,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
 
                         application.Patch(update);
                         application.DiscovererId = discovererId;
-                        application.SiteId = siteId;
                         application.NotSeenSince = null;
                         application.Updated = context;
                         updated++;
@@ -397,7 +384,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
 
                         // TODO: Handle case where we take ownership of all endpoints
                         await _bulk.ProcessDiscoveryEventsAsync(epFound, result, discovererId, supervisorId,
-                            siteId, application.ApplicationId, false).ConfigureAwait(false);
+                            update.ApplicationId, false).ConfigureAwait(false);
 
                         await _broker.NotifyAllAsync(l => l.OnApplicationUpdatedAsync(context, application)).ConfigureAwait(false);
                     }

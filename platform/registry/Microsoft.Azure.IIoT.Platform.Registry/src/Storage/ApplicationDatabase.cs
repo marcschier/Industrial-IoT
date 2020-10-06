@@ -38,24 +38,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Storage.Default {
         }
 
         /// <inheritdoc/>
-        public async Task<ApplicationSiteListModel> ListSitesAsync(
-            string continuation, int? pageSize, CancellationToken ct) {
-            var compiled = continuation != null ?
-                _documents.ContinueQuery<string>(continuation, pageSize) :
-                _documents.CreateQuery<ApplicationRegistration>(pageSize)
-                    .Where(x => x.DeviceType == IdentityType.Application)
-                    .Select(x => x.SiteId)
-                    .Distinct()
-                    .GetResults();
-            // Read results
-            var results = await compiled.ReadAsync(ct).ConfigureAwait(false);
-            return new ApplicationSiteListModel {
-                Sites = results.Select(r => r.Value).ToList(),
-                ContinuationToken = compiled.ContinuationToken
-            };
-        }
-
-        /// <inheritdoc/>
         public async Task<ApplicationInfoModel> AddAsync(ApplicationInfoModel application,
             CancellationToken ct) {
             if (application == null) {
@@ -64,7 +46,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Storage.Default {
             var presetId = application.ApplicationId;
             while (true) {
                 if (!string.IsNullOrEmpty(application.ApplicationId)) {
-                    var document = await _documents.FindAsync<ApplicationRegistration>(
+                    var document = await _documents.FindAsync<ApplicationDocument>(
                         application.ApplicationId, ct: ct).ConfigureAwait(false);
                     if (document != null) {
                         throw new ResourceConflictException(
@@ -75,8 +57,9 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Storage.Default {
                     application.ApplicationId = Guid.NewGuid().ToString();
                 }
                 try {
-                    var result = await _documents.AddAsync(application.ToApplicationRegistration(), ct: ct).ConfigureAwait(false);
-                    return result.Value.ToServiceModel();
+                    var result = await _documents.AddAsync(application.ToDocumentModel(), 
+                        ct: ct).ConfigureAwait(false);
+                    return result.Value.ToServiceModel(result.Etag);
                 }
                 catch (ResourceConflictException) {
                     // Try again - reset to preset id or null if none was asked for
@@ -96,19 +79,21 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Storage.Default {
                 throw new ArgumentNullException(nameof(applicationId));
             }
             while (true) {
-                var document = await _documents.FindAsync<ApplicationRegistration>(applicationId, ct: ct).ConfigureAwait(false);
-                var updateOrAdd = document?.Value.ToServiceModel();
+                var document = await _documents.FindAsync<ApplicationDocument>(
+                    applicationId, ct: ct).ConfigureAwait(false);
+                var updateOrAdd = document?.Value.ToServiceModel(document.Etag);
                 var application = await predicate(updateOrAdd).ConfigureAwait(false);
                 if (application == null) {
                     return updateOrAdd;
                 }
                 application.ApplicationId = applicationId;
-                var updated = application.ToApplicationRegistration();
+                var updated = application.ToDocumentModel();
                 if (document == null) {
                     try {
                         // Add document
-                        var result = await _documents.AddAsync(updated, ct: ct).ConfigureAwait(false);
-                        return result.Value.ToServiceModel();
+                        var result = await _documents.AddAsync(updated,
+                            ct: ct).ConfigureAwait(false);
+                        return result.Value.ToServiceModel(result.Etag);
                     }
                     catch (ResourceConflictException) {
                         // Conflict - try update now
@@ -117,8 +102,9 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Storage.Default {
                 }
                 // Try replacing
                 try {
-                    var result = await _documents.ReplaceAsync(document, updated, ct: ct).ConfigureAwait(false);
-                    return result.Value.ToServiceModel();
+                    var result = await _documents.ReplaceAsync(document, 
+                        updated, ct: ct).ConfigureAwait(false);
+                    return result.Value.ToServiceModel(result.Etag);
                 }
                 catch (ResourceOutOfDateException) {
                     continue;
@@ -134,19 +120,21 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Storage.Default {
                 throw new ArgumentNullException(nameof(applicationId));
             }
             while (true) {
-                var document = await _documents.FindAsync<ApplicationRegistration>(applicationId, ct: ct).ConfigureAwait(false);
+                var document = await _documents.FindAsync<ApplicationDocument>(
+                    applicationId, ct: ct).ConfigureAwait(false);
                 if (document == null) {
                     throw new ResourceNotFoundException("Writer application not found");
                 }
-                var application = document.Value.ToServiceModel();
+                var application = document.Value.ToServiceModel(document.Etag);
                 if (!await predicate(application).ConfigureAwait(false)) {
                     return application;
                 }
                 application.ApplicationId = applicationId;
-                var updated = application.ToApplicationRegistration();
+                var updated = application.ToDocumentModel();
                 try {
-                    var result = await _documents.ReplaceAsync(document, updated, ct: ct).ConfigureAwait(false);
-                    return result.Value.ToServiceModel();
+                    var result = await _documents.ReplaceAsync(document, updated,
+                        ct: ct).ConfigureAwait(false);
+                    return result.Value.ToServiceModel(result.Etag);
                 }
                 catch (ResourceOutOfDateException) {
                     continue;
@@ -160,20 +148,20 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Storage.Default {
             if (string.IsNullOrEmpty(applicationId)) {
                 throw new ArgumentNullException(nameof(applicationId));
             }
-            var document = await _documents.FindAsync<ApplicationRegistration>(
+            var document = await _documents.FindAsync<ApplicationDocument>(
                 applicationId, ct: ct).ConfigureAwait(false);
             if (document == null) {
                 return null;
             }
-            return document.Value.ToServiceModel();
+            return document.Value.ToServiceModel(document.Etag);
         }
 
         /// <inheritdoc/>
         public async Task<ApplicationInfoListModel> QueryAsync(ApplicationRegistrationQueryModel query,
             string continuationToken, int? maxResults, CancellationToken ct) {
             var results = continuationToken != null ?
-                _documents.ContinueQuery<ApplicationRegistration>(continuationToken, maxResults) :
-                CreateQuery(_documents.CreateQuery<ApplicationRegistration>(maxResults), query);
+                _documents.ContinueQuery<ApplicationDocument>(continuationToken, maxResults) :
+                CreateQuery(_documents.CreateQuery<ApplicationDocument>(maxResults), query);
             if (!results.HasMore()) {
                 return new ApplicationInfoListModel {
                     Items = new List<ApplicationInfoModel>()
@@ -182,7 +170,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Storage.Default {
             var documents = await results.ReadAsync(ct).ConfigureAwait(false);
             return new ApplicationInfoListModel {
                 ContinuationToken = results.ContinuationToken,
-                Items = documents.Select(r => r.Value.ToServiceModel()).ToList()
+                Items = documents.Select(r => r.Value.ToServiceModel(r.Etag)).ToList()
             };
         }
 
@@ -193,12 +181,12 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Storage.Default {
                 throw new ArgumentNullException(nameof(applicationId));
             }
             while (true) {
-                var document = await _documents.FindAsync<ApplicationRegistration>(
+                var document = await _documents.FindAsync<ApplicationDocument>(
                     applicationId, ct: ct).ConfigureAwait(false);
                 if (document == null) {
                     return null;
                 }
-                var application = document.Value.ToServiceModel();
+                var application = document.Value.ToServiceModel(document.Etag);
                 if (!await predicate(application).ConfigureAwait(false)) {
                     return null;
                 }
@@ -221,7 +209,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Storage.Default {
             if (string.IsNullOrEmpty(generationId)) {
                 throw new ArgumentNullException(nameof(generationId));
             }
-            await _documents.DeleteAsync<ApplicationRegistration>(
+            await _documents.DeleteAsync<ApplicationDocument>(
                 applicationId, null, generationId, ct).ConfigureAwait(false);
         }
 
@@ -231,8 +219,8 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Storage.Default {
         /// <param name="filter"></param>
         /// <param name="query"></param>
         /// <returns></returns>
-        private static IResultFeed<IDocumentInfo<ApplicationRegistration>> CreateQuery(
-            IQuery<ApplicationRegistration> query, ApplicationRegistrationQueryModel filter) {
+        private static IResultFeed<IDocumentInfo<ApplicationDocument>> CreateQuery(
+            IQuery<ApplicationDocument> query, ApplicationRegistrationQueryModel filter) {
 
             if (filter != null) {
                 if (!(filter?.IncludeNotSeenSince ?? false)) {
@@ -284,12 +272,8 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Storage.Default {
                     // If Capabilities provided, filter results
                     query = query.Where(x => x.Capabilities.ContainsKey(filter.Capability));
                 }
-                if (filter?.SiteOrGatewayId != null) {
-                    // If site or gateway id search provided, include it in search
-                    query = query.Where(x => x.SiteOrGatewayId == filter.SiteOrGatewayId);
-                }
             }
-            query = query.Where(x => x.DeviceType == IdentityType.Application);
+            query = query.Where(x => x.ClassType == IdentityType.Application);
             return query.GetResults();
         }
 

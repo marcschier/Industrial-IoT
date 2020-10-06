@@ -333,7 +333,7 @@ namespace Opc.Ua.Nodeset {
                 throw new ArgumentNullException(nameof(node));
             }
             if (NodeId.IsNull(node.NodeId)) {
-                throw new ArgumentException(nameof(node));
+                throw new ArgumentException("Node id missing", nameof(node));
             }
             UANode encoded;
             switch (node) {

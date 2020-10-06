@@ -107,6 +107,6 @@
 
 <ErrorMessage PageError="@Items.Error" Status="@Status"></ErrorMessage>
 
-<LoadMore Result=@Items IsLoading=@IsLoading LoadMoreItems=@(async() => await LoadMoreItems()) />
+<LoadMore Result=@Items IsLoading=@IsLoading LoadMoreItems=@(async() => await LoadMoreItemsAsync()) />
 
 <Spinner IsLoading=@IsLoading></Spinner>

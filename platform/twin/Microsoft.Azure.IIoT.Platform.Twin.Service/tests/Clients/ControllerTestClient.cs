@@ -59,7 +59,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Service.Controllers.Test {
                 throw new ArgumentNullException(nameof(content));
             }
             if (content.ContinuationToken == null) {
-                throw new ArgumentNullException(nameof(content.ContinuationToken));
+                throw new ArgumentException("Missing continuation", nameof(content));
             }
             var path = new UriBuilder($"{_serviceUri}/v2/browse/{endpointId}/next") {
                 Query = $"continuationToken={content.ContinuationToken}"
@@ -81,7 +81,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Service.Controllers.Test {
                 throw new ArgumentNullException(nameof(content));
             }
             if (string.IsNullOrEmpty(content.NodeId)) {
-                throw new ArgumentNullException(nameof(content.NodeId));
+                throw new ArgumentException("Missing nodeid", nameof(content));
             }
             var path = new UriBuilder($"{_serviceUri}/v2/read/{endpointId}") {
                 Query = $"nodeId={content.NodeId.UrlEncode()}"

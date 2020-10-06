@@ -21,12 +21,12 @@ namespace Microsoft.Azure.IIoT.Platform.Registry {
         /// <param name="context"></param>
         /// <param name="discovererId"></param>
         /// <param name="supervisorId"></param>
-        /// <param name="siteId"></param>
         /// <param name="applicationId"></param>
         /// <param name="hardDelete"></param>
+        /// 
         /// <returns></returns>
         Task ProcessDiscoveryEventsAsync(IEnumerable<EndpointInfoModel> found,
             DiscoveryResultModel context, string discovererId, string supervisorId,
-            string siteId = null, string applicationId = null, bool hardDelete = false);
+            string applicationId = null, bool hardDelete = false);
     }
 }

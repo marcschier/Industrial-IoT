@@ -64,7 +64,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Services {
                 throw new ArgumentNullException(nameof(request));
             }
             if (string.IsNullOrEmpty(request.ParentId)) {
-                throw new ArgumentNullException(nameof(request.ParentId));
+                throw new ArgumentException("Missing parent id", nameof(request));
             }
 
             var parent = await _groups.FindAsync(request.ParentId, ct).ConfigureAwait(false);
@@ -176,7 +176,8 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Services {
             if (parent == null) {
                 return await RenewGroupRootAsync(group, notBefore, ct).ConfigureAwait(false);
             }
-            return await RenewGroupFromParentAsync(group, parent, notBefore, ct).ConfigureAwait(false);
+            return await RenewGroupFromParentAsync(group, parent, notBefore, 
+                ct).ConfigureAwait(false);
         }
 
         /// <summary>

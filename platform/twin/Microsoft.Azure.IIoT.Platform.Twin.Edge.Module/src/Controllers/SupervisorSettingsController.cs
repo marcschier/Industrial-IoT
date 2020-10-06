@@ -90,12 +90,6 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Controllers {
             _endpoints = new Dictionary<string, VariantValue>();
         }
 
-
-        /// <returns></returns>
-        public IEnumerable<string> GetPropertyNames() {
-            return _supervisor.GetStatusAsync().Result.Entities.Select(e => e.Id);
-        }
-
         /// <summary>
         /// Apply changes
         /// </summary>

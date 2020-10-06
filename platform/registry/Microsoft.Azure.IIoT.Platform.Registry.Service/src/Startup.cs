@@ -198,12 +198,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service {
                 .AsImplementedInterfaces();
             builder.RegisterType<TwinModuleCertificateClient>()
                 .AsImplementedInterfaces();
-            builder.RegisterType<TwinModuleDiagnosticsClient>()
-                .AsImplementedInterfaces();
-            builder.RegisterType<PublisherModuleActivationClient>()
-                .AsImplementedInterfaces();
-            builder.RegisterType<PublisherModuleDiagnosticsClient>()
-                .AsImplementedInterfaces();
             builder.RegisterType<OnboardingClient>()
                 .AsImplementedInterfaces();
             builder.RegisterType<ChunkMethodClient>()

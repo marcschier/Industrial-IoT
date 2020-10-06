@@ -18,8 +18,11 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Models {
         public static byte[] ToRawData(this StartSigningRequestModel model) {
             const string certRequestPemHeader = "-----BEGIN CERTIFICATE REQUEST-----";
             const string certRequestPemFooter = "-----END CERTIFICATE REQUEST-----";
+            if (model is null) {
+                throw new ArgumentNullException(nameof(model));
+            }
             if (model.CertificateRequest == null) {
-                throw new ArgumentNullException(nameof(model.CertificateRequest));
+                throw new ArgumentException("Missing request", nameof(model));
             }
             if (model.CertificateRequest.IsBytes) {
                 return (byte[])model.CertificateRequest;
@@ -36,8 +39,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Models {
                 }
                 return Convert.FromBase64String(request);
             }
-            throw new ArgumentException("Bad certificate request",
-                nameof(model.CertificateRequest));
+            throw new ArgumentException("Bad certificate request", nameof(model));
         }
     }
 }

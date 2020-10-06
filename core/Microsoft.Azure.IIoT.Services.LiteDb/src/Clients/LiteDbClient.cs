@@ -25,7 +25,7 @@ namespace Microsoft.Azure.IIoT.Services.LiteDb.Clients {
             _config = config ?? throw new ArgumentNullException(nameof(config));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             if (_config.DbConnectionString == null) {
-                throw new ArgumentNullException(nameof(_config.DbConnectionString));
+                throw new ArgumentException("Missing connection string", nameof(config));
             }
         }
 

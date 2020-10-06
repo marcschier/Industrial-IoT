@@ -8,7 +8,9 @@ namespace Microsoft.Azure.IIoT.App.Pages {
     using Microsoft.AspNetCore.Components;
     using Microsoft.Azure.IIoT.App.Models;
 
+#pragma warning disable IDE1006 // Naming Styles
     public partial class _DrawerDiscoverer {
+#pragma warning restore IDE1006 // Naming Styles
         [Parameter]
         public DiscovererInfo DiscovererData { get; set; }
 
@@ -44,9 +46,6 @@ namespace Microsoft.Azure.IIoT.App.Pages {
         private async Task UpdateDiscovererConfigAsync() {
             DiscovererData.TryUpdateData(InputData);
             await Onclick.InvokeAsync(DiscovererData).ConfigureAwait(false);
-            if (!DiscovererData.IsAdHocDiscovery) {
-                Status = await RegistryHelper.UpdateDiscovererAsync(DiscovererData).ConfigureAwait(false);
-            }
         }
 
         private void UrlListButtonClick() {

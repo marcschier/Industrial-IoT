@@ -41,7 +41,6 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                 // Act
                 var result1 = await groups.AddWriterGroupAsync(new WriterGroupAddRequestModel {
                     Name = "Test",
-                    SiteId = "fakesite" // See below
                 }).ConfigureAwait(false);
 
                 // Assert
@@ -114,7 +113,6 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
 
                 var result1 = await groups.AddWriterGroupAsync(new WriterGroupAddRequestModel {
                     Name = "Test",
-                    SiteId = "fakesite" // See below
                 }).ConfigureAwait(false);
 
                 var result2 = await writers.AddDataSetWriterAsync(new DataSetWriterAddRequestModel {
@@ -181,7 +179,6 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
 
                 var result1 = await groups.AddWriterGroupAsync(new WriterGroupAddRequestModel {
                     Name = "Test",
-                    SiteId = "fakesite" // See below
                 }).ConfigureAwait(false);
 
                 var result2 = await writers.AddDataSetWriterAsync(new DataSetWriterAddRequestModel {
@@ -271,7 +268,6 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                 var endpoint = new EndpointInfoModel {
                     EndpointUrl = "fakeurl",
                     Id = "endpoint1",
-                    SiteId = "fakesite",
                     Endpoint = new EndpointModel {
                         Url = "fakeurl"
                     }
@@ -279,7 +275,6 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
 
                 var result1 = await groups.AddWriterGroupAsync(new WriterGroupAddRequestModel {
                     Name = "Test",
-                    SiteId = "fakesite" // See below
                 }).ConfigureAwait(false);
 
                 var result2 = await writers.AddDataSetWriterAsync(new DataSetWriterAddRequestModel {
@@ -393,7 +388,6 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                     .Returns(Task.FromResult(new EndpointInfoModel {
                             EndpointUrl = "fakeurl",
                             Id = "endpoint1",
-                            SiteId = "fakesite",
                             Endpoint = new EndpointModel {
                                 Url = "fakeurl"
                             }

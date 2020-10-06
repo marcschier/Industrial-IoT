@@ -34,7 +34,6 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Models {
                 Encoding = model.Encoding,
                 Name = model.Name,
                 Priority = model.Priority,
-                SiteId = model.SiteId,
                 State = model.State.Clone(),
                 Schema = model.Schema,
                 MessageSettings = model.MessageSettings.Clone(),
@@ -73,7 +72,6 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Models {
                 Name = model.Name,
                 BatchSize = model.BatchSize,
                 Priority = model.Priority,
-                SiteId = model.SiteId,
                 DataSetWriters = writers.ToList(),
                 MessageSettings = model.MessageSettings.Clone(),
                 SecurityGroupId = model.SecurityGroupId,
@@ -107,7 +105,6 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Models {
                 Encoding = model.Encoding,
                 Name = model.Name,
                 Priority = model.Priority,
-                SiteId = model.SiteId,
                 MessageSettings = model.MessageSettings.Clone(),
                 BatchSize = model.BatchSize,
                 Created = context.Clone(),
@@ -130,7 +127,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Models {
             if (model == null) {
                 return false;
             }
-            return model.WriterGroupId == model.SiteId;
+            return model.WriterGroupId == $"default";
         }
     }
 }

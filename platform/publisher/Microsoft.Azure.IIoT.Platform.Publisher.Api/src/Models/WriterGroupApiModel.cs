@@ -43,12 +43,6 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api.Models {
         public byte? Priority { get; set; }
 
         /// <summary>
-        /// Site id this writer group applies to
-        /// </summary>
-        [DataMember(Name = "siteId", Order = 4)]
-        public string SiteId { get; set; }
-
-        /// <summary>
         /// Generation id
         /// </summary>
         [DataMember(Name = "generationId", Order = 5,

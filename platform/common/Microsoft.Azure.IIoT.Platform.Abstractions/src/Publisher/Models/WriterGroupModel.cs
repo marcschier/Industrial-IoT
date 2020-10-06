@@ -29,11 +29,6 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Models {
         public byte? Priority { get; set; }
 
         /// <summary>
-        /// Site id this writer group applies to
-        /// </summary>
-        public string SiteId { get; set; }
-
-        /// <summary>
         /// Generation id
         /// </summary>
         public string GenerationId { get; set; }

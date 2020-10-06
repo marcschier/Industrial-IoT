@@ -52,7 +52,9 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Provider.Controllers {
         /// <param name="returnUrl"></param>
         /// <returns></returns>
         [HttpGet]
+#pragma warning disable IDE1006 // Naming Styles
         public async Task<IActionResult> Index(string returnUrl) {
+#pragma warning restore IDE1006 // Naming Styles
             var vm = await BuildViewModelAsync(returnUrl);
             if (vm != null) {
                 return View("Index", vm);
@@ -66,7 +68,9 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Provider.Controllers {
         /// </summary>
         [HttpPost]
         [ValidateAntiForgeryToken]
+#pragma warning disable IDE1006 // Naming Styles
         public async Task<IActionResult> Index(ConsentInputModel model) {
+#pragma warning restore IDE1006 // Naming Styles
             var result = await ProcessConsent(model);
 
             if (result.IsRedirect) {
@@ -94,7 +98,9 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Provider.Controllers {
         /*****************************************/
         /* helper APIs for the ConsentController */
         /*****************************************/
+#pragma warning disable IDE1006 // Naming Styles
         private async Task<ProcessConsentResult> ProcessConsent(ConsentInputModel model) {
+#pragma warning restore IDE1006 // Naming Styles
             var result = new ProcessConsentResult();
 
             // validate return url is still valid

@@ -51,17 +51,17 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
         /// <summary>
         /// Application capabilities
         /// </summary>
-        public /*IReadOnlySet*/ IReadOnlyCollection<string> Capabilities { get; set; }
+        public IReadOnlySet<string> Capabilities { get; set; }
 
         /// <summary>
         /// Host addresses of server application or null
         /// </summary>
-        public /*IReadOnlySet*/ IReadOnlyCollection<string> HostAddresses { get; set; }
+        public IReadOnlySet<string> HostAddresses { get; set; }
 
         /// <summary>
         /// Discovery urls of the application
         /// </summary>
-        public /*IReadOnlySet*/ IReadOnlyCollection<string> DiscoveryUrls { get; set; }
+        public IReadOnlySet<string> DiscoveryUrls { get; set; }
 
         /// <summary>
         /// Discovery profile uri
@@ -72,11 +72,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
         /// Gateway server uri
         /// </summary>
         public string GatewayServerUri { get; set; }
-
-        /// <summary>
-        /// Site of the application
-        /// </summary>
-        public string SiteId { get; set; }
 
         /// <summary>
         /// Discoverer that registered the application

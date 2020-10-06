@@ -21,7 +21,7 @@ namespace Confluent.Kafka {
             string clientId = null)
             where T : ClientConfig, new() {
             if (string.IsNullOrEmpty(config?.BootstrapServers)) {
-                throw new ArgumentException(nameof(config));
+                throw new ArgumentException("Missing bootstrap server", nameof(config));
             }
             return new T {
                 BootstrapServers = config.BootstrapServers,

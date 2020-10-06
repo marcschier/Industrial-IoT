@@ -33,6 +33,8 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
     using System.Linq;
     using System.Threading.Tasks;
     using Prometheus;
+    using Microsoft.Azure.IIoT.Platform.Directory.Api;
+    using Microsoft.Azure.IIoT.Platform.Directory.Api.Models;
 
     /// <summary>
     /// Api command line interface
@@ -122,6 +124,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
             var container = ConfigureContainer(configuration, useMsgPack);
             _scope = container.BeginLifetimeScope();
             _twin = _scope.Resolve<ITwinServiceApi>();
+            _directory = _scope.Resolve<IDirectoryServiceApi>();
             _registry = _scope.Resolve<IRegistryServiceApi>();
             _history = _scope.Resolve<IHistoryServiceApi>();
             _publisher = _scope.Resolve<IPublisherServiceApi>();
@@ -188,9 +191,6 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
                             command = args[1];
                             options = new CliOptions(args, 2);
                             switch (command) {
-                                case "sites":
-                                    await ListSitesAsync(options).ConfigureAwait(false);
-                                    break;
                                 case "register":
                                     await RegisterApplicationAsync(options).ConfigureAwait(false);
                                     break;
@@ -588,17 +588,11 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
                                 case "get":
                                     await GetSupervisorAsync(options).ConfigureAwait(false);
                                     break;
-                                case "status":
-                                    await GetSupervisorStatusAsync(options).ConfigureAwait(false);
-                                    break;
                                 case "update":
                                     await UpdateSupervisorAsync(options).ConfigureAwait(false);
                                     break;
                                 case "monitor":
                                     await MonitorSupervisorsAsync().ConfigureAwait(false);
-                                    break;
-                                case "reset":
-                                    await ResetSupervisorAsync(options).ConfigureAwait(false);
                                     break;
                                 case "list":
                                     await ListSupervisorsAsync(options).ConfigureAwait(false);
@@ -663,6 +657,9 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
                             switch (command) {
                                 case "get":
                                     await GetGatewayAsync(options).ConfigureAwait(false);
+                                    break;
+                                case "sites":
+                                    await ListSitesAsync(options).ConfigureAwait(false);
                                     break;
                                 case "update":
                                     await UpdateGatewayAsync(options).ConfigureAwait(false);
@@ -1407,7 +1404,6 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
                 Encoding = options.GetValueOrDefault<MessageEncoding?>("-e", "--encoding", null),
                 Schema = options.GetValueOrDefault<MessageSchema?>("-t", "--schema", null),
                 Priority = options.GetValueOrDefault<byte>("-P", "--priority", null),
-                SiteId = options.GetValueOrDefault<string>("-s", "--siteId", null),
                 // LocaleIds = ...
                 MessageSettings = BuildWriterGroupMessageSettings(options)
             }).ConfigureAwait(false);
@@ -1460,7 +1456,6 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
                 Schema = options.GetValueOrDefault<MessageSchema?>("-t", "--schema", null),
                 Name = options.GetValueOrDefault<string>("-n", "--name", null),
                 Priority = options.GetValueOrDefault<byte>("-p", "--priority", null),
-                SiteId = options.GetValueOrDefault<string>("-s", "--siteId", null)
             };
             if (options.IsSet("-A", "--all")) {
                 var result = await _publisher.QueryAllWriterGroupsAsync(query).ConfigureAwait(false);
@@ -1524,7 +1519,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
             else {
                 var publisherId = options.GetValueOrDefault<string>("-i", "--id", null);
                 if (string.IsNullOrEmpty(publisherId)) {
-                    var result = await _registry.ListAllPublishersAsync().ConfigureAwait(false);
+                    var result = await _directory.ListAllPublishersAsync().ConfigureAwait(false);
                     publisherId = ConsoleEx.Select(result.Select(r => r.Id));
                     if (string.IsNullOrEmpty(publisherId)) {
                         Console.WriteLine("Nothing selected - publisher selection cleared.");
@@ -1542,12 +1537,12 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
         /// </summary>
         private async Task ListPublishersAsync(CliOptions options) {
             if (options.IsSet("-A", "--all")) {
-                var result = await _registry.ListAllPublishersAsync().ConfigureAwait(false);
+                var result = await _directory.ListAllPublishersAsync().ConfigureAwait(false);
                 PrintResult(options, result);
                 Console.WriteLine($"{result.Count()} item(s) found...");
             }
             else {
-                var result = await _registry.ListPublishersAsync(
+                var result = await _directory.ListPublishersAsync(
                     options.GetValueOrDefault<string>("-C", "--continuation", null),
                     options.GetValueOrDefault<int>("-P", "--page-size", null)).ConfigureAwait(false);
                 PrintResult(options, result);
@@ -1562,12 +1557,12 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
                 Connected = options.IsProvidedOrNull("-c", "--connected"),
             };
             if (options.IsSet("-A", "--all")) {
-                var result = await _registry.QueryAllPublishersAsync(query).ConfigureAwait(false);
+                var result = await _directory.QueryAllPublishersAsync(query).ConfigureAwait(false);
                 PrintResult(options, result);
                 Console.WriteLine($"{result.Count()} item(s) found...");
             }
             else {
-                var result = await _registry.QueryPublishersAsync(query,
+                var result = await _directory.QueryPublishersAsync(query,
                     options.GetValueOrDefault<int>("-P", "--page-size", null)).ConfigureAwait(false);
                 PrintResult(options, result);
             }
@@ -1577,7 +1572,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
         /// Get publisher
         /// </summary>
         private async Task GetPublisherAsync(CliOptions options) {
-            var result = await _registry.GetPublisherAsync(GetPublisherId(options)).ConfigureAwait(false);
+            var result = await _directory.GetPublisherAsync(GetPublisherId(options)).ConfigureAwait(false);
             PrintResult(options, result);
         }
 
@@ -1585,7 +1580,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
         /// Update publisher
         /// </summary>
         private async Task UpdatePublisherAsync(CliOptions options) {
-            await _registry.UpdatePublisherAsync(GetPublisherId(options),
+            await _directory.UpdatePublisherAsync(GetPublisherId(options),
                 new PublisherUpdateApiModel {
                     LogLevel = options.GetValueOrDefault<TraceLogLevel>(
                         "-l", "--log-level", null)
@@ -1596,7 +1591,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
         /// Monitor publishers
         /// </summary>
         private async Task MonitorPublishersAsync() {
-            var events = _scope.Resolve<IRegistryServiceEvents>();
+            var events = _scope.Resolve<IDirectoryServiceEvents>();
             Console.WriteLine("Press any key to stop.");
             var complete = await events.SubscribePublisherEventsAsync(PrintEvent).ConfigureAwait(false);
             try {
@@ -1630,6 +1625,23 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
         }
 
         /// <summary>
+        /// List sites
+        /// </summary>
+        private async Task ListSitesAsync(CliOptions options) {
+            if (options.IsSet("-A", "--all")) {
+                var result = await _directory.ListAllSitesAsync().ConfigureAwait(false);
+                PrintResult(options, result);
+                Console.WriteLine($"{result.Count()} item(s) found...");
+            }
+            else {
+                var result = await _directory.ListSitesAsync(
+                    options.GetValueOrDefault<string>("-C", "--continuation", null),
+                    options.GetValueOrDefault<int>("-P", "--page-size", null)).ConfigureAwait(false);
+                PrintResult(options, result);
+            }
+        }
+
+        /// <summary>
         /// Select gateway registration
         /// </summary>
         private async Task SelectGatewayAsync(CliOptions options) {
@@ -1642,7 +1654,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
             else {
                 var gatewayId = options.GetValueOrDefault<string>("-i", "--id", null);
                 if (string.IsNullOrEmpty(gatewayId)) {
-                    var result = await _registry.ListAllGatewaysAsync().ConfigureAwait(false);
+                    var result = await _directory.ListAllGatewaysAsync().ConfigureAwait(false);
                     gatewayId = ConsoleEx.Select(result.Select(r => r.Id));
                     if (string.IsNullOrEmpty(gatewayId)) {
                         Console.WriteLine("Nothing selected - gateway selection cleared.");
@@ -1660,12 +1672,12 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
         /// </summary>
         private async Task ListGatewaysAsync(CliOptions options) {
             if (options.IsSet("-A", "--all")) {
-                var result = await _registry.ListAllGatewaysAsync().ConfigureAwait(false);
+                var result = await _directory.ListAllGatewaysAsync().ConfigureAwait(false);
                 PrintResult(options, result);
                 Console.WriteLine($"{result.Count()} item(s) found...");
             }
             else {
-                var result = await _registry.ListGatewaysAsync(
+                var result = await _directory.ListGatewaysAsync(
                     options.GetValueOrDefault<string>("-C", "--continuation", null),
                     options.GetValueOrDefault<int>("-P", "--page-size", null)).ConfigureAwait(false);
                 PrintResult(options, result);
@@ -1681,12 +1693,12 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
                 SiteId = options.GetValueOrDefault<string>("-s", "--siteId", null)
             };
             if (options.IsSet("-A", "--all")) {
-                var result = await _registry.QueryAllGatewaysAsync(query).ConfigureAwait(false);
+                var result = await _directory.QueryAllGatewaysAsync(query).ConfigureAwait(false);
                 PrintResult(options, result);
                 Console.WriteLine($"{result.Count()} item(s) found...");
             }
             else {
-                var result = await _registry.QueryGatewaysAsync(query,
+                var result = await _directory.QueryGatewaysAsync(query,
                     options.GetValueOrDefault<int>("-P", "--page-size", null)).ConfigureAwait(false);
                 PrintResult(options, result);
             }
@@ -1696,7 +1708,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
         /// Get gateway
         /// </summary>
         private async Task GetGatewayAsync(CliOptions options) {
-            var result = await _registry.GetGatewayAsync(GetGatewayId(options)).ConfigureAwait(false);
+            var result = await _directory.GetGatewayAsync(GetGatewayId(options)).ConfigureAwait(false);
             PrintResult(options, result);
         }
 
@@ -1704,7 +1716,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
         /// Update gateway
         /// </summary>
         private async Task UpdateGatewayAsync(CliOptions options) {
-            await _registry.UpdateGatewayAsync(GetGatewayId(options),
+            await _directory.UpdateGatewayAsync(GetGatewayId(options),
                 new GatewayUpdateApiModel {
                     SiteId = options.GetValueOrDefault<string>("-s", "--siteId", null),
                 }).ConfigureAwait(false);
@@ -1714,7 +1726,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
         /// Monitor gateways
         /// </summary>
         private async Task MonitorGatewaysAsync() {
-            var events = _scope.Resolve<IRegistryServiceEvents>();
+            var events = _scope.Resolve<IDirectoryServiceEvents>();
             Console.WriteLine("Press any key to stop.");
             var complete = await events.SubscribeGatewayEventsAsync(PrintEvent).ConfigureAwait(false);
             try {
@@ -1760,7 +1772,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
             else {
                 var supervisorId = options.GetValueOrDefault<string>("-i", "--id", null);
                 if (string.IsNullOrEmpty(supervisorId)) {
-                    var result = await _registry.ListAllSupervisorsAsync().ConfigureAwait(false);
+                    var result = await _directory.ListAllSupervisorsAsync().ConfigureAwait(false);
                     supervisorId = ConsoleEx.Select(result.Select(r => r.Id));
                     if (string.IsNullOrEmpty(supervisorId)) {
                         Console.WriteLine("Nothing selected - supervisor selection cleared.");
@@ -1778,12 +1790,12 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
         /// </summary>
         private async Task ListSupervisorsAsync(CliOptions options) {
             if (options.IsSet("-A", "--all")) {
-                var result = await _registry.ListAllSupervisorsAsync().ConfigureAwait(false);
+                var result = await _directory.ListAllSupervisorsAsync().ConfigureAwait(false);
                 PrintResult(options, result);
                 Console.WriteLine($"{result.Count()} item(s) found...");
             }
             else {
-                var result = await _registry.ListSupervisorsAsync(
+                var result = await _directory.ListSupervisorsAsync(
                     options.GetValueOrDefault<string>("-C", "--continuation", null),
                     options.GetValueOrDefault<int>("-P", "--page-size", null)).ConfigureAwait(false);
                 PrintResult(options, result);
@@ -1796,15 +1808,14 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
         private async Task QuerySupervisorsAsync(CliOptions options) {
             var query = new SupervisorQueryApiModel {
                 Connected = options.IsProvidedOrNull("-c", "--connected"),
-                EndpointId = options.GetValueOrDefault<string>("-e", "--endpoint", null),
             };
             if (options.IsSet("-A", "--all")) {
-                var result = await _registry.QueryAllSupervisorsAsync(query).ConfigureAwait(false);
+                var result = await _directory.QueryAllSupervisorsAsync(query).ConfigureAwait(false);
                 PrintResult(options, result);
                 Console.WriteLine($"{result.Count()} item(s) found...");
             }
             else {
-                var result = await _registry.QuerySupervisorsAsync(query,
+                var result = await _directory.QuerySupervisorsAsync(query,
                     options.GetValueOrDefault<int>("-P", "--page-size", null)).ConfigureAwait(false);
                 PrintResult(options, result);
             }
@@ -1814,32 +1825,18 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
         /// Get supervisor
         /// </summary>
         private async Task GetSupervisorAsync(CliOptions options) {
-            var result = await _registry.GetSupervisorAsync(GetSupervisorId(options)).ConfigureAwait(false);
+            var result = await _directory.GetSupervisorAsync(GetSupervisorId(options)).ConfigureAwait(false);
             PrintResult(options, result);
-        }
-
-        /// <summary>
-        /// Get supervisor status
-        /// </summary>
-        private async Task GetSupervisorStatusAsync(CliOptions options) {
-            var result = await _registry.GetSupervisorStatusAsync(GetSupervisorId(options)).ConfigureAwait(false);
-            PrintResult(options, result);
-        }
-
-        /// <summary>
-        /// Reset supervisor
-        /// </summary>
-        private async Task ResetSupervisorAsync(CliOptions options) {
-            await _registry.ResetSupervisorAsync(GetSupervisorId(options)).ConfigureAwait(false);
         }
 
         /// <summary>
         /// Monitor supervisors
         /// </summary>
         private async Task MonitorSupervisorsAsync() {
-            var events = _scope.Resolve<IRegistryServiceEvents>();
+            var events = _scope.Resolve<IDirectoryServiceEvents>();
             Console.WriteLine("Press any key to stop.");
-            var complete = await events.SubscribeSupervisorEventsAsync(PrintEvent).ConfigureAwait(false);
+            var complete = await events.SubscribeSupervisorEventsAsync(
+                PrintEvent).ConfigureAwait(false);
             try {
                 Console.ReadKey();
             }
@@ -1853,7 +1850,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
         /// </summary>
         private async Task UpdateSupervisorAsync(CliOptions options) {
             _ = BuildDiscoveryConfig(options);
-            await _registry.UpdateSupervisorAsync(GetSupervisorId(options),
+            await _directory.UpdateSupervisorAsync(GetSupervisorId(options),
                 new SupervisorUpdateApiModel {
                     LogLevel = options.GetValueOrDefault<TraceLogLevel>(
                         "-l", "--log-level", null)
@@ -1895,7 +1892,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
             else {
                 var discovererId = options.GetValueOrDefault<string>("-i", "--id", null);
                 if (string.IsNullOrEmpty(discovererId)) {
-                    var result = await _registry.ListAllDiscoverersAsync().ConfigureAwait(false);
+                    var result = await _directory.ListAllDiscoverersAsync().ConfigureAwait(false);
                     discovererId = ConsoleEx.Select(result.Select(r => r.Id));
                     if (string.IsNullOrEmpty(discovererId)) {
                         Console.WriteLine("Nothing selected - discoverer selection cleared.");
@@ -1913,12 +1910,12 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
         /// </summary>
         private async Task ListDiscoverersAsync(CliOptions options) {
             if (options.IsSet("-A", "--all")) {
-                var result = await _registry.ListAllDiscoverersAsync().ConfigureAwait(false);
+                var result = await _directory.ListAllDiscoverersAsync().ConfigureAwait(false);
                 PrintResult(options, result);
                 Console.WriteLine($"{result.Count()} item(s) found...");
             }
             else {
-                var result = await _registry.ListDiscoverersAsync(
+                var result = await _directory.ListDiscoverersAsync(
                     options.GetValueOrDefault<string>("-C", "--continuation", null),
                     options.GetValueOrDefault<int>("-P", "--page-size", null)).ConfigureAwait(false);
                 PrintResult(options, result);
@@ -1930,16 +1927,15 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
         /// </summary>
         private async Task QueryDiscoverersAsync(CliOptions options) {
             var query = new DiscovererQueryApiModel {
-                Connected = options.IsProvidedOrNull("-c", "--connected"),
-                Discovery = options.GetValueOrDefault<DiscoveryMode>("-d", "--discovery", null),
+                Connected = options.IsProvidedOrNull("-c", "--connected")
             };
             if (options.IsSet("-A", "--all")) {
-                var result = await _registry.QueryAllDiscoverersAsync(query).ConfigureAwait(false);
+                var result = await _directory.QueryAllDiscoverersAsync(query).ConfigureAwait(false);
                 PrintResult(options, result);
                 Console.WriteLine($"{result.Count()} item(s) found...");
             }
             else {
-                var result = await _registry.QueryDiscoverersAsync(query,
+                var result = await _directory.QueryDiscoverersAsync(query,
                     options.GetValueOrDefault<int>("-P", "--page-size", null)).ConfigureAwait(false);
                 PrintResult(options, result);
             }
@@ -1949,7 +1945,8 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
         /// Get discoverer
         /// </summary>
         private async Task GetDiscovererAsync(CliOptions options) {
-            var result = await _registry.GetDiscovererAsync(GetDiscovererId(options)).ConfigureAwait(false);
+            var result = await _directory.GetDiscovererAsync(
+                GetDiscovererId(options)).ConfigureAwait(false);
             PrintResult(options, result);
         }
 
@@ -1957,17 +1954,19 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
         /// Monitor discoverers
         /// </summary>
         private async Task MonitorDiscoverersAsync(CliOptions options) {
-            var events = _scope.Resolve<IRegistryServiceEvents>();
+            var revents = _scope.Resolve<IRegistryServiceEvents>();
+            var devents = _scope.Resolve<IDirectoryServiceEvents>();
             Console.WriteLine("Press any key to stop.");
             IAsyncDisposable complete;
             var discovererId = options.GetValueOrDefault<string>("-i", "--id", null);
             if (discovererId != null) {
                 // If specified - monitor progress
-                complete = await events.SubscribeDiscoveryProgressByDiscovererIdAsync(
+                complete = await revents.SubscribeDiscoveryProgressByDiscovererIdAsync(
                     discovererId, PrintProgress).ConfigureAwait(false);
             }
             else {
-                complete = await events.SubscribeDiscovererEventsAsync(PrintEvent).ConfigureAwait(false);
+                complete = await devents.SubscribeDiscovererEventsAsync(
+                    PrintEvent).ConfigureAwait(false);
             }
             try {
                 Console.ReadKey();
@@ -1982,13 +1981,10 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
         /// </summary>
         private async Task UpdateDiscovererAsync(CliOptions options) {
             var config = BuildDiscoveryConfig(options);
-            await _registry.UpdateDiscovererAsync(GetDiscovererId(options),
+            await _directory.UpdateDiscovererAsync(GetDiscovererId(options),
                 new DiscovererUpdateApiModel {
                     LogLevel = options.GetValueOrDefault<TraceLogLevel>(
-                        "-l", "--log-level", null),
-                    Discovery = options.GetValueOrDefault("-d", "--discovery",
-                        config == null ? (DiscoveryMode?)null : DiscoveryMode.Fast),
-                    DiscoveryConfig = config,
+                        "-l", "--log-level", null)
                 }).ConfigureAwait(false);
         }
 
@@ -2268,23 +2264,6 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
         }
 
         /// <summary>
-        /// List sites
-        /// </summary>
-        private async Task ListSitesAsync(CliOptions options) {
-            if (options.IsSet("-A", "--all")) {
-                var result = await _registry.ListAllSitesAsync().ConfigureAwait(false);
-                PrintResult(options, result);
-                Console.WriteLine($"{result.Count()} item(s) found...");
-            }
-            else {
-                var result = await _registry.ListSitesAsync(
-                    options.GetValueOrDefault<string>("-C", "--continuation", null),
-                    options.GetValueOrDefault<int>("-P", "--page-size", null)).ConfigureAwait(false);
-                PrintResult(options, result);
-            }
-        }
-
-        /// <summary>
         /// Query applications
         /// </summary>
         private async Task QueryApplicationsAsync(CliOptions options) {
@@ -2338,21 +2317,22 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
         /// Monitor all
         /// </summary>
         private async Task MonitorAllAsync() {
-            var events = _scope.Resolve<IRegistryServiceEvents>();
+            var revents = _scope.Resolve<IRegistryServiceEvents>();
+            var devents = _scope.Resolve<IDirectoryServiceEvents>();
             Console.WriteLine("Press any key to stop.");
-            var apps = await events.SubscribeApplicationEventsAsync(PrintEvent).ConfigureAwait(false);
+            var apps = await revents.SubscribeApplicationEventsAsync(PrintEvent).ConfigureAwait(false);
             try {
-                var endpoint = await events.SubscribeEndpointEventsAsync(PrintEvent).ConfigureAwait(false);
+                var endpoint = await revents.SubscribeEndpointEventsAsync(PrintEvent).ConfigureAwait(false);
                 try {
-                    var supervisor = await events.SubscribeSupervisorEventsAsync(PrintEvent).ConfigureAwait(false);
+                    var supervisor = await devents.SubscribeSupervisorEventsAsync(PrintEvent).ConfigureAwait(false);
                     try {
-                        var publisher = await events.SubscribePublisherEventsAsync(PrintEvent).ConfigureAwait(false);
+                        var publisher = await devents.SubscribePublisherEventsAsync(PrintEvent).ConfigureAwait(false);
                         try {
-                            var discoverers = await events.SubscribeDiscovererEventsAsync(PrintEvent).ConfigureAwait(false);
+                            var discoverers = await devents.SubscribeDiscovererEventsAsync(PrintEvent).ConfigureAwait(false);
                             try {
-                                var supervisors = await _registry.ListAllDiscoverersAsync().ConfigureAwait(false);
+                                var supervisors = await _directory.ListAllDiscoverersAsync().ConfigureAwait(false);
                                 var discovery = await supervisors
-                                    .Select(s => events.SubscribeDiscoveryProgressByDiscovererIdAsync(
+                                    .Select(s => revents.SubscribeDiscoveryProgressByDiscovererIdAsync(
                                         s.Id, PrintProgress)).AsAsyncDisposable().ConfigureAwait(false);
                                 try {
                                     Console.ReadKey();
@@ -2466,7 +2446,6 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
                 IncludeNotSeenSince = options.IsProvidedOrNull("-d", "--deleted"),
                 SupervisorId = options.GetValueOrDefault<string>("-T", "--supervisorId", null),
                 ApplicationId = options.GetValueOrDefault<string>("-R", "--applicationId", null),
-                SiteOrGatewayId = options.GetValueOrDefault<string>("-G", "--siteId", null),
                 DiscovererId = options.GetValueOrDefault<string>("-D", "--discovererId", null)
             };
             if (options.IsSet("-A", "--all")) {
@@ -3285,14 +3264,6 @@ Commands and Options
 
      monitor     Monitor changes to applications.
 
-     sites       List application sites
-        with ...
-        -C, --continuation
-                        Continuation from previous result.
-        -P, --page-size Size of page
-        -A, --all       Return all sites (unpaged)
-        -F, --format    Json format for result
-
      list        List applications
         with ...
         -C, --continuation
@@ -3417,7 +3388,6 @@ Commands and Options
                         Return endpoints with provided supervisor.
         -R  --applicationId
                         Return endpoints for specified Application.
-        -G  --siteId    Site or Gateway identifier to filter with.
         -D  --discovererId
                         Onboarded from specified discoverer.
         -P, --page-size Size of page
@@ -3561,6 +3531,14 @@ Commands and Options
         -i, --id        Id of gateway to retrieve (mandatory)
         -s, --siteId    Updated site of the gateway.
 
+     sites       List gateway sites
+        with ...
+        -C, --continuation
+                        Continuation from previous result.
+        -P, --page-size Size of page
+        -A, --all       Return all sites (unpaged)
+        -F, --format    Json format for result
+
      list        List gateways
         with ...
         -C, --continuation
@@ -3663,7 +3641,6 @@ Commands and Options
 
      query       Find supervisors
         -c, --connected Only return connected or disconnected.
-        -e, --endpoint  Manages Endpoint twin with given id.
         -P, --page-size Size of page
         -A, --all       Return all supervisors (unpaged)
         -F, --format    Json format for result
@@ -3800,7 +3777,6 @@ Commands and Options
 
      query       Find writer groups
         with ...
-        -s, --siteId    Site of the group
         -n, --name      Name of the group
         -t, --schema    Message schema
         -e, --encoding  Message encoding
@@ -3813,7 +3789,6 @@ Commands and Options
 
      create      Create new writer group
         with ...
-        -s, --siteId    Site of the group (mandatory)
         -n, --name      Name of the group
         -b, --batchsize Batch size
         -p, --publish   Publishing interval
@@ -4253,6 +4228,7 @@ Commands and Options
 
         private readonly ILifetimeScope _scope;
         private readonly ITwinServiceApi _twin;
+        private readonly IDirectoryServiceApi _directory;
         private readonly IRegistryServiceApi _registry;
         private readonly IPublisherServiceApi _publisher;
         private readonly IHistoryServiceApi _history;

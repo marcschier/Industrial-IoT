@@ -42,7 +42,9 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Provider.Controllers {
         /// <summary>
         /// Shows the error page
         /// </summary>
+#pragma warning disable IDE1006 // Naming Styles
         public async Task<IActionResult> Error(string errorId) {
+#pragma warning restore IDE1006 // Naming Styles
             var vm = new ErrorViewModel();
 
             // retrieve error details from identityserver

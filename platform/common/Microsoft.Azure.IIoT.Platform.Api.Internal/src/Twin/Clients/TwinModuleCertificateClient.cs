@@ -39,10 +39,10 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
                 throw new ArgumentNullException(nameof(registration));
             }
             if (registration.Endpoint == null) {
-                throw new ArgumentNullException(nameof(registration.Endpoint));
+                throw new ArgumentException("Missing endpoint", nameof(registration));
             }
             if (string.IsNullOrEmpty(registration.SupervisorId)) {
-                throw new ArgumentNullException(nameof(registration.SupervisorId));
+                throw new ArgumentException("Missing supervisor id", nameof(registration));
             }
 
             var sw = Stopwatch.StartNew();

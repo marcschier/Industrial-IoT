@@ -25,6 +25,6 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Models {
         /// <summary>
         /// Capabilities of endpoint (server)
         /// </summary>
-        public /*IReadOnlySet*/ IReadOnlyCollection<string> Capabilities { get; set; }
+        public IReadOnlySet<string> Capabilities { get; set; }
     }
 }

@@ -25,8 +25,9 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa {
         /// <param name="service"></param>
         /// <returns></returns>
         public static Task<T> ExecuteServiceAsync<T>(this IEndpointServices client,
-            ConnectionModel connection, CancellationToken ct, Func<Session, Task<T>> service) {
-            return client.ExecuteServiceAsync(connection, ct, service, _ => true);
+            ConnectionModel connection, Func<Session, Task<T>> service,
+            CancellationToken ct = default) {
+            return client.ExecuteServiceAsync(connection, service, _ => true, ct);
         }
 
         /// <summary>
@@ -40,8 +41,8 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa {
         /// <param name="handler"></param>
         /// <returns></returns>
         public static Task<T> ExecuteServiceAsync<T>(this IEndpointServices client,
-            ConnectionModel connection, CancellationToken ct, Func<Session, Task<T>> service,
-            Func<Exception, bool> handler) {
+            ConnectionModel connection, Func<Session, Task<T>> service, 
+            Func<Exception, bool> handler, CancellationToken ct = default) {
             return client.ExecuteServiceAsync(connection, null, 0, service,
                 null, handler, ct);
         }
@@ -56,13 +57,13 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa {
         /// <param name="priority"></param>
         /// <param name="service"></param>
         /// <param name="timeout"></param>
-        /// <param name="ct"></param>
         /// <param name="exceptionHandler"></param>
+        /// <param name="ct"></param>
         /// <returns></returns>
         public static Task<T> ExecuteServiceAsync<T>(this IEndpointServices client,
             EndpointModel endpoint, CredentialModel elevation, int priority, Func<Session,
-            Task<T>> service, TimeSpan? timeout, CancellationToken ct,
-            Func<Exception, bool> exceptionHandler) {
+            Task<T>> service, TimeSpan? timeout, Func<Exception, bool> exceptionHandler,
+            CancellationToken ct = default) {
             return client.ExecuteServiceAsync(new ConnectionModel { Endpoint = endpoint },
                 elevation, priority, service, timeout, exceptionHandler, ct);
         }
@@ -77,12 +78,13 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa {
         /// <param name="endpoint"></param>
         /// <param name="timeout"></param>
         /// <param name="service"></param>
+        /// <param name="ct"></param>
         /// <returns></returns>
         public static Task<T> ExecuteServiceAsync<T>(this IEndpointServices client,
             EndpointModel endpoint, CredentialModel elevation, TimeSpan timeout,
-            Func<Session, Task<T>> service) {
+            Func<Session, Task<T>> service, CancellationToken ct = default) {
             return client.ExecuteServiceAsync(endpoint, elevation, 0, service,
-                timeout, CancellationToken.None, _ => true);
+                timeout, _ => true, ct);
         }
 
         /// <summary>
@@ -94,11 +96,13 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa {
         /// <param name="endpoint"></param>
         /// <param name="elevation"></param>
         /// <param name="service"></param>
+        /// <param name="ct"></param>
         /// <returns></returns>
         public static Task<T> ExecuteServiceAsync<T>(this IEndpointServices client,
-            EndpointModel endpoint, CredentialModel elevation, Func<Session, Task<T>> service) {
+            EndpointModel endpoint, CredentialModel elevation, 
+            Func<Session, Task<T>> service, CancellationToken ct = default) {
             return client.ExecuteServiceAsync(endpoint, elevation, 0, service,
-                null, CancellationToken.None, _ => true);
+                null, _ => true, ct);
         }
 
         /// <summary>
@@ -114,9 +118,9 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa {
         /// <returns></returns>
         public static Task<T> ExecuteServiceAsync<T>(this IEndpointServices client,
             EndpointModel endpoint, CredentialModel elevation, int priority,
-            CancellationToken ct, Func<Session, Task<T>> service) {
-            return client.ExecuteServiceAsync(endpoint, elevation, priority, ct, service,
-                _ => true);
+            Func<Session, Task<T>> service, CancellationToken ct = default) {
+            return client.ExecuteServiceAsync(endpoint, elevation, priority, 
+                service, _ => true, ct);
         }
 
         /// <summary>
@@ -133,10 +137,10 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa {
         /// <returns></returns>
         public static Task<T> ExecuteServiceAsync<T>(this IEndpointServices client,
             EndpointModel endpoint, CredentialModel elevation, int priority,
-            CancellationToken ct, Func<Session, Task<T>> service,
-            Func<Exception, bool> handler) {
+            Func<Session, Task<T>> service, Func<Exception, bool> handler,
+            CancellationToken ct = default) {
             return client.ExecuteServiceAsync(endpoint, elevation, priority, service,
-                null, ct, handler);
+                null, handler, ct);
         }
     }
 }

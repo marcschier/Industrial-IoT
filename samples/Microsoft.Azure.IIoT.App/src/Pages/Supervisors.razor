@@ -11,6 +11,8 @@
 @using Microsoft.Azure.IIoT.App.Components.Drawer;
 @using Microsoft.Azure.IIoT.App.Components.ErrorMessage;
 @using Microsoft.Azure.IIoT.App.Components.Loader;
+@using Microsoft.Azure.IIoT.Platform.Directory.Api;
+@using Microsoft.Azure.IIoT.Platform.Directory.Api.Models;
 @using Microsoft.Azure.IIoT.Platform.Registry.Api;
 @using Microsoft.Azure.IIoT.Platform.Registry.Api.Models;
 @using Microsoft.Azure.IIoT.App.Common;
@@ -19,6 +21,8 @@
 
 @inject NavigationManager NavigationManager
 @inject Registry RegistryHelper
+@inject IDirectoryServiceApi DirectoryService
+@inject DirectoryServiceEvents DirectoryServiceEvents
 @inject IRegistryServiceApi RegistryService
 @inject RegistryServiceEvents RegistryServiceEvents
 @inject UICommon CommonHelper
@@ -34,7 +38,6 @@
             <th class="width-medium">Connection Status</th>
             <th class="width-medium">Sync Status</th>
             <th class="width-small">Version</th>
-            <th></th>
         </tr>
     </thead>
     <tbody>
@@ -43,7 +46,7 @@
             <tr>
                 <td class="hover-text width-large">
                     <div>
-                        <a href='endpoints/@RegistryHelper.PathAll/@RegistryHelper.PathAll/@supervisor.Id'>
+                        <a href='endpoints/@Registry.PathAll/@Registry.PathAll/@supervisor.Id'>
                             @supervisor.Id
                         </a>
                     </div>
@@ -74,9 +77,6 @@
                 <td>
                     <a class="ellipsis-space" href="javascript: void(0)" @onclick="@(() => OpenDrawer(supervisor.Id))">More Data</a>
                 </td>
-                <td>
-                    <button @onclick="@(() => ResetSupervisorUIAsync(supervisor.Id))" class="btn btn-primary">Reset</button>
-                </td>
             </tr>
         }
     </tbody>
@@ -89,6 +89,6 @@
 
 <ErrorMessage PageError="@Items.Error" Status="@null"></ErrorMessage>
 
-<LoadMore Result=@Items IsLoading=@IsLoading LoadMoreItems=@(async() => await LoadMoreItems()) />
+<LoadMore Result=@Items IsLoading=@IsLoading LoadMoreItems=@(async() => await LoadMoreItemsAsync()) />
 
 <Spinner IsLoading=@IsLoading></Spinner>

@@ -20,7 +20,7 @@ namespace Microsoft.Azure.IIoT.Utils {
         /// <param name="offset">Offset into the array</param>
         /// <returns></returns>
         public CliOptions(string[] args, int offset = 1) {
-            options = new Dictionary<string, string>();
+            _options = new Dictionary<string, string>();
             for (var i = offset; i < args.Length;) {
                 var key = args[i];
                 if (key[0] != '-') {
@@ -28,16 +28,16 @@ namespace Microsoft.Azure.IIoT.Utils {
                 }
                 i++;
                 if (i == args.Length) {
-                    options.Add(key, "");
+                    _options.Add(key, "");
                     break;
                 }
                 var val = args[i];
                 if (val[0] == '-') {
                     // An option, so previous one is a boolean option
-                    options.Add(key, "");
+                    _options.Add(key, "");
                     continue;
                 }
-                options.Add(key, val);
+                _options.Add(key, val);
                 i++;
             }
         }
@@ -81,8 +81,8 @@ namespace Microsoft.Azure.IIoT.Utils {
         /// <param name="defaultValue"></param>
         /// <returns></returns>
         public T GetValueOrDefault<T>(string key1, string key2, T defaultValue) {
-            if (!options.TryGetValue(key1, out var value) &&
-                !options.TryGetValue(key2, out value)) {
+            if (!_options.TryGetValue(key1, out var value) &&
+                !_options.TryGetValue(key2, out value)) {
                 return defaultValue;
             }
             try {
@@ -101,8 +101,8 @@ namespace Microsoft.Azure.IIoT.Utils {
         /// <param name="key2"></param>
         /// <returns></returns>
         public T GetValue<T>(string key1, string key2) {
-            if (!options.TryGetValue(key1, out var value) &&
-                !options.TryGetValue(key2, out value)) {
+            if (!_options.TryGetValue(key1, out var value) &&
+                !_options.TryGetValue(key2, out value)) {
                 throw new ArgumentException($"Missing {key1}/{key2} option.");
             }
             try {
@@ -121,8 +121,8 @@ namespace Microsoft.Azure.IIoT.Utils {
         /// <param name="key2"></param>
         /// <returns></returns>
         public bool IsSet(string key1, string key2) {
-            if (!options.TryGetValue(key1, out var value) &&
-                !options.TryGetValue(key2, out value)) {
+            if (!_options.TryGetValue(key1, out var value) &&
+                !_options.TryGetValue(key2, out value)) {
                 return false;
             }
             if (string.IsNullOrEmpty(value)) {
@@ -146,8 +146,8 @@ namespace Microsoft.Azure.IIoT.Utils {
         /// <returns></returns>
         public T? GetValueOrDefault<T>(string key1, string key2,
             T? defaultValue) where T : struct {
-            if (!options.TryGetValue(key1, out var value) &&
-                !options.TryGetValue(key2, out value)) {
+            if (!_options.TryGetValue(key1, out var value) &&
+                !_options.TryGetValue(key2, out value)) {
                 return defaultValue;
             }
             if (typeof(T).IsEnum) {
@@ -175,8 +175,8 @@ namespace Microsoft.Azure.IIoT.Utils {
         /// <param name="key2"></param>
         /// <returns></returns>
         public bool? IsProvidedOrNull(string key1, string key2) {
-            if (!options.TryGetValue(key1, out var value) &&
-                !options.TryGetValue(key2, out value)) {
+            if (!_options.TryGetValue(key1, out var value) &&
+                !_options.TryGetValue(key2, out value)) {
                 return null;
             }
             if (string.IsNullOrEmpty(value)) {
@@ -191,6 +191,6 @@ namespace Microsoft.Azure.IIoT.Utils {
             }
         }
 
-        private readonly Dictionary<string, string> options;
+        private readonly Dictionary<string, string> _options;
     }
 }

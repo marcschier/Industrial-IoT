@@ -80,6 +80,7 @@ namespace System.Security.Cryptography.Asn1 {
         private const byte kControlMask = kClassMask | kConstructedMask;
         private const byte kTagNumberMask = 0b0001_1111;
 
+#pragma warning disable IDE1006 // Naming Styles
         internal static readonly Asn1Tag EndOfContents = new Asn1Tag(0, (int)UniversalTagNumber.EndOfContents);
         internal static readonly Asn1Tag Boolean = new Asn1Tag(0, (int)UniversalTagNumber.Boolean);
         internal static readonly Asn1Tag Integer = new Asn1Tag(0, (int)UniversalTagNumber.Integer);
@@ -94,6 +95,7 @@ namespace System.Security.Cryptography.Asn1 {
         internal static readonly Asn1Tag SetOf = new Asn1Tag(kConstructedMask, (int)UniversalTagNumber.SetOf);
         internal static readonly Asn1Tag UtcTime = new Asn1Tag(0, (int)UniversalTagNumber.UtcTime);
         internal static readonly Asn1Tag GeneralizedTime = new Asn1Tag(0, (int)UniversalTagNumber.GeneralizedTime);
+#pragma warning restore IDE1006 // Naming Styles
 
         private readonly byte _controlFlags;
 

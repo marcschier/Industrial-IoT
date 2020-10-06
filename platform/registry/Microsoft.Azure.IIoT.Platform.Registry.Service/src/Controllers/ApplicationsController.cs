@@ -35,7 +35,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service.Controllers {
         /// <param name="applications"></param>
         /// <param name="onboarding"></param>
         public ApplicationsController(IApplicationRegistry applications,
-            IOnboardingServices onboarding) {
+            IDiscoveryServices onboarding) {
             _applications = applications;
             _onboarding = onboarding;
         }
@@ -206,29 +206,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service.Controllers {
         }
 
         /// <summary>
-        /// Get list of sites
-        /// </summary>
-        /// <remarks>
-        /// List all sites applications are registered in.
-        /// </remarks>
-        /// <param name="continuationToken">Optional Continuation
-        /// token</param>
-        /// <param name="pageSize">Optional number of results to
-        /// return</param>
-        /// <returns>Sites</returns>
-        [HttpGet("sites")]
-        [AutoRestExtension(NextPageLinkName = "continuationToken")]
-        public async Task<ApplicationSiteListApiModel> GetListOfSitesAsync(
-            [FromQuery] string continuationToken, [FromQuery] int? pageSize) {
-
-            continuationToken = Request.GetContinuationToken(continuationToken);
-            pageSize = Request.GetPageSize(pageSize);
-            var result = await _applications.ListSitesAsync(
-                continuationToken, pageSize).ConfigureAwait(false);
-            return result.ToApiModel();
-        }
-
-        /// <summary>
         /// Get list of applications
         /// </summary>
         /// <remarks>
@@ -315,6 +292,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service.Controllers {
         }
 
         private readonly IApplicationRegistry _applications;
-        private readonly IOnboardingServices _onboarding;
+        private readonly IDiscoveryServices _onboarding;
     }
 }

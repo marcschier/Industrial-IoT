@@ -224,9 +224,6 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Storage.Services {
             if (filter?.Priority != null) {
                 query = query.Where(x => x.Priority == filter.Priority.Value);
             }
-            if (filter?.SiteId != null) {
-                query = query.Where(x => x.SiteId == filter.SiteId);
-            }
             if (filter?.State != null) {
                 query = query.Where(x => x.LastState == filter.State.Value);
             }

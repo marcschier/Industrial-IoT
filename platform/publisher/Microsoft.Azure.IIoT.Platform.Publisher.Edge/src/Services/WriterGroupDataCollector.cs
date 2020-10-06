@@ -333,7 +333,9 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Services {
             /// <param name="sender"></param>
             /// <param name="e"></param>
             private void MetadataTimerElapsed(object sender, System.Timers.ElapsedEventArgs e) {
-                // Send(_metaData)
+                if(_metaData != null) {
+                    // send
+                }
             }
 
             /// <summary>

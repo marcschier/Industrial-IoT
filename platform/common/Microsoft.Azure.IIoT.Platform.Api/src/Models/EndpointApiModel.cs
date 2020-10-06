@@ -25,7 +25,7 @@ namespace Microsoft.Azure.IIoT.Platform.Core.Api.Models {
         /// </summary>
         [DataMember(Name = "alternativeUrls", Order = 1,
             EmitDefaultValue = false)]
-        public /*IReadOnlySet*/ IReadOnlyCollection<string> AlternativeUrls { get; set; }
+        public IReadOnlySet<string> AlternativeUrls { get; set; }
 
         /// <summary>
         /// Security Mode to use for communication.

@@ -11,18 +11,18 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
     public enum EntityActivationState {
 
         /// <summary>
-        /// Entity twin is deactivated
+        /// Activation state is unknown
+        /// </summary>
+        Unknown,
+
+        /// <summary>
+        /// Entity is deactivated
         /// </summary>
         Deactivated,
 
         /// <summary>
-        /// Entity twin is activated but not connected
+        /// Entity is activated
         /// </summary>
         Activated,
-
-        /// <summary>
-        /// Entity twin is activated and connected to hub
-        /// </summary>
-        ActivatedAndConnected
     }
 }

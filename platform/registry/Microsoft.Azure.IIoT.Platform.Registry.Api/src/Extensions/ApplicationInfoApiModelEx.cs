@@ -38,7 +38,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Models {
             application.LocalizedNames = update.LocalizedNames;
             application.NotSeenSince = update.NotSeenSince;
             application.ProductUri = update.ProductUri;
-            application.SiteId = update.SiteId;
             application.Updated = update.Updated;
             return application;
         }

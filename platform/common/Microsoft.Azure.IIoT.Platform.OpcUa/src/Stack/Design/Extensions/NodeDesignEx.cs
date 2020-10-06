@@ -155,7 +155,7 @@ namespace Opc.Ua.Design.Schema {
             if (string.IsNullOrEmpty(parentId)) {
                 return childName;
             }
-            return $"{parentId}{NodeDesign.kPathChar}{childName}";
+            return $"{parentId}{NodeDesign.PathChar}{childName}";
         }
 
         /// <summary>
@@ -211,7 +211,7 @@ namespace Opc.Ua.Design.Schema {
                 if (parent.Hierarchy != null) {
                     var browsePath = node.SymbolicId.Name;
                     if (browsePath.StartsWith(parent.SymbolicId.Name, StringComparison.Ordinal) &&
-                        browsePath[parent.SymbolicId.Name.Length] == NodeDesign.kPathChar[0]) {
+                        browsePath[parent.SymbolicId.Name.Length] == NodeDesign.PathChar) {
                         // Get relative browse path from parent
                         browsePath = browsePath[(parent.SymbolicId.Name.Length + 1)..];
                     }

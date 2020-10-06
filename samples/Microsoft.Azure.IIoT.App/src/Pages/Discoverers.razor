@@ -13,6 +13,8 @@
 @using Microsoft.Azure.IIoT.App.Components.Loader;
 @using Microsoft.Azure.IIoT.App.Components.ErrorMessage;
 @using Microsoft.AspNetCore.Components;
+@using Microsoft.Azure.IIoT.Platform.Directory.Api;
+@using Microsoft.Azure.IIoT.Platform.Directory.Api.Models;
 @using Microsoft.Azure.IIoT.Platform.Registry.Api;
 @using Microsoft.Azure.IIoT.Platform.Registry.Api.Models;
 @using Microsoft.Azure.IIoT.App.Common;
@@ -21,6 +23,8 @@
 @inject NavigationManager NavigationManager
 @inject Registry RegistryHelper
 @inject IRegistryServiceApi RegistryService
+@inject IDirectoryServiceApi DirectoryService
+@inject DirectoryServiceEvents DirectoryServiceEvents
 @inject RegistryServiceEvents RegistryServiceEvents
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject UICommon CommonHelper
@@ -61,7 +65,7 @@
                 @if (discoverer.HasApplication == true) {
                     <td class="hover-text width-large">
                         <div>
-                            <a href='endpoints/@discoverer.DiscovererModel.Id/@RegistryHelper.PathAll/@RegistryHelper.PathAll'>
+                            <a href='endpoints/@discoverer.DiscovererModel.Id/@Registry.PathAll/@Registry.PathAll'>
                                 @discoverer.DiscovererModel.Id
                             </a>
                         </div>
@@ -154,6 +158,6 @@
     <_DrawerDiscoverer DiscovererData="@DiscovererData" Onclick="((DiscovererData) => ClickHandlerAsync((DiscovererInfo)DiscovererData))"></_DrawerDiscoverer>
 </Drawer>
 
-<LoadMore Result=@Items IsLoading=@IsLoading LoadMoreItems=@(async() => await LoadMoreItems()) />
+<LoadMore Result=@Items IsLoading=@IsLoading LoadMoreItems=@(async() => await LoadMoreItemsAsync()) />
 
 <Spinner IsLoading=@IsLoading></Spinner>

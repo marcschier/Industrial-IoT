@@ -356,8 +356,6 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Tests {
                 .AsImplementedInterfaces();
             builder.RegisterType<TwinModuleCertificateClient>()
                 .AsImplementedInterfaces();
-            builder.RegisterType<TwinModuleDiagnosticsClient>()
-                .AsImplementedInterfaces();
             builder.RegisterType<DiscovererModuleClient>()
                 .AsImplementedInterfaces();
             builder.RegisterType<VariantEncoderFactory>()

@@ -40,7 +40,6 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Storage.Services {
                 Priority = model.Priority,
                 PublishingOffset = model.MessageSettings?.PublishingOffset,
                 SamplingOffset = model.MessageSettings?.SamplingOffset,
-                SiteId = model.SiteId,
                 Updated = model.Updated?.Time ?? DateTime.UtcNow,
                 UpdatedAuditId = model.Updated?.AuthorityId,
                 Created = model.Created?.Time ?? DateTime.UtcNow,
@@ -73,7 +72,6 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Storage.Services {
                 Schema = document.Schema,
                 Name = document.Name,
                 Priority = document.Priority,
-                SiteId = document.SiteId,
                 MessageSettings = new WriterGroupMessageSettingsModel {
                     DataSetOrdering = document.DataSetOrdering,
                     GroupVersion = document.GroupVersion,

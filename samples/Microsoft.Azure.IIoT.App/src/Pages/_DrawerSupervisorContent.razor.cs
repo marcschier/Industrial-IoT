@@ -8,11 +8,13 @@ namespace Microsoft.Azure.IIoT.App.Pages {
     using Microsoft.AspNetCore.Components;
     using Microsoft.Azure.IIoT.Platform.Registry.Api.Models;
 
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+#pragma warning disable IDE1006 // Naming Styles
     public partial class _DrawerSupervisorContent {
+#pragma warning restore IDE1006 // Naming Styles
+#pragma warning restore IDE0079 // Remove unnecessary suppression
         [Parameter]
         public string SupervisorId { get; set; }
-
-        public SupervisorStatusApiModel SupervisorStatus { get; set; }
 
         public bool IsLoading { get; set; }
 
@@ -27,12 +29,12 @@ namespace Microsoft.Azure.IIoT.App.Pages {
         /// OnAfterRenderAsync
         /// </summary>
         /// <param name="firstRender"></param>
-        protected override async Task OnAfterRenderAsync(bool firstRender) {
+        protected override Task OnAfterRenderAsync(bool firstRender) {
             if (firstRender) {
-                SupervisorStatus = await RegistryHelper.GetSupervisorStatusAsync(SupervisorId).ConfigureAwait(false);
                 IsLoading = false;
                 StateHasChanged();
             }
+            return Task.CompletedTask;
         }
     }
 }

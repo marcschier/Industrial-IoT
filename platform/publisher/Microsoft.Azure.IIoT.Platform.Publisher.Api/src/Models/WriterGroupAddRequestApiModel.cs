@@ -29,12 +29,6 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api.Models {
         public byte? Priority { get; set; }
 
         /// <summary>
-        /// Site id this writer group applies to (mandatory)
-        /// </summary>
-        [DataMember(Name = "siteId", Order = 2)]
-        public string SiteId { get; set; }
-
-        /// <summary>
         /// Network message encoding to generate (publisher extension)
         /// </summary>
         [DataMember(Name = "encoding", Order = 3,

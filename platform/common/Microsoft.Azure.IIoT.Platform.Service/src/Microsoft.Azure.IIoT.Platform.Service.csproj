@@ -21,12 +21,11 @@
     <ProjectReference Include="..\..\..\..\platform\common\Microsoft.Azure.IIoT.Platform.Api.Events.Service\src\Microsoft.Azure.IIoT.Platform.Api.Events.Service.csproj" />
     <ProjectReference Include="..\..\..\..\platform\subscriber\Microsoft.Azure.IIoT.Platform.Subscriber.Cdm.Service\src\Microsoft.Azure.IIoT.Platform.Subscriber.Cdm.Service.csproj" />
     <ProjectReference Include="..\..\..\..\platform\subscriber\Microsoft.Azure.IIoT.Platform.Subscriber.Service\src\Microsoft.Azure.IIoT.Platform.Subscriber.Service.csproj" />
-    <ProjectReference Include="..\..\..\..\platform\discovery\Microsoft.Azure.IIoT.Platform.Discovery.Service\src\Microsoft.Azure.IIoT.Platform.Discovery.Service.csproj" />
+    <ProjectReference Include="..\..\..\..\platform\registry\Microsoft.Azure.IIoT.Platform.Discovery.Service\src\Microsoft.Azure.IIoT.Platform.Discovery.Service.csproj" />
     <ProjectReference Include="..\..\..\..\platform\registry\Microsoft.Azure.IIoT.Platform.Registry.Service\src\Microsoft.Azure.IIoT.Platform.Registry.Service.csproj" />
-    <ProjectReference Include="..\..\..\..\platform\registry\Microsoft.Azure.IIoT.Platform.Registry.Sync.Service\src\Microsoft.Azure.IIoT.Platform.Registry.Sync.Service.csproj" />
     <ProjectReference Include="..\..\..\..\platform\publisher\Microsoft.Azure.IIoT.Platform.Publisher.Service\src\Microsoft.Azure.IIoT.Platform.Publisher.Service.csproj" />
-    <ProjectReference Include="..\..\..\twin\Microsoft.Azure.IIoT.Platform.Twin.Ua.Service\src\Microsoft.Azure.IIoT.Platform.Twin.Ua.Service.csproj" />
-    <ProjectReference Include="..\..\..\twin\Microsoft.Azure.IIoT.Platform.Twin.Service\src\Microsoft.Azure.IIoT.Platform.Twin.Service.csproj" />
+    <ProjectReference Include="..\..\..\..\platform\twin\Microsoft.Azure.IIoT.Platform.Twin.Ua.Service\src\Microsoft.Azure.IIoT.Platform.Twin.Ua.Service.csproj" />
+    <ProjectReference Include="..\..\..\..\platform\twin\Microsoft.Azure.IIoT.Platform.Twin.Service\src\Microsoft.Azure.IIoT.Platform.Twin.Service.csproj" />
     <ProjectReference Include="..\..\..\..\platform\vault\Microsoft.Azure.IIoT.Platform.Vault.Service\src\Microsoft.Azure.IIoT.Platform.Vault.Service.csproj" />
   </ItemGroup>
   <ItemGroup>

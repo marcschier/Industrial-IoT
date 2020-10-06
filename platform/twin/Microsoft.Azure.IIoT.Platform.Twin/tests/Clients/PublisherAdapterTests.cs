@@ -440,7 +440,6 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
                     .Returns(Task.FromResult(new EndpointInfoModel {
                             EndpointUrl = "fakeurl",
                             Id = "endpoint1",
-                            SiteId = "fakesite",
                             Endpoint = new EndpointModel {
                                 Url = "fakeurl"
                             }

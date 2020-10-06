@@ -21,7 +21,7 @@ namespace Microsoft.Azure.IIoT.Hosting.Services {
 
             var harness = new ModuleHostHarness();
             var controller = new TestController1();
-            await harness.RunTestAsync(controller.YieldReturn(),
+            await ModuleHostHarness.RunTestAsync(controller.YieldReturn(),
                 async (deviceId, moduleId, services) => {
                     var test = _serializer.FromObject("test4");
                     // Act
@@ -42,7 +42,7 @@ namespace Microsoft.Azure.IIoT.Hosting.Services {
 
             var harness = new ModuleHostHarness();
             var controller = new TestController1();
-            await harness.RunTestAsync(controller.YieldReturn(),
+            await ModuleHostHarness.RunTestAsync(controller.YieldReturn(),
                 async (deviceId, moduleId, services) => {
                     var test = _serializer.FromObject("test");
                     var test2 = _serializer.FromObject("test2");
@@ -68,7 +68,7 @@ namespace Microsoft.Azure.IIoT.Hosting.Services {
 
             var harness = new ModuleHostHarness();
             var controller = new TestController1();
-            await harness.RunTestAsync(controller.YieldReturn(),
+            await ModuleHostHarness.RunTestAsync(controller.YieldReturn(),
                 async (deviceId, moduleId, services) => {
                     var test = _serializer.FromObject("test");
                     var test2 = _serializer.FromObject("test2");
@@ -100,7 +100,7 @@ namespace Microsoft.Azure.IIoT.Hosting.Services {
 
             var harness = new ModuleHostHarness();
             var controller = new TestController2();
-            await harness.RunTestAsync(controller.YieldReturn(),
+            await ModuleHostHarness.RunTestAsync(controller.YieldReturn(),
                 async (deviceId, moduleId, services) => {
                     var expected = new Test {
                         Item1 = "test",
@@ -128,7 +128,7 @@ namespace Microsoft.Azure.IIoT.Hosting.Services {
 
             var harness = new ModuleHostHarness();
             var controller = new TestController1();
-            await harness.RunTestAsync(controller.YieldReturn(),
+            await ModuleHostHarness.RunTestAsync(controller.YieldReturn(),
                 async (deviceId, moduleId, services) => {
                     // Act
                     var hub = services.Resolve<IDeviceTwinServices>();
@@ -147,7 +147,7 @@ namespace Microsoft.Azure.IIoT.Hosting.Services {
 
             var harness = new ModuleHostHarness();
             var controller = new TestController1();
-            await harness.RunTestAsync(controller.YieldReturn(),
+            await ModuleHostHarness.RunTestAsync(controller.YieldReturn(),
                 async (deviceId, moduleId, services) => {
                     var hub = services.Resolve<IDeviceTwinServices>();
                     var twin = await hub.GetAsync(deviceId, moduleId).ConfigureAwait(false);

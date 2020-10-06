@@ -366,7 +366,7 @@ namespace Opc.Ua.Models {
                 throw new ServiceResultException(StatusCodes.BadNodeClassInvalid);
             }
             SetAttribute(Attributes.NodeClass, nodeClass);
-            foreach (var attributeId in _attributeMap.GetNodeClassAttributes(NodeClass)) {
+            foreach (var attributeId in kAttributeMap.GetNodeClassAttributes(NodeClass)) {
                 if (attributeId == Attributes.NodeClass) {
                     continue; // Read already first
                 }
@@ -395,7 +395,7 @@ namespace Opc.Ua.Models {
             // Write node class as first element since we need to look it up on decode.
             AttributeMap.Encode(encoder, Attributes.NodeClass, NodeClass);
             var optional = false;
-            foreach (var attributeId in _attributeMap.GetNodeClassAttributes(NodeClass)) {
+            foreach (var attributeId in kAttributeMap.GetNodeClassAttributes(NodeClass)) {
                 if (attributeId == Attributes.NodeClass) {
                     continue; // Read already first
                 }
@@ -404,7 +404,7 @@ namespace Opc.Ua.Models {
                     value = result.WrappedValue.Value;
                 }
                 if (value == null) {
-                    value = _attributeMap.GetDefault(NodeClass, attributeId, ref optional);
+                    value = kAttributeMap.GetDefault(NodeClass, attributeId, ref optional);
                 }
                 AttributeMap.Encode(encoder, attributeId, value);
             }
@@ -428,9 +428,9 @@ namespace Opc.Ua.Models {
                 return true;
             }
             var optional = false;
-            var attributes = _attributeMap.GetNodeClassAttributes(NodeClass);
+            var attributes = kAttributeMap.GetNodeClassAttributes(NodeClass);
             foreach (var attributeId in attributes) {
-                var defaultObject = _attributeMap.GetDefault(
+                var defaultObject = kAttributeMap.GetDefault(
                     NodeClass, attributeId, ref optional);
                 object o1 = null;
                 object o2 = null;
@@ -458,7 +458,7 @@ namespace Opc.Ua.Models {
                 return default;
             }
             var optional = false;
-            var defaultValue = _attributeMap.GetDefault(nodeClass, attribute, ref optional);
+            var defaultValue = kAttributeMap.GetDefault(nodeClass, attribute, ref optional);
             return (T)defaultValue;
         }
 
@@ -526,6 +526,6 @@ namespace Opc.Ua.Models {
         /// <summary>Attributes to use in derived classes</summary>
         protected SortedDictionary<uint, DataValue> _attributes;
 #pragma warning restore CA1051 // Do not declare visible instance fields
-        private static readonly AttributeMap _attributeMap = new AttributeMap();
+        private static readonly AttributeMap kAttributeMap = new AttributeMap();
     }
 }

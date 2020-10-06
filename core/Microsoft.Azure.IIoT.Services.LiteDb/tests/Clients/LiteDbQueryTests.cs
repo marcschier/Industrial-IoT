@@ -880,7 +880,7 @@ namespace Microsoft.Azure.IIoT.Services.LiteDb.Clients {
 
         [SkippableFact]
         public async Task QueryWithDistinct1Async() {
-            using (var container = await _fixture.GetContainerAsync().ConfigureAwait(false)) {
+            using (var container = await LiteDbClientFixture.GetContainerAsync().ConfigureAwait(false)) {
                 Skip.If(container == null);
                 var documents = container.Container;
 
@@ -927,7 +927,7 @@ namespace Microsoft.Azure.IIoT.Services.LiteDb.Clients {
 
         [SkippableFact]
         public async Task QueryWithDistinct2Async() {
-            using (var container = await _fixture.GetContainerAsync().ConfigureAwait(false)) {
+            using (var container = await LiteDbClientFixture.GetContainerAsync().ConfigureAwait(false)) {
                 Skip.If(container == null);
                 var documents = container.Container;
 
@@ -1008,7 +1008,7 @@ namespace Microsoft.Azure.IIoT.Services.LiteDb.Clients {
 
         [SkippableFact]
         public async Task QueryWithSelectAndOrderByAsync() {
-            using (var container = await _fixture.GetContainerAsync().ConfigureAwait(false)) {
+            using (var container = await LiteDbClientFixture.GetContainerAsync().ConfigureAwait(false)) {
                 Skip.If(container == null);
                 var documents = container.Container;
 
@@ -1099,7 +1099,7 @@ namespace Microsoft.Azure.IIoT.Services.LiteDb.Clients {
 
         [SkippableFact]
         public async Task QueryContinueTest1Async() {
-            using (var container = await _fixture.GetContainerAsync().ConfigureAwait(false)) {
+            using (var container = await LiteDbClientFixture.GetContainerAsync().ConfigureAwait(false)) {
                 Skip.If(container == null);
                 var documents = container.Container;
 
@@ -1141,7 +1141,7 @@ namespace Microsoft.Azure.IIoT.Services.LiteDb.Clients {
 
         [SkippableFact]
         public async Task QueryContinueTest2Async() {
-            using (var container = await _fixture.GetContainerAsync().ConfigureAwait(false)) {
+            using (var container = await LiteDbClientFixture.GetContainerAsync().ConfigureAwait(false)) {
                 Skip.If(container == null);
                 var documents = container.Container;
 
@@ -1184,7 +1184,7 @@ namespace Microsoft.Azure.IIoT.Services.LiteDb.Clients {
 
         [SkippableFact]
         public async Task QueryContinueTest3Async() {
-            using (var container = await _fixture.GetContainerAsync().ConfigureAwait(false)) {
+            using (var container = await LiteDbClientFixture.GetContainerAsync().ConfigureAwait(false)) {
                 Skip.If(container == null);
                 var documents = container.Container;
 
@@ -1217,7 +1217,7 @@ namespace Microsoft.Azure.IIoT.Services.LiteDb.Clients {
 
         [SkippableFact]
         public async Task QueryContinueTest4Async() {
-            using (var container = await _fixture.GetContainerAsync().ConfigureAwait(false)) {
+            using (var container = await LiteDbClientFixture.GetContainerAsync().ConfigureAwait(false)) {
                 Skip.If(container == null);
                 var documents = container.Container;
 

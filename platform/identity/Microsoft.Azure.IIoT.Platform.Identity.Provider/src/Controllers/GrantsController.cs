@@ -49,7 +49,9 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Provider.Controllers {
         /// Show list of grants
         /// </summary>
         [HttpGet]
+#pragma warning disable IDE1006 // Naming Styles
         public async Task<IActionResult> Index() {
+#pragma warning restore IDE1006 // Naming Styles
             return View("Index", await BuildViewModelAsync());
         }
 
@@ -58,7 +60,9 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Provider.Controllers {
         /// </summary>
         [HttpPost]
         [ValidateAntiForgeryToken]
+#pragma warning disable IDE1006 // Naming Styles
         public async Task<IActionResult> Revoke(string clientId) {
+#pragma warning restore IDE1006 // Naming Styles
             await _interaction.RevokeUserConsentAsync(clientId);
             await _events.RaiseAsync(new GrantsRevokedEvent(User.GetSubjectId(), clientId));
 

@@ -47,14 +47,14 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Models {
         /// </summary>
         [DataMember(Name = "capabilities", Order = 4,
             EmitDefaultValue = false)]
-        public /*IReadOnlySet*/ IReadOnlyCollection<string> Capabilities { get; set; }
+        public IReadOnlySet<string> Capabilities { get; set; }
 
         /// <summary>
         /// Discovery urls of the application
         /// </summary>
         [DataMember(Name = "discoveryUrls", Order = 5,
             EmitDefaultValue = false)]
-        public /*IReadOnlySet*/ IReadOnlyCollection<string> DiscoveryUrls { get; set; }
+        public IReadOnlySet<string> DiscoveryUrls { get; set; }
 
         /// <summary>
         /// Discovery profile uri

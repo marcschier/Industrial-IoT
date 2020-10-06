@@ -5,6 +5,7 @@
 
 namespace Microsoft.Azure.IIoT.Platform.Registry.Storage.Default {
     using Microsoft.Azure.IIoT.Platform.Registry.Models;
+    using Microsoft.Azure.IIoT.Platform.Core.Models;
     using Microsoft.Azure.IIoT.Exceptions;
     using Microsoft.Azure.IIoT.Storage;
     using Microsoft.Azure.IIoT.Hub;
@@ -48,7 +49,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Storage.Default {
             var presetId = endpoint.Id;
             while (true) {
                 if (!string.IsNullOrEmpty(endpoint.Id)) {
-                    var document = await _documents.FindAsync<EndpointRegistration>(
+                    var document = await _documents.FindAsync<EndpointDocument>(
                         endpoint.Id, ct: ct).ConfigureAwait(false);
                     if (document != null) {
                         throw new ResourceConflictException(
@@ -60,7 +61,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Storage.Default {
                 }
                 try {
                     var result = await _documents.AddAsync(
-                        endpoint.ToEndpointRegistration(_serializer), ct: ct).ConfigureAwait(false);
+                        endpoint.ToDocumentModel(_serializer), ct: ct).ConfigureAwait(false);
                     return result.Value.ToServiceModel(result.Etag);
                 }
                 catch (ResourceConflictException) {
@@ -81,14 +82,15 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Storage.Default {
                 throw new ArgumentNullException(nameof(endpointId));
             }
             while (true) {
-                var document = await _documents.FindAsync<EndpointRegistration>(endpointId, ct: ct).ConfigureAwait(false);
+                var document = await _documents.FindAsync<EndpointDocument>(
+                    endpointId, ct: ct).ConfigureAwait(false);
                 var updateOrAdd = document?.Value.ToServiceModel(document.Etag);
                 var endpoint = await predicate(updateOrAdd).ConfigureAwait(false);
                 if (endpoint == null) {
                     return updateOrAdd;
                 }
                 endpoint.Id = endpointId;
-                var updated = endpoint.ToEndpointRegistration(_serializer);
+                var updated = endpoint.ToDocumentModel(_serializer);
                 if (document == null) {
                     try {
                         // Add document
@@ -102,7 +104,8 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Storage.Default {
                 }
                 // Try replacing
                 try {
-                    var result = await _documents.ReplaceAsync(document, updated, ct: ct).ConfigureAwait(false);
+                    var result = await _documents.ReplaceAsync(document,
+                        updated, ct: ct).ConfigureAwait(false);
                     return result.Value.ToServiceModel(result.Etag);
                 }
                 catch (ResourceOutOfDateException) {
@@ -119,7 +122,8 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Storage.Default {
                 throw new ArgumentNullException(nameof(endpointId));
             }
             while (true) {
-                var document = await _documents.FindAsync<EndpointRegistration>(endpointId, ct: ct).ConfigureAwait(false);
+                var document = await _documents.FindAsync<EndpointDocument>(
+                    endpointId, ct: ct).ConfigureAwait(false);
                 if (document == null) {
                     throw new ResourceNotFoundException("Endpoint not found");
                 }
@@ -128,9 +132,10 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Storage.Default {
                     return endpoint;
                 }
                 endpoint.Id = endpointId;
-                var updated = endpoint.ToEndpointRegistration(_serializer);
+                var updated = endpoint.ToDocumentModel(_serializer);
                 try {
-                    var result = await _documents.ReplaceAsync(document, updated, ct: ct).ConfigureAwait(false);
+                    var result = await _documents.ReplaceAsync(document, 
+                        updated, ct: ct).ConfigureAwait(false);
                     return result.Value.ToServiceModel(result.Etag);
                 }
                 catch (ResourceOutOfDateException) {
@@ -145,7 +150,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Storage.Default {
             if (string.IsNullOrEmpty(endpointId)) {
                 throw new ArgumentNullException(nameof(endpointId));
             }
-            var document = await _documents.FindAsync<EndpointRegistration>(
+            var document = await _documents.FindAsync<EndpointDocument>(
                 endpointId, ct: ct).ConfigureAwait(false);
             if (document == null) {
                 return null;
@@ -157,8 +162,8 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Storage.Default {
         public async Task<EndpointInfoListModel> QueryAsync(EndpointInfoQueryModel query,
             string continuationToken, int? maxResults, CancellationToken ct) {
             var results = continuationToken != null ?
-                _documents.ContinueQuery<EndpointRegistration>(continuationToken, maxResults) :
-                CreateQuery(_documents.CreateQuery<EndpointRegistration>(maxResults), query);
+                _documents.ContinueQuery<EndpointDocument>(continuationToken, maxResults) :
+                CreateQuery(_documents.CreateQuery<EndpointDocument>(maxResults), query);
             if (!results.HasMore()) {
                 return new EndpointInfoListModel {
                     Items = new List<EndpointInfoModel>()
@@ -178,7 +183,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Storage.Default {
                 throw new ArgumentNullException(nameof(endpointId));
             }
             while (true) {
-                var document = await _documents.FindAsync<EndpointRegistration>(endpointId,
+                var document = await _documents.FindAsync<EndpointDocument>(endpointId,
                     ct: ct).ConfigureAwait(false);
                 if (document == null) {
                     return null;
@@ -206,7 +211,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Storage.Default {
             if (string.IsNullOrEmpty(generationId)) {
                 throw new ArgumentNullException(nameof(generationId));
             }
-            await _documents.DeleteAsync<EndpointRegistration>(
+            await _documents.DeleteAsync<EndpointDocument>(
                 endpointId, null, generationId, ct).ConfigureAwait(false);
         }
 
@@ -216,8 +221,8 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Storage.Default {
         /// <param name="filter"></param>
         /// <param name="query"></param>
         /// <returns></returns>
-        private static IResultFeed<IDocumentInfo<EndpointRegistration>> CreateQuery(
-            IQuery<EndpointRegistration> query, EndpointInfoQueryModel filter) {
+        private static IResultFeed<IDocumentInfo<EndpointDocument>> CreateQuery(
+            IQuery<EndpointDocument> query, EndpointInfoQueryModel filter) {
             if (filter != null) {
                 if (!(filter?.IncludeNotSeenSince ?? false)) {
                     // Scope to non deleted twins
@@ -238,10 +243,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Storage.Default {
                 if (filter?.DiscovererId != null) {
                     // If discoverer provided, include it in search
                     query = query.Where(x => x.DiscovererId == filter.DiscovererId);
-                }
-                if (filter?.SiteOrGatewayId != null) {
-                    // If site or gateway provided, include it in search
-                    query = query.Where(x => x.SiteOrGatewayId == filter.SiteOrGatewayId);
                 }
                 if (filter?.Certificate != null) {
                     // If cert thumbprint provided, include it in search
@@ -266,23 +267,23 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Storage.Default {
                 if (filter?.Activated != null) {
                     // If flag provided, include it in search
                     if (filter.Activated.Value) {
-                        query = query.Where(x => x.Activated == true);
+                        query = query.Where(x => x.ActivationState == EntityActivationState.Activated);
                     }
                     else {
-                        query = query.Where(x => x.Activated != true);
+                        query = query.Where(x => x.ActivationState != EntityActivationState.Activated);
                     }
                 }
                 if (filter?.Connected != null) {
                     // If flag provided, include it in search
                     if (filter.Connected.Value) {
-                        query = query.Where(x => x.Connected == true);
+                        query = query.Where(x => x.State == null);
                     }
                     else {
-                        query = query.Where(x => x.Connected != true);
+                        query = query.Where(x => x.State != null);
                     }
                 }
             }
-            query = query.Where(x => x.DeviceType == IdentityType.Endpoint);
+            query = query.Where(x => x.ClassType == IdentityType.Endpoint);
             return query.GetResults();
         }
 

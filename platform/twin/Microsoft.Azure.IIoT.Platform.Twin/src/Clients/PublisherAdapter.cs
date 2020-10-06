@@ -45,10 +45,10 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Clients {
                 throw new ArgumentNullException(nameof(request));
             }
             if (request.Item == null) {
-                throw new ArgumentNullException(nameof(request.Item));
+                throw new ArgumentException("Missing item", nameof(request));
             }
             if (string.IsNullOrEmpty(request.Item.NodeId)) {
-                throw new ArgumentNullException(nameof(request.Item.NodeId));
+                throw new ArgumentException("Missing node id", nameof(request));
             }
             var result = await _dataSets.AddVariablesToDefaultDataSetWriterAsync(endpointId,
                 new DataSetAddVariableBatchRequestModel {
@@ -141,7 +141,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Clients {
                 throw new ArgumentNullException(nameof(request));
             }
             if (string.IsNullOrEmpty(request.NodeId)) {
-                throw new ArgumentNullException(nameof(request.NodeId));
+                throw new ArgumentException("Missing node id", nameof(request));
             }
 
             var result = await _dataSets.RemoveVariablesFromDataSetWriterAsync(endpointId,

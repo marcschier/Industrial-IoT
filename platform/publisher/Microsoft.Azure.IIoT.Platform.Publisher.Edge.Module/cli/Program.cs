@@ -317,7 +317,7 @@ Options:
             /// </summary>
             public ServerWrapper(ILogger logger) {
                 _cts = new CancellationTokenSource();
-                _server = RunSampleServerAsync(_cts.Token, logger);
+                _server = RunSampleServerAsync(logger, _cts.Token);
                 EndpointUrl = "opc.tcp://" + Utils.GetHostName() +
                     ":51210/UA/SampleServer";
             }
@@ -332,7 +332,7 @@ Options:
             /// <summary>
             /// Run server until cancelled
             /// </summary>
-            private static async Task RunSampleServerAsync(CancellationToken ct, ILogger logger) {
+            private static async Task RunSampleServerAsync(ILogger logger, CancellationToken ct) {
                 var tcs = new TaskCompletionSource<bool>();
                 ct.Register(() => tcs.TrySetResult(true));
                 using (var server = new ServerConsoleHost(new ServerFactory(logger) {

@@ -65,11 +65,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
         /// Supervisor id to filter with
         /// </summary>
         public string SupervisorId { get; set; }
-
-        /// <summary>
-        /// Site or gateway id to filter with
-        /// </summary>
-        public string SiteOrGatewayId { get; set; }
     }
 }
 

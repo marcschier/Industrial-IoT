@@ -158,12 +158,12 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge {
             try {
                 // Read node with value
                 var response = await _client.ExecuteServiceAsync(_endpoint, _elevation,
-                    _priority, ct, session => {
+                    _priority, session => {
                         _encoder.Context.UpdateFromSession(session);
                         return session.BrowseAsync(_diagnostics.ToStackModel(), null,
                             nodeModel.NodeId, 0u, Opc.Ua.BrowseDirection.Both,
                             ReferenceTypeIds.References, true, 0u);
-                    }).ConfigureAwait(false);
+                    }, ct).ConfigureAwait(false);
 
                 SessionClientEx.Validate(response.Results, response.DiagnosticInfos);
                 OperationResultEx.Validate("Browse_" + nodeModel.NodeId, Diagnostics,
@@ -178,11 +178,11 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge {
                         break;
                     }
                     response = await _client.ExecuteServiceAsync(_endpoint, _elevation,
-                    _priority, ct, session => {
+                    _priority, session => {
                         _encoder.Context.UpdateFromSession(session);
                         return session.BrowseNextAsync(_diagnostics.ToStackModel(), false,
                             new ByteStringCollection { response.Results[0].ContinuationPoint });
-                    }).ConfigureAwait(false);
+                    }, ct).ConfigureAwait(false);
                     SessionClientEx.Validate(response.Results, response.DiagnosticInfos);
                     OperationResultEx.Validate("BrowseNext_" + nodeModel.NodeId, Diagnostics,
                         response.Results.Select(r => r.StatusCode), null, false);
@@ -204,7 +204,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge {
             try {
                 // Read node with value
                 return await _client.ExecuteServiceAsync(_endpoint, _elevation,
-                    _priority, ct, async session => {
+                    _priority, async session => {
                         _encoder.Context.UpdateFromSession(session);
                         var node = await RawNodeModel.ReadAsync(session, _diagnostics.ToStackModel(),
                             nodeId, false, Diagnostics, false).ConfigureAwait(false);
@@ -222,7 +222,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge {
                              node.NodeClass == Opc.Ua.NodeClass.VariableType) &&
                              session.TypeTree.IsTypeOf(node.NodeId, VariableTypeIds.PropertyType);
                         return node.ToNodeModel(isProperty);
-                    }).ConfigureAwait(false);
+                    }, ct).ConfigureAwait(false);
             }
             catch (Exception ex) {
                 _logger.Error(ex, "Failed reading node object for node {nodeId}.", nodeId);

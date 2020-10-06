@@ -67,7 +67,6 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                 // Act
                 var result = await groups.AddWriterGroupAsync(new WriterGroupAddRequestModel {
                     Name = "Test",
-                    SiteId = "doesnotexist"
                 }).ConfigureAwait(false);
 
                 await Assert.ThrowsAsync<ArgumentException>(async () => {
@@ -112,7 +111,6 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                 // Act
                 var result1 = await groups.AddWriterGroupAsync(new WriterGroupAddRequestModel {
                     Name = "Test",
-                    SiteId = "sitefakeurl" // See below
                 }).ConfigureAwait(false);
 
                 var result2  = await service.AddDataSetWriterAsync(new DataSetWriterAddRequestModel {
@@ -159,7 +157,6 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                 Assert.NotNull(group);
                 Assert.Equal(result1.WriterGroupId, group.WriterGroupId);
                 Assert.Equal("Test", group.Name);
-                Assert.Equal("sitefakeurl", group.SiteId);
                 Assert.Single(group.DataSetWriters);
                 Assert.Collection(group.DataSetWriters, writer2 => {
                     Assert.Equal(writer.DataSetWriterId, writer2.DataSetWriterId);
@@ -176,7 +173,6 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                 Assert.Single(groupresult.WriterGroups);
                 Assert.Collection(groupresult.WriterGroups, group2 => {
                     Assert.Equal(group.WriterGroupId, group2.WriterGroupId);
-                    Assert.Equal(group.SiteId, group2.SiteId);
                     Assert.Equal(group.Name, group2.Name);
                 });
 
@@ -243,7 +239,6 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                 // Assert
                 Assert.NotNull(group);
                 Assert.Equal(writerGroupId, group.WriterGroupId);
-                Assert.Equal("sitefakeurl", group.SiteId);
                 Assert.Single(group.DataSetWriters);
                 Assert.Collection(group.DataSetWriters, writer2 => {
                     Assert.Equal(writer.DataSetWriterId, writer2.DataSetWriterId);
@@ -264,7 +259,6 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                 // Act
                 var group = await groups.AddWriterGroupAsync(new WriterGroupAddRequestModel {
                     Name = "Test",
-                    SiteId = "sitefakeurl" // See below
                 }).ConfigureAwait(false);
 
                 var writer = await service.AddDataSetWriterAsync(new DataSetWriterAddRequestModel {
@@ -331,7 +325,6 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                 // Act
                 var group = await groups.AddWriterGroupAsync(new WriterGroupAddRequestModel {
                     Name = "Test",
-                    SiteId = "sitefakeurl" // See below
                 }).ConfigureAwait(false);
 
                 var writer = await service.AddDataSetWriterAsync(new DataSetWriterAddRequestModel {
@@ -393,7 +386,6 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                 // Act
                 var group = await groups.AddWriterGroupAsync(new WriterGroupAddRequestModel {
                     Name = "Test",
-                    SiteId = "sitefakeurl" // See below
                 }).ConfigureAwait(false);
 
                 var writer = await service.AddDataSetWriterAsync(new DataSetWriterAddRequestModel {
@@ -540,7 +532,6 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                 // Act
                 var result1 = await groups.AddWriterGroupAsync(new WriterGroupAddRequestModel {
                     Name = "Test",
-                    SiteId = "sitefakeurl" // See below
                 }).ConfigureAwait(false);
 
                 await Assert.ThrowsAsync<ResourceOutOfDateException>(() =>
@@ -880,7 +871,6 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                 var group = writerGroups.SingleOrDefault();
                 Assert.NotNull(group);
                 Assert.NotNull(group.WriterGroupId);
-                Assert.Equal("sitefakeurl", group.SiteId);
                 Assert.Equal("Test", group.Name);
                 Assert.Equal(99, group.BatchSize);
 
@@ -1016,7 +1006,6 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                 Assert.NotNull(group);
                 Assert.NotNull(group.WriterGroupId);
                 Assert.Equal("WriterGroupId", group.WriterGroupId);
-                Assert.Equal("sitefakeurl", group.SiteId);
                 Assert.Equal("Test", group.Name);
                 Assert.Equal(99, group.BatchSize);
 
@@ -1154,7 +1143,6 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                 Assert.NotNull(group);
                 Assert.NotNull(group.WriterGroupId);
                 Assert.Equal("WriterGroupId", group.WriterGroupId);
-                Assert.Equal("sitefakeurl", group.SiteId);
                 Assert.Equal("Test", group.Name);
                 Assert.Equal(99, group.BatchSize);
 
@@ -1277,15 +1265,13 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                 Assert.Equal(2, writerGroups.Count);
 
                 var altId = "";
-                Assert.Collection(writerGroups.OrderBy(w => w.SiteId),
+                Assert.Collection(writerGroups.OrderBy(w => w.SecurityMode),
                     group => {
-                        Assert.Equal("sitefakeurl1", group.SiteId);
                         Assert.Equal("WriterGroupId", group.WriterGroupId);
                         Assert.Equal("Test", group.Name);
                         Assert.Equal(99, group.BatchSize);
                     },
                     group => {
-                        Assert.Equal("sitefakeurl2", group.SiteId);
                         altId = group.WriterGroupId;
                         Assert.Equal("Test", group.Name);
                         Assert.Equal(99, group.BatchSize);
@@ -1341,7 +1327,6 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                 // Act
                 var result1 = await groups.AddWriterGroupAsync(new WriterGroupAddRequestModel {
                     Name = "Test",
-                    SiteId = "sitefakeurl" // See below
                 }).ConfigureAwait(false);
 
                 var foundGroups = await groups.QueryAllWriterGroupsAsync(new WriterGroupInfoQueryModel {
@@ -1421,7 +1406,6 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
 
                 Assert.NotNull(group);
                 Assert.Equal(writerGroupId, group.WriterGroupId);
-                Assert.Equal("sitefakeurl", group.SiteId);
                 Assert.Single(group.DataSetWriters);
                 Assert.Collection(group.DataSetWriters, writer2 => {
                     Assert.Equal(writer.DataSetWriterId, writer2.DataSetWriterId);
@@ -1480,7 +1464,6 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                     .Returns(Task.FromResult(new EndpointInfoModel {
                             EndpointUrl = "fakeurl",
                             Id = "endpointfakeurl",
-                            SiteId = "sitefakeurl",
                             Endpoint = new EndpointModel {
                                 Url = "fakeurl",
                                 SecurityMode = SecurityMode.Sign
@@ -1494,7 +1477,6 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                             new EndpointInfoModel {
                                     EndpointUrl = q.Url,
                                     Id = "endpoint" + q.Url,
-                                    SiteId = "site" + q.Url,
                                     Endpoint = new EndpointModel {
                                         Url = q.Url,
                                         SecurityMode = q.SecurityMode,

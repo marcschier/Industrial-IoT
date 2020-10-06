@@ -34,7 +34,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Models {
                 Locale = model.Locale,
                 LocalizedNames = model.LocalizedNames,
                 ProductUri = model.ProductUri,
-                SiteId = model.SiteId,
                 HostAddresses = model.HostAddresses,
                 DiscovererId = model.DiscovererId,
                 DiscoveryProfileUri = model.DiscoveryProfileUri,
@@ -66,7 +65,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Models {
                 Locale = model.Locale,
                 LocalizedNames = model.LocalizedNames,
                 ProductUri = model.ProductUri,
-                SiteId = model.SiteId,
                 HostAddresses = model.HostAddresses,
                 DiscovererId = model.DiscovererId,
                 DiscoveryProfileUri = model.DiscoveryProfileUri,
@@ -168,7 +166,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Models {
                 ApplicationName = model.ApplicationName,
                 Locale = model.Locale,
                 Capability = model.Capability,
-                SiteOrGatewayId = model.SiteOrGatewayId,
                 IncludeNotSeenSince = model.IncludeNotSeenSince,
                 GatewayServerUri = model.GatewayServerUri,
                 DiscovererId = model.DiscovererId,
@@ -193,7 +190,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Models {
                 ApplicationName = model.ApplicationName,
                 Locale = model.Locale,
                 Capability = model.Capability,
-                SiteOrGatewayId = model.SiteOrGatewayId,
                 IncludeNotSeenSince = model.IncludeNotSeenSince,
                 GatewayServerUri = model.GatewayServerUri,
                 DiscovererId = model.DiscovererId,
@@ -221,7 +217,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Models {
                 ProductUri = model.ProductUri,
                 DiscoveryProfileUri = model.DiscoveryProfileUri,
                 DiscoveryUrls = model.DiscoveryUrls,
-                SiteId = model.SiteId,
                 GatewayServerUri = model.GatewayServerUri,
                 Capabilities = model.Capabilities
             };
@@ -247,7 +242,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Models {
                 ProductUri = model.ProductUri,
                 DiscoveryProfileUri = model.DiscoveryProfileUri,
                 DiscoveryUrls = model.DiscoveryUrls,
-                SiteId = model.SiteId,
                 GatewayServerUri = model.GatewayServerUri,
                 Capabilities = model.Capabilities
             };
@@ -398,155 +392,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Models {
                 Configuration = model.Configuration,
                 CredentialType = (Core.Models.CredentialType?)model.CredentialType ??
                    Core.Models.CredentialType.None
-            };
-        }
-
-        /// <summary>
-        /// Create api model
-        /// </summary>
-        /// <param name="model"></param>
-        /// <returns></returns>
-        public static DiscovererApiModel ToApiModel(
-            this DiscovererModel model) {
-            if (model == null) {
-                return null;
-            }
-            return new DiscovererApiModel {
-                Id = model.Id,
-                GenerationId = model.GenerationId,
-                LogLevel = (TraceLogLevel?)model.LogLevel,
-                RequestedMode = (DiscoveryMode?)model.RequestedMode,
-                RequestedConfig = model.RequestedConfig.ToApiModel(),
-                Discovery = (DiscoveryMode?)model.Discovery,
-                DiscoveryConfig = model.DiscoveryConfig.ToApiModel(),
-                OutOfSync = model.OutOfSync,
-                Version = model.Version,
-                Connected = model.Connected
-            };
-        }
-
-        /// <summary>
-        /// Create api model
-        /// </summary>
-        /// <param name="model"></param>
-        /// <returns></returns>
-        public static DiscovererModel ToServiceModel(
-            this DiscovererApiModel model) {
-            if (model == null) {
-                return null;
-            }
-            return new DiscovererModel {
-                Id = model.Id,
-                GenerationId = model.GenerationId,
-                LogLevel = (Registry.Models.TraceLogLevel?)model.LogLevel,
-                RequestedMode = (Registry.Models.DiscoveryMode?)model.RequestedMode,
-                RequestedConfig = model.RequestedConfig.ToServiceModel(),
-                Discovery = (Registry.Models.DiscoveryMode?)model.Discovery,
-                DiscoveryConfig = model.DiscoveryConfig.ToServiceModel(),
-                OutOfSync = model.OutOfSync,
-                Version = model.Version,
-                Connected = model.Connected
-            };
-        }
-
-        /// <summary>
-        /// Create api model
-        /// </summary>
-        /// <param name="model"></param>
-        /// <returns></returns>
-        public static DiscovererListApiModel ToApiModel(
-            this DiscovererListModel model) {
-            if (model == null) {
-                return null;
-            }
-            return new DiscovererListApiModel {
-                ContinuationToken = model.ContinuationToken,
-                Items = model.Items?
-                    .Select(s => s.ToApiModel())
-                    .ToList()
-            };
-        }
-
-        /// <summary>
-        /// Create service model
-        /// </summary>
-        /// <param name="model"></param>
-        /// <returns></returns>
-        public static DiscovererListModel ToServiceModel(
-            this DiscovererListApiModel model) {
-            if (model == null) {
-                return null;
-            }
-            return new DiscovererListModel {
-                ContinuationToken = model.ContinuationToken,
-                Items = model.Items?
-                    .Select(s => s.ToServiceModel())
-                    .ToList()
-            };
-        }
-
-        /// <summary>
-        /// Convert To api model
-        /// </summary>
-        /// <returns></returns>
-        public static DiscovererQueryApiModel ToApiModel(
-            this DiscovererQueryModel model) {
-            if (model == null) {
-                return null;
-            }
-            return new DiscovererQueryApiModel {
-                Connected = model.Connected,
-                Discovery = (DiscoveryMode?)model.Discovery
-            };
-        }
-
-        /// <summary>
-        /// Convert back to service model
-        /// </summary>
-        /// <returns></returns>
-        public static DiscovererQueryModel ToServiceModel(
-            this DiscovererQueryApiModel model) {
-            if (model == null) {
-                return null;
-            }
-            return new DiscovererQueryModel {
-                Connected = model.Connected,
-                Discovery = (Registry.Models.DiscoveryMode?)model.Discovery
-            };
-        }
-
-        /// <summary>
-        /// Create api model
-        /// </summary>
-        /// <returns></returns>
-        public static DiscovererUpdateApiModel ToApiModel(
-            this DiscovererUpdateModel model) {
-            if (model == null) {
-                return null;
-            }
-            return new DiscovererUpdateApiModel {
-                GenerationId = model.GenerationId,
-                LogLevel = (TraceLogLevel?)model.LogLevel,
-                Discovery = (DiscoveryMode?)model.Discovery,
-                DiscoveryConfig = model.DiscoveryConfig.ToApiModel()
-            };
-        }
-
-
-        /// <summary>
-        /// Convert back to service model
-        /// </summary>
-        /// <returns></returns>
-        public static DiscovererUpdateModel ToServiceModel(
-            this DiscovererUpdateApiModel model) {
-            if (model == null) {
-                return null;
-            }
-            return new DiscovererUpdateModel {
-                GenerationId = model.GenerationId,
-                LogLevel = (Registry.Models.TraceLogLevel?)model.LogLevel,
-                Discovery = (Registry.Models.DiscoveryMode?)model.Discovery,
-                DiscoveryConfig = model.DiscoveryConfig.ToServiceModel()
             };
         }
 
@@ -782,7 +627,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Models {
                     .Select(p => p.ToApiModel())
                     .ToList(),
                 SecurityLevel = model.SecurityLevel,
-                SiteId = model.SiteId,
                 DiscovererId = model.DiscovererId,
                 SupervisorId = model.SupervisorId
             };
@@ -811,7 +655,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Models {
                     .Select(p => p.ToServiceModel())
                     .ToList(),
                 SecurityLevel = model.SecurityLevel,
-                SiteId = model.SiteId,
                 DiscovererId = model.DiscovererId,
                 SupervisorId = model.SupervisorId
             };
@@ -873,7 +716,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Models {
                 SecurityMode = (Core.Api.Models.SecurityMode?)model.SecurityMode,
                 ApplicationId = model.ApplicationId,
                 DiscovererId = model.DiscovererId,
-                SiteOrGatewayId = model.SiteOrGatewayId,
                 SupervisorId = model.SupervisorId,
                 IncludeNotSeenSince = model.IncludeNotSeenSince
             };
@@ -899,246 +741,8 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Models {
                 SecurityMode = (Core.Models.SecurityMode?)model.SecurityMode,
                 ApplicationId = model.ApplicationId,
                 DiscovererId = model.DiscovererId,
-                SiteOrGatewayId = model.SiteOrGatewayId,
                 SupervisorId = model.SupervisorId,
                 IncludeNotSeenSince = model.IncludeNotSeenSince
-            };
-        }
-
-        /// <summary>
-        /// Create api model
-        /// </summary>
-        /// <param name="model"></param>
-        /// <returns></returns>
-        public static GatewayApiModel ToApiModel(
-            this GatewayModel model) {
-            if (model == null) {
-                return null;
-            }
-            return new GatewayApiModel {
-                Id = model.Id,
-                SiteId = model.SiteId,
-                Connected = model.Connected
-            };
-        }
-
-        /// <summary>
-        /// Create api model
-        /// </summary>
-        /// <param name="model"></param>
-        /// <returns></returns>
-        public static GatewayInfoApiModel ToApiModel(
-            this GatewayInfoModel model) {
-            if (model == null) {
-                return null;
-            }
-            return new GatewayInfoApiModel {
-                Gateway = model.Gateway.ToApiModel(),
-                Modules = model.Modules.ToApiModel()
-            };
-        }
-
-        /// <summary>
-        /// Create api model
-        /// </summary>
-        /// <param name="model"></param>
-        /// <returns></returns>
-        public static GatewayModulesApiModel ToApiModel(
-            this GatewayModulesModel model) {
-            if (model == null) {
-                return null;
-            }
-            return new GatewayModulesApiModel {
-                Publisher = model.Publisher.ToApiModel(),
-                Supervisor = model.Supervisor.ToApiModel(),
-                Discoverer = model.Discoverer.ToApiModel()
-            };
-        }
-
-        /// <summary>
-        /// Create api model
-        /// </summary>
-        /// <param name="model"></param>
-        /// <returns></returns>
-        public static GatewayListApiModel ToApiModel(
-            this GatewayListModel model) {
-            if (model == null) {
-                return null;
-            }
-            return new GatewayListApiModel {
-                ContinuationToken = model.ContinuationToken,
-                Items = model.Items?
-                    .Select(s => s.ToApiModel())
-                    .ToList()
-            };
-        }
-
-        /// <summary>
-        /// Convert to service model
-        /// </summary>
-        /// <param name="model"></param>
-        /// <returns></returns>
-        public static GatewayQueryModel ToServiceModel(
-            this GatewayQueryApiModel model) {
-            if (model == null) {
-                return null;
-            }
-            return new GatewayQueryModel {
-                SiteId = model.SiteId,
-                Connected = model.Connected
-            };
-        }
-
-        /// <summary>
-        /// Convert to service model
-        /// </summary>
-        /// <param name="model"></param>
-        /// <returns></returns>
-        public static GatewayUpdateModel ToServiceModel(
-            this GatewayUpdateApiModel model) {
-            if (model == null) {
-                return null;
-            }
-            return new GatewayUpdateModel {
-                SiteId = model.SiteId,
-            };
-        }
-
-        /// <summary>
-        /// Create api model
-        /// </summary>
-        /// <param name="model"></param>
-        /// <returns></returns>
-        public static PublisherApiModel ToApiModel(
-            this PublisherModel model) {
-            if (model == null) {
-                return null;
-            }
-            return new PublisherApiModel {
-                Id = model.Id,
-                GenerationId = model.GenerationId,
-                LogLevel = (TraceLogLevel?)model.LogLevel,
-                OutOfSync = model.OutOfSync,
-                Version = model.Version,
-                Connected = model.Connected
-            };
-        }
-
-        /// <summary>
-        /// Create service model
-        /// </summary>
-        /// <param name="model"></param>
-        /// <returns></returns>
-        public static PublisherModel ToServiceModel(
-            this PublisherApiModel model) {
-            if (model == null) {
-                return null;
-            }
-            return new PublisherModel {
-                Id = model.Id,
-                GenerationId = model.GenerationId,
-                LogLevel = (Registry.Models.TraceLogLevel?)model.LogLevel,
-                OutOfSync = model.OutOfSync,
-                Version = model.Version,
-                Connected = model.Connected
-            };
-        }
-
-        /// <summary>
-        /// Create api model
-        /// </summary>
-        /// <param name="model"></param>
-        /// <returns></returns>
-        public static PublisherListApiModel ToApiModel(
-            this PublisherListModel model) {
-            if (model == null) {
-                return null;
-            }
-            return new PublisherListApiModel {
-                ContinuationToken = model.ContinuationToken,
-                Items = model.Items?
-                    .Select(s => s.ToApiModel())
-                    .ToList()
-            };
-        }
-
-        /// <summary>
-        /// Create services model
-        /// </summary>
-        /// <param name="model"></param>
-        /// <returns></returns>
-        public static PublisherListModel ToServiceModel(
-            this PublisherListApiModel model) {
-            if (model == null) {
-                return null;
-            }
-            return new PublisherListModel {
-                ContinuationToken = model.ContinuationToken,
-                Items = model.Items?
-                    .Select(s => s.ToServiceModel())
-                    .ToList()
-            };
-        }
-
-        /// <summary>
-        /// Convert to api model
-        /// </summary>
-        /// <param name="model"></param>
-        /// <returns></returns>
-        public static PublisherQueryApiModel ToApiModel(
-            this PublisherQueryModel model) {
-            if (model == null) {
-                return null;
-            }
-            return new PublisherQueryApiModel {
-                Connected = model.Connected
-            };
-        }
-
-        /// <summary>
-        /// Convert to service model
-        /// </summary>
-        /// <param name="model"></param>
-        /// <returns></returns>
-        public static PublisherQueryModel ToServiceModel(
-            this PublisherQueryApiModel model) {
-            if (model == null) {
-                return null;
-            }
-            return new PublisherQueryModel {
-                Connected = model.Connected
-            };
-        }
-
-        /// <summary>
-        /// Convert to api model
-        /// </summary>
-        /// <param name="model"></param>
-        /// <returns></returns>
-        public static PublisherUpdateApiModel ToApiModel(
-            this PublisherUpdateModel model) {
-            if (model == null) {
-                return null;
-            }
-            return new PublisherUpdateApiModel {
-                GenerationId = model.GenerationId,
-                LogLevel = (TraceLogLevel?)model.LogLevel,
-            };
-        }
-
-        /// <summary>
-        /// Convert to service model
-        /// </summary>
-        /// <param name="model"></param>
-        /// <returns></returns>
-        public static PublisherUpdateModel ToServiceModel(
-            this PublisherUpdateApiModel model) {
-            if (model == null) {
-                return null;
-            }
-            return new PublisherUpdateModel {
-                GenerationId = model.GenerationId,
-                LogLevel = (Registry.Models.TraceLogLevel?)model.LogLevel,
             };
         }
 
@@ -1187,181 +791,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Models {
             return new ServerRegistrationRequestModel {
                 DiscoveryUrl = model.DiscoveryUrl,
                 Id = model.Id,
-            };
-        }
-
-        /// <summary>
-        /// Create api model
-        /// </summary>
-        /// <param name="model"></param>
-        /// <returns></returns>
-        public static SupervisorApiModel ToApiModel(
-            this SupervisorModel model) {
-            if (model == null) {
-                return null;
-            }
-            return new SupervisorApiModel {
-                Id = model.Id,
-                GenerationId = model.GenerationId,
-                LogLevel = (TraceLogLevel?)model.LogLevel,
-                OutOfSync = model.OutOfSync,
-                Version = model.Version,
-                Connected = model.Connected
-            };
-        }
-
-        /// <summary>
-        /// Create service model
-        /// </summary>
-        /// <param name="model"></param>
-        /// <returns></returns>
-        public static SupervisorModel ToServiceModel(
-            this SupervisorApiModel model) {
-            if (model == null) {
-                return null;
-            }
-            return new SupervisorModel {
-                Id = model.Id,
-                LogLevel = (Registry.Models.TraceLogLevel?)model.LogLevel,
-                OutOfSync = model.OutOfSync,
-                Version = model.Version,
-                Connected = model.Connected
-            };
-        }
-
-        /// <summary>
-        /// Create api model
-        /// </summary>
-        /// <param name="model"></param>
-        /// <returns></returns>
-        public static SupervisorListApiModel ToApiModel(
-            this SupervisorListModel model) {
-            if (model == null) {
-                return null;
-            }
-            return new SupervisorListApiModel {
-                ContinuationToken = model.ContinuationToken,
-                Items = model.Items?
-                    .Select(s => s.ToApiModel())
-                    .ToList()
-            };
-        }
-
-        /// <summary>
-        /// Create service model
-        /// </summary>
-        /// <param name="model"></param>
-        /// <returns></returns>
-        public static SupervisorListModel ToServiceModel(
-            this SupervisorListApiModel model) {
-            if (model == null) {
-                return null;
-            }
-            return new SupervisorListModel {
-                ContinuationToken = model.ContinuationToken,
-                Items = model.Items?
-                    .Select(s => s.ToServiceModel())
-                    .ToList()
-            };
-        }
-
-        /// <summary>
-        /// Convert to api model
-        /// </summary>
-        /// <param name="model"></param>
-        /// <returns></returns>
-        public static SupervisorQueryApiModel ToApiModel(
-            this SupervisorQueryModel model) {
-            if (model == null) {
-                return null;
-            }
-            return new SupervisorQueryApiModel {
-                EndpointId = model.EndpointId,
-                Connected = model.Connected
-            };
-        }
-
-        /// <summary>
-        /// Convert to service model
-        /// </summary>
-        /// <param name="model"></param>
-        /// <returns></returns>
-        public static SupervisorQueryModel ToServiceModel(
-            this SupervisorQueryApiModel model) {
-            if (model == null) {
-                return null;
-            }
-            return new SupervisorQueryModel {
-                EndpointId = model.EndpointId,
-                Connected = model.Connected
-            };
-        }
-
-        /// <summary>
-        /// Create api model
-        /// </summary>
-        /// <param name="model"></param>
-        /// <returns></returns>
-        public static SupervisorStatusApiModel ToApiModel(
-            this SupervisorStatusModel model) {
-            if (model == null) {
-                return null;
-            }
-            return new SupervisorStatusApiModel {
-                DeviceId = model.DeviceId,
-                ModuleId = model.ModuleId,
-                Entities = model.Entities?
-                    .Select(e => e.ToApiModel())
-                    .ToList()
-            };
-        }
-
-        /// <summary>
-        /// Create api model
-        /// </summary>
-        /// <param name="model"></param>
-        /// <returns></returns>
-        public static SupervisorStatusModel ToServiceModel(
-            this SupervisorStatusApiModel model) {
-            if (model == null) {
-                return null;
-            }
-            return new SupervisorStatusModel {
-                DeviceId = model.DeviceId,
-                ModuleId = model.ModuleId,
-                Entities = model.Entities?
-                    .Select(e => e.ToServiceModel())
-                    .ToList()
-            };
-        }
-
-        /// <summary>
-        /// Convert to api model
-        /// </summary>
-        /// <param name="model"></param>
-        /// <returns></returns>
-        public static SupervisorUpdateApiModel ToApiModel(
-            this SupervisorUpdateModel model) {
-            if (model == null) {
-                return null;
-            }
-            return new SupervisorUpdateApiModel {
-                LogLevel = (TraceLogLevel?)model.LogLevel
-            };
-        }
-
-        /// <summary>
-        /// Convert to service model
-        /// </summary>
-        /// <param name="model"></param>
-        /// <returns></returns>
-        public static SupervisorUpdateModel ToServiceModel(
-            this SupervisorUpdateApiModel model) {
-            if (model == null) {
-                return null;
-            }
-            return new SupervisorUpdateModel {
-                LogLevel = (Registry.Models.TraceLogLevel?)model.LogLevel
             };
         }
 

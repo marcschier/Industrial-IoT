@@ -40,8 +40,8 @@ namespace Opc.Ua.Design.Schema {
     /// Type schema generator
     /// </summary>
     public class SchemaGenerator {
-        private const string TemplatePath = "Opc.Ua.ModelCompiler.Templates.";
-        private const string DefaultNamespace = "http://opcfoundation.org/UA/";
+        internal const string TemplatePath = "Opc.Ua.ModelCompiler.Templates.";
+        internal const string DefaultNamespace = "http://opcfoundation.org/UA/";
 
         private readonly ModelDesign _model;
         private string[] _excludedCategories;

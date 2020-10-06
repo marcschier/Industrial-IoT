@@ -30,38 +30,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api {
             Func<EndpointEventApiModel, Task> callback);
 
         /// <summary>
-        /// Subscribe to gateway events
-        /// </summary>
-        /// <param name="callback"></param>
-        /// <returns></returns>
-        Task<IAsyncDisposable> SubscribeGatewayEventsAsync(
-            Func<GatewayEventApiModel, Task> callback);
-
-        /// <summary>
-        /// Subscribe to supervisor events
-        /// </summary>
-        /// <param name="callback"></param>
-        /// <returns></returns>
-        Task<IAsyncDisposable> SubscribeSupervisorEventsAsync(
-            Func<SupervisorEventApiModel, Task> callback);
-
-        /// <summary>
-        /// Subscribe to discoverer events
-        /// </summary>
-        /// <param name="callback"></param>
-        /// <returns></returns>
-        Task<IAsyncDisposable> SubscribeDiscovererEventsAsync(
-            Func<DiscovererEventApiModel, Task> callback);
-
-        /// <summary>
-        /// Subscribe to publisher events
-        /// </summary>
-        /// <param name="callback"></param>
-        /// <returns></returns>
-        Task<IAsyncDisposable> SubscribePublisherEventsAsync(
-            Func<PublisherEventApiModel, Task> callback);
-
-        /// <summary>
         /// Subscribe to supervisor discovery events
         /// </summary>
         /// <param name="discovererId"></param>

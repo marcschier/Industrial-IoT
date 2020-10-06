@@ -77,9 +77,9 @@
     <td class="hover-text width-large">
         <div>
             @{
-                string discover = DiscovererId ?? RegistryHelper.PathAll;
-                string application = ApplicationId ?? RegistryHelper.PathAll;
-                string supervisor = SupervisorId ?? RegistryHelper.PathAll;
+                string discover = DiscovererId ?? Registry.PathAll;
+                string application = ApplicationId ?? Registry.PathAll;
+                string supervisor = SupervisorId ?? Registry.PathAll;
             }
             <a href='browser/@discover/@application/@supervisor/@endpoint.EndpointModel.Id'>
                 @endpoint.EndpointModel.Endpoint.Url
@@ -151,4 +151,4 @@ else {
 
 <Spinner IsLoading=@IsLoading></Spinner>
 
-<LoadMore Result=@Items IsLoading=@IsLoading LoadMoreItems=@(async() => await LoadMoreItems()) />
+<LoadMore Result=@Items IsLoading=@IsLoading LoadMoreItems=@(async() => await LoadMoreItemsAsync()) />

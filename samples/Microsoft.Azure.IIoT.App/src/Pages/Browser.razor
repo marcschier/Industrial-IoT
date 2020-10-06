@@ -38,7 +38,6 @@
     <div class="subtitle">
         Url: @EndpointModel.EndpointUrl
         Discoverer: @EndpointModel.DiscovererId
-        Site: @EndpointModel.SiteId
         Security Mode: @EndpointModel.Endpoint.SecurityMode
         Security Policy: @UICommon.ExtractSecurityPolicy(EndpointModel.Endpoint.SecurityPolicy)
         Security Level: @EndpointModel.SecurityLevel
@@ -46,15 +45,15 @@
 }
 
 <div>
-    @if (DiscovererId != string.Empty && DiscovererId != RegistryHelper.PathAll)
+    @if (DiscovererId != string.Empty && DiscovererId != Registry.PathAll)
     {
         <a href="/discoverers">/ @DiscovererId</a>
     }
-    @if (ApplicationId != string.Empty && ApplicationId != RegistryHelper.PathAll)
+    @if (ApplicationId != string.Empty && ApplicationId != Registry.PathAll)
     {
         <a href="/applications">/ @CommonHelper.ApplicationUri[ApplicationId]</a>
     }
-    @if (SupervisorId != string.Empty && SupervisorId != RegistryHelper.PathAll)
+    @if (SupervisorId != string.Empty && SupervisorId != Registry.PathAll)
     {
         <a href="/supervisors">/ @SupervisorId</a>
     }
@@ -245,6 +244,6 @@
     }
 </Drawer>
 
-<LoadMore Result=@Items IsLoading=@IsLoading LoadMoreItems=@(async() => await LoadMoreItems()) />
+<LoadMore Result=@Items IsLoading=@IsLoading LoadMoreItems=@(async() => await LoadMoreItemsAsync()) />
 
 <Spinner IsLoading=@IsLoading></Spinner>

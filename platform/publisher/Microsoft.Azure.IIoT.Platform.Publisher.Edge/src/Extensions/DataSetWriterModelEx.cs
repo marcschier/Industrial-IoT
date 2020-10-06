@@ -24,17 +24,16 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Models {
                 return null;
             }
             if (dataSetWriter.DataSetWriterId == null) {
-                throw new ArgumentNullException(nameof(dataSetWriter.DataSetWriterId));
+                throw new ArgumentException("Missing writer id", nameof(dataSetWriter));
             }
             if (dataSetWriter.DataSet == null) {
-                throw new ArgumentNullException(nameof(dataSetWriter.DataSet));
+                throw new ArgumentException("Missing dataset", nameof(dataSetWriter));
             }
             if (dataSetWriter.DataSet.DataSetSource == null) {
-                throw new ArgumentNullException(nameof(dataSetWriter.DataSet.DataSetSource));
+                throw new ArgumentException("Missing dataset source", nameof(dataSetWriter));
             }
             if (dataSetWriter.DataSet.DataSetSource.Connection == null) {
-                throw new ArgumentNullException(
-                    nameof(dataSetWriter.DataSet.DataSetSource.Connection));
+                throw new ArgumentException("Missing dataset connection", nameof(dataSetWriter));
             }
             var monitoredItems = dataSetWriter.DataSet.DataSetSource.ToMonitoredItems();
             return new SubscriptionModel {

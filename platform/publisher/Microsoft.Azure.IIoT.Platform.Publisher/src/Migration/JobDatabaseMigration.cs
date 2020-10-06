@@ -96,7 +96,6 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Migration {
                 SecurityGroupId = null,
                 SecurityKeyServices = null,
                 SecurityMode = null,
-                SiteId = null // Note null in v1
             };
         }
 

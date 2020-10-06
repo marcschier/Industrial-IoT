@@ -53,7 +53,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
         public async Task<EndpointInfoModel> GetEndpointAsync(string endpointId,
             CancellationToken ct) {
             if (string.IsNullOrEmpty(endpointId)) {
-                throw new ArgumentException(nameof(endpointId));
+                throw new ArgumentNullException(nameof(endpointId));
             }
             return await _database.FindAsync(endpointId, ct).ConfigureAwait(false);
         }
@@ -99,7 +99,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
         public async Task<X509CertificateChainModel> GetEndpointCertificateAsync(
             string endpointId, CancellationToken ct) {
             if (string.IsNullOrEmpty(endpointId)) {
-                throw new ArgumentException(nameof(endpointId));
+                throw new ArgumentNullException(nameof(endpointId));
             }
 
             // Get existing endpoint - get should always throw
@@ -111,7 +111,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
             }
             if (string.IsNullOrEmpty(endpoint.SupervisorId)) {
                 throw new ArgumentException(
-                    $"Twin {endpointId} not registered with a supervisor.");
+                    $"Twin {endpointId} not registered with a supervisor.", nameof(endpointId));
             }
 
             var rawCertificates = await _certificates.GetEndpointCertificateAsync(
@@ -148,18 +148,18 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
         public async Task<IEnumerable<EndpointInfoModel>> GetApplicationEndpoints(
             string applicationId, bool includeDeleted, bool filterInactiveTwins, CancellationToken ct) {
             // Include deleted twins if the application itself is deleted.  Otherwise omit.
-            var endpoints = await GetEndpointsAsync(applicationId, includeDeleted, ct).ConfigureAwait(false);
+            var endpoints = await GetEndpointsAsync(applicationId, includeDeleted,
+                ct).ConfigureAwait(false);
             if (!filterInactiveTwins) {
                 return endpoints;
             }
-            return endpoints
-                .Where(e => e.ActivationState == EntityActivationState.ActivatedAndConnected);
+            return endpoints.Where(e => e.IsActivated());
         }
 
         /// <inheritdoc/>
         public async Task ProcessDiscoveryEventsAsync(IEnumerable<EndpointInfoModel> newEndpoints,
             DiscoveryResultModel result, string discovererId, string supervisorId,
-            string siteId, string applicationId, bool hardDelete) {
+            string applicationId, bool hardDelete) {
 
             if (newEndpoints == null) {
                 throw new ArgumentNullException(nameof(newEndpoints));
