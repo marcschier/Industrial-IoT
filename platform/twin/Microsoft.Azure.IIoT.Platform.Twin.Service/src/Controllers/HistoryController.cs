@@ -8,9 +8,9 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Service.Controllers {
     using Microsoft.Azure.IIoT.Platform.Twin.Service.Filters;
     using Microsoft.Azure.IIoT.Platform.Twin.Api.Models;
     using Microsoft.Azure.IIoT.Platform.Twin;
+    using Microsoft.Azure.IIoT.Serializers;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
-    using Microsoft.Azure.IIoT.Serializers;
     using System;
     using System.ComponentModel.DataAnnotations;
     using System.Threading.Tasks;
@@ -28,9 +28,9 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Service.Controllers {
         /// <summary>
         /// Create controller with service
         /// </summary>
-        /// <param name="client"></param>
-        public HistoryController(IHistoricAccessServices<string> client) {
-            _client = client ?? throw new ArgumentNullException(nameof(client));
+        /// <param name="history"></param>
+        public HistoryController(IHistoricAccessServices<string> history) {
+            _history = history ?? throw new ArgumentNullException(nameof(history));
         }
 
         /// <summary>
@@ -50,7 +50,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Service.Controllers {
             if (request == null) {
                 throw new ArgumentNullException(nameof(request));
             }
-            var readresult = await _client.HistoryReadAsync(
+            var readresult = await _history.HistoryReadAsync(
                 endpointId, request.ToServiceModel(d => d)).ConfigureAwait(false);
             return readresult.ToApiModel(d => d);
         }
@@ -72,7 +72,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Service.Controllers {
             if (request == null) {
                 throw new ArgumentNullException(nameof(request));
             }
-            var readresult = await _client.HistoryReadNextAsync(
+            var readresult = await _history.HistoryReadNextAsync(
                 endpointId, request.ToServiceModel()).ConfigureAwait(false);
             return readresult.ToApiModel(d => d);
         }
@@ -95,11 +95,11 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Service.Controllers {
             if (request == null) {
                 throw new ArgumentNullException(nameof(request));
             }
-            var writeResult = await _client.HistoryUpdateAsync(
+            var writeResult = await _history.HistoryUpdateAsync(
                 endpointId, request.ToServiceModel(d => d)).ConfigureAwait(false);
             return writeResult.ToApiModel();
         }
 
-        private readonly IHistoricAccessServices<string> _client;
+        private readonly IHistoricAccessServices<string> _history;
     }
 }

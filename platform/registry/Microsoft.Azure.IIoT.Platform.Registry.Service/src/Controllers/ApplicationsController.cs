@@ -33,11 +33,11 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service.Controllers {
         /// Create controller
         /// </summary>
         /// <param name="applications"></param>
-        /// <param name="onboarding"></param>
+        /// <param name="discovery"></param>
         public ApplicationsController(IApplicationRegistry applications,
-            IDiscoveryServices onboarding) {
+            IDiscoveryServices discovery) {
             _applications = applications;
-            _onboarding = onboarding;
+            _discovery = discovery;
         }
 
         /// <summary>
@@ -57,7 +57,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service.Controllers {
             if (request == null) {
                 throw new ArgumentNullException(nameof(request));
             }
-            await _onboarding.RegisterAsync(request.ToServiceModel()).ConfigureAwait(false);
+            await _discovery.RegisterAsync(request.ToServiceModel()).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -76,7 +76,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service.Controllers {
             if (request == null) {
                 throw new ArgumentNullException(nameof(request));
             }
-            await _onboarding.DiscoverAsync(request.ToServiceModel()).ConfigureAwait(false);
+            await _discovery.DiscoverAsync(request.ToServiceModel()).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -93,7 +93,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service.Controllers {
             if (string.IsNullOrEmpty(requestId)) {
                 throw new ArgumentNullException(nameof(requestId));
             }
-            await _onboarding.CancelAsync(new DiscoveryCancelModel {
+            await _discovery.CancelAsync(new DiscoveryCancelModel {
                 Id = requestId
                 // TODO: AuthorityId = User.Identity.Name;
             }).ConfigureAwait(false);
@@ -292,6 +292,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service.Controllers {
         }
 
         private readonly IApplicationRegistry _applications;
-        private readonly IDiscoveryServices _onboarding;
+        private readonly IDiscoveryServices _discovery;
     }
 }

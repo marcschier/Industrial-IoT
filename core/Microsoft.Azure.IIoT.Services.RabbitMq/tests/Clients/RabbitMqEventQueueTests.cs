@@ -12,6 +12,7 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
     using AutoFixture;
     using Xunit;
 
+    [Collection(RabbitMqCollection.Name)]
     public class RabbitMqEventQueueTests : IClassFixture<RabbitMqEventQueueFixture> {
         private readonly RabbitMqEventQueueFixture _fixture;
 
@@ -32,7 +33,7 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
                 var contentEncoding = fix.Create<string>();
                 var contentType = fix.Create<string>();
 
-                var tcs = new TaskCompletionSource<TelemetryEventArgs>();
+                var tcs = new TaskCompletionSource<TelemetryEventArgs>(TaskCreationOptions.RunContinuationsAsynchronously);
                 harness.OnEvent += (_, a) => {
                     if (a.HandlerSchema == "Test1"){
                         tcs.TrySetResult(a);
@@ -67,7 +68,7 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
                 var contentType = fix.Create<string>();
 
                 var count = 0;
-                var tcs = new TaskCompletionSource<TelemetryEventArgs>();
+                var tcs = new TaskCompletionSource<TelemetryEventArgs>(TaskCreationOptions.RunContinuationsAsynchronously);
                 harness.OnEvent += (_, a) => {
                     if (a.HandlerSchema == "Test1" && ++count == 5) {
                         tcs.TrySetResult(a);
@@ -108,7 +109,7 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
                 var contentType = fix.Create<string>();
 
                 var count = 0;
-                var tcs = new TaskCompletionSource<TelemetryEventArgs>();
+                var tcs = new TaskCompletionSource<TelemetryEventArgs>(TaskCreationOptions.RunContinuationsAsynchronously);
                 harness.OnEvent += (_, a) => {
                     if (a.HandlerSchema == "Test1" && ++count == 16) {
                         tcs.TrySetResult(a);
@@ -155,7 +156,7 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
                 var contentType = fix.Create<string>();
 
                 var count = 0;
-                var tcs = new TaskCompletionSource<TelemetryEventArgs>();
+                var tcs = new TaskCompletionSource<TelemetryEventArgs>(TaskCreationOptions.RunContinuationsAsynchronously);
                 harness.OnEvent += (_, a) => {
                     if (++count == max) {
                         tcs.TrySetResult(a);
@@ -192,13 +193,13 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
                 var contentEncoding = fix.Create<string>();
                 var contentType = fix.Create<string>();
 
-                var tcs = new TaskCompletionSource<TelemetryEventArgs>();
+                var tcs = new TaskCompletionSource<TelemetryEventArgs>(TaskCreationOptions.RunContinuationsAsynchronously);
                 harness.OnEvent += (_, a) => {
                     tcs.TrySetResult(a);
                 };
 
                 var expected = "ttttttttttttt";
-                var actual = new TaskCompletionSource<string>();
+                var actual = new TaskCompletionSource<string>(TaskCreationOptions.RunContinuationsAsynchronously);
                 queue.SendEvent(HubResource.Format(hub, deviceId, null), data, contentType,
                     "Test3", contentEncoding, expected, (t, e) => {
                         if (e != null) {
@@ -235,13 +236,13 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
                 var contentEncoding = fix.Create<string>();
                 var contentType = fix.Create<string>();
 
-                var tcs = new TaskCompletionSource<TelemetryEventArgs>();
+                var tcs = new TaskCompletionSource<TelemetryEventArgs>(TaskCreationOptions.RunContinuationsAsynchronously);
                 harness.OnEvent += (_, a) => {
                     tcs.TrySetResult(a);
                 };
 
                 var expected = 1234;
-                var actual = new TaskCompletionSource<int?>();
+                var actual = new TaskCompletionSource<int?>(TaskCreationOptions.RunContinuationsAsynchronously);
                 queue.SendEvent(HubResource.Format(hub, deviceId, null), data, contentType,
                     "Test3", contentEncoding, expected, (t, e) => {
                         if (e != null) {
@@ -279,7 +280,7 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
                 var contentType = fix.Create<string>();
 
                 var count = 0;
-                var tcs = new TaskCompletionSource<TelemetryEventArgs>();
+                var tcs = new TaskCompletionSource<TelemetryEventArgs>(TaskCreationOptions.RunContinuationsAsynchronously);
                 harness.OnEvent += (_, a) => {
                     if (a.HandlerSchema == "Test3" && ++count == 4) {
                         tcs.TrySetResult(a);
@@ -287,7 +288,7 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
                 };
 
                 var expected = 4;
-                var actual = new TaskCompletionSource<int?>();
+                var actual = new TaskCompletionSource<int?>(TaskCreationOptions.RunContinuationsAsynchronously);
                 queue.SendEvent(HubResource.Format(hub, deviceId, null), data, fix.Create<string>(),
                     "Test3", fix.Create<string>(), 1, (t, e) => { });
                 queue.SendEvent(HubResource.Format(hub, deviceId, null), data, fix.Create<string>(),
@@ -340,7 +341,7 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
                 var contentType = fix.Create<string>();
 
                 var count = 0;
-                var tcs = new TaskCompletionSource<TelemetryEventArgs>();
+                var tcs = new TaskCompletionSource<TelemetryEventArgs>(TaskCreationOptions.RunContinuationsAsynchronously);
                 harness.OnEvent += (_, a) => {
                     if (++count == max) {
                         tcs.TrySetResult(a);
@@ -380,7 +381,7 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
                 var contentEncoding = fix.Create<string>();
                 var contentType = fix.Create<string>();
 
-                var tcs = new TaskCompletionSource<TelemetryEventArgs>();
+                var tcs = new TaskCompletionSource<TelemetryEventArgs>(TaskCreationOptions.RunContinuationsAsynchronously);
                 harness.OnEvent += (_, a) => {
                     tcs.TrySetResult(a);
                 };
@@ -414,7 +415,7 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
                 var contentType = fix.Create<string>();
 
                 var count = 0;
-                var tcs = new TaskCompletionSource<TelemetryEventArgs>();
+                var tcs = new TaskCompletionSource<TelemetryEventArgs>(TaskCreationOptions.RunContinuationsAsynchronously);
                 harness.OnEvent += (_, a) => {
                     if (a.HandlerSchema == "Test2" && ++count == 4) {
                         tcs.TrySetResult(a);
@@ -455,7 +456,7 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
                 var contentType = fix.Create<string>();
 
                 var count = 0;
-                var tcs = new TaskCompletionSource<TelemetryEventArgs>();
+                var tcs = new TaskCompletionSource<TelemetryEventArgs>(TaskCreationOptions.RunContinuationsAsynchronously);
                 harness.OnEvent += (_, a) => {
                     if (a.HandlerSchema == "Test2" && ++count == 19) {
                         tcs.TrySetResult(a);
@@ -503,7 +504,7 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
                 var contentType = fix.Create<string>();
 
                 var count = 0;
-                var tcs = new TaskCompletionSource<TelemetryEventArgs>();
+                var tcs = new TaskCompletionSource<TelemetryEventArgs>(TaskCreationOptions.RunContinuationsAsynchronously);
                 harness.OnEvent += (_, a) => {
                     if (++count == max) {
                         tcs.TrySetResult(a);
@@ -540,13 +541,13 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
                 var contentEncoding = fix.Create<string>();
                 var contentType = fix.Create<string>();
 
-                var tcs = new TaskCompletionSource<TelemetryEventArgs>();
+                var tcs = new TaskCompletionSource<TelemetryEventArgs>(TaskCreationOptions.RunContinuationsAsynchronously);
                 harness.OnEvent += (_, a) => {
                     tcs.TrySetResult(a);
                 };
 
                 var expected = "ttttttttttttt";
-                var actual = new TaskCompletionSource<string>();
+                var actual = new TaskCompletionSource<string>(TaskCreationOptions.RunContinuationsAsynchronously);
                 queue.SendEvent(HubResource.Format(hub, deviceId, moduleId), data, contentType,
                     "Test2", contentEncoding, expected, (t, e) => {
                         if (e != null) {
@@ -584,13 +585,13 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
                 var contentEncoding = fix.Create<string>();
                 var contentType = fix.Create<string>();
 
-                var tcs = new TaskCompletionSource<TelemetryEventArgs>();
+                var tcs = new TaskCompletionSource<TelemetryEventArgs>(TaskCreationOptions.RunContinuationsAsynchronously);
                 harness.OnEvent += (_, a) => {
                     tcs.TrySetResult(a);
                 };
 
                 var expected = 1234;
-                var actual = new TaskCompletionSource<int?>();
+                var actual = new TaskCompletionSource<int?>(TaskCreationOptions.RunContinuationsAsynchronously);
                 queue.SendEvent(HubResource.Format(hub, deviceId, moduleId), data, contentType,
                     "Test2", contentEncoding, expected, (t, e) => {
                         if (e != null) {
@@ -629,7 +630,7 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
                 var contentType = fix.Create<string>();
 
                 var count = 0;
-                var tcs = new TaskCompletionSource<TelemetryEventArgs>();
+                var tcs = new TaskCompletionSource<TelemetryEventArgs>(TaskCreationOptions.RunContinuationsAsynchronously);
                 harness.OnEvent += (_, a) => {
                     if (a.HandlerSchema == "Test2" && ++count == 4) {
                         tcs.TrySetResult(a);
@@ -637,7 +638,7 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
                 };
 
                 var expected = 4;
-                var actual = new TaskCompletionSource<int?>();
+                var actual = new TaskCompletionSource<int?>(TaskCreationOptions.RunContinuationsAsynchronously);
                 queue.SendEvent(HubResource.Format(hub, deviceId, moduleId), data, fix.Create<string>(),
                     "Test2", fix.Create<string>(), 1, (t, e) => { });
                 queue.SendEvent(HubResource.Format(hub, deviceId, moduleId), data, fix.Create<string>(),
@@ -691,7 +692,7 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
                 var contentType = fix.Create<string>();
 
                 var count = 0;
-                var tcs = new TaskCompletionSource<TelemetryEventArgs>();
+                var tcs = new TaskCompletionSource<TelemetryEventArgs>(TaskCreationOptions.RunContinuationsAsynchronously);
                 harness.OnEvent += (_, a) => {
                     if (++count == max) {
                         tcs.TrySetResult(a);

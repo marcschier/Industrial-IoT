@@ -627,8 +627,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Models {
                     .Select(p => p.ToApiModel())
                     .ToList(),
                 SecurityLevel = model.SecurityLevel,
-                DiscovererId = model.DiscovererId,
-                SupervisorId = model.SupervisorId
+                DiscovererId = model.DiscovererId
             };
         }
 
@@ -655,8 +654,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Models {
                     .Select(p => p.ToServiceModel())
                     .ToList(),
                 SecurityLevel = model.SecurityLevel,
-                DiscovererId = model.DiscovererId,
-                SupervisorId = model.SupervisorId
+                DiscovererId = model.DiscovererId
             };
         }
 
@@ -716,7 +714,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Models {
                 SecurityMode = (Core.Api.Models.SecurityMode?)model.SecurityMode,
                 ApplicationId = model.ApplicationId,
                 DiscovererId = model.DiscovererId,
-                SupervisorId = model.SupervisorId,
                 IncludeNotSeenSince = model.IncludeNotSeenSince
             };
         }
@@ -741,7 +738,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Models {
                 SecurityMode = (Core.Models.SecurityMode?)model.SecurityMode,
                 ApplicationId = model.ApplicationId,
                 DiscovererId = model.DiscovererId,
-                SupervisorId = model.SupervisorId,
                 IncludeNotSeenSince = model.IncludeNotSeenSince
             };
         }
@@ -775,6 +771,22 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Models {
             return new RegistryOperationContextModel {
                 Time = model.Time,
                 AuthorityId = model.AuthorityId
+            };
+        }
+
+        /// <summary>
+        /// Convert to api model
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public static ServerRegistrationRequestApiModel ToApiModel(
+            this ServerRegistrationRequestModel model) {
+            if (model == null) {
+                return null;
+            }
+            return new ServerRegistrationRequestApiModel {
+                DiscoveryUrl = model.DiscoveryUrl,
+                Id = model.Id,
             };
         }
 

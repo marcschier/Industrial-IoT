@@ -3,10 +3,10 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module {
-    using Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Runtime;
-    using Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Controllers;
-    using Microsoft.Azure.IIoT.Platform.Twin.Edge;
+namespace Microsoft.Azure.IIoT.Platform.Twin.Services.Module {
+    using Microsoft.Azure.IIoT.Platform.Twin.Services.Module.Runtime;
+    using Microsoft.Azure.IIoT.Platform.Twin.Services.Module.Controllers;
+    using Microsoft.Azure.IIoT.Platform.Twin.Services;
     using Microsoft.Azure.IIoT.Platform.OpcUa;
     using Microsoft.Azure.IIoT.Platform.OpcUa.Services;
     using Microsoft.Azure.IIoT.Hosting;
@@ -170,8 +170,6 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module {
                 .AsImplementedInterfaces().InstancePerLifetimeScope();
 
             // Register supervisor services
-            builder.RegisterType<EndpointSupervisorServices>()
-                .AsImplementedInterfaces().InstancePerLifetimeScope();
             builder.RegisterType<TwinContainerFactory>()
                 .AsImplementedInterfaces().InstancePerLifetimeScope();
 
@@ -222,8 +220,6 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module {
                 // Register other opc ua services
                 builder.RegisterType<VariantEncoderFactory>()
                     .AsImplementedInterfaces();
-                builder.RegisterType<EndpointTwinServices>()
-                    .AsImplementedInterfaces().InstancePerLifetimeScope();
                 builder.RegisterType<AddressSpaceServices>()
                     .AsImplementedInterfaces().InstancePerLifetimeScope();
                 builder.RegisterType<DataTransferServices>()

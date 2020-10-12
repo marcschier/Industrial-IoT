@@ -41,7 +41,6 @@ namespace Microsoft.Azure.IIoT.Serializers.NewtonSoft {
         public NewtonSoftJsonSerializer(
             IEnumerable<IJsonSerializerConverterProvider> providers = null) {
             var settings = new JsonSerializerSettings();
-            settings.Converters.Add(new ReadonlyBufferConverter());
             if (providers != null) {
                 foreach (var provider in providers) {
                     settings.Converters.AddRange(provider.GetConverters());
@@ -50,6 +49,8 @@ namespace Microsoft.Azure.IIoT.Serializers.NewtonSoft {
             settings.ContractResolver = new DefaultContractResolver {
                 NamingStrategy = new CamelCaseDictionaryKeys()
             };
+            settings.Converters.Add(new ReadOnlyBufferConverter());
+            settings.Converters.Add(new ReadOnlySetConverter());
             settings.Converters.Add(new JsonVariantConverter(this));
             settings.Converters.Add(new StringEnumConverter {
                 AllowIntegerValues = true,
@@ -427,7 +428,7 @@ namespace Microsoft.Azure.IIoT.Serializers.NewtonSoft {
         /// <summary>
         /// Readonly buffer converter
         /// </summary>
-        internal sealed class ReadonlyBufferConverter : JsonConverter {
+        internal sealed class ReadOnlyBufferConverter : JsonConverter {
 
             /// <inheritdoc/>
             public override bool CanRead => true;
@@ -476,6 +477,40 @@ namespace Microsoft.Azure.IIoT.Serializers.NewtonSoft {
                     buffer = ((IReadOnlyCollection<byte>)value).ToArray();
                 }
                 writer.WriteValue(buffer);
+            }
+        }
+
+        /// <summary>
+        /// Readonly set converter
+        /// </summary>
+        internal sealed class ReadOnlySetConverter : JsonConverter {
+
+            /// <inheritdoc/>
+            public override bool CanRead => true;
+
+            /// <inheritdoc/>
+            public override bool CanWrite => false;
+
+            /// <inheritdoc/>
+            public override bool CanConvert(Type objectType) {
+                if (objectType.IsGenericType &&
+                    objectType.GetGenericTypeDefinition() == typeof(IReadOnlySet<>)) {
+                    return true;
+                }
+                return false;
+            }
+
+            /// <inheritdoc/>
+            public override object ReadJson(JsonReader reader, Type objectType,
+                object existingValue, JsonSerializer serializer) {
+                objectType = typeof(HashSet<>).MakeGenericType(objectType.GetGenericArguments());
+                return serializer.Deserialize(reader, objectType);
+            }
+
+            /// <inheritdoc/>
+            public override void WriteJson(JsonWriter writer,
+                object value, JsonSerializer serializer) {
+                throw new NotSupportedException();
             }
         }
 

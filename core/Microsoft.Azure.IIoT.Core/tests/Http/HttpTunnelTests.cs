@@ -59,6 +59,7 @@ namespace Microsoft.Azure.IIoT.Http.Tunnel.Services {
             Assert.NotNull(result);
             Assert.True(result.IsSuccessStatusCode);
             Assert.NotNull(result.Content);
+            Assert.NotNull(result.Content.Headers);
             var payload = await result.Content.ReadAsStringAsync().ConfigureAwait(false);
             Assert.NotNull(payload);
             Assert.NotNull(result.Headers);
@@ -109,6 +110,7 @@ namespace Microsoft.Azure.IIoT.Http.Tunnel.Services {
             Assert.NotNull(result);
             Assert.Equal(System.Net.HttpStatusCode.OK, result.StatusCode);
             Assert.NotNull(result.Content);
+            Assert.NotNull(result.Content.Headers);
             var payload = await result.Content.ReadAsByteArrayAsync().ConfigureAwait(false);
             Assert.Equal(response.Content.Length, payload.Length);
             Assert.Equal(responseBuffer, payload);
@@ -175,6 +177,7 @@ namespace Microsoft.Azure.IIoT.Http.Tunnel.Services {
             Assert.NotNull(result);
             Assert.Equal(System.Net.HttpStatusCode.OK, result.StatusCode);
             Assert.NotNull(result.Content);
+            Assert.NotNull(result.Content.Headers);
             var payload = await result.Content.ReadAsByteArrayAsync().ConfigureAwait(false);
             Assert.Equal(response.Content.Length, payload.Length);
             Assert.Equal(responseBuffer, payload);
@@ -237,7 +240,9 @@ namespace Microsoft.Azure.IIoT.Http.Tunnel.Services {
 
             Assert.NotNull(result);
             Assert.Equal(System.Net.HttpStatusCode.OK, result.StatusCode);
-            Assert.Null(result.Content);
+            Assert.NotNull(result.Content);
+            Assert.NotNull(result.Content.Headers);
+            Assert.Equal(0, result.Content.Headers.ContentLength);
             Assert.NotNull(result.Headers);
             Assert.Empty(result.Headers);
         }
@@ -287,7 +292,9 @@ namespace Microsoft.Azure.IIoT.Http.Tunnel.Services {
 
             Assert.NotNull(result);
             Assert.Equal(System.Net.HttpStatusCode.OK, result.StatusCode);
-            Assert.Null(result.Content);
+            Assert.NotNull(result.Content);
+            Assert.NotNull(result.Content.Headers);
+            Assert.Equal(0, result.Content.Headers.ContentLength);
             Assert.NotNull(result.Headers);
             Assert.Empty(result.Headers);
         }

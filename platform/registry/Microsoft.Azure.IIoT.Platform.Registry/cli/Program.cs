@@ -4,35 +4,38 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Platform.Registry.Cli {
-    using Microsoft.Azure.IIoT.Platform.Registry.Edge.Services;
-    using Microsoft.Azure.IIoT.Platform.OpcUa.Services;
-    using Microsoft.Azure.IIoT.Platform.OpcUa.Transport.Probe;
+    using Microsoft.Azure.IIoT.Platform.Registry.Services;
     using Microsoft.Azure.IIoT.Platform.Registry;
     using Microsoft.Azure.IIoT.Platform.Registry.Models;
+    using Microsoft.Azure.IIoT.Platform.OpcUa.Services;
+    using Microsoft.Azure.IIoT.Platform.OpcUa.Transport.Probe;
     using Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Runtime;
     using Microsoft.Azure.IIoT.Diagnostics;
-    using Microsoft.Azure.IIoT.Messaging;
     using Microsoft.Azure.IIoT.Hub;
-    using Microsoft.Azure.IIoT.Azure.IoTHub.Runtime;
     using Microsoft.Azure.IIoT.Azure.IoTHub.Clients;
+    using Microsoft.Azure.IIoT.Azure.IoTHub;
+    using Microsoft.Azure.IIoT.Azure.LogAnalytics;
+    using Microsoft.Azure.IIoT.Azure.LogAnalytics.Runtime;
+    using Microsoft.Azure.IIoT.Exceptions;
     using Microsoft.Azure.IIoT.Hub.Models;
-    using Microsoft.Azure.IIoT.Rpc;
     using Microsoft.Azure.IIoT.Net;
     using Microsoft.Azure.IIoT.Net.Models;
     using Microsoft.Azure.IIoT.Net.Scanner;
     using Microsoft.Azure.IIoT.Serializers;
     using Microsoft.Azure.IIoT.Utils;
     using Microsoft.Azure.IIoT.Serializers.NewtonSoft;
-    using Newtonsoft.Json;
+    using Microsoft.Extensions.Configuration;
     using Opc.Ua;
+    using Serilog;
+    using Serilog.Events;
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.Linq;
     using System.Net;
-    using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
+    using System.Diagnostics.Tracing;
 
     /// <summary>
     /// Test client for opc ua services
@@ -60,13 +63,28 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Cli {
             AppDomain.CurrentDomain.UnhandledException +=
                 (s, e) => Console.WriteLine("unhandled: " + e.ExceptionObject);
             var op = Op.None;
+            var verbose = false;
             string deviceId = null, moduleId = null;
             string addressRanges = null;
             var stress = false;
             var host = Utils.GetHostName();
+            string cs = null;
             try {
                 for (var i = 0; i < args.Length; i++) {
                     switch (args[i]) {
+                        case "-v":
+                        case "--verbose":
+                            verbose = true;
+                            break;
+                        case "-C":
+                        case "--connection-string":
+                            i++;
+                            if (i < args.Length) {
+                                cs = args[i];
+                                break;
+                            }
+                            throw new ArgumentException(
+                                "Missing arguments for connection string");
                         case "--make-supervisor":
                             if (op != Op.None) {
                                 throw new ArgumentException("Operations are mutually exclusive");
@@ -141,9 +159,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Cli {
                             throw new ArgumentException($"Unknown {args[i]}");
                     }
                 }
-                if (op == Op.None) {
-                    throw new ArgumentException("Missing operation.");
-                }
             }
             catch (Exception e) {
                 Console.WriteLine(e.Message);
@@ -154,15 +169,16 @@ usage:       [options] operation [args]
 
 Options:
 
+     -C
+    --connection-string     IoT Hub owner connection string to use to 
+                            connect to IoT hub to create edge identity.  
+                            If not provided, read from environment.
     --stress                Run test as stress test (if supported)
     --port / -p             Port to listen on
     --help / -? / -h        Prints out this help.
 
 Operations (Mutually exclusive):
 
-    --make-supervisor       Make supervisor module.
-    --clear-registry        Clear device registry content.
-    --clear-supervisors     Clear supervisors in device registry.
     --scan-net              Tests network scanning.
     --scan-ports            Tests port scanning.
     --scan-servers          Tests opc server scanning on single machine.
@@ -176,15 +192,6 @@ Operations (Mutually exclusive):
             try {
                 Console.WriteLine($"Running {op}...");
                 switch (op) {
-                    case Op.MakeSupervisor:
-                        MakeSupervisorAsync(deviceId, moduleId).Wait();
-                        break;
-                    case Op.ClearSupervisors:
-                        ClearSupervisorsAsync().Wait();
-                        break;
-                    case Op.ClearRegistry:
-                        ClearRegistryAsync().Wait();
-                        break;
                     case Op.TestNetworkScanner:
                         TestNetworkScannerAsync().Wait();
                         break;
@@ -198,7 +205,8 @@ Operations (Mutually exclusive):
                         TestOpcUaDiscoveryServiceAsync(addressRanges, stress).Wait();
                         break;
                     default:
-                        throw new ArgumentException("Unknown.");
+                        HostAsync(cs, deviceId, moduleId, verbose).Wait();
+                        break;
                 }
             }
             catch (Exception e) {
@@ -211,85 +219,99 @@ Operations (Mutually exclusive):
         }
 
         /// <summary>
-        /// Create supervisor module identity in device registry
+        /// Host the module giving it its connection string.
         /// </summary>
-        private static async Task MakeSupervisorAsync(string deviceId, string moduleId) {
-            var logger = ConsoleOutLogger.Create();
-            var config = new IoTHubConfig(null);
-            var registry = new IoTHubServiceClient(
-                config, new NewtonSoftJsonSerializer(), logger);
+        private static async Task HostAsync(string iotHubCs, string deviceId, string moduleId, 
+            bool verbose = false) {
+            var configuration = new ConfigurationBuilder()
+                .AddFromDotEnvFile()
+                .AddEnvironmentVariables()
+                .AddEnvironmentVariables(EnvironmentVariableTarget.User)
+                // Above configuration providers will provide connection
+                // details for KeyVault configuration provider.
+                .AddFromKeyVault(providerPriority: ConfigurationProviderPriority.Lowest)
+                .Build();
+            if (string.IsNullOrEmpty(iotHubCs)) {
+                iotHubCs = configuration.GetValue<string>(PcsVariable.PCS_IOTHUB_CONNSTRING, null);
+                if (string.IsNullOrEmpty(iotHubCs)) {
+                    iotHubCs = configuration.GetValue<string>("_HUB_CS", null);
+                }
+                if (string.IsNullOrEmpty(iotHubCs)) {
+                    throw new ArgumentException("Missing connection string.");
+                }
+            }
+            if (!ConnectionString.TryParse(iotHubCs, out var connectionString)) {
+                throw new ArgumentException("Bad connection string.");
+            }
+            var config = connectionString.ToIoTHubConfig();
+            if (deviceId == null) {
+                deviceId = Utils.GetHostName();
+                Console.WriteLine($"Using <deviceId> '{deviceId}'");
+            }
+            if (moduleId == null) {
+                moduleId = "registry";
+                Console.WriteLine($"Using <moduleId> '{moduleId}'");
+            }
+            var diagnostics = new LogAnalyticsConfig(configuration);
+            Console.WriteLine("Create or retrieve connection string...");
+            var logger = ConsoleLogger.Create(LogEventLevel.Error);
+            var cs = await Retry.WithExponentialBackoff(logger,
+                () => AddOrGetAsync(config, diagnostics, deviceId, moduleId)).ConfigureAwait(false);
 
-            await registry.CreateOrUpdateAsync(new DeviceTwinModel {
-                Id = deviceId,
-                ModuleId = moduleId
-            }, true, CancellationToken.None).ConfigureAwait(false);
+            // Hook event source
+            using (var broker = new EventSourceBroker()) {
+                LogControl.Level.MinimumLevel = verbose ?
+                    LogEventLevel.Verbose : LogEventLevel.Information;
 
-            var module = await registry.GetRegistrationAsync(deviceId, moduleId, CancellationToken.None).ConfigureAwait(false);
-            Console.WriteLine(JsonConvert.SerializeObject(module));
-            var twin = await registry.GetAsync(deviceId, moduleId, CancellationToken.None).ConfigureAwait(false);
-            Console.WriteLine(JsonConvert.SerializeObject(twin));
-            var cs = ConnectionString.Parse(config.IoTHubConnString);
-            Console.WriteLine("Connection string:");
-            Console.WriteLine($"HostName={cs.HostName};DeviceId={deviceId};" +
-                $"ModuleId={moduleId};SharedAccessKey={module.Authentication.PrimaryKey}");
+                Console.WriteLine("Starting discovery module...");
+                broker.Subscribe(IoTSdkLogger.EventSource, new IoTSdkLogger(logger));
+                var arguments = new List<string> {
+                    $"EdgeHubConnectionString={cs}"
+                };
+                Service.Program.Main(arguments.ToArray());
+            	Console.WriteLine("Discovery module exited.");
+            }
         }
 
         /// <summary>
-        /// Clear registry
+        /// Add or get module identity
         /// </summary>
-        private static async Task ClearSupervisorsAsync() {
-            var logger = ConsoleOutLogger.Create();
-            var config = new IoTHubConfig(null);
+        private static async Task<ConnectionString> AddOrGetAsync(IIoTHubConfig config,
+            ILogAnalyticsConfig diagnostics, string deviceId, string moduleId) {
+            var logger = ConsoleLogger.Create(LogEventLevel.Error);
             var registry = new IoTHubServiceClient(
                 config, new NewtonSoftJsonSerializer(), logger);
-
-            var query = "SELECT * FROM devices.modules WHERE " +
-                $"properties.reported.{TwinProperty.Type} = '{IdentityType.Supervisor}'";
-            var supers = await registry.QueryAllDeviceTwinsAsync(query).ConfigureAwait(false);
-            foreach (var item in supers) {
-                var properties = new Dictionary<string, VariantValue>();
-                var tags = new Dictionary<string, VariantValue>();
-                if (item.Tags != null) {
-                    foreach (var tag in item.Tags.Keys.ToList()) {
-                        tags.Add(tag, null);
+            try {
+                await registry.CreateOrUpdateAsync(new DeviceTwinModel {
+                    Id = deviceId,
+                    Tags = new Dictionary<string, VariantValue> {
+                        [TwinProperty.Type] = IdentityType.Gateway
+                    },
+                    Capabilities = new DeviceCapabilitiesModel {
+                        IotEdge = true
                     }
-                }
-                if (item.Properties?.Desired != null) {
-                    foreach (var property in item.Properties.Desired.Keys.ToList()) {
-                        properties.Add(property, null);
-                    }
-                }
-                if (item.Properties?.Reported != null) {
-                    foreach (var property in item.Properties.Reported.Keys.ToList()) {
-                        if (!item.Properties.Desired.ContainsKey(property)) {
-                            properties.Add(property, null);
+                }, false, CancellationToken.None).ConfigureAwait(false);
+            }
+            catch (ResourceConflictException) {
+                logger.Information("Gateway {deviceId} exists.", deviceId);
+            }
+            try {
+                await registry.CreateOrUpdateAsync(new DeviceTwinModel {
+                    Id = deviceId,
+                    ModuleId = moduleId,
+                    Properties = new TwinPropertiesModel {
+                        Desired = new Dictionary<string, VariantValue> {
+                            [nameof(diagnostics.LogWorkspaceId)] = diagnostics?.LogWorkspaceId,
+                            [nameof(diagnostics.LogWorkspaceKey)] = diagnostics?.LogWorkspaceKey
                         }
                     }
-                }
-
-                item.Tags = tags;
-                item.Properties = new TwinPropertiesModel {
-                    Desired = properties
-                };
-                await registry.CreateOrUpdateAsync(item, true,
-                    default).ConfigureAwait(false);
+                }, true, CancellationToken.None).ConfigureAwait(false);
             }
-        }
-
-        /// <summary>
-        /// Clear registry
-        /// </summary>
-        private static async Task ClearRegistryAsync() {
-            var logger = ConsoleOutLogger.Create();
-            var config = new IoTHubConfig(null);
-            var registry = new IoTHubServiceClient(
-                config, new NewtonSoftJsonSerializer(), logger);
-
-            var result = await registry.QueryAllDeviceTwinsAsync(
-                "SELECT * from devices where IS_DEFINED(tags.DeviceType)").ConfigureAwait(false);
-            foreach (var item in result) {
-                await registry.DeleteAsync(item.Id, item.ModuleId, null, CancellationToken.None).ConfigureAwait(false);
+            catch (ResourceConflictException) {
+                logger.Information("Module {moduleId} exists...", moduleId);
             }
+            var cs = await registry.GetConnectionStringAsync(deviceId, moduleId).ConfigureAwait(false);
+            return cs;
         }
 
         /// <summary>
@@ -335,8 +357,8 @@ Operations (Mutually exclusive):
             using (var logger = StackLogger.Create(ConsoleLogger.Create()))
             using (var config = new TestClientServicesConfig())
             using (var client = new ClientServices(logger.Logger, config))
-            using (var scanner = new DiscoveryServices(client, new ConsoleEmitter(),
-                new NewtonSoftJsonSerializer(), logger.Logger)) {
+            using (var scanner = new DiscoveryServices(client,
+                new NewtonSoftJsonSerializer(), new ConsoleListener(), logger.Logger)) {
                 var rand = new Random();
                 while (true) {
                     var configuration = new DiscoveryConfigModel {
@@ -358,66 +380,38 @@ Operations (Mutually exclusive):
         }
 
         /// <inheritdoc/>
-        private class ConsoleEmitter : ISettingsReporter, IEventClient, IIdentity {
-
-            /// <inheritdoc/>
-            public string Gateway { get; } = Utils.GetHostName();
-
-            /// <inheritdoc/>
-            public string Hub => Gateway;
-
-            /// <inheritdoc/>
-            public string DeviceId => Gateway;
-
-            /// <inheritdoc/>
-            public string ModuleId { get; } = "";
-
-            /// <inheritdoc/>
-            public Task SendEventAsync(string target, byte[] data, string contentType,
-                string eventSchema, string contentEncoding, CancellationToken ct) {
-                var json = Encoding.UTF8.GetString(data);
-                var o = JsonConvert.DeserializeObject(json);
-                Console.WriteLine(contentType);
-                Console.WriteLine(_serializer.SerializePretty(o));
-                return Task.CompletedTask;
+        sealed class IoTSdkLogger : EventSourceSerilogSink {
+            public IoTSdkLogger(ILogger logger) :
+                base(logger.ForContext("SourceContext", EventSource.Replace('-', '.'))) {
             }
 
-            /// <inheritdoc/>
-            public async Task SendEventAsync(string target, IEnumerable<byte[]> batch, string contentType,
-                string eventSchema, string contentEncoding, CancellationToken ct) {
-                foreach (var data in batch) {
-                    await SendEventAsync(target, data, contentType, contentType, contentEncoding, ct).ConfigureAwait(false);
+            public override void OnEvent(EventWrittenEventArgs eventData) {
+                switch (eventData.EventName) {
+                    case "Enter":
+                    case "Exit":
+                    case "Associate":
+                        WriteEvent(LogEventLevel.Verbose, eventData);
+                        break;
+                    default:
+                        WriteEvent(LogEventLevel.Debug, eventData);
+                        break;
                 }
             }
 
-            /// <inheritdoc/>
-            public void SendEvent<T>(string target, byte[] data, string contentType, string eventSchema,
-                string contentEncoding, T token, Action<T, Exception> complete) {
-                SendEventAsync(target, data, contentType, eventSchema, contentEncoding, default)
-                    .ContinueWith(task => complete(token, task.Exception));
-            }
-
-            /// <inheritdoc/>
-            public Task ReportAsync(string propertyId, VariantValue value, CancellationToken ct) {
-                Console.WriteLine($"{propertyId}={value}");
-                return Task.CompletedTask;
-            }
-
-            /// <inheritdoc/>
-            public Task ReportAsync(IEnumerable<KeyValuePair<string, VariantValue>> properties,
-                CancellationToken ct) {
-                foreach (var prop in properties) {
-                    Console.WriteLine($"{prop.Key}={prop.Value}");
-                }
-                return Task.CompletedTask;
-            }
-
-            private readonly IJsonSerializer _serializer = new NewtonSoftJsonSerializer();
+            // ddbee999-a79e-5050-ea3c-6d1a8a7bafdd
+            public const string EventSource = "Microsoft-Azure-Devices-Device-Client";
         }
 
         /// <inheritdoc/>
         private class ConsoleListener : IApplicationRegistryListener,
-            IEndpointRegistryListener {
+            IEndpointRegistryListener, IDiscoveryResultHandler {
+
+            /// <inheritdoc/>
+            public Task ReportResultsAsync(IEnumerable<DiscoveryResultModel> results,
+                CancellationToken ct) {
+                Console.WriteLine(_serializer.SerializePretty(results));
+                return Task.CompletedTask;
+            }
 
             /// <inheritdoc/>
             public Task OnApplicationDeletedAsync(RegistryOperationContextModel context,
@@ -474,6 +468,8 @@ Operations (Mutually exclusive):
                 Console.WriteLine($"Updated {endpoint.Id}");
                 return Task.CompletedTask;
             }
+
+            private readonly IJsonSerializer _serializer = new NewtonSoftJsonSerializer();
         }
     }
 }

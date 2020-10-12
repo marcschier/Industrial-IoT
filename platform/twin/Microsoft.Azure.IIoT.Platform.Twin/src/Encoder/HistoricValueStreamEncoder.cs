@@ -3,7 +3,7 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Platform.Twin.Edge {
+namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
     using Microsoft.Azure.IIoT.Platform.OpcUa;
     using Microsoft.Azure.IIoT.Platform.OpcUa.Models;
     using Microsoft.Azure.IIoT.Platform.Core.Models;
@@ -258,7 +258,8 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge {
             while (true) {
                 ct.ThrowIfCancellationRequested();
                 try {
-                    var result = await ReadHistoryAsync<HistoryEvent>(details, ct).ConfigureAwait(false);
+                    var result = await ReadHistoryAsync<HistoryEvent>(details, 
+                        ct).ConfigureAwait(false);
                     if (result.history?.Events != null) {
                         _logger.Verbose("  {count} events...",
                             result.history.Events.Count);
@@ -324,7 +325,8 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge {
                     return null;
                 }
                 var read = await RawNodeModel.ReadValueAsync(session, null,
-                    (NodeId)filterNode.Results[0].Targets[0].TargetId, _diagnostics, false).ConfigureAwait(false);
+                    (NodeId)filterNode.Results[0].Targets[0].TargetId, _diagnostics, 
+                        false).ConfigureAwait(false);
                 if (ExtensionObject.ToEncodeable(read.Value.Value as ExtensionObject)
                     is EventFilter eventFilter) {
                     return eventFilter;

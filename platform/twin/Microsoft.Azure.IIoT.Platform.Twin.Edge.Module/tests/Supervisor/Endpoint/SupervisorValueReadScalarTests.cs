@@ -3,8 +3,8 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Supervisor.Endpoint {
-    using Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Tests;
+namespace Microsoft.Azure.IIoT.Platform.Twin.Services.Module.Supervisor.Endpoint {
+    using Microsoft.Azure.IIoT.Platform.Twin.Services.Module.Tests;
     using Microsoft.Azure.IIoT.Platform.OpcUa;
     using Microsoft.Azure.IIoT.Platform.Registry.Models;
     using Microsoft.Azure.IIoT.Platform.Core.Models;
@@ -42,8 +42,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Supervisor.Endpoint {
                             .Select(ip => $"opc.tcp://{ip}:{_server.Port}/UA/SampleServer").ToHashSet(),
                         Certificate = _server.Certificate?.RawData?.ToThumbprint()
                     },
-                    Id = "testid",
-                    SupervisorId = _module.AsHubResource()
+                    Id = "testid"
                 }, (ep, n) => _server.Client.ReadValueAsync(ep.Endpoint, n));
         }
 

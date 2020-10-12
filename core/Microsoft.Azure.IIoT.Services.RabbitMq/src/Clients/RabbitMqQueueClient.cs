@@ -32,7 +32,7 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
         public Task SendAsync(string target, byte[] payload,
             IDictionary<string, string> properties, string partitionKey,
             CancellationToken ct) {
-            var tcs = new TaskCompletionSource<bool>();
+            var tcs = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
             ct.Register(() => tcs.TrySetCanceled());
             Send(target, payload, tcs, (t, ex) => {
                 if (ex == null) {
@@ -87,7 +87,7 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
             if (payload == null) {
                 throw new ArgumentNullException(nameof(payload));
             }
-            var tcs = new TaskCompletionSource<bool>();
+            var tcs = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
             ct.Register(() => tcs.TrySetCanceled());
             SendEvent(target, payload, contentType, eventSchema, contentEncoding,
                 tcs, (t, ex) => {
@@ -102,7 +102,7 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
         }
 
         /// <inheritdoc/>
-        public Task SendEventAsync(string target, IEnumerable<byte[]> batch,
+        public async Task SendEventAsync(string target, IEnumerable<byte[]> batch,
             string contentType, string eventSchema, string contentEncoding,
             CancellationToken ct) {
             if (target == null) {
@@ -111,8 +111,8 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
             if (batch == null) {
                 throw new ArgumentNullException(nameof(batch));
             }
-            var channel = GetChannel(target);
-            var tcs = new TaskCompletionSource<bool>();
+            var channel = await Task.Run(() => GetChannel(target)).ConfigureAwait(false);
+            var tcs = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
             ct.Register(() => tcs.TrySetCanceled());
             channel.Publish(batch.Select(b => (ReadOnlyMemory<byte>)b.AsMemory()),
                 tcs, (t, ex) => {
@@ -124,7 +124,7 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
                     }
                 },
                 header => Set(header, target, contentType, eventSchema, contentEncoding));
-            return tcs.Task;
+            await tcs.Task;
         }
 
         /// <inheritdoc/>

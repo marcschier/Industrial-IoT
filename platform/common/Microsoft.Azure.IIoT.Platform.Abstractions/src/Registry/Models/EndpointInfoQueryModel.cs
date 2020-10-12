@@ -60,11 +60,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
         /// Application id to filter
         /// </summary>
         public string ApplicationId { get; set; }
-
-        /// <summary>
-        /// Supervisor id to filter with
-        /// </summary>
-        public string SupervisorId { get; set; }
     }
 }
 

@@ -39,7 +39,7 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service.Api {
                     LogLevel = IIoT.Platform.Directory.Models.TraceLogLevel.Verbose
                 }
             };
-            var result = new TaskCompletionSource<PublisherEventApiModel>();
+            var result = new TaskCompletionSource<PublisherEventApiModel>(TaskCreationOptions.RunContinuationsAsynchronously);
             await using (await client.SubscribePublisherEventsAsync(ev => {
                 result.SetResult(ev);
                 return Task.CompletedTask;
@@ -70,7 +70,7 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service.Api {
                     LogLevel = IIoT.Platform.Directory.Models.TraceLogLevel.Verbose
                 }
             };
-            var result = new TaskCompletionSource<bool>();
+            var result = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
             var counter = 0;
             await using (await client.SubscribePublisherEventsAsync(ev => {
                 counter++;
@@ -101,7 +101,7 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service.Api {
                     LogLevel = IIoT.Platform.Directory.Models.TraceLogLevel.Verbose
                 }
             };
-            var result = new TaskCompletionSource<DiscovererEventApiModel>();
+            var result = new TaskCompletionSource<DiscovererEventApiModel>(TaskCreationOptions.RunContinuationsAsynchronously);
             await using (await client.SubscribeDiscovererEventsAsync(ev => {
                 result.SetResult(ev);
                 return Task.CompletedTask;
@@ -130,7 +130,7 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service.Api {
                     LogLevel = IIoT.Platform.Directory.Models.TraceLogLevel.Verbose
                 }
             };
-            var result = new TaskCompletionSource<bool>();
+            var result = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
             var counter = 0;
             await using (await client.SubscribeDiscovererEventsAsync(ev => {
                 counter++;
@@ -162,7 +162,7 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service.Api {
                     LogLevel = IIoT.Platform.Directory.Models.TraceLogLevel.Verbose
                 }
             };
-            var result = new TaskCompletionSource<SupervisorEventApiModel>();
+            var result = new TaskCompletionSource<SupervisorEventApiModel>(TaskCreationOptions.RunContinuationsAsynchronously);
             await using (await client.SubscribeSupervisorEventsAsync(ev => {
                 result.SetResult(ev);
                 return Task.CompletedTask;
@@ -194,7 +194,7 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service.Api {
                     LogLevel = IIoT.Platform.Directory.Models.TraceLogLevel.Verbose
                 }
             };
-            var result = new TaskCompletionSource<bool>();
+            var result = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
             var counter = 0;
             await using (await client.SubscribeSupervisorEventsAsync(ev => {
                 counter++;
@@ -227,7 +227,7 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service.Api {
                     Capabilities = new HashSet<string>{ "ag", "sadf", "" },
                 }
             };
-            var result = new TaskCompletionSource<ApplicationEventApiModel>();
+            var result = new TaskCompletionSource<ApplicationEventApiModel>(TaskCreationOptions.RunContinuationsAsynchronously);
             await using (await client.SubscribeApplicationEventsAsync(ev => {
                 result.SetResult(ev);
                 return Task.CompletedTask;
@@ -263,7 +263,7 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service.Api {
                     Capabilities = new HashSet<string> { "ag", "sadf", "" },
                 }
             };
-            var result = new TaskCompletionSource<bool>();
+            var result = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
             var counter = 0;
             await using (await client.SubscribeApplicationEventsAsync(ev => {
                 counter++;
@@ -295,7 +295,7 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service.Api {
                     NotSeenSince = DateTime.UtcNow
                 }
             };
-            var result = new TaskCompletionSource<EndpointEventApiModel>();
+            var result = new TaskCompletionSource<EndpointEventApiModel>(TaskCreationOptions.RunContinuationsAsynchronously);
             await using (await client.SubscribeEndpointEventsAsync(ev => {
                 result.SetResult(ev);
                 return Task.CompletedTask;
@@ -330,7 +330,7 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service.Api {
                     NotSeenSince = DateTime.UtcNow
                 }
             };
-            var result = new TaskCompletionSource<bool>();
+            var result = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
             var counter = 0;
             await using (await client.SubscribeEndpointEventsAsync(ev => {
                 counter++;
@@ -361,7 +361,7 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service.Api {
                     SiteId = "TestSigfsdfg  ff",
                 }
             };
-            var result = new TaskCompletionSource<GatewayEventApiModel>();
+            var result = new TaskCompletionSource<GatewayEventApiModel>(TaskCreationOptions.RunContinuationsAsynchronously);
             await using (await client.SubscribeGatewayEventsAsync(ev => {
                 result.SetResult(ev);
                 return Task.CompletedTask;
@@ -392,7 +392,7 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service.Api {
                     SiteId = "TestSigfsdfg  ff",
                 }
             };
-            var result = new TaskCompletionSource<bool>();
+            var result = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
             var counter = 0;
             await using (await client.SubscribeGatewayEventsAsync(ev => {
                 counter++;
@@ -425,7 +425,7 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service.Api {
                 EventType = IIoT.Platform.Registry.Models.DiscoveryProgressType.NetworkScanFinished,
                 TimeStamp = DateTime.UtcNow
             };
-            var result = new TaskCompletionSource<DiscoveryProgressApiModel>();
+            var result = new TaskCompletionSource<DiscoveryProgressApiModel>(TaskCreationOptions.RunContinuationsAsynchronously);
             await using (await client.SubscribeDiscoveryProgressByDiscovererIdAsync(
                 discovererId, ev => {
                     result.SetResult(ev);
@@ -467,7 +467,7 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service.Api {
                 EventType = IIoT.Platform.Registry.Models.DiscoveryProgressType.NetworkScanFinished,
                 TimeStamp = DateTime.UtcNow
             };
-            var result = new TaskCompletionSource<DiscoveryProgressApiModel>();
+            var result = new TaskCompletionSource<DiscoveryProgressApiModel>(TaskCreationOptions.RunContinuationsAsynchronously);
             await using (await client.SubscribeDiscoveryProgressByRequestIdAsync(
                 requestId, ev => {
                     result.SetResult(ev);
@@ -505,7 +505,7 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service.Api {
                 EventType = IIoT.Platform.Registry.Models.DiscoveryProgressType.NetworkScanFinished,
                 TimeStamp = DateTime.UtcNow
             };
-            var result = new TaskCompletionSource<bool>();
+            var result = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
             var counter = 0;
             await using (await client.SubscribeDiscoveryProgressByDiscovererIdAsync(
                 discovererId, ev => {

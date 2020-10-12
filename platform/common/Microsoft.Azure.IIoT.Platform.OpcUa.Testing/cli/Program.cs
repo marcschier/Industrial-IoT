@@ -143,7 +143,7 @@ Operations (Mutually exclusive):
         /// </summary>
         private static async Task RunServerAsync(IEnumerable<int> ports) {
             using (var logger = StackLogger.Create(ConsoleLogger.Create())) {
-                var tcs = new TaskCompletionSource<bool>();
+                var tcs = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
                 AssemblyLoadContext.Default.Unloading += _ => tcs.TrySetResult(true);
                 using (var server = new ServerConsoleHost(new ServerFactory(logger.Logger),
                     logger.Logger) {
@@ -238,7 +238,7 @@ Operations (Mutually exclusive):
             /// <param name="ct"></param>
             /// <returns></returns>
             private static async Task RunSampleServerAsync(ILogger logger, CancellationToken ct) {
-                var tcs = new TaskCompletionSource<bool>();
+                var tcs = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
                 ct.Register(() => tcs.TrySetResult(true));
                 using (var server = new ServerConsoleHost(new ServerFactory(logger) {
                     LogStatus = false

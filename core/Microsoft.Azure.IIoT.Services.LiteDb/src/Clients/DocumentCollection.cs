@@ -51,7 +51,7 @@ namespace Microsoft.Azure.IIoT.Services.LiteDb.Clients {
             }
             catch (Exception ex) {
                 FilterException(ex);
-                return Task.FromResult<IDocumentInfo<T>>(null);
+                throw;
             }
         }
 
@@ -99,7 +99,7 @@ namespace Microsoft.Azure.IIoT.Services.LiteDb.Clients {
             }
             catch (Exception ex) {
                 FilterException(ex);
-                return Task.FromResult<IDocumentInfo<T>>(null);
+                throw;
             }
         }
 
@@ -147,7 +147,7 @@ namespace Microsoft.Azure.IIoT.Services.LiteDb.Clients {
             }
             catch (Exception ex) {
                 FilterException(ex);
-                return Task.FromResult<IDocumentInfo<T>>(null);
+                throw;
             }
         }
 
@@ -168,7 +168,7 @@ namespace Microsoft.Azure.IIoT.Services.LiteDb.Clients {
             }
             catch (Exception ex) {
                 FilterException(ex);
-                return Task.FromResult<IDocumentInfo<T>>(null);
+                throw;
             }
         }
 
@@ -223,6 +223,7 @@ namespace Microsoft.Azure.IIoT.Services.LiteDb.Clients {
             }
             catch (Exception ex) {
                 FilterException(ex);
+                throw;
             }
             return Task.CompletedTask;
         }
@@ -613,7 +614,6 @@ namespace Microsoft.Azure.IIoT.Services.LiteDb.Clients {
                             nameof(LiteException.INVALID_NULL_CHAR_STRING), lex);
                 }
             }
-            throw ex;
         }
 
         private readonly ILiteDatabase _db;

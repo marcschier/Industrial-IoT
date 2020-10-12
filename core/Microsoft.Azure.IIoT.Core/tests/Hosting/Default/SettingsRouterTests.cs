@@ -142,32 +142,6 @@ namespace Microsoft.Azure.IIoT.Hosting.Services {
                 }).ConfigureAwait(false);
         }
 
-        [Fact]
-        public async Task TestSettingDesiredPropertyToNullAndCheckReported1Async() {
-
-            var harness = new ModuleHostHarness();
-            var controller = new TestController1();
-            await ModuleHostHarness.RunTestAsync(controller.YieldReturn(),
-                async (deviceId, moduleId, services) => {
-                    var hub = services.Resolve<IDeviceTwinServices>();
-                    var twin = await hub.GetAsync(deviceId, moduleId).ConfigureAwait(false);
-
-                    // TODO : Assert precondition
-                    // Assert.True(twin.Properties.Reported.TryGetValue(nameof(TestController1.TestSetting3), out var pre));
-
-                    // Act
-                    await hub.UpdatePropertyAsync(deviceId, moduleId,
-                        nameof(TestController1.TestSetting3), null).ConfigureAwait(false);
-                    twin = await hub.GetAsync(deviceId, moduleId).ConfigureAwait(false);
-
-                    // Assert
-                    Assert.True(controller._applyCalled);
-                    Assert.Null(controller.TestSetting3);
-                    Assert.False(twin.Properties.Reported.TryGetValue(nameof(TestController1.TestSetting3), out var post));
-                    Assert.Null(post);
-                }).ConfigureAwait(false);
-        }
-
         public class TestController1 : ISettingsController {
             public bool _applyCalled;
 

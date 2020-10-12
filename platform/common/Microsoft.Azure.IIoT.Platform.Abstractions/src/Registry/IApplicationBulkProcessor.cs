@@ -17,12 +17,11 @@ namespace Microsoft.Azure.IIoT.Platform.Registry {
         /// Merge applications and endpoints
         /// </summary>
         /// <param name="discovererId"></param>
-        /// <param name="supervisorId"></param>
-        /// <param name="result"></param>
-        /// <param name="events"></param>
+        /// <param name="header"></param>
+        /// <param name="results"></param>
         /// <returns></returns>
         Task ProcessDiscoveryEventsAsync(string discovererId,
-            string supervisorId, DiscoveryResultModel result,
-            IEnumerable<DiscoveryEventModel> events);
+            DiscoveryContextModel header, 
+            IEnumerable<DiscoveryResultModel> results);
     }
 }

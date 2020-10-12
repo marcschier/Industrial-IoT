@@ -39,7 +39,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Service.Controllers {
             var log = _factory.Resolve<ILogger>();
             var serializer = _factory.Resolve<IJsonSerializer>();
             return new HistoryReadValuesTests<string>(() => // Create an adapter over the api
-                new HistoricAccessAdapter<string>(
+                new HistorianServicesAdapter<string>(
                     new HistoryRawAdapter(
                         new TwinServiceClient(new HttpClient(_factory, log),
                             new TestConfig(client.BaseAddress), serializer)),

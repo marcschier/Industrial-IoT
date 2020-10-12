@@ -31,13 +31,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Models {
         public string EndpointUrl { get; set; }
 
         /// <summary>
-        /// Supervisor that can manage the endpoint.
-        /// </summary>
-        [DataMember(Name = "supervisorId", Order = 3,
-            EmitDefaultValue = false)]
-        public string SupervisorId { get; set; }
-
-        /// <summary>
         /// Discoverer that registered the endpoint
         /// </summary>
         [DataMember(Name = "discovererId", Order = 4,

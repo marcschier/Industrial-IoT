@@ -5,7 +5,7 @@
 
 namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
     using Microsoft.Azure.IIoT.Platform.Registry.Models;
-    using Microsoft.Azure.IIoT.Platform.Registry.Storage.Default;
+    using Microsoft.Azure.IIoT.Platform.Registry.Storage;
     using Microsoft.Azure.IIoT.Platform.Core.Models;
     using Microsoft.Azure.IIoT.Storage.Default;
     using Microsoft.Azure.IIoT.Storage;
@@ -27,7 +27,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
 
         [Fact]
         public void GetTwinThatDoesNotExist() {
-            using (var mock = CreateMock(out var hubName, out var site, out var super, out var endpoints)) {
+            using (var mock = CreateMock(out var endpoints)) {
                 IEndpointRegistry service = mock.Create<EndpointRegistry>();
 
                 // Run
@@ -42,7 +42,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
 
         [Fact]
         public void GetTwinThatExists() {
-            using (var mock = CreateMock(out var hubName, out var site, out var super, out var endpoints)) {
+            using (var mock = CreateMock(out var endpoints)) {
                 var first = endpoints.First();
                 var id = EndpointInfoModelEx.CreateEndpointId(first.ApplicationId,
                     first.EndpointUrl, first.Endpoint.SecurityMode,
@@ -60,7 +60,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
 
         [Fact]
         public void ListAllTwins() {
-            using (var mock = CreateMock(out var hubName, out var site, out var super, out var endpoints)) {
+            using (var mock = CreateMock(out var endpoints)) {
                 IEndpointRegistry service = mock.Create<EndpointRegistry>();
 
                 // Run
@@ -73,7 +73,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
 
         [Fact]
         public void ListAllTwinsUsingQuery() {
-            using (var mock = CreateMock(out var hubName, out var site, out var super, out var endpoints)) {
+            using (var mock = CreateMock(out var endpoints)) {
                 IEndpointRegistry service = mock.Create<EndpointRegistry>();
 
                 // Run
@@ -86,7 +86,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
 
         [Fact]
         public void QueryTwinsBySignSecurityMode() {
-            using (var mock = CreateMock(out var hubName, out var site, out var super, out var endpoints)) {
+            using (var mock = CreateMock(out var endpoints)) {
                 var count = endpoints.Count(x => x.Endpoint.SecurityMode == SecurityMode.Sign);
                 IEndpointRegistry service = mock.Create<EndpointRegistry>();
 
@@ -102,7 +102,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
 
         [Fact]
         public void QueryTwinsByActivation() {
-            using (var mock = CreateMock(out var hubName, out var site, out var super, out var endpoints)) {
+            using (var mock = CreateMock(out var endpoints)) {
                 var count = endpoints.Count(x => x.IsActivated());
                 IEndpointRegistry service = mock.Create<EndpointRegistry>();
 
@@ -118,7 +118,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
 
         [Fact]
         public void QueryTwinsByDeactivation() {
-            using (var mock = CreateMock(out var hubName, out var site, out var super, out var endpoints)) {
+            using (var mock = CreateMock(out var endpoints)) {
                 var count = endpoints.Count(x => !x.IsActivated());
                 IEndpointRegistry service = mock.Create<EndpointRegistry>();
 
@@ -134,7 +134,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
 
         [Fact]
         public void QueryTwinsByConnectivity() {
-            using (var mock = CreateMock(out var hubName, out var site, out var super, out var endpoints)) {
+            using (var mock = CreateMock(out var endpoints)) {
                 var count = endpoints.Count(x => x.IsConnected());
                 IEndpointRegistry service = mock.Create<EndpointRegistry>();
 
@@ -150,7 +150,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
 
         [Fact]
         public void QueryTwinsByDisconnectivity() {
-            using (var mock = CreateMock(out var hubName, out var site, out var super, out var endpoints)) {
+            using (var mock = CreateMock(out var endpoints)) {
                 var count = endpoints.Count(x => !x.IsConnected());
                 IEndpointRegistry service = mock.Create<EndpointRegistry>();
 
@@ -166,7 +166,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
 
         [Fact]
         public void QueryTwinsBySecurityPolicySameCase() {
-            using (var mock = CreateMock(out var hubName, out var site, out var super, out var endpoints)) {
+            using (var mock = CreateMock(out var endpoints)) {
                 IEndpointRegistry service = mock.Create<EndpointRegistry>();
 
                 // Run
@@ -182,7 +182,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
 
         [Fact]
         public void QueryTwinsBySecurityPolicyDifferentCase() {
-            using (var mock = CreateMock(out var hubName, out var site, out var super, out var endpoints)) {
+            using (var mock = CreateMock(out var endpoints)) {
                 IEndpointRegistry service = mock.Create<EndpointRegistry>();
 
                 // Run
@@ -197,7 +197,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
 
         [Fact]
         public void QueryTwinsByEndpointUrlDifferentCase() {
-            using (var mock = CreateMock(out var hubName, out var site, out var super, out var endpoints)) {
+            using (var mock = CreateMock(out var endpoints)) {
                 IEndpointRegistry service = mock.Create<EndpointRegistry>();
 
                 // Run
@@ -210,22 +210,18 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                 Assert.True(records.Items[0].IsSameAs(endpoints.First()));
             }
         }
-        public static AutoMock CreateMock(out string hubName, out string site, out string super,
-            out List<EndpointInfoModel> endpoints, bool noSite = false, bool noAdd = false) {
+        public static AutoMock CreateMock(out List<EndpointInfoModel> endpoints, bool noAdd = false) {
             var fix = new Fixture();
             fix.Customizations.Add(new TypeRelay(typeof(VariantValue), typeof(VariantValue)));
             fix.Behaviors.OfType<ThrowingRecursionBehavior>().ToList()
                 .ForEach(b => fix.Behaviors.Remove(b));
             fix.Behaviors.Add(new OmitOnRecursionBehavior());
-            var sitex = site = noSite ? null : fix.Create<string>();
-            var hubNamex = hubName = fix.Create<string>();
-            var superx = super = HubResource.Format(hubNamex, fix.Create<string>(), null);
+
             endpoints = fix
                 .Build<EndpointInfoModel>()
                 .Without(x => x)
                 .Do(x => x = fix
                     .Build<EndpointInfoModel>()
-                    .With(y => y.SupervisorId, superx)
                     .Create())
                 .CreateMany(10)
                 .ToList();

@@ -39,8 +39,11 @@ namespace System.Threading.Tasks {
         public static async Task<T> WithTimeoutOf<T>(this Task<T> task,
             TimeSpan timeout) {
 #pragma warning restore IDE1006 // Naming Styles
-            using var cts = new CancellationTokenSource(timeout);
-            return await Task.Run(() => task, cts.Token).ConfigureAwait(false);
+            var result = await Task.WhenAny(task, Task.Delay(timeout)).ConfigureAwait(false);
+            if (result != task) {
+                throw new TimeoutException($"Timeout after {timeout}");
+            }
+            return await task;
         }
 
         /// <summary>
@@ -50,8 +53,11 @@ namespace System.Threading.Tasks {
         public static async Task WithTimeoutOf(this Task task,
             TimeSpan timeout) {
 #pragma warning restore IDE1006 // Naming Styles
-            using var cts = new CancellationTokenSource(timeout);
-            await Task.Run(() => task, cts.Token).ConfigureAwait(false);
+            var result = await Task.WhenAny(task, Task.Delay(timeout)).ConfigureAwait(false);
+            if (result != task) {
+                throw new TimeoutException($"Timeout after {timeout}");
+            }
+            await task;
         }
 
         /// <summary>

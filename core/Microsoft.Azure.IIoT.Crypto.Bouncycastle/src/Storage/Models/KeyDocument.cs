@@ -15,6 +15,14 @@ namespace Microsoft.Azure.IIoT.Crypto.Storage.Models {
     public class KeyDocument {
 
         /// <summary>
+        /// Document type
+        /// </summary>
+        [DataMember]
+        public string ClassType { get; set; } = ClassTypeName;
+        /// <summary/>
+        public static readonly string ClassTypeName = "Key";
+
+        /// <summary>
         /// Key id
         /// </summary>
         [DataMember(Name = "id")]
@@ -37,12 +45,6 @@ namespace Microsoft.Azure.IIoT.Crypto.Storage.Models {
         /// </summary>
         [DataMember]
         public VariantValue KeyJson { get; set; }
-
-        /// <summary>
-        /// Type
-        /// </summary>
-        [DataMember]
-        public static string Type => nameof(Key);
     }
 }
 

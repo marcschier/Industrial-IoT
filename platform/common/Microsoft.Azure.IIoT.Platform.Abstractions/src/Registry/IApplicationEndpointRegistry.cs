@@ -12,7 +12,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry {
     /// <summary>
     /// Application endpoint references
     /// </summary>
-    public interface IApplicationEndpointRegistry : IEndpointRegistry {
+    public interface IApplicationEndpointRegistry {
 
         /// <summary>
         /// Get application endpoints
@@ -22,8 +22,9 @@ namespace Microsoft.Azure.IIoT.Platform.Registry {
         /// <param name="filterInactiveTwins"></param>
         /// <param name="ct"></param>
         /// <returns></returns>
-        Task<IEnumerable<EndpointInfoModel>> GetApplicationEndpoints(string applicationId,
-            bool includeDeleted = false, bool filterInactiveTwins = false,
+        Task<IEnumerable<EndpointInfoModel>> GetApplicationEndpoints(
+            string applicationId, bool includeDeleted = false, 
+            bool filterInactiveTwins = false,
             CancellationToken ct = default);
     }
 }

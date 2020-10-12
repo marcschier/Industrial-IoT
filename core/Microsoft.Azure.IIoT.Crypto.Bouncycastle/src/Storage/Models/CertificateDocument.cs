@@ -16,6 +16,14 @@ namespace Microsoft.Azure.IIoT.Crypto.Storage.Models {
     public class CertificateDocument {
 
         /// <summary>
+        /// Document type
+        /// </summary>
+        [DataMember]
+        public string ClassType { get; set; } = ClassTypeName;
+        /// <summary/>
+        public static readonly string ClassTypeName = "Certificate";
+
+        /// <summary>
         /// Serial number
         /// </summary>
         [DataMember(Name = "id")]
@@ -55,7 +63,7 @@ namespace Microsoft.Azure.IIoT.Crypto.Storage.Models {
         /// Alternative names of the subject
         /// </summary>
         [DataMember]
-        public List<string> SubjectAltNames { get; set; }
+        public /*IReadOnlyList*/ IList<string> SubjectAltNames { get; set; }
 
         /// <summary>
         /// Certificate issuer
@@ -67,7 +75,7 @@ namespace Microsoft.Azure.IIoT.Crypto.Storage.Models {
         /// Alternative names of the issuer
         /// </summary>
         [DataMember]
-        public List<string> IssuerAltNames { get; set; }
+        public /*IReadOnlyList*/ IList<string> IssuerAltNames { get; set; }
 
         /// <summary>
         /// Issuer key id
@@ -128,12 +136,6 @@ namespace Microsoft.Azure.IIoT.Crypto.Storage.Models {
         /// </summary>
         [DataMember]
         public long Version { get; set; }
-
-        /// <summary>
-        /// Type
-        /// </summary>
-        [DataMember]
-        public string Type { get; } = nameof(Certificate);
     }
 }
 

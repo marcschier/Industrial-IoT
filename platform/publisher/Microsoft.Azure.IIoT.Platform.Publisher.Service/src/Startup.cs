@@ -7,18 +7,16 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Service {
     using Microsoft.Azure.IIoT.Platform.Publisher.Service.Auth;
     using Microsoft.Azure.IIoT.Platform.Publisher.Service.Runtime;
     using Microsoft.Azure.IIoT.Platform.Publisher;
-    using Microsoft.Azure.IIoT.Platform.Publisher.Migration;
     using Microsoft.Azure.IIoT.Platform.Registry.Api.Clients;
-    using Microsoft.Azure.IIoT.Azure.CosmosDb;
-    using Microsoft.Azure.IIoT.Azure.ServiceBus;
-    using Microsoft.Azure.IIoT.Azure.AppInsights;
-    using Microsoft.Azure.IIoT.Azure.IoTHub.Clients;
-    using Microsoft.Azure.IIoT.Azure.IoTHub.Deploy;
-    using Microsoft.Azure.IIoT.Storage.Default;
+    using Microsoft.Azure.IIoT.Platform.OpcUa.Services;
     using Microsoft.Azure.IIoT.Http.Clients;
     using Microsoft.Azure.IIoT.Authentication;
     using Microsoft.Azure.IIoT.Serializers;
     using Microsoft.Azure.IIoT.Utils;
+    using Microsoft.Azure.IIoT.Azure.CosmosDb;
+    using Microsoft.Azure.IIoT.Azure.ServiceBus;
+    using Microsoft.Azure.IIoT.Azure.AppInsights;
+    using Microsoft.Azure.IIoT.Azure.LogAnalytics.Runtime;
     using Microsoft.Azure.IIoT.AspNetCore.Authentication;
     using Microsoft.Azure.IIoT.AspNetCore.Authentication.Clients;
     using Microsoft.Azure.IIoT.AspNetCore.Cors;
@@ -35,7 +33,6 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Service {
     using Prometheus;
     using System;
     using ILogger = Serilog.ILogger;
-    using Microsoft.Azure.IIoT.Azure.LogAnalytics.Runtime;
 
     /// <summary>
     /// Webservice startup
@@ -187,24 +184,18 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Service {
             // ... Publisher services
             builder.RegisterModule<PublisherServices>();
 
-            // ... migrate from job database on startup
-            builder.RegisterType<StartupMigration>()
-                .AutoActivate()
-                .AsImplementedInterfaces().SingleInstance();
-            builder.RegisterType<JobDatabaseMigration>()
-                .AsImplementedInterfaces().SingleInstance();
-
             // Registry services are required to lookup endpoints.
             builder.RegisterType<RegistryServicesApiAdapter>()
                 .AsImplementedInterfaces();
             builder.RegisterType<RegistryServiceClient>()
                 .AsImplementedInterfaces();
 
-            // Auto Deploy publisher module
-            builder.RegisterType<IoTHubConfigurationClient>()
-                .AsImplementedInterfaces();
-            builder.RegisterType<IoTEdgePublisherDeployment>()
-                .AsImplementedInterfaces().SingleInstance();
+            // Register opc stack services for publisher
+            builder.RegisterType<ClientServices>()
+                .AsImplementedInterfaces().InstancePerLifetimeScope();
+            builder.RegisterType<StackLogger>()
+                .AsImplementedInterfaces().InstancePerLifetimeScope()
+                .AutoActivate();
 
             // ... and auto start
             builder.RegisterType<HostAutoStart>()
@@ -220,7 +211,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Service {
             // Add diagnostics
             builder.AddAppInsightsLogging(Config);
             // Register event bus for integration events
-            builder.RegisterModule<ServiceBusEventBusModule>();
+            builder.RegisterModule<ServiceBusEventBusSupport>();
             // Register Cosmos db for publisher storage
             builder.RegisterModule<CosmosDbModule>();
         }

@@ -19,9 +19,6 @@ namespace Microsoft.Azure.IIoT.App.Pages {
         [Parameter]
         public string ApplicationId { get; set; } = string.Empty;
 
-        [Parameter]
-        public string SupervisorId { get; set; } = string.Empty;
-
         private const string kValueGood = "Good";
 
         protected override async Task LoadPageContentAsync(bool getNextPage) {

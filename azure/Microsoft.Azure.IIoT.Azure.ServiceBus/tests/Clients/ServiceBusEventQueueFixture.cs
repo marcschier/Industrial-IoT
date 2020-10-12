@@ -20,13 +20,16 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Clients {
 
     public sealed class ServiceBusEventQueueFixture : IDisposable {
 
+        public bool Skip { get; set; }
+
         /// <summary>
         /// Create test harness
         /// </summary>
         /// <returns></returns>
-#pragma warning disable CA1822 // Mark members as static
         internal ServiceBusEventQueueHarness GetHarness(string queue) {
-#pragma warning restore CA1822 // Mark members as static
+            if (Skip) {
+                return new ServiceBusEventQueueHarness(null);
+            }
             return new ServiceBusEventQueueHarness(queue);
         }
 
@@ -68,8 +71,8 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Clients {
                 builder.RegisterInstance(new ServiceBusQueueConfig(queue))
                     .AsImplementedInterfaces();
 
-                builder.RegisterModule<ServiceBusEventQueueModule>();
-                builder.RegisterModule<ServiceBusEventProcessorModule>();
+                builder.RegisterModule<ServiceBusEventQueueSupport>();
+                builder.RegisterModule<ServiceBusEventProcessorSupport>();
                 builder.RegisterModule<NewtonSoftJsonModule>();
 
                 builder.RegisterType<DeviceEventHandler>()
@@ -179,13 +182,15 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Clients {
             byte[] data, IDictionary<string, string> properties) {
             HandlerSchema = schema;
             Source = source;
-            try {
-                DeviceId = HubResource.Parse(source, out var hub, out var moduleId);
-                Hub = hub;
-                ModuleId = moduleId;
-            }
-            catch {
+            if (source != null) {
+                try {
+                    DeviceId = HubResource.Parse(source, out var hub, out var moduleId);
+                    Hub = hub;
+                    ModuleId = moduleId;
+                }
+                catch {
 
+                }
             }
             Data = data;
             Target = properties.TryGetValue(EventProperties.Target, out var v) ? v : null;

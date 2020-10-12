@@ -11,17 +11,21 @@ namespace Microsoft.Azure.IIoT.Services.Generic.Services {
     using System;
     using System.Runtime.Serialization;
     using Autofac;
+    using Xunit;
 
     public sealed class SimpleEventBusFixture : IDisposable {
+
+        public bool Skip { get; set; }
 
         /// <summary>
         /// Create test harness
         /// </summary>
         /// <returns></returns>
-#pragma warning disable CA1822 // Mark members as static
         public SimpleEventBusHarness GetHarness(string bus,
-#pragma warning restore CA1822 // Mark members as static
             Action<ContainerBuilder> configure = null) {
+            if (Skip) {
+                return null;
+            }
             return new SimpleEventBusHarness(bus, configure);
         }
 

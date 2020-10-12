@@ -7,6 +7,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Storage.Services {
     using Microsoft.Azure.IIoT.Platform.Core.Models;
     using Microsoft.Azure.IIoT.Platform.Publisher.Models;
     using System;
+    using System.Linq;
 
     /// <summary>
     /// Variable model extensions
@@ -48,14 +49,14 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Storage.Services {
                 ETag = model.GenerationId,
                 DataSetWriterId = dataSetWriterId,
                 Id = GetDocumentId(dataSetWriterId),
-                BrowsePath = model.BrowsePath,
+                BrowsePath = model.BrowsePath?.ToList(),
                 DiscardNew = model.DiscardNew,
                 MonitoringMode = model.MonitoringMode,
                 QueueSize = model.QueueSize,
                 TriggerId = model.TriggerId,
                 EventNotifier = model.EventNotifier,
-                FilterElements = model.Filter?.Elements,
-                SelectedFields = model.SelectedFields,
+                FilterElements = model.Filter?.Elements?.ToList(),
+                SelectedFields = model.SelectedFields?.ToList(),
                 Order = 0,
                 VariableId = null,
                 Attribute = null,
@@ -101,7 +102,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Storage.Services {
                 VariableId = model.Id,
                 DataSetWriterId = dataSetWriterId,
                 Attribute = model.Attribute,
-                BrowsePath = model.BrowsePath,
+                BrowsePath = model.BrowsePath?.ToList(),
                 DataChangeFilter = model.DataChangeFilter,
                 DeadbandType = model.DeadbandType,
                 DeadbandValue = model.DeadbandValue,
@@ -109,7 +110,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Storage.Services {
                 DisplayName = model.PublishedVariableDisplayName,
                 HeartbeatInterval = model.HeartbeatInterval,
                 IndexRange = model.IndexRange,
-                MetaDataProperties = model.MetaDataProperties,
+                MetaDataProperties = model.MetaDataProperties?.ToList(),
                 MonitoringMode = model.MonitoringMode,
                 NodeId = model.PublishedVariableNodeId,
                 QueueSize = model.QueueSize,
@@ -148,16 +149,16 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Storage.Services {
             return new PublishedDataSetEventsModel {
                 GenerationId = document.ETag,
                 Id = document.DataSetWriterId,
-                BrowsePath = document.BrowsePath,
+                BrowsePath = document.BrowsePath?.ToList(),
                 DiscardNew = document.DiscardNew,
                 MonitoringMode = document.MonitoringMode,
                 QueueSize = document.QueueSize,
                 TriggerId = document.TriggerId,
                 EventNotifier = document.EventNotifier,
                 Filter = new ContentFilterModel {
-                    Elements = document.FilterElements,
+                    Elements = document.FilterElements?.ToList(),
                 },
-                SelectedFields = document.SelectedFields,
+                SelectedFields = document.SelectedFields?.ToList(),
                 State = ToDataSetItemState(document),
                 Updated = document.Updated == null ? null : new PublisherOperationContextModel {
                     Time = document.Updated.Value,
@@ -184,7 +185,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Storage.Services {
                 Id = document.VariableId,
                 GenerationId = document.ETag,
                 Attribute = document.Attribute,
-                BrowsePath = document.BrowsePath,
+                BrowsePath = document.BrowsePath?.ToList(),
                 DataChangeFilter = document.DataChangeFilter,
                 DeadbandType = document.DeadbandType,
                 DeadbandValue = document.DeadbandValue,
@@ -192,7 +193,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Storage.Services {
                 PublishedVariableDisplayName = document.DisplayName,
                 HeartbeatInterval = document.HeartbeatInterval,
                 IndexRange = document.IndexRange,
-                MetaDataProperties = document.MetaDataProperties,
+                MetaDataProperties = document.MetaDataProperties?.ToList(),
                 MonitoringMode = document.MonitoringMode,
                 PublishedVariableNodeId = document.NodeId,
                 QueueSize = document.QueueSize,

@@ -124,7 +124,19 @@ namespace System.Collections.Generic {
         /// <param name="that"></param>
         /// <returns></returns>
         public static bool SetEqualsSafe<T>(this IEnumerable<T> seq, IEnumerable<T> that) {
-            return SetEqualsSafe(seq, that, (x, y) => EqualityComparer<T>.Default.Equals(x, y));
+            if (seq == that) {
+                return true;
+            }
+            if (seq == null || that == null) {
+                return false;
+            }
+            if (seq is ISet<T> setx) {
+                return setx.SetEquals(that);
+            }
+            if (that is ISet<T> sety) {
+                return sety.SetEquals(seq);
+            }
+            return new HashSet<T>(seq).SetEquals(that);
         }
 
         /// <summary>

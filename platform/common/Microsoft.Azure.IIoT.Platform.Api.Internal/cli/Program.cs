@@ -2094,7 +2094,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
             var id = options.GetValueOrDefault("-i", "--id", Guid.NewGuid().ToString());
             if (options.IsSet("-m", "--monitor")) {
                 events = _scope.Resolve<IRegistryServiceEvents>();
-                var tcs = new TaskCompletionSource<bool>();
+                var tcs = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
 
                 var discovery = await events.SubscribeDiscoveryProgressByRequestIdAsync(
                     id, async ev => {
@@ -2140,7 +2140,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
             var id = options.GetValueOrDefault("-i", "--id", Guid.NewGuid().ToString());
             if (options.IsSet("-m", "--monitor")) {
                 events = _scope.Resolve<IRegistryServiceEvents>();
-                var tcs = new TaskCompletionSource<bool>();
+                var tcs = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
                 var discovery = await events.SubscribeDiscoveryProgressByRequestIdAsync(
                     id, async ev => {
                         await PrintProgress(ev).ConfigureAwait(false);
@@ -2444,7 +2444,6 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
                 EndpointState = options.GetValueOrDefault<EndpointConnectivityState>(
                     "-s", "--state", null),
                 IncludeNotSeenSince = options.IsProvidedOrNull("-d", "--deleted"),
-                SupervisorId = options.GetValueOrDefault<string>("-T", "--supervisorId", null),
                 ApplicationId = options.GetValueOrDefault<string>("-R", "--applicationId", null),
                 DiscovererId = options.GetValueOrDefault<string>("-D", "--discovererId", null)
             };
@@ -3384,8 +3383,6 @@ Commands and Options
         -c, --connected Only return connected or disconnected.
         -s, --state     Only return endpoints with specified state.
         -d, --deleted   Include soft deleted endpoints.
-        -T  --supervisorId
-                        Return endpoints with provided supervisor.
         -R  --applicationId
                         Return endpoints for specified Application.
         -D  --discovererId

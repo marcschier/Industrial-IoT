@@ -43,7 +43,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
         public void TestEqualIsEqualWithServiceModelConversion() {
             var r1 = CreateRegistration();
             var m = r1.ToServiceModel("etag");
-            var r2 = m.ToDocumentModel(_serializer);
+            var r2 = m.ToDocumentModel();
 
             Assert.Equal(r1, r2);
             Assert.Equal(r1.GetHashCode(), r2.GetHashCode());
@@ -55,7 +55,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
         public void TestEqualIsNotEqualWithServiceModelConversionWhenDisabled() {
             var r1 = CreateRegistration();
             var m = r1.ToServiceModel("etag");
-            var r2 = m.ToDocumentModel(_serializer, true);
+            var r2 = m.ToDocumentModel(true);
 
             Assert.NotEqual(r1, r2);
             Assert.NotEqual(r1.GetHashCode(), r2.GetHashCode());
@@ -68,7 +68,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
             var r1 = CreateRegistration();
             var m = r1.ToServiceModel("etag");
             m.Endpoint.SecurityPolicy = "";
-            var r2 = m.ToDocumentModel(_serializer);
+            var r2 = m.ToDocumentModel();
 
             Assert.NotEqual(r1, r2);
             Assert.NotEqual(r1.GetHashCode(), r2.GetHashCode());
@@ -80,7 +80,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
         /// Helper to create registration
         /// </summary>
         /// <returns></returns>
-        private EndpointDocument CreateRegistration() {
+        private static EndpointDocument CreateRegistration() {
             var fix = new Fixture();
 
             fix.Customizations.Add(new TypeRelay(typeof(VariantValue), typeof(VariantValue)));
@@ -95,16 +95,13 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
                 .With(x => x.AlternativeUrls,
                     fix.CreateMany<Uri>(4)
                         .Select(u => u.ToString())
-                        .ToList().EncodeAsDictionary())
+                        .ToHashSet())
                 .With(x => x.AuthenticationMethods,
-                    fix.CreateMany<AuthenticationMethodModel>()
-                        .Select(_serializer.FromObject).ToList().EncodeAsDictionary())
+                    fix.CreateMany<AuthenticationMethodModel>().ToList())
                 .Without(x => x.IsDisabled)
                 .Without(x => x.NotSeenSince)
                 .Create();
             return r1;
         }
-
-        private readonly IJsonSerializer _serializer = new NewtonSoftJsonSerializer();
     }
 }

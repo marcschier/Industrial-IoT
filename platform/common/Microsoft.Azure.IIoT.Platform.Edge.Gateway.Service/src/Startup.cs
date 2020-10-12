@@ -194,7 +194,7 @@ namespace Microsoft.Azure.IIoT.Platform.Edge.Gateway.Service {
             // Add App Insights logging
             builder.AddAppInsightsLogging(Config);
             // Iot hub
-            builder.RegisterModule<IoTHubModule>();
+            builder.RegisterModule<IoTHubSupportModule>();
             // Add service to service authentication
             builder.RegisterModule<WebApiAuthentication>();
         }

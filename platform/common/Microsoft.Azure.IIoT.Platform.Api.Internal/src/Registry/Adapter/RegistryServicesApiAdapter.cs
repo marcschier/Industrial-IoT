@@ -16,7 +16,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Clients {
     /// Registry services adapter to run dependent services outside of cloud.
     /// </summary>
     public sealed class RegistryServicesApiAdapter : IEndpointRegistry,
-        IApplicationRegistry, IDiscovererServices {
+        IApplicationRegistry, IDiscoveryServices {
 
         /// <summary>
         /// Create registry services
@@ -120,6 +120,12 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Clients {
         /// <inheritdoc/>
         public Task CancelAsync(DiscoveryCancelModel request, CancellationToken ct) {
             return _client.CancelAsync(request.ToApiModel(), ct);
+        }
+
+        /// <inheritdoc/>
+        public Task RegisterAsync(ServerRegistrationRequestModel request, 
+            CancellationToken ct) {
+            return _client.RegisterAsync(request.ToApiModel(), ct);
         }
 
         private readonly IRegistryServiceApi _client;

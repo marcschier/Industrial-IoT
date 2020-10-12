@@ -22,6 +22,8 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq {
                 .AsImplementedInterfaces();
             builder.RegisterType<RabbitMqConnection>()
                 .AsImplementedInterfaces().SingleInstance();
+            builder.RegisterType<RabbitMqHealthCheck>()
+                .AsImplementedInterfaces().SingleInstance();
             base.Load(builder);
         }
     }

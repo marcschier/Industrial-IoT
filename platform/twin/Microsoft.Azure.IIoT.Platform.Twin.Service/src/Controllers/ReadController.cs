@@ -30,7 +30,8 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Service.Controllers {
         /// </summary>
         /// <param name="historian"></param>
         /// <param name="nodes"></param>
-        public ReadController(IHistorianServices<string> historian, INodeServices<string> nodes) {
+        public ReadController(IHistorianServices<string> historian, 
+            INodeServices<string> nodes) {
             _historian = historian ?? throw new ArgumentNullException(nameof(historian));
             _nodes = nodes ?? throw new ArgumentNullException(nameof(nodes));
         }

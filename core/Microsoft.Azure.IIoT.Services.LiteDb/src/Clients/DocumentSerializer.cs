@@ -11,6 +11,8 @@ namespace Microsoft.Azure.IIoT.Services.LiteDb.Clients {
     using System.Reflection;
     using System.Runtime.Serialization;
     using System.Linq.Expressions;
+    using System.Collections.Generic;
+    using System.Linq;
 
     /// <summary>
     /// Provides document db and graph functionality for storage interfaces.
@@ -94,6 +96,10 @@ namespace Microsoft.Azure.IIoT.Services.LiteDb.Clients {
                     (BsonValue)serializer.SerializeToBytes(vv).ToArray(),
                 bs => bs.IsNull ? VariantValue.Null :
                     serializer.Parse(bs.AsBinary.AsMemory()));
+
+            mapper.RegisterType<IReadOnlyCollection<byte>>(
+                b => b is byte[] binary ? binary : (b?.ToArray() ?? BsonValue.Null),
+                bs => bs.AsBinary);
 
             return mapper;
         }

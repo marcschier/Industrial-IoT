@@ -41,16 +41,15 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
             if (registration.Endpoint == null) {
                 throw new ArgumentException("Missing endpoint", nameof(registration));
             }
-            if (string.IsNullOrEmpty(registration.SupervisorId)) {
-                throw new ArgumentException("Missing supervisor id", nameof(registration));
-            }
+
+            // TODO
+            string target = null; // registration.SupervisorId;
 
             var sw = Stopwatch.StartNew();
-            var result = await _client.CallMethodAsync(registration.SupervisorId,
-                 "GetEndpointCertificate_V2",
+            var result = await _client.CallMethodAsync(target, "GetEndpointCertificate_V2",
                 _serializer.SerializeToString(registration.Endpoint), null, ct).ConfigureAwait(false);
             _logger.Debug("Calling supervisor {supervisorId} to get certificate." +
-                "Took {elapsed} ms and returned {result}!", registration.SupervisorId,
+                "Took {elapsed} ms and returned {result}!", target,
                 sw.ElapsedMilliseconds, result);
             return _serializer.Deserialize<byte[]>(result);
         }

@@ -32,7 +32,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
 
             using (var mock = Setup()) {
 
-                IPublishServices service = mock.Create<PublisherAdapter>();
+                IPublishServices service = mock.Create<PublishServicesAdapter>();
 
                 // Run
                 var result = await service.NodePublishStartAsync("endpoint1", new PublishStartRequestModel {
@@ -63,7 +63,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
 
             using (var mock = Setup()) {
 
-                IPublishServices service = mock.Create<PublisherAdapter>();
+                IPublishServices service = mock.Create<PublishServicesAdapter>();
 
                 // Run
                 var result = await service.NodePublishStartAsync("endpoint1", new PublishStartRequestModel {
@@ -92,7 +92,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
 
             using (var mock = Setup()) {
 
-                IPublishServices service = mock.Create<PublisherAdapter>();
+                IPublishServices service = mock.Create<PublishServicesAdapter>();
 
                 // Run
                 var result = await service.NodePublishStartAsync("endpoint1", new PublishStartRequestModel {
@@ -125,7 +125,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
 
             using (var mock = Setup()) {
 
-                IPublishServices service = mock.Create<PublisherAdapter>();
+                IPublishServices service = mock.Create<PublishServicesAdapter>();
 
                 // Run
                 var result = await service.NodePublishStartAsync("endpoint1", new PublishStartRequestModel {
@@ -164,7 +164,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
 
             using (var mock = Setup()) {
 
-                IPublishServices service = mock.Create<PublisherAdapter>();
+                IPublishServices service = mock.Create<PublishServicesAdapter>();
 
                 // Run
                 var result = await service.NodePublishStartAsync("endpoint1", new PublishStartRequestModel {
@@ -210,7 +210,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
 
             using (var mock = Setup()) {
 
-                IPublishServices service = mock.Create<PublisherAdapter>();
+                IPublishServices service = mock.Create<PublishServicesAdapter>();
 
                 // Run
                 var result = await service.NodePublishStartAsync("endpoint1", new PublishStartRequestModel {
@@ -266,7 +266,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
 
             using (var mock = Setup()) {
 
-                IPublishServices service = mock.Create<PublisherAdapter>();
+                IPublishServices service = mock.Create<PublishServicesAdapter>();
 
                 // Run
                 var result1 = await service.NodePublishStartAsync("endpoint1", new PublishStartRequestModel {
@@ -308,7 +308,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
 
             using (var mock = Setup()) {
 
-                IPublishServices service = mock.Create<PublisherAdapter>();
+                IPublishServices service = mock.Create<PublishServicesAdapter>();
 
                 // Run
                 var result = await service.NodePublishStartAsync("endpoint1", new PublishStartRequestModel {
@@ -346,7 +346,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
 
             using (var mock = Setup()) {
 
-                IPublishServices service = mock.Create<PublisherAdapter>();
+                IPublishServices service = mock.Create<PublishServicesAdapter>();
 
                 // Run
                 for (var i = 0; i < 100; i++) {
@@ -409,7 +409,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
 
             using (var mock = Setup()) {
 
-                IPublishServices service = mock.Create<PublisherAdapter>();
+                IPublishServices service = mock.Create<PublishServicesAdapter>();
 
                 var list = await service.NodePublishListAsync("endpoint1", new PublishedItemListRequestModel {
                     ContinuationToken = null
@@ -449,7 +449,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
                 builder.RegisterType<DataSetWriterDatabase>().AsImplementedInterfaces();
                 builder.RegisterType<WriterGroupDatabase>().AsImplementedInterfaces();
                 builder.RegisterType<WriterGroupRegistry>().AsImplementedInterfaces();
-                builder.RegisterType<PublisherAdapter>().As<IPublishServices>();
+                builder.RegisterType<PublishServicesAdapter>().As<IPublishServices>();
             });
             return mock;
         }

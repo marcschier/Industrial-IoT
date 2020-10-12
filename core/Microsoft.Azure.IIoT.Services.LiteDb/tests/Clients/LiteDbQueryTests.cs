@@ -880,12 +880,12 @@ namespace Microsoft.Azure.IIoT.Services.LiteDb.Clients {
 
         [SkippableFact]
         public async Task QueryWithDistinct1Async() {
-            using (var container = await LiteDbClientFixture.GetContainerAsync().ConfigureAwait(false)) {
+            using (var container = await _fixture.GetContainerAsync().ConfigureAwait(false)) {
                 Skip.If(container == null);
                 var documents = container.Container;
 
                 var now = DateTime.UtcNow;
-                var families = new Fixture().CreateMany<Family>(20);
+                var families = _fixture.Fixture.CreateMany<Family>(20);
                 foreach (var f in families) {
                     f.LastName = "Same";
                     f.RegistrationDate = now;
@@ -927,18 +927,18 @@ namespace Microsoft.Azure.IIoT.Services.LiteDb.Clients {
 
         [SkippableFact]
         public async Task QueryWithDistinct2Async() {
-            using (var container = await LiteDbClientFixture.GetContainerAsync().ConfigureAwait(false)) {
+            using (var container = await _fixture.GetContainerAsync().ConfigureAwait(false)) {
                 Skip.If(container == null);
                 var documents = container.Container;
 
-                var families = new Fixture().CreateMany<Family>(5);
+                var families = _fixture.Fixture.CreateMany<Family>(5);
                 foreach (var f in families) {
                     f.LastName = "Same";
                     f.Count = 6;
                     await documents.UpsertAsync(f).ConfigureAwait(false);
                 }
 
-                families = new Fixture().CreateMany<Family>(5);
+                families = _fixture.Fixture.CreateMany<Family>(5);
                 foreach (var f in families) {
                     f.LastName = "Other";
                     f.Count = null;
@@ -1008,19 +1008,19 @@ namespace Microsoft.Azure.IIoT.Services.LiteDb.Clients {
 
         [SkippableFact]
         public async Task QueryWithSelectAndOrderByAsync() {
-            using (var container = await LiteDbClientFixture.GetContainerAsync().ConfigureAwait(false)) {
+            using (var container = await _fixture.GetContainerAsync().ConfigureAwait(false)) {
                 Skip.If(container == null);
                 var documents = container.Container;
 
                 var count = 0;
-                var families = new Fixture().CreateMany<Family>(5);
+                var families = _fixture.Fixture.CreateMany<Family>(5);
                 foreach (var f in families) {
                     f.LastName = "Same";
                     f.Count = ++count;
                     await documents.UpsertAsync(f).ConfigureAwait(false);
                 }
 
-                families = new Fixture().CreateMany<Family>(5);
+                families = _fixture.Fixture.CreateMany<Family>(5);
                 foreach (var f in families) {
                     f.LastName = "Other";
                     f.Count = ++count;
@@ -1099,11 +1099,11 @@ namespace Microsoft.Azure.IIoT.Services.LiteDb.Clients {
 
         [SkippableFact]
         public async Task QueryContinueTest1Async() {
-            using (var container = await LiteDbClientFixture.GetContainerAsync().ConfigureAwait(false)) {
+            using (var container = await _fixture.GetContainerAsync().ConfigureAwait(false)) {
                 Skip.If(container == null);
                 var documents = container.Container;
 
-                var families = new Fixture().CreateMany<Family>(100);
+                var families = _fixture.Fixture.CreateMany<Family>(100);
                 foreach (var f in families) {
                     await documents.UpsertAsync(f).ConfigureAwait(false);
                 }
@@ -1141,11 +1141,11 @@ namespace Microsoft.Azure.IIoT.Services.LiteDb.Clients {
 
         [SkippableFact]
         public async Task QueryContinueTest2Async() {
-            using (var container = await LiteDbClientFixture.GetContainerAsync().ConfigureAwait(false)) {
+            using (var container = await _fixture.GetContainerAsync().ConfigureAwait(false)) {
                 Skip.If(container == null);
                 var documents = container.Container;
 
-                var families = new Fixture().CreateMany<Family>(100);
+                var families = _fixture.Fixture.CreateMany<Family>(100);
                 foreach (var f in families) {
                     await documents.UpsertAsync(f).ConfigureAwait(false);
                 }
@@ -1184,11 +1184,11 @@ namespace Microsoft.Azure.IIoT.Services.LiteDb.Clients {
 
         [SkippableFact]
         public async Task QueryContinueTest3Async() {
-            using (var container = await LiteDbClientFixture.GetContainerAsync().ConfigureAwait(false)) {
+            using (var container = await _fixture.GetContainerAsync().ConfigureAwait(false)) {
                 Skip.If(container == null);
                 var documents = container.Container;
 
-                var families = new Fixture().CreateMany<Family>(5);
+                var families = _fixture.Fixture.CreateMany<Family>(5);
                 foreach (var f in families) {
                     await documents.UpsertAsync(f).ConfigureAwait(false);
                 }
@@ -1217,11 +1217,11 @@ namespace Microsoft.Azure.IIoT.Services.LiteDb.Clients {
 
         [SkippableFact]
         public async Task QueryContinueTest4Async() {
-            using (var container = await LiteDbClientFixture.GetContainerAsync().ConfigureAwait(false)) {
+            using (var container = await _fixture.GetContainerAsync().ConfigureAwait(false)) {
                 Skip.If(container == null);
                 var documents = container.Container;
 
-                var families = new Fixture().CreateMany<Family>(100);
+                var families = _fixture.Fixture.CreateMany<Family>(100);
                 foreach (var f in families) {
                     await documents.UpsertAsync(f).ConfigureAwait(false);
                 }

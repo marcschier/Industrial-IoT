@@ -50,12 +50,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
         public string DiscovererId { get; set; }
 
         /// <summary>
-        /// Identity that manages the endpoint twin.
-        /// </summary>
-        [DataMember]
-        public string SupervisorId { get; set; }
-
-        /// <summary>
         /// Application id of twin
         /// </summary>
         [DataMember]
@@ -85,7 +79,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
         /// The credential policies supported by the registered endpoint
         /// </summary>
         [DataMember]
-        public Dictionary<string, VariantValue> AuthenticationMethods { get; set; }
+        public /*IReadOnlyList*/ IList<AuthenticationMethodModel> AuthenticationMethods { get; set; }
 
         /// <summary>
         /// Endoint url for direct server access
@@ -97,7 +91,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
         /// Alternative urls
         /// </summary>
         [DataMember]
-        public Dictionary<string, string> AlternativeUrls { get; set; }
+        public /*IReadOnlySet*/ ISet<string> AlternativeUrls { get; set; }
 
         /// <summary>
         /// Endpoint security policy to use.
@@ -156,16 +150,10 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
             if (DiscovererId != document.DiscovererId) {
                 return false;
             }
-            if (SupervisorId != document.SupervisorId) {
-                return false;
-            }
             if (ApplicationId != document.ApplicationId) {
                 return false;
             }
             if (EndpointUrlLC != document.EndpointUrlLC) {
-                return false;
-            }
-            if (SupervisorId != document.SupervisorId) {
                 return false;
             }
             if (SecurityLevel != document.SecurityLevel) {
@@ -178,11 +166,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
                 return false;
             }
             if (Thumbprint != document.Thumbprint) {
-                return false;
-            }
-            if (!AuthenticationMethods.DecodeAsList().SetEqualsSafe(
-                    document.AuthenticationMethods.DecodeAsList(),
-                        VariantValue.DeepEquals)) {
                 return false;
             }
             return true;
@@ -208,7 +191,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
             hash.Add(ActivationState);
             hash.Add(EndpointUrlLC);
             hash.Add(DiscovererId);
-            hash.Add(SupervisorId);
             hash.Add(ApplicationId);
             hash.Add(Thumbprint);
             hash.Add(SecurityLevel);

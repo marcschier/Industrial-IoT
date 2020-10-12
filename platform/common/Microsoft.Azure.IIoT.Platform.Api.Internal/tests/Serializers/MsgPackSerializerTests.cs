@@ -12,6 +12,7 @@ namespace Microsoft.Azure.IIoT.Api.MsgPack {
     using FluentAssertions;
     using System.Linq;
     using System.Collections;
+    using System.Collections.Generic;
 
     public class MsgPackSerializerTests {
         [Theory]
@@ -31,6 +32,10 @@ namespace Microsoft.Azure.IIoT.Api.MsgPack {
         public void SerializerDeserializeScalarTypeToBufferWithFixture(Type type) {
 
             var fixture = new Fixture();
+            fixture.Customizations.Add(new TypeRelay(typeof(IReadOnlySet<>), typeof(HashSet<>)));
+            fixture.Customizations.Add(new TypeRelay(typeof(IReadOnlyList<>), typeof(List<>)));
+            fixture.Customizations.Add(new TypeRelay(typeof(IReadOnlyDictionary<,>), typeof(Dictionary<,>)));
+            fixture.Customizations.Add(new TypeRelay(typeof(IReadOnlyCollection<>), typeof(List<>)));
             // Create some random variant value
             fixture.Register(() => _serializer.FromObject(Activator.CreateInstance(type)));
             // Ensure utc datetimes
@@ -48,6 +53,10 @@ namespace Microsoft.Azure.IIoT.Api.MsgPack {
         public void SerializerDeserializeArrayTypeToBufferWithFixture(Type type) {
 
             var fixture = new Fixture();
+            fixture.Customizations.Add(new TypeRelay(typeof(IReadOnlySet<>), typeof(HashSet<>)));
+            fixture.Customizations.Add(new TypeRelay(typeof(IReadOnlyList<>), typeof(List<>)));
+            fixture.Customizations.Add(new TypeRelay(typeof(IReadOnlyDictionary<,>), typeof(Dictionary<,>)));
+            fixture.Customizations.Add(new TypeRelay(typeof(IReadOnlyCollection<>), typeof(List<>)));
             // Create some random variant value
             fixture.Register(() => _serializer.FromObject(Activator.CreateInstance(type)));
             // Ensure utc datetimes

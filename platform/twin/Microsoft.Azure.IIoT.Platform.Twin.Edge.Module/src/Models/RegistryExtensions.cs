@@ -3,7 +3,7 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Models {
+namespace Microsoft.Azure.IIoT.Platform.Twin.Services.Module.Models {
     using Microsoft.Azure.IIoT.Platform.Core.Api.Models;
     using Microsoft.Azure.IIoT.Platform.Registry.Api.Models;
     using Microsoft.Azure.IIoT.Platform.Core.Models;

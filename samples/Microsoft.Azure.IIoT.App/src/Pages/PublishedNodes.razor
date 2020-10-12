@@ -4,7 +4,7 @@
 ------------------------------------------------------------*@
 
 @page "/PublishedNodes/{endpointId}"
-@page "/PublishedNodes/{endpointId}/{discovererId}/{applicationId}/{supervisorId}"
+@page "/PublishedNodes/{endpointId}/{discovererId}/{applicationId}"
 
 @using Microsoft.AspNetCore.Components;
 @using Microsoft.Azure.IIoT.App.Services;
@@ -35,10 +35,10 @@
             <th class="width-small">Sampling Interval</th>
             <th class="width-small">Heartbeat Interval</th>
             <th class="width-medium-large">Value</th>
-            @if (IsIdGiven(DiscovererId) && IsIdGiven(ApplicationId) && IsIdGiven(SupervisorId))
+            @if (IsIdGiven(DiscovererId) && IsIdGiven(ApplicationId))
             {
                 <th class="width-xsmall">
-                    @{var link = @NavigationManager.BaseUri + "endpoints/" + @DiscovererId + "/" + @ApplicationId + "/" + @SupervisorId;}
+                    @{var link = @NavigationManager.BaseUri + "endpoints/" + @DiscovererId + "/" + @ApplicationId;}
                     <a href="@link" aria-label="back"><span class="oi oi-arrow-left"></span></a>
                 </th>
             }

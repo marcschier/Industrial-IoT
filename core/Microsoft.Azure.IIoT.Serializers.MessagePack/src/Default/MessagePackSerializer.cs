@@ -45,7 +45,8 @@ namespace Microsoft.Azure.IIoT.Serializers.MessagePack {
             // Create options
             var resolvers = new List<IFormatterResolver> {
                 MessagePackVariantFormatterResolver.Instance,
-                ExceptionFormatterResolver.Instance
+                ExceptionFormatterResolver.Instance,
+                ReadOnlySetResolver.Instance,
             };
             if (providers != null) {
                 foreach (var provider in providers) {
@@ -526,8 +527,62 @@ namespace Microsoft.Azure.IIoT.Serializers.MessagePack {
 
                 /// <inheritdoc/>
                 public T Deserialize(ref MessagePackReader reader, MessagePackSerializerOptions options) {
-                    // Read variant from reader
                     return new T();
+                }
+            }
+
+            private readonly ConcurrentDictionary<Type, IMessagePackFormatter> _cache;
+        }
+
+        /// <summary>
+        /// ReadOnly Set resolver
+        /// </summary>
+        private class ReadOnlySetResolver : IFormatterResolver {
+
+            public static readonly ReadOnlySetResolver Instance =
+                new ReadOnlySetResolver();
+
+            /// <inheritdoc/>
+            public ReadOnlySetResolver() {
+                _cache = new ConcurrentDictionary<Type, IMessagePackFormatter>();
+            }
+
+            /// <inheritdoc/>
+            public IMessagePackFormatter<T> GetFormatter<T>() {
+                if (typeof(T).IsGenericType &&
+                    typeof(T).GetGenericTypeDefinition() == typeof(IReadOnlySet<>)) {
+                    return (IMessagePackFormatter<T>)GetSetFormatter(typeof(T));
+                }
+                return null;
+            }
+
+            /// <summary>
+            /// Create Message pack variant formater of specifed type
+            /// </summary>
+            /// <param name="type"></param>
+            /// <returns></returns>
+            internal IMessagePackFormatter GetSetFormatter(Type type) {
+                return _cache.GetOrAdd(type,
+                    (IMessagePackFormatter)Activator.CreateInstance(
+                        typeof(SetFormatter<>).MakeGenericType(type)));
+            }
+
+            /// <summary>
+            /// Set formatter
+            /// </summary>
+            private sealed class SetFormatter<T> : IMessagePackFormatter<T> {
+
+                /// <inheritdoc/>
+                public void Serialize(ref MessagePackWriter writer, T value,
+                    MessagePackSerializerOptions options) {
+                    var type = typeof(HashSet<>).MakeGenericType(typeof(T).GetGenericArguments());
+                    MsgPack.Serialize(type, ref writer, value, options);
+                }
+
+                /// <inheritdoc/>
+                public T Deserialize(ref MessagePackReader reader, MessagePackSerializerOptions options) {
+                    var type = typeof(HashSet<>).MakeGenericType(typeof(T).GetGenericArguments());
+                    return (T)MsgPack.Deserialize(type, ref reader, options);
                 }
             }
 

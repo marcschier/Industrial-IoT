@@ -46,7 +46,7 @@ namespace Microsoft.Azure.IIoT.Crypto.Storage {
         public async Task<Certificate> FindCertificateAsync(string certificateId,
             CancellationToken ct) {
             var result = _certificates.CreateQuery<CertificateDocument>(1)
-                .Where(x => x.Type == nameof(Certificate))
+                .Where(x => x.ClassType == CertificateDocument.ClassTypeName)
                 .Where(x => x.CertificateId == certificateId)
                 .OrderByDescending(x => x.Version)
                 .Take(1)
@@ -100,7 +100,7 @@ namespace Microsoft.Azure.IIoT.Crypto.Storage {
         public async Task<Certificate> FindLatestCertificateAsync(string certificateName,
             CancellationToken ct) {
             var result = _certificates.CreateQuery<CertificateDocument>(1)
-                .Where(x => x.Type == nameof(Certificate))
+                .Where(x => x.ClassType == CertificateDocument.ClassTypeName)
                 .Where(x => x.CertificateName == certificateName)
                 .OrderByDescending(x => x.Version)
                 .Take(1)
@@ -114,7 +114,7 @@ namespace Microsoft.Azure.IIoT.Crypto.Storage {
             CertificateFilter filter, int? pageSize, CancellationToken ct) {
 
             var query = _certificates.CreateQuery<CertificateDocument>(pageSize)
-                .Where(x => x.Type == nameof(Certificate));
+                .Where(x => x.ClassType == CertificateDocument.ClassTypeName);
             if (filter != null) {
                 if (filter.NotBefore != null) {
                     query = query.Where(x => x.NotBefore <= filter.NotBefore.Value);
@@ -202,7 +202,7 @@ namespace Microsoft.Azure.IIoT.Crypto.Storage {
             }
             else {
                 result = _certificates.CreateQuery<CertificateDocument>(pageSize)
-                    .Where(x => x.Type == nameof(Certificate))
+                    .Where(x => x.ClassType == CertificateDocument.ClassTypeName)
                     .OrderByDescending(x => x.Version)
                     .GetResults();
             }
@@ -224,7 +224,7 @@ namespace Microsoft.Azure.IIoT.Crypto.Storage {
         public async Task<Certificate> GetCertificateBySubjectAsync(X500DistinguishedName subjectName,
             CancellationToken ct) {
             var result = _certificates.CreateQuery<CertificateDocument>(1)
-                .Where(x => x.Type == nameof(Certificate))
+                .Where(x => x.ClassType == CertificateDocument.ClassTypeName)
                 // With matching name
                 .Where(x => x.Subject == subjectName.Name)
                 // Latest on top

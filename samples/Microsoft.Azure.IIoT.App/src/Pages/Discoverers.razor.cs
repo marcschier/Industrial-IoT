@@ -35,7 +35,7 @@ namespace Microsoft.Azure.IIoT.App.Pages {
         /// Enable discoverer scan
         /// </summary>
         /// <param name="discoverer"></param>
-        private async Task SetScanAsync(DiscovererInfo discoverer, bool checkStatus) {
+        internal async Task SetScanAsync(DiscovererInfo discoverer, bool checkStatus) {
            try {
                discoverer.ScanStatus = checkStatus;
                EventResult = string.Empty;

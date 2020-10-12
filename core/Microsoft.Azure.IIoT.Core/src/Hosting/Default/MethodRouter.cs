@@ -67,7 +67,7 @@ namespace Microsoft.Azure.IIoT.Hosting.Services {
             // Create chunk server always
             var server = new ChunkMethodServer(_serializer, logger);
             _calltable = new Dictionary<string, IMethodInvoker> {
-                { server.MethodName, server }
+                { server.MethodName.ToUpperInvariant(), server }
             };
         }
 

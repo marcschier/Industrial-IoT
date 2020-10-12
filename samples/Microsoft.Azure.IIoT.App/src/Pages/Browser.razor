@@ -53,10 +53,6 @@
     {
         <a href="/applications">/ @CommonHelper.ApplicationUri[ApplicationId]</a>
     }
-    @if (SupervisorId != string.Empty && SupervisorId != Registry.PathAll)
-    {
-        <a href="/supervisors">/ @SupervisorId</a>
-    }
 
     @if (BrowseManager.Path != null)
     {
@@ -102,7 +98,7 @@
                     {
                         if (Items.Results[0].DiscovererId != null)
                         {
-                            var link = @NavigationManager.BaseUri + "endpoints/" + Items.Results[0].DiscovererId + "/" + @ApplicationId + "/" + @SupervisorId;
+                            var link = @NavigationManager.BaseUri + "endpoints/" + Items.Results[0].DiscovererId + "/" + @ApplicationId;
                             <a aria-label="back" href="@link">
                                 <span class="oi oi-arrow-left"></span>
                             </a>

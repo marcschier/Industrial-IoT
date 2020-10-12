@@ -26,6 +26,8 @@ namespace Microsoft.Azure.IIoT.Azure.EventHub.Clients {
 
     public sealed class EventHubQueueFixture : IDisposable {
 
+        public bool Skip { get; set; }
+
         public EventHubQueueFixture() {
             // Read connections string from keyvault
             _config = new ConfigurationBuilder()
@@ -51,6 +53,9 @@ namespace Microsoft.Azure.IIoT.Azure.EventHub.Clients {
 
 
         private async Task<EventHubQueueHarness> GetHarnessAsync(string eventHub) {
+            if (Skip) {
+                return new EventHubQueueHarness(eventHub, null);
+            }
             await _limit.WaitAsync().ConfigureAwait(false); // Acquire
             try {
                 var eventHubClient = CreateEventHubClient(out var resourceGroup, out var namespaceName);
@@ -278,19 +283,21 @@ namespace Microsoft.Azure.IIoT.Azure.EventHub.Clients {
         private readonly Action _dispose;
     }
 
-
     internal class TelemetryEventArgs : EventArgs {
 
         internal TelemetryEventArgs(string schema, string source,
             byte[] data, IDictionary<string, string> properties) {
             HandlerSchema = schema;
             Source = source;
-            try {
-                DeviceId = HubResource.Parse(source, out var hub, out var moduleId);
-                Hub = hub;
-                ModuleId = moduleId;
-            }
-            catch {
+            if (source != null) {
+                try {
+                    DeviceId = HubResource.Parse(source, out var hub, out var moduleId);
+                    Hub = hub;
+                    ModuleId = moduleId;
+                }
+                catch {
+
+                }
             }
             Data = data;
             Target = properties.TryGetValue(EventProperties.Target, out var v) ? v : null;

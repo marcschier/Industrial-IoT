@@ -40,7 +40,7 @@ namespace Microsoft.Azure.IIoT.App.Services {
         /// <param name="previousPage"></param>
         /// <returns>EndpointInfoApiModel</returns>
         public async Task<PagedResult<EndpointInfo>> GetEndpointListAsync(
-            string discovererId, string applicationId, string supervisorId, PagedResult<EndpointInfo> previousPage = null, bool getNextPage = false) {
+            string discovererId, string applicationId, PagedResult<EndpointInfo> previousPage = null, bool getNextPage = false) {
 
             var pageResult = new PagedResult<EndpointInfo>();
 
@@ -49,7 +49,6 @@ namespace Microsoft.Azure.IIoT.App.Services {
                 var query = new EndpointInfoQueryApiModel {
                     DiscovererId = discovererId == PathAll ? null : discovererId,
                     ApplicationId = applicationId == PathAll ? null : applicationId,
-                    SupervisorId = supervisorId == PathAll ? null : supervisorId,
                     IncludeNotSeenSince = true
                 };
 

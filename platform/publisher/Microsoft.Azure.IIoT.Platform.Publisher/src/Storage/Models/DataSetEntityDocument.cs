@@ -71,7 +71,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Storage.Services {
         /// (Publisher extension).
         /// </summary>
         [DataMember]
-        public IReadOnlyList<string> BrowsePath { get; set; }
+        public /*IReadOnlyList*/ IList<string> BrowsePath { get; set; }
 
         /// <summary>
         /// Default is <see cref="NodeAttribute.Value"/>.
@@ -119,7 +119,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Storage.Services {
         /// MetaData properties qualified names. (not supported yet)
         /// </summary>
         [DataMember]
-        public IReadOnlyList<string> MetaDataProperties { get; set; }
+        public /*IReadOnlyList*/ IList<string> MetaDataProperties { get; set; }
 
         /// <summary>
         /// Monitoring mode (Publisher extension)
@@ -164,13 +164,13 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Storage.Services {
         /// Fields to select
         /// </summary>
         [DataMember]
-        public IReadOnlyList<SimpleAttributeOperandModel> SelectedFields { get; set; }
+        public /*IReadOnlyList*/ IList<SimpleAttributeOperandModel> SelectedFields { get; set; }
 
         /// <summary>
         /// Filter to use
         /// </summary>
         [DataMember]
-        public IReadOnlyList<ContentFilterElementModel> FilterElements { get; set; }
+        public /*IReadOnlyList*/ IList<ContentFilterElementModel> FilterElements { get; set; }
 
         /// <summary>
         /// Order

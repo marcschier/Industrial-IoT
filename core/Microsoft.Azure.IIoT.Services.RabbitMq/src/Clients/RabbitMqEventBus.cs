@@ -48,7 +48,8 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
                 var channel = GetPublisherChannel(eventName);
                 var writer = new ArrayBufferWriter<byte>();
                 _serializer.Serialize(writer, message);
-                var tcs = new TaskCompletionSource<bool>();
+                var tcs = new TaskCompletionSource<bool>(
+                    TaskCreationOptions.RunContinuationsAsynchronously);
                 channel.Publish(writer.WrittenMemory, tcs, (t, ex) => {
                     if (ex != null) {
                         t.SetException(ex);

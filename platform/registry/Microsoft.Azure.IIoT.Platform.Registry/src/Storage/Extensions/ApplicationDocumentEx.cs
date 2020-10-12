@@ -5,8 +5,6 @@
 
 namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
     using Microsoft.Azure.IIoT.Platform.Core.Models;
-    using Microsoft.Azure.IIoT.Utils;
-    using Microsoft.Azure.IIoT.Serializers;
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -15,41 +13,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
     /// Application document persisted and comparable
     /// </summary>
     public static class ApplicationDocumentEx {
-
-        /// <summary>
-        /// Clone
-        /// </summary>
-        /// <param name="document"></param>
-        /// <returns></returns>
-        public static ApplicationDocument Clone(this ApplicationDocument document) {
-            if (document == null) {
-                return null;
-            }
-            return new ApplicationDocument {
-                IsDisabled = document.IsDisabled,
-                NotSeenSince = document.NotSeenSince,
-                ApplicationName = document.ApplicationName,
-                Locale = document.Locale,
-                LocalizedNames = document.LocalizedNames?
-                    .ToDictionary(k => k.Key, v => v.Value),
-                ApplicationUri = document.ApplicationUri,
-                ProductUri = document.ProductUri,
-                DiscovererId = document.DiscovererId,
-                DiscoveryProfileUri = document.DiscoveryProfileUri,
-                GatewayServerUri = document.GatewayServerUri,
-                ApplicationType = document.ApplicationType,
-                Capabilities = document.Capabilities?
-                    .ToDictionary(k => k.Key, v => v.Value),
-                HostAddresses = document.HostAddresses?
-                    .ToDictionary(k => k.Key, v => v.Value),
-                DiscoveryUrls = document.DiscoveryUrls?
-                    .ToDictionary(k => k.Key, v => v.Value),
-                CreateTime = document.CreateTime,
-                CreateAuthorityId = document.CreateAuthorityId,
-                UpdateTime = document.UpdateTime,
-                UpdateAuthorityId = document.UpdateAuthorityId,
-            };
-        }
 
         /// <summary>
         /// Decode tags and property into document object
@@ -67,16 +30,16 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
                 DiscovererId = model.DiscovererId,
                 ApplicationName = model.ApplicationName,
                 Locale = model.Locale,
-                LocalizedNames = model.LocalizedNames,
-                HostAddresses = model.HostAddresses?.ToList().EncodeAsDictionary(),
+                LocalizedNames = model.LocalizedNames.Clone(),
+                HostAddresses = model.HostAddresses.ToHashSetSafe(),
                 ApplicationType = model.ApplicationType,
                 ApplicationUri = model.ApplicationUri,
                 ProductUri = model.ProductUri,
                 NotSeenSince = model.NotSeenSince,
                 DiscoveryProfileUri = model.DiscoveryProfileUri,
                 GatewayServerUri = model.GatewayServerUri,
-                Capabilities = model.Capabilities.EncodeSetAsDictionary(),
-                DiscoveryUrls = model.DiscoveryUrls?.ToList().EncodeAsDictionary(),
+                Capabilities = model.Capabilities.ToHashSetSafe(),
+                DiscoveryUrls = model.DiscoveryUrls.ToHashSetSafe(),
                 CreateAuthorityId = model.Created?.AuthorityId,
                 CreateTime = model.Created?.Time,
                 UpdateAuthorityId = model.Updated?.AuthorityId,
@@ -99,8 +62,8 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
                 ApplicationId = document.Id,
                 ApplicationName = document.ApplicationName,
                 Locale = document.Locale,
-                LocalizedNames = document.LocalizedNames,
-                HostAddresses = document.HostAddresses.DecodeAsList().ToHashSetSafe(),
+                LocalizedNames = document.LocalizedNames.Clone(),
+                HostAddresses = document.HostAddresses.ToHashSetSafe(),
                 NotSeenSince = document.NotSeenSince,
                 ApplicationType = document.ApplicationType ?? ApplicationType.Server,
                 ApplicationUri = string.IsNullOrEmpty(document.ApplicationUri) ?
@@ -109,10 +72,10 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
                 GenerationId = etag,
                 DiscovererId = string.IsNullOrEmpty(document.DiscovererId) ?
                     null : document.DiscovererId,
-                DiscoveryUrls = document.DiscoveryUrls.DecodeAsList().ToHashSetSafe(),
+                DiscoveryUrls = document.DiscoveryUrls.ToHashSetSafe(),
                 DiscoveryProfileUri = document.DiscoveryProfileUri,
                 GatewayServerUri = document.GatewayServerUri,
-                Capabilities = document.Capabilities?.DecodeAsSet(),
+                Capabilities = document.Capabilities.ToHashSetSafe(),
                 Created = ToOperationModel(document.CreateAuthorityId, document.CreateTime),
                 Updated = ToOperationModel(document.UpdateAuthorityId, document.UpdateTime),
             };

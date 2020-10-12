@@ -71,7 +71,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Storage.Services {
         /// Extension fields
         /// </summary>
         [DataMember]
-        public IReadOnlyDictionary<string, string> ExtensionFields { get; set; }
+        public /*IReadOnlyDictionary*/ IDictionary<string, string> ExtensionFields { get; set; }
 
         /// <summary>
         /// Dataset field content mask

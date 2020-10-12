@@ -3,7 +3,7 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Platform.Registry.Storage.Default {
+namespace Microsoft.Azure.IIoT.Platform.Registry.Storage {
     using Microsoft.Azure.IIoT.Platform.Registry.Models;
     using Microsoft.Azure.IIoT.Platform.Core.Models;
     using Microsoft.Azure.IIoT.Exceptions;
@@ -34,7 +34,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Storage.Default {
                 throw new ArgumentNullException(nameof(config));
             }
             var dbs = databaseServer.OpenAsync(config.DatabaseName).Result;
-            _documents = dbs.OpenContainerAsync(config.ContainerName ?? "twin").Result;
+            _documents = dbs.OpenContainerAsync(config.ContainerName ?? "registry").Result;
         }
 
         /// <inheritdoc/>
@@ -270,7 +270,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Storage.Default {
                 }
                 if (filter?.Capability != null) {
                     // If Capabilities provided, filter results
-                    query = query.Where(x => x.Capabilities.ContainsKey(filter.Capability));
+                    query = query.Where(x => x.Capabilities.Contains(filter.Capability));
                 }
             }
             query = query.Where(x => x.ClassType == IdentityType.Application);

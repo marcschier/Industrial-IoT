@@ -11,18 +11,23 @@ namespace Microsoft.Azure.IIoT.Services.LiteDb.Clients {
     using System.Linq;
     using System.Linq.Expressions;
     using System.Threading.Tasks;
-    using AutoFixture;
     using Xunit;
+    using AutoFixture;
 
-    public class LiteDbContainerTests {
+    public class LiteDbContainerTests : IClassFixture<LiteDbClientFixture> {
+        private readonly LiteDbClientFixture _fixture;
+
+        public LiteDbContainerTests(LiteDbClientFixture fixture) {
+            _fixture = fixture;
+        }
 
         [SkippableFact]
         public async Task FindItemTestAsync() {
-            using (var container = await LiteDbClientFixture.GetContainerAsync().ConfigureAwait(false)) {
+            using (var container = await _fixture.GetContainerAsync().ConfigureAwait(false)) {
                 Skip.If(container == null);
                 var documents = container.Container;
 
-                var f = new Fixture().Create<Family>();
+                var f = _fixture.Fixture.Create<Family>();
                 var fr = await documents.AddAsync(f).ConfigureAwait(false);
                 Assert.Equal(f.Id, fr.Id);
                 Assert.Equal(f.Id, fr.Value.Id);
@@ -40,11 +45,11 @@ namespace Microsoft.Azure.IIoT.Services.LiteDb.Clients {
 
         [SkippableFact]
         public async Task NotFindItemTestAsync() {
-            using (var container = await LiteDbClientFixture.GetContainerAsync().ConfigureAwait(false)) {
+            using (var container = await _fixture.GetContainerAsync().ConfigureAwait(false)) {
                 Skip.If(container == null);
                 var documents = container.Container;
 
-                var f = new Fixture().Create<Family>();
+                var f = _fixture.Fixture.Create<Family>();
                 var fr = await documents.AddAsync(f).ConfigureAwait(false);
                 Assert.Equal(f.Id, fr.Id);
                 Assert.Equal(f.Id, fr.Value.Id);
@@ -58,7 +63,7 @@ namespace Microsoft.Azure.IIoT.Services.LiteDb.Clients {
 
         [SkippableFact]
         public async Task FindItemBadArgumentTestsAsync() {
-            using (var container = await LiteDbClientFixture.GetContainerAsync().ConfigureAwait(false)) {
+            using (var container = await _fixture.GetContainerAsync().ConfigureAwait(false)) {
                 Skip.If(container == null);
                 var documents = container.Container;
 
@@ -69,11 +74,11 @@ namespace Microsoft.Azure.IIoT.Services.LiteDb.Clients {
 
         [SkippableFact]
         public async Task AddItemsTestAsync() {
-            using (var container = await LiteDbClientFixture.GetContainerAsync().ConfigureAwait(false)) {
+            using (var container = await _fixture.GetContainerAsync().ConfigureAwait(false)) {
                 Skip.If(container == null);
                 var documents = container.Container;
 
-                var families = new Fixture().CreateMany<Family>(10).OrderBy(x => x.Id).ToArray();
+                var families = _fixture.Fixture.CreateMany<Family>(10).OrderBy(x => x.Id).ToArray();
                 foreach (var f in families) {
                     await documents.AddAsync(f).ConfigureAwait(false);
                 }
@@ -85,11 +90,12 @@ namespace Microsoft.Azure.IIoT.Services.LiteDb.Clients {
 
         [SkippableFact]
         public async Task AddItemTestAsync() {
-            using (var container = await LiteDbClientFixture.GetContainerAsync().ConfigureAwait(false)) {
+            using (var container = await _fixture.GetContainerAsync().ConfigureAwait(false)) {
                 Skip.If(container == null);
                 var documents = container.Container;
 
-                var f = new Fixture().Create<Family>();
+                var f = _fixture.Fixture.Create<Family>();
+
                 var fr = await documents.AddAsync(f).ConfigureAwait(false);
                 Assert.Equal(f.Id, fr.Id);
                 Assert.Equal(f.Id, fr.Value.Id);
@@ -108,18 +114,18 @@ namespace Microsoft.Azure.IIoT.Services.LiteDb.Clients {
 
         [SkippableFact]
         public async Task AddItemTwiceThrowsAsync() {
-            using (var container = await LiteDbClientFixture.GetContainerAsync().ConfigureAwait(false)) {
+            using (var container = await _fixture.GetContainerAsync().ConfigureAwait(false)) {
                 Skip.If(container == null);
                 var documents = container.Container;
 
-                var f = new Fixture().Create<Family>();
+                var f = _fixture.Fixture.Create<Family>();
                 var fr = await documents.AddAsync(f).ConfigureAwait(false);
                 Assert.Equal(f.Id, fr.Id);
                 Assert.Equal(f.Id, fr.Value.Id);
                 Assert.Equal(f.LastName, fr.Value.LastName);
                 Assert.NotNull(fr.Etag);
 
-                var f2 = new Fixture().Create<Family>();
+                var f2 = _fixture.Fixture.Create<Family>();
                 f2.Id = f.Id;
                 await Assert.ThrowsAsync<ResourceConflictException>(() => documents.AddAsync(f2)).ConfigureAwait(false);
             }
@@ -127,18 +133,18 @@ namespace Microsoft.Azure.IIoT.Services.LiteDb.Clients {
 
         [SkippableFact]
         public async Task AddItemAfterUpsertThrowsAsync() {
-            using (var container = await LiteDbClientFixture.GetContainerAsync().ConfigureAwait(false)) {
+            using (var container = await _fixture.GetContainerAsync().ConfigureAwait(false)) {
                 Skip.If(container == null);
                 var documents = container.Container;
 
-                var f = new Fixture().Create<Family>();
+                var f = _fixture.Fixture.Create<Family>();
                 var fr = await documents.UpsertAsync(f).ConfigureAwait(false);
                 Assert.Equal(f.Id, fr.Id);
                 Assert.Equal(f.Id, fr.Value.Id);
                 Assert.Equal(f.LastName, fr.Value.LastName);
                 Assert.NotNull(fr.Etag);
 
-                var f2 = new Fixture().Create<Family>();
+                var f2 = _fixture.Fixture.Create<Family>();
                 f2.Id = f.Id;
                 await Assert.ThrowsAsync<ResourceConflictException>(() => documents.AddAsync(f2)).ConfigureAwait(false);
             }
@@ -146,7 +152,7 @@ namespace Microsoft.Azure.IIoT.Services.LiteDb.Clients {
 
         [SkippableFact]
         public async Task AddItemBadArgumentTestsAsync() {
-            using (var container = await LiteDbClientFixture.GetContainerAsync().ConfigureAwait(false)) {
+            using (var container = await _fixture.GetContainerAsync().ConfigureAwait(false)) {
                 Skip.If(container == null);
                 var documents = container.Container;
 
@@ -159,11 +165,11 @@ namespace Microsoft.Azure.IIoT.Services.LiteDb.Clients {
 
         [SkippableFact]
         public async Task UpsertItemsTestAsync() {
-            using (var container = await LiteDbClientFixture.GetContainerAsync().ConfigureAwait(false)) {
+            using (var container = await _fixture.GetContainerAsync().ConfigureAwait(false)) {
                 Skip.If(container == null);
                 var documents = container.Container;
 
-                var families = new Fixture().CreateMany<Family>(10).OrderBy(x => x.Id).ToArray();
+                var families = _fixture.Fixture.CreateMany<Family>(10).OrderBy(x => x.Id).ToArray();
                 foreach (var f in families) {
                     await documents.UpsertAsync(f).ConfigureAwait(false);
                 }
@@ -176,11 +182,11 @@ namespace Microsoft.Azure.IIoT.Services.LiteDb.Clients {
 
         [SkippableFact]
         public async Task UpsertItemTwiceAsync() {
-            using (var container = await LiteDbClientFixture.GetContainerAsync().ConfigureAwait(false)) {
+            using (var container = await _fixture.GetContainerAsync().ConfigureAwait(false)) {
                 Skip.If(container == null);
                 var documents = container.Container;
 
-                var f = new Fixture().Create<Family>();
+                var f = _fixture.Fixture.Create<Family>();
                 var fr = await documents.UpsertAsync(f).ConfigureAwait(false);
                 Assert.Equal(f.Id, fr.Id);
                 Assert.Equal(f.Id, fr.Value.Id);
@@ -195,7 +201,7 @@ namespace Microsoft.Azure.IIoT.Services.LiteDb.Clients {
                 Assert.NotNull(results.Single().Etag);
                 Assert.Equal(fr.Etag, results.Single().Etag);
 
-                var f2 = new Fixture().Create<Family>();
+                var f2 = _fixture.Fixture.Create<Family>();
                 f2.Id = f.Id;
                 var f3 = await documents.UpsertAsync(f2).ConfigureAwait(false);
                 Assert.Equal(f2.Id, f3.Id);
@@ -216,18 +222,18 @@ namespace Microsoft.Azure.IIoT.Services.LiteDb.Clients {
 
         [SkippableFact]
         public async Task UpsertItemTwiceWithEtagAsync() {
-            using (var container = await LiteDbClientFixture.GetContainerAsync().ConfigureAwait(false)) {
+            using (var container = await _fixture.GetContainerAsync().ConfigureAwait(false)) {
                 Skip.If(container == null);
                 var documents = container.Container;
 
-                var f = new Fixture().Create<Family>();
+                var f = _fixture.Fixture.Create<Family>();
                 var fr = await documents.UpsertAsync(f).ConfigureAwait(false);
                 Assert.Equal(f.Id, fr.Id);
                 Assert.Equal(f.Id, fr.Value.Id);
                 Assert.Equal(f.LastName, fr.Value.LastName);
                 Assert.NotNull(fr.Etag);
 
-                var f2 = new Fixture().Create<Family>();
+                var f2 = _fixture.Fixture.Create<Family>();
                 f2.Id = f.Id;
                 var f3 = await documents.UpsertAsync(f2, etag: fr.Etag).ConfigureAwait(false);
                 Assert.Equal(f2.Id, f3.Id);
@@ -248,11 +254,11 @@ namespace Microsoft.Azure.IIoT.Services.LiteDb.Clients {
 
         [SkippableFact]
         public async Task UpsertItemFirstTimeWithEtagInsertsAsync() {
-            using (var container = await LiteDbClientFixture.GetContainerAsync().ConfigureAwait(false)) {
+            using (var container = await _fixture.GetContainerAsync().ConfigureAwait(false)) {
                 Skip.If(container == null);
                 var documents = container.Container;
 
-                var f = new Fixture().Create<Family>();
+                var f = _fixture.Fixture.Create<Family>();
                 var fr = await documents.UpsertAsync(f, etag: "OldEtag").ConfigureAwait(false);
                 Assert.Equal(f.Id, fr.Id);
                 Assert.Equal(f.Id, fr.Value.Id);
@@ -271,18 +277,18 @@ namespace Microsoft.Azure.IIoT.Services.LiteDb.Clients {
 
         [SkippableFact]
         public async Task UpsertItemTwiceWithBadEtagThrowsAsync() {
-            using (var container = await LiteDbClientFixture.GetContainerAsync().ConfigureAwait(false)) {
+            using (var container = await _fixture.GetContainerAsync().ConfigureAwait(false)) {
                 Skip.If(container == null);
                 var documents = container.Container;
 
-                var f = new Fixture().Create<Family>();
+                var f = _fixture.Fixture.Create<Family>();
                 var fr = await documents.UpsertAsync(f).ConfigureAwait(false);
                 Assert.Equal(f.Id, fr.Id);
                 Assert.Equal(f.Id, fr.Value.Id);
                 Assert.Equal(f.LastName, fr.Value.LastName);
                 Assert.NotNull(fr.Etag);
 
-                var f2 = new Fixture().Create<Family>();
+                var f2 = _fixture.Fixture.Create<Family>();
                 f2.Id = f.Id;
                 await Assert.ThrowsAsync<ResourceOutOfDateException>(
                     () => documents.UpsertAsync(f2, etag: "bad")).ConfigureAwait(false);
@@ -291,18 +297,18 @@ namespace Microsoft.Azure.IIoT.Services.LiteDb.Clients {
 
         [SkippableFact]
         public async Task UpsertItemAfterAddAsync() {
-            using (var container = await LiteDbClientFixture.GetContainerAsync().ConfigureAwait(false)) {
+            using (var container = await _fixture.GetContainerAsync().ConfigureAwait(false)) {
                 Skip.If(container == null);
                 var documents = container.Container;
 
-                var f = new Fixture().Create<Family>();
+                var f = _fixture.Fixture.Create<Family>();
                 var fr = await documents.AddAsync(f).ConfigureAwait(false);
                 Assert.Equal(f.Id, fr.Id);
                 Assert.Equal(f.Id, fr.Value.Id);
                 Assert.Equal(f.LastName, fr.Value.LastName);
                 Assert.NotNull(fr.Etag);
 
-                var f2 = new Fixture().Create<Family>();
+                var f2 = _fixture.Fixture.Create<Family>();
                 f2.Id = f.Id;
                 var f3 = await documents.UpsertAsync(f2).ConfigureAwait(false);
                 Assert.Equal(f2.Id, f3.Id);
@@ -323,7 +329,7 @@ namespace Microsoft.Azure.IIoT.Services.LiteDb.Clients {
 
         [SkippableFact]
         public async Task UpsertItemBadArgumentTestsAsync() {
-            using (var container = await LiteDbClientFixture.GetContainerAsync().ConfigureAwait(false)) {
+            using (var container = await _fixture.GetContainerAsync().ConfigureAwait(false)) {
                 Skip.If(container == null);
                 var documents = container.Container;
 
@@ -336,18 +342,18 @@ namespace Microsoft.Azure.IIoT.Services.LiteDb.Clients {
 
         [SkippableFact]
         public async Task ReplaceItemAfterAddAsync() {
-            using (var container = await LiteDbClientFixture.GetContainerAsync().ConfigureAwait(false)) {
+            using (var container = await _fixture.GetContainerAsync().ConfigureAwait(false)) {
                 Skip.If(container == null);
                 var documents = container.Container;
 
-                var f = new Fixture().Create<Family>();
+                var f = _fixture.Fixture.Create<Family>();
                 var fr = await documents.AddAsync(f).ConfigureAwait(false);
                 Assert.Equal(f.Id, fr.Id);
                 Assert.Equal(f.Id, fr.Value.Id);
                 Assert.Equal(f.LastName, fr.Value.LastName);
                 Assert.NotNull(fr.Etag);
 
-                var f2 = new Fixture().Create<Family>();
+                var f2 = _fixture.Fixture.Create<Family>();
                 var f3 = await documents.ReplaceAsync(fr, f2).ConfigureAwait(false);
                 Assert.Equal(f.Id, f3.Id);
                 Assert.Equal(f.Id, f3.Value.Id); // Id was overridden with f.id
@@ -367,18 +373,18 @@ namespace Microsoft.Azure.IIoT.Services.LiteDb.Clients {
 
         [SkippableFact]
         public async Task ReplaceItemAfterUpsertAsync() {
-            using (var container = await LiteDbClientFixture.GetContainerAsync().ConfigureAwait(false)) {
+            using (var container = await _fixture.GetContainerAsync().ConfigureAwait(false)) {
                 Skip.If(container == null);
                 var documents = container.Container;
 
-                var f = new Fixture().Create<Family>();
+                var f = _fixture.Fixture.Create<Family>();
                 var fr = await documents.UpsertAsync(f).ConfigureAwait(false);
                 Assert.Equal(f.Id, fr.Id);
                 Assert.Equal(f.Id, fr.Value.Id);
                 Assert.Equal(f.LastName, fr.Value.LastName);
                 Assert.NotNull(fr.Etag);
 
-                var f2 = new Fixture().Create<Family>();
+                var f2 = _fixture.Fixture.Create<Family>();
                 var f3 = await documents.ReplaceAsync(fr, f2).ConfigureAwait(false);
                 Assert.Equal(f.Id, f3.Id);
                 Assert.Equal(f.Id, f3.Value.Id); // Id was overridden with f.id
@@ -398,16 +404,16 @@ namespace Microsoft.Azure.IIoT.Services.LiteDb.Clients {
 
         [SkippableFact]
         public async Task ReplaceItemWithBadEtagThrowsAsync() {
-            using (var container = await LiteDbClientFixture.GetContainerAsync().ConfigureAwait(false)) {
+            using (var container = await _fixture.GetContainerAsync().ConfigureAwait(false)) {
                 Skip.If(container == null);
                 var documents = container.Container;
 
-                var f = new Fixture().Create<Family>();
+                var f = _fixture.Fixture.Create<Family>();
                 var fr = await documents.UpsertAsync(f).ConfigureAwait(false);
 
-                var f2 = new Fixture().Create<Family>();
+                var f2 = _fixture.Fixture.Create<Family>();
                 var f3 = await documents.ReplaceAsync(fr, f2).ConfigureAwait(false);
-                var f4 = new Fixture().Create<Family>();
+                var f4 = _fixture.Fixture.Create<Family>();
                 await Assert.ThrowsAsync<ResourceOutOfDateException>(
                     () => documents.ReplaceAsync(fr, f4, null, default)).ConfigureAwait(false);
 
@@ -415,7 +421,7 @@ namespace Microsoft.Azure.IIoT.Services.LiteDb.Clients {
                 var results = await ListAsync<Family>(documents).ConfigureAwait(false);
                 Assert.Empty(results);
 
-                var f5 = new Fixture().Create<Family>();
+                var f5 = _fixture.Fixture.Create<Family>();
                 await Assert.ThrowsAsync<ResourceNotFoundException>(
                     () => documents.ReplaceAsync(f3, f5, null, default)).ConfigureAwait(false);
             }
@@ -423,11 +429,11 @@ namespace Microsoft.Azure.IIoT.Services.LiteDb.Clients {
 
         [SkippableFact]
         public async Task ReplaceItemBadArgumentTestsAsync() {
-            using (var container = await LiteDbClientFixture.GetContainerAsync().ConfigureAwait(false)) {
+            using (var container = await _fixture.GetContainerAsync().ConfigureAwait(false)) {
                 Skip.If(container == null);
                 var documents = container.Container;
 
-                var f = new Fixture().Create<Family>();
+                var f = _fixture.Fixture.Create<Family>();
                 var fr = await documents.UpsertAsync(f).ConfigureAwait(false);
 
                 await Assert.ThrowsAsync<ArgumentNullException>(
@@ -439,11 +445,11 @@ namespace Microsoft.Azure.IIoT.Services.LiteDb.Clients {
 
         [SkippableFact]
         public async Task DeleteItemAfterAddAsync() {
-            using (var container = await LiteDbClientFixture.GetContainerAsync().ConfigureAwait(false)) {
+            using (var container = await _fixture.GetContainerAsync().ConfigureAwait(false)) {
                 Skip.If(container == null);
                 var documents = container.Container;
 
-                var f = new Fixture().Create<Family>();
+                var f = _fixture.Fixture.Create<Family>();
                 var fr = await documents.AddAsync(f).ConfigureAwait(false);
                 Assert.Equal(f.Id, fr.Id);
                 Assert.Equal(f.Id, fr.Value.Id);
@@ -459,11 +465,11 @@ namespace Microsoft.Azure.IIoT.Services.LiteDb.Clients {
 
         [SkippableFact]
         public async Task DeleteItemAfterUpsertAsync() {
-            using (var container = await LiteDbClientFixture.GetContainerAsync().ConfigureAwait(false)) {
+            using (var container = await _fixture.GetContainerAsync().ConfigureAwait(false)) {
                 Skip.If(container == null);
                 var documents = container.Container;
 
-                var f = new Fixture().Create<Family>();
+                var f = _fixture.Fixture.Create<Family>();
                 var fr = await documents.UpsertAsync(f).ConfigureAwait(false);
                 Assert.Equal(f.Id, fr.Id);
                 Assert.Equal(f.Id, fr.Value.Id);
@@ -479,11 +485,11 @@ namespace Microsoft.Azure.IIoT.Services.LiteDb.Clients {
 
         [SkippableFact]
         public async Task DeleteItemWithGoodEtagTestAsync() {
-            using (var container = await LiteDbClientFixture.GetContainerAsync().ConfigureAwait(false)) {
+            using (var container = await _fixture.GetContainerAsync().ConfigureAwait(false)) {
                 Skip.If(container == null);
                 var documents = container.Container;
 
-                var f = new Fixture().Create<Family>();
+                var f = _fixture.Fixture.Create<Family>();
                 var fr = await documents.AddAsync(f).ConfigureAwait(false);
                 Assert.Equal(f.Id, fr.Id);
                 Assert.Equal(f.Id, fr.Value.Id);
@@ -499,11 +505,11 @@ namespace Microsoft.Azure.IIoT.Services.LiteDb.Clients {
 
         [SkippableFact]
         public async Task DeleteItemWithNoEtagTestAsync() {
-            using (var container = await LiteDbClientFixture.GetContainerAsync().ConfigureAwait(false)) {
+            using (var container = await _fixture.GetContainerAsync().ConfigureAwait(false)) {
                 Skip.If(container == null);
                 var documents = container.Container;
 
-                var f = new Fixture().Create<Family>();
+                var f = _fixture.Fixture.Create<Family>();
                 var fr = await documents.AddAsync(f).ConfigureAwait(false);
                 Assert.Equal(f.Id, fr.Id);
                 Assert.Equal(f.Id, fr.Value.Id);
@@ -519,11 +525,11 @@ namespace Microsoft.Azure.IIoT.Services.LiteDb.Clients {
 
         [SkippableFact]
         public async Task DeleteItemWithBadEtagThrowsAsync() {
-            using (var container = await LiteDbClientFixture.GetContainerAsync().ConfigureAwait(false)) {
+            using (var container = await _fixture.GetContainerAsync().ConfigureAwait(false)) {
                 Skip.If(container == null);
                 var documents = container.Container;
 
-                var f = new Fixture().Create<Family>();
+                var f = _fixture.Fixture.Create<Family>();
                 var fr = await documents.AddAsync(f).ConfigureAwait(false);
                 Assert.Equal(f.Id, fr.Id);
                 Assert.Equal(f.Id, fr.Value.Id);
@@ -538,7 +544,7 @@ namespace Microsoft.Azure.IIoT.Services.LiteDb.Clients {
 
         [SkippableFact]
         public async Task DeleteItemBadArgumentTestsAsync() {
-            using (var container = await LiteDbClientFixture.GetContainerAsync().ConfigureAwait(false)) {
+            using (var container = await _fixture.GetContainerAsync().ConfigureAwait(false)) {
                 Skip.If(container == null);
                 var documents = container.Container;
 

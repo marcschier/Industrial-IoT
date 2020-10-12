@@ -76,7 +76,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
         /// Application name locale
         /// </summary>
         [DataMember]
-        public IReadOnlyDictionary<string, string> LocalizedNames { get; set; }
+        public /*IReadOnlyDictionary*/ IDictionary<string, string> LocalizedNames { get; set; }
 
         /// <summary>
         /// Discovery profile uri
@@ -106,19 +106,19 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
         /// Returns discovery urls of the application
         /// </summary>
         [DataMember]
-        public Dictionary<string, string> DiscoveryUrls { get; set; }
+        public /*ReadOnlySet*/ ISet<string> DiscoveryUrls { get; set; }
 
         /// <summary>
         /// Host address of server application
         /// </summary>
         [DataMember]
-        public Dictionary<string, string> HostAddresses { get; set; }
+        public /*ReadOnlySet*/ ISet<string> HostAddresses { get; set; }
 
         /// <summary>
         /// Capabilities
         /// </summary>
         [DataMember]
-        public Dictionary<string, bool> Capabilities { get; set; }
+        public /*ReadOnlySet*/ ISet<string> Capabilities { get; set; }
 
         /// <summary>
         /// Create time
@@ -191,8 +191,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
             if (ProductUri != document.ProductUri) {
                 return false;
             }
-            if (!HostAddresses.DecodeAsList().SequenceEqualsSafe(
-               document.HostAddresses.DecodeAsList())) {
+            if (!HostAddresses.SetEqualsSafe(document.HostAddresses)) {
                 return false;
             }
             if (ApplicationName != document.ApplicationName) {
@@ -202,12 +201,10 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
                 document.LocalizedNames)) {
                 return false;
             }
-            if (!Capabilities.DecodeAsSet().SetEqualsSafe(
-                document.Capabilities.DecodeAsSet())) {
+            if (!Capabilities.SetEqualsSafe(document.Capabilities)) {
                 return false;
             }
-            if (!DiscoveryUrls.DecodeAsList().SequenceEqualsSafe(
-                document.DiscoveryUrls.DecodeAsList())) {
+            if (!DiscoveryUrls.SetEqualsSafe(document.DiscoveryUrls)) {
                 return false;
             }
             return true;

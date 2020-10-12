@@ -75,13 +75,13 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Storage.Services {
         /// Publishing offset for uadp messages
         /// </summary>
         [DataMember]
-        public IReadOnlyList<double> PublishingOffset { get; set; }
+        public /*IReadOnlyList*/ IList<double> PublishingOffset { get; set; }
 
         /// <summary>
         /// Locales to use
         /// </summary>
         [DataMember]
-        public IReadOnlyList<string> LocaleIds { get; set; }
+        public /*IReadOnlyList*/ IList<string> LocaleIds { get; set; }
 
         /// <summary>
         /// Header layout uri

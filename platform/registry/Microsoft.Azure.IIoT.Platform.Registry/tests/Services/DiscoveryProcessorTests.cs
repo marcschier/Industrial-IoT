@@ -4,12 +4,11 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
-    using Microsoft.Azure.IIoT.Platform.Registry.Services;
     using Microsoft.Azure.IIoT.Platform.Registry.Models;
-    using Microsoft.Azure.IIoT.Platform.Registry.Storage.Default;
+    using Microsoft.Azure.IIoT.Platform.Registry.Storage;
     using Microsoft.Azure.IIoT.Platform.Registry;
+    using Microsoft.Azure.IIoT.Platform.Directory.Models;
     using Microsoft.Azure.IIoT.Hub;
-    using Microsoft.Azure.IIoT.Azure.IoTHub.Mock;
     using Microsoft.Azure.IIoT.Hub.Models;
     using Microsoft.Azure.IIoT.Serializers;
     using Microsoft.Azure.IIoT.Serializers.NewtonSoft;
@@ -21,18 +20,17 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
     using System.Linq;
     using Xunit;
     using Autofac;
-    using Microsoft.Azure.IIoT.Platform.Directory.Models;
 
     public class DiscoveryProcessorTests {
 
         [Fact]
         public void ProcessDiscoveryWithNoResultsAndNoExistingApplications() {
-            using (var mock = Setup(out var discoverer, out var supervisor, out var existing,
-                out var found, noApps: true)) {
+            using (var mock = Setup(out var discoverer, out var existing, out var found,
+                noApps: true)) {
                 var service = mock.Create<IApplicationBulkProcessor>();
 
                 // Run
-                service.ProcessDiscoveryEventsAsync(discoverer, supervisor, new DiscoveryResultModel(), found).Wait();
+                service.ProcessDiscoveryEventsAsync(discoverer, new DiscoveryContextModel(), found).Wait();
 
                 // Assert
                 Assert.Single(ApplicationsIn(mock));
@@ -41,12 +39,11 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
 
         [Fact]
         public void ProcessDiscoveryWithAlreadyExistingApplications() {
-            using (var mock = Setup(out var discoverer, out var supervisor, out var existing,
-                out var found)) {
+            using (var mock = Setup(out var discoverer, out var existing, out var found)) {
                 var service = mock.Create<IApplicationBulkProcessor>();
 
                 // Run
-                service.ProcessDiscoveryEventsAsync(discoverer, supervisor, new DiscoveryResultModel(), found).Wait();
+                service.ProcessDiscoveryEventsAsync(discoverer, new DiscoveryContextModel(), found).Wait();
 
                 // Assert
                 Assert.True(ApplicationsIn(mock).IsSameAs(existing));
@@ -55,12 +52,12 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
 
         [Fact]
         public void ProcessDiscoveryWithOneExistingApplication() {
-            using (var mock = Setup(out var discoverer, out var supervisor, out var existing,
-                out var found, countDevices: 1)) {
+            using (var mock = Setup(out var discoverer, out var existing, out var found,
+                countDevices: 1)) {
                 var service = mock.Create<IApplicationBulkProcessor>();
 
                 // Run
-                service.ProcessDiscoveryEventsAsync(discoverer, supervisor, new DiscoveryResultModel(), found).Wait();
+                service.ProcessDiscoveryEventsAsync(discoverer, new DiscoveryContextModel(), found).Wait();
 
                 // Assert
                 Assert.Single(ApplicationsIn(mock));
@@ -74,8 +71,8 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
 
             // Assert no changes
 
-            using (var mock = Setup(out var discoverer, out var supervisor, out var existing,
-                out var found, fixup: x => {
+            using (var mock = Setup(out var discoverer, out var existing, out var found,
+                fixup: x => {
                     x.Application.DiscovererId = discoverer2;
                     x.Endpoints.ForEach(e => e.DiscovererId = discoverer2);
                     return x;
@@ -83,7 +80,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                 var service = mock.Create<IApplicationBulkProcessor>();
 
                 // Run
-                service.ProcessDiscoveryEventsAsync(discoverer, supervisor, new DiscoveryResultModel(), found).Wait();
+                service.ProcessDiscoveryEventsAsync(discoverer, new DiscoveryContextModel(), found).Wait();
 
                 // Assert
                 Assert.True(ApplicationsIn(mock).IsSameAs(existing));
@@ -95,8 +92,8 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
             var fix = new Fixture();
             var discoverer2 = HubResource.Format(fix.Create<string>(), fix.Create<string>(), fix.Create<string>());
 
-            using (var mock = Setup(out var discoverer, out var supervisor, out var existing,
-                out var found, fixup: x => {
+            using (var mock = Setup(out var discoverer, out var existing, out var found,
+                fixup: x => {
                     x.Application.DiscovererId = discoverer2;
                     x.Endpoints.ForEach(e => e.DiscovererId = discoverer2);
                     return x;
@@ -104,11 +101,11 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                 var service = mock.Create<IApplicationBulkProcessor>();
 
                 // Found one item
-                found = new List<DiscoveryEventModel> { found.First() };
+                found = new List<DiscoveryResultModel> { found.First() };
                 // Assert there is still the same content as originally
 
                 // Run
-                service.ProcessDiscoveryEventsAsync(discoverer, supervisor, new DiscoveryResultModel(), found).Wait();
+                service.ProcessDiscoveryEventsAsync(discoverer, new DiscoveryContextModel(), found).Wait();
 
                 // Assert
                 Assert.True(ApplicationsIn(mock).IsSameAs(existing));
@@ -120,8 +117,8 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
             var fix = new Fixture();
             var discoverer2 = HubResource.Format(fix.Create<string>(), fix.Create<string>(), fix.Create<string>());
 
-            using (var mock = Setup(out var discoverer, out var supervisor, out var existing,
-                out var found, fixup: x => {
+            using (var mock = Setup(out var discoverer, out var existing, out var found,
+                fixup: x => {
                     x.Application.DiscovererId = discoverer2;
                     x.Endpoints.ForEach(e => e.DiscovererId = discoverer2);
                     return x;
@@ -129,7 +126,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                 var service = mock.Create<IApplicationBulkProcessor>();
 
                 // Run
-                service.ProcessDiscoveryEventsAsync(discoverer, supervisor, new DiscoveryResultModel(), found).Wait();
+                service.ProcessDiscoveryEventsAsync(discoverer, new DiscoveryContextModel(), found).Wait();
 
                 // Assert
                 var inreg = ApplicationsIn(mock);
@@ -145,8 +142,8 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
             var fix = new Fixture();
             var discoverer2 = HubResource.Format(fix.Create<string>(), fix.Create<string>(), fix.Create<string>());
 
-            using (var mock = Setup(out var discoverer, out var supervisor, out var existing,
-                out var found, fixup: x => {
+            using (var mock = Setup(out var discoverer, out var existing, out var found,
+                fixup: x => {
                     x.Application.DiscovererId = discoverer2;
                     x.Endpoints.ForEach(e => e.DiscovererId = discoverer2);
                     return x;
@@ -154,11 +151,11 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                 var service = mock.Create<IApplicationBulkProcessor>();
 
                 // Found one app and endpoint
-                found = new List<DiscoveryEventModel> { found.First() };
+                found = new List<DiscoveryResultModel> { found.First() };
 
 
                 // Run
-                service.ProcessDiscoveryEventsAsync(discoverer, supervisor, new DiscoveryResultModel(), found).Wait();
+                service.ProcessDiscoveryEventsAsync(discoverer, new DiscoveryContextModel(), found).Wait();
 
                 // Assert
                 var inreg = ApplicationsIn(mock);
@@ -174,20 +171,20 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
             var fix = new Fixture();
             var discoverer2 = HubResource.Format(fix.Create<string>(), fix.Create<string>(), fix.Create<string>());
 
-            using (var mock = Setup(out var discoverer, out var supervisor, out var existing,
-                out var found, fixup: x => {
+            using (var mock = Setup(out var discoverer, out var existing, out var found,
+                fixup: x => {
                     x.Application.DiscovererId = discoverer2;
                     x.Endpoints.ForEach(e => e.DiscovererId = discoverer2);
                     return x;
                 })) {
                 // Found nothing
-                found = new List<DiscoveryEventModel>();
+                found = new List<DiscoveryResultModel>();
                 // Assert there is still the same content as originally
 
                 var service = mock.Create<IApplicationBulkProcessor>();
 
                 // Run
-                service.ProcessDiscoveryEventsAsync(discoverer, supervisor, new DiscoveryResultModel(), found).Wait();
+                service.ProcessDiscoveryEventsAsync(discoverer, new DiscoveryContextModel(), found).Wait();
 
                 // Assert
 
@@ -197,16 +194,15 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
 
         [Fact]
         public void ProcessDiscoveryWithNoResultsAndExisting() {
-            using (var mock = Setup(out var discoverer, out var supervisor, out var existing,
-                out var found)) {
+            using (var mock = Setup(out var discoverer, out var existing, out var found)) {
                 // Found nothing
-                found = new List<DiscoveryEventModel>();
+                found = new List<DiscoveryResultModel>();
 
                 // Assert there is still the same content as originally but now disabled
                 var service = mock.Create<IApplicationBulkProcessor>();
 
                 // Run
-                service.ProcessDiscoveryEventsAsync(discoverer, supervisor, new DiscoveryResultModel(), found).Wait();
+                service.ProcessDiscoveryEventsAsync(discoverer, new DiscoveryContextModel(), found).Wait();
 
                 // Assert
                 var inreg = ApplicationsIn(mock);
@@ -219,8 +215,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
         public void ProcessDiscoveryWithOneEndpointResultsAndExisting() {
             // All applications, but only one endpoint each is enabled
 
-            using (var mock = Setup(out var discoverer, out var supervisor, out var existing,
-                out var found)) {
+            using (var mock = Setup(out var discoverer, out var existing, out var found)) {
 
                 // Found single endpoints
                 found = found
@@ -230,7 +225,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                 var service = mock.Create<IApplicationBulkProcessor>();
 
                 // Run
-                service.ProcessDiscoveryEventsAsync(discoverer, supervisor, new DiscoveryResultModel(), found).Wait();
+                service.ProcessDiscoveryEventsAsync(discoverer, new DiscoveryContextModel(), found).Wait();
 
                 // Assert
                 var inreg = ApplicationsIn(mock);
@@ -257,16 +252,14 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
         /// Setup mock
         /// </summary>
         /// <param name="discoverer"></param>
-        /// <param name="supervisor"></param>
         /// <param name="existing"></param>
         /// <param name="found"></param>
         /// <param name="countDevices"></param>
         /// <param name="noApps"></param>
         /// <param name="fixup"></param>
         /// <returns></returns>
-        private static AutoMock Setup(out string discoverer, out string supervisor,
-            out List<ApplicationRegistrationModel> existing, out List<DiscoveryEventModel> found, 
-            int countDevices = -1, bool noApps = false,
+        private static AutoMock Setup(out string discoverer, out List<ApplicationRegistrationModel> existing,
+            out List<DiscoveryResultModel> found, int countDevices = -1, bool noApps = false, 
             Func<ApplicationRegistrationModel, ApplicationRegistrationModel> fixup = null) {
             var fix = new Fixture();
 
@@ -280,8 +273,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
             var gateway = fix.Create<string>();
             var module = fix.Create<string>();
             var discovererx = discoverer = HubResource.Format(hub, gateway, module);
-            module = fix.Create<string>();
-            var supervisorx = supervisor = HubResource.Format(hub, gateway, module);
 
             var template = fix
                 .Build<ApplicationRegistrationModel>()
@@ -295,7 +286,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                 .Do(c => c.Endpoints = fix
                     .Build<EndpointInfoModel>()
                     .With(x => x.DiscovererId, discovererx)
-                    .With(x => x.SupervisorId, supervisorx)
                     .CreateMany(5)
                     .ToList())
                 .CreateMany(5)
@@ -309,7 +299,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
             var i = 0; var now = DateTime.UtcNow;
             found = template
                  .SelectMany(a => a.Endpoints.Select(
-                     e => new DiscoveryEventModel {
+                     e => new DiscoveryResultModel {
                          Application = a.Application,
                          Endpoint = e,
                          Index = i++,

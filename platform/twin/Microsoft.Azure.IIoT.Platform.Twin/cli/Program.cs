@@ -5,7 +5,7 @@
 
 namespace Microsoft.Azure.IIoT.Platform.Cli {
     using Microsoft.Azure.IIoT.Platform.Core.Models;
-    using Microsoft.Azure.IIoT.Platform.Twin.Edge;
+    using Microsoft.Azure.IIoT.Platform.Twin.Services;
     using Microsoft.Azure.IIoT.Platform.OpcUa.Sample;
     using Microsoft.Azure.IIoT.Platform.OpcUa.Services;
     using Microsoft.Azure.IIoT.Platform.Registry.Models;
@@ -473,7 +473,7 @@ Operations (Mutually exclusive):
             /// <param name="ct"></param>
             /// <returns></returns>
             private static async Task RunSampleServerAsync(ILogger logger, CancellationToken ct) {
-                var tcs = new TaskCompletionSource<bool>();
+                var tcs = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
                 ct.Register(() => tcs.TrySetResult(true));
                 using (var server = new ServerConsoleHost(new ServerFactory(logger) {
                     LogStatus = false

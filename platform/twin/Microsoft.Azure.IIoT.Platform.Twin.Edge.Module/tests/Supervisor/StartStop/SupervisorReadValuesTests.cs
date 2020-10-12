@@ -3,8 +3,8 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Supervisor.History.StartStop {
-    using Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Tests;
+namespace Microsoft.Azure.IIoT.Platform.Twin.Services.Module.Supervisor.History.StartStop {
+    using Microsoft.Azure.IIoT.Platform.Twin.Services.Module.Tests;
     using Microsoft.Azure.IIoT.Platform.Registry.Models;
     using Microsoft.Azure.IIoT.Platform.Core.Models;
     using Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Fixtures;
@@ -29,8 +29,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Supervisor.History.Star
                 ?? Try.Op(() => Dns.GetHostEntry("localhost"));
         }
 
-        private HistoryReadValuesTests<EndpointInfoModel> GetTests(string hub,
-            string deviceId, string moduleId, IContainer services) {
+        private HistoryReadValuesTests<EndpointInfoModel> GetTests(IContainer services) {
             return new HistoryReadValuesTests<EndpointInfoModel>(
                 () => services.Resolve<IHistorianServices<EndpointInfoModel>>(),
                 new EndpointInfoModel {
@@ -41,8 +40,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Supervisor.History.Star
                             .Select(ip => $"opc.tcp://{ip}:{_server.Port}/UA/SampleServer").ToHashSet(),
                         Certificate = _server.Certificate?.RawData?.ToThumbprint()
                     },
-                    Id = "testid",
-                    SupervisorId = HubResource.Format(hub, deviceId, moduleId)
+                    Id = "testid"
                 });
         }
 
@@ -60,7 +58,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Supervisor.History.Star
             // Skip.IfNot(_runAll);
             using (var harness = new TwinModuleFixture()) {
                 await harness.RunTestAsync(async (hub, device, module, services) => {
-                    await GetTests(hub, device, module, services).HistoryReadInt64ValuesTest1Async().ConfigureAwait(false);
+                    await GetTests(services).HistoryReadInt64ValuesTest1Async().ConfigureAwait(false);
                 }).ConfigureAwait(false);
             }
         }
@@ -70,7 +68,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Supervisor.History.Star
             // Skip.IfNot(_runAll);
             using (var harness = new TwinModuleFixture()) {
                 await harness.RunTestAsync(async (hub, device, module, services) => {
-                    await GetTests(hub, device, module, services).HistoryReadInt64ValuesTest2Async().ConfigureAwait(false);
+                    await GetTests(services).HistoryReadInt64ValuesTest2Async().ConfigureAwait(false);
                 }).ConfigureAwait(false);
             }
         }
@@ -80,7 +78,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Supervisor.History.Star
             Skip.IfNot(_runAll);
             using (var harness = new TwinModuleFixture()) {
                 await harness.RunTestAsync(async (hub, device, module, services) => {
-                    await GetTests(hub, device, module, services).HistoryReadInt64ValuesTest3Async().ConfigureAwait(false);
+                    await GetTests(services).HistoryReadInt64ValuesTest3Async().ConfigureAwait(false);
                 }).ConfigureAwait(false);
             }
         }
@@ -90,7 +88,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Supervisor.History.Star
             Skip.IfNot(_runAll);
             using (var harness = new TwinModuleFixture()) {
                 await harness.RunTestAsync(async (hub, device, module, services) => {
-                    await GetTests(hub, device, module, services).HistoryReadInt64ValuesTest4Async().ConfigureAwait(false);
+                    await GetTests(services).HistoryReadInt64ValuesTest4Async().ConfigureAwait(false);
                 }).ConfigureAwait(false);
             }
         }

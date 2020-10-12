@@ -333,7 +333,7 @@ Options:
             /// Run server until cancelled
             /// </summary>
             private static async Task RunSampleServerAsync(ILogger logger, CancellationToken ct) {
-                var tcs = new TaskCompletionSource<bool>();
+                var tcs = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
                 ct.Register(() => tcs.TrySetResult(true));
                 using (var server = new ServerConsoleHost(new ServerFactory(logger) {
                     LogStatus = false

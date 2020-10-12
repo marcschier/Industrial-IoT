@@ -3,7 +3,7 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Platform.Twin.Edge {
+namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
     using Microsoft.Azure.IIoT.Platform.OpcUa;
     using Microsoft.Azure.IIoT.Platform.OpcUa.Models;
     using Microsoft.Azure.IIoT.Platform.Core.Models;
@@ -61,8 +61,8 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge {
         /// <param name="elevation"></param>
         /// <param name="priority"></param>
         public BrowsedNodeStreamEncoder(IEndpointServices client, EndpointModel endpoint,
-            IEncoder encoder, DiagnosticsModel diagnostics, ILogger logger, CredentialModel elevation = null,
-            int priority = int.MaxValue) :
+            IEncoder encoder, DiagnosticsModel diagnostics, ILogger logger,
+            CredentialModel elevation = null, int priority = int.MaxValue) :
             this(client, endpoint, diagnostics, logger, elevation, priority) {
             _encoder = new ModelEncoder(encoder, PushNode);
         }
@@ -77,7 +77,8 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge {
         /// <param name="elevation"></param>
         /// <param name="priority"></param>
         private BrowsedNodeStreamEncoder(IEndpointServices client, EndpointModel endpoint,
-            DiagnosticsModel diagnostics, ILogger logger, CredentialModel elevation, int priority) {
+            DiagnosticsModel diagnostics, ILogger logger, CredentialModel elevation, 
+            int priority) {
             _client = client ?? throw new ArgumentNullException(nameof(client));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _endpoint = endpoint ?? throw new ArgumentNullException(nameof(endpoint));

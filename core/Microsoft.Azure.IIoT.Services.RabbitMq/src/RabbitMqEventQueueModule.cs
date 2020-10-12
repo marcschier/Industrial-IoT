@@ -18,8 +18,10 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq {
         /// <param name="builder"></param>
         protected override void Load(ContainerBuilder builder) {
             builder.RegisterType<RabbitMqQueueClient>()
-                .AsImplementedInterfaces();
+                .AsImplementedInterfaces().InstancePerDependency();
             builder.RegisterType<RabbitMqConnection>()
+                .AsImplementedInterfaces().SingleInstance();
+            builder.RegisterType<RabbitMqHealthCheck>()
                 .AsImplementedInterfaces().SingleInstance();
             base.Load(builder);
         }

@@ -8,10 +8,14 @@ namespace Microsoft.Azure.IIoT.App.Pages {
     using Microsoft.Azure.IIoT.App.Models;
     using System.Threading.Tasks;
 
+#pragma warning disable IDE0079 // Remove unnecessary suppression
 #pragma warning disable IDE1006 // Naming Styles
     public partial class _DrawerPublisher {
+#pragma warning restore IDE0079 // Remove unnecessary suppression
+#pragma warning disable IDE0079 // Remove unnecessary suppression
 #pragma warning restore IDE1006 // Naming Styles
         [Parameter]
+#pragma warning restore IDE0079 // Remove unnecessary suppression
         public PublisherInfo Publisher { get; set; }
 
         private PublisherInfoRequested InputData { get; set; }

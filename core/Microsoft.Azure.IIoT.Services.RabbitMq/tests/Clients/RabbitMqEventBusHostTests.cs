@@ -15,6 +15,7 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
     using System.Collections.Generic;
     using System.Linq;
 
+    [Collection(RabbitMqCollection.Name)]
     public class RabbitMqEventBusHostTests : IClassFixture<RabbitMqEventBusFixture> {
         private readonly RabbitMqEventBusFixture _fixture;
 
@@ -99,7 +100,7 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
                     await bus.PublishAsync(fix.Create<Pet>()).ConfigureAwait(false);
                 });
 
-                await Task.WhenAll(senders).With1MinuteTimeout().ConfigureAwait(false);
+                await Task.WhenAll(senders).With2MinuteTimeout().ConfigureAwait(false);
 
                 var f = await families.Complete.ConfigureAwait(false);
                 var p = await pets.Complete.ConfigureAwait(false);
@@ -169,7 +170,7 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
         internal class FamilyHandler : IEventHandler<Family> {
             private readonly int _count;
             private readonly TaskCompletionSource<HashSet<Family>> _complete =
-                new TaskCompletionSource<HashSet<Family>>();
+                new TaskCompletionSource<HashSet<Family>>(TaskCreationOptions.RunContinuationsAsynchronously);
             public Task<HashSet<Family>> Complete => _complete.Task.With1MinuteTimeout();
 
             public FamilyHandler(int count) {
@@ -189,7 +190,7 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
         internal class ChildHandler : IEventHandler<Child> {
             private readonly int _count;
             private readonly TaskCompletionSource<HashSet<Child>> _complete =
-                new TaskCompletionSource<HashSet<Child>>();
+                new TaskCompletionSource<HashSet<Child>>(TaskCreationOptions.RunContinuationsAsynchronously);
             public Task<HashSet<Child>> Complete => _complete.Task.With1MinuteTimeout();
             public ChildHandler(int count) {
                 _count = count;
@@ -208,7 +209,7 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
         internal class PetHandler : IEventHandler<Pet> {
             private readonly int _count;
             private readonly TaskCompletionSource<HashSet<Pet>> _complete =
-                new TaskCompletionSource<HashSet<Pet>>();
+                new TaskCompletionSource<HashSet<Pet>>(TaskCreationOptions.RunContinuationsAsynchronously);
             public Task<HashSet<Pet>> Complete => _complete.Task.With1MinuteTimeout();
             public PetHandler(int count) {
                 _count = count;

@@ -6,13 +6,17 @@
 namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
     using Microsoft.Azure.IIoT.Exceptions;
     using Microsoft.Azure.IIoT.Utils;
+    using Microsoft.Extensions.Diagnostics.HealthChecks;
+    using Serilog;
     using System;
     using System.Collections.Concurrent;
     using System.Linq;
     using System.Threading.Tasks;
     using System.Collections.Generic;
-    using Serilog;
+    using System.Threading;
+    using System.IO;
     using RabbitMQ.Client;
+    using RabbitMQ.Client.Exceptions;
 
     /// <summary>
     /// Rabbitmq connection
@@ -28,14 +32,16 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _config = config ?? throw new ArgumentNullException(nameof(config));
 
-            _connection = new ConnectionFactory {
-                HostName = _config.HostName,
-                Password = _config.Key,
-                UserName = _config.UserName,
+            _connection = Retry.WithLinearBackoff(_logger, () =>
+                Task.FromResult(new ConnectionFactory {
+                    HostName = _config.HostName,
+                    Password = _config.Key,
+                    UserName = _config.UserName,
 
-                AutomaticRecoveryEnabled = true,
-                DispatchConsumersAsync = true,
-            }.CreateConnection();
+                    AutomaticRecoveryEnabled = true,
+                    NetworkRecoveryInterval = TimeSpan.FromMilliseconds(500),
+                    DispatchConsumersAsync = true
+                }.CreateConnection()), ex => ex is BrokerUnreachableException, 60).Result;
         }
 
         /// <inheritdoc/>
@@ -101,10 +107,6 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
                     throw new NotSupportedException("Consumer channel");
                 }
 
-                while (_channel?.Model == null || _channel.Model.IsClosed) {
-                    CloseChannel();
-                    _channel = CreateChannel();
-                }
                 lock (_channel) {
                     var seq = _channel.Model.NextPublishSeqNo;
                     if (!_completions.TryAdd(seq, ex => complete(token, ex))) {
@@ -126,11 +128,6 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
 
                 if (_consumer != null) {
                     throw new NotSupportedException("Consumer channel");
-                }
-
-                while (_channel?.Model == null || _channel.Model.IsClosed) {
-                    CloseChannel();
-                    _channel = CreateChannel();
                 }
 
                 lock (_channel) {
@@ -157,13 +154,34 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
             }
 
             /// <summary>
-            /// Create channel
+            /// Create model
             /// </summary>
             /// <returns></returns>
             private Channel CreateChannel() {
+                var attempt = 1;
+                while (true) {
+                    try {
+                        return CreateChannelInternal();
+                    }
+                    catch (OperationInterruptedException ex) {
+                        _logger.Error(ex, "Failed to open channel {attempt}", attempt);
+                        if (++attempt > 10) { 
+                            throw;
+                        }
+                        // Try again
+                    }
+                }
+            }
+
+            /// <summary>
+            /// Create channel
+            /// </summary>
+            /// <returns></returns>
+            private Channel CreateChannelInternal() {
                 if (_isDisposed) {
                     throw new ObjectDisposedException(nameof(RabbitMqChannel));
                 }
+
                 var model = _outer._connection.CreateModel();
 
                 if (_consumer == null) {
@@ -179,7 +197,7 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
                     }
                     else {
                         // Create Queue
-                        QueueName = model.QueueDeclare(_name, true).QueueName;
+                        QueueName = model.QueueDeclare(_name, true, false).QueueName;
                         ExchangeName = _outer._config.RoutingKey ?? string.Empty;
                         if (!string.IsNullOrEmpty(ExchangeName)) {
                             model.ExchangeDeclare(ExchangeName, ExchangeType.Direct, true);
@@ -208,7 +226,7 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
                     }
                     else {
                         // Create Queue
-                        QueueName = model.QueueDeclare(_name, true).QueueName;
+                        QueueName = model.QueueDeclare(_name, true, false).QueueName;
                         ExchangeName = _outer._config.RoutingKey ?? string.Empty;
                         if (!string.IsNullOrEmpty(ExchangeName)) {
                             model.ExchangeDeclare(ExchangeName, ExchangeType.Direct, true);
@@ -313,6 +331,9 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
                 /// <inheritdoc/>
                 public void Dispose() {
                     try {
+                        if (Model.IsClosed) {
+                            return;
+                        }
                         if (IsRunning) {
                             // Stop consume
                             Model.BasicCancelNoWait(_consumerTag);
@@ -329,7 +350,7 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
                 private readonly string _consumerTag = Guid.NewGuid().ToString();
             }
 
-            private Channel _channel;
+            private readonly Channel _channel;
             private bool _isDisposed;
             private readonly string _name;
             private readonly bool _pubSub;

@@ -28,7 +28,7 @@ namespace Microsoft.Azure.IIoT.Services.Generic.Services {
 
                 var data = fix.CreateMany<byte>().ToArray();
 
-                var tcs = new TaskCompletionSource<TelemetryEventArgs>();
+                var tcs = new TaskCompletionSource<TelemetryEventArgs>(TaskCreationOptions.RunContinuationsAsynchronously);
                 harness.OnEvent += (_, a) => {
                     tcs.TrySetResult(a);
                 };
@@ -54,7 +54,7 @@ namespace Microsoft.Azure.IIoT.Services.Generic.Services {
                 var data = fix.CreateMany<byte>().ToArray();
                 var properties = fix.Create<Dictionary<string, string>>();
 
-                var tcs = new TaskCompletionSource<TelemetryEventArgs>();
+                var tcs = new TaskCompletionSource<TelemetryEventArgs>(TaskCreationOptions.RunContinuationsAsynchronously);
                 harness.OnEvent += (_, a) => {
                     tcs.TrySetResult(a);
                 };
@@ -81,7 +81,7 @@ namespace Microsoft.Azure.IIoT.Services.Generic.Services {
                 var properties = fix.Create<Dictionary<string, string>>();
 
                 var count = 0;
-                var tcs = new TaskCompletionSource<TelemetryEventArgs>();
+                var tcs = new TaskCompletionSource<TelemetryEventArgs>(TaskCreationOptions.RunContinuationsAsynchronously);
                 harness.OnEvent += (_, a) => {
                     if (++count == 4) {
                         tcs.TrySetResult(a);
@@ -119,7 +119,7 @@ namespace Microsoft.Azure.IIoT.Services.Generic.Services {
                 var data = fix.CreateMany<byte>().ToArray();
                 var properties = fix.Create<Dictionary<string, string>>();
                 var count = 0;
-                var tcs = new TaskCompletionSource<TelemetryEventArgs>();
+                var tcs = new TaskCompletionSource<TelemetryEventArgs>(TaskCreationOptions.RunContinuationsAsynchronously);
                 harness.OnEvent += (_, a) => {
                     if (++count == max) {
                         tcs.TrySetResult(a);
@@ -131,7 +131,7 @@ namespace Microsoft.Azure.IIoT.Services.Generic.Services {
                     .Select(i => queue.SendAsync(target + "/" + rand.Next(0, 10), data, properties));
                 await Task.WhenAll(senders).ConfigureAwait(false);
 
-                var result = await tcs.Task.With1MinuteTimeout().ConfigureAwait(false);
+                var result = await tcs.Task.With2MinuteTimeout().ConfigureAwait(false);
                 Assert.True(data.SequenceEqualsSafe(result.Data));
                 Assert.Null(result.DeviceId);
                 Assert.Null(result.ModuleId);
@@ -149,13 +149,13 @@ namespace Microsoft.Azure.IIoT.Services.Generic.Services {
 
                 var data = fix.CreateMany<byte>().ToArray();
 
-                var tcs = new TaskCompletionSource<TelemetryEventArgs>();
+                var tcs = new TaskCompletionSource<TelemetryEventArgs>(TaskCreationOptions.RunContinuationsAsynchronously);
                 harness.OnEvent += (_, a) => {
                     tcs.TrySetResult(a);
                 };
 
                 var expected = "token";
-                var actual = new TaskCompletionSource<string>();
+                var actual = new TaskCompletionSource<string>(TaskCreationOptions.RunContinuationsAsynchronously);
                 queue.Send(target, data, expected, (t, e) => {
                     if (e != null) {
                         actual.TrySetException(e);
@@ -185,13 +185,13 @@ namespace Microsoft.Azure.IIoT.Services.Generic.Services {
                 var data = fix.CreateMany<byte>().ToArray();
                 var properties = fix.Create<Dictionary<string, string>>();
 
-                var tcs = new TaskCompletionSource<TelemetryEventArgs>();
+                var tcs = new TaskCompletionSource<TelemetryEventArgs>(TaskCreationOptions.RunContinuationsAsynchronously);
                 harness.OnEvent += (_, a) => {
                     tcs.TrySetResult(a);
                 };
 
                 var expected = 1234;
-                var actual = new TaskCompletionSource<int?>();
+                var actual = new TaskCompletionSource<int?>(TaskCreationOptions.RunContinuationsAsynchronously);
                 queue.Send(target, data, expected, (t, e) => {
                     if (e != null) {
                         actual.TrySetException(e);
@@ -222,7 +222,7 @@ namespace Microsoft.Azure.IIoT.Services.Generic.Services {
                 var properties = fix.Create<Dictionary<string, string>>();
 
                 var count = 0;
-                var tcs = new TaskCompletionSource<TelemetryEventArgs>();
+                var tcs = new TaskCompletionSource<TelemetryEventArgs>(TaskCreationOptions.RunContinuationsAsynchronously);
                 harness.OnEvent += (_, a) => {
                     if (++count == 4) {
                         tcs.TrySetResult(a);
@@ -230,7 +230,7 @@ namespace Microsoft.Azure.IIoT.Services.Generic.Services {
                 };
 
                 var expected = 4;
-                var actual = new TaskCompletionSource<int?>();
+                var actual = new TaskCompletionSource<int?>(TaskCreationOptions.RunContinuationsAsynchronously);
                 queue.Send(target, fix.CreateMany<byte>().ToArray(), 1, (t, e) => { }, properties);
                 queue.Send(target, fix.CreateMany<byte>().ToArray(), 2, (t, e) => { }, properties);
                 queue.Send(target, fix.CreateMany<byte>().ToArray(), 3, (t, e) => { }, properties);
@@ -269,7 +269,7 @@ namespace Microsoft.Azure.IIoT.Services.Generic.Services {
                 var data = fix.CreateMany<byte>().ToArray();
                 var properties = fix.Create<Dictionary<string, string>>();
                 var count = 0;
-                var tcs = new TaskCompletionSource<TelemetryEventArgs>();
+                var tcs = new TaskCompletionSource<TelemetryEventArgs>(TaskCreationOptions.RunContinuationsAsynchronously);
                 harness.OnEvent += (_, a) => {
                     if (++count == max) {
                         tcs.TrySetResult(a);
@@ -283,7 +283,7 @@ namespace Microsoft.Azure.IIoT.Services.Generic.Services {
                     .ForEach(i => queue.Send(target + "/" + rand.Next(0, 100), data, i,
                         (t, e) => hashSet.Add(t), properties));
 
-                var result = await tcs.Task.With1MinuteTimeout().ConfigureAwait(false);
+                var result = await tcs.Task.With2MinuteTimeout().ConfigureAwait(false);
                 Assert.True(data.SequenceEqualsSafe(result.Data));
                 Assert.Null(result.DeviceId);
                 Assert.Null(result.ModuleId);

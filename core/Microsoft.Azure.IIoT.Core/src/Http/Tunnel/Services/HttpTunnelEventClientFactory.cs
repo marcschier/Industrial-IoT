@@ -73,7 +73,7 @@ namespace Microsoft.Azure.IIoT.Http.Tunnel.Services {
             // Handle response from device method
             var response = _serializer.Deserialize<HttpTunnelResponseModel>(payload);
             if (_outstanding.TryRemove(response.RequestId, out var request)) {
-                using var httpResponse = new HttpResponseMessage((HttpStatusCode)response.Status) {
+                var httpResponse = new HttpResponseMessage((HttpStatusCode)response.Status) {
                     Content = response.Payload == null ? null :
                         new ByteArrayContent(response.Payload)
                 };
@@ -240,7 +240,8 @@ namespace Microsoft.Azure.IIoT.Http.Tunnel.Services {
             /// Outstanding task
             /// </summary>
             public TaskCompletionSource<HttpResponseMessage> Completion { get; }
-                = new TaskCompletionSource<HttpResponseMessage>();
+                = new TaskCompletionSource<HttpResponseMessage>(
+                    TaskCreationOptions.RunContinuationsAsynchronously);
 
             /// <summary>
             /// Create task

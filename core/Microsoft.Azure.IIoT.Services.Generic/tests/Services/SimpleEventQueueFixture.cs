@@ -8,21 +8,24 @@ namespace Microsoft.Azure.IIoT.Services.Generic.Services {
     using Microsoft.Azure.IIoT.Messaging;
     using Microsoft.Azure.IIoT.Hub;
     using Microsoft.Azure.IIoT.Utils;
+    using Autofac;
     using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
-    using Autofac;
     using System.Linq;
 
     public sealed class SimpleEventQueueFixture : IDisposable {
+
+        public bool Skip { get; set; }
 
         /// <summary>
         /// Create test harness
         /// </summary>
         /// <returns></returns>
-#pragma warning disable CA1822 // Mark members as static
         internal SimpleEventQueueHarness GetHarness(string target) {
-#pragma warning restore CA1822 // Mark members as static
+            if (Skip) {
+                return null;
+            }
             return new SimpleEventQueueHarness(target);
         }
 
@@ -147,13 +150,15 @@ namespace Microsoft.Azure.IIoT.Services.Generic.Services {
             byte[] data, IDictionary<string, string> properties) {
             HandlerSchema = schema;
             Source = source;
-            try {
-                DeviceId = HubResource.Parse(source, out var hub, out var moduleId);
-                Hub = hub;
-                ModuleId = moduleId;
-            }
-            catch {
+            if (source != null) {
+                try {
+                    DeviceId = HubResource.Parse(source, out var hub, out var moduleId);
+                    Hub = hub;
+                    ModuleId = moduleId;
+                }
+                catch {
 
+                }
             }
             Data = data;
             Target = properties.TryGetValue(EventProperties.Target, out var v) ? v : null;

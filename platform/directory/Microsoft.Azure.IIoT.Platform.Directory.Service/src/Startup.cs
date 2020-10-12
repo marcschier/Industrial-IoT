@@ -30,6 +30,8 @@ namespace Microsoft.Azure.IIoT.Platform.Directory.Service {
     using Prometheus;
     using System;
     using ILogger = Serilog.ILogger;
+    using Microsoft.Azure.IIoT.Azure.IoTHub.Clients;
+    using Microsoft.Azure.IIoT.Azure.IoTHub.Deploy;
 
     /// <summary>
     /// Webservice startup
@@ -183,6 +185,19 @@ namespace Microsoft.Azure.IIoT.Platform.Directory.Service {
             // Registries and repositories
             builder.RegisterModule<DirectoryServices>();
 
+            // Deployments
+            builder.RegisterType<IoTHubConfigurationClient>()
+                .AsImplementedInterfaces();
+            builder.RegisterType<IoTEdgeBaseDeployment>()
+                .AsImplementedInterfaces().SingleInstance();
+            builder.RegisterType<IoTEdgeRegistryDeployment>()
+                .AsImplementedInterfaces().SingleInstance();
+            builder.RegisterType<IoTEdgeTwinDeployment>()
+                .AsImplementedInterfaces().SingleInstance();
+            builder.RegisterType<IoTEdgePublisherDeployment>()
+                .AsImplementedInterfaces().SingleInstance();
+
+
             // ... and auto start
             builder.RegisterType<HostAutoStart>()
                 .AutoActivate()
@@ -195,9 +210,9 @@ namespace Microsoft.Azure.IIoT.Platform.Directory.Service {
             // Add service to service authentication
             builder.RegisterModule<WebApiAuthentication>();
             // Iot hub services
-            builder.RegisterModule<IoTHubModule>();
+            builder.RegisterModule<IoTHubSupportModule>();
             // Register event bus for integration events
-            builder.RegisterModule<ServiceBusEventBusModule>();
+            builder.RegisterModule<ServiceBusEventBusSupport>();
         }
     }
 }

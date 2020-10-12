@@ -96,7 +96,8 @@ namespace Microsoft.Azure.IIoT.Net.Scanner {
             _replies = replies;
             _ct = ct;
             _timeout = timeout ?? kDefaultProbeTimeout;
-            _completion = new TaskCompletionSource<bool>();
+            _completion = new TaskCompletionSource<bool>(
+                TaskCreationOptions.RunContinuationsAsynchronously);
             _candidates = new List<uint>();
             if (addresses == null) {
                 _addresses = NetworkInformationEx.GetAllNetInterfaces(netclass)

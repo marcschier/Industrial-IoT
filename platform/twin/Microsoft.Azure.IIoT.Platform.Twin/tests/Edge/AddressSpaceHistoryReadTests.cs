@@ -3,7 +3,7 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Platform.Twin.Edge {
+namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
     using Microsoft.Azure.IIoT.Platform.Twin.Clients;
     using Microsoft.Azure.IIoT.Platform.Core.Models;
     using Microsoft.Azure.IIoT.Platform.OpcUa.Services;
@@ -30,7 +30,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge {
         private HistoryReadValuesTests<EndpointModel> GetTests() {
             var codec = new VariantEncoderFactory();
             return new HistoryReadValuesTests<EndpointModel>(
-                () => new HistoricAccessAdapter<EndpointModel>(new AddressSpaceServices(_server.Client,
+                () => new HistorianServicesAdapter<EndpointModel>(new AddressSpaceServices(_server.Client,
                     codec, _server.Logger), codec),
                 new EndpointModel {
                     Url = $"opc.tcp://{_hostEntry?.HostName ?? "localhost"}:{_server.Port}/UA/SampleServer",

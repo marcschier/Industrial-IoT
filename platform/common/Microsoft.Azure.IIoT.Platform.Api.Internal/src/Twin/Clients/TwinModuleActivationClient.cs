@@ -38,9 +38,6 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
             if (registration == null) {
                 throw new ArgumentNullException(nameof(registration));
             }
-            if (string.IsNullOrEmpty(registration.SupervisorId)) {
-                throw new ArgumentException("Missing supervisor id", nameof(registration));
-            }
             if (string.IsNullOrEmpty(registration.Id)) {
                 throw new ArgumentException("Missing registration id", nameof(registration));
             }
@@ -50,7 +47,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
             if (!secret.IsBase64()) {
                 throw new ArgumentException("not base64", nameof(secret));
             }
-            await CallServiceOnSupervisorAsync("ActivateEndpoint_V2", registration.SupervisorId, new {
+            await CallServiceAsync("ActivateEndpoint_V2", null/* TODO registration.SupervisorId */, new {
                 registration.Id,
                 Secret = secret
             }, ct).ConfigureAwait(false);
@@ -62,13 +59,10 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
             if (registration == null) {
                 throw new ArgumentNullException(nameof(registration));
             }
-            if (string.IsNullOrEmpty(registration.SupervisorId)) {
-                throw new ArgumentException("Missing supervisor id", nameof(registration));
-            }
             if (string.IsNullOrEmpty(registration.Id)) {
                 throw new ArgumentException("Missing registration id", nameof(registration));
             }
-            await CallServiceOnSupervisorAsync("DeactivateEndpoint_V2", registration.SupervisorId,
+            await CallServiceAsync("DeactivateEndpoint_V2", null/* TODO registration.SupervisorId */,
                 registration.Id, ct).ConfigureAwait(false);
         }
 
@@ -76,17 +70,17 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
         /// Helper to invoke service
         /// </summary>
         /// <param name="service"></param>
-        /// <param name="supervisorId"></param>
+        /// <param name="target"></param>
         /// <param name="payload"></param>
         /// <param name="ct"></param>
         /// <returns></returns>
-        private async Task CallServiceOnSupervisorAsync(string service,
-            string supervisorId, object payload, CancellationToken ct) {
+        private async Task CallServiceAsync(string service,
+            string target, object payload, CancellationToken ct) {
             var sw = Stopwatch.StartNew();
-            _ = await _client.CallMethodAsync(supervisorId, service,
+            _ = await _client.CallMethodAsync(target, service,
                 _serializer.SerializeToString(payload), null, ct).ConfigureAwait(false);
             _logger.Debug("Calling supervisor service '{service}' on " +
-                "{supervisorId} took {elapsed} ms.", service, supervisorId,
+                "{target} took {elapsed} ms.", service, target,
                     sw.ElapsedMilliseconds);
         }
 

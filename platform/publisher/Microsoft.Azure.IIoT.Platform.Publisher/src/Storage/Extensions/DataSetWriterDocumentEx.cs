@@ -8,8 +8,9 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Storage.Services {
     using Microsoft.Azure.IIoT.Platform.Publisher.Models;
     using Microsoft.Azure.IIoT.Serializers;
     using System;
+    using System.Collections.Generic;
 
-    /// <summary>
+    /// <summary>s
     /// DataSet Writer model extensions
     /// </summary>
     public static class DataSetWriterDocumentEx {
@@ -53,7 +54,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Storage.Services {
                 Created = model.Created?.Time,
                 CreatedAuditId = model.Created?.AuthorityId,
                 ExtensionFields = model.DataSet?.ExtensionFields?.Count == 0 ? null :
-                    model.DataSet?.ExtensionFields,
+                    model.DataSet?.ExtensionFields.Clone(),
                 DataSetName = model.DataSet?.Name,
                 SubscriptionLifeTimeCount = model.DataSet?.SubscriptionSettings?.LifeTimeCount == 0 ?
                     null : model.DataSet?.SubscriptionSettings?.LifeTimeCount,
@@ -150,7 +151,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Storage.Services {
                 OperationTimeout = document.OperationTimeout,
                 DiagnosticsLevel = document.DiagnosticsLevel,
                 EndpointId = document.EndpointId,
-                ExtensionFields = document.ExtensionFields,
+                ExtensionFields = document.ExtensionFields.Clone(),
                 Name = document.DataSetName,
                 SubscriptionSettings = subscriptionSettings
             };

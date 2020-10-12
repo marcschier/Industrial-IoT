@@ -22,6 +22,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry {
         /// <param name="events"></param>
         /// <returns></returns>
         Task ProcessDiscoveryResultsAsync(string discovererId,
-            DiscoveryResultModel result, IEnumerable<DiscoveryEventModel> events);
+            DiscoveryContextModel result, IEnumerable<DiscoveryResultModel> events);
     }
 }

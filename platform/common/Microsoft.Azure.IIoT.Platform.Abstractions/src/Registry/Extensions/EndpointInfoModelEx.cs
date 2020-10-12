@@ -99,7 +99,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
                 model.EndpointUrl == that.EndpointUrl &&
                 model.AuthenticationMethods.IsSameAs(that.AuthenticationMethods) &&
                 model.DiscovererId == that.DiscovererId &&
-                model.SupervisorId == that.SupervisorId &&
                 model.SecurityLevel == that.SecurityLevel;
         }
 
@@ -163,7 +162,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
                 AuthenticationMethods = model.AuthenticationMethods?
                     .Select(c => c.Clone()).ToList(),
                 SecurityLevel = model.SecurityLevel,
-                SupervisorId = model.SupervisorId,
                 DiscovererId = model.DiscovererId
             };
         }
@@ -185,7 +183,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
             endpoint.AuthenticationMethods = model.AuthenticationMethods?
                 .Select(c => c.Clone()).ToList();
             endpoint.SecurityLevel = model.SecurityLevel;
-            endpoint.SupervisorId = model.SupervisorId;
             endpoint.DiscovererId = model.DiscovererId;
             return endpoint;
         }

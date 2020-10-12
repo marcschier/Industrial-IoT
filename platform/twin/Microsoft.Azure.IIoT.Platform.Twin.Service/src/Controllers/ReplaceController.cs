@@ -6,13 +6,13 @@
 namespace Microsoft.Azure.IIoT.Platform.Twin.Service.Controllers {
     using Microsoft.Azure.IIoT.Platform.Twin.Service.Auth;
     using Microsoft.Azure.IIoT.Platform.Twin.Service.Filters;
+    using Microsoft.Azure.IIoT.Platform.Twin.Api.Models;
     using Microsoft.Azure.IIoT.Platform.Twin;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using System;
     using System.Threading.Tasks;
     using System.ComponentModel.DataAnnotations;
-    using Microsoft.Azure.IIoT.Platform.Twin.Api.Models;
 
     /// <summary>
     /// History replace services

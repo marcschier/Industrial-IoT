@@ -33,7 +33,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Models {
             endpoint.EndpointUrl = update.EndpointUrl;
             endpoint.Id = update.Id;
             endpoint.SecurityLevel = update.SecurityLevel;
-            endpoint.SupervisorId = update.SupervisorId;
             endpoint.Endpoint = (update.Endpoint ?? new EndpointApiModel())
                 .Patch(endpoint.Endpoint);
             return endpoint;

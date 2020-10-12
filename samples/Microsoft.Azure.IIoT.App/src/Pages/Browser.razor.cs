@@ -28,9 +28,6 @@ namespace Microsoft.Azure.IIoT.App.Pages {
         [Parameter]
         public string ApplicationId { get; set; } = string.Empty;
 
-        [Parameter]
-        public string SupervisorId { get; set; } = string.Empty;
-
         public PagedResult<ListNode> PublishedNodes { get; set; } = new PagedResult<ListNode>();
         public CredentialModel Credential { get; set; } = new CredentialModel();
 
@@ -71,7 +68,7 @@ namespace Microsoft.Azure.IIoT.App.Pages {
         /// <param name="parentId"></param>
         private async Task GetTreeBackAsync(string id, List<string> parentId, int index) {
             await BrowseTreeAsync(BrowseDirection.Backward, index, false, id, parentId).ConfigureAwait(false);
-            NavigationManager.NavigateTo(NavigationManager.BaseUri + "browser/" + DiscovererId + "/" + ApplicationId + "/" + SupervisorId + "/" + EndpointId);
+            NavigationManager.NavigateTo(NavigationManager.BaseUri + "browser/" + DiscovererId + "/" + ApplicationId + "/" + EndpointId);
         }
 
         /// <summary>
@@ -121,7 +118,7 @@ namespace Microsoft.Azure.IIoT.App.Pages {
                 NavigationManager.NavigateTo(NavigationManager.BaseUri + "browser/" + "/" + ApplicationId + "/" + EndpointId);
             }
             else {
-                NavigationManager.NavigateTo(NavigationManager.BaseUri + "browser/" + "/" + DiscovererId + "/" + ApplicationId + "/" + SupervisorId + "/" + EndpointId);
+                NavigationManager.NavigateTo(NavigationManager.BaseUri + "browser/" + "/" + DiscovererId + "/" + ApplicationId + "/" + EndpointId);
             }
             IsLoading = false;
         }

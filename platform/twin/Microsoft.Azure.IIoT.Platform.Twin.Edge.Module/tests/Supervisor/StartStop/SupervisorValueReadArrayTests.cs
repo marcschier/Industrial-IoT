@@ -3,8 +3,8 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Supervisor.StartStop {
-    using Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Tests;
+namespace Microsoft.Azure.IIoT.Platform.Twin.Services.Module.Supervisor.StartStop {
+    using Microsoft.Azure.IIoT.Platform.Twin.Services.Module.Tests;
     using Microsoft.Azure.IIoT.Platform.OpcUa;
     using Microsoft.Azure.IIoT.Platform.Registry.Models;
     using Microsoft.Azure.IIoT.Platform.Core.Models;
@@ -30,8 +30,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Supervisor.StartStop {
                 ?? Try.Op(() => Dns.GetHostEntry("localhost"));
         }
 
-        private ReadArrayValueTests<EndpointInfoModel> GetTests(string hub,
-            string deviceId, string moduleId, IContainer services) {
+        private ReadArrayValueTests<EndpointInfoModel> GetTests(IContainer services) {
             return new ReadArrayValueTests<EndpointInfoModel>(
                 () => services.Resolve<INodeServices<EndpointInfoModel>>(),
                 new EndpointInfoModel {
@@ -42,8 +41,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Supervisor.StartStop {
                             .Select(ip => $"opc.tcp://{ip}:{_server.Port}/UA/SampleServer").ToHashSet(),
                         Certificate = _server.Certificate?.RawData?.ToThumbprint()
                     },
-                    Id = "testid",
-                    SupervisorId = HubResource.Format(hub, deviceId, moduleId)
+                    Id = "testid"
                 }, (ep, n) => _server.Client.ReadValueAsync(ep.Endpoint, n));
         }
 
@@ -60,7 +58,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Supervisor.StartStop {
             // Skip.IfNot(_runAll);
             using (var harness = new TwinModuleFixture()) {
                 await harness.RunTestAsync(async (hub, device, module, services) => {
-                    await GetTests(hub, device, module, services).NodeReadAllStaticArrayVariableNodeClassTest1Async().ConfigureAwait(false);
+                    await GetTests(services).NodeReadAllStaticArrayVariableNodeClassTest1Async().ConfigureAwait(false);
                 }).ConfigureAwait(false);
             }
         }
@@ -70,7 +68,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Supervisor.StartStop {
             Skip.IfNot(_runAll);
             using (var harness = new TwinModuleFixture()) {
                 await harness.RunTestAsync(async (hub, device, module, services) => {
-                    await GetTests(hub, device, module, services).NodeReadAllStaticArrayVariableAccessLevelTest1Async().ConfigureAwait(false);
+                    await GetTests(services).NodeReadAllStaticArrayVariableAccessLevelTest1Async().ConfigureAwait(false);
                 }).ConfigureAwait(false);
             }
         }
@@ -80,7 +78,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Supervisor.StartStop {
             Skip.IfNot(_runAll);
             using (var harness = new TwinModuleFixture()) {
                 await harness.RunTestAsync(async (hub, device, module, services) => {
-                    await GetTests(hub, device, module, services).NodeReadAllStaticArrayVariableWriteMaskTest1Async().ConfigureAwait(false);
+                    await GetTests(services).NodeReadAllStaticArrayVariableWriteMaskTest1Async().ConfigureAwait(false);
                 }).ConfigureAwait(false);
             }
         }
@@ -90,7 +88,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Supervisor.StartStop {
             Skip.IfNot(_runAll);
             using (var harness = new TwinModuleFixture()) {
                 await harness.RunTestAsync(async (hub, device, module, services) => {
-                    await GetTests(hub, device, module, services).NodeReadAllStaticArrayVariableWriteMaskTest2Async().ConfigureAwait(false);
+                    await GetTests(services).NodeReadAllStaticArrayVariableWriteMaskTest2Async().ConfigureAwait(false);
                 }).ConfigureAwait(false);
             }
         }
@@ -100,7 +98,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Supervisor.StartStop {
             Skip.IfNot(_runAll);
             using (var harness = new TwinModuleFixture()) {
                 await harness.RunTestAsync(async (hub, device, module, services) => {
-                    await GetTests(hub, device, module, services).NodeReadStaticArrayBooleanValueVariableTestAsync().ConfigureAwait(false);
+                    await GetTests(services).NodeReadStaticArrayBooleanValueVariableTestAsync().ConfigureAwait(false);
                 }).ConfigureAwait(false);
             }
         }
@@ -110,7 +108,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Supervisor.StartStop {
             // Skip.IfNot(_runAll);
             using (var harness = new TwinModuleFixture()) {
                 await harness.RunTestAsync(async (hub, device, module, services) => {
-                    await GetTests(hub, device, module, services).NodeReadStaticArraySByteValueVariableTestAsync().ConfigureAwait(false);
+                    await GetTests(services).NodeReadStaticArraySByteValueVariableTestAsync().ConfigureAwait(false);
                 }).ConfigureAwait(false);
             }
         }
@@ -120,7 +118,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Supervisor.StartStop {
             Skip.IfNot(_runAll);
             using (var harness = new TwinModuleFixture()) {
                 await harness.RunTestAsync(async (hub, device, module, services) => {
-                    await GetTests(hub, device, module, services).NodeReadStaticArrayByteValueVariableTestAsync().ConfigureAwait(false);
+                    await GetTests(services).NodeReadStaticArrayByteValueVariableTestAsync().ConfigureAwait(false);
                 }).ConfigureAwait(false);
             }
         }
@@ -130,7 +128,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Supervisor.StartStop {
             Skip.IfNot(_runAll);
             using (var harness = new TwinModuleFixture()) {
                 await harness.RunTestAsync(async (hub, device, module, services) => {
-                    await GetTests(hub, device, module, services).NodeReadStaticArrayInt16ValueVariableTestAsync().ConfigureAwait(false);
+                    await GetTests(services).NodeReadStaticArrayInt16ValueVariableTestAsync().ConfigureAwait(false);
                 }).ConfigureAwait(false);
             }
         }
@@ -140,7 +138,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Supervisor.StartStop {
             Skip.IfNot(_runAll);
             using (var harness = new TwinModuleFixture()) {
                 await harness.RunTestAsync(async (hub, device, module, services) => {
-                    await GetTests(hub, device, module, services).NodeReadStaticArrayUInt16ValueVariableTestAsync().ConfigureAwait(false);
+                    await GetTests(services).NodeReadStaticArrayUInt16ValueVariableTestAsync().ConfigureAwait(false);
                 }).ConfigureAwait(false);
             }
         }
@@ -150,7 +148,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Supervisor.StartStop {
             Skip.IfNot(_runAll);
             using (var harness = new TwinModuleFixture()) {
                 await harness.RunTestAsync(async (hub, device, module, services) => {
-                    await GetTests(hub, device, module, services).NodeReadStaticArrayInt32ValueVariableTestAsync().ConfigureAwait(false);
+                    await GetTests(services).NodeReadStaticArrayInt32ValueVariableTestAsync().ConfigureAwait(false);
                 }).ConfigureAwait(false);
             }
         }
@@ -160,7 +158,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Supervisor.StartStop {
             Skip.IfNot(_runAll);
             using (var harness = new TwinModuleFixture()) {
                 await harness.RunTestAsync(async (hub, device, module, services) => {
-                    await GetTests(hub, device, module, services).NodeReadStaticArrayUInt32ValueVariableTestAsync().ConfigureAwait(false);
+                    await GetTests(services).NodeReadStaticArrayUInt32ValueVariableTestAsync().ConfigureAwait(false);
                 }).ConfigureAwait(false);
             }
         }
@@ -170,7 +168,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Supervisor.StartStop {
             // Skip.IfNot(_runAll);
             using (var harness = new TwinModuleFixture()) {
                 await harness.RunTestAsync(async (hub, device, module, services) => {
-                    await GetTests(hub, device, module, services).NodeReadStaticArrayInt64ValueVariableTestAsync().ConfigureAwait(false);
+                    await GetTests(services).NodeReadStaticArrayInt64ValueVariableTestAsync().ConfigureAwait(false);
                 }).ConfigureAwait(false);
             }
         }
@@ -180,7 +178,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Supervisor.StartStop {
             Skip.IfNot(_runAll);
             using (var harness = new TwinModuleFixture()) {
                 await harness.RunTestAsync(async (hub, device, module, services) => {
-                    await GetTests(hub, device, module, services).NodeReadStaticArrayUInt64ValueVariableTestAsync().ConfigureAwait(false);
+                    await GetTests(services).NodeReadStaticArrayUInt64ValueVariableTestAsync().ConfigureAwait(false);
                 }).ConfigureAwait(false);
             }
         }
@@ -190,7 +188,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Supervisor.StartStop {
             Skip.IfNot(_runAll);
             using (var harness = new TwinModuleFixture()) {
                 await harness.RunTestAsync(async (hub, device, module, services) => {
-                    await GetTests(hub, device, module, services).NodeReadStaticArrayFloatValueVariableTestAsync().ConfigureAwait(false);
+                    await GetTests(services).NodeReadStaticArrayFloatValueVariableTestAsync().ConfigureAwait(false);
                 }).ConfigureAwait(false);
             }
         }
@@ -200,7 +198,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Supervisor.StartStop {
             Skip.IfNot(_runAll);
             using (var harness = new TwinModuleFixture()) {
                 await harness.RunTestAsync(async (hub, device, module, services) => {
-                    await GetTests(hub, device, module, services).NodeReadStaticArrayDoubleValueVariableTestAsync().ConfigureAwait(false);
+                    await GetTests(services).NodeReadStaticArrayDoubleValueVariableTestAsync().ConfigureAwait(false);
                 }).ConfigureAwait(false);
             }
         }
@@ -210,7 +208,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Supervisor.StartStop {
             Skip.IfNot(_runAll);
             using (var harness = new TwinModuleFixture()) {
                 await harness.RunTestAsync(async (hub, device, module, services) => {
-                    await GetTests(hub, device, module, services).NodeReadStaticArrayStringValueVariableTestAsync().ConfigureAwait(false);
+                    await GetTests(services).NodeReadStaticArrayStringValueVariableTestAsync().ConfigureAwait(false);
                 }).ConfigureAwait(false);
             }
         }
@@ -220,7 +218,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Supervisor.StartStop {
             Skip.IfNot(_runAll);
             using (var harness = new TwinModuleFixture()) {
                 await harness.RunTestAsync(async (hub, device, module, services) => {
-                    await GetTests(hub, device, module, services).NodeReadStaticArrayDateTimeValueVariableTestAsync().ConfigureAwait(false);
+                    await GetTests(services).NodeReadStaticArrayDateTimeValueVariableTestAsync().ConfigureAwait(false);
                 }).ConfigureAwait(false);
             }
         }
@@ -230,7 +228,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Supervisor.StartStop {
             Skip.IfNot(_runAll);
             using (var harness = new TwinModuleFixture()) {
                 await harness.RunTestAsync(async (hub, device, module, services) => {
-                    await GetTests(hub, device, module, services).NodeReadStaticArrayGuidValueVariableTestAsync().ConfigureAwait(false);
+                    await GetTests(services).NodeReadStaticArrayGuidValueVariableTestAsync().ConfigureAwait(false);
                 }).ConfigureAwait(false);
             }
         }
@@ -240,7 +238,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Supervisor.StartStop {
             Skip.IfNot(_runAll);
             using (var harness = new TwinModuleFixture()) {
                 await harness.RunTestAsync(async (hub, device, module, services) => {
-                    await GetTests(hub, device, module, services).NodeReadStaticArrayByteStringValueVariableTestAsync().ConfigureAwait(false);
+                    await GetTests(services).NodeReadStaticArrayByteStringValueVariableTestAsync().ConfigureAwait(false);
                 }).ConfigureAwait(false);
             }
         }
@@ -250,7 +248,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Supervisor.StartStop {
             Skip.IfNot(_runAll);
             using (var harness = new TwinModuleFixture()) {
                 await harness.RunTestAsync(async (hub, device, module, services) => {
-                    await GetTests(hub, device, module, services).NodeReadStaticArrayXmlElementValueVariableTestAsync().ConfigureAwait(false);
+                    await GetTests(services).NodeReadStaticArrayXmlElementValueVariableTestAsync().ConfigureAwait(false);
                 }).ConfigureAwait(false);
             }
         }
@@ -260,7 +258,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Supervisor.StartStop {
             Skip.IfNot(_runAll);
             using (var harness = new TwinModuleFixture()) {
                 await harness.RunTestAsync(async (hub, device, module, services) => {
-                    await GetTests(hub, device, module, services).NodeReadStaticArrayNodeIdValueVariableTestAsync().ConfigureAwait(false);
+                    await GetTests(services).NodeReadStaticArrayNodeIdValueVariableTestAsync().ConfigureAwait(false);
                 }).ConfigureAwait(false);
             }
         }
@@ -270,7 +268,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Supervisor.StartStop {
             Skip.IfNot(_runAll);
             using (var harness = new TwinModuleFixture()) {
                 await harness.RunTestAsync(async (hub, device, module, services) => {
-                    await GetTests(hub, device, module, services).NodeReadStaticArrayExpandedNodeIdValueVariableTestAsync().ConfigureAwait(false);
+                    await GetTests(services).NodeReadStaticArrayExpandedNodeIdValueVariableTestAsync().ConfigureAwait(false);
                 }).ConfigureAwait(false);
             }
         }
@@ -280,7 +278,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Supervisor.StartStop {
             // Skip.IfNot(_runAll);
             using (var harness = new TwinModuleFixture()) {
                 await harness.RunTestAsync(async (hub, device, module, services) => {
-                    await GetTests(hub, device, module, services).NodeReadStaticArrayQualifiedNameValueVariableTestAsync().ConfigureAwait(false);
+                    await GetTests(services).NodeReadStaticArrayQualifiedNameValueVariableTestAsync().ConfigureAwait(false);
                 }).ConfigureAwait(false);
             }
         }
@@ -290,7 +288,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Supervisor.StartStop {
             Skip.IfNot(_runAll);
             using (var harness = new TwinModuleFixture()) {
                 await harness.RunTestAsync(async (hub, device, module, services) => {
-                    await GetTests(hub, device, module, services).NodeReadStaticArrayLocalizedTextValueVariableTestAsync().ConfigureAwait(false);
+                    await GetTests(services).NodeReadStaticArrayLocalizedTextValueVariableTestAsync().ConfigureAwait(false);
                 }).ConfigureAwait(false);
             }
         }
@@ -300,7 +298,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Supervisor.StartStop {
             Skip.IfNot(_runAll);
             using (var harness = new TwinModuleFixture()) {
                 await harness.RunTestAsync(async (hub, device, module, services) => {
-                    await GetTests(hub, device, module, services).NodeReadStaticArrayStatusCodeValueVariableTestAsync().ConfigureAwait(false);
+                    await GetTests(services).NodeReadStaticArrayStatusCodeValueVariableTestAsync().ConfigureAwait(false);
                 }).ConfigureAwait(false);
             }
         }
@@ -310,7 +308,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Supervisor.StartStop {
             Skip.IfNot(_runAll);
             using (var harness = new TwinModuleFixture()) {
                 await harness.RunTestAsync(async (hub, device, module, services) => {
-                    await GetTests(hub, device, module, services).NodeReadStaticArrayVariantValueVariableTestAsync().ConfigureAwait(false);
+                    await GetTests(services).NodeReadStaticArrayVariantValueVariableTestAsync().ConfigureAwait(false);
                 }).ConfigureAwait(false);
             }
         }
@@ -320,7 +318,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Supervisor.StartStop {
             Skip.IfNot(_runAll);
             using (var harness = new TwinModuleFixture()) {
                 await harness.RunTestAsync(async (hub, device, module, services) => {
-                    await GetTests(hub, device, module, services).NodeReadStaticArrayEnumerationValueVariableTestAsync().ConfigureAwait(false);
+                    await GetTests(services).NodeReadStaticArrayEnumerationValueVariableTestAsync().ConfigureAwait(false);
                 }).ConfigureAwait(false);
             }
         }
@@ -330,7 +328,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Supervisor.StartStop {
             Skip.IfNot(_runAll);
             using (var harness = new TwinModuleFixture()) {
                 await harness.RunTestAsync(async (hub, device, module, services) => {
-                    await GetTests(hub, device, module, services).NodeReadStaticArrayStructureValueVariableTestAsync().ConfigureAwait(false);
+                    await GetTests(services).NodeReadStaticArrayStructureValueVariableTestAsync().ConfigureAwait(false);
                 }).ConfigureAwait(false);
             }
         }
@@ -340,7 +338,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Supervisor.StartStop {
             Skip.IfNot(_runAll);
             using (var harness = new TwinModuleFixture()) {
                 await harness.RunTestAsync(async (hub, device, module, services) => {
-                    await GetTests(hub, device, module, services).NodeReadStaticArrayNumberValueVariableTestAsync().ConfigureAwait(false);
+                    await GetTests(services).NodeReadStaticArrayNumberValueVariableTestAsync().ConfigureAwait(false);
                 }).ConfigureAwait(false);
             }
         }
@@ -350,7 +348,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Supervisor.StartStop {
             Skip.IfNot(_runAll);
             using (var harness = new TwinModuleFixture()) {
                 await harness.RunTestAsync(async (hub, device, module, services) => {
-                    await GetTests(hub, device, module, services).NodeReadStaticArrayIntegerValueVariableTestAsync().ConfigureAwait(false);
+                    await GetTests(services).NodeReadStaticArrayIntegerValueVariableTestAsync().ConfigureAwait(false);
                 }).ConfigureAwait(false);
             }
         }
@@ -360,7 +358,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Supervisor.StartStop {
             Skip.IfNot(_runAll);
             using (var harness = new TwinModuleFixture()) {
                 await harness.RunTestAsync(async (hub, device, module, services) => {
-                    await GetTests(hub, device, module, services).NodeReadStaticArrayUIntegerValueVariableTestAsync().ConfigureAwait(false);
+                    await GetTests(services).NodeReadStaticArrayUIntegerValueVariableTestAsync().ConfigureAwait(false);
                 }).ConfigureAwait(false);
             }
         }

@@ -32,8 +32,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
         /// <param name="logger"></param>
         public ApplicationRegistry(IApplicationRepository database,
             IApplicationEndpointRegistry endpoints, IEndpointBulkProcessor bulk,
-            IRegistryEventBroker<IApplicationRegistryListener> broker,
-            ILogger logger) {
+            IRegistryEventBroker<IApplicationRegistryListener> broker, ILogger logger) {
 
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _broker = broker ?? throw new ArgumentNullException(nameof(broker));
@@ -145,7 +144,8 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
             if (application == null) {
                 return null;
             }
-            var endpoints = await _endpoints.GetApplicationEndpoints(applicationId, application.NotSeenSince != null, filterInactiveTwins, ct).ConfigureAwait(false);
+            var endpoints = await _endpoints.GetApplicationEndpoints(applicationId, 
+                application.NotSeenSince != null, filterInactiveTwins, ct).ConfigureAwait(false);
             return new ApplicationRegistrationModel {
                 Application = application,
                 Endpoints = endpoints.ToList()
@@ -207,8 +207,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
 
         /// <inheritdoc/>
         public async Task ProcessDiscoveryEventsAsync(string discovererId,
-            string supervisorId, DiscoveryResultModel result,
-            IEnumerable<DiscoveryEventModel> events) {
+            DiscoveryContextModel result, IEnumerable<DiscoveryResultModel> events) {
             if (string.IsNullOrEmpty(discovererId)) {
                 throw new ArgumentNullException(nameof(discovererId));
             }
@@ -254,7 +253,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                         // have correct values, same as applications earlier.
                         //
                         ev.Endpoint.DiscovererId = discovererId;
-                        ev.Endpoint.SupervisorId = supervisorId;
                         ev.Endpoint.ApplicationId = group.Key;
                         return ev.Endpoint.Clone();
                     })
@@ -339,7 +337,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                     // Now - add all new endpoints
                     endpoints.TryGetValue(application.ApplicationId, out var epFound);
                     await _bulk.ProcessDiscoveryEventsAsync(epFound, result, discovererId,
-                        supervisorId, null, false).ConfigureAwait(false);
+                        application.ApplicationId, false).ConfigureAwait(false);
                     added++;
                 }
                 catch (ResourceConflictException) {
@@ -383,7 +381,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                         endpoints.TryGetValue(application.ApplicationId, out var epFound);
 
                         // TODO: Handle case where we take ownership of all endpoints
-                        await _bulk.ProcessDiscoveryEventsAsync(epFound, result, discovererId, supervisorId,
+                        await _bulk.ProcessDiscoveryEventsAsync(epFound, result, discovererId,
                             update.ApplicationId, false).ConfigureAwait(false);
 
                         await _broker.NotifyAllAsync(l => l.OnApplicationUpdatedAsync(context, application)).ConfigureAwait(false);

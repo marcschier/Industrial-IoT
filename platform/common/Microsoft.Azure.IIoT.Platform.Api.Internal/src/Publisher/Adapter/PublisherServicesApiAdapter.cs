@@ -37,7 +37,8 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api.Clients {
         /// <inheritdoc/>
         public async Task<DataSetWriterModel> GetDataSetWriterAsync(
             string dataSetWriterId, CancellationToken ct) {
-            var result = await _client.GetDataSetWriterAsync(dataSetWriterId, ct).ConfigureAwait(false);
+            var result = await _client.GetDataSetWriterAsync(dataSetWriterId,
+                ct).ConfigureAwait(false);
             return result.ToServiceModel();
         }
 

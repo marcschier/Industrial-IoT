@@ -4,38 +4,36 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
-    using Microsoft.Azure.IIoT.Serializers;
+    using System;
 
     /// <summary>
-    /// Result of a discovery run - part of last event element
-    /// in batch
+    /// One of n items with the discovered application info
     /// </summary>
     public class DiscoveryResultModel {
 
         /// <summary>
-        /// Id of discovery request
+        /// Timestamp of the discovery sweep.
         /// </summary>
-        public string Id { get; set; }
+        public DateTime TimeStamp { get; set; }
 
         /// <summary>
-        /// Configuration used during discovery
+        /// Index in the batch with same timestamp.
         /// </summary>
-        public DiscoveryConfigModel DiscoveryConfig { get; set; }
+        public int Index { get; set; }
 
         /// <summary>
-        /// If true, only register, do not unregister based
-        /// on these events.
+        /// Discovered endpoint in form of endpoint registration
         /// </summary>
-        public bool? RegisterOnly { get; set; }
+        public EndpointInfoModel Endpoint { get; set; }
 
         /// <summary>
-        /// If discovery failed, result information
+        /// Application to which this endpoint belongs
         /// </summary>
-        public VariantValue Diagnostics { get; set; }
+        public ApplicationInfoModel Application { get; set; }
 
         /// <summary>
-        /// Operation audit context
+        /// Discovery result summary on last element
         /// </summary>
-        public RegistryOperationContextModel Context { get; set; }
+        public DiscoveryContextModel Result { get; set; }
     }
 }

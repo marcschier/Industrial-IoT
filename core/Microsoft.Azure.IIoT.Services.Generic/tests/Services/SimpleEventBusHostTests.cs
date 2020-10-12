@@ -169,7 +169,7 @@ namespace Microsoft.Azure.IIoT.Services.Generic.Services {
         internal class FamilyHandler : IEventHandler<Family> {
             private readonly int _count;
             private readonly TaskCompletionSource<HashSet<Family>> _complete =
-                new TaskCompletionSource<HashSet<Family>>();
+                new TaskCompletionSource<HashSet<Family>>(TaskCreationOptions.RunContinuationsAsynchronously);
             public Task<HashSet<Family>> Complete => _complete.Task.With1MinuteTimeout();
 
             public FamilyHandler(int count) {
@@ -189,7 +189,7 @@ namespace Microsoft.Azure.IIoT.Services.Generic.Services {
         internal class ChildHandler : IEventHandler<Child> {
             private readonly int _count;
             private readonly TaskCompletionSource<HashSet<Child>> _complete =
-                new TaskCompletionSource<HashSet<Child>>();
+                new TaskCompletionSource<HashSet<Child>>(TaskCreationOptions.RunContinuationsAsynchronously);
             public Task<HashSet<Child>> Complete => _complete.Task.With1MinuteTimeout();
             public ChildHandler(int count) {
                 _count = count;
@@ -208,7 +208,7 @@ namespace Microsoft.Azure.IIoT.Services.Generic.Services {
         internal class PetHandler : IEventHandler<Pet> {
             private readonly int _count;
             private readonly TaskCompletionSource<HashSet<Pet>> _complete =
-                new TaskCompletionSource<HashSet<Pet>>();
+                new TaskCompletionSource<HashSet<Pet>>(TaskCreationOptions.RunContinuationsAsynchronously);
             public Task<HashSet<Pet>> Complete => _complete.Task.With1MinuteTimeout();
             public PetHandler(int count) {
                 _count = count;

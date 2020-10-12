@@ -5,15 +5,40 @@
 
 namespace Microsoft.Azure.IIoT.Platform.Registry {
     using Microsoft.Azure.IIoT.Platform.Registry.Models;
+    using Microsoft.Azure.IIoT.Platform.Core.Models;
     using Microsoft.Azure.IIoT.Exceptions;
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
+    using System;
 
     /// <summary>
     /// Endpoint registry extensions
     /// </summary>
     public static class EndpointRegistryEx {
+
+        /// <summary>
+        /// Get activated endopint
+        /// </summary>
+        /// <param name="registry"></param>
+        /// <param name="endpointId"></param>
+        /// <param name="ct"></param>
+        /// <returns></returns>
+        public static async Task<EndpointModel> GetActivatedEndpointAsync(
+            this IEndpointRegistry registry, string endpointId,
+            CancellationToken ct = default) {
+            if (registry is null) {
+                throw new ArgumentNullException(nameof(registry));
+            }
+            if (string.IsNullOrEmpty(endpointId)) {
+                throw new ArgumentNullException(nameof(endpointId));
+            }
+            var ep = await registry.GetEndpointAsync(endpointId, ct).ConfigureAwait(false);
+            if (ep.ActivationState != EntityActivationState.Activated) {
+                throw new ArgumentException("Endpoint not activated", nameof(endpointId));
+            }
+            return ep.Endpoint;
+        }
 
         /// <summary>
         /// Find endpoint.

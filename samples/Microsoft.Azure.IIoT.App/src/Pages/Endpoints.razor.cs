@@ -21,13 +21,10 @@ namespace Microsoft.Azure.IIoT.App.Pages {
         [Parameter]
         public string ApplicationId { get; set; } = string.Empty;
 
-        [Parameter]
-        public string SupervisorId { get; set; } = string.Empty;
-
         public EndpointInfo EndpointData { get; set; }
 
         protected override async Task LoadPageContentAsync(bool getNextPage) {
-            Items = await RegistryHelper.GetEndpointListAsync(DiscovererId, ApplicationId, SupervisorId, Items, getNextPage).ConfigureAwait(false);
+            Items = await RegistryHelper.GetEndpointListAsync(DiscovererId, ApplicationId, Items, getNextPage).ConfigureAwait(false);
         }
 
         protected override async Task SubscribeContentEventsAsync() {
@@ -81,7 +78,7 @@ namespace Microsoft.Azure.IIoT.App.Pages {
         /// </summary>
         /// <param name="endpointId"></param>
         /// <returns></returns>
-        private async Task SetActivationAsync(EndpointInfo endpoint) {
+        internal async Task SetActivationAsync(EndpointInfo endpoint) {
             try {
                 await RegistryService.UpdateEndpointAsync(endpoint.EndpointModel.Id,
                     new EndpointInfoUpdateApiModel {

@@ -5,8 +5,6 @@
 
 namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
     using Microsoft.Azure.IIoT.Platform.Core.Models;
-    using Microsoft.Azure.IIoT.Utils;
-    using Microsoft.Azure.IIoT.Serializers;
     using System;
     using System.Linq;
 
@@ -29,12 +27,9 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
                 ApplicationId = document.ApplicationId,
                 GenerationId = etag,
                 Id = document.Id,
-                SupervisorId = string.IsNullOrEmpty(document.SupervisorId) ?
-                    null : document.SupervisorId,
                 DiscovererId = string.IsNullOrEmpty(document.DiscovererId) ?
                     null : document.DiscovererId,
-                AuthenticationMethods = document.AuthenticationMethods?.DecodeAsList(j =>
-                    j.ConvertTo<AuthenticationMethodModel>()),
+                AuthenticationMethods = document.AuthenticationMethods?.ToList(),
                 SecurityLevel = document.SecurityLevel,
                 EndpointUrl = string.IsNullOrEmpty(document.EndpointRegistrationUrl) ?
                     (string.IsNullOrEmpty(document.EndpointUrl) ?
@@ -42,7 +37,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
                 Endpoint = new EndpointModel {
                     Url = string.IsNullOrEmpty(document.EndpointUrl) ?
                         document.EndpointUrlLC : document.EndpointUrl,
-                    AlternativeUrls = document.AlternativeUrls?.DecodeAsList().ToHashSetSafe(),
+                    AlternativeUrls = document.AlternativeUrls?.ToHashSetSafe(),
                     SecurityMode = document.SecurityMode == SecurityMode.Best ?
                         null : document.SecurityMode,
                     SecurityPolicy = string.IsNullOrEmpty(document.SecurityPolicy) ?
@@ -62,36 +57,25 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
         /// Convert into document object
         /// </summary>
         /// <param name="model"></param>
-        /// <param name="serializer"></param>
         /// <param name="disabled"></param>
-        /// <param name="discovererId"></param>
-        /// <param name="supervisorId"></param>
-        /// <param name="applicationId"></param>
+        /// 
         /// <returns></returns>
         public static EndpointDocument ToDocumentModel(this EndpointInfoModel model,
-            IJsonSerializer serializer, bool? disabled = null, string discovererId = null,
-            string supervisorId = null, string applicationId = null) {
+            bool? disabled = null) {
             if (model == null) {
                 throw new ArgumentNullException(nameof(model));
             }
-            if (serializer is null) {
-                throw new ArgumentNullException(nameof(serializer));
-            }
-
             return new EndpointDocument {
                 IsDisabled = disabled,
                 NotSeenSince = model.NotSeenSince,
-                ApplicationId = applicationId ?? model.ApplicationId,
-                SupervisorId = supervisorId ?? model.SupervisorId,
-                DiscovererId = discovererId ?? model.DiscovererId,
+                ApplicationId = model.ApplicationId,
+                DiscovererId = model.DiscovererId,
                 SecurityLevel = model.SecurityLevel,
                 EndpointRegistrationUrl = model.EndpointUrl ??
                     model.Endpoint.Url,
                 EndpointUrl = model.Endpoint.Url,
-                AlternativeUrls = model.Endpoint.AlternativeUrls?.ToList()?
-                    .EncodeAsDictionary(),
-                AuthenticationMethods = model.AuthenticationMethods?
-                    .EncodeAsDictionary(serializer.FromObject),
+                AlternativeUrls = model.Endpoint.AlternativeUrls.ToHashSetSafe(),
+                AuthenticationMethods = model.AuthenticationMethods?.ToList(),
                 SecurityMode = model.Endpoint.SecurityMode ??
                     SecurityMode.Best,
                 SecurityPolicy = model.Endpoint.SecurityPolicy,

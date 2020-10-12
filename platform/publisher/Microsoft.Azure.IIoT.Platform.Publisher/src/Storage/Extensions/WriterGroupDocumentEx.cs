@@ -38,7 +38,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Storage.Services {
                 Name = model.Name,
                 NetworkMessageContentMask = model.MessageSettings?.NetworkMessageContentMask,
                 Priority = model.Priority,
-                PublishingOffset = model.MessageSettings?.PublishingOffset,
+                PublishingOffset = model.MessageSettings?.PublishingOffset?.ToList(),
                 SamplingOffset = model.MessageSettings?.SamplingOffset,
                 Updated = model.Updated?.Time ?? DateTime.UtcNow,
                 UpdatedAuditId = model.Updated?.AuthorityId,
@@ -76,7 +76,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Storage.Services {
                     DataSetOrdering = document.DataSetOrdering,
                     GroupVersion = document.GroupVersion,
                     NetworkMessageContentMask = document.NetworkMessageContentMask,
-                    PublishingOffset = document.PublishingOffset,
+                    PublishingOffset = document.PublishingOffset?.ToList(),
                     SamplingOffset = document.SamplingOffset
                 },
                 State = new WriterGroupStateModel {

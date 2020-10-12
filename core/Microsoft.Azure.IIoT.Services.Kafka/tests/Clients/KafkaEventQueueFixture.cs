@@ -19,6 +19,8 @@ namespace Microsoft.Azure.IIoT.Services.Kafka.Clients {
 
     public sealed class KafkaEventQueueFixture : IDisposable {
 
+        public bool Skip { get; set; }
+
         /// <summary>
         /// Create fixture
         /// </summary>
@@ -49,7 +51,7 @@ namespace Microsoft.Azure.IIoT.Services.Kafka.Clients {
         /// <param name="topic"></param>
         /// <returns></returns>
         internal KafkaEventQueueHarness GetHarness(string topic) {
-            return new KafkaEventQueueHarness(topic, _container != null);
+            return new KafkaEventQueueHarness(topic, _container != null && !Skip);
         }
 
         /// <summary>
@@ -212,13 +214,15 @@ namespace Microsoft.Azure.IIoT.Services.Kafka.Clients {
             byte[] data, IDictionary<string, string> properties) {
             HandlerSchema = schema;
             Source = source;
-            try {
-                DeviceId = HubResource.Parse(source, out var hub, out var moduleId);
-                Hub = hub;
-                ModuleId = moduleId;
-            }
-            catch {
+            if (source != null) {
+                try {
+                    DeviceId = HubResource.Parse(source, out var hub, out var moduleId);
+                    Hub = hub;
+                    ModuleId = moduleId;
+                }
+                catch {
 
+                }
             }
             Data = data;
             Target = properties.TryGetValue(EventProperties.Target, out var v) ? v : null;
@@ -234,7 +238,7 @@ namespace Microsoft.Azure.IIoT.Services.Kafka.Clients {
         public string Hub { get; }
         public string DeviceId { get; }
         public string ModuleId { get; }
-        public byte[] Data { get; }
+        public IReadOnlyCollection<byte> Data { get; }
         public IReadOnlyDictionary<string, string> Properties { get; }
     }
 

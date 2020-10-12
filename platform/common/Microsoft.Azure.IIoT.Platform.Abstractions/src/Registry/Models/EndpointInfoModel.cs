@@ -25,11 +25,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
         public string EndpointUrl { get; set; }
 
         /// <summary>
-        /// Supervisor that manages the endpoint.
-        /// </summary>
-        public string SupervisorId { get; set; }
-
-        /// <summary>
         /// Discoverer that registered the endpoint
         /// </summary>
         public string DiscovererId { get; set; }

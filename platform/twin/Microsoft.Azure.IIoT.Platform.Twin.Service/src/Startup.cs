@@ -6,21 +6,15 @@
 namespace Microsoft.Azure.IIoT.Platform.Twin.Service {
     using Microsoft.Azure.IIoT.Platform.Twin.Service.Runtime;
     using Microsoft.Azure.IIoT.Platform.Twin.Service.Auth;
-    using Microsoft.Azure.IIoT.Platform.Twin.Clients;
-    using Microsoft.Azure.IIoT.Platform.Twin.Api.Clients;
-    using Microsoft.Azure.IIoT.Platform.Publisher.Api.Clients;
-    using Microsoft.Azure.IIoT.Platform.Registry.Models;
+    using Microsoft.Azure.IIoT.Platform.Registry.Api.Clients;
+    using Microsoft.Azure.IIoT.Platform.OpcUa.Services;
     using Microsoft.Azure.IIoT.Azure.LogAnalytics.Runtime;
     using Microsoft.Azure.IIoT.Azure.AppInsights;
-    using Microsoft.Azure.IIoT.Azure.IoTHub;
-    using Microsoft.Azure.IIoT.Azure.IoTHub.Deploy;
     using Microsoft.Azure.IIoT.Authentication;
     using Microsoft.Azure.IIoT.Http.Clients;
-    using Microsoft.Azure.IIoT.Rpc.Default;
     using Microsoft.Azure.IIoT.Serializers;
     using Microsoft.Azure.IIoT.Utils;
     using Microsoft.Azure.IIoT.AspNetCore.Authentication;
-    using Microsoft.Azure.IIoT.AspNetCore.Authentication.Clients;
     using Microsoft.Azure.IIoT.AspNetCore.Correlation;
     using Microsoft.Azure.IIoT.AspNetCore.Cors;
     using Microsoft.AspNetCore.Builder;
@@ -186,29 +180,21 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Service {
 
             // --- Logic ---
 
-            // Edge clients
-            builder.RegisterType<TwinModuleControlClient>()
+            // Register Twin services
+            builder.RegisterModule<TwinServices>();
+
+            // Registry services are required to lookup endpoints.
+            builder.RegisterType<RegistryServicesApiAdapter>()
                 .AsImplementedInterfaces();
-            builder.RegisterType<TwinModuleSupervisorClient>()
-                .AsImplementedInterfaces();
-            builder.RegisterType<HistoricAccessAdapter<string>>()
-              .AsImplementedInterfaces();
-            builder.RegisterType<HistoricAccessAdapter<EndpointInfoModel>>()
-                .AsImplementedInterfaces();
-            builder.RegisterType<ChunkMethodClient>()
+            builder.RegisterType<RegistryServiceClient>()
                 .AsImplementedInterfaces();
 
-            // Publish services publisher adapter
-            builder.RegisterType<PublisherAdapter>()
-                .AsImplementedInterfaces().SingleInstance();
-            builder.RegisterType<PublishServicesApiAdapter>()
-                .AsImplementedInterfaces().SingleInstance();
-            builder.RegisterType<PublisherServiceClient>()
-                .AsImplementedInterfaces().SingleInstance();
-
-            // Edge deployment
-            builder.RegisterType<IoTEdgeSupervisorDeployment>()
-                .AsImplementedInterfaces().SingleInstance();
+            // Register opc ua stack to do discovery
+            builder.RegisterType<ClientServices>()
+                .AsImplementedInterfaces().InstancePerLifetimeScope();
+            builder.RegisterType<StackLogger>()
+                .AsImplementedInterfaces().InstancePerLifetimeScope()
+                .AutoActivate();
 
             // ... and auto start
             builder.RegisterType<HostAutoStart>()
@@ -221,10 +207,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Service {
             builder.AddAppInsightsLogging(Config);
             builder.RegisterType<LogAnalyticsConfig>()
                 .AsImplementedInterfaces().SingleInstance();
-            // Add service to service authentication
-            builder.RegisterModule<WebApiAuthentication>();
-            // Iot hub services
-            builder.RegisterModule<IoTHubModule>();
+
         }
     }
 }

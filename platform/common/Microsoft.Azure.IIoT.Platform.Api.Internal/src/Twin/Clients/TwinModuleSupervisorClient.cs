@@ -38,7 +38,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
         /// <inheritdoc/>
         public async Task<BrowseResultModel> NodeBrowseFirstAsync(
             EndpointInfoModel registration, BrowseRequestModel request) {
-            var result = await CallServiceOnSupervisorAsync<BrowseRequestModel,
+            var result = await CallServiceAsync<BrowseRequestModel,
                 BrowseResultModel>("Browse_V2", registration, request).ConfigureAwait(false);
             return result;
         }
@@ -52,7 +52,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
             if (string.IsNullOrEmpty(request.ContinuationToken)) {
                 throw new ArgumentException("Missing continuation", nameof(request));
             }
-            var result = await CallServiceOnSupervisorAsync<BrowseNextRequestModel,
+            var result = await CallServiceAsync<BrowseNextRequestModel,
                 BrowseNextResultModel>("BrowseNext_V2", registration, request).ConfigureAwait(false);
             return result;
         }
@@ -67,7 +67,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
                 request.BrowsePaths.Any(p => p == null || p.Count == 0)) {
                 throw new ArgumentException("Bad browse paths", nameof(request));
             }
-            var result = await CallServiceOnSupervisorAsync<BrowsePathRequestModel,
+            var result = await CallServiceAsync<BrowsePathRequestModel,
                 BrowsePathResultModel>("BrowsePath_V2", registration, request).ConfigureAwait(false);
             return result;
         }
@@ -78,7 +78,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
             if (request == null) {
                 throw new ArgumentNullException(nameof(request));
             }
-            var result = await CallServiceOnSupervisorAsync<ValueReadRequestModel,
+            var result = await CallServiceAsync<ValueReadRequestModel,
                 ValueReadResultModel>("ValueRead_V2", registration, request).ConfigureAwait(false);
             return result;
         }
@@ -92,7 +92,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
             if (request.Value is null) {
                 throw new ArgumentException("Missing value", nameof(request));
             }
-            var result = await CallServiceOnSupervisorAsync<ValueWriteRequestModel,
+            var result = await CallServiceAsync<ValueWriteRequestModel,
                 ValueWriteResultModel>("ValueWrite_V2", registration, request).ConfigureAwait(false);
             return result;
         }
@@ -103,8 +103,9 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
             if (request == null) {
                 throw new ArgumentNullException(nameof(request));
             }
-            var result = await CallServiceOnSupervisorAsync<MethodMetadataRequestModel,
-                MethodMetadataResultModel>("MethodMetadata_V2", registration, request).ConfigureAwait(false);
+            var result = await CallServiceAsync<MethodMetadataRequestModel,
+                MethodMetadataResultModel>("MethodMetadata_V2", registration, 
+                request).ConfigureAwait(false);
             return result;
         }
 
@@ -114,7 +115,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
             if (request == null) {
                 throw new ArgumentNullException(nameof(request));
             }
-            var result = await CallServiceOnSupervisorAsync<MethodCallRequestModel,
+            var result = await CallServiceAsync<MethodCallRequestModel,
                 MethodCallResultModel>("MethodCall_V2", registration, request).ConfigureAwait(false);
             return result;
         }
@@ -131,7 +132,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
             if (request.Attributes.Any(r => string.IsNullOrEmpty(r.NodeId))) {
                 throw new ArgumentException("Missing attribute node ids", nameof(request));
             }
-            var result = await CallServiceOnSupervisorAsync<ReadRequestModel,
+            var result = await CallServiceAsync<ReadRequestModel,
                 ReadResultModel>("NodeRead_V2", registration, request).ConfigureAwait(false);
             return result;
         }
@@ -148,7 +149,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
             if (request.Attributes.Any(r => string.IsNullOrEmpty(r.NodeId))) {
                 throw new ArgumentException("Missing attribute node ids", nameof(request));
             }
-            var result = await CallServiceOnSupervisorAsync<WriteRequestModel,
+            var result = await CallServiceAsync<WriteRequestModel,
                 WriteResultModel>("NodeWrite_V2", registration, request).ConfigureAwait(false);
             return result;
         }
@@ -159,7 +160,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
             if (request == null) {
                 throw new ArgumentNullException(nameof(request));
             }
-            var result = await CallServiceOnSupervisorAsync<
+            var result = await CallServiceAsync<
                 HistoryReadRequestModel<VariantValue>, HistoryReadResultModel<VariantValue>>(
                 "HistoryRead_V2", registration, request).ConfigureAwait(false);
             return result;
@@ -174,7 +175,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
             if (string.IsNullOrEmpty(request.ContinuationToken)) {
                 throw new ArgumentException("Missing continuation", nameof(request));
             }
-            var result = await CallServiceOnSupervisorAsync<
+            var result = await CallServiceAsync<
                 HistoryReadNextRequestModel, HistoryReadNextResultModel<VariantValue>>(
                 "HistoryRead_V2", registration, request).ConfigureAwait(false);
             return result;
@@ -190,7 +191,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
             if (request.Details == null) {
                 throw new ArgumentException("Missing details", nameof(request));
             }
-            var result = await CallServiceOnSupervisorAsync<
+            var result = await CallServiceAsync<
                 HistoryUpdateRequestModel<VariantValue>, HistoryUpdateResultModel>(
                 "HistoryUpdate_V2", registration, request).ConfigureAwait(false);
             return result;
@@ -205,7 +206,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
         /// <param name="registration"></param>
         /// <param name="request"></param>
         /// <returns></returns>
-        private async Task<R> CallServiceOnSupervisorAsync<T, R>(string service,
+        private async Task<R> CallServiceAsync<T, R>(string service,
             EndpointInfoModel registration, T request) {
             if (registration == null) {
                 throw new ArgumentNullException(nameof(registration));
@@ -213,18 +214,19 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
             if (registration.Endpoint == null) {
                 throw new ArgumentException("Missing endpoint", nameof(registration));
             }
-            if (string.IsNullOrEmpty(registration.SupervisorId)) {
-                throw new ArgumentException("Missing supervisor", nameof(registration));
-            }
             var sw = Stopwatch.StartNew();
-            var result = await _client.CallMethodAsync(registration.SupervisorId, service,
+
+            // TODO
+            string target = null; // registration.SupervisorId;
+
+            var result = await _client.CallMethodAsync(target, service,
                 _serializer.SerializeToString(new {
                     endpoint = registration.Endpoint,
                     request
                 })).ConfigureAwait(false);
-            _logger.Debug("Calling supervisor service '{service}' on {supervisorId} " +
+            _logger.Debug("Calling service '{service}' on {target} " +
                 "took {elapsed} ms and returned {result}!", service,
-                registration.SupervisorId, sw.ElapsedMilliseconds, result);
+                target, sw.ElapsedMilliseconds, result);
             return _serializer.Deserialize<R>(result);
         }
 

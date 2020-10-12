@@ -61,14 +61,16 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
         /// <inheritdoc/>
         public async Task<EndpointInfoListModel> ListEndpointsAsync(string continuation,
             int? pageSize, CancellationToken ct) {
-            return await _database.QueryAsync(null, continuation, pageSize, ct).ConfigureAwait(false);
+            return await _database.QueryAsync(null, 
+                continuation, pageSize, ct).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
         public async Task<EndpointInfoListModel> QueryEndpointsAsync(
             EndpointInfoQueryModel model, int? pageSize,
             CancellationToken ct) {
-            return await _database.QueryAsync(model, null, pageSize, ct).ConfigureAwait(false);
+            return await _database.QueryAsync(model, 
+                null, pageSize, ct).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
@@ -109,11 +111,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                 throw new ResourceNotFoundException(
                     $"{endpointId} is not an endpoint registration.");
             }
-            if (string.IsNullOrEmpty(endpoint.SupervisorId)) {
-                throw new ArgumentException(
-                    $"Twin {endpointId} not registered with a supervisor.", nameof(endpointId));
-            }
-
             var rawCertificates = await _certificates.GetEndpointCertificateAsync(
                 endpoint, ct).ConfigureAwait(false);
             return rawCertificates.ToCertificateChain();
@@ -138,7 +135,8 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
             // stop half way and throw and do not complete.
             var endpoints = await GetEndpointsAsync(applicationId, true).ConfigureAwait(false);
             foreach (var endpoint in endpoints) {
-                await _database.DeleteAsync(endpoint.Id, ep => Task.FromResult(true)).ConfigureAwait(false);
+                await _database.DeleteAsync(endpoint.Id, 
+                    ep => Task.FromResult(true)).ConfigureAwait(false);
                 await _broker.NotifyAllAsync(l => l.OnEndpointDeletedAsync(context,
                     endpoint.Id, endpoint)).ConfigureAwait(false);
             }
@@ -158,14 +156,13 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
 
         /// <inheritdoc/>
         public async Task ProcessDiscoveryEventsAsync(IEnumerable<EndpointInfoModel> newEndpoints,
-            DiscoveryResultModel result, string discovererId, string supervisorId,
-            string applicationId, bool hardDelete) {
+            DiscoveryContextModel context, string discovererId, string applicationId, bool hardDelete) {
 
             if (newEndpoints == null) {
                 throw new ArgumentNullException(nameof(newEndpoints));
             }
 
-            var context = result.Context.Validate();
+            var operationContext = context.Context.Validate();
             var found = newEndpoints.ToList();
 
             var existing = Enumerable.Empty<EndpointInfoModel>();
@@ -193,7 +190,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
             var unchanged = 0;
             var removed = 0;
 
-            if (!(result.RegisterOnly ?? false)) {
+            if (!(context.RegisterOnly ?? false)) {
                 // Remove or disable an endpoint
                 foreach (var item in remove) {
                     try {
@@ -202,7 +199,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                             if (hardDelete) {
                                 var existingEndpoint = await _database.FindAsync(item.Id).ConfigureAwait(false);
                                 await _database.DeleteAsync(item.Id, ep => Task.FromResult(true)).ConfigureAwait(false);
-                                await _broker.NotifyAllAsync(l => l.OnEndpointDeletedAsync(context,
+                                await _broker.NotifyAllAsync(l => l.OnEndpointDeletedAsync(operationContext,
                                     item.Id, item)).ConfigureAwait(false);
                             }
                             else if (item.IsDisabled()) {
@@ -211,7 +208,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                                     return Task.FromResult(true);
                                 }).ConfigureAwait(false);
                                 await _broker.NotifyAllAsync(
-                                    l => l.OnEndpointUpdatedAsync(context, endpoint)).ConfigureAwait(false);
+                                    l => l.OnEndpointUpdatedAsync(operationContext, endpoint)).ConfigureAwait(false);
                             }
                             else {
                                 unchanged++;
@@ -247,7 +244,8 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                             return Task.FromResult(true);
                         }).ConfigureAwait(false);
                         await _broker.NotifyAllAsync(
-                            l => l.OnEndpointUpdatedAsync(context, endpoint)).ConfigureAwait(false);
+                            l => l.OnEndpointUpdatedAsync(operationContext,
+                                endpoint)).ConfigureAwait(false);
                         updated++;
                         continue;
                     }
@@ -269,11 +267,12 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                     }).ConfigureAwait(false);
                     if (update) {
                         await _broker.NotifyAllAsync(
-                            l => l.OnEndpointUpdatedAsync(context, endpoint)).ConfigureAwait(false);
+                            l => l.OnEndpointUpdatedAsync(operationContext, endpoint)).ConfigureAwait(false);
                         updated++;
                         continue;
                     }
-                    await _broker.NotifyAllAsync(l => l.OnEndpointNewAsync(context, endpoint)).ConfigureAwait(false);
+                    await _broker.NotifyAllAsync(l => l.OnEndpointNewAsync(operationContext, 
+                        endpoint)).ConfigureAwait(false);
                     added++;
                 }
                 catch (Exception ex) {

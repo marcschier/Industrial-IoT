@@ -87,7 +87,8 @@ namespace Microsoft.Azure.IIoT.Net.Scanner {
 
             _cts = new CancellationTokenSource();
             ct.Register(_cts.Cancel);
-            _completion = new TaskCompletionSource<bool>();
+            _completion = new TaskCompletionSource<bool>(
+                TaskCreationOptions.RunContinuationsAsynchronously);
             _active = _maxProbeCount;
             foreach (var probe in _probePool) {
                 probe.Start();

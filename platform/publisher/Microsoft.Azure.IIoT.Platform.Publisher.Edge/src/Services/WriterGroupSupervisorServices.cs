@@ -24,14 +24,12 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Services {
         /// Create supervisor
         /// </summary>
         /// <param name="hosts"></param>
-        /// <param name="identity"></param>
         /// <param name="process"></param>
         /// <param name="logger"></param>
-        public WriterGroupSupervisorServices(IModuleHostManager hosts, IIdentity identity,
+        public WriterGroupSupervisorServices(IModuleHostManager hosts,
             IProcessControl process, ILogger logger) {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _hosts = hosts ?? throw new ArgumentNullException(nameof(hosts));
-            _identity = identity ?? throw new ArgumentNullException(nameof(identity));
             _process = process ?? throw new ArgumentNullException(nameof(process));
         }
 
@@ -65,7 +63,6 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Services {
         private readonly ILogger _logger;
 #pragma warning restore IDE0052 // Remove unread private members
         private readonly IModuleHostManager _hosts;
-        private readonly IIdentity _identity;
         private readonly IProcessControl _process;
     }
 }

@@ -78,12 +78,9 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
         private static ApplicationDocument CreateDocument() {
             var fix = new Fixture();
             var r1 = fix.Build<ApplicationDocument>()
-                .With(x => x.Capabilities, fix.CreateMany<string>().ToHashSet()
-                    .EncodeSetAsDictionary())
-                .With(x => x.DiscoveryUrls, fix.CreateMany<string>().ToList()
-                    .EncodeAsDictionary())
-                .With(x => x.HostAddresses, fix.CreateMany<string>().ToList()
-                    .EncodeAsDictionary())
+                .With(x => x.Capabilities, fix.CreateMany<string>().ToHashSet())
+                .With(x => x.DiscoveryUrls, fix.CreateMany<string>().ToHashSet())
+                .With(x => x.HostAddresses, fix.CreateMany<string>().ToHashSet())
                 .Without(x => x.IsDisabled)
                 .Without(x => x.NotSeenSince)
                 .Create();

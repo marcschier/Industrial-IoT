@@ -9,7 +9,6 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Service.Controllers {
     using Microsoft.Azure.IIoT.Platform.Twin;
     using Microsoft.Azure.IIoT.Platform.Twin.Models;
     using Microsoft.Azure.IIoT.Platform.Twin.Api.Models;
-    using Microsoft.Azure.IIoT.Http;
     using Microsoft.Azure.IIoT.AspNetCore.OpenApi;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Authorization;
@@ -17,7 +16,6 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Service.Controllers {
     using System;
     using System.Threading.Tasks;
     using System.ComponentModel.DataAnnotations;
-    using System.Linq;
 
     /// <summary>
     /// Browse nodes services

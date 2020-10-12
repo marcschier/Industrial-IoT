@@ -40,7 +40,7 @@ namespace Microsoft.Azure.IIoT.App.Shared {
             NavigationManager.LocationChanged -= HandleLocationChangedAsync;
         }
 
-        void ToggleNavMenu() {
+        internal void ToggleNavMenu() {
             _collapseNavMenu = !_collapseNavMenu;
         }
 

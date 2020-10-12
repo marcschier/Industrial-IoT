@@ -63,7 +63,8 @@ namespace Opc.Ua.PubSub {
         public ExpandedNodeId XmlEncodingId => ExpandedNodeId.Null;
 
         /// <inheritdoc/>
-        private DataSetMessage() {
+        public DataSetMessage() {
+            // Satisfy encodable object 
         }
 
         /// <inheritdoc/>

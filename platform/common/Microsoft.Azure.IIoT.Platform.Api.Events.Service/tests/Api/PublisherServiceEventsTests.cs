@@ -34,7 +34,7 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service.Api {
 
             var endpointId = "testid";
 
-            var result = new TaskCompletionSource<MonitoredItemMessageApiModel>();
+            var result = new TaskCompletionSource<MonitoredItemMessageApiModel>(TaskCreationOptions.RunContinuationsAsynchronously);
             await using (await client.NodePublishSubscribeByEndpointAsync(endpointId, ev => {
                 result.SetResult(ev);
                 return Task.CompletedTask;
@@ -84,7 +84,7 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service.Api {
                 Timestamp = DateTime.UtcNow,
                 Value = 234234
             };
-            var result = new TaskCompletionSource<bool>();
+            var result = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
             var counter = 0;
             await using (await client.NodePublishSubscribeByEndpointAsync(endpointId, ev => {
                 counter++;

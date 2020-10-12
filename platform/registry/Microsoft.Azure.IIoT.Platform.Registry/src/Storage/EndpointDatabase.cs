@@ -3,7 +3,7 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Platform.Registry.Storage.Default {
+namespace Microsoft.Azure.IIoT.Platform.Registry.Storage {
     using Microsoft.Azure.IIoT.Platform.Registry.Models;
     using Microsoft.Azure.IIoT.Platform.Core.Models;
     using Microsoft.Azure.IIoT.Exceptions;
@@ -25,19 +25,16 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Storage.Default {
         /// Create
         /// </summary>
         /// <param name="databaseServer"></param>
-        /// <param name="serializer"></param>
         /// <param name="config"></param>
-        public EndpointDatabase(IDatabaseServer databaseServer, IJsonSerializer serializer,
-            IItemContainerConfig config) {
+        public EndpointDatabase(IDatabaseServer databaseServer, IItemContainerConfig config) {
             if (databaseServer is null) {
                 throw new ArgumentNullException(nameof(databaseServer));
             }
             if (config is null) {
                 throw new ArgumentNullException(nameof(config));
             }
-            _serializer = serializer ?? throw new ArgumentNullException(nameof(serializer));
             var dbs = databaseServer.OpenAsync(config.DatabaseName).Result;
-            _documents = dbs.OpenContainerAsync(config.ContainerName ?? "twin").Result;
+            _documents = dbs.OpenContainerAsync(config.ContainerName ?? "registry").Result;
         }
 
         /// <inheritdoc/>
@@ -61,7 +58,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Storage.Default {
                 }
                 try {
                     var result = await _documents.AddAsync(
-                        endpoint.ToDocumentModel(_serializer), ct: ct).ConfigureAwait(false);
+                        endpoint.ToDocumentModel(), ct: ct).ConfigureAwait(false);
                     return result.Value.ToServiceModel(result.Etag);
                 }
                 catch (ResourceConflictException) {
@@ -90,7 +87,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Storage.Default {
                     return updateOrAdd;
                 }
                 endpoint.Id = endpointId;
-                var updated = endpoint.ToDocumentModel(_serializer);
+                var updated = endpoint.ToDocumentModel();
                 if (document == null) {
                     try {
                         // Add document
@@ -132,7 +129,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Storage.Default {
                     return endpoint;
                 }
                 endpoint.Id = endpointId;
-                var updated = endpoint.ToDocumentModel(_serializer);
+                var updated = endpoint.ToDocumentModel();
                 try {
                     var result = await _documents.ReplaceAsync(document, 
                         updated, ct: ct).ConfigureAwait(false);
@@ -236,10 +233,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Storage.Default {
                     // If application id provided, include it in search
                     query = query.Where(x => x.ApplicationId == filter.ApplicationId);
                 }
-                if (filter?.SupervisorId != null) {
-                    // If supervisor provided, include it in search
-                    query = query.Where(x => x.SupervisorId == filter.SupervisorId);
-                }
                 if (filter?.DiscovererId != null) {
                     // If discoverer provided, include it in search
                     query = query.Where(x => x.DiscovererId == filter.DiscovererId);
@@ -288,6 +281,5 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Storage.Default {
         }
 
         private readonly IItemContainer _documents;
-        private readonly IJsonSerializer _serializer;
     }
 }

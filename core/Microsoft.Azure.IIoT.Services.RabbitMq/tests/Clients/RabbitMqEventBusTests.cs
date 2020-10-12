@@ -11,6 +11,7 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
     using AutoFixture;
     using Xunit;
 
+    [Collection(RabbitMqCollection.Name)]
     public class RabbitMqEventBusTests : IClassFixture<RabbitMqEventBusFixture> {
         private readonly RabbitMqEventBusFixture _fixture;
 
@@ -28,7 +29,7 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
 
                 var family = fix.Create<Family>();
 
-                var tcs = new TaskCompletionSource<Family>();
+                var tcs = new TaskCompletionSource<Family>(TaskCreationOptions.RunContinuationsAsynchronously);
                 var token = await bus.RegisterAsync<Family>(f => {
                     tcs.SetResult(f);
                     return Task.CompletedTask;
@@ -57,7 +58,7 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
                 var family2 = fix.Create<Family>();
 
                 var count = 0;
-                var tcs = new TaskCompletionSource<Family>();
+                var tcs = new TaskCompletionSource<Family>(TaskCreationOptions.RunContinuationsAsynchronously);
                 var token = await bus.RegisterAsync<Family>(f => {
                     if (++count == 4) {
                         tcs.TrySetResult(f);
@@ -90,12 +91,12 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
                 var family = fix.Create<Family>();
                 var family2 = fix.Create<Family>();
 
-                var tcs1 = new TaskCompletionSource<Family>();
+                var tcs1 = new TaskCompletionSource<Family>(TaskCreationOptions.RunContinuationsAsynchronously);
                 var token1 = await bus.RegisterAsync<Family>(f => {
                     tcs1.TrySetResult(f);
                     return Task.CompletedTask;
                 }).ConfigureAwait(false);
-                var tcs2 = new TaskCompletionSource<Family>();
+                var tcs2 = new TaskCompletionSource<Family>(TaskCreationOptions.RunContinuationsAsynchronously);
                 var token2 = await bus.RegisterAsync<Family>(f => {
                     tcs2.TrySetResult(f);
                     return Task.CompletedTask;
@@ -131,12 +132,12 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
 
                 var family = fix.Create<Family>();
 
-                var tcs2 = new TaskCompletionSource<Family>();
+                var tcs2 = new TaskCompletionSource<Family>(TaskCreationOptions.RunContinuationsAsynchronously);
                 var token2 = await bus.RegisterAsync<Family>(f => {
                     tcs2.TrySetResult(f);
                     return Task.CompletedTask;
                 }).ConfigureAwait(false);
-                var tcs1 = new TaskCompletionSource<Family>();
+                var tcs1 = new TaskCompletionSource<Family>(TaskCreationOptions.RunContinuationsAsynchronously);
                 var token1 = await bus.RegisterAsync<Family>(f => {
                     tcs1.TrySetResult(f);
                     return Task.CompletedTask;

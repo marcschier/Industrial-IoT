@@ -12,8 +12,12 @@ namespace Microsoft.Azure.IIoT.Services.LiteDb.Clients {
     using System.Threading.Tasks;
     using System.Runtime.Serialization;
     using System.Collections.Generic;
+    using AutoFixture;
+    using AutoFixture.Kernel;
 
     public sealed class LiteDbClientFixture : IDisposable {
+
+        public Fixture Fixture { get; } = CreateFixture();
 
         /// <summary>
         /// Creates the documents used in this Sample
@@ -46,7 +50,12 @@ namespace Microsoft.Azure.IIoT.Services.LiteDb.Clients {
                     Size = 15.82,
                     City = "Seattle"
                 },
-                Colors = new List<string> { "yellow", "blue", "orange" },
+                Colors = new HashSet<string> { "yellow", "blue", "orange" },
+                Certificate = new byte[] {1, 2, 3, 4, 5},
+                Items = new Dictionary<string, bool> {
+                    ["false"] = false,
+                    ["true"] = true
+                },
                 IsRegistered = true,
                 ExistsFor = TimeSpan.FromMinutes(1),
                 RegistrationDate = DateTime.UtcNow.AddDays(-1)
@@ -87,7 +96,12 @@ namespace Microsoft.Azure.IIoT.Services.LiteDb.Clients {
                     Size = 5.82,
                     City = "NY"
                 },
-                Colors = new List<string> { "blue", "red" },
+                Colors = new HashSet<string> { "blue", "red" },
+                Certificate = new byte[] { 5, 4, 3, 2, 1, 0 },
+                Items = new Dictionary<string, bool> {
+                    ["false"] = true,
+                    ["true"] = false
+                },
                 IsRegistered = false,
                 ExistsFor = TimeSpan.FromMinutes(2),
                 RegistrationDate = DateTime.UtcNow.AddDays(-30)
@@ -101,10 +115,10 @@ namespace Microsoft.Azure.IIoT.Services.LiteDb.Clients {
         /// </summary>
         /// <param name="options"></param>
         /// <returns></returns>
-        public static async Task<IDatabase> GetDatabaseAsync() {
+        public async Task<IDatabase> GetDatabaseAsync() {
             var logger = ConsoleLogger.Create();
             var server = new MemoryDatabase(logger);
-            return await server.OpenAsync("test", null).ConfigureAwait(false);
+            return await server.OpenAsync(_database, null).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -113,7 +127,7 @@ namespace Microsoft.Azure.IIoT.Services.LiteDb.Clients {
         /// <param name="options"></param>
         /// <returns></returns>
         public async Task<IItemContainer> GetDocumentsAsync() {
-            _query = await GetContainerAsync("test").ConfigureAwait(false);
+            _query = await GetContainerAsync(_container).ConfigureAwait(false);
             if (_query == null) {
                 return null;
             }
@@ -126,7 +140,7 @@ namespace Microsoft.Azure.IIoT.Services.LiteDb.Clients {
         /// </summary>
         /// <param name="options"></param>
         /// <returns></returns>
-        public static async Task<ContainerWrapper> GetContainerAsync(string name = null) {
+        public async Task<ContainerWrapper> GetContainerAsync(string name = null) {
             var database = await Try.Async(() => GetDatabaseAsync()).ConfigureAwait(false);
             if (database == null) {
                 return null;
@@ -147,6 +161,17 @@ namespace Microsoft.Azure.IIoT.Services.LiteDb.Clients {
             _query?.Dispose();
         }
 
+        private static Fixture CreateFixture() {
+            var fixture = new Fixture();
+            fixture.Customizations.Add(new TypeRelay(typeof(IReadOnlySet<>), typeof(HashSet<>)));
+            fixture.Customizations.Add(new TypeRelay(typeof(IReadOnlyList<>), typeof(List<>)));
+            fixture.Customizations.Add(new TypeRelay(typeof(IReadOnlyDictionary<,>), typeof(Dictionary<,>)));
+            fixture.Customizations.Add(new TypeRelay(typeof(IReadOnlyCollection<>), typeof(List<>)));
+            return fixture;
+        }
+
+        private readonly string _database = "test";
+        private readonly string _container = "test";
         private ContainerWrapper _query;
     }
 
@@ -225,7 +250,7 @@ namespace Microsoft.Azure.IIoT.Services.LiteDb.Clients {
         [DataMember]
         public string LastName { get; set; }
         [DataMember]
-        public List<Parent> Parents { get; set; }
+        public /*IReadOnlyList*/ IList<Parent> Parents { get; set; }
         [DataMember]
         public Child[] Children { get; set; }
         [DataMember]
@@ -237,7 +262,11 @@ namespace Microsoft.Azure.IIoT.Services.LiteDb.Clients {
         [DataMember]
         public TimeSpan ExistsFor { get; set; }
         [DataMember]
-        public List<string> Colors { get; set; }
+        public /*IReadOnlySet*/ ISet<string> Colors { get; set; }
+        [DataMember]
+        public IReadOnlyCollection<byte> Certificate { get; set; }
+        [DataMember]
+        public /*IReadOnlyDictionary*/ IDictionary<string, bool> Items { get; set; }
         [DataMember]
         public int? Count { get; set; }
 

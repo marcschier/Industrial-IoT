@@ -74,7 +74,7 @@ namespace Opc.Ua.Extensions {
                 return NodeId.Null;
             }
             int index = nodeId.NamespaceIndex;
-            if (index > 0 && !string.IsNullOrEmpty(nodeId.NamespaceUri)) {
+            if (index == 0 && !string.IsNullOrEmpty(nodeId.NamespaceUri)) {
                 if (namespaces == null) {
                     throw new ArgumentNullException(nameof(namespaces));
                 }

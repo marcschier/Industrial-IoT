@@ -8,9 +8,11 @@ namespace Microsoft.Azure.IIoT.App.Pages {
     using Microsoft.AspNetCore.Components;
     using Microsoft.Azure.IIoT.App.Models;
 
+#pragma warning disable IDE0079 // Remove unnecessary suppression
 #pragma warning disable IDE1006 // Naming Styles
     public partial class _DrawerDiscoverer {
 #pragma warning restore IDE1006 // Naming Styles
+#pragma warning restore IDE0079 // Remove unnecessary suppression
         [Parameter]
         public DiscovererInfo DiscovererData { get; set; }
 

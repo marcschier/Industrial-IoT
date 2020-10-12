@@ -13,32 +13,11 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
     using System;
     using System.Runtime.Serialization;
     using Autofac;
+    using Xunit;
 
-    public sealed class RabbitMqEventBusFixture : IDisposable {
+    public sealed class RabbitMqEventBusFixture {
 
-        /// <summary>
-        /// Create fixture
-        /// </summary>
-        public RabbitMqEventBusFixture() {
-            try {
-                var builder = new ContainerBuilder();
-
-                builder.RegisterModule<RabbitMqEventQueueModule>();
-                builder.RegisterType<RabbitMqConfig>()
-                    .AsImplementedInterfaces().SingleInstance();
-                builder.RegisterType<RabbitMqServer>()
-                    .AsImplementedInterfaces().SingleInstance();
-                builder.RegisterType<HostAutoStart>()
-                    .AutoActivate()
-                    .AsImplementedInterfaces().SingleInstance();
-
-                builder.AddDebugDiagnostics();
-                _container = builder.Build();
-            }
-            catch {
-                _container = null;
-            }
-        }
+        public bool Skip { get; set; }
 
         /// <summary>
         /// Create test harness
@@ -46,18 +25,12 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
         /// <returns></returns>
         public RabbitMqEventBusHarness GetHarness(string bus,
             Action<ContainerBuilder> configure = null) {
-            if (_container == null) {
-                return null;
+
+            if (Skip || !RabbitMqServerFixture.Up) {
+                return new RabbitMqEventBusHarness();
             }
             return new RabbitMqEventBusHarness(bus, configure);
         }
-
-        /// <inheritdoc/>
-        public void Dispose() {
-            _container?.Dispose();
-        }
-
-        private readonly IContainer _container;
     }
 
     public class RabbitMqEventBusConfig : IRabbitMqConfig {
@@ -104,6 +77,10 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
             }
         }
 
+        public RabbitMqEventBusHarness() {
+            _container = null;
+        }
+
         /// <summary>
         /// Get Event Bus
         /// </summary>
@@ -122,9 +99,7 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
             return Try.Op(() => _container?.Resolve<EventBusHost>());
         }
 
-        /// <summary>
-        /// Clean up query container
-        /// </summary>
+        /// <inheritdoc/>
         public void Dispose() {
             _container?.Dispose();
         }

@@ -113,7 +113,7 @@ namespace Microsoft.Azure.IIoT.Platform.Service {
             app.AddStartupBranch<Api.Events.Service.Startup>("/events");
 
             if (!Config.IsMinimumDeployment) {
-                app.AddStartupBranch<Twin.Ua.Service.Startup>("/ua");
+                app.AddStartupBranch<Twin.Services.Service.Startup>("/ua");
             }
 
             app.UseHealthChecks("/healthz");
@@ -164,7 +164,6 @@ namespace Microsoft.Azure.IIoT.Platform.Service {
 
                 // Minimal processes
                 var processes = new List<Task> {
-                  //  Task.Run(() => Registry.Service.Program.Main(args), _cts.Token),
                     Task.Run(() => Subscriber.Service.Program.Main(args), _cts.Token),
                     Task.Run(() => Edge.Events.Service.Program.Main(args), _cts.Token),
                     Task.Run(() => Edge.Tunnel.Service.Program.Main(args), _cts.Token),

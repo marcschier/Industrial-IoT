@@ -48,6 +48,7 @@ namespace Microsoft.Azure.IIoT.Services.CouchDb.Clients {
         public void Dispose() {
             _server?.Dispose();
             _container?.Dispose();
+            Up = false;
         }
 
         private readonly CouchDbServer _server;

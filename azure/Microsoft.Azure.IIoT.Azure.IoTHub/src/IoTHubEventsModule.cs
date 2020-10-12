@@ -10,7 +10,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub {
     /// <summary>
     /// Injected iot hub service handlers
     /// </summary>
-    public sealed class IoTHubEventsModule : IoTHubModule {
+    public sealed class IoTHubEventsModule : IoTHubSupportModule {
 
         /// <summary>
         /// Load the module

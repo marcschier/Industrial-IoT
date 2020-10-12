@@ -38,7 +38,7 @@ namespace Microsoft.Azure.IIoT.App.Pages {
         private MethodMetadataResponseApiModel Parameters { get; set; }
         private string ResponseClass { get; set; } = "list-group-item text-left margin body-action-content hidden";
 
-        private async Task SelectActionAsync(string nodeId, ChangeEventArgs action) {
+        internal async Task SelectActionAsync(string nodeId, ChangeEventArgs action) {
             switch (action.Value) {
                 case "Read":
                     TypeOfAction = ActionType.Read;

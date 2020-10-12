@@ -7,6 +7,7 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service {
     using Microsoft.Azure.IIoT.Platform.Api.Events.Service.Runtime;
     using Microsoft.Azure.IIoT.Platform.Publisher.Api;
     using Microsoft.Azure.IIoT.Platform.Registry.Api;
+    using Microsoft.Azure.IIoT.Platform.Directory.Api;
     using Microsoft.Azure.IIoT.Platform.Events.Api.Runtime;
     using Microsoft.Azure.IIoT.Services.Generic.Services;
     using Microsoft.Azure.IIoT.Authentication.Runtime;
@@ -55,6 +56,8 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service {
                 .AsImplementedInterfaces().InstancePerLifetimeScope();
 
             // Register client events
+            builder.RegisterType<DirectoryServiceEvents>()
+                .AsImplementedInterfaces().SingleInstance();
             builder.RegisterType<RegistryServiceEvents>()
                 .AsImplementedInterfaces().SingleInstance();
             builder.RegisterType<PublisherServiceEvents>()

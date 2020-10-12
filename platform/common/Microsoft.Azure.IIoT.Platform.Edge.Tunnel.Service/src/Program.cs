@@ -107,7 +107,7 @@ namespace Microsoft.Azure.IIoT.Platform.Edge.Tunnel.Service {
             builder.AddDependencyTracking(config, serviceInfo);
             builder.AddAppInsightsLogging(config);
             // IoT Hub client and telemetry handler
-            builder.RegisterModule<IoTHubModule>();
+            builder.RegisterModule<IoTHubSupportModule>();
             builder.RegisterType<IoTHubDeviceEventHandler>()
                 .AsImplementedInterfaces();
             // Event processor host

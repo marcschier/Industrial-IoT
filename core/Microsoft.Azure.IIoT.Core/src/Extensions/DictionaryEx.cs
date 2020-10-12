@@ -37,6 +37,31 @@ namespace System.Collections.Generic {
         }
 
         /// <summary>
+        /// Safe dictionary equals
+        /// </summary>
+        /// <typeparam name="TKey"></typeparam>
+        /// <typeparam name="TValue"></typeparam>
+        /// <param name="dict"></param>
+        /// <param name="that"></param>
+        /// <param name="equality"></param>
+        /// <returns></returns>
+        public static bool DictionaryEqualsSafe<TKey, TValue>(
+            this IDictionary<TKey, TValue> dict,
+            IDictionary<TKey, TValue> that, Func<TValue, TValue, bool> equality) {
+            if (dict == that) {
+                return true;
+            }
+            if (dict == null || that == null) {
+                return false;
+            }
+            if (dict.Count != that.Count) {
+                return false;
+            }
+            return that.All(kv => dict.TryGetValue(kv.Key, out var v) &&
+                equality(kv.Value, v));
+        }
+
+        /// <summary>
         /// Returns the contents of a dictionary as KeyValuePairs
         /// </summary>
         /// <typeparam name="TKey"></typeparam>
@@ -107,6 +132,19 @@ namespace System.Collections.Generic {
         /// <returns></returns>
         public static bool DictionaryEqualsSafe<TKey, TValue>(this IReadOnlyDictionary<TKey, TValue> dict,
             IReadOnlyDictionary<TKey, TValue> that) {
+            return DictionaryEqualsSafe(dict, that, (x, y) => x.EqualsSafe(y));
+        }
+
+        /// <summary>
+        /// Safe dictionary equals
+        /// </summary>
+        /// <typeparam name="TKey"></typeparam>
+        /// <typeparam name="TValue"></typeparam>
+        /// <param name="dict"></param>
+        /// <param name="that"></param>
+        /// <returns></returns>
+        public static bool DictionaryEqualsSafe<TKey, TValue>(this IDictionary<TKey, TValue> dict,
+            IDictionary<TKey, TValue> that) {
             return DictionaryEqualsSafe(dict, that, (x, y) => x.EqualsSafe(y));
         }
 

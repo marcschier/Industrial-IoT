@@ -100,13 +100,13 @@ namespace Microsoft.Azure.IIoT.Platform.Edge.Events.Service {
             // --- Logic ---
 
             // 1.) Handler for discovery progress
-            builder.RegisterType<DiscoveryProgressHandler>()
+            builder.RegisterType<DiscoveryProgressEventHandler>()
                 .AsImplementedInterfaces();
             builder.RegisterType<DiscoveryProgressEventBusPublisher>()
                 .AsImplementedInterfaces();
 
             // 2.) Handlers for twin and device change events ...
-            builder.RegisterModule<RegistryTwinEventHandlers>();
+            builder.RegisterModule<RegistryEventHandlers>();
 
             // 3.) Publisher events
             // TODO: because of dependencies should be in seperate processor
@@ -130,7 +130,7 @@ namespace Microsoft.Azure.IIoT.Platform.Edge.Events.Service {
             // Event processor services
             builder.RegisterModule<EventHubProcessorModule>();
             // Register event bus for integration events
-            builder.RegisterModule<ServiceBusEventBusModule>();
+            builder.RegisterModule<ServiceBusEventBusSupport>();
 
             return builder;
         }

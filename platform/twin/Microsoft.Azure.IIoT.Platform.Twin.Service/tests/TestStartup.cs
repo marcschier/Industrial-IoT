@@ -5,7 +5,7 @@
 
 namespace Microsoft.Azure.IIoT.Platform.Twin.Service {
     using Microsoft.Azure.IIoT.Platform.Twin.Service.Runtime;
-    using Microsoft.Azure.IIoT.Platform.Twin.Edge;
+    using Microsoft.Azure.IIoT.Platform.Twin.Services;
     using Microsoft.Azure.IIoT.Platform.OpcUa.Services;
     using Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Runtime;
     using Microsoft.Azure.IIoT.Platform.Core.Models;

@@ -16,6 +16,14 @@ namespace Microsoft.Azure.IIoT.Crypto.Storage.Models {
     public class CrlDocument {
 
         /// <summary>
+        /// Document type
+        /// </summary>
+        [DataMember]
+        public string ClassType { get; set; } = ClassTypeName;
+        /// <summary/>
+        public static readonly string ClassTypeName = "Crl";
+
+        /// <summary>
         /// Serial number of the certificate
         /// </summary>
         [DataMember(Name = "id")]
@@ -50,12 +58,6 @@ namespace Microsoft.Azure.IIoT.Crypto.Storage.Models {
         /// </summary>
         [DataMember]
         public IReadOnlyCollection<byte> RawData { get; set; }
-
-        /// <summary>
-        /// Type
-        /// </summary>
-        [DataMember]
-        public string Type { get; } = nameof(Crl);
 
         /// <summary>
         /// Expiration in seconds

@@ -6,18 +6,11 @@
 namespace Microsoft.Azure.IIoT.Platform.Registry.Service {
     using Microsoft.Azure.IIoT.Platform.Registry.Service.Runtime;
     using Microsoft.Azure.IIoT.Platform.Registry.Service.Auth;
-    using Microsoft.Azure.IIoT.Platform.Registry.Clients;
     using Microsoft.Azure.IIoT.Platform.Registry;
-    using Microsoft.Azure.IIoT.Platform.Registry.Services;
-    using Microsoft.Azure.IIoT.Platform.Twin.Api.Clients;
-    using Microsoft.Azure.IIoT.Platform.Publisher.Api.Clients;
-    using Microsoft.Azure.IIoT.Azure.AppInsights;
-    using Microsoft.Azure.IIoT.Azure.IoTHub;
-    using Microsoft.Azure.IIoT.Azure.ServiceBus;
+    using Microsoft.Azure.IIoT.Platform.OpcUa.Services;
     using Microsoft.Azure.IIoT.Authentication;
     using Microsoft.Azure.IIoT.Utils;
     using Microsoft.Azure.IIoT.Http.Clients;
-    using Microsoft.Azure.IIoT.Rpc.Default;
     using Microsoft.Azure.IIoT.Serializers;
     using Microsoft.Azure.IIoT.AspNetCore.Authentication;
     using Microsoft.Azure.IIoT.AspNetCore.Authentication.Clients;
@@ -29,13 +22,15 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service {
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
     using Microsoft.Extensions.Logging;
+    using Microsoft.Azure.IIoT.Azure.AppInsights;
+    using Microsoft.Azure.IIoT.Azure.ServiceBus;
+    using Microsoft.Azure.IIoT.Azure.CosmosDb;
     using Microsoft.OpenApi.Models;
     using Autofac;
     using Autofac.Extensions.DependencyInjection;
     using Prometheus;
     using System;
     using ILogger = Serilog.ILogger;
-    using Microsoft.Azure.IIoT.Platform.Registry.Storage.Default;
 
     /// <summary>
     /// Webservice startup
@@ -63,7 +58,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service {
         /// <param name="env"></param>
         /// <param name="configuration"></param>
         public Startup(IWebHostEnvironment env, IConfiguration configuration) :
-            this (env, new Config(new ConfigurationBuilder()
+            this(env, new Config(new ConfigurationBuilder()
                 .AddConfiguration(configuration)
                 .AddFromDotEnvFile()
                 .AddEnvironmentVariables()
@@ -186,22 +181,15 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service {
 
             // --- Logic ---
 
-            // Registries and repositories
+            // Registries, discovery service and repositories
             builder.RegisterModule<RegistryServices>();
-            builder.RegisterType<ApplicationDatabase>()
-                .AsImplementedInterfaces().SingleInstance();
-            builder.RegisterType<EndpointDatabase>()
-                .AsImplementedInterfaces().SingleInstance();
 
-            // Additional clients needed by registry services
-            builder.RegisterType<TwinModuleActivationClient>()
-                .AsImplementedInterfaces();
-            builder.RegisterType<TwinModuleCertificateClient>()
-                .AsImplementedInterfaces();
-            builder.RegisterType<OnboardingClient>()
-                .AsImplementedInterfaces();
-            builder.RegisterType<ChunkMethodClient>()
-                .AsImplementedInterfaces();
+            // Register opc stack services for discovery and certs
+            builder.RegisterType<ClientServices>()
+                .AsImplementedInterfaces().InstancePerLifetimeScope();
+            builder.RegisterType<StackLogger>()
+                .AsImplementedInterfaces().InstancePerLifetimeScope()
+                .AutoActivate();
 
             // ... and auto start
             builder.RegisterType<HostAutoStart>()
@@ -214,10 +202,10 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service {
             builder.AddAppInsightsLogging(Config);
             // Add service to service authentication
             builder.RegisterModule<WebApiAuthentication>();
-            // Iot hub services
-            builder.RegisterModule<IoTHubModule>();
             // Register event bus for integration events
-            builder.RegisterModule<ServiceBusEventBusModule>();
+            builder.RegisterModule<ServiceBusEventBusSupport>();
+            // Register Cosmos db for registry storage
+            builder.RegisterModule<CosmosDbModule>();
         }
     }
 }

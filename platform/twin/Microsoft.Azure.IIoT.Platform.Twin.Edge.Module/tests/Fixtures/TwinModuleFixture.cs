@@ -3,7 +3,7 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Tests {
+namespace Microsoft.Azure.IIoT.Platform.Twin.Services.Module.Tests {
     using Microsoft.Azure.IIoT.Platform.Twin.Clients;
     using Microsoft.Azure.IIoT.Platform.OpcUa.Services;
     using Microsoft.Azure.IIoT.Platform.Registry;
@@ -13,7 +13,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Tests {
     using Microsoft.Azure.IIoT.Platform.Core.Models;
     using Microsoft.Azure.IIoT.Platform.Core.Api.Models;
     using Microsoft.Azure.IIoT.Platform.Registry.Api.Clients;
-    using Microsoft.Azure.IIoT.Platform.Registry.Storage.Default;
+    using Microsoft.Azure.IIoT.Platform.Registry.Storage;
     using Microsoft.Azure.IIoT.Platform.Twin.Api;
     using Microsoft.Azure.IIoT.Platform.Twin.Api.Clients;
     using Microsoft.Azure.IIoT.Azure.IoTEdge;
@@ -40,7 +40,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Tests {
     /// <summary>
     /// Harness for opc twin module
     /// </summary>
-    public sealed class TwinModuleFixture : IInjector, ITwinModuleConfig, IDisposable {
+    public sealed class TwinModuleFixture : IInjector, IDisposable {
 
         /// <summary>
         /// Hub
@@ -203,8 +203,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Tests {
             }
 
             var endpoint = new EndpointInfoModel {
-                Endpoint = ep,
-                SupervisorId = HubResource.Format(Hub, DeviceId, ModuleId)
+                Endpoint = ep
             };
             AssertRunning();
             try {
@@ -336,19 +335,12 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Tests {
             builder.RegisterType<TwinModuleSupervisorClient>()
                 .AsImplementedInterfaces();
 
-            builder.RegisterType<HistoryRawSupervisorAdapter>()
-                .AsImplementedInterfaces();
-            builder.RegisterType<TwinSupervisorAdapter>()
-                .AsImplementedInterfaces();
-            builder.RegisterType<TwinModuleClient>()
-                .AsImplementedInterfaces();
-
             // Adapts to expanded hda
-            builder.RegisterType<HistoricAccessAdapter<string>>()
+            builder.RegisterType<HistorianServicesAdapter<string>>()
                 .AsImplementedInterfaces();
-            builder.RegisterType<HistoricAccessAdapter<EndpointInfoModel>>()
+            builder.RegisterType<HistorianServicesAdapter<EndpointInfoModel>>()
                 .AsImplementedInterfaces();
-            builder.RegisterType<HistoricAccessAdapter<EndpointApiModel>>()
+            builder.RegisterType<HistorianServicesAdapter<EndpointApiModel>>()
                 .AsImplementedInterfaces();
 
             // Supervisor clients

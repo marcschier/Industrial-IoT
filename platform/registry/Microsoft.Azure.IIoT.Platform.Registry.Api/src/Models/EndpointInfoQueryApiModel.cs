@@ -82,13 +82,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Models {
         [DataMember(Name = "applicationId", Order = 9,
             EmitDefaultValue = false)]
         public string ApplicationId { get; set; }
-
-        /// <summary>
-        /// Supervisor id to filter with
-        /// </summary>
-        [DataMember(Name = "supervisorId", Order = 10,
-            EmitDefaultValue = false)]
-        public string SupervisorId { get; set; }
     }
 }
 

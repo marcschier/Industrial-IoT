@@ -305,6 +305,7 @@ namespace Microsoft.Azure.IIoT.Serializers.MessagePack {
             public int Test4 { get; set; } = 4;
         }
 
+
         [Fact]
         public void TestDataContract2() {
             var v1 = new DataContractModel2 {
@@ -315,10 +316,26 @@ namespace Microsoft.Azure.IIoT.Serializers.MessagePack {
                     ["test3"] = "4test",
                     ["test4"] = "6test",
                 },
+                RoDictionary = new Dictionary<string, string> {
+                    ["test1"] = "3test",
+                    ["test2"] = "2test",
+                    ["test3"] = "4test",
+                    ["test4"] = "6test",
+                },
                 Strings = new List<string> { "a", "b", "c", "dddd" },
+                RoStrings = new List<string> { "a", "b", "c", "dddd" },
+                Set = new HashSet<string> { "a", "b", "c", "dddd" },
+                RoSet = new HashSet<string> { "a", "b", "c", "dddd" },
                 Test1 = 444,
                 Test2 = "sfgasfkadflf",
-                StringsOfStrings = new List<IReadOnlyList<string>> {
+                RoStringsOfStrings = new List<IReadOnlyList<string>> {
+                    new List<string> { "aa", "bg", "ca", "ddddg" },
+                    new List<string> { "a3333", "b", "c", "dddd" },
+                    new List<string> { "a", "b3333", "c", "dddd" },
+                    new List<string> { "a", "b", "c3333", "dddd" },
+                    new List<string> { "a", "b", "c", "dddd3333" },
+                },
+                StringsOfStrings = new List<IList<string>> {
                     new List<string> { "aa", "bg", "ca", "ddddg" },
                     new List<string> { "a3333", "b", "c", "dddd" },
                     new List<string> { "a", "b3333", "c", "dddd" },
@@ -344,13 +361,28 @@ namespace Microsoft.Azure.IIoT.Serializers.MessagePack {
             public IReadOnlyCollection<byte> Bytes { get; set; }
 
             [DataMember(EmitDefaultValue = false)]
-            public IReadOnlyList<string> Strings { get; set; }
+            public ISet<string> Set { get; set; }
 
             [DataMember(EmitDefaultValue = false)]
-            public IReadOnlyList<IReadOnlyList<string>> StringsOfStrings { get; set; }
+            public IReadOnlySet<string> RoSet { get; set; }
 
             [DataMember(EmitDefaultValue = false)]
-            public IReadOnlyDictionary<string, string> Dictionary { get; set; }
+            public IList<string> Strings { get; set; }
+
+            [DataMember(EmitDefaultValue = false)]
+            public IReadOnlyList<string> RoStrings { get; set; }
+
+            [DataMember(EmitDefaultValue = false)]
+            public IList<IList<string>> StringsOfStrings { get; set; }
+
+            [DataMember(EmitDefaultValue = false)]
+            public IReadOnlyList<IReadOnlyList<string>> RoStringsOfStrings { get; set; }
+
+            [DataMember(EmitDefaultValue = false)]
+            public IDictionary<string, string> Dictionary { get; set; }
+
+            [DataMember(EmitDefaultValue = false)]
+            public IReadOnlyDictionary<string, string> RoDictionary { get; set; }
 
             public override bool Equals(object obj) {
                 if (obj is DataContractModel2 model) {
@@ -363,14 +395,30 @@ namespace Microsoft.Azure.IIoT.Serializers.MessagePack {
                     if (!Bytes.SequenceEqualsSafe(model.Bytes)) {
                         return false;
                     }
+                    if (!Set.SetEqualsSafe(model.Set)) {
+                        return false;
+                    }
+                    if (!RoSet.SetEqualsSafe(model.RoSet)) {
+                        return false;
+                    }
                     if (!Strings.SequenceEqualsSafe(model.Strings)) {
+                        return false;
+                    }
+                    if (!RoStrings.SequenceEqualsSafe(model.RoStrings)) {
                         return false;
                     }
                     if (!StringsOfStrings.SequenceEqualsSafe(
                         model.StringsOfStrings, (x, y) => x.SequenceEqualsSafe(y))) {
                         return false;
                     }
+                    if (!RoStringsOfStrings.SequenceEqualsSafe(
+                        model.RoStringsOfStrings, (x, y) => x.SequenceEqualsSafe(y))) {
+                        return false;
+                    }
                     if (!Dictionary.DictionaryEqualsSafe(model.Dictionary)) {
+                        return false;
+                    }
+                    if (!RoDictionary.DictionaryEqualsSafe(model.RoDictionary)) {
                         return false;
                     }
                     return true;

@@ -3,7 +3,7 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Filters {
+namespace Microsoft.Azure.IIoT.Platform.Twin.Services.Module.Filters {
     using Microsoft.Azure.IIoT.Platform.Exceptions;
     using Microsoft.Azure.IIoT.Hosting;
     using Microsoft.Azure.IIoT.Exceptions;

@@ -3,9 +3,9 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Platform.Twin.Ua.Service {
-    using Microsoft.Azure.IIoT.Platform.Twin.Ua.Service.Runtime;
-    using Microsoft.Azure.IIoT.Platform.Twin.Ua;
+namespace Microsoft.Azure.IIoT.Platform.Twin.Services.Service {
+    using Microsoft.Azure.IIoT.Platform.Twin.Services.Service.Runtime;
+    using Microsoft.Azure.IIoT.Platform.Twin.Services;
     using Microsoft.Azure.IIoT.Platform.OpcUa.Services;
     using Microsoft.Azure.IIoT.Platform.OpcUa.Transport;
     using Microsoft.Azure.IIoT.Platform.Registry.Api.Clients;
