@@ -2439,8 +2439,8 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
                 SecurityMode = options
                     .GetValueOrDefault<Platform.Core.Api.Models.SecurityMode>("-m", "--mode", null),
                 SecurityPolicy = options.GetValueOrDefault<string>("-l", "--policy", null),
-                Connected = options.IsProvidedOrNull("-c", "--connected"),
-                Activated = options.IsProvidedOrNull("-a", "--activated"),
+                ActivationState = options.GetValueOrDefault<EntityActivationState?>(
+                    "-a", "--activated", null),
                 EndpointState = options.GetValueOrDefault<EndpointConnectivityState>(
                     "-s", "--state", null),
                 IncludeNotSeenSince = options.IsProvidedOrNull("-d", "--deleted"),
@@ -2474,7 +2474,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
             // Activate all sign and encrypt endpoints
             var result = await _registry.QueryAllEndpointsAsync(new EndpointInfoQueryApiModel {
                 SecurityMode = options.GetValueOrDefault<SecurityMode>("-m", "mode", null),
-                Activated = false
+                ActivationState = EntityActivationState.Deactivated
             }).ConfigureAwait(false);
             foreach (var item in result) {
                 try {
@@ -2501,7 +2501,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
             // Activate all sign and encrypt endpoints
             var result = await _registry.QueryAllEndpointsAsync(new EndpointInfoQueryApiModel {
                 SecurityMode = options.GetValueOrDefault<SecurityMode>("-m", "mode", null),
-                Activated = true
+                ActivationState = EntityActivationState.Activated
             }).ConfigureAwait(false);
             foreach (var item in result) {
                 try {

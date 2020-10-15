@@ -43,33 +43,10 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Storage {
             if (application == null) {
                 throw new ArgumentNullException(nameof(application));
             }
-            var presetId = application.ApplicationId;
-            while (true) {
-                if (!string.IsNullOrEmpty(application.ApplicationId)) {
-                    var document = await _documents.FindAsync<ApplicationDocument>(
-                        application.ApplicationId, ct: ct).ConfigureAwait(false);
-                    if (document != null) {
-                        throw new ResourceConflictException(
-                            $"Writer Group {application.ApplicationId} already exists.");
-                    }
-                }
-                else {
-                    application.ApplicationId = Guid.NewGuid().ToString();
-                }
-                try {
-                    var result = await _documents.AddAsync(application.ToDocumentModel(), 
-                        ct: ct).ConfigureAwait(false);
-                    return result.Value.ToServiceModel(result.Etag);
-                }
-                catch (ResourceConflictException) {
-                    // Try again - reset to preset id or null if none was asked for
-                    application.ApplicationId = presetId;
-                    continue;
-                }
-                catch {
-                    throw;
-                }
-            }
+            application = application.SetApplicationId();
+            var result = await _documents.AddAsync(application.ToDocumentModel(),
+                ct: ct).ConfigureAwait(false);
+            return result.Value.ToServiceModel(result.Etag);
         }
 
         /// <inheritdoc/>
@@ -86,7 +63,8 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Storage {
                 if (application == null) {
                     return updateOrAdd;
                 }
-                application.ApplicationId = applicationId;
+                application.SetApplicationId();
+                applicationId = application.ApplicationId;
                 var updated = application.ToDocumentModel();
                 if (document == null) {
                     try {
@@ -129,7 +107,8 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Storage {
                 if (!await predicate(application).ConfigureAwait(false)) {
                     return application;
                 }
-                application.ApplicationId = applicationId;
+                application.SetApplicationId();
+                applicationId = application.ApplicationId;
                 var updated = application.ToDocumentModel();
                 try {
                     var result = await _documents.ReplaceAsync(document, updated,
@@ -240,36 +219,59 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Storage {
                 }
                 else if (filter?.ApplicationName != null) {
                     // If application name provided, search for default name
-                    query = query.Where(x => x.ApplicationName == filter.ApplicationName);
+                    query = query.Where(x => x.ApplicationName != null);
+                    query = query.Where(x => x.ApplicationName.Equals( 
+                        filter.ApplicationName, StringComparison.Ordinal));
                 }
                 if (filter?.DiscovererId != null) {
                     // If discoverer provided, include it in search
-                    query = query.Where(x => x.DiscovererId == filter.DiscovererId);
+                    query = query.Where(x => x.DiscovererId != null);
+                    query = query.Where(x => x.DiscovererId.Equals(
+                        filter.DiscovererId, StringComparison.OrdinalIgnoreCase));
                 }
                 if (filter?.ProductUri != null) {
                     // If product uri provided, include it in search
-                    query = query.Where(x => x.ProductUri == filter.ProductUri);
+                    query = query.Where(x => x.ProductUri != null);
+                    query = query.Where(x => x.ProductUri.Equals(
+                        filter.ProductUri, StringComparison.OrdinalIgnoreCase));
                 }
                 if (filter?.GatewayServerUri != null) {
                     // If gateway uri provided, include it in search
-                    query = query.Where(x => x.GatewayServerUri == filter.GatewayServerUri);
+                    query = query.Where(x => x.GatewayServerUri != null);
+                    query = query.Where(x => x.GatewayServerUri.Equals(
+                        filter.GatewayServerUri, StringComparison.OrdinalIgnoreCase));
                 }
                 if (filter?.DiscoveryProfileUri != null) {
                     // If discovery profile uri provided, include it in search
-                    query = query.Where(x => x.DiscoveryProfileUri == filter.DiscoveryProfileUri);
+                    query = query.Where(x => x.DiscoveryProfileUri != null);
+                    query = query.Where(x => x.DiscoveryProfileUri.Equals(
+                       filter.DiscoveryProfileUri, StringComparison.OrdinalIgnoreCase));
                 }
                 if (filter?.ApplicationUri != null) {
                     // If ApplicationUri provided, include it in search
-                    query = query.Where(x => x.ApplicationUriUC ==
-                        filter.ApplicationUri.ToLowerInvariant());
+                    query = query.Where(x => x.ApplicationUri != null);
+                    query = query.Where(x => x.ApplicationUri.Equals(
+                       filter.ApplicationUri, StringComparison.OrdinalIgnoreCase));
                 }
                 if (filter?.ApplicationType != null) {
-                    // If searching for clients include it in search
-                    query = query.Where(x => filter.ApplicationType.Value ==
-                        (x.ApplicationType & filter.ApplicationType.Value));
+                    switch (filter?.ApplicationType.Value) {
+                        case ApplicationType.Client:
+                            query = query.Where(x => x.IsClient);
+                            break;
+                        case ApplicationType.Server:
+                            query = query.Where(x => x.IsServer);
+                            break;
+                        case ApplicationType.DiscoveryServer:
+                            query = query.Where(x => x.IsDiscovery);
+                            break;
+                        case ApplicationType.ClientAndServer:
+                            query = query.Where(x => x.IsServer && x.IsClient);
+                            break;
+                    }
                 }
                 if (filter?.Capability != null) {
                     // If Capabilities provided, filter results
+                    query = query.Where(x => x.Capabilities != null);
                     query = query.Where(x => x.Capabilities.Contains(filter.Capability));
                 }
             }

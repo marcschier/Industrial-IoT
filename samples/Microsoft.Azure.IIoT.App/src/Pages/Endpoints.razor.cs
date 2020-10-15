@@ -53,7 +53,7 @@ namespace Microsoft.Azure.IIoT.App.Pages {
         /// <returns>True if the endpoint is activated, false otherwise</returns>
         private static bool IsEndpointActivated(EndpointInfo endpoint) {
             return endpoint.EndpointModel.ActivationState == EntityActivationState.Activated ||
-                 endpoint.EndpointModel.ActivationState == EntityActivationState.ActivatedAndConnected;
+                 endpoint.EndpointModel.ActivationState == EntityActivationState.Activated;
         }
 
         /// <summary>

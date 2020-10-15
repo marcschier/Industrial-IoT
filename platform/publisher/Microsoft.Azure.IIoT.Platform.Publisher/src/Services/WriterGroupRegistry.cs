@@ -1132,9 +1132,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
             string endpointId, PublisherOperationContextModel context,
             TimeSpan? publishingInterval, CredentialModel user, CancellationToken ct) {
             // Find the specified endpoint and fail if not exist
-            var endpoint = await Try.Async(() => _endpoints.GetEndpointAsync(
-                endpointId, ct)).ConfigureAwait(false);
-            ct.ThrowIfCancellationRequested();
+            var endpoint = await _endpoints.FindEndpointAsync(endpointId, ct).ConfigureAwait(false);
             if (endpoint == null) {
                 throw new ArgumentException("Endpoint not found.", nameof(endpointId));
             }

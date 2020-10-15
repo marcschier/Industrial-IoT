@@ -44,16 +44,9 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Models {
         /// <summary>
         /// Whether the endpoint was activated
         /// </summary>
-        [DataMember(Name = "activated", Order = 4,
+        [DataMember(Name = "activationState", Order = 4,
             EmitDefaultValue = false)]
-        public bool? Activated { get; set; }
-
-        /// <summary>
-        /// Whether the endpoint is connected on supervisor.
-        /// </summary>
-        [DataMember(Name = "connected", Order = 5,
-            EmitDefaultValue = false)]
-        public bool? Connected { get; set; }
+        public EntityActivationState? ActivationState { get; set; }
 
         /// <summary>
         /// The last state of the the activated endpoint

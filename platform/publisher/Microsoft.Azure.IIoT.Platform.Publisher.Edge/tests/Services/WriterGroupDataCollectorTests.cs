@@ -450,7 +450,6 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Services {
                 registry
                     .Setup(e => e.GetEndpointAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
                     .Returns(Task.FromResult(new EndpointInfoModel {
-                            EndpointUrl = url,
                             Id = "endpoint1",
                             Endpoint = new EndpointModel {
                                 Url = url,

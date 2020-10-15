@@ -75,7 +75,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                     return Task.FromException<bool>(
                         new ResourceOutOfDateException("Generation id not matching"));
                 }
-                return Task.FromResult(false);
+                return Task.FromResult(true);
             }, ct).ConfigureAwait(false);
             if (application == null) {
                 return;
@@ -142,10 +142,10 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
             string applicationId, bool filterInactiveTwins, CancellationToken ct) {
             var application = await _database.FindAsync(applicationId, ct).ConfigureAwait(false);
             if (application == null) {
-                return null;
+                throw new ResourceNotFoundException("Could not find application");
             }
             var endpoints = await _endpoints.GetApplicationEndpoints(applicationId, 
-                application.NotSeenSince != null, filterInactiveTwins, ct).ConfigureAwait(false);
+                application.IsDisabled(), filterInactiveTwins, ct).ConfigureAwait(false);
             return new ApplicationRegistrationModel {
                 Application = application,
                 Endpoints = endpoints.ToList()
@@ -219,28 +219,18 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
             }
             var context = result.Context.Validate();
 
-            //
-            // Get all applications for this discoverer or the site the application
-            // was found in.  There should only be one site in the found application set
-            // or none, otherwise, throw.  The OR covers where site of a discoverer was
-            // changed after a discovery run (same discoverer that registered, but now
-            // different site reported).
-            //
+            // Get all applications.
             var existing = await _database.QueryAllAsync(
                 new ApplicationRegistrationQueryModel {
+                    IncludeNotSeenSince = true,
                     DiscovererId = discovererId
                 }).ConfigureAwait(false);
 
-            //
-            // Ensure we set the site id and discoverer id in the found applications
-            // have correct values.  Also set application id even though it should
-            // automatically happen later
-            //
+            // Ensure we set set application id even though it should automatically happen later
             var eventList = events.ToList();
             eventList.ForEach(ev => {
                 ev.Application.DiscovererId = discovererId;
-                ev.Application.ApplicationId = ApplicationInfoModelEx.CreateApplicationId(discovererId,
-                    ev.Application.ApplicationUri, ev.Application.ApplicationType);
+                ev.Application.SetApplicationId();
             });
 
             // Create endpoints lookup table per application id
@@ -282,38 +272,32 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
             var added = 0;
             var updated = 0;
             var unchanged = 0;
-            var removed = 0;
+            var disabled = 0;
 
             if (!(result.RegisterOnly ?? false)) {
                 // Remove applications
                 foreach (var removal in remove) {
                     try {
-                        // Only touch applications the discoverer owns.
-                        if (removal.DiscovererId == discovererId) {
-                            var wasUpdated = false;
+                        var wasUpdated = false;
 
-                            // Disable if not already disabled
-                            var application = await _database.UpdateAsync(removal.ApplicationId,
-                                application => {
-                                    // Disable application
-                                    if (application.NotSeenSince == null) {
-                                        application.NotSeenSince = DateTime.UtcNow;
-                                        application.Updated = context;
-                                        removed++;
-                                        wasUpdated = true;
-                                        return Task.FromResult(true);
-                                    }
-                                    unchanged++;
-                                    return Task.FromResult(false);
-                                }).ConfigureAwait(false);
+                        // Marks as not seen
+                        var application = await _database.UpdateAsync(removal.ApplicationId,
+                            application => {
+                                // Disable application
+                                if (application.NotSeenSince == null) {
+                                    application.NotSeenSince = DateTime.UtcNow;
+                                    application.Updated = context;
+                                    disabled++;
+                                    wasUpdated = true;
+                                    return Task.FromResult(true);
+                                }
+                                unchanged++;
+                                return Task.FromResult(false);
+                            }).ConfigureAwait(false);
 
-                            if (wasUpdated) {
-                                await _broker.NotifyAllAsync(l => l.OnApplicationUpdatedAsync(context, application)).ConfigureAwait(false);
-                            }
-                        }
-                        else {
-                            // Skip the ones owned by other discoverers
-                            unchanged++;
+                        if (wasUpdated) {
+                            await _broker.NotifyAllAsync(l => l.OnApplicationUpdatedAsync(
+                                context, application)).ConfigureAwait(false);
                         }
                     }
                     catch (Exception ex) {
@@ -328,16 +312,32 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                 try {
                     var application = addition.Clone();
                     application.Created = context;
+                    application.Updated = context;
                     application.NotSeenSince = null;
-                    application = await _database.AddAsync(application).ConfigureAwait(false);
+                    application.DiscovererId = discovererId;
+                    application.SetApplicationId();
+                    var update = false;
+                    application = await _database.AddOrUpdateAsync(application.ApplicationId, 
+                        existing => {
+                            update = existing != null;
+                            return Task.FromResult(existing.Patch(application));
+                        }).ConfigureAwait(false);
 
-                    // Notify addition!
-                    await _broker.NotifyAllAsync(l => l.OnApplicationNewAsync(context, application)).ConfigureAwait(false);
+                    if (update) {
+                        // Notify update
+                        await _broker.NotifyAllAsync(l => l.OnApplicationUpdatedAsync(context,
+                            application)).ConfigureAwait(false);
+                    }
+                    else {
+                        // Notify addition!
+                        await _broker.NotifyAllAsync(l => l.OnApplicationNewAsync(context,
+                            application)).ConfigureAwait(false);
+                    }
 
                     // Now - add all new endpoints
                     endpoints.TryGetValue(application.ApplicationId, out var epFound);
                     await _bulk.ProcessDiscoveryEventsAsync(epFound, result, discovererId,
-                        application.ApplicationId, false).ConfigureAwait(false);
+                        application.ApplicationId).ConfigureAwait(false);
                     added++;
                 }
                 catch (ResourceConflictException) {
@@ -349,42 +349,28 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                 }
             }
 
-            // Update applications and endpoints ...
+            // Update existing applications and endpoints ...
             foreach (var update in unchange) {
                 try {
                     var wasUpdated = false;
 
                     // Disable if not already disabled
                     var application = await _database.UpdateAsync(update.ApplicationId, application => {
-                        //
-                        // Check whether another discoverer owns this application (discoverer
-                        // id are not the same) and it is not disabled before updating it it.
-                        //
-                        if (update.DiscovererId != discovererId && application.NotSeenSince == null) {
-                            // TODO: Decide whether we merge newly found endpoints...
-                            unchanged++;
-                            return Task.FromResult(false);
-                        }
-
-                        wasUpdated = true;
-
+                        wasUpdated = application.IsDisabled();
                         application.Patch(update);
-                        application.DiscovererId = discovererId;
                         application.NotSeenSince = null;
                         application.Updated = context;
-                        updated++;
                         return Task.FromResult(true);
                     }).ConfigureAwait(false);
 
+                    endpoints.TryGetValue(application.ApplicationId, out var epFound);
+                    await _bulk.ProcessDiscoveryEventsAsync(epFound, result, discovererId,
+                        update.ApplicationId).ConfigureAwait(false);
+
                     if (wasUpdated) {
-                        // If this is our discoverer's application we update all endpoints also.
-                        endpoints.TryGetValue(application.ApplicationId, out var epFound);
-
-                        // TODO: Handle case where we take ownership of all endpoints
-                        await _bulk.ProcessDiscoveryEventsAsync(epFound, result, discovererId,
-                            update.ApplicationId, false).ConfigureAwait(false);
-
-                        await _broker.NotifyAllAsync(l => l.OnApplicationUpdatedAsync(context, application)).ConfigureAwait(false);
+                        updated++;
+                        await _broker.NotifyAllAsync(l => l.OnApplicationUpdatedAsync(context,
+                            application)).ConfigureAwait(false);
                     }
                 }
                 catch (Exception ex) {
@@ -393,11 +379,8 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                 }
             }
             _logger.Information("... processed discovery results from {discovererId}: " +
-                "{added} applications added, {updated} updated, {removed} disabled, and " +
-                "{unchanged} unchanged.", discovererId, added, updated, removed, unchanged);
-            kAppsAdded.Set(added);
-            kAppsUpdated.Set(updated);
-            kAppsUnchanged.Set(unchanged);
+                "{added} applications added, {updated} updated, {disabled} disabled, and " +
+                "{unchanged} unchanged.", discovererId, added, updated, disabled, unchanged);
         }
 
         private readonly IApplicationRepository _database;
@@ -405,12 +388,5 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
         private readonly IEndpointBulkProcessor _bulk;
         private readonly IApplicationEndpointRegistry _endpoints;
         private readonly IRegistryEventBroker<IApplicationRegistryListener> _broker;
-
-        private static readonly Gauge kAppsAdded = Metrics
-            .CreateGauge("iiot_registry_applicationAdded", "Number of applications added ");
-        private static readonly Gauge kAppsUpdated = Metrics
-            .CreateGauge("iiot_registry_applicationsUpdated", "Number of applications updated ");
-        private static readonly Gauge kAppsUnchanged = Metrics
-            .CreateGauge("iiot_registry_applicationUnchanged", "Number of applications unchanged ");
     }
 }

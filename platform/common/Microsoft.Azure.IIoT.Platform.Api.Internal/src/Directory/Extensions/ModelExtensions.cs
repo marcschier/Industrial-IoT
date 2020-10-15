@@ -61,8 +61,7 @@ namespace Microsoft.Azure.IIoT.Platform.Directory.Api.Models {
                 Id = model.Id,
                 SecurityPolicy = model.SecurityPolicy,
                 Configuration = model.Configuration,
-                CredentialType = (Core.Api.Models.CredentialType?)model.CredentialType ??
-                    Core.Api.Models.CredentialType.None
+                CredentialType = (Core.Api.Models.CredentialType)model.CredentialType
             };
         }
 
@@ -80,8 +79,7 @@ namespace Microsoft.Azure.IIoT.Platform.Directory.Api.Models {
                 Id = model.Id,
                 SecurityPolicy = model.SecurityPolicy,
                 Configuration = model.Configuration,
-                CredentialType = (Core.Models.CredentialType?)model.CredentialType ??
-                   Core.Models.CredentialType.None
+                CredentialType = (Core.Models.CredentialType)model.CredentialType
             };
         }
 

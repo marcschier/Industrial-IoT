@@ -36,7 +36,7 @@
 @if (EndpointModel != null)
 {
     <div class="subtitle">
-        Url: @EndpointModel.EndpointUrl
+        Url: @EndpointModel.Endpoint.Url
         Discoverer: @EndpointModel.DiscovererId
         Security Mode: @EndpointModel.Endpoint.SecurityMode
         Security Policy: @UICommon.ExtractSecurityPolicy(EndpointModel.Endpoint.SecurityPolicy)

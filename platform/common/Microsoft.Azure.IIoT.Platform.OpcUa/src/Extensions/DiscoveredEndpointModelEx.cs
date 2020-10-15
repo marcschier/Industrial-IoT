@@ -66,9 +66,8 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Models {
                         SecurityLevel = result.Description.SecurityLevel,
                         AuthenticationMethods = result.Description.UserIdentityTokens
                             .ToServiceModel(serializer),
-                        EndpointUrl = result.Description.EndpointUrl, // Reported
                         Endpoint = new EndpointModel {
-                            Url = result.AccessibleEndpointUrl, // Accessible
+                            Url = result.Description.EndpointUrl,
                             AlternativeUrls = new HashSet<string> {
                                 result.AccessibleEndpointUrl,
                                 result.Description.EndpointUrl,

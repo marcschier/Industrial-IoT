@@ -22,20 +22,13 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
         /// Endpoint id
         /// </summary>
         [DataMember(Name = "id")]
-        public string Id => EndpointInfoModelEx.CreateEndpointId(
-            ApplicationId, EndpointRegistrationUrl, SecurityMode, SecurityPolicy);
+        public string Id { get; set; }
 
         /// <summary>
         /// Class type
         /// </summary>
         [DataMember]
         public string ClassType { get; set; } = IdentityType.Endpoint;
-
-        /// <summary>
-        /// Whether document is enabled or not
-        /// </summary>
-        [DataMember]
-        public bool? IsDisabled { get; set; }
 
         /// <summary>
         /// Last time application was seen
@@ -54,20 +47,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
         /// </summary>
         [DataMember]
         public string ApplicationId { get; set; }
-
-        /// <summary>
-        /// Lower case endpoint url
-        /// </summary>
-        [DataMember]
-        public string EndpointUrlLC =>
-            EndpointRegistrationUrl?.ToLowerInvariant();
-
-        /// <summary>
-        /// Reported endpoint description url as opposed to the
-        /// one that can be used to connect with.
-        /// </summary>
-        [DataMember]
-        public string EndpointRegistrationUrl { get; set; }
 
         /// <summary>
         /// Security level of endpoint
@@ -103,7 +82,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
         /// Security mode to use for communication
         /// </summary>
         [DataMember]
-        public SecurityMode? SecurityMode { get; set; }
+        public SecurityMode SecurityMode { get; set; }
 
         /// <summary>
         /// Certificate Thumbprint
@@ -116,13 +95,37 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
         /// </summary>
         /// <returns></returns>
         [DataMember]
-        public EntityActivationState? ActivationState { get; set; }
+        public EntityActivationState ActivationState { get; set; }
 
         /// <summary>
         /// Endpoint connectivity status
         /// </summary>
         [DataMember]
-        public EndpointConnectivityState? State { get; set; }
+        public EndpointConnectivityState EndpointState { get; set; }
+
+        /// <summary>
+        /// Create time
+        /// </summary>
+        [DataMember]
+        public DateTime CreateTime { get; set; }
+
+        /// <summary>
+        /// Authority
+        /// </summary>
+        [DataMember]
+        public string CreateAuthorityId { get; set; }
+
+        /// <summary>
+        /// Update time
+        /// </summary>
+        [DataMember]
+        public DateTime UpdateTime { get; set; }
+
+        /// <summary>
+        /// Authority
+        /// </summary>
+        [DataMember]
+        public string UpdateAuthorityId { get; set; }
 
         /// <inheritdoc/>
         public override bool Equals(object obj) {
@@ -135,16 +138,13 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
             if (ClassType != document.ClassType) {
                 return false;
             }
-            if ((IsDisabled ?? false) != (document.IsDisabled ?? false)) {
-                return false;
-            }
             if (NotSeenSince != document.NotSeenSince) {
                 return false;
             }
             if (ActivationState != document.ActivationState) {
                 return false;
             }
-            if (State != document.State) {
+            if (EndpointState != document.EndpointState) {
                 return false;
             }
             if (DiscovererId != document.DiscovererId) {
@@ -153,7 +153,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
             if (ApplicationId != document.ApplicationId) {
                 return false;
             }
-            if (EndpointUrlLC != document.EndpointUrlLC) {
+            if (EndpointUrl != document.EndpointUrl) {
                 return false;
             }
             if (SecurityLevel != document.SecurityLevel) {
@@ -166,6 +166,18 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
                 return false;
             }
             if (Thumbprint != document.Thumbprint) {
+                return false;
+            }
+            if (UpdateTime != document.UpdateTime) {
+                return false;
+            }
+            if (UpdateAuthorityId != document.UpdateAuthorityId) {
+                return false;
+            }
+            if (CreateAuthorityId != document.CreateAuthorityId) {
+                return false;
+            }
+            if (CreateTime != document.CreateTime) {
                 return false;
             }
             return true;
@@ -186,16 +198,19 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
             hash.Add(Id);
             hash.Add(ClassType);
             hash.Add(NotSeenSince);
-            hash.Add(IsDisabled);
-            hash.Add(State);
+            hash.Add(EndpointState);
             hash.Add(ActivationState);
-            hash.Add(EndpointUrlLC);
+            hash.Add(EndpointUrl);
             hash.Add(DiscovererId);
             hash.Add(ApplicationId);
             hash.Add(Thumbprint);
             hash.Add(SecurityLevel);
             hash.Add(SecurityMode);
             hash.Add(SecurityPolicy);
+            hash.Add(UpdateTime);
+            hash.Add(UpdateAuthorityId);
+            hash.Add(CreateTime);
+            hash.Add(CreateAuthorityId);
             return hash.ToHashCode();
         }
     }

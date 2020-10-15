@@ -41,7 +41,7 @@ namespace Microsoft.Azure.IIoT.Services.Generic.Services {
 
                 await queue.SendEventAsync(HubResource.Format(hub, deviceId, null), data, contentType, "Test1", contentEncoding).ConfigureAwait(false);
 
-                var result = await tcs.Task.With1MinuteTimeout().ConfigureAwait(false);
+                var result = await tcs.Task.With2MinuteTimeout().ConfigureAwait(false);
                 Assert.Equal(deviceId, result.DeviceId);
                 Assert.Null(result.ModuleId);
                 Assert.NotEmpty(result.Properties);
@@ -82,7 +82,7 @@ namespace Microsoft.Azure.IIoT.Services.Generic.Services {
                 await queue.SendEventAsync(HubResource.Format(hub, deviceId, null), fix.CreateMany<byte>().ToArray(), contentType, "TESt1", contentEncoding).ConfigureAwait(false);
                 await queue.SendEventAsync(HubResource.Format(hub, deviceId, null), fix.CreateMany<byte>().ToArray(), contentType, "TEST1", contentEncoding).ConfigureAwait(false);
 
-                var result = await tcs.Task.With1MinuteTimeout().ConfigureAwait(false);
+                var result = await tcs.Task.With2MinuteTimeout().ConfigureAwait(false);
                 Assert.Equal(deviceId, result.DeviceId);
                 Assert.Null(result.ModuleId);
                 Assert.NotEmpty(result.Properties);
@@ -125,7 +125,7 @@ namespace Microsoft.Azure.IIoT.Services.Generic.Services {
                     Enumerable.Range(0, 10).Select(i => data), contentType,
                     "TEst1", contentEncoding).ConfigureAwait(false);
 
-                var result = await tcs.Task.With1MinuteTimeout().ConfigureAwait(false);
+                var result = await tcs.Task.With2MinuteTimeout().ConfigureAwait(false);
                 Assert.Equal(deviceId, result.DeviceId);
                 Assert.Null(result.ModuleId);
                 Assert.NotEmpty(result.Properties);
@@ -167,7 +167,7 @@ namespace Microsoft.Azure.IIoT.Services.Generic.Services {
                     Enumerable.Range(0, max).Select(i => data), contentType,
                     "Test3", contentEncoding).ConfigureAwait(false);
 
-                var result = await tcs.Task.With1MinuteTimeout().ConfigureAwait(false);
+                var result = await tcs.Task.With2MinuteTimeout().ConfigureAwait(false);
                 Assert.Equal(deviceId, result.DeviceId);
                 Assert.Null(result.ModuleId);
                 Assert.NotEmpty(result.Properties);
@@ -209,7 +209,7 @@ namespace Microsoft.Azure.IIoT.Services.Generic.Services {
                         }
                     });
 
-                var result = await tcs.Task.With1MinuteTimeout().ConfigureAwait(false);
+                var result = await tcs.Task.With2MinuteTimeout().ConfigureAwait(false);
                 Assert.Equal(expected, await actual.Task.ConfigureAwait(false));
                 Assert.Equal(deviceId, result.DeviceId);
                 Assert.Null(result.ModuleId);
@@ -252,7 +252,7 @@ namespace Microsoft.Azure.IIoT.Services.Generic.Services {
                         }
                     });
 
-                var result = await tcs.Task.With1MinuteTimeout().ConfigureAwait(false);
+                var result = await tcs.Task.With2MinuteTimeout().ConfigureAwait(false);
                 Assert.Equal(expected, await actual.Task.ConfigureAwait(false));
                 Assert.Equal(deviceId, result.DeviceId);
                 Assert.Null(result.ModuleId);
@@ -308,7 +308,7 @@ namespace Microsoft.Azure.IIoT.Services.Generic.Services {
                 queue.SendEvent(HubResource.Format(hub, deviceId, null), data, fix.Create<string>(),
                     "Test3", fix.Create<string>(), 6, (t, e) => { });
 
-                var result = await tcs.Task.With1MinuteTimeout().ConfigureAwait(false);
+                var result = await tcs.Task.With2MinuteTimeout().ConfigureAwait(false);
                 Assert.Equal(expected, await actual.Task.ConfigureAwait(false));
                 Assert.Equal(deviceId, result.DeviceId);
                 Assert.Null(result.ModuleId);
@@ -354,7 +354,7 @@ namespace Microsoft.Azure.IIoT.Services.Generic.Services {
                     .ForEach(i => queue.SendEvent(HubResource.Format(hub, deviceId, null), data, contentType,
                         "TesT3", contentEncoding, i, (t, e) => hashSet.Add(t)));
 
-                var result = await tcs.Task.With1MinuteTimeout().ConfigureAwait(false);
+                var result = await tcs.Task.With2MinuteTimeout().ConfigureAwait(false);
                 Assert.Equal(deviceId, result.DeviceId);
                 Assert.Null(result.ModuleId);
                 Assert.NotEmpty(result.Properties);
@@ -387,7 +387,7 @@ namespace Microsoft.Azure.IIoT.Services.Generic.Services {
 
                 await queue.SendEventAsync(HubResource.Format(hub, deviceId, moduleId), data, contentType, "test2", contentEncoding).ConfigureAwait(false);
 
-                var result = await tcs.Task.With1MinuteTimeout().ConfigureAwait(false);
+                var result = await tcs.Task.With2MinuteTimeout().ConfigureAwait(false);
                 Assert.Equal(deviceId, result.DeviceId);
                 Assert.Equal(moduleId, result.ModuleId);
                 Assert.NotEmpty(result.Properties);
@@ -428,7 +428,7 @@ namespace Microsoft.Azure.IIoT.Services.Generic.Services {
                 await queue.SendEventAsync(HubResource.Format(hub, deviceId, moduleId), fix.CreateMany<byte>().ToArray(), contentType, "Test2", contentEncoding).ConfigureAwait(false);
                 await queue.SendEventAsync(HubResource.Format(hub, deviceId, moduleId), fix.CreateMany<byte>().ToArray(), contentType, "aaaaa", contentEncoding).ConfigureAwait(false);
 
-                var result = await tcs.Task.With1MinuteTimeout().ConfigureAwait(false);
+                var result = await tcs.Task.With2MinuteTimeout().ConfigureAwait(false);
                 Assert.Equal(deviceId, result.DeviceId);
                 Assert.Equal(moduleId, result.ModuleId);
                 Assert.NotEmpty(result.Properties);
@@ -472,7 +472,7 @@ namespace Microsoft.Azure.IIoT.Services.Generic.Services {
                     Enumerable.Range(0, 10).Select(i => data), contentType,
                     "TEst2", contentEncoding).ConfigureAwait(false);
 
-                var result = await tcs.Task.With1MinuteTimeout().ConfigureAwait(false);
+                var result = await tcs.Task.With2MinuteTimeout().ConfigureAwait(false);
                 Assert.Equal(deviceId, result.DeviceId);
                 Assert.Equal(moduleId, result.ModuleId);
                 Assert.NotEmpty(result.Properties);
@@ -514,7 +514,7 @@ namespace Microsoft.Azure.IIoT.Services.Generic.Services {
                     Enumerable.Range(0, max).Select(i => data), contentType,
                     "Test2", contentEncoding).ConfigureAwait(false);
 
-                var result = await tcs.Task.With1MinuteTimeout().ConfigureAwait(false);
+                var result = await tcs.Task.With2MinuteTimeout().ConfigureAwait(false);
                 Assert.Equal(deviceId, result.DeviceId);
                 Assert.Equal(moduleId, result.ModuleId);
                 Assert.NotEmpty(result.Properties);
@@ -557,7 +557,7 @@ namespace Microsoft.Azure.IIoT.Services.Generic.Services {
                         }
                     });
 
-                var result = await tcs.Task.With1MinuteTimeout().ConfigureAwait(false);
+                var result = await tcs.Task.With2MinuteTimeout().ConfigureAwait(false);
                 Assert.Equal(expected, await actual.Task.ConfigureAwait(false));
                 Assert.Equal(deviceId, result.DeviceId);
                 Assert.Equal(moduleId, result.ModuleId);
@@ -601,7 +601,7 @@ namespace Microsoft.Azure.IIoT.Services.Generic.Services {
                         }
                     });
 
-                var result = await tcs.Task.With1MinuteTimeout().ConfigureAwait(false);
+                var result = await tcs.Task.With2MinuteTimeout().ConfigureAwait(false);
                 Assert.Equal(expected, await actual.Task.ConfigureAwait(false));
                 Assert.Equal(deviceId, result.DeviceId);
                 Assert.Equal(moduleId, result.ModuleId);
@@ -658,7 +658,7 @@ namespace Microsoft.Azure.IIoT.Services.Generic.Services {
                 queue.SendEvent(HubResource.Format(hub, deviceId, moduleId), data, fix.Create<string>(),
                     "Test2", fix.Create<string>(), 6, (t, e) => { });
 
-                var result = await tcs.Task.With1MinuteTimeout().ConfigureAwait(false);
+                var result = await tcs.Task.With2MinuteTimeout().ConfigureAwait(false);
                 Assert.Equal(expected, await actual.Task.ConfigureAwait(false));
                 Assert.Equal(deviceId, result.DeviceId);
                 Assert.Equal(moduleId, result.ModuleId);
@@ -705,7 +705,7 @@ namespace Microsoft.Azure.IIoT.Services.Generic.Services {
                     .ForEach(i => queue.SendEvent(HubResource.Format(hub, deviceId, moduleId), data, contentType,
                         "TesT2", contentEncoding, i, (t, e) => hashSet.Add(t)));
 
-                var result = await tcs.Task.With1MinuteTimeout().ConfigureAwait(false);
+                var result = await tcs.Task.With2MinuteTimeout().ConfigureAwait(false);
                 Assert.Equal(deviceId, result.DeviceId);
                 Assert.Equal(moduleId, result.ModuleId);
                 Assert.NotEmpty(result.Properties);

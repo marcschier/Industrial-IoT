@@ -266,7 +266,6 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                 IEndpointRegistryListener service = mock.Create<WriterGroupManagement>();
 
                 var endpoint = new EndpointInfoModel {
-                    EndpointUrl = "fakeurl",
                     Id = "endpoint1",
                     Endpoint = new EndpointModel {
                         Url = "fakeurl"
@@ -386,7 +385,6 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                 registry
                     .Setup(e => e.GetEndpointAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
                     .Returns(Task.FromResult(new EndpointInfoModel {
-                            EndpointUrl = "fakeurl",
                             Id = "endpoint1",
                             Endpoint = new EndpointModel {
                                 Url = "fakeurl"

@@ -21,10 +21,8 @@ namespace Microsoft.Azure.IIoT.Platform.Registry {
         /// <param name="context"></param>
         /// <param name="discovererId"></param>
         /// <param name="applicationId"></param>
-        /// <param name="hardDelete"></param>
         /// <returns></returns>
         Task ProcessDiscoveryEventsAsync(IEnumerable<EndpointInfoModel> found,
-            DiscoveryContextModel context, string discovererId, 
-            string applicationId, bool hardDelete = false);
+            DiscoveryContextModel context, string discovererId, string applicationId);
     }
 }

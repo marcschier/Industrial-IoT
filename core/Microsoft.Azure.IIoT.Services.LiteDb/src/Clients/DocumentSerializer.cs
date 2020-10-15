@@ -62,7 +62,11 @@ namespace Microsoft.Azure.IIoT.Services.LiteDb.Clients {
         /// </summary>
         /// <returns></returns>
         private static BsonMapper CreateMapper() {
-            var mapper = new BsonMapper();
+            var mapper = new BsonMapper {
+                EnumAsInteger = true, 
+                TrimWhitespace = false
+            };
+
             var serializer = new NewtonSoftJsonSerializer();
 
             // Override default time type handling

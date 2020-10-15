@@ -4,6 +4,7 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Platform.Core.Models {
+
     /// <summary>
     /// Application type
     /// </summary>

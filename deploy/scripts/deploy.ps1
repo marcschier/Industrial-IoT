@@ -220,7 +220,7 @@ Function Select-RepositoryAndBranch() {
     
     if ([string]::IsNullOrEmpty($script:repo)) {
         # Try get repo name / TODO
-        $script:repo = "https://github.com/Azure/Industrial-IoT"
+        $script:repo = "https://github.com/marcschier/Industrial-IoT"
     }
 
     if ([string]::IsNullOrEmpty($script:branchName)) {
@@ -1087,7 +1087,7 @@ Function Test-All-Deployment-Options() {
     }
     $testGroup = $script:resourceGroupName
 
-    $script:repo = "https://github.com/Azure/Industrial-IoT"
+    $script:repo = "https://github.com/marcschier/Industrial-IoT"
     $script:branchName = "master"
     $script:interactive = $false
     $script:deleteOnErrorPrompt = $false

@@ -41,10 +41,10 @@ namespace Microsoft.Azure.IIoT.Platform.Registry {
         /// Add new application to repository.
         /// The created application is returned.
         /// </summary>
-        /// <param name="writer"></param>
+        /// <param name="application"></param>
         /// <param name="ct"></param>
         /// <returns>The newly created writer</returns>
-        Task<ApplicationInfoModel> AddAsync(ApplicationInfoModel writer,
+        Task<ApplicationInfoModel> AddAsync(ApplicationInfoModel application,
             CancellationToken ct = default);
 
         /// <summary>

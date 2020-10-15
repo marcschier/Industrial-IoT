@@ -1462,7 +1462,6 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                 registry
                     .Setup(e => e.GetEndpointAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
                     .Returns(Task.FromResult(new EndpointInfoModel {
-                            EndpointUrl = "fakeurl",
                             Id = "endpointfakeurl",
                             Endpoint = new EndpointModel {
                                 Url = "fakeurl",
@@ -1475,7 +1474,6 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                         Task.FromResult(new EndpointInfoListModel {
                         Items = new List<EndpointInfoModel> {
                             new EndpointInfoModel {
-                                    EndpointUrl = q.Url,
                                     Id = "endpoint" + q.Url,
                                     Endpoint = new EndpointModel {
                                         Url = q.Url,

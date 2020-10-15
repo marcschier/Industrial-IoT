@@ -27,8 +27,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services.Module.Models {
                 Id = model.Id,
                 SecurityPolicy = model.SecurityPolicy,
                 Configuration = model.Configuration,
-                CredentialType = (IIoT.Platform.Core.Api.Models.CredentialType?)model.CredentialType ??
-                    IIoT.Platform.Core.Api.Models.CredentialType.None
+                CredentialType = (Core.Api.Models.CredentialType)model.CredentialType
             };
         }
 
@@ -44,8 +43,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services.Module.Models {
                 Id = model.Id,
                 SecurityPolicy = model.SecurityPolicy,
                 Configuration = model.Configuration,
-                CredentialType = (IIoT.Platform.Core.Models.CredentialType?)model.CredentialType ??
-                    IIoT.Platform.Core.Models.CredentialType.None
+                CredentialType = (Core.Models.CredentialType)model.CredentialType
             };
         }
 
@@ -60,7 +58,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services.Module.Models {
             }
             return new EntityActivationStatusApiModel {
                 Id = model.Id,
-                ActivationState = (IIoT.Platform.Registry.Api.Models.EntityActivationState?)model.ActivationState
+                ActivationState = (Registry.Api.Models.EntityActivationState?)model.ActivationState
             };
         }
 
@@ -75,7 +73,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services.Module.Models {
             }
             return new EntityActivationStatusModel {
                 Id = model.Id,
-                ActivationState = (IIoT.Platform.Registry.Models.EntityActivationState?)model.ActivationState
+                ActivationState = (Registry.Models.EntityActivationState?)model.ActivationState
             };
         }
     }

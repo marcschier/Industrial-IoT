@@ -11,11 +11,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
     public enum EntityActivationState {
 
         /// <summary>
-        /// Activation state is unknown
-        /// </summary>
-        Unknown,
-
-        /// <summary>
         /// Entity is deactivated
         /// </summary>
         Deactivated,
@@ -23,6 +18,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
         /// <summary>
         /// Entity is activated
         /// </summary>
-        Activated,
+        Activated
     }
 }

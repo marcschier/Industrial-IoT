@@ -26,14 +26,19 @@ namespace Microsoft.Azure.IIoT.Azure.EventHub.Clients {
 
     public sealed class EventHubQueueFixture : IDisposable {
 
-        public bool Skip { get; set; }
+        public bool Skip => _config == null;
 
         public EventHubQueueFixture() {
-            // Read connections string from keyvault
-            _config = new ConfigurationBuilder()
-                .AddFromDotEnvFile()
-                .AddFromKeyVault()
-                .Build();
+            try {
+                // Read connections string from keyvault
+                _config = new ConfigurationBuilder()
+                    .AddFromDotEnvFile()
+                    .AddFromKeyVault()
+                    .Build();
+            }
+            catch {
+                _config = null;
+            }
         }
 
         /// <summary>

@@ -9,7 +9,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Storage {
     using Microsoft.Azure.IIoT.Exceptions;
     using Microsoft.Azure.IIoT.Storage;
     using Microsoft.Azure.IIoT.Hub;
-    using Microsoft.Azure.IIoT.Serializers;
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -43,33 +42,10 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Storage {
             if (endpoint == null) {
                 throw new ArgumentNullException(nameof(endpoint));
             }
-            var presetId = endpoint.Id;
-            while (true) {
-                if (!string.IsNullOrEmpty(endpoint.Id)) {
-                    var document = await _documents.FindAsync<EndpointDocument>(
-                        endpoint.Id, ct: ct).ConfigureAwait(false);
-                    if (document != null) {
-                        throw new ResourceConflictException(
-                            $"Writer Group {endpoint.Id} already exists.");
-                    }
-                }
-                else {
-                    endpoint.Id = Guid.NewGuid().ToString();
-                }
-                try {
-                    var result = await _documents.AddAsync(
-                        endpoint.ToDocumentModel(), ct: ct).ConfigureAwait(false);
-                    return result.Value.ToServiceModel(result.Etag);
-                }
-                catch (ResourceConflictException) {
-                    // Try again - reset to preset id or null if none was asked for
-                    endpoint.Id = presetId;
-                    continue;
-                }
-                catch {
-                    throw;
-                }
-            }
+            endpoint = endpoint.SetEndpointId();
+            var result = await _documents.AddAsync(
+                endpoint.ToDocumentModel(), ct: ct).ConfigureAwait(false);
+            return result.Value.ToServiceModel(result.Etag);
         }
 
         /// <inheritdoc/>
@@ -86,7 +62,8 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Storage {
                 if (endpoint == null) {
                     return updateOrAdd;
                 }
-                endpoint.Id = endpointId;
+                endpoint.SetEndpointId();
+                endpointId = endpoint.Id;
                 var updated = endpoint.ToDocumentModel();
                 if (document == null) {
                     try {
@@ -128,7 +105,8 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Storage {
                 if (!await predicate(endpoint).ConfigureAwait(false)) {
                     return endpoint;
                 }
-                endpoint.Id = endpointId;
+                endpoint.SetEndpointId();
+                endpointId = endpoint.Id;
                 var updated = endpoint.ToDocumentModel();
                 try {
                     var result = await _documents.ReplaceAsync(document, 
@@ -227,19 +205,27 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Storage {
                 }
                 if (filter?.Url != null) {
                     // If Url provided, include it in search
-                    query = query.Where(x => x.EndpointUrlLC == filter.Url.ToLowerInvariant());
+                    query = query.Where(x => x.EndpointUrl != null);
+                    query = query.Where(x => x.EndpointUrl.Equals(filter.Url,
+                        StringComparison.OrdinalIgnoreCase));
                 }
                 if (filter?.ApplicationId != null) {
                     // If application id provided, include it in search
-                    query = query.Where(x => x.ApplicationId == filter.ApplicationId);
+                    query = query.Where(x => x.ApplicationId != null);
+                    query = query.Where(x => x.ApplicationId.Equals(
+                        filter.ApplicationId, StringComparison.OrdinalIgnoreCase));
                 }
                 if (filter?.DiscovererId != null) {
                     // If discoverer provided, include it in search
-                    query = query.Where(x => x.DiscovererId == filter.DiscovererId);
+                    query = query.Where(x => x.DiscovererId != null);
+                    query = query.Where(x => x.DiscovererId.Equals(
+                        filter.DiscovererId, StringComparison.OrdinalIgnoreCase));
                 }
                 if (filter?.Certificate != null) {
                     // If cert thumbprint provided, include it in search
-                    query = query.Where(x => x.Thumbprint == filter.Certificate);
+                    query = query.Where(x => x.Thumbprint != null);
+                    query = query.Where(x => x.Thumbprint.Equals(filter.Certificate, 
+                        StringComparison.Ordinal));
                 }
                 if (filter?.SecurityMode != null) {
                     // If SecurityMode provided, include it in search
@@ -247,33 +233,15 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Storage {
                 }
                 if (filter?.SecurityPolicy != null) {
                     // If SecurityPolicy uri provided, include it in search
-                    query = query.Where(x => x.SecurityPolicy == filter.SecurityPolicy);
+                    query = query.Where(x => x.SecurityPolicy != null);
+                    query = query.Where(x => x.SecurityPolicy.Equals(filter.SecurityPolicy,
+                        StringComparison.Ordinal));
                 }
-                if (filter?.EndpointState != null && filter?.Connected != false &&
-                    filter?.Activated != false) {
-                    query = query.Where(x => x.State == filter.EndpointState);
-
-                    // Force query for activated and connected
-                    filter.Connected = true;
-                    filter.Activated = true;
+                if (filter?.EndpointState != null) {
+                    query = query.Where(x => x.EndpointState == filter.EndpointState.Value);
                 }
-                if (filter?.Activated != null) {
-                    // If flag provided, include it in search
-                    if (filter.Activated.Value) {
-                        query = query.Where(x => x.ActivationState == EntityActivationState.Activated);
-                    }
-                    else {
-                        query = query.Where(x => x.ActivationState != EntityActivationState.Activated);
-                    }
-                }
-                if (filter?.Connected != null) {
-                    // If flag provided, include it in search
-                    if (filter.Connected.Value) {
-                        query = query.Where(x => x.State == null);
-                    }
-                    else {
-                        query = query.Where(x => x.State != null);
-                    }
+                if (filter?.ActivationState != null) {
+                    query = query.Where(x => x.ActivationState == filter.ActivationState.Value);
                 }
             }
             query = query.Where(x => x.ClassType == IdentityType.Endpoint);

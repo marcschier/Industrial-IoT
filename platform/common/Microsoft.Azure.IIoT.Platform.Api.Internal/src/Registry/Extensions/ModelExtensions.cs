@@ -371,8 +371,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Models {
                 Id = model.Id,
                 SecurityPolicy = model.SecurityPolicy,
                 Configuration = model.Configuration,
-                CredentialType = (Core.Api.Models.CredentialType?)model.CredentialType ??
-                    Core.Api.Models.CredentialType.None
+                CredentialType = (Core.Api.Models.CredentialType)model.CredentialType
             };
         }
 
@@ -390,8 +389,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Models {
                 Id = model.Id,
                 SecurityPolicy = model.SecurityPolicy,
                 Configuration = model.Configuration,
-                CredentialType = (Core.Models.CredentialType?)model.CredentialType ??
-                   Core.Models.CredentialType.None
+                CredentialType = (Core.Models.CredentialType)model.CredentialType
             };
         }
 
@@ -622,12 +620,13 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Models {
                 EndpointState = (Core.Api.Models.EndpointConnectivityState?)model.EndpointState,
                 Id = model.Id,
                 Endpoint = model.Endpoint.ToApiModel(),
-                EndpointUrl = model.EndpointUrl,
                 AuthenticationMethods = model.AuthenticationMethods?
                     .Select(p => p.ToApiModel())
                     .ToList(),
                 SecurityLevel = model.SecurityLevel,
-                DiscovererId = model.DiscovererId
+                DiscovererId = model.DiscovererId,
+                Created = model.Created.ToApiModel(),
+                Updated = model.Updated.ToApiModel(),
             };
         }
 
@@ -649,12 +648,13 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Models {
                 EndpointState = (Core.Models.EndpointConnectivityState?)model.EndpointState,
                 Id = model.Id,
                 Endpoint = model.Endpoint.ToServiceModel(),
-                EndpointUrl = model.EndpointUrl,
                 AuthenticationMethods = model.AuthenticationMethods?
                     .Select(p => p.ToServiceModel())
                     .ToList(),
                 SecurityLevel = model.SecurityLevel,
-                DiscovererId = model.DiscovererId
+                DiscovererId = model.DiscovererId,
+                Created = model.Created.ToServiceModel(),
+                Updated = model.Updated.ToServiceModel(),
             };
         }
 
@@ -706,8 +706,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Models {
             }
             return new EndpointInfoQueryApiModel {
                 Url = model.Url,
-                Connected = model.Connected,
-                Activated = model.Activated,
+                ActivationState = (Registry.Api.Models.EntityActivationState?)model.ActivationState,
                 EndpointState = (Core.Api.Models.EndpointConnectivityState?)model.EndpointState,
                 Certificate = model.Certificate,
                 SecurityPolicy = model.SecurityPolicy,
@@ -730,8 +729,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Models {
             }
             return new EndpointInfoQueryModel {
                 Url = model.Url,
-                Connected = model.Connected,
-                Activated = model.Activated,
+                ActivationState = (Registry.Models.EntityActivationState?)model.ActivationState,
                 EndpointState = (Core.Models.EndpointConnectivityState?)model.EndpointState,
                 Certificate = model.Certificate,
                 SecurityPolicy = model.SecurityPolicy,

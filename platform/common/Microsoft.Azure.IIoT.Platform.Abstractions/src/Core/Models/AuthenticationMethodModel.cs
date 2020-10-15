@@ -19,7 +19,7 @@ namespace Microsoft.Azure.IIoT.Platform.Core.Models {
         /// <summary>
         /// Type of credential
         /// </summary>
-        public CredentialType? CredentialType { get; set; }
+        public CredentialType CredentialType { get; set; }
 
         /// <summary>
         /// Security policy to use when passing credential.

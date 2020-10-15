@@ -4,9 +4,9 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Platform.Core.Models {
+    using Microsoft.Azure.IIoT.Serializers;
     using System.Collections.Generic;
     using System.Linq;
-    using Microsoft.Azure.IIoT.Serializers;
 
     /// <summary>
     /// Authentication method model extensions
@@ -24,13 +24,7 @@ namespace Microsoft.Azure.IIoT.Platform.Core.Models {
             if (model == that) {
                 return true;
             }
-            if (model == null || that == null) {
-                return false;
-            }
-            if (model.Count() != that.Count()) {
-                return false;
-            }
-            return model.All(a => that.Any(b => b.IsSameAs(a)));
+            return model.SetEqualsSafe(that, (x, y) => x.IsSameAs(y));
         }
 
         /// <summary>
@@ -55,8 +49,7 @@ namespace Microsoft.Azure.IIoT.Platform.Core.Models {
             return
                 model.Id == that.Id &&
                 model.SecurityPolicy == that.SecurityPolicy &&
-                (that.CredentialType ?? CredentialType.None) ==
-                    (model.CredentialType ?? CredentialType.None);
+                model.CredentialType == that.CredentialType;
         }
 
         /// <summary>

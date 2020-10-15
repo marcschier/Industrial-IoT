@@ -27,7 +27,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
     public class ApplicationRegistryTests {
 
         [Fact]
-        public void GetApplicationThatDoesNotExist() {
+        public void GetApplicationThatDoesNotExistThrowsResourceNotFoundException() {
             using (var mock = CreateMock(out var hubName, out var discovererId, out var apps)) {
 
                 IApplicationRegistry service = mock.Create<ApplicationRegistry>();
@@ -43,37 +43,38 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
         }
 
         [Fact]
-        public void GetApplicationThatExists() {
+        public async Task GetApplicationThatExistsAsync() {
             using (var mock = CreateMock(out var hubName, out var discovererId, out var apps)) {
                 var first = apps.First();
                 IApplicationRegistry service = mock.Create<ApplicationRegistry>();
 
                 // Run
-                var result = service.GetApplicationAsync(
-                    ApplicationInfoModelEx.CreateApplicationId(discovererId,
-                    first.ApplicationUri, first.ApplicationType), false).Result;
+                var result = await service.GetApplicationAsync(first.ApplicationId, false);
 
                 // Assert
+                Assert.NotNull(result);
+                Assert.NotNull(result.Application);
                 Assert.True(result.Application.IsSameAs(apps.First()));
                 Assert.True(result.Endpoints.Count == 0);
             }
         }
 
         [Fact]
-        public void UpdateApplicationThatExists() {
+        public async Task UpdateApplicationThatExistsAsync() {
             using (var mock = CreateMock(out var hubName, out var discovererId, out var apps)) {
                 var first = apps.First();
-                var appId = ApplicationInfoModelEx.CreateApplicationId(discovererId, first.ApplicationUri,
-                    first.ApplicationType);
+                var appId = first.ApplicationId;
                 IApplicationRegistry service = mock.Create<ApplicationRegistry>();
 
                 // Run
+                var toUpdate = await service.FindApplicationAsync(appId);
                 service.UpdateApplicationAsync(appId, new ApplicationInfoUpdateModel {
+                    GenerationId = toUpdate.Application.GenerationId,
                     ApplicationName = "TestName",
                     DiscoveryProfileUri = "pu"
                 }).Wait();
 
-                var result = service.GetApplicationAsync(appId, false).Result;
+                var result = await service.GetApplicationAsync(appId, false);
 
                 // Assert
                 Assert.Equal("TestName", result.Application.ApplicationName);
@@ -82,12 +83,12 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
         }
 
         [Fact]
-        public void ListAllApplications() {
+        public async Task ListAllApplicationsAsync() {
             using (var mock = CreateMock(out var hubName, out var discovererId, out var apps)) {
                 IApplicationRegistry service = mock.Create<ApplicationRegistry>();
 
                 // Run
-                var records = service.ListApplicationsAsync(null, null).Result;
+                var records = await service.ListApplicationsAsync(null, null);
 
                 // Assert
                 Assert.True(apps.IsSameAs(records.Items));
@@ -95,12 +96,12 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
         }
 
         [Fact]
-        public void ListAllApplicationsUsingQuery() {
+        public async Task ListAllApplicationsUsingQueryAsync() {
             using (var mock = CreateMock(out var hubName, out var discovererId, out var apps)) {
                 IApplicationRegistry service = mock.Create<ApplicationRegistry>();
 
                 // Run
-                var records = service.QueryApplicationsAsync(null, null).Result;
+                var records = await service.QueryApplicationsAsync(null, null);
 
                 // Assert
                 Assert.True(apps.IsSameAs(records.Items));
@@ -108,14 +109,14 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
         }
 
         [Fact]
-        public void QueryApplicationsByClientAndServerApplicationType() {
+        public async Task QueryApplicationsByClientAndServerApplicationTypeAsync() {
             using (var mock = CreateMock(out var hubName, out var discovererId, out var apps)) {
                 IApplicationRegistry service = mock.Create<ApplicationRegistry>();
 
                 // Run
-                var records = service.QueryApplicationsAsync(new ApplicationRegistrationQueryModel {
+                var records = await service.QueryApplicationsAsync(new ApplicationRegistrationQueryModel {
                     ApplicationType = ApplicationType.ClientAndServer
-                }, null).Result;
+                }, null);
 
                 // Assert
                 Assert.Equal(apps.Count(x =>
@@ -124,14 +125,14 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
         }
 
         [Fact]
-        public void QueryApplicationsByServerApplicationType() {
+        public async Task QueryApplicationsByServerApplicationTypeAsync() {
             using (var mock = CreateMock(out var hubName, out var discovererId, out var apps)) {
                 IApplicationRegistry service = mock.Create<ApplicationRegistry>();
 
                 // Run
-                var records = service.QueryApplicationsAsync(new ApplicationRegistrationQueryModel {
+                var records = await service.QueryApplicationsAsync(new ApplicationRegistrationQueryModel {
                     ApplicationType = ApplicationType.Server
-                }, null).Result;
+                }, null);
 
                 // Assert
                 Assert.Equal(apps.Count(x => x.ApplicationType != ApplicationType.Client), records.Items.Count);
@@ -139,14 +140,14 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
         }
 
         [Fact]
-        public void QueryApplicationsByDiscoveryServerApplicationType() {
+        public async Task QueryApplicationsByDiscoveryServerApplicationTypeAsync() {
             using (var mock = CreateMock(out var hubName, out var discovererId, out var apps)) {
                 IApplicationRegistry service = mock.Create<ApplicationRegistry>();
 
                 // Run
-                var records = service.QueryApplicationsAsync(new ApplicationRegistrationQueryModel {
+                var records = await service.QueryApplicationsAsync(new ApplicationRegistrationQueryModel {
                     ApplicationType = ApplicationType.DiscoveryServer
-                }, null).Result;
+                }, null);
 
                 // Assert
                 Assert.Equal(apps.Count(x => x.ApplicationType == ApplicationType.DiscoveryServer), records.Items.Count);
@@ -154,14 +155,14 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
         }
 
         [Fact]
-        public void QueryApplicationsBySupervisorId() {
+        public async Task QueryApplicationsBySupervisorIdAsync() {
             using (var mock = CreateMock(out var hubName, out var discovererId, out var apps)) {
                 IApplicationRegistry service = mock.Create<ApplicationRegistry>();
 
                 // Run
-                var records = service.QueryApplicationsAsync(new ApplicationRegistrationQueryModel {
+                var records = await service.QueryApplicationsAsync(new ApplicationRegistrationQueryModel {
                     DiscovererId = discovererId
-                }, null).Result;
+                }, null);
 
                 // Assert
                 Assert.True(apps.IsSameAs(records.Items));
@@ -170,14 +171,14 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
 
 
         [Fact]
-        public void QueryApplicationsByClientApplicationType() {
+        public async Task QueryApplicationsByClientApplicationTypeAsync() {
             using (var mock = CreateMock(out var hubName, out var discovererId, out var apps)) {
                 IApplicationRegistry service = mock.Create<ApplicationRegistry>();
 
                 // Run
-                var records = service.QueryApplicationsAsync(new ApplicationRegistrationQueryModel {
+                var records = await service.QueryApplicationsAsync(new ApplicationRegistrationQueryModel {
                     ApplicationType = ApplicationType.Client
-                }, null).Result;
+                }, null);
 
                 // Assert
                 Assert.Equal(apps.Count(x =>
@@ -187,14 +188,14 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
         }
 
         [Fact]
-        public void QueryApplicationsByApplicationNameSameCase() {
+        public async Task QueryApplicationsByApplicationNameSameCaseAsync() {
             using (var mock = CreateMock(out var hubName, out var discovererId, out var apps)) {
                 IApplicationRegistry service = mock.Create<ApplicationRegistry>();
 
                 // Run
-                var records = service.QueryApplicationsAsync(new ApplicationRegistrationQueryModel {
+                var records = await service.QueryApplicationsAsync(new ApplicationRegistrationQueryModel {
                     ApplicationName = apps.First().ApplicationName
-                }, null).Result;
+                }, null);
 
                 // Assert
                 Assert.True(records.Items.Count >= 1);
@@ -203,14 +204,14 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
         }
 
         [Fact]
-        public void QueryApplicationsByApplicationNameDifferentCase() {
+        public async Task QueryApplicationsByApplicationNameDifferentCaseAsync() {
             using (var mock = CreateMock(out var hubName, out var discovererId, out var apps)) {
                 IApplicationRegistry service = mock.Create<ApplicationRegistry>();
 
                 // Run
-                var records = service.QueryApplicationsAsync(new ApplicationRegistrationQueryModel {
+                var records = await service.QueryApplicationsAsync(new ApplicationRegistrationQueryModel {
                     ApplicationName = apps.First().ApplicationName.ToUpperInvariant()
-                }, null).Result;
+                }, null);
 
                 // Assert
                 Assert.True(records.Items.Count == 0);
@@ -218,14 +219,14 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
         }
 
         [Fact]
-        public void QueryApplicationsByApplicationUriDifferentCase() {
+        public async Task QueryApplicationsByApplicationUriDifferentCaseAsync() {
             using (var mock = CreateMock(out var hubName, out var discovererId, out var apps)) {
                 IApplicationRegistry service = mock.Create<ApplicationRegistry>();
 
                 // Run
-                var records = service.QueryApplicationsAsync(new ApplicationRegistrationQueryModel {
+                var records = await service.QueryApplicationsAsync(new ApplicationRegistrationQueryModel {
                     ApplicationUri = apps.First().ApplicationUri.ToUpperInvariant()
-                }, null).Result;
+                }, null);
 
                 // Assert
                 Assert.True(records.Items.Count >= 1);
@@ -237,18 +238,18 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
         /// Test to register all applications in the test set.
         /// </summary>
         [Fact]
-        public void RegisterApplication() {
+        public async Task RegisterApplicationAsync() {
             using (var mock = CreateMock(out var hubName, out var discovererId, out var apps, true)) {
                 IApplicationRegistry service = mock.Create<ApplicationRegistry>();
 
                 // Run
                 foreach (var app in apps) {
-                    var record = service.RegisterApplicationAsync(
-                        app.ToRegistrationRequest()).Result;
+                    var record = await service.RegisterApplicationAsync(
+                        app.ToRegistrationRequest());
                 }
 
                 // Assert
-                var records = service.ListApplicationsAsync(null, null).Result;
+                var records = await service.ListApplicationsAsync(null, null);
 
                 Assert.Equal(apps.Count, records.Items.Count);
                 Assert.True(apps.IsSameAs(records.Items));
@@ -259,17 +260,18 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
         /// Test to register all applications in the test set.
         /// </summary>
         [Fact]
-        public void UnregisterApplications() {
+        public async Task UnregisterApplicationsAsync() {
             using (var mock = CreateMock(out var hubName, out var discovererId, out var apps)) {
                 IApplicationRegistry service = mock.Create<ApplicationRegistry>();
 
                 // Run
-                foreach (var app in apps) {
-                    service.UnregisterApplicationAsync(app.ApplicationId, null).Wait();
+                var delete = await service.ListAllApplicationsAsync();
+                foreach (var app in delete) {
+                    await service.UnregisterApplicationAsync(app.ApplicationId, app.GenerationId);
                 }
 
                 // Assert
-                var records = service.ListApplicationsAsync(null, null).Result;
+                var records = await service.ListApplicationsAsync(null, null);
 
                 Assert.Empty(records.Items);
                 Assert.Null(records.ContinuationToken);
@@ -299,21 +301,24 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
 
         public static AutoMock CreateMock(out string hub, out string disc, out List<ApplicationInfoModel> apps,
             bool noAdd = false) {
-            var fix = new Fixture();
-            fix.Customizations.Add(new TypeRelay(typeof(VariantValue), typeof(VariantValue)));
-            fix.Behaviors.OfType<ThrowingRecursionBehavior>().ToList()
-                .ForEach(b => fix.Behaviors.Remove(b));
-            fix.Behaviors.Add(new OmitOnRecursionBehavior());
-            var hubx = hub = fix.Create<string>();
-            var discx = disc = HubResource.Format(hubx, fix.Create<string>(), null);
-            apps = fix
+            var fixture = new Fixture();
+            fixture.Customizations.Add(new TypeRelay(typeof(IReadOnlySet<>), typeof(HashSet<>)));
+            fixture.Customizations.Add(new TypeRelay(typeof(IReadOnlyList<>), typeof(List<>)));
+            fixture.Customizations.Add(new TypeRelay(typeof(IReadOnlyDictionary<,>), typeof(Dictionary<,>)));
+            fixture.Customizations.Add(new TypeRelay(typeof(IReadOnlyCollection<>), typeof(List<>)));
+            fixture.Customizations.Add(new TypeRelay(typeof(VariantValue), typeof(VariantValue)));
+            fixture.Behaviors.OfType<ThrowingRecursionBehavior>().ToList()
+                .ForEach(b => fixture.Behaviors.Remove(b));
+            fixture.Behaviors.Add(new OmitOnRecursionBehavior());
+            var hubx = hub = fixture.Create<string>();
+            var discx = disc = HubResource.Format(hubx, fixture.Create<string>(), null);
+            apps = fixture
                 .Build<ApplicationInfoModel>()
                 .Without(x => x.NotSeenSince)
                 .With(x => x.DiscovererId, discx)
                 .CreateMany(10)
                 .ToList();
-            apps.ForEach(x => x.ApplicationId = ApplicationInfoModelEx.CreateApplicationId(
-                 discx, x.ApplicationUri, x.ApplicationType));
+            apps.ForEach(x => x.SetApplicationId());
 
             var mock = AutoMock.GetLoose(builder => {
                 builder.RegisterType<NewtonSoftJsonConverters>().As<IJsonSerializerConverterProvider>();

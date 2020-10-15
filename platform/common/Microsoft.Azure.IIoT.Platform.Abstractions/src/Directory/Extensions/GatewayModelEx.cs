@@ -23,13 +23,7 @@ namespace Microsoft.Azure.IIoT.Platform.Directory.Models {
             if (model == that) {
                 return true;
             }
-            if (model == null || that == null) {
-                return false;
-            }
-            if (model.Count() != that.Count()) {
-                return false;
-            }
-            return model.All(a => that.Any(b => b.IsSameAs(a)));
+            return model.SetEqualsSafe(that, (x, y) => x.IsSameAs(y));
         }
 
         /// <summary>

@@ -438,7 +438,6 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
                 registry
                     .Setup(e => e.GetEndpointAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
                     .Returns(Task.FromResult(new EndpointInfoModel {
-                            EndpointUrl = "fakeurl",
                             Id = "endpoint1",
                             Endpoint = new EndpointModel {
                                 Url = "fakeurl"

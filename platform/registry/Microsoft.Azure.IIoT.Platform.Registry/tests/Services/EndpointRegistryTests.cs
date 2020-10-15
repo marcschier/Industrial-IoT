@@ -10,8 +10,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
     using Microsoft.Azure.IIoT.Storage.Default;
     using Microsoft.Azure.IIoT.Storage;
     using Microsoft.Azure.IIoT.Exceptions;
-    using Microsoft.Azure.IIoT.Hub;
-    using Microsoft.Azure.IIoT.Hub.Models;
     using Microsoft.Azure.IIoT.Serializers.NewtonSoft;
     using Microsoft.Azure.IIoT.Serializers;
     using Autofac.Extras.Moq;
@@ -22,11 +20,12 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
     using System.Linq;
     using Xunit;
     using Autofac;
+    using System.Threading.Tasks;
 
     public class EndpointRegistryTests {
 
         [Fact]
-        public void GetTwinThatDoesNotExist() {
+        public void GetTwinThatDoesNotExistThrowsResourceNotFoundException() {
             using (var mock = CreateMock(out var endpoints)) {
                 IEndpointRegistry service = mock.Create<EndpointRegistry>();
 
@@ -41,17 +40,14 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
         }
 
         [Fact]
-        public void GetTwinThatExists() {
+        public async Task GetTwinThatExistsAsync() {
             using (var mock = CreateMock(out var endpoints)) {
                 var first = endpoints.First();
-                var id = EndpointInfoModelEx.CreateEndpointId(first.ApplicationId,
-                    first.EndpointUrl, first.Endpoint.SecurityMode,
-                    first.Endpoint.SecurityPolicy);
 
                 IEndpointRegistry service = mock.Create<EndpointRegistry>();
 
                 // Run
-                var result = service.GetEndpointAsync(id).Result;
+                var result = await service.GetEndpointAsync(first.Id);
 
                 // Assert
                 Assert.True(result.IsSameAs(endpoints.First()));
@@ -59,12 +55,12 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
         }
 
         [Fact]
-        public void ListAllTwins() {
+        public async Task ListAllEndpointsAsync() {
             using (var mock = CreateMock(out var endpoints)) {
                 IEndpointRegistry service = mock.Create<EndpointRegistry>();
 
                 // Run
-                var records = service.ListEndpointsAsync(null, null).Result;
+                var records = await service.ListEndpointsAsync(null, null);
 
                 // Assert
                 Assert.True(endpoints.IsSameAs(records.Items));
@@ -72,12 +68,12 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
         }
 
         [Fact]
-        public void ListAllTwinsUsingQuery() {
+        public async Task ListAllEndpointsUsingQueryAsync() {
             using (var mock = CreateMock(out var endpoints)) {
                 IEndpointRegistry service = mock.Create<EndpointRegistry>();
 
                 // Run
-                var records = service.QueryEndpointsAsync(null, null).Result;
+                var records = await service.QueryEndpointsAsync(null, null);
 
                 // Assert
                 Assert.True(endpoints.IsSameAs(records.Items));
@@ -85,15 +81,15 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
         }
 
         [Fact]
-        public void QueryTwinsBySignSecurityMode() {
+        public async Task QueryEndpointsBySignSecurityModeAsync() {
             using (var mock = CreateMock(out var endpoints)) {
                 var count = endpoints.Count(x => x.Endpoint.SecurityMode == SecurityMode.Sign);
                 IEndpointRegistry service = mock.Create<EndpointRegistry>();
 
                 // Run
-                var records = service.QueryEndpointsAsync(new EndpointInfoQueryModel {
+                var records = await service.QueryEndpointsAsync(new EndpointInfoQueryModel {
                     SecurityMode = SecurityMode.Sign
-                }, null).Result;
+                }, null);
 
                 // Assert
                 Assert.Equal(count, records.Items.Count);
@@ -101,15 +97,15 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
         }
 
         [Fact]
-        public void QueryTwinsByActivation() {
+        public async Task QueryEndpointsByActivationAsync() {
             using (var mock = CreateMock(out var endpoints)) {
                 var count = endpoints.Count(x => x.IsActivated());
                 IEndpointRegistry service = mock.Create<EndpointRegistry>();
 
                 // Run
-                var records = service.QueryEndpointsAsync(new EndpointInfoQueryModel {
-                    Activated = true
-                }, null).Result;
+                var records = await service.QueryEndpointsAsync(new EndpointInfoQueryModel {
+                    ActivationState = EntityActivationState.Activated
+                }, null);
 
                 // Assert
                 Assert.Equal(count, records.Items.Count);
@@ -117,15 +113,15 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
         }
 
         [Fact]
-        public void QueryTwinsByDeactivation() {
+        public async Task QueryEndpointsByDeactivationAsync() {
             using (var mock = CreateMock(out var endpoints)) {
                 var count = endpoints.Count(x => !x.IsActivated());
                 IEndpointRegistry service = mock.Create<EndpointRegistry>();
 
                 // Run
-                var records = service.QueryEndpointsAsync(new EndpointInfoQueryModel {
-                    Activated = false
-                }, null).Result;
+                var records = await service.QueryEndpointsAsync(new EndpointInfoQueryModel {
+                    ActivationState = EntityActivationState.Deactivated
+                }, null);
 
                 // Assert
                 Assert.Equal(count, records.Items.Count);
@@ -133,15 +129,15 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
         }
 
         [Fact]
-        public void QueryTwinsByConnectivity() {
+        public async Task QueryEndpointsByConnectivityAsync() {
             using (var mock = CreateMock(out var endpoints)) {
-                var count = endpoints.Count(x => x.IsConnected());
+                var count = endpoints.Count(x => x.EndpointState == EndpointConnectivityState.Ready);
                 IEndpointRegistry service = mock.Create<EndpointRegistry>();
 
                 // Run
-                var records = service.QueryEndpointsAsync(new EndpointInfoQueryModel {
-                    Connected = true
-                }, null).Result;
+                var records = await service.QueryEndpointsAsync(new EndpointInfoQueryModel {
+                    EndpointState = EndpointConnectivityState.Ready
+                }, null);
 
                 // Assert
                 Assert.Equal(count, records.Items.Count);
@@ -149,15 +145,15 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
         }
 
         [Fact]
-        public void QueryTwinsByDisconnectivity() {
+        public async Task QueryEndpointsByDisconnectivityAsync() {
             using (var mock = CreateMock(out var endpoints)) {
-                var count = endpoints.Count(x => !x.IsConnected());
+                var count = endpoints.Count(x => x.EndpointState == EndpointConnectivityState.Disconnected);
                 IEndpointRegistry service = mock.Create<EndpointRegistry>();
 
                 // Run
-                var records = service.QueryEndpointsAsync(new EndpointInfoQueryModel {
-                    Connected = false
-                }, null).Result;
+                var records = await service.QueryEndpointsAsync(new EndpointInfoQueryModel {
+                    EndpointState = EndpointConnectivityState.Disconnected
+                }, null);
 
                 // Assert
                 Assert.Equal(count, records.Items.Count);
@@ -165,14 +161,14 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
         }
 
         [Fact]
-        public void QueryTwinsBySecurityPolicySameCase() {
+        public async Task QueryEndpointsBySecurityPolicySameCaseAsync() {
             using (var mock = CreateMock(out var endpoints)) {
                 IEndpointRegistry service = mock.Create<EndpointRegistry>();
 
                 // Run
-                var records = service.QueryEndpointsAsync(new EndpointInfoQueryModel {
+                var records = await service.QueryEndpointsAsync(new EndpointInfoQueryModel {
                     SecurityPolicy = endpoints.First().Endpoint.SecurityPolicy
-                }, null).Result;
+                }, null);
 
                 // Assert
                 Assert.True(records.Items.Count >= 1);
@@ -181,14 +177,14 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
         }
 
         [Fact]
-        public void QueryTwinsBySecurityPolicyDifferentCase() {
+        public async Task QueryEndpointsBySecurityPolicyDifferentCaseAsync() {
             using (var mock = CreateMock(out var endpoints)) {
                 IEndpointRegistry service = mock.Create<EndpointRegistry>();
 
                 // Run
-                var records = service.QueryEndpointsAsync(new EndpointInfoQueryModel {
+                var records = await service.QueryEndpointsAsync(new EndpointInfoQueryModel {
                     SecurityPolicy = endpoints.First().Endpoint.SecurityPolicy.ToUpperInvariant()
-                }, null).Result;
+                }, null);
 
                 // Assert
                 Assert.True(records.Items.Count == 0);
@@ -196,14 +192,14 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
         }
 
         [Fact]
-        public void QueryTwinsByEndpointUrlDifferentCase() {
+        public async Task QueryEndpointsByEndpointUrlDifferentCaseAsync() {
             using (var mock = CreateMock(out var endpoints)) {
                 IEndpointRegistry service = mock.Create<EndpointRegistry>();
 
                 // Run
-                var records = service.QueryEndpointsAsync(new EndpointInfoQueryModel {
+                var records = await service.QueryEndpointsAsync(new EndpointInfoQueryModel {
                     Url = endpoints.First().Endpoint.Url.ToUpperInvariant()
-                }, null).Result;
+                }, null);
 
                 // Assert
                 Assert.True(records.Items.Count >= 1);
@@ -211,20 +207,26 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
             }
         }
         public static AutoMock CreateMock(out List<EndpointInfoModel> endpoints, bool noAdd = false) {
-            var fix = new Fixture();
-            fix.Customizations.Add(new TypeRelay(typeof(VariantValue), typeof(VariantValue)));
-            fix.Behaviors.OfType<ThrowingRecursionBehavior>().ToList()
-                .ForEach(b => fix.Behaviors.Remove(b));
-            fix.Behaviors.Add(new OmitOnRecursionBehavior());
+            var fixture = new Fixture();
+            fixture.Customizations.Add(new TypeRelay(typeof(IReadOnlySet<>), typeof(HashSet<>)));
+            fixture.Customizations.Add(new TypeRelay(typeof(IReadOnlyList<>), typeof(List<>)));
+            fixture.Customizations.Add(new TypeRelay(typeof(IReadOnlyDictionary<,>), typeof(Dictionary<,>)));
+            fixture.Customizations.Add(new TypeRelay(typeof(IReadOnlyCollection<>), typeof(List<>)));
+            fixture.Customizations.Add(new TypeRelay(typeof(VariantValue), typeof(VariantValue)));
+            fixture.Behaviors.OfType<ThrowingRecursionBehavior>().ToList()
+                .ForEach(b => fixture.Behaviors.Remove(b));
+            fixture.Behaviors.Add(new OmitOnRecursionBehavior());
 
-            endpoints = fix
+            endpoints = fixture
                 .Build<EndpointInfoModel>()
-                .Without(x => x)
-                .Do(x => x = fix
+                .Do(x => x = fixture
                     .Build<EndpointInfoModel>()
                     .Create())
+                .Without(x => x.NotSeenSince)
                 .CreateMany(10)
                 .ToList();
+
+            endpoints.ForEach(x => x.SetEndpointId());
 
             var mock = AutoMock.GetLoose(builder => {
                 builder.RegisterType<NewtonSoftJsonConverters>().As<IJsonSerializerConverterProvider>();

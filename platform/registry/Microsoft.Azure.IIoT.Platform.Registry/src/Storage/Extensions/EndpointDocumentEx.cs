@@ -19,7 +19,8 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
         /// <param name="document"></param>
         /// <param name="etag"></param>
         /// <returns></returns>
-        public static EndpointInfoModel ToServiceModel(this EndpointDocument document, string etag) {
+        public static EndpointInfoModel ToServiceModel(this EndpointDocument document,
+            string etag) {
             if (document == null) {
                 return null;
             }
@@ -31,12 +32,8 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
                     null : document.DiscovererId,
                 AuthenticationMethods = document.AuthenticationMethods?.ToList(),
                 SecurityLevel = document.SecurityLevel,
-                EndpointUrl = string.IsNullOrEmpty(document.EndpointRegistrationUrl) ?
-                    (string.IsNullOrEmpty(document.EndpointUrl) ?
-                        document.EndpointUrlLC : document.EndpointUrl) : document.EndpointRegistrationUrl,
                 Endpoint = new EndpointModel {
-                    Url = string.IsNullOrEmpty(document.EndpointUrl) ?
-                        document.EndpointUrlLC : document.EndpointUrl,
+                    Url = document.EndpointUrl,
                     AlternativeUrls = document.AlternativeUrls?.ToHashSetSafe(),
                     SecurityMode = document.SecurityMode == SecurityMode.Best ?
                         null : document.SecurityMode,
@@ -45,11 +42,10 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
                     Certificate = document.Thumbprint
                 },
                 ActivationState = document.ActivationState,
+                Updated = ToOperationModel(document.UpdateAuthorityId, document.UpdateTime),
+                Created = ToOperationModel(document.CreateAuthorityId, document.CreateTime),
                 NotSeenSince = document.NotSeenSince,
-                EndpointState = document.ActivationState == EntityActivationState.Activated ?
-                    (document.State == EndpointConnectivityState.Disconnected ?
-                        EndpointConnectivityState.Connecting : document.State) :
-                            EndpointConnectivityState.Disconnected
+                EndpointState = document.EndpointState
             };
         }
 
@@ -57,30 +53,46 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
         /// Convert into document object
         /// </summary>
         /// <param name="model"></param>
-        /// <param name="disabled"></param>
-        /// 
         /// <returns></returns>
-        public static EndpointDocument ToDocumentModel(this EndpointInfoModel model,
-            bool? disabled = null) {
+        public static EndpointDocument ToDocumentModel(this EndpointInfoModel model) {
             if (model == null) {
                 throw new ArgumentNullException(nameof(model));
             }
             return new EndpointDocument {
-                IsDisabled = disabled,
+                Id = model.Id,
+                EndpointState = model.EndpointState ?? EndpointConnectivityState.Disconnected,
                 NotSeenSince = model.NotSeenSince,
                 ApplicationId = model.ApplicationId,
                 DiscovererId = model.DiscovererId,
                 SecurityLevel = model.SecurityLevel,
-                EndpointRegistrationUrl = model.EndpointUrl ??
-                    model.Endpoint.Url,
-                EndpointUrl = model.Endpoint.Url,
+                EndpointUrl = model.Endpoint.Url ?? string.Empty,
                 AlternativeUrls = model.Endpoint.AlternativeUrls.ToHashSetSafe(),
                 AuthenticationMethods = model.AuthenticationMethods?.ToList(),
-                SecurityMode = model.Endpoint.SecurityMode ??
-                    SecurityMode.Best,
-                SecurityPolicy = model.Endpoint.SecurityPolicy,
-                Thumbprint = model.Endpoint.Certificate,
-                ActivationState = model.ActivationState
+                SecurityMode = model.Endpoint.SecurityMode ?? SecurityMode.Best,
+                SecurityPolicy = model.Endpoint.SecurityPolicy ?? string.Empty,
+                Thumbprint = model.Endpoint.Certificate ?? string.Empty,
+                ActivationState = model.ActivationState ?? EntityActivationState.Deactivated,
+                CreateAuthorityId = model.Created?.AuthorityId,
+                CreateTime = model.Created?.Time ?? DateTime.UtcNow,
+                UpdateAuthorityId = model.Updated?.AuthorityId,
+                UpdateTime = model.Updated?.Time ?? DateTime.UtcNow,
+            };
+        }
+
+        /// <summary>
+        /// Create operation model
+        /// </summary>
+        /// <param name="authorityId"></param>
+        /// <param name="time"></param>
+        /// <returns></returns>
+        private static RegistryOperationContextModel ToOperationModel(
+            string authorityId, DateTime? time) {
+            if (string.IsNullOrEmpty(authorityId) && time == null) {
+                return null;
+            }
+            return new RegistryOperationContextModel {
+                AuthorityId = authorityId,
+                Time = time ?? DateTime.MinValue
             };
         }
     }

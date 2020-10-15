@@ -24,13 +24,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Models {
         public string Id { get; set; }
 
         /// <summary>
-        /// Original endpoint url of the endpoint
-        /// </summary>
-        [DataMember(Name = "endpointUrl", Order = 1,
-            EmitDefaultValue = false)]
-        public string EndpointUrl { get; set; }
-
-        /// <summary>
         /// Discoverer that registered the endpoint
         /// </summary>
         [DataMember(Name = "discovererId", Order = 4,
@@ -87,9 +80,23 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Models {
         public DateTime? NotSeenSince { get; set; }
 
         /// <summary>
+        /// Created
+        /// </summary>
+        [DataMember(Name = "created", Order = 12,
+            EmitDefaultValue = false)]
+        public RegistryOperationApiModel Created { get; set; }
+
+        /// <summary>
+        /// Updated
+        /// </summary>
+        [DataMember(Name = "updated", Order = 13,
+            EmitDefaultValue = false)]
+        public RegistryOperationApiModel Updated { get; set; }
+
+        /// <summary>
         /// Generation id
         /// </summary>
-        [DataMember(Name = "generationId", Order = 12)]
+        [DataMember(Name = "generationId", Order = 14)]
         [Required]
         public string GenerationId { get; set; }
     }

@@ -27,35 +27,25 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
             new StructuralComparer();
 
         /// <summary>
-        /// Create unique application id
+        /// Set unique application id
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
-        public static string CreateApplicationId(ApplicationInfoModel model) {
+        public static ApplicationInfoModel SetApplicationId(this ApplicationInfoModel model) {
             if (model == null) {
-                throw new ArgumentNullException(nameof(model));
-            }
-            return CreateApplicationId(model.DiscovererId, model.ApplicationUri,
-                model.ApplicationType);
-        }
-
-        /// <summary>
-        /// Create unique application id
-        /// </summary>
-        /// <param name="discovererId"></param>
-        /// <param name="applicationUri"></param>
-        /// <param name="applicationType"></param>
-        /// <returns></returns>
-        public static string CreateApplicationId(string discovererId,
-            string applicationUri, ApplicationType? applicationType) {
-            if (string.IsNullOrEmpty(applicationUri)) {
                 return null;
             }
+            var applicationUri = model.ApplicationUri;
+            if (string.IsNullOrEmpty(applicationUri)) {
+                throw new ArgumentException("Missing application uri", nameof(model));
+            }
+            var discovererId = model.DiscovererId;
+            var applicationType = model.ApplicationType;
             applicationUri = applicationUri.ToUpperInvariant();
-            var type = applicationType ?? ApplicationType.Server;
-            var id = $"{discovererId ?? ""}-{type}-{applicationUri}";
+            var id = $"{discovererId ?? ""}-{applicationType}-{applicationUri}";
             var prefix = applicationType == ApplicationType.Client ? "uac" : "uas";
-            return prefix + id.ToSha256Hash();
+            model.ApplicationId = prefix + id.ToSha256Hash();
+            return model;
         }
 
         /// <summary>
@@ -69,14 +59,22 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
             if (model == that) {
                 return true;
             }
-            if (model == null || that == null) {
-                return false;
-            }
-            if (model.Count() != that.Count()) {
-                return false;
-            }
-            return model.All(a => that.Any(b => b.IsSameAs(a)));
+            return model.SetEqualsSafe(that, (x, y) => x.IsSameAs(y));
         }
+
+        /// <summary>
+        /// Is disabled
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public static bool IsDisabled(this ApplicationInfoModel model) {
+            if (model == null) {
+                return true;
+            }
+            return
+                model.NotSeenSince != null;
+        }
+
 
         /// <summary>
         /// Equality comparison
@@ -93,6 +91,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
                 return false;
             }
             return
+                that.IsDisabled() == model.IsDisabled() &&
                 that.ApplicationUri.EqualsIgnoreCase(model.ApplicationUri) &&
                 that.ApplicationType == model.ApplicationType;
         }
@@ -243,7 +242,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
             application.ProductUri = model.ProductUri;
             application.DiscovererId = model.DiscovererId;
             application.GatewayServerUri = model.GatewayServerUri;
-            application.Created = model.Created;
             application.Updated = model.Updated;
             application.Locale = model.Locale;
             return application;

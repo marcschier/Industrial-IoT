@@ -30,7 +30,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Models {
             endpoint.NotSeenSince = update.NotSeenSince;
             endpoint.AuthenticationMethods = update.AuthenticationMethods;
             endpoint.DiscovererId = update.DiscovererId;
-            endpoint.EndpointUrl = update.EndpointUrl;
             endpoint.Id = update.Id;
             endpoint.SecurityLevel = update.SecurityLevel;
             endpoint.Endpoint = (update.Endpoint ?? new EndpointApiModel())

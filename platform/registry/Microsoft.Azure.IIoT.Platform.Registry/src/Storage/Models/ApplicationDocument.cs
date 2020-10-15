@@ -21,20 +21,19 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
         /// Application document id
         /// </summary>
         [DataMember(Name = "id")]
-        public string Id => ApplicationInfoModelEx.CreateApplicationId(
-             DiscovererId, ApplicationUri, ApplicationType);
+        public string Id { get; set; }
+
+        /// <summary>
+        /// Application type
+        /// </summary>
+        [DataMember]
+        public ApplicationType ApplicationType { get; set; }
 
         /// <summary>
         /// Class type
         /// </summary>
         [DataMember]
         public string ClassType { get; set; } = IdentityType.Application;
-
-        /// <summary>
-        /// Whether document is enabled or not
-        /// </summary>
-        [DataMember]
-        public bool? IsDisabled { get; set; }
 
         /// <summary>
         /// Last time application was seen
@@ -53,12 +52,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
         /// </summary>
         [DataMember]
         public string ApplicationUri { get; set; }
-
-        /// <summary>
-        /// Upper case application url
-        /// </summary>
-        [DataMember]
-        public string ApplicationUriUC => ApplicationUri?.ToUpperInvariant();
 
         /// <summary>
         /// Application name
@@ -97,12 +90,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
         public string ProductUri { get; set; }
 
         /// <summary>
-        /// Application type
-        /// </summary>
-        [DataMember]
-        public ApplicationType? ApplicationType { get; set; }
-
-        /// <summary>
         /// Returns discovery urls of the application
         /// </summary>
         [DataMember]
@@ -124,7 +111,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
         /// Create time
         /// </summary>
         [DataMember]
-        public DateTime? CreateTime { get; set; }
+        public DateTime CreateTime { get; set; }
 
         /// <summary>
         /// Authority
@@ -136,13 +123,35 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
         /// Update time
         /// </summary>
         [DataMember]
-        public DateTime? UpdateTime { get; set; }
+        public DateTime UpdateTime { get; set; }
 
         /// <summary>
         /// Authority
         /// </summary>
         [DataMember]
         public string UpdateAuthorityId { get; set; }
+
+        /// <summary>
+        /// Application is server
+        /// </summary>
+        [DataMember]
+        public bool IsServer =>
+            ApplicationType != ApplicationType.Client;
+
+        /// <summary>
+        /// Application is client
+        /// </summary>
+        [DataMember]
+        public bool IsClient =>
+            ApplicationType == ApplicationType.Client ||
+            ApplicationType == ApplicationType.ClientAndServer;
+
+        /// <summary>
+        /// Application is discovery server
+        /// </summary>
+        [DataMember]
+        public bool IsDiscovery =>
+            ApplicationType == ApplicationType.DiscoveryServer;
 
         /// <inheritdoc/>
         public override bool Equals(object obj) {
@@ -155,9 +164,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
             if (ClassType != document.ClassType) {
                 return false;
             }
-            if ((IsDisabled ?? false) != (document.IsDisabled ?? false)) {
-                return false;
-            }
             if (NotSeenSince != document.NotSeenSince) {
                 return false;
             }
@@ -167,7 +173,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
             if (ApplicationType != document.ApplicationType) {
                 return false;
             }
-            if (ApplicationUriUC != document.ApplicationUriUC) {
+            if (ApplicationUri != document.ApplicationUri) {
                 return false;
             }
             if (DiscoveryProfileUri != document.DiscoveryProfileUri) {
@@ -197,8 +203,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
             if (ApplicationName != document.ApplicationName) {
                 return false;
             }
-            if (!LocalizedNames.DictionaryEqualsSafe(
-                document.LocalizedNames)) {
+            if (!LocalizedNames.DictionaryEqualsSafe(document.LocalizedNames)) {
                 return false;
             }
             if (!Capabilities.SetEqualsSafe(document.Capabilities)) {
@@ -221,17 +226,19 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
         /// <inheritdoc/>
         public override int GetHashCode() {
             var hash = new HashCode();
-            hash.Add(base.GetHashCode());
             hash.Add(Id);
             hash.Add(ClassType);
             hash.Add(NotSeenSince);
-            hash.Add(IsDisabled);
             hash.Add(DiscovererId);
             hash.Add(ApplicationType);
             hash.Add(ProductUri);
             hash.Add(DiscoveryProfileUri);
             hash.Add(GatewayServerUri);
             hash.Add(ApplicationName);
+            hash.Add(UpdateTime);
+            hash.Add(UpdateAuthorityId);
+            hash.Add(CreateTime);
+            hash.Add(CreateAuthorityId);
             return hash.ToHashCode();
         }
     }

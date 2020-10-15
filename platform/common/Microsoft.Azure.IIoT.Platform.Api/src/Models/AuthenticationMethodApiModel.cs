@@ -26,7 +26,7 @@ namespace Microsoft.Azure.IIoT.Platform.Core.Api.Models {
         /// </summary>
         [DataMember(Name = "credentialType", Order = 1,
             EmitDefaultValue = false)]
-        public CredentialType? CredentialType { get; set; }
+        public CredentialType CredentialType { get; set; }
 
         /// <summary>
         /// Security policy to use when passing credential.

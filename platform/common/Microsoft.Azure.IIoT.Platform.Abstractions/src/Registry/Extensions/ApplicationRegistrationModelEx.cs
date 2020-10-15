@@ -7,7 +7,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
     using Microsoft.Azure.IIoT.Platform.Core.Models;
     using System.Collections.Generic;
     using System.Linq;
-    using System;
 
     /// <summary>
     /// Service model extensions for discovery service
@@ -25,13 +24,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
             if (model == that) {
                 return true;
             }
-            if (model == null || that == null) {
-                return false;
-            }
-            if (model.Count() != that.Count()) {
-                return false;
-            }
-            return model.All(a => that.Any(b => b.IsSameAs(a)));
+            return model.SetEqualsSafe(that, (x, y) => x.IsSameAs(y));
         }
 
         /// <summary>
@@ -48,9 +41,13 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
             if (model == null || that == null) {
                 return false;
             }
-            return
-                that.Endpoints.IsSameAs(model.Endpoints) &&
-                that.Application.IsSameAs(model.Application);
+            if (!that.Endpoints.IsSameAs(model.Endpoints)) {
+                return false;
+            }
+            if (!that.Application.IsSameAs(model.Application)) {
+                return false;
+            }
+            return true;
         }
 
         /// <summary>

@@ -36,7 +36,7 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
 
                 await queue.SendAsync(target, data).ConfigureAwait(false);
 
-                var result = await tcs.Task.With1MinuteTimeout().ConfigureAwait(false);
+                var result = await tcs.Task.With2MinuteTimeout().ConfigureAwait(false);
                 Assert.True(data.SequenceEqualsSafe(result.Data));
                 Assert.Null(result.DeviceId);
                 Assert.Null(result.ModuleId);
@@ -62,7 +62,7 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
 
                 await queue.SendAsync(target, data, properties).ConfigureAwait(false);
 
-                var result = await tcs.Task.With1MinuteTimeout().ConfigureAwait(false);
+                var result = await tcs.Task.With2MinuteTimeout().ConfigureAwait(false);
                 Assert.True(data.SequenceEqualsSafe(result.Data));
                 Assert.Null(result.DeviceId);
                 Assert.Null(result.ModuleId);
@@ -96,7 +96,7 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
                 await queue.SendAsync(target, fix.CreateMany<byte>().ToArray(), properties).ConfigureAwait(false);
                 await queue.SendAsync(target, fix.CreateMany<byte>().ToArray(), properties).ConfigureAwait(false);
 
-                var result = await tcs.Task.With1MinuteTimeout().ConfigureAwait(false);
+                var result = await tcs.Task.With2MinuteTimeout().ConfigureAwait(false);
                 Assert.True(data.SequenceEqualsSafe(result.Data));
                 Assert.Null(result.DeviceId);
                 Assert.Null(result.ModuleId);
@@ -166,7 +166,7 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
                     }
                 });
 
-                var result = await tcs.Task.With1MinuteTimeout().ConfigureAwait(false);
+                var result = await tcs.Task.With2MinuteTimeout().ConfigureAwait(false);
                 Assert.Equal(expected, await actual.Task.ConfigureAwait(false));
                 Assert.True(data.SequenceEqualsSafe(result.Data));
                 Assert.Null(result.DeviceId);
@@ -202,7 +202,7 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
                     }
                 }, properties);
 
-                var result = await tcs.Task.With1MinuteTimeout().ConfigureAwait(false);
+                var result = await tcs.Task.With2MinuteTimeout().ConfigureAwait(false);
                 Assert.Equal(expected, await actual.Task.ConfigureAwait(false));
                 Assert.True(data.SequenceEqualsSafe(result.Data));
                 Assert.Null(result.DeviceId);
@@ -245,7 +245,7 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
                 }, properties);
                 queue.Send(target, fix.CreateMany<byte>().ToArray(), 5, (t, e) => { }, properties);
 
-                var result = await tcs.Task.With1MinuteTimeout().ConfigureAwait(false);
+                var result = await tcs.Task.With2MinuteTimeout().ConfigureAwait(false);
                 Assert.Equal(expected, await actual.Task.ConfigureAwait(false));
                 Assert.True(data.SequenceEqualsSafe(result.Data));
                 Assert.Null(result.DeviceId);

@@ -34,12 +34,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
         /// <summary>
         /// Whether the endpoint is activated
         /// </summary>
-        public bool? Activated { get; set; }
-
-        /// <summary>
-        /// Whether the endpoint is connected
-        /// </summary>
-        public bool? Connected { get; set; }
+        public EntityActivationState? ActivationState { get; set; }
 
         /// <summary>
         /// The last state of the the activated endpoint

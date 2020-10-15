@@ -20,11 +20,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
         public string Id { get; set; }
 
         /// <summary>
-        /// The reported endpoint url
-        /// </summary>
-        public string EndpointUrl { get; set; }
-
-        /// <summary>
         /// Discoverer that registered the endpoint
         /// </summary>
         public string DiscovererId { get; set; }
@@ -64,6 +59,11 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
         /// The last state of the endpoint
         /// </summary>
         public EndpointConnectivityState? EndpointState { get; set; }
+
+        /// <summary>
+        /// Created
+        /// </summary>
+        public RegistryOperationContextModel Created { get; set; }
 
         /// <summary>
         /// Updated

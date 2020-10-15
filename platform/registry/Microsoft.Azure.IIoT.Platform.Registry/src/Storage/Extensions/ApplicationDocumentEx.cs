@@ -18,15 +18,13 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
         /// Decode tags and property into document object
         /// </summary>
         /// <param name="model"></param>
-        /// <param name="disabled"></param>
         /// <returns></returns>
-        public static ApplicationDocument ToDocumentModel(
-            this ApplicationInfoModel model, bool? disabled = null) {
+        public static ApplicationDocument ToDocumentModel(this ApplicationInfoModel model) {
             if (model == null) {
                 throw new ArgumentNullException(nameof(model));
             }
             return new ApplicationDocument {
-                IsDisabled = disabled,
+                Id = model.ApplicationId,
                 DiscovererId = model.DiscovererId,
                 ApplicationName = model.ApplicationName,
                 Locale = model.Locale,
@@ -41,9 +39,9 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
                 Capabilities = model.Capabilities.ToHashSetSafe(),
                 DiscoveryUrls = model.DiscoveryUrls.ToHashSetSafe(),
                 CreateAuthorityId = model.Created?.AuthorityId,
-                CreateTime = model.Created?.Time,
+                CreateTime = model.Created?.Time ?? DateTime.UtcNow,
                 UpdateAuthorityId = model.Updated?.AuthorityId,
-                UpdateTime = model.Updated?.Time,
+                UpdateTime = model.Updated?.Time ?? DateTime.UtcNow,
             };
         }
 
@@ -65,9 +63,8 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
                 LocalizedNames = document.LocalizedNames.Clone(),
                 HostAddresses = document.HostAddresses.ToHashSetSafe(),
                 NotSeenSince = document.NotSeenSince,
-                ApplicationType = document.ApplicationType ?? ApplicationType.Server,
-                ApplicationUri = string.IsNullOrEmpty(document.ApplicationUri) ?
-                    document.ApplicationUriUC : document.ApplicationUri,
+                ApplicationType = document.ApplicationType,
+                ApplicationUri = document.ApplicationUri,
                 ProductUri = document.ProductUri,
                 GenerationId = etag,
                 DiscovererId = string.IsNullOrEmpty(document.DiscovererId) ?

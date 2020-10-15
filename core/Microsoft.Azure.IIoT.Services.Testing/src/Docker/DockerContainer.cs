@@ -197,7 +197,15 @@ namespace Microsoft.Azure.IIoT.Services.Docker {
             try {
                 var networks = await dockerClient.Networks.ListNetworksAsync(
                     new NetworksListParameters()).ConfigureAwait(false);
-                if (!networks.Any(n => n.Name == NetworkName)) {
+                var existing = networks.Where(n => n.Name == NetworkName).ToList();
+                if (existing.Count > 1) {
+                    // Remove ambigous networks
+                    foreach (var network in existing) {
+                        await dockerClient.Networks.DeleteNetworkAsync(network.ID);
+                    }
+                    existing.Clear();
+                }
+                if (existing.Count == 0) {
                     await dockerClient.Networks.CreateNetworkAsync(
                         new NetworksCreateParameters { Name = NetworkName }).ConfigureAwait(false);
                 }

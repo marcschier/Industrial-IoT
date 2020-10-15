@@ -10,7 +10,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
     using System;
     using Microsoft.Azure.IIoT.Hub;
     using Microsoft.Azure.IIoT.Utils;
-    using Microsoft.Azure.IIoT.Exceptions;
 
     /// <summary>
     /// Service model extensions for discovery service
@@ -26,26 +25,27 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
         /// <summary>
         /// Create unique endpoint
         /// </summary>
-        /// <param name="applicationId"></param>
-        /// <param name="url"></param>
-        /// <param name="mode"></param>
-        /// <param name="securityPolicy"></param>
+        /// <param name="model"></param>
         /// <returns></returns>
-        public static string CreateEndpointId(string applicationId, string url,
-            SecurityMode? mode, string securityPolicy) {
-            if (applicationId == null || url == null) {
+        public static EndpointInfoModel SetEndpointId(this EndpointInfoModel model) {
+            if (model == null) {
                 return null;
             }
-
-            url = url.ToLowerInvariant();
-
+            if (string.IsNullOrEmpty(model.ApplicationId)) {
+                throw new ArgumentException("Missing application id", nameof(model));
+            }
+            if (string.IsNullOrEmpty(model.Endpoint?.Url)) {
+                throw new ArgumentException("Missing Endpoint Url", nameof(model));
+            }
+            var url = model.Endpoint.Url.ToUpperInvariant();
+            var mode = model.Endpoint.SecurityMode;
             if (!mode.HasValue || mode.Value == SecurityMode.None) {
                 mode = SecurityMode.Best;
             }
-            securityPolicy = securityPolicy?.ToLowerInvariant() ?? "";
-
-            var id = $"{url}-{applicationId}-{mode}-{securityPolicy}";
-            return "uat" + id.ToSha256Hash();
+            var securityPolicy = model.Endpoint.SecurityPolicy?.ToUpperInvariant() ?? "";
+            var id = $"{url}-{model.ApplicationId}-{mode}-{securityPolicy}";
+            model.Id = kEndpointPrefix + id.ToSha256Hash();
+            return model;
         }
 
         /// <summary>
@@ -55,7 +55,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
         /// <returns></returns>
         public static bool IsEndpointId(string id) {
             var endpointId = Try.Op(() => HubResource.Parse(id, out _, out _));
-            if (endpointId == null || !endpointId.StartsWith("uat")) {
+            if (endpointId == null || !endpointId.StartsWith(kEndpointPrefix)) {
                 return false;
             }
             return endpointId[3..].IsBase16();
@@ -72,13 +72,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
             if (model == that) {
                 return true;
             }
-            if (model == null || that == null) {
-                return false;
-            }
-            if (model.Count() != that.Count()) {
-                return false;
-            }
-            return model.All(a => that.Any(b => b.IsSameAs(a)));
+            return model.SetEqualsSafe(that, (x, y) => x.IsSameAs(y));
         }
 
         /// <summary>
@@ -95,10 +89,12 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
             if (model == null || that == null) {
                 return false;
             }
-            return model.Endpoint.HasSameSecurityProperties(that.Endpoint) &&
-                model.EndpointUrl == that.EndpointUrl &&
+            return
+                model.Endpoint.HasSameSecurityProperties(that.Endpoint) &&
+                model.Endpoint?.Url == that.Endpoint?.Url &&
                 model.AuthenticationMethods.IsSameAs(that.AuthenticationMethods) &&
                 model.DiscovererId == that.DiscovererId &&
+                model.IsDisabled() == that.IsDisabled() &&
                 model.SecurityLevel == that.SecurityLevel;
         }
 
@@ -116,19 +112,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
         }
 
         /// <summary>
-        /// Is connected
-        /// </summary>
-        /// <param name="model"></param>
-        /// <returns></returns>
-        public static bool IsConnected(this EndpointInfoModel model) {
-            if (model == null) {
-                return false;
-            }
-            return
-                model.EndpointState != null;
-        }
-
-        /// <summary>
         /// Is disabled
         /// </summary>
         /// <param name="model"></param>
@@ -138,7 +121,8 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
                 return true;
             }
             return
-                model.NotSeenSince != null;
+                model.NotSeenSince != null ||
+                model.ActivationState == EntityActivationState.Deactivated;
         }
 
         /// <summary>
@@ -157,11 +141,13 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
                 ActivationState = model.ActivationState,
                 EndpointState = model.EndpointState,
                 Endpoint = model.Endpoint.Clone(),
-                EndpointUrl = model.EndpointUrl,
                 Id = model.Id,
                 AuthenticationMethods = model.AuthenticationMethods?
-                    .Select(c => c.Clone()).ToList(),
+                    .Select(c => c.Clone())
+                    .ToList(),
                 SecurityLevel = model.SecurityLevel,
+                Created = model.Created.Clone(),
+                Updated = model.Updated.Clone(),
                 DiscovererId = model.DiscovererId
             };
         }
@@ -173,17 +159,24 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
         /// <param name="model"></param>
         public static EndpointInfoModel Patch(this EndpointInfoModel endpoint,
             EndpointInfoModel model) {
+            if (endpoint == null) {
+                return model;
+            }
+            if (model == null) {
+                return endpoint;
+            }
             endpoint.ApplicationId = model.ApplicationId;
             endpoint.NotSeenSince = model.NotSeenSince;
             endpoint.ActivationState = model.ActivationState;
             endpoint.EndpointState = model.EndpointState;
             endpoint.Endpoint = model.Endpoint.Clone();
-            endpoint.EndpointUrl = model.EndpointUrl;
             endpoint.Id = model.Id;
             endpoint.AuthenticationMethods = model.AuthenticationMethods?
-                .Select(c => c.Clone()).ToList();
+                .Select(c => c.Clone())
+                .ToList();
             endpoint.SecurityLevel = model.SecurityLevel;
             endpoint.DiscovererId = model.DiscovererId;
+            endpoint.Updated = model.Updated;
             return endpoint;
         }
 
@@ -194,18 +187,24 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
 
             /// <inheritdoc />
             public bool Equals(EndpointInfoModel x, EndpointInfoModel y) {
-                if (!x.EndpointUrl.EqualsIgnoreCase(y.EndpointUrl)) {
+                if (x == y) {
+                    return true;
+                }
+                if (x == null || y == null) {
+                    return false;
+                }
+                if (!(x.Endpoint?.Url).EqualsIgnoreCase(y.Endpoint?.Url)) {
                     return false;
                 }
                 if (x.ApplicationId != y.ApplicationId) {
                     return false;
                 }
-                if (x?.Endpoint.SecurityPolicy !=
-                    y?.Endpoint.SecurityPolicy) {
+                if (x.Endpoint?.SecurityPolicy !=
+                    y.Endpoint?.SecurityPolicy) {
                     return false;
                 }
-                if (x?.Endpoint.SecurityMode !=
-                    y?.Endpoint.SecurityMode) {
+                if (x.Endpoint?.SecurityMode !=
+                    y.Endpoint?.SecurityMode) {
                     return false;
                 }
                 return true;
@@ -214,12 +213,14 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
             /// <inheritdoc />
             public int GetHashCode(EndpointInfoModel obj) {
                 var hash = new HashCode();
-                hash.Add(obj.ApplicationId);
-                hash.Add(obj?.EndpointUrl?.ToLowerInvariant());
-                hash.Add(obj?.Endpoint.SecurityMode);
-                hash.Add(obj?.Endpoint.SecurityPolicy);
+                hash.Add(obj?.ApplicationId);
+                hash.Add(obj?.Endpoint?.Url?.ToUpperInvariant());
+                hash.Add(obj?.Endpoint?.SecurityMode);
+                hash.Add(obj?.Endpoint?.SecurityPolicy);
                 return hash.ToHashCode();
             }
         }
+
+        private const string kEndpointPrefix = "uat";
     }
 }

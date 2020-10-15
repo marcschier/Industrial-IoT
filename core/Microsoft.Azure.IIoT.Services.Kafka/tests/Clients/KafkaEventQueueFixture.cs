@@ -17,33 +17,9 @@ namespace Microsoft.Azure.IIoT.Services.Kafka.Clients {
     using System.Threading.Tasks;
     using System.Linq;
 
-    public sealed class KafkaEventQueueFixture : IDisposable {
+    public sealed class KafkaEventQueueFixture {
 
         public bool Skip { get; set; }
-
-        /// <summary>
-        /// Create fixture
-        /// </summary>
-        public KafkaEventQueueFixture() {
-            try {
-                var builder = new ContainerBuilder();
-
-                builder.RegisterModule<KafkaProducerModule>();
-                builder.RegisterType<KafkaServerConfig>()
-                    .AsImplementedInterfaces().SingleInstance();
-                builder.RegisterType<KafkaCluster>()
-                    .AsImplementedInterfaces().SingleInstance();
-                builder.RegisterType<HostAutoStart>()
-                    .AutoActivate()
-                    .AsImplementedInterfaces().SingleInstance();
-
-                builder.AddDebugDiagnostics();
-                _container = builder.Build();
-            }
-            catch {
-                _container = null;
-            }
-        }
 
         /// <summary>
         /// Create test harness
@@ -51,17 +27,8 @@ namespace Microsoft.Azure.IIoT.Services.Kafka.Clients {
         /// <param name="topic"></param>
         /// <returns></returns>
         internal KafkaEventQueueHarness GetHarness(string topic) {
-            return new KafkaEventQueueHarness(topic, _container != null && !Skip);
+            return new KafkaEventQueueHarness(topic, KafkaServerFixture.Up && !Skip);
         }
-
-        /// <summary>
-        /// Clean up query container
-        /// </summary>
-        public void Dispose() {
-            _container?.Dispose();
-        }
-
-        private readonly IContainer _container;
     }
 
     public class Pid : IProcessIdentity {

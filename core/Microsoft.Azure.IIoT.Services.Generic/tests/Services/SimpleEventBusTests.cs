@@ -36,7 +36,7 @@ namespace Microsoft.Azure.IIoT.Services.Generic.Services {
 
                 await bus.PublishAsync(family).ConfigureAwait(false);
 
-                var f = await tcs.Task.With1MinuteTimeout().ConfigureAwait(false);
+                var f = await tcs.Task.With2MinuteTimeout().ConfigureAwait(false);
                 Assert.Equal(family.Id, f.Id);
                 Assert.Equal(family.LastName, f.LastName);
                 Assert.Equal(family.RegistrationDate, f.RegistrationDate);
@@ -70,7 +70,7 @@ namespace Microsoft.Azure.IIoT.Services.Generic.Services {
                 await bus.PublishAsync(family2).ConfigureAwait(false);
                 await bus.PublishAsync(family).ConfigureAwait(false);
 
-                var f = await tcs.Task.With1MinuteTimeout().ConfigureAwait(false);
+                var f = await tcs.Task.With2MinuteTimeout().ConfigureAwait(false);
                 Assert.Equal(family.Id, f.Id);
                 Assert.Equal(family.LastName, f.LastName);
                 Assert.Equal(family.RegistrationDate, f.RegistrationDate);
@@ -106,8 +106,8 @@ namespace Microsoft.Azure.IIoT.Services.Generic.Services {
                 await bus.PublishAsync(family2).ConfigureAwait(false);
                 await bus.PublishAsync(family2).ConfigureAwait(false);
 
-                var f1 = await tcs1.Task.With1MinuteTimeout().ConfigureAwait(false);
-                var f2 = await tcs2.Task.With1MinuteTimeout().ConfigureAwait(false);
+                var f1 = await tcs1.Task.With2MinuteTimeout().ConfigureAwait(false);
+                var f2 = await tcs2.Task.With2MinuteTimeout().ConfigureAwait(false);
 
                 Assert.Equal(family.Id, f1.Id);
                 Assert.Equal(family.LastName, f1.LastName);
@@ -145,7 +145,7 @@ namespace Microsoft.Azure.IIoT.Services.Generic.Services {
 
                 await bus.PublishAsync(family).ConfigureAwait(false);
 
-                var f = await tcs1.Task.With1MinuteTimeout().ConfigureAwait(false);
+                var f = await tcs1.Task.With2MinuteTimeout().ConfigureAwait(false);
                 Assert.Equal(family.Id, f.Id);
                 Assert.Equal(family.LastName, f.LastName);
                 Assert.Equal(family.RegistrationDate, f.RegistrationDate);

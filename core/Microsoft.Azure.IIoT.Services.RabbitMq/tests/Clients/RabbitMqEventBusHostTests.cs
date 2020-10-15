@@ -171,7 +171,7 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
             private readonly int _count;
             private readonly TaskCompletionSource<HashSet<Family>> _complete =
                 new TaskCompletionSource<HashSet<Family>>(TaskCreationOptions.RunContinuationsAsynchronously);
-            public Task<HashSet<Family>> Complete => _complete.Task.With1MinuteTimeout();
+            public Task<HashSet<Family>> Complete => _complete.Task.With2MinuteTimeout();
 
             public FamilyHandler(int count) {
                 _count = count;
@@ -191,7 +191,7 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
             private readonly int _count;
             private readonly TaskCompletionSource<HashSet<Child>> _complete =
                 new TaskCompletionSource<HashSet<Child>>(TaskCreationOptions.RunContinuationsAsynchronously);
-            public Task<HashSet<Child>> Complete => _complete.Task.With1MinuteTimeout();
+            public Task<HashSet<Child>> Complete => _complete.Task.With2MinuteTimeout();
             public ChildHandler(int count) {
                 _count = count;
             }
@@ -210,7 +210,7 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
             private readonly int _count;
             private readonly TaskCompletionSource<HashSet<Pet>> _complete =
                 new TaskCompletionSource<HashSet<Pet>>(TaskCreationOptions.RunContinuationsAsynchronously);
-            public Task<HashSet<Pet>> Complete => _complete.Task.With1MinuteTimeout();
+            public Task<HashSet<Pet>> Complete => _complete.Task.With2MinuteTimeout();
             public PetHandler(int count) {
                 _count = count;
             }

@@ -47,18 +47,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
         }
 
         [Fact]
-        public void TestEqualIsEqualWithServiceModelConversionWhenDisabled() {
-            var r1 = CreateDocument();
-            var m = r1.ToServiceModel("etag");
-            var r2 = m.ToDocumentModel(true);
-
-            Assert.NotEqual(r1, r2);
-            Assert.NotEqual(r1.GetHashCode(), r2.GetHashCode());
-            Assert.True(r1 != r2);
-            Assert.False(r1 == r2);
-        }
-
-        [Fact]
         public void TestEqualIsNotEqualWithServiceModelConversion() {
             var r1 = CreateDocument();
             var m = r1.ToServiceModel("etag");
@@ -81,8 +69,8 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
                 .With(x => x.Capabilities, fix.CreateMany<string>().ToHashSet())
                 .With(x => x.DiscoveryUrls, fix.CreateMany<string>().ToHashSet())
                 .With(x => x.HostAddresses, fix.CreateMany<string>().ToHashSet())
-                .Without(x => x.IsDisabled)
                 .Without(x => x.NotSeenSince)
+                .Without(x => x.ClassType)
                 .Create();
             return r1;
         }

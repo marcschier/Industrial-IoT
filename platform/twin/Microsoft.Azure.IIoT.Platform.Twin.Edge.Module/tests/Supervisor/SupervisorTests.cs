@@ -114,8 +114,8 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services.Module.Supervisor {
                     Assert.Equal(module, status.ModuleId);
                     Assert.Single(status.Entities);
                     Assert.Equal(ep1.Id, status.Entities.Single().Id);
-                    Assert.Equal(EntityActivationState.ActivatedAndConnected, status.Entities.Single().ActivationState);
-                    Assert.Equal(EntityActivationState.ActivatedAndConnected, ep2.ActivationState);
+                    Assert.Equal(EntityActivationState.Activated, status.Entities.Single().ActivationState);
+                    Assert.Equal(EntityActivationState.Activated, ep2.ActivationState);
                     Assert.True(
                         ep2.EndpointState == EndpointConnectivityState.Connecting ||
                         ep2.EndpointState == EndpointConnectivityState.NotReachable);

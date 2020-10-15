@@ -22,12 +22,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Models {
         /// Entity twin is activated but not connected
         /// </summary>
         [EnumMember]
-        Activated,
-
-        /// <summary>
-        /// Entity twin is activated and connected to hub
-        /// </summary>
-        [EnumMember]
-        ActivatedAndConnected
+        Activated
     }
 }
