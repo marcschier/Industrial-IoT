@@ -6,10 +6,11 @@
 namespace Microsoft.Azure.IIoT.Services.LiteDb.Clients {
     using Microsoft.Azure.IIoT.Storage;
     using Serilog;
+    using LiteDB;
     using System;
     using System.Threading.Tasks;
-    using LiteDB;
     using System.IO;
+    using System.Globalization;
 
     /// <summary>
     /// Provides document db and graph functionality for storage interfaces.
@@ -38,7 +39,14 @@ namespace Microsoft.Azure.IIoT.Services.LiteDb.Clients {
             cs.Filename = (cs.Filename == null || cs.Filename.Trim(':') != cs.Filename ?
                 databaseId : Path.Combine(
                     Path.GetFullPath(cs.Filename), databaseId)) + ".db";
-            var client = new LiteDatabase(cs, DocumentSerializer.Mapper);
+            var client = new LiteDatabase(cs, DocumentSerializer.Mapper) {
+                UtcDate = true
+            };
+            if (client.Collation.SortOptions != CompareOptions.Ordinal) {
+                client.Rebuild(new LiteDB.Engine.RebuildOptions {
+                    Collation = new Collation(9, CompareOptions.Ordinal)
+                });
+            }
             var db = new DocumentDatabase(client, _logger);
             return Task.FromResult<IDatabase>(db);
         }

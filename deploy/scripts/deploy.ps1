@@ -257,7 +257,7 @@ Function Select-RepositoryAndBranch() {
             catch {
                 throw "This script requires *git* to be installed and must be run from " + `
                     "within a branch of the Industrial IoT repository. " + `
-                    "See the deployment documentation at https://github.com/Azure/Industrial-IoT " + `
+                    "See the deployment documentation at https://github.com/marcschier/Industrial-IoT " + `
                     "to learn about other deployment options."
             }
         }

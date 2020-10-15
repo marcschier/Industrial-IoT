@@ -11,6 +11,7 @@ namespace Microsoft.Azure.IIoT.Storage.Default {
     using System.Threading.Tasks;
     using System.IO;
     using LiteDB;
+    using System.Globalization;
 
     /// <summary>
     /// Provides in memory storage with litedb engine.
@@ -31,10 +32,23 @@ namespace Microsoft.Azure.IIoT.Storage.Default {
                 databaseId = "default";
             }
             databaseId = databaseId.Replace('-', '_').ToLowerInvariant();
-            var client = _clients.GetOrAdd(
-                databaseId, id => new LiteDatabase(new MemoryStream(), DocumentSerializer.Mapper));
+            var client = _clients.GetOrAdd(databaseId, id => Open());
             var db = new DocumentDatabase(client, _logger);
             return Task.FromResult<IDatabase>(db);
+        }
+
+        /// <summary>
+        /// Helper to create client
+        /// </summary>
+        /// <returns></returns>
+        private static LiteDatabase Open() {
+            var client = new LiteDatabase(new MemoryStream(), DocumentSerializer.Mapper) {
+                UtcDate = true
+            };
+            client.Rebuild(new LiteDB.Engine.RebuildOptions {
+                Collation = new Collation(9, CompareOptions.Ordinal)
+            });
+            return client;
         }
 
         private readonly ConcurrentDictionary<string, LiteDatabase> _clients =

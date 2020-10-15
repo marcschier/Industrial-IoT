@@ -115,7 +115,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
         }
 
         [Fact]
-        public async Task ProcessAllResultsWithDifferentDiscoverersFromExistingAsync() {
+        public async Task ProcessDiscoveryWithAllResultsWithDifferentDiscoverersFromExistingAsync() {
             var fix = new Fixture();
             var oldDiscovererId = HubResource.Format(fix.Create<string>(), fix.Create<string>(), fix.Create<string>());
 
@@ -153,7 +153,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
         }
 
         [Fact]
-        public async Task ProcessOneResultWithDifferentDiscoverersFromExistingAsync() {
+        public async Task ProcessDiscoveryWithOneResultWithDifferentDiscoverersFromExistingAsync() {
             var fix = new Fixture();
             var oldDiscovererId = HubResource.Format(fix.Create<string>(), fix.Create<string>(), fix.Create<string>());
 
@@ -190,7 +190,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
         }
 
         [Fact]
-        public async Task ProcessAllResultsWhenExistingDisabledAsync() {
+        public async Task ProcessDiscoveryWithAllResultsWhenExistingDisabledAsync() {
             var fix = new Fixture();
             var discoverer2 = HubResource.Format(fix.Create<string>(), fix.Create<string>(), fix.Create<string>());
 
@@ -218,7 +218,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
         }
 
         [Fact]
-        public async Task ProcessOneResultWhenExistingDisabledAsync() {
+        public async Task ProcessDiscoveryWithOneResultWhenExistingDisabledAsync() {
             var fix = new Fixture();
             var discoverer2 = HubResource.Format(fix.Create<string>(), fix.Create<string>(), fix.Create<string>());
 
@@ -241,50 +241,15 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                 Assert.All(inreg, a => Assert.Equal(discoverer, a.Application.DiscovererId));
                 Assert.All(inreg, a => Assert.All(a.Endpoints, e => Assert.Equal(discoverer, e.DiscovererId)));
 
-                var disabled = await ListApplicationsAsync(mock, includeNotSeenSince: false);
+                var disabled = await ListApplicationsAsync(mock);
                 disabled = disabled.Where(x => x.Application.NotSeenSince != null).ToList();
                 Assert.Equal(4, disabled.Count);
-                Assert.All(inreg, a => Assert.True(a.Application.IsDisabled()));
-                Assert.All(inreg, a => Assert.All(a.Endpoints, e => Assert.True(a.Application.IsDisabled())));
+                Assert.All(disabled, a => Assert.True(a.Application.IsDisabled()));
+                Assert.All(disabled, a => Assert.All(a.Endpoints, e => Assert.True(a.Application.IsDisabled())));
                 var enabled = await ListApplicationsAsync(mock, includeNotSeenSince: false);
                 Assert.Single(enabled);
-                Assert.All(inreg, a => Assert.False(a.Application.IsDisabled()));
-                Assert.All(inreg, a => Assert.All(a.Endpoints, e => Assert.False(a.Application.IsDisabled())));
-            }
-        }
-
-
-
-
-
-
-
-        [Fact]
-        public async Task ProcessOneDiscoveryWithDifferentDiscoverersFromExistingWhenExistingDisabledAsync() {
-            var fix = new Fixture();
-            var discoverer2 = HubResource.Format(fix.Create<string>(), fix.Create<string>(), fix.Create<string>());
-
-            using (var mock = Setup(out var discoverer, out var expected, out var discoveryResults,
-                fixupDatabase: x => {
-                    x.Application.DiscovererId = discoverer2;
-                    x.Endpoints.ForEach(e => e.DiscovererId = discoverer2);
-                    return x;
-                })) {
-                var service = mock.Create<IApplicationBulkProcessor>();
-
-                // Found one app and endpoint
-                discoveryResults = new List<DiscoveryResultModel> { discoveryResults.First() };
-
-
-                // Run
-                await service.ProcessDiscoveryEventsAsync(discoverer, new DiscoveryContextModel(), discoveryResults);
-
-                // Assert
-                var inreg = await ListApplicationsAsync(mock);
-                Assert.False(inreg.IsSameAs(expected));
-                Assert.Equal(discoverer, inreg.First().Application.DiscovererId);
-                Assert.Null(inreg.First().Application.NotSeenSince);
-                Assert.Equal(discoverer, inreg.First().Endpoints[0].DiscovererId);
+                Assert.All(enabled, a => Assert.False(a.Application.IsDisabled()));
+                Assert.All(enabled, a => Assert.All(a.Endpoints, e => Assert.False(a.Application.IsDisabled())));
             }
         }
 
@@ -305,36 +270,17 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
 
                 // Assert all applications and endpoints are disabled
                 var inreg = await ListApplicationsAsync(mock);
-                Assert.False(inreg.IsSameAs(expected));
-                Assert.Equal(discoverer, inreg.First().Application.DiscovererId);
-                Assert.True(inreg.First().Application.IsDisabled());
-                Assert.Equal(discoverer, inreg.First().Endpoints[0].DiscovererId);
-                Assert.True(inreg.First().Endpoints[0].IsDisabled());
-            }
-        }
-
-        [Fact]
-        public async Task ProcessDiscoveryWithNoResultsAndExistingAsync() {
-            using (var mock = Setup(out var discoverer, out var expected, out var discoveryResults)) {
-                // Found nothing
-                discoveryResults = new List<DiscoveryResultModel>();
-
-                // Assert there is still the same content as originally but now disabled
-                var service = mock.Create<IApplicationBulkProcessor>();
-
-                // Run
-                await service.ProcessDiscoveryEventsAsync(discoverer, new DiscoveryContextModel(), discoveryResults);
-
-                // Assert
-                var inreg = await ListApplicationsAsync(mock);
-                Assert.False(inreg.IsSameAs(expected));
+                Assert.Equal(5, inreg.Count);
+                Assert.All(inreg, a => Assert.Equal(discoverer, a.Application.DiscovererId));
+                Assert.All(inreg, a => Assert.All(a.Endpoints, e => Assert.Equal(discoverer, e.DiscovererId)));
                 Assert.All(inreg, a => Assert.True(a.Application.IsDisabled()));
+                Assert.All(inreg, a => Assert.All(a.Endpoints, e => Assert.True(a.Application.IsDisabled())));
+                Assert.False(inreg.IsSameAs(expected));
             }
         }
 
         [Fact]
         public async Task ProcessDiscoveryWithOneEndpointResultsAndExistingAsync() {
-            // All applications, but only one endpoint each is enabled
 
             using (var mock = Setup(out var discoverer, out var expected, out var discoveryResults)) {
 
@@ -349,8 +295,14 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                 await service.ProcessDiscoveryEventsAsync(discoverer, new DiscoveryContextModel(), discoveryResults);
 
                 // Assert
+                // All applications, but only one endpoint each is enabled
                 var inreg = await ListApplicationsAsync(mock);
-                Assert.True(inreg.IsSameAs(expected));
+                Assert.True(inreg.Select(a => a.Application).IsSameAs(expected.Select(b => b.Application)));
+                Assert.All(inreg, a => Assert.Equal(discoverer, a.Application.DiscovererId));
+                Assert.All(inreg, a => Assert.All(a.Endpoints, e => Assert.Equal(discoverer, e.DiscovererId)));
+                Assert.All(inreg, a => Assert.False(a.Application.IsDisabled()));
+                Assert.All(inreg, a => Assert.Single(a.Endpoints));
+                Assert.All(inreg, a => Assert.All(a.Endpoints, e => Assert.False(a.Application.IsDisabled())));
             }
         }
 
