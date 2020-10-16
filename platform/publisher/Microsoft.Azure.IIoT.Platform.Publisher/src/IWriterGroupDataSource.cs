@@ -11,7 +11,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher {
     /// <summary>
     /// Manages a group of writers all producing dataset messages
     /// </summary>
-    public interface IWriterGroupMessageCollector {
+    public interface IWriterGroupDataSource {
 
         /// <summary>
         /// Group version

@@ -4,7 +4,7 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
-    using Microsoft.Azure.IIoT.Platform.Edge;
+    using Microsoft.Azure.IIoT.Platform.Registry;
     using Microsoft.Azure.IIoT.Platform.Twin;
     using Microsoft.Azure.IIoT.Platform.Twin.Models;
     using System;

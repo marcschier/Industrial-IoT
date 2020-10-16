@@ -7,7 +7,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
     using Microsoft.Azure.IIoT.Platform.Registry.Models;
     using Microsoft.Azure.IIoT.Platform.Registry.Clients;
     using Microsoft.Azure.IIoT.Platform.Registry;
-    using Microsoft.Azure.IIoT.Platform.Edge;
     using Microsoft.Azure.IIoT.Platform.OpcUa.Transport.Probe;
     using Microsoft.Azure.IIoT.Platform.OpcUa.Models;
     using Microsoft.Azure.IIoT.Platform.OpcUa;
@@ -32,7 +31,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
     /// <summary>
     /// Provides discovery services
     /// </summary>
-    public sealed class DiscoveryServices : IDiscoveryServices, IScannerServices,
+    public sealed class DiscoveryServices : IDiscoveryServices, INetworkScanner,
         IDisposable {
 
         /// <inheritdoc/>

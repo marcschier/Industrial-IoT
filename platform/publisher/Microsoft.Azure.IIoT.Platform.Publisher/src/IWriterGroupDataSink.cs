@@ -11,7 +11,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher {
     /// <summary>
     /// Emits network messages for a writer group.
     /// </summary>
-    public interface INetworkMessageSender {
+    public interface IWriterGroupDataSink {
 
         /// <summary>
         /// Dataset writer group identifier

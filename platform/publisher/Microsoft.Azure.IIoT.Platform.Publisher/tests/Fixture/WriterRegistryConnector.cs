@@ -22,7 +22,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
         IDataSetWriterRegistryListener {
 
         public WriterRegistryConnector(IDataSetWriterRegistry registry,
-            Func<IWriterGroupMessageCollector> collectors, Func<INetworkMessageSender> senders,
+            Func<IWriterGroupDataSource> collectors, Func<IWriterGroupDataSink> senders,
             IPublisherEvents<IWriterGroupRegistryListener> b1,
             IPublisherEvents<IDataSetWriterRegistryListener> b2) {
             _registry = registry;
@@ -131,7 +131,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
             public HashSet<DataSetWriterModel> Writers { get; } = new HashSet<DataSetWriterModel>(
                 Compare.Using<DataSetWriterModel>((a, b) => a.DataSetWriterId == b.DataSetWriterId));
 
-            public void Activate(IWriterGroupMessageCollector collector, INetworkMessageSender emitter) {
+            public void Activate(IWriterGroupDataSource collector, IWriterGroupDataSink emitter) {
                 _collector = collector;
                 _emitter = emitter;
                 UpdateWriterGroupProcessor();
@@ -184,15 +184,15 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                 Writers.RemoveWhere(w => w.DataSetWriterId == dataSetWriterId);
             }
 
-            private IWriterGroupMessageCollector _collector;
-            private INetworkMessageSender _emitter;
+            private IWriterGroupDataSource _collector;
+            private IWriterGroupDataSink _emitter;
             private WriterGroupInfoModel _group;
         }
 
         private readonly ConcurrentDictionary<string, WriterGroupTwin> _twins =
             new ConcurrentDictionary<string, WriterGroupTwin>();
         private readonly IDataSetWriterRegistry _registry;
-        private readonly Func<IWriterGroupMessageCollector> _collectors;
-        private readonly Func<INetworkMessageSender> _senders;
+        private readonly Func<IWriterGroupDataSource> _collectors;
+        private readonly Func<IWriterGroupDataSink> _senders;
     }
 }

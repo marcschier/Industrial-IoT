@@ -465,7 +465,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                 builder.RegisterType<WriterRegistryConnector>().AsImplementedInterfaces().SingleInstance()
                     .AutoActivate(); // Create and register with broker
                 builder.RegisterType<NetworkMessageSender>().AsImplementedInterfaces().SingleInstance();
-                builder.RegisterType<WriterGroupDataCollector>().AsImplementedInterfaces();
+                builder.RegisterType<WriterGroupProcessor>().AsImplementedInterfaces();
                 builder.RegisterType<UadpNetworkMessageEncoder>().AsImplementedInterfaces();
                 builder.RegisterType<JsonNetworkMessageEncoder>().AsImplementedInterfaces();
                 builder.RegisterType<BinarySampleMessageEncoder>().AsImplementedInterfaces();

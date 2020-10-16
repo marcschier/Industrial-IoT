@@ -118,7 +118,6 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                 var result2 = await writers.AddDataSetWriterAsync(new DataSetWriterAddRequestModel {
                     EndpointId = "endpoint1",
                     DataSetName = "Test",
-                    KeyFrameInterval = TimeSpan.FromSeconds(1),
                     SubscriptionSettings = new PublishedDataSetSourceSettingsModel {
                         Priority = 1
                     },
@@ -184,7 +183,6 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                 var result2 = await writers.AddDataSetWriterAsync(new DataSetWriterAddRequestModel {
                     EndpointId = "endpoint1",
                     DataSetName = "Test",
-                    KeyFrameInterval = TimeSpan.FromSeconds(1),
                     SubscriptionSettings = new PublishedDataSetSourceSettingsModel {
                         Priority = 1
                     },
@@ -279,7 +277,6 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                 var result2 = await writers.AddDataSetWriterAsync(new DataSetWriterAddRequestModel {
                     EndpointId = "endpoint1",
                     DataSetName = "Test",
-                    KeyFrameInterval = TimeSpan.FromSeconds(1),
                     SubscriptionSettings = new PublishedDataSetSourceSettingsModel {
                         Priority = 1
                     },

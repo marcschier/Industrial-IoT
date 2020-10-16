@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29201.188
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Azure.IIoT.Platform.Edge.Gateway.Service", "platform\common\Microsoft.Azure.IIoT.Platform.Edge.Gateway.Service\src\Microsoft.Azure.IIoT.Platform.Edge.Gateway.Service.csproj", "{4073F4E2-FAA8-4509-A47A-855D527588FC}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Azure.IIoT.Platform.Api.Cli", "platform\common\Microsoft.Azure.IIoT.Platform.Api.Internal\cli\Microsoft.Azure.IIoT.Platform.Api.Cli.csproj", "{D14C979A-E41B-459B-97CE-E3DA62E02369}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Azure.IIoT.Platform.Twin.Service", "platform\twin\Microsoft.Azure.IIoT.Platform.Twin.Service\src\Microsoft.Azure.IIoT.Platform.Twin.Service.csproj", "{7840E38C-D435-432B-A5B4-2393D1A5D21A}"
@@ -290,14 +288,6 @@ Global
 		Release|x64 = Release|x64
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{4073F4E2-FAA8-4509-A47A-855D527588FC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4073F4E2-FAA8-4509-A47A-855D527588FC}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4073F4E2-FAA8-4509-A47A-855D527588FC}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{4073F4E2-FAA8-4509-A47A-855D527588FC}.Debug|x64.Build.0 = Debug|Any CPU
-		{4073F4E2-FAA8-4509-A47A-855D527588FC}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4073F4E2-FAA8-4509-A47A-855D527588FC}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4073F4E2-FAA8-4509-A47A-855D527588FC}.Release|x64.ActiveCfg = Release|Any CPU
-		{4073F4E2-FAA8-4509-A47A-855D527588FC}.Release|x64.Build.0 = Release|Any CPU
 		{D14C979A-E41B-459B-97CE-E3DA62E02369}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{D14C979A-E41B-459B-97CE-E3DA62E02369}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D14C979A-E41B-459B-97CE-E3DA62E02369}.Debug|x64.ActiveCfg = Debug|Any CPU
@@ -1055,7 +1045,6 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{4073F4E2-FAA8-4509-A47A-855D527588FC} = {FEE95825-2E34-45AF-BDED-52F9C7412BF5}
 		{D14C979A-E41B-459B-97CE-E3DA62E02369} = {35093E45-F95E-47BD-8335-F61E23781A20}
 		{7840E38C-D435-432B-A5B4-2393D1A5D21A} = {46A6F910-C5A6-4A0D-9E95-63287156EC56}
 		{34BF73AA-89A3-4E10-A1AC-2360A93143FE} = {F11F0639-CBB3-4D59-9B45-C69D3AFA1FCA}

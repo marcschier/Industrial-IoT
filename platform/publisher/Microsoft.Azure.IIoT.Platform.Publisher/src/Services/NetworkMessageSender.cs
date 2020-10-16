@@ -19,8 +19,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
     /// <summary>
     /// Writer group data flow engine
     /// </summary>
-    public sealed class NetworkMessageSender : INetworkMessageSender, 
-        IDisposable {
+    public sealed class NetworkMessageSender : IWriterGroupDataSink, IDisposable {
 
         /// <inheritdoc/>
         public string WriterGroupId { get; set; }

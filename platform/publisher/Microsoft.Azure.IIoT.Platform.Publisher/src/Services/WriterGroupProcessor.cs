@@ -5,20 +5,22 @@
 
 namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
     using Microsoft.Azure.IIoT.Platform.Publisher.Models;
+    using Microsoft.Azure.IIoT.Platform.OpcUa.Models;
     using Microsoft.Azure.IIoT.Platform.OpcUa;
+    using Microsoft.Extensions.Options;
     using Serilog;
     using System;
     using System.Linq;
     using System.Threading.Tasks;
     using System.Collections.Generic;
     using System.Collections.Concurrent;
-    using Microsoft.Extensions.Options;
+    using Opc.Ua.Client;
+    using Opc.Ua;
 
     /// <summary>
-    /// Collects / receives data for writers in the writer group, contextualizes
-    /// them and enqueues them to the writer group message emitter.
+    /// Simple all in memory writer group processor
     /// </summary>
-    public sealed class WriterGroupDataCollector : IWriterGroupMessageCollector,
+    public sealed class WriterGroupProcessor : IWriterGroupDataSource, IDataSetWriterDataSink, 
         IDisposable {
 
         /// <inheritdoc/>
@@ -39,20 +41,19 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
         /// <param name="diagnostics"></param>
         /// <param name="state"></param>
         /// <param name="codec"></param>
-        /// <param name="sender"></param>
+        /// <param name="sink"></param>
         /// <param name="subscriptions"></param>
         /// <param name="logger"></param>
-        public WriterGroupDataCollector(ISubscriptionClient subscriptions,
-            IDataSetMessageSender sender, IDataSetWriterDiagnostics diagnostics,
-            IDataSetWriterStateReporter state, IVariantEncoderFactory codec, 
-            ILogger logger) {
+        public WriterGroupProcessor(ISubscriptionClient subscriptions, IWriterGroupDataSink sink, 
+            IDataSetWriterDiagnostics diagnostics, IDataSetWriterStateReporter state, 
+            IVariantEncoderFactory codec, ILogger logger) {
             _state = state ?? throw new ArgumentNullException(nameof(state));
             _codec = codec ?? throw new ArgumentNullException(nameof(codec));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _subscriptions = subscriptions ?? throw new ArgumentNullException(nameof(subscriptions));
-            _sender = sender ?? throw new ArgumentNullException(nameof(sender));
+            _sink = sink ?? throw new ArgumentNullException(nameof(sink));
             _diagnostics = diagnostics ?? throw new ArgumentNullException(nameof(diagnostics));
-            _writers = new ConcurrentDictionary<string, Task<DataSetWriterSubscription>>();
+            _writers = new ConcurrentDictionary<string, Task<DataSetWriterDataSource>>();
         }
 
         /// <inheritdoc/>
@@ -65,13 +66,13 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
 
             foreach (var writer in dataSetWriters) {
                 _writers.AddOrUpdate(writer.DataSetWriterId, async writerId => {
-                    var subscription = new DataSetWriterSubscription(
-                        _subscriptions, null, _diagnostics, _state, Options.Create(writer), _codec, _logger);
+                    var subscription = new DataSetWriterDataSource(
+                        _subscriptions, this, _diagnostics, _state, Options.Create(writer), _codec, _logger);
                     await subscription.OpenAsync().ConfigureAwait(false);
                     await subscription.ActivateAsync().ConfigureAwait(false);
                     return subscription;
                 }, async (writerId, old) => {
-                    DataSetWriterSubscription subscription = null;
+                    DataSetWriterDataSource subscription = null;
                     try {
                         subscription = await old.ConfigureAwait(false);
                         await subscription.DeactivateAsync().ConfigureAwait(false);
@@ -80,8 +81,8 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                     finally {
                         subscription?.Dispose();
                     }
-                    subscription = new DataSetWriterSubscription(
-                        _subscriptions, null, _diagnostics, _state, Options.Create(writer), _codec, _logger);
+                    subscription = new DataSetWriterDataSource(
+                        _subscriptions, this, _diagnostics, _state, Options.Create(writer), _codec, _logger);
                     await subscription.OpenAsync().ConfigureAwait(false);
                     await subscription.ActivateAsync().ConfigureAwait(false);
                     return subscription;
@@ -133,8 +134,8 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
         /// </summary>
         /// <param name="writer"></param>
         /// <returns></returns>
-        private static async Task DisposeAsync(Task<DataSetWriterSubscription> writer) {
-            DataSetWriterSubscription subscription = null;
+        private static async Task DisposeAsync(Task<DataSetWriterDataSource> writer) {
+            DataSetWriterDataSource subscription = null;
             try {
                 // TODO: Add cleanup
                 subscription = await writer.ConfigureAwait(false);
@@ -146,13 +147,36 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
             }
         }
 
+        /// <inheritdoc/>
+        public void Write(DataSetWriterModel dataSetWriter, uint sequenceNumber,
+            DataChangeNotification notification, IList<string> stringTable,
+            Subscription subscription) {
+            _sink.Enqueue(new DataSetWriterMessageModel {
+                Notifications = notification.ToMonitoredItemNotifications(
+                    subscription.MonitoredItems).ToList(),
+                ServiceMessageContext = subscription.Session.MessageContext,
+                SequenceNumber = sequenceNumber,
+                ApplicationUri = subscription.Session.Endpoint.Server.ApplicationUri,
+                EndpointUrl = subscription.Session.Endpoint.EndpointUrl,
+                TimeStamp = DateTime.UtcNow,
+                Writer = dataSetWriter
+            });
+        }
+
+        /// <inheritdoc/>
+        public void Write(DataSetWriterModel dataSetWriter, uint sequenceNumber,
+            EventNotificationList notification, IList<string> stringTable,
+            Subscription subscription) {
+            throw new NotSupportedException(); // TODO
+        }
+
         // Services
         private readonly IVariantEncoderFactory _codec;
         private readonly ISubscriptionClient _subscriptions;
-        private readonly IDataSetMessageSender _sender;
+        private readonly IWriterGroupDataSink _sink;
         private readonly IDataSetWriterStateReporter _state;
         private readonly ILogger _logger;
-        private readonly ConcurrentDictionary<string, Task<DataSetWriterSubscription>> _writers;
+        private readonly ConcurrentDictionary<string, Task<DataSetWriterDataSource>> _writers;
         private readonly IDataSetWriterDiagnostics _diagnostics;
     }
 }

@@ -15,23 +15,24 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
     using System.Collections.Generic;
     using Opc.Ua.Client;
     using Opc.Ua;
+    using System.Threading;
 
     /// <summary>
-    /// A dataset writer
+    /// A dataset writer source
     /// </summary>
-    public sealed class DataSetWriterSubscription : ISubscriptionListener, IDisposable {
+    public sealed class DataSetWriterDataSource : ISubscriptionListener, IDisposable {
 
         /// <summary>
-        /// Create persistent writer subscription
+        /// Create persistent writer data source
         /// </summary>
         /// <param name="diagnostics"></param>
         /// <param name="state"></param>
         /// <param name="codec"></param>
-        /// <param name="writer"></param>
+        /// <param name="sink"></param>
         /// <param name="client"></param>
         /// <param name="config"></param>
         /// <param name="logger"></param>
-        public DataSetWriterSubscription(ISubscriptionClient client, IDataSetMessageSender writer, 
+        public DataSetWriterDataSource(ISubscriptionClient client, IDataSetWriterDataSink sink, 
             IDataSetWriterDiagnostics diagnostics, IDataSetWriterStateReporter state, 
             IOptions<DataSetWriterModel> config, IVariantEncoderFactory codec, ILogger logger) {
             _diagnostics = diagnostics ?? throw new ArgumentNullException(nameof(diagnostics));
@@ -39,7 +40,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
             _codec = codec ?? throw new ArgumentNullException(nameof(codec));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _client = client ?? throw new ArgumentNullException(nameof(client));
-            _writer = writer ?? throw new ArgumentNullException(nameof(writer));
+            _sink = sink ?? throw new ArgumentNullException(nameof(sink));
             _config = config ?? throw new ArgumentNullException(nameof(config));
         }
 
@@ -113,7 +114,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
             var state = new PublishedDataSetItemStateModel {
                 LastResultChange = DateTime.UtcNow,
                 LastResult = codec.Encode(
-                    lastResult?.StatusCode ?? lastResult.InnerResult?.StatusCode),
+                    lastResult?.StatusCode ?? lastResult?.InnerResult?.StatusCode),
                 ServerId = serverId,
                 ClientId = clientHandle
             };
@@ -136,7 +137,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
             var state = new PublishedDataSetSourceStateModel {
                 LastResultChange = DateTime.UtcNow,
                 LastResult = codec.Encode(
-                    lastResult?.StatusCode ?? lastResult.InnerResult?.StatusCode),
+                    lastResult?.StatusCode ?? lastResult?.InnerResult?.StatusCode),
             };
             _state.OnDataSetWriterStateChange(_config.Value.DataSetWriterId, state);
         }
@@ -150,8 +151,8 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                 _config.Value.DataSetWriterId,
                 notification.MonitoredItems.Count);
 
-            _writer.Write(_config.Value, notification, stringTable,
-                subscription.Session.MessageContext);
+            _sink.Write(_config.Value, Interlocked.Increment(ref _sequenceNumber), 
+                notification, stringTable, subscription);
         }
 
         /// <inheritdoc/>
@@ -162,8 +163,8 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
             _diagnostics.ReportDataSetWriterSubscriptionNotifications(
                 _config.Value.DataSetWriterId, notification.Events.Count);
 
-            _writer.Write(_config.Value, notification, stringTable,
-                subscription.Session.MessageContext);
+            _sink.Write(_config.Value, Interlocked.Increment(ref _sequenceNumber), 
+                notification, stringTable, subscription);
         }
 
         /// <inheritdoc/>
@@ -205,9 +206,10 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
         }
 
         private ISubscriptionHandle _subscription;
+        private volatile uint _sequenceNumber;
         private readonly IVariantEncoderFactory _codec;
         private readonly ISubscriptionClient _client;
-        private readonly IDataSetMessageSender _writer;
+        private readonly IDataSetWriterDataSink _sink;
         private readonly IDataSetWriterStateReporter _state;
         private readonly ILogger _logger;
         private readonly IDataSetWriterDiagnostics _diagnostics;

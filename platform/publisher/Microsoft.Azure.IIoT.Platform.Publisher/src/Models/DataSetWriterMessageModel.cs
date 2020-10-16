@@ -40,11 +40,6 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Models {
         public IEnumerable<MonitoredItemNotificationModel> Notifications { get; set; }
 
         /// <summary>
-        /// Subscription from which message originated
-        /// </summary>
-        public string SubscriptionId { get; set; }
-
-        /// <summary>
         /// Endpoint the subscription is connected to
         /// </summary>
         public string EndpointUrl { get; set; }

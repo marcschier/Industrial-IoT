@@ -3,14 +3,14 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Platform.Edge {
+namespace Microsoft.Azure.IIoT.Platform.Registry {
     using Microsoft.Azure.IIoT.Platform.Registry.Models;
     using System.Threading.Tasks;
 
     /// <summary>
-    /// Provides server scanning services
+    /// Provides network scanning services
     /// </summary>
-    public interface IScannerServices {
+    public interface INetworkScanner {
 
         /// <summary>
         /// Current discovery mode

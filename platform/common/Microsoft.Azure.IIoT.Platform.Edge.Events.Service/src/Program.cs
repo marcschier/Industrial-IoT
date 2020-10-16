@@ -7,7 +7,7 @@ namespace Microsoft.Azure.IIoT.Platform.Edge.Events.Service {
     using Microsoft.Azure.IIoT.Platform.Edge.Events.Service.Runtime;
     using Microsoft.Azure.IIoT.Platform.Registry;
     using Microsoft.Azure.IIoT.Platform.Registry.Handlers;
-    using Microsoft.Azure.IIoT.Platform.Registry.Events.v2;
+    using Microsoft.Azure.IIoT.Platform.Edge.Events.v2;
     using Microsoft.Azure.IIoT.Platform.Publisher;
     using Microsoft.Azure.IIoT.Platform.Publisher.Handlers;
     using Microsoft.Azure.IIoT.Azure.AppInsights;

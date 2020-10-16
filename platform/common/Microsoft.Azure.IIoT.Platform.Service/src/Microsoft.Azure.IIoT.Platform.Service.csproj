@@ -15,7 +15,6 @@
     <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="6.0.0" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\platform\common\Microsoft.Azure.IIoT.Platform.Edge.Gateway.Service\src\Microsoft.Azure.IIoT.Platform.Edge.Gateway.Service.csproj" />
     <ProjectReference Include="..\..\..\..\platform\common\Microsoft.Azure.IIoT.Platform.Edge.Tunnel.Service\src\Microsoft.Azure.IIoT.Platform.Edge.Tunnel.Service.csproj" />
     <ProjectReference Include="..\..\..\..\platform\common\Microsoft.Azure.IIoT.Platform.Edge.Events.Service\src\Microsoft.Azure.IIoT.Platform.Edge.Events.Service.csproj" />
     <ProjectReference Include="..\..\..\..\platform\common\Microsoft.Azure.IIoT.Platform.Api.Events.Service\src\Microsoft.Azure.IIoT.Platform.Api.Events.Service.csproj" />

@@ -106,13 +106,12 @@ namespace Microsoft.Azure.IIoT.Platform.Service {
 
             // Minimal API surface
             app.AddStartupBranch<Registry.Service.Startup>("/registry");
-            app.AddStartupBranch<Vault.Service.Startup>("/vault");
             app.AddStartupBranch<Twin.Service.Startup>("/twin");
             app.AddStartupBranch<Publisher.Service.Startup>("/publisher");
-            app.AddStartupBranch<Edge.Gateway.Service.Startup>("/edge");
             app.AddStartupBranch<Api.Events.Service.Startup>("/events");
 
             if (!Config.IsMinimumDeployment) {
+                app.AddStartupBranch<Vault.Service.Startup>("/vault");
                 app.AddStartupBranch<Twin.Services.Service.Startup>("/ua");
             }
 
@@ -165,7 +164,7 @@ namespace Microsoft.Azure.IIoT.Platform.Service {
                 // Minimal processes
                 var processes = new List<Task> {
                     Task.Run(() => Subscriber.Service.Program.Main(args), _cts.Token),
-                    Task.Run(() => Edge.Events.Service.Program.Main(args), _cts.Token),
+                    Task.Run(() => Registry.Events.Service.Program.Main(args), _cts.Token),
                     Task.Run(() => Edge.Tunnel.Service.Program.Main(args), _cts.Token),
                 };
 
