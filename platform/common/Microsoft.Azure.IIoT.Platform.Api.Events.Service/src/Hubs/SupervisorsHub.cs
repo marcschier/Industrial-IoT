@@ -12,7 +12,7 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service {
     /// <summary>
     /// Supervisors hub
     /// </summary>
-    [HubRoute("v2/supervisors/events")]
+    [HubRoute("v3/supervisors/events")]
     [Authorize(Policy = Policies.CanRead)]
     public class SupervisorsHub : Hub {
 

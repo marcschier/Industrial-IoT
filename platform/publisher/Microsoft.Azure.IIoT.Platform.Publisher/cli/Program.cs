@@ -6,9 +6,6 @@
 namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Module.Cli {
     using Microsoft.Azure.IIoT.Platform.OpcUa.Sample;
     using Microsoft.Azure.IIoT.Platform.OpcUa.Services;
-    using Microsoft.Azure.IIoT.Platform.Publisher.Models;
-    using Microsoft.Azure.IIoT.Platform.Publisher.Edge.Services;
-    using Microsoft.Azure.IIoT.Platform.Core.Models;
     using Microsoft.Azure.IIoT.Diagnostics;
     using Microsoft.Azure.IIoT.Utils;
     using Microsoft.Azure.IIoT.Hub;
@@ -197,7 +194,7 @@ Options:
                 if (acceptAll) {
                     arguments.Add("--aa");
                 }
-                Module.Program.Main(arguments.ToArray());
+                Service.Program.Main(arguments.ToArray());
                 Console.WriteLine("Publisher module exited.");
             }
         }
@@ -214,36 +211,6 @@ Options:
                 using (var server = new ServerWrapper(logger)) { // Start test server
 
                     var arguments = args.ToList();
-                    if (startLegacy) {
-                        // Write publishing
-                        var pf = new PublishedNodesFile(fileName, new NewtonSoftJsonSerializer(), logger);
-                        pf.Write(new WriterGroupModel {
-                            DataSetWriters = new List<DataSetWriterModel> {
-                                new DataSetWriterModel {
-                                    DataSet = new PublishedDataSetModel {
-                                        DataSetSource = new PublishedDataSetSourceModel {
-                                            Connection = new ConnectionModel {
-                                                Endpoint = new EndpointModel {
-                                                    Url = server.EndpointUrl
-                                                }
-                                            },
-                                            PublishedVariables = new PublishedDataItemsModel {
-                                                PublishedData = new List<PublishedDataSetVariableModel> {
-                                                    new PublishedDataSetVariableModel {
-                                                        PublishedVariableNodeId = "i=2258"
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        });
-                        arguments.Add($"--pf={fileName}");
-                        if (scale > 1) {
-                            arguments.Add($"--sc={scale}");
-                        }
-                    }
 
                     // Start publisher module
                     var host = Task.Run(() => HostAsync(config, diagnostics, logger, deviceId,

@@ -5,8 +5,8 @@
     <Description>Azure Industrial IoT Identity server storage</Description>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="IdentityServer4" Version="4.1.0" />
-    <PackageReference Include="IdentityServer4.AspNetIdentity" Version="4.1.0" />
+    <PackageReference Include="IdentityServer4" Version="4.1.1" />
+    <PackageReference Include="IdentityServer4.AspNetIdentity" Version="4.1.1" />
     <PackageReference Include="Microsoft.Extensions.Identity.Stores" Version="5.0.0-rc.2.20475.17" />
   </ItemGroup>
   <ItemGroup>

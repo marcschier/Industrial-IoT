@@ -12,7 +12,7 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service {
     /// <summary>
     /// Discovery hub
     /// </summary>
-    [HubRoute("v2/discovery/events")]
+    [HubRoute("v3/discovery/events")]
     [Authorize(Policy = Policies.CanRead)]
     public class DiscoverersHub : Hub {
 

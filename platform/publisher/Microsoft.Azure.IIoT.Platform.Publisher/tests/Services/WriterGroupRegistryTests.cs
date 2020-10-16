@@ -37,7 +37,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
 
                 IDataSetWriterRegistry service = mock.Create<WriterGroupRegistry>();
 
-                await Assert.ThrowsAsync<ArgumentNullException>(async () => {
+                await Assert.ThrowsAsync<ArgumentException>(async () => {
                     await service.AddDataSetWriterAsync(new DataSetWriterAddRequestModel {
                         EndpointId = null,
                         DataSetName = "Test",
@@ -50,30 +50,6 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                         EndpointId = "someendpointthatexists",
                         DataSetName = "Test",
                         WriterGroupId = "doesnotexist"
-                    }).ConfigureAwait(false);
-                }).ConfigureAwait(false);
-
-            }
-        }
-
-        [Fact]
-        public async Task AddWriterButGroupNotInSiteShouldExceptAsync() {
-
-            using (var mock = Setup()) {
-
-                IDataSetWriterRegistry service = mock.Create<WriterGroupRegistry>();
-                IWriterGroupRegistry groups = mock.Create<WriterGroupRegistry>();
-
-                // Act
-                var result = await groups.AddWriterGroupAsync(new WriterGroupAddRequestModel {
-                    Name = "Test",
-                }).ConfigureAwait(false);
-
-                await Assert.ThrowsAsync<ArgumentException>(async () => {
-                    await service.AddDataSetWriterAsync(new DataSetWriterAddRequestModel {
-                        EndpointId = "someendpointthatexists",
-                        DataSetName = "Test",
-                        WriterGroupId = result.WriterGroupId
                     }).ConfigureAwait(false);
                 }).ConfigureAwait(false);
 
@@ -203,7 +179,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
         [Fact]
         public async Task AddWriterToDefaultGroupTestAsync() {
 
-            var writerGroupId = "sitefakeurl";
+            var writerGroupId = "$default";
             using (var mock = Setup()) {
 
                 IDataSetWriterRegistry service = mock.Create<WriterGroupRegistry>();
@@ -697,7 +673,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                 Assert.Null(writer.KeyFrameCount);
                 Assert.NotNull(writer.DataSet);
                 Assert.Null(writer.DataSet.Name);
-                Assert.Null(writer.DataSet.ExtensionFields);
+                Assert.Empty(writer.DataSet.ExtensionFields);
                 Assert.NotNull(writer.DataSet.DataSetSource);
                 Assert.NotNull(writer.DataSet.DataSetSource.SubscriptionSettings);
                 Assert.Null(writer.DataSet.DataSetSource.SubscriptionSettings.ResolveDisplayName);
@@ -1262,17 +1238,11 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                 await batch.ImportWriterGroupAsync(writerGroup).ConfigureAwait(false);
 
                 var writerGroups = await groups.ListAllWriterGroupsAsync().ConfigureAwait(false);
-                Assert.Equal(2, writerGroups.Count);
+                Assert.Single(writerGroups);
 
-                var altId = "";
                 Assert.Collection(writerGroups.OrderBy(w => w.SecurityMode),
                     group => {
                         Assert.Equal("WriterGroupId", group.WriterGroupId);
-                        Assert.Equal("Test", group.Name);
-                        Assert.Equal(99, group.BatchSize);
-                    },
-                    group => {
-                        altId = group.WriterGroupId;
                         Assert.Equal("Test", group.Name);
                         Assert.Equal(99, group.BatchSize);
                     });
@@ -1290,7 +1260,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                 Assert.Equal(TimeSpan.FromSeconds(1), writer1.DataSet.OperationTimeout);
 
                 Assert.NotNull(writer2);
-                Assert.Equal(altId, writer2.WriterGroupId);
+                Assert.Equal("WriterGroupId", writer2.WriterGroupId);
                 Assert.Equal("endpointfakeurl2", writer2.DataSet.EndpointId);
                 Assert.Equal(TimeSpan.FromSeconds(2), writer2.DataSet.OperationTimeout);
 
@@ -1360,7 +1330,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
         public async Task AddVariablesToDefaultDataSetWriterTestAsync() {
 
             var dataSetWriterId = "endpointfakeurl";
-            var writerGroupId = "sitefakeurl";
+            var writerGroupId = "$default";
             using (var mock = Setup()) {
 
                 IDataSetWriterRegistry service = mock.Create<WriterGroupRegistry>();
@@ -1470,17 +1440,17 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                     }));
                 registry.Setup(e => e.QueryEndpointsAsync(It.IsNotNull<EndpointInfoQueryModel>(),
                     It.IsAny<int>(), It.IsAny<CancellationToken>()))
-                    .Returns<EndpointInfoQueryModel, bool?, int?, CancellationToken>((q, b, i, c) =>
+                    .Returns<EndpointInfoQueryModel, int?, CancellationToken>((q, i, c) =>
                         Task.FromResult(new EndpointInfoListModel {
                         Items = new List<EndpointInfoModel> {
                             new EndpointInfoModel {
-                                    Id = "endpoint" + q.Url,
-                                    Endpoint = new EndpointModel {
-                                        Url = q.Url,
-                                        SecurityMode = q.SecurityMode,
-                                        SecurityPolicy = q.SecurityPolicy
-                                    }
+                                Id = "endpoint" + q.Url,
+                                Endpoint = new EndpointModel {
+                                    Url = q.Url,
+                                    SecurityMode = q.SecurityMode,
+                                    SecurityPolicy = q.SecurityPolicy
                                 }
+                            }
                         }
                     }));
                 builder.RegisterMock(registry);

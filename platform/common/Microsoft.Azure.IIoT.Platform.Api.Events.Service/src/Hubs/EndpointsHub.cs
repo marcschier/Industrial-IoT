@@ -12,7 +12,7 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service {
     /// <summary>
     /// Endpoints hub
     /// </summary>
-    [HubRoute("v2/endpoints/events")]
+    [HubRoute("v3/endpoints/events")]
     [Authorize(Policy = Policies.CanRead)]
     public class EndpointsHub : Hub {
 

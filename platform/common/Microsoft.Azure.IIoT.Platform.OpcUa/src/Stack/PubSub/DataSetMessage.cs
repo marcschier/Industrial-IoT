@@ -293,11 +293,11 @@ namespace Opc.Ua.PubSub {
                 MessageContentMask |= (uint)JsonDataSetMessageContentMask.MetaDataVersion;
             }
             Timestamp = decoder.ReadDateTime(nameof(JsonDataSetMessageContentMask.Timestamp));
-            if (Timestamp != DateTime.MinValue) {
+            if (Timestamp != DateTime.MinValue && Timestamp != DateTime.MaxValue) {
                 MessageContentMask |= (uint)JsonDataSetMessageContentMask.Timestamp;
             }
             Status = decoder.ReadStatusCode(nameof(JsonDataSetMessageContentMask.Status));
-            if (Status != StatusCodes.Good) {
+            if (Status != uint.MaxValue) {
                 MessageContentMask |= (uint)JsonDataSetMessageContentMask.Status;
             }
 

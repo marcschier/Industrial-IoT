@@ -12,7 +12,7 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service {
     /// <summary>
     /// Publishers hub
     /// </summary>
-    [HubRoute("v2/publishers/events")]
+    [HubRoute("v3/publishers/events")]
     [Authorize(Policy = Policies.CanRead)]
     public class PublishersHub : Hub {
 

@@ -12,7 +12,7 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service {
     /// <summary>
     /// Writer groups hub
     /// </summary>
-    [HubRoute("v2/groups/events")]
+    [HubRoute("v3/groups/events")]
     [Authorize(Policy = Policies.CanRead)]
     public class WriterGroupsHub : Hub {
 

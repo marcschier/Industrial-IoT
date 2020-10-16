@@ -12,7 +12,7 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service {
     /// <summary>
     /// Dataset writer hub
     /// </summary>
-    [HubRoute("v2/writers/events")]
+    [HubRoute("v3/writers/events")]
     [Authorize(Policy = Policies.CanRead)]
     public class DataSetWritersHub : Hub {
 

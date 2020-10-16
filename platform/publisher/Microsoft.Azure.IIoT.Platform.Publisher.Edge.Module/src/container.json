@@ -1,5 +1,0 @@
-{
-    "name": "iotedge/opc-publisher",
-    "buildAlways": true,
-    "exposes": [ 9600 ]
-}

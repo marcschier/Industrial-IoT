@@ -12,7 +12,8 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Cli {
     /// <summary>
     /// Publisher module host process
     /// </summary>
-    public class Program {
+    public class Testing_OLD {
+#if FALSE
 
         public enum Target {
             None,
@@ -28,7 +29,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Cli {
         /// <summary>
         /// Entry point
         /// </summary>
-        public static void Main(string[] args) {
+        public static void Main2(string[] args) {
             var target = Target.None;
             var inputRate = 100000000; // x values total per second
             var notifications = 1000000; // over x messages
@@ -165,7 +166,6 @@ Options:
         }
 
 #pragma warning restore CS0219 // Variable is assigned but its value is never used
-#if FALSE
         /// <summary>
         /// Run benchmark
         /// </summary>
