@@ -18,7 +18,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Service.Controllers {
     /// Certificate CRL Distribution Point and Authority Information Access services.
     /// </summary>
     [ExceptionsFilter]
-    [ApiVersion("2")][ApiVersion("3")]
+    [ApiVersion("3")]
     [Route("v{version:apiVersion}")]
     [ApiController]
     public sealed class DistributionController : ControllerBase {

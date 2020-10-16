@@ -43,8 +43,6 @@ namespace Microsoft.Azure.IIoT.Platform.Directory.Models {
                 if (update?.IsDisabled != null && update.IsDisabled != existing?.IsDisabled) {
                     tags.Add(nameof(SupervisorRegistration.IsDisabled), (update?.IsDisabled ?? false) ?
                         true : (bool?)null);
-                    tags.Add(nameof(SupervisorRegistration.NotSeenSince), (update?.IsDisabled ?? false) ?
-                        DateTime.UtcNow : (DateTime?)null);
                 }
 
                 // Settings
@@ -96,8 +94,6 @@ namespace Microsoft.Azure.IIoT.Platform.Directory.Models {
 
                 IsDisabled =
                     tags.GetValueOrDefault<bool>(nameof(SupervisorRegistration.IsDisabled), null),
-                NotSeenSince =
-                    tags.GetValueOrDefault<DateTime>(nameof(SupervisorRegistration.NotSeenSince), null),
 
                 // Properties
 

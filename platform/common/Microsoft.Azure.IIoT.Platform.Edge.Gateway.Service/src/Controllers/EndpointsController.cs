@@ -12,7 +12,7 @@ namespace Microsoft.Azure.IIoT.Platform.Edge.Gateway.Service.Controllers {
     /// <summary>
     /// Publish from model
     /// </summary>
-    [ApiVersion("2")][ApiVersion("3")]
+    [ApiVersion("3")]
     [Route("v{version:apiVersion}/endpoints")]
     [ExceptionsFilter]
     [ApiController]

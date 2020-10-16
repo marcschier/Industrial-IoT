@@ -14,7 +14,7 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service.Controllers {
     /// <summary>
     /// Value and Event monitoring services
     /// </summary>
-    [ApiVersion("2")][ApiVersion("3")]
+    [ApiVersion("3")]
     [Route("v{version:apiVersion}/endpoints")]
     [ExceptionsFilter]
     [Authorize(Policy = Policies.CanWrite)]

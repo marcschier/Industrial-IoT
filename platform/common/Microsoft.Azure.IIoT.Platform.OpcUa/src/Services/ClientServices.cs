@@ -228,7 +228,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
         }
 
         /// <inheritdoc/>
-        public async Task<byte[]> GetEndpointCertificateAsync(
+        public async Task<X509CertificateChainModel> GetEndpointCertificateAsync(
             EndpointModel endpoint, CancellationToken ct) {
             if (endpoint is null) {
                 throw new ArgumentNullException(nameof(endpoint));
@@ -252,7 +252,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
                     throw new ResourceNotFoundException("Endpoint not found");
                 }
                 _logger.Debug("Found endpoint at {discoveryUrl}...", discoveryUrl);
-                return ep.ServerCertificate;
+                return ep.ServerCertificate.ToCertificateChain();
             }
         }
 

@@ -17,7 +17,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Service.Controllers {
     /// <summary>
     /// History insert services
     /// </summary>
-    [ApiVersion("2")][ApiVersion("3")]
+    [ApiVersion("3")]
     [Route("v{version:apiVersion}/insert")]
     [ExceptionsFilter]
     [Authorize(Policy = Policies.CanControl)]

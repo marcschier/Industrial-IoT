@@ -651,7 +651,7 @@ namespace Microsoft.Azure.IIoT.Services.LiteDb.Clients {
         }
 
         [SkippableFact]
-        public async Task QueryWithRangeOperatorsOnStringsAsync() {
+        public async Task QueryWithStringCollation1Async() {
             var documents = await _fixture.GetDocumentsAsync().ConfigureAwait(false);
             Skip.If(documents == null);
 
@@ -660,7 +660,116 @@ namespace Microsoft.Azure.IIoT.Services.LiteDb.Clients {
 
             var results = await RunAsync(families).ConfigureAwait(false);
             Assert.Single(results);
+
+            families = documents.CreateQuery<Family>()
+                .Where(f => string.Equals(f.Address.State, "NY", StringComparison.OrdinalIgnoreCase));
+
+            results = await RunAsync(families).ConfigureAwait(false);
+            Assert.Single(results);
+
+            families = documents.CreateQuery<Family>()
+                .Where(f => f.Address.State.Equals("NY", StringComparison.InvariantCultureIgnoreCase));
+
+            results = await RunAsync(families).ConfigureAwait(false);
+            Assert.Single(results);
+
+            families = documents.CreateQuery<Family>()
+                .Where(f => string.Equals(f.Address.State, "NY", StringComparison.InvariantCultureIgnoreCase));
+
+            results = await RunAsync(families).ConfigureAwait(false);
+            Assert.Single(results);
+
+            families = documents.CreateQuery<Family>()
+                .Where(f => f.Address.State.Equals("NY", StringComparison.InvariantCulture));
+
+            results = await RunAsync(families).ConfigureAwait(false);
+            Assert.Single(results);
+
+            families = documents.CreateQuery<Family>()
+                .Where(f => string.Equals(f.Address.State, "NY", StringComparison.InvariantCulture));
+
+            results = await RunAsync(families).ConfigureAwait(false);
+            Assert.Single(results);
+
+            families = documents.CreateQuery<Family>()
+                .Where(f => f.Address.State.Equals("NY", StringComparison.Ordinal));
+
+            results = await RunAsync(families).ConfigureAwait(false);
+            Assert.Single(results);
+
+            families = documents.CreateQuery<Family>()
+                .Where(f => string.Equals(f.Address.State, "NY", StringComparison.Ordinal));
+
+            results = await RunAsync(families).ConfigureAwait(false);
+            Assert.Single(results);
+
+            families = documents.CreateQuery<Family>()
+                .Where(f => f.Address.State == "NY");
+
+            results = await RunAsync(families).ConfigureAwait(false);
+            Assert.Single(results);
         }
+
+        [SkippableFact]
+        public async Task QueryWithStringCollation2Async() {
+            var documents = await _fixture.GetDocumentsAsync().ConfigureAwait(false);
+            Skip.If(documents == null);
+
+            var families = documents.CreateQuery<Family>()
+                .Where(f => f.Address.State.Equals("ny", StringComparison.OrdinalIgnoreCase));
+
+            var results = await RunAsync(families).ConfigureAwait(false);
+            Assert.Single(results);
+
+            families = documents.CreateQuery<Family>()
+                .Where(f => string.Equals(f.Address.State, "ny", StringComparison.OrdinalIgnoreCase));
+
+            results = await RunAsync(families).ConfigureAwait(false);
+            Assert.Single(results);
+
+            families = documents.CreateQuery<Family>()
+                .Where(f => f.Address.State.Equals("ny", StringComparison.InvariantCultureIgnoreCase));
+
+            results = await RunAsync(families).ConfigureAwait(false);
+            Assert.Single(results);
+
+            families = documents.CreateQuery<Family>()
+                .Where(f => string.Equals(f.Address.State, "ny", StringComparison.InvariantCultureIgnoreCase));
+
+            results = await RunAsync(families).ConfigureAwait(false);
+            Assert.Single(results);
+
+            families = documents.CreateQuery<Family>()
+                .Where(f => f.Address.State.Equals("ny", StringComparison.InvariantCulture));
+
+            results = await RunAsync(families).ConfigureAwait(false);
+            Assert.Empty(results);
+
+            families = documents.CreateQuery<Family>()
+                .Where(f => string.Equals(f.Address.State, "ny", StringComparison.InvariantCulture));
+
+            results = await RunAsync(families).ConfigureAwait(false);
+            Assert.Empty(results);
+
+            families = documents.CreateQuery<Family>()
+                .Where(f => f.Address.State.Equals("ny", StringComparison.Ordinal));
+
+            results = await RunAsync(families).ConfigureAwait(false);
+            Assert.Empty(results);
+
+            families = documents.CreateQuery<Family>()
+                .Where(f => string.Equals(f.Address.State, "ny", StringComparison.Ordinal));
+
+            results = await RunAsync(families).ConfigureAwait(false);
+            Assert.Empty(results);
+
+            families = documents.CreateQuery<Family>()
+                .Where(f => f.Address.State == "ny");
+
+            results = await RunAsync(families).ConfigureAwait(false);
+            Assert.Empty(results);
+        }
+
 
         [SkippableFact]
         public async Task QueryWithRangeOperatorsDateTimesAsync() {

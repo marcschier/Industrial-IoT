@@ -92,9 +92,7 @@ namespace Microsoft.Azure.IIoT.Platform.Directory.Models {
             var m2 = r2.Patch(r3, _serializer);
 
             Assert.True((bool)m1.Tags[nameof(EntityRegistration.IsDisabled)]);
-            Assert.NotNull((DateTime?)m1.Tags[nameof(EntityRegistration.NotSeenSince)]);
             Assert.Null((bool?)m2.Tags[nameof(EntityRegistration.IsDisabled)]);
-            Assert.Null((DateTime?)m2.Tags[nameof(EntityRegistration.NotSeenSince)]);
         }
 
         /// <summary>
@@ -108,7 +106,6 @@ namespace Microsoft.Azure.IIoT.Platform.Directory.Models {
                 .FromFactory(() => new DiscovererRegistration(
                     fix.Create<string>(), fix.Create<string>()))
                 .Without(x => x.IsDisabled)
-                .Without(x => x.NotSeenSince)
                 .Create();
             r._desired = r;
             return r;

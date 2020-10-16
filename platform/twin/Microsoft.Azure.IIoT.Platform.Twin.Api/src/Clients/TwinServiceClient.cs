@@ -67,7 +67,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
             if (string.IsNullOrEmpty(endpointId)) {
                 throw new ArgumentNullException(nameof(endpointId));
             }
-            var request = _httpClient.NewRequest($"{_serviceUri}/v2/browse/{endpointId}",
+            var request = _httpClient.NewRequest($"{_serviceUri}/v3/browse/{endpointId}",
                 Resource.Platform);
             _serializer.SerializeToRequest(request, content);
             var response = await _httpClient.PostAsync(request, ct).ConfigureAwait(false);
@@ -87,7 +87,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
             if (content.ContinuationToken == null) {
                 throw new ArgumentException("Missing continuation", nameof(content));
             }
-            var request = _httpClient.NewRequest($"{_serviceUri}/v2/browse/{endpointId}/next",
+            var request = _httpClient.NewRequest($"{_serviceUri}/v3/browse/{endpointId}/next",
                 Resource.Platform);
             _serializer.SerializeToRequest(request, content);
             var response = await _httpClient.PostAsync(request, ct).ConfigureAwait(false);
@@ -108,7 +108,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
                 content.BrowsePaths.Any(p => p == null || p.Count == 0)) {
                 throw new ArgumentException("Bad browse paths", nameof(content));
             }
-            var request = _httpClient.NewRequest($"{_serviceUri}/v2/browse/{endpointId}/path",
+            var request = _httpClient.NewRequest($"{_serviceUri}/v3/browse/{endpointId}/path",
                 Resource.Platform);
             _serializer.SerializeToRequest(request, content);
             var response = await _httpClient.PostAsync(request, ct).ConfigureAwait(false);
@@ -129,7 +129,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
                 throw new ArgumentException(nameof(content.Attributes));
             }
             var request = _httpClient.NewRequest(
-                $"{_serviceUri}/v2/read/{endpointId}/attributes", Resource.Platform);
+                $"{_serviceUri}/v3/read/{endpointId}/attributes", Resource.Platform);
             _serializer.SerializeToRequest(request, content);
             var response = await _httpClient.PostAsync(request, ct).ConfigureAwait(false);
             response.Validate();
@@ -149,7 +149,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
                 throw new ArgumentException(nameof(content.Attributes));
             }
             var request = _httpClient.NewRequest(
-                $"{_serviceUri}/v2/write/{endpointId}/attributes", Resource.Platform);
+                $"{_serviceUri}/v3/write/{endpointId}/attributes", Resource.Platform);
             _serializer.SerializeToRequest(request, content);
             var response = await _httpClient.PostAsync(request, ct).ConfigureAwait(false);
             response.Validate();
@@ -165,7 +165,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
             if (content == null) {
                 throw new ArgumentNullException(nameof(content));
             }
-            var request = _httpClient.NewRequest($"{_serviceUri}/v2/read/{endpointId}",
+            var request = _httpClient.NewRequest($"{_serviceUri}/v3/read/{endpointId}",
                 Resource.Platform);
             _serializer.SerializeToRequest(request, content);
             var response = await _httpClient.PostAsync(request, ct).ConfigureAwait(false);
@@ -185,7 +185,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
             if (content.Value == null) {
                 throw new ArgumentException("Missing value", nameof(content));
             }
-            var request = _httpClient.NewRequest($"{_serviceUri}/v2/write/{endpointId}",
+            var request = _httpClient.NewRequest($"{_serviceUri}/v3/write/{endpointId}",
                 Resource.Platform);
             _serializer.SerializeToRequest(request, content);
             var response = await _httpClient.PostAsync(request, ct).ConfigureAwait(false);
@@ -202,7 +202,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
             if (content == null) {
                 throw new ArgumentNullException(nameof(content));
             }
-            var request = _httpClient.NewRequest($"{_serviceUri}/v2/call/{endpointId}/metadata",
+            var request = _httpClient.NewRequest($"{_serviceUri}/v3/call/{endpointId}/metadata",
                 Resource.Platform);
             _serializer.SerializeToRequest(request, content);
             var response = await _httpClient.PostAsync(request, ct).ConfigureAwait(false);
@@ -219,7 +219,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
             if (content == null) {
                 throw new ArgumentNullException(nameof(content));
             }
-            var request = _httpClient.NewRequest($"{_serviceUri}/v2/call/{endpointId}",
+            var request = _httpClient.NewRequest($"{_serviceUri}/v3/call/{endpointId}",
                 Resource.Platform);
             _serializer.SerializeToRequest(request, content);
             var response = await _httpClient.PostAsync(request, ct).ConfigureAwait(false);
@@ -236,7 +236,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
             if (content == null) {
                 throw new ArgumentNullException(nameof(content));
             }
-            var request = _httpClient.NewRequest($"{_serviceUri}/v2/transfer/{endpointId}/model",
+            var request = _httpClient.NewRequest($"{_serviceUri}/v3/transfer/{endpointId}/model",
                 Resource.Platform);
             _serializer.SerializeToRequest(request, content);
             var response = await _httpClient.PostAsync(request, ct).ConfigureAwait(false);
@@ -256,7 +256,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
             if (content.Item == null) {
                 throw new ArgumentException("Missing item", nameof(content));
             }
-            var request = _httpClient.NewRequest($"{_serviceUri}/v2/publish/{endpointId}/start",
+            var request = _httpClient.NewRequest($"{_serviceUri}/v3/publish/{endpointId}/start",
                 Resource.Platform);
             _serializer.SerializeToRequest(request, content);
             var response = await _httpClient.PostAsync(request, ct).ConfigureAwait(false);
@@ -273,7 +273,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
             if (content == null) {
                 throw new ArgumentNullException(nameof(content));
             }
-            var request = _httpClient.NewRequest($"{_serviceUri}/v2/publish/{endpointId}/bulk",
+            var request = _httpClient.NewRequest($"{_serviceUri}/v3/publish/{endpointId}/bulk",
                 Resource.Platform);
             _serializer.SerializeToRequest(request, content);
             var response = await _httpClient.PostAsync(request, ct).ConfigureAwait(false);
@@ -287,7 +287,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
             if (string.IsNullOrEmpty(endpointId)) {
                 throw new ArgumentNullException(nameof(endpointId));
             }
-            var request = _httpClient.NewRequest($"{_serviceUri}/v2/publish/{endpointId}",
+            var request = _httpClient.NewRequest($"{_serviceUri}/v3/publish/{endpointId}",
                 Resource.Platform);
             _serializer.SerializeToRequest(request, content);
             var response = await _httpClient.PostAsync(request, ct).ConfigureAwait(false);
@@ -304,7 +304,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
             if (content == null) {
                 throw new ArgumentNullException(nameof(content));
             }
-            var request = _httpClient.NewRequest($"{_serviceUri}/v2/publish/{endpointId}/stop",
+            var request = _httpClient.NewRequest($"{_serviceUri}/v3/publish/{endpointId}/stop",
                 Resource.Platform);
             _serializer.SerializeToRequest(request, content);
             var response = await _httpClient.PostAsync(request, ct).ConfigureAwait(false);
@@ -325,7 +325,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
                 throw new ArgumentException("Missing details", nameof(content));
             }
             var request = _httpClient.NewRequest(
-                $"{_serviceUri}/v2/history/read/{endpointId}", Resource.Platform);
+                $"{_serviceUri}/v3/history/read/{endpointId}", Resource.Platform);
             _serializer.SerializeToRequest(request, content);
             var response = await _httpClient.PostAsync(request, ct).ConfigureAwait(false);
             response.Validate();
@@ -345,7 +345,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
                 throw new ArgumentException("Missing continuation", nameof(content));
             }
             var request = _httpClient.NewRequest(
-                $"{_serviceUri}/v2/history/read/{endpointId}/next", Resource.Platform);
+                $"{_serviceUri}/v3/history/read/{endpointId}/next", Resource.Platform);
             _serializer.SerializeToRequest(request, content);
             var response = await _httpClient.PostAsync(request, ct).ConfigureAwait(false);
             response.Validate();
@@ -365,7 +365,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
                 throw new ArgumentException("Missing details", nameof(content));
             }
             var request = _httpClient.NewRequest(
-                $"{_serviceUri}/v2/history/update/{endpointId}", Resource.Platform);
+                $"{_serviceUri}/v3/history/update/{endpointId}", Resource.Platform);
             _serializer.SerializeToRequest(request, content);
             var response = await _httpClient.PostAsync(request, ct).ConfigureAwait(false);
             response.Validate();
@@ -383,7 +383,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
                 throw new ArgumentNullException(nameof(content));
             }
             var request = _httpClient.NewRequest(
-                $"{_serviceUri}/v2/read/{endpointId}/values", Resource.Platform);
+                $"{_serviceUri}/v3/read/{endpointId}/values", Resource.Platform);
             _serializer.SerializeToRequest(request, content);
             var response = await _httpClient.PostAsync(request, ct).ConfigureAwait(false);
             response.Validate();
@@ -401,7 +401,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
                 throw new ArgumentNullException(nameof(content));
             }
             var request = _httpClient.NewRequest(
-                $"{_serviceUri}/v2/read/{endpointId}/values/modified", Resource.Platform);
+                $"{_serviceUri}/v3/read/{endpointId}/values/modified", Resource.Platform);
             _serializer.SerializeToRequest(request, content);
             var response = await _httpClient.PostAsync(request, ct).ConfigureAwait(false);
             response.Validate();
@@ -419,7 +419,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
                 throw new ArgumentNullException(nameof(content));
             }
             var request = _httpClient.NewRequest(
-                $"{_serviceUri}/v2/read/{endpointId}/values/pick", Resource.Platform);
+                $"{_serviceUri}/v3/read/{endpointId}/values/pick", Resource.Platform);
             _serializer.SerializeToRequest(request, content);
             var response = await _httpClient.PostAsync(request, ct).ConfigureAwait(false);
             response.Validate();
@@ -437,7 +437,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
                 throw new ArgumentNullException(nameof(content));
             }
             var request = _httpClient.NewRequest(
-                $"{_serviceUri}/v2/read/{endpointId}/values/processed", Resource.Platform);
+                $"{_serviceUri}/v3/read/{endpointId}/values/processed", Resource.Platform);
             _serializer.SerializeToRequest(request, content);
             var response = await _httpClient.PostAsync(request, ct).ConfigureAwait(false);
             response.Validate();
@@ -457,7 +457,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
                 throw new ArgumentException("Missing continuation", nameof(content));
             }
             var request = _httpClient.NewRequest(
-                $"{_serviceUri}/v2/read/{endpointId}/values/next", Resource.Platform);
+                $"{_serviceUri}/v3/read/{endpointId}/values/next", Resource.Platform);
             _serializer.SerializeToRequest(request, content);
             var response = await _httpClient.PostAsync(request, ct).ConfigureAwait(false);
             response.Validate();
@@ -475,7 +475,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
                 throw new ArgumentNullException(nameof(content));
             }
             var request = _httpClient.NewRequest(
-                $"{_serviceUri}/v2/read/{endpointId}/events", Resource.Platform);
+                $"{_serviceUri}/v3/read/{endpointId}/events", Resource.Platform);
             _serializer.SerializeToRequest(request, content);
             var response = await _httpClient.PostAsync(request, ct).ConfigureAwait(false);
             response.Validate();
@@ -495,7 +495,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
                 throw new ArgumentException("Missing continuation", nameof(content));
             }
             var request = _httpClient.NewRequest(
-                $"{_serviceUri}/v2/read/{endpointId}/events/next", Resource.Platform);
+                $"{_serviceUri}/v3/read/{endpointId}/events/next", Resource.Platform);
             _serializer.SerializeToRequest(request, content);
             var response = await _httpClient.PostAsync(request, ct).ConfigureAwait(false);
             response.Validate();
@@ -512,7 +512,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
                 throw new ArgumentNullException(nameof(content));
             }
             var request = _httpClient.NewRequest(
-                $"{_serviceUri}/v2/replace/{endpointId}/values", Resource.Platform);
+                $"{_serviceUri}/v3/replace/{endpointId}/values", Resource.Platform);
             _serializer.SerializeToRequest(request, content);
             var response = await _httpClient.PostAsync(request, ct).ConfigureAwait(false);
             response.Validate();
@@ -529,7 +529,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
                 throw new ArgumentNullException(nameof(content));
             }
             var request = _httpClient.NewRequest(
-                $"{_serviceUri}/v2/replace/{endpointId}/events", Resource.Platform);
+                $"{_serviceUri}/v3/replace/{endpointId}/events", Resource.Platform);
             _serializer.SerializeToRequest(request, content);
             var response = await _httpClient.PostAsync(request, ct).ConfigureAwait(false);
             response.Validate();
@@ -546,7 +546,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
                 throw new ArgumentNullException(nameof(content));
             }
             var request = _httpClient.NewRequest(
-                $"{_serviceUri}/v2/insert/{endpointId}/values", Resource.Platform);
+                $"{_serviceUri}/v3/insert/{endpointId}/values", Resource.Platform);
             _serializer.SerializeToRequest(request, content);
             var response = await _httpClient.PostAsync(request, ct).ConfigureAwait(false);
             response.Validate();
@@ -563,7 +563,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
                 throw new ArgumentNullException(nameof(content));
             }
             var request = _httpClient.NewRequest(
-                $"{_serviceUri}/v2/insert/{endpointId}/events", Resource.Platform);
+                $"{_serviceUri}/v3/insert/{endpointId}/events", Resource.Platform);
             _serializer.SerializeToRequest(request, content);
             var response = await _httpClient.PostAsync(request, ct).ConfigureAwait(false);
             response.Validate();
@@ -580,7 +580,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
                 throw new ArgumentNullException(nameof(content));
             }
             var request = _httpClient.NewRequest(
-                $"{_serviceUri}/v2/delete/{endpointId}/values", Resource.Platform);
+                $"{_serviceUri}/v3/delete/{endpointId}/values", Resource.Platform);
             _serializer.SerializeToRequest(request, content);
             var response = await _httpClient.PostAsync(request, ct).ConfigureAwait(false);
             response.Validate();
@@ -597,7 +597,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
                 throw new ArgumentNullException(nameof(content));
             }
             var request = _httpClient.NewRequest(
-                $"{_serviceUri}/v2/delete/{endpointId}/values/pick", Resource.Platform);
+                $"{_serviceUri}/v3/delete/{endpointId}/values/pick", Resource.Platform);
             _serializer.SerializeToRequest(request, content);
             var response = await _httpClient.PostAsync(request, ct).ConfigureAwait(false);
             response.Validate();
@@ -614,7 +614,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
                 throw new ArgumentNullException(nameof(content));
             }
             var request = _httpClient.NewRequest(
-                $"{_serviceUri}/v2/delete/{endpointId}/values/modified", Resource.Platform);
+                $"{_serviceUri}/v3/delete/{endpointId}/values/modified", Resource.Platform);
             _serializer.SerializeToRequest(request, content);
             var response = await _httpClient.PostAsync(request, ct).ConfigureAwait(false);
             response.Validate();
@@ -631,7 +631,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
                 throw new ArgumentNullException(nameof(content));
             }
             var request = _httpClient.NewRequest(
-                $"{_serviceUri}/v2/delete/{endpointId}/events", Resource.Platform);
+                $"{_serviceUri}/v3/delete/{endpointId}/events", Resource.Platform);
             _serializer.SerializeToRequest(request, content);
             var response = await _httpClient.PostAsync(request, ct).ConfigureAwait(false);
             response.Validate();

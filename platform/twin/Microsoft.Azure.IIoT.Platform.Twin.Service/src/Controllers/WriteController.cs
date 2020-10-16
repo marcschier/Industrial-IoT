@@ -17,7 +17,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Service.Controllers {
     /// <summary>
     /// Node writing services
     /// </summary>
-    [ApiVersion("2")][ApiVersion("3")]
+    [ApiVersion("3")]
     [Route("v{version:apiVersion}/write")]
     [ExceptionsFilter]
     [Authorize(Policy = Policies.CanControl)]

@@ -199,9 +199,9 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Storage {
         private static IResultFeed<IDocumentInfo<EndpointDocument>> CreateQuery(
             IQuery<EndpointDocument> query, EndpointInfoQueryModel filter) {
             if (filter != null) {
-                if (!(filter?.IncludeNotSeenSince ?? false)) {
-                    // Scope to non deleted twins
-                    query = query.Where(x => x.NotSeenSince == null);
+                if (filter?.Visibility != null) {
+                    // Scope to non deleted applications
+                    query = query.Where(x => x.Visibility == filter.Visibility.Value);
                 }
                 if (filter?.Url != null) {
                     // If Url provided, include it in search

@@ -49,7 +49,6 @@ namespace Microsoft.Azure.IIoT.App.Services {
                 var query = new EndpointInfoQueryApiModel {
                     DiscovererId = discovererId == PathAll ? null : discovererId,
                     ApplicationId = applicationId == PathAll ? null : applicationId,
-                    IncludeNotSeenSince = true
                 };
 
                 if (getNextPage && string.IsNullOrEmpty(previousPage?.ContinuationToken)) {
@@ -153,7 +152,6 @@ namespace Microsoft.Azure.IIoT.App.Services {
 
             try {
                 var query = new ApplicationRegistrationQueryApiModel {
-                    IncludeNotSeenSince = true
                 };
                 var applications = new ApplicationInfoListApiModel();
 

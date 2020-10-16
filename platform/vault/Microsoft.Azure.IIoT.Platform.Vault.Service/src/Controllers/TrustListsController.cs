@@ -20,7 +20,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Service.Controllers {
     /// Trust lists services.
     /// </summary>
     [ExceptionsFilter]
-    [ApiVersion("2")][ApiVersion("3")]
+    [ApiVersion("3")]
     [Route("v{version:apiVersion}/trustlists")]
     [Authorize(Policy = Policies.CanRead)]
     [ApiController]

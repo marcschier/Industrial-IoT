@@ -46,7 +46,12 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
         public string ApplicationId { get; set; }
 
         /// <summary>
-        /// Last time application was seen
+        /// Endpoint visibility
+        /// </summary>
+        public EntityVisibility? Visibility { get; set; }
+
+        /// <summary>
+        /// Last time endpoint was seen
         /// </summary>
         public DateTime? NotSeenSince { get; set; }
 

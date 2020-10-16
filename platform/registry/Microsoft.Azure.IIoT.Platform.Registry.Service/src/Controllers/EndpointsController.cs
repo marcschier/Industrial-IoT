@@ -20,7 +20,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service.Controllers {
     /// <summary>
     /// Activate, Deactivate and Query endpoint resources
     /// </summary>
-    [ApiVersion("2")][ApiVersion("3")]
+    [ApiVersion("3")]
     [Route("v{version:apiVersion}/endpoints")]
     [ExceptionsFilter]
     [Authorize(Policy = Policies.CanQuery)]
@@ -31,8 +31,11 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service.Controllers {
         /// Create controller for endpoints services
         /// </summary>
         /// <param name="endpoints"></param>
-        public EndpointsController(IEndpointRegistry endpoints) {
+        /// <param name="certificates"></param>
+        public EndpointsController(IEndpointRegistry endpoints, 
+            ICertificateServices<string> certificates) {
             _endpoints = endpoints;
+            _certificates = certificates;
         }
 
         /// <summary>
@@ -49,7 +52,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service.Controllers {
             if (string.IsNullOrEmpty(endpointId)) {
                 throw new ArgumentNullException(nameof(endpointId));
             }
-            var result = await _endpoints.GetEndpointCertificateAsync(
+            var result = await _certificates.GetEndpointCertificateAsync(
                 endpointId).ConfigureAwait(false);
             return result.ToApiModel();
         }
@@ -179,5 +182,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service.Controllers {
         }
 
         private readonly IEndpointRegistry _endpoints;
+        private readonly ICertificateServices<string> _certificates;
     }
 }

@@ -8,14 +8,12 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
     using Microsoft.Azure.IIoT.Platform.Registry;
     using Microsoft.Azure.IIoT.Platform.Core.Models;
     using Microsoft.Azure.IIoT.Exceptions;
-    using Microsoft.Azure.IIoT.Hub.Models;
     using Serilog;
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
     using System.Threading;
-    using Microsoft.VisualBasic.CompilerServices;
 
     /// <summary>
     /// Endpoint registry.
@@ -102,25 +100,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
         }
 
         /// <inheritdoc/>
-        public async Task<X509CertificateChainModel> GetEndpointCertificateAsync(
-            string endpointId, CancellationToken ct) {
-            if (string.IsNullOrEmpty(endpointId)) {
-                throw new ArgumentNullException(nameof(endpointId));
-            }
-
-            // Get existing endpoint - get should always throw
-            var endpoint = await _database.FindAsync(endpointId, ct).ConfigureAwait(false);
-
-            if (endpoint == null) {
-                throw new ResourceNotFoundException(
-                    $"{endpointId} is not an endpoint registration.");
-            }
-            var rawCertificates = await _certificates.GetEndpointCertificateAsync(
-                endpoint, ct).ConfigureAwait(false);
-            return rawCertificates.ToCertificateChain();
-        }
-
-        /// <inheritdoc/>
         public Task OnApplicationNewAsync(RegistryOperationContextModel context,
             ApplicationInfoModel application) {
             return Task.CompletedTask;
@@ -137,7 +116,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
             string applicationId, ApplicationInfoModel application) {
             // Get all endpoint registrations and for each one, call delete, if failure,
             // stop half way and throw and do not complete.
-            var endpoints = await GetEndpointsAsync(applicationId, true).ConfigureAwait(false);
+            var endpoints = await GetEndpointsAsync(applicationId).ConfigureAwait(false);
             foreach (var endpoint in endpoints) {
                 await _database.DeleteAsync(endpoint.Id, 
                     ep => Task.FromResult(true)).ConfigureAwait(false);
@@ -148,10 +127,12 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
 
         /// <inheritdoc/>
         public async Task<IEnumerable<EndpointInfoModel>> GetApplicationEndpoints(
-            string applicationId, bool includeDeleted, bool filterInactiveTwins, CancellationToken ct) {
-            // Include deleted twins if the application itself is deleted.  Otherwise omit.
-            var endpoints = await GetEndpointsAsync(
-                applicationId, includeDeleted, ct).ConfigureAwait(false);
+            string applicationId, bool includeDeleted, bool filterInactiveTwins,
+            CancellationToken ct) {
+            // Include non-visible twins if the application itself is not visible. Otherwise omit.
+            var endpoints = await GetEndpointsAsync(applicationId, 
+                includeDeleted ? (EntityVisibility?)null : EntityVisibility.Found, 
+                    ct).ConfigureAwait(false);
             if (!filterInactiveTwins) {
                 return endpoints;
             }
@@ -178,7 +159,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
             var existing = Enumerable.Empty<EndpointInfoModel>();
             if (!string.IsNullOrEmpty(applicationId)) {
                 // Merge with existing endpoints of the application
-                existing = await GetEndpointsAsync(applicationId, true).ConfigureAwait(false);
+                existing = await GetEndpointsAsync(applicationId).ConfigureAwait(false);
             }
 
             var remove = new HashSet<EndpointInfoModel>(existing,
@@ -206,10 +187,10 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                     try {
                         var wasDisabled = false;
                         var endpoint = await _database.UpdateAsync(item.Id, existing => {
-                            wasDisabled = existing.NotSeenSince == null;
+                            wasDisabled = existing.IsNotSeen();
                             existing.Patch(item);
                             existing.Updated = operationContext;
-                            existing.NotSeenSince = DateTime.UtcNow;
+                            existing.SetNotSeen();
                             return Task.FromResult(true);
                         }).ConfigureAwait(false);
 
@@ -237,13 +218,13 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                     var patch = change.First(x =>
                         EndpointInfoModelEx.Logical.Equals(x, exists));
                     patch.ActivationState = exists.ActivationState;
-                    var endpoint = await _database.UpdateAsync(exists.Id, existing => {
-                        wasUpdated = existing.IsDisabled();
-                        patch.NotSeenSince = null;
+                    var endpoint = await _database.UpdateAsync(exists.Id, (Func<EndpointInfoModel, Task<bool>>)(existing => {
+                        wasUpdated = existing.IsNotSeen();
                         existing.Patch(patch);
+                        existing.SetAsFound();
                         existing.Updated = operationContext;
                         return Task.FromResult(true);
-                    }).ConfigureAwait(false);
+                    })).ConfigureAwait(false);
                     if (wasUpdated) {
                         await _broker.NotifyAllAsync(
                             l => l.OnEndpointUpdatedAsync(operationContext,
@@ -267,7 +248,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                     var endpoint = await _database.AddOrUpdateAsync(item.Id, existing => {
                         update = existing != null;
                         var addOrUpdated = existing.Patch(item);
-                        addOrUpdated.NotSeenSince = null;
+                        addOrUpdated.SetAsFound();
                         addOrUpdated.Updated = operationContext;
                         if (!update) {
                             addOrUpdated.Created = operationContext;
@@ -302,13 +283,13 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
         /// Get all endpoints for application id
         /// </summary>
         /// <param name="applicationId"></param>
-        /// <param name="includeDeleted"></param>
+        /// <param name="visibility"></param>
         /// <param name="ct"></param>
         /// <returns></returns>
         private async Task<IEnumerable<EndpointInfoModel>> GetEndpointsAsync(
-            string applicationId, bool includeDeleted, CancellationToken ct = default) {
+            string applicationId, EntityVisibility? visibility = null, CancellationToken ct = default) {
             return await _database.QueryAllAsync(new EndpointInfoQueryModel {
-                IncludeNotSeenSince = includeDeleted,
+                Visibility = visibility,
                 ApplicationId = applicationId
             }, ct).ConfigureAwait(false);
         }

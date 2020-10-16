@@ -14,7 +14,7 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service.Controllers {
     /// <summary>
     /// Configure discovery
     /// </summary>
-    [ApiVersion("2")][ApiVersion("3")]
+    [ApiVersion("3")]
     [Route("v{version:apiVersion}/discovery")]
     [ExceptionsFilter]
     [Authorize(Policy = Policies.CanWrite)]

@@ -44,6 +44,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
                 ActivationState = document.ActivationState,
                 Updated = ToOperationModel(document.UpdateAuthorityId, document.UpdateTime),
                 Created = ToOperationModel(document.CreateAuthorityId, document.CreateTime),
+                Visibility = document.Visibility,
                 NotSeenSince = document.NotSeenSince,
                 EndpointState = document.EndpointState
             };
@@ -61,6 +62,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
             return new EndpointDocument {
                 Id = model.Id,
                 EndpointState = model.EndpointState ?? EndpointConnectivityState.Disconnected,
+                Visibility = model.Visibility ?? EntityVisibility.Unknown,
                 NotSeenSince = model.NotSeenSince,
                 ApplicationId = model.ApplicationId,
                 DiscovererId = model.DiscovererId,

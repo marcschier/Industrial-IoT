@@ -88,9 +88,7 @@ namespace Microsoft.Azure.IIoT.Platform.Directory.Models {
             var m2 = r2.Patch(r3);
 
             Assert.True((bool)m1.Tags[nameof(EntityRegistration.IsDisabled)]);
-            Assert.NotNull((DateTime?)m1.Tags[nameof(EntityRegistration.NotSeenSince)]);
             Assert.Null((bool?)m2.Tags[nameof(EntityRegistration.IsDisabled)]);
-            Assert.Null((DateTime?)m2.Tags[nameof(EntityRegistration.NotSeenSince)]);
         }
 
         /// <summary>
@@ -105,7 +103,6 @@ namespace Microsoft.Azure.IIoT.Platform.Directory.Models {
                     fix.Create<string>()))
                 .Without(x => x.IsDisabled)
                 .Without(x => x.Connected)
-                .Without(x => x.NotSeenSince)
                 .Create();
             return r;
         }

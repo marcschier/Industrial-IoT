@@ -40,9 +40,18 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Models {
         public bool? ReadVariableValues { get; set; }
 
         /// <summary>
+        /// Whether to only return the raw node id
+        /// information and not read the target node.
+        /// (default is false)
+        /// </summary>
+        [DataMember(Name = "NodeIdsOnly", Order = 3,
+            EmitDefaultValue = false)]
+        public bool? NodeIdsOnly { get; set; }
+
+        /// <summary>
         /// Optional request header
         /// </summary>
-        [DataMember(Name = "header", Order = 3,
+        [DataMember(Name = "header", Order = 4,
             EmitDefaultValue = false)]
         public RequestHeaderApiModel Header { get; set; }
     }

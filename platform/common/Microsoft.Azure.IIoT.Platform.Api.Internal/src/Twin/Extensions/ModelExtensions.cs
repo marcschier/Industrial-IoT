@@ -148,6 +148,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Models {
             return new BrowseNextRequestApiModel {
                 Abort = model.Abort,
                 TargetNodesOnly = model.TargetNodesOnly,
+                NodeIdsOnly = model.NodeIdsOnly,
                 ReadVariableValues = model.ReadVariableValues,
                 ContinuationToken = model.ContinuationToken,
                 Header = model.Header.ToApiModel()
@@ -166,6 +167,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Models {
             return new BrowseNextRequestModel {
                 Abort = model.Abort,
                 TargetNodesOnly = model.TargetNodesOnly,
+                NodeIdsOnly = model.NodeIdsOnly,
                 ReadVariableValues = model.ReadVariableValues,
                 ContinuationToken = model.ContinuationToken,
                 Header = model.Header.ToServiceModel()
@@ -220,6 +222,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Models {
             return new BrowsePathRequestApiModel {
                 NodeId = model.NodeId,
                 BrowsePaths = model.BrowsePaths,
+                NodeIdsOnly = model.NodeIdsOnly,
                 ReadVariableValues = model.ReadVariableValues,
                 Header = model.Header.ToApiModel()
             };
@@ -237,6 +240,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Models {
             return new BrowsePathRequestModel {
                 NodeId = model.NodeId,
                 BrowsePaths = model.BrowsePaths,
+                NodeIdsOnly = model.NodeIdsOnly,
                 ReadVariableValues = model.ReadVariableValues,
                 Header = model.Header.ToServiceModel()
             };
@@ -292,6 +296,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Models {
                 View = model.View.ToApiModel(),
                 ReferenceTypeId = model.ReferenceTypeId,
                 TargetNodesOnly = model.TargetNodesOnly,
+                NodeIdsOnly = model.NodeIdsOnly,
                 ReadVariableValues = model.ReadVariableValues,
                 NodeClassFilter = model.NodeClassFilter?
                     .Select(f => (Core.Api.Models.NodeClass)f)
@@ -317,6 +322,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Models {
                 View = model.View.ToServiceModel(),
                 ReferenceTypeId = model.ReferenceTypeId,
                 TargetNodesOnly = model.TargetNodesOnly,
+                NodeIdsOnly = model.NodeIdsOnly,
                 ReadVariableValues = model.ReadVariableValues,
                 NodeClassFilter = model.NodeClassFilter?
                     .Select(f => (Core.Models.NodeClass)f)

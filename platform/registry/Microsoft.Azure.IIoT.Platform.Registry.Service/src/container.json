@@ -1,4 +1,5 @@
 {
-    "name": "iot/opc-registry-service",
-    "exposes": [9042]
+    "name": "iotedge/opc-discovery",
+    "buildAlways": true,
+    "exposes": [ 9042 ]
 }

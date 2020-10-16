@@ -63,18 +63,42 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
         }
 
         /// <summary>
-        /// Is disabled
+        /// Is not seen
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
-        public static bool IsDisabled(this ApplicationInfoModel model) {
+        public static bool IsNotSeen(this ApplicationInfoModel model) {
             if (model == null) {
                 return true;
             }
-            return
-                model.NotSeenSince != null;
+            return model.Visibility != EntityVisibility.Found;
         }
 
+        /// <summary>
+        /// Disable
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public static ApplicationInfoModel SetNotSeen(this ApplicationInfoModel model) {
+            if (model != null) {
+                model.Visibility = EntityVisibility.NotSeen;
+                model.NotSeenSince = DateTime.UtcNow;
+            }
+            return model;
+        }
+
+        /// <summary>
+        /// Enable
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public static ApplicationInfoModel SetAsFound(this ApplicationInfoModel model) {
+            if (model != null) {
+                model.Visibility = EntityVisibility.Found;
+                model.NotSeenSince = null;
+            }
+            return model;
+        }
 
         /// <summary>
         /// Equality comparison
@@ -91,7 +115,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
                 return false;
             }
             return
-                that.IsDisabled() == model.IsDisabled() &&
+                that.Visibility == model.Visibility &&
                 that.ApplicationUri.EqualsIgnoreCase(model.ApplicationUri) &&
                 that.ApplicationType == model.ApplicationType;
         }
@@ -122,6 +146,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
                 DiscoveryUrls = model.DiscoveryUrls
                     .ToHashSetSafe(),
                 NotSeenSince = model.NotSeenSince,
+                Visibility = model.Visibility,
                 ProductUri = model.ProductUri,
                 GatewayServerUri = model.GatewayServerUri,
                 Created = model.Created.Clone(),
@@ -161,12 +186,10 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
         /// </summary>
         /// <param name="request"></param>
         /// <param name="context"></param>
-        /// <param name="disabled"></param>
         /// <returns></returns>
         public static ApplicationInfoModel ToApplicationInfo(
             this ApplicationRegistrationRequestModel request,
-            RegistryOperationContextModel context,
-            bool disabled = true) {
+            RegistryOperationContextModel context) {
             if (request is null) {
                 return null;
             }
@@ -182,7 +205,8 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
                 Capabilities = request.Capabilities,
                 GatewayServerUri = request.GatewayServerUri,
                 Created = context,
-                NotSeenSince = disabled ? DateTime.UtcNow : (DateTime?)null,
+                Visibility = EntityVisibility.Unknown,
+                NotSeenSince = null,
                 GenerationId = null,
                 Updated = null,
                 ApplicationId = null,
@@ -238,6 +262,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
             application.DiscoveryProfileUri = model.DiscoveryProfileUri;
             application.HostAddresses = model.HostAddresses;
             application.DiscoveryUrls = model.DiscoveryUrls;
+            application.Visibility = model.Visibility;
             application.NotSeenSince = model.NotSeenSince;
             application.ProductUri = model.ProductUri;
             application.DiscovererId = model.DiscovererId;

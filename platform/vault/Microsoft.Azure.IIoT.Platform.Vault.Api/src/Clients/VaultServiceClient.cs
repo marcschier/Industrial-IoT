@@ -63,7 +63,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Api.Clients {
         /// <inheritdoc/>
         public async Task<TrustGroupListApiModel> ListGroupsAsync(string nextPageLink,
             int? pageSize, CancellationToken ct) {
-            var request = _httpClient.NewRequest($"{_serviceUri}/v2/groups", Resource.Platform);
+            var request = _httpClient.NewRequest($"{_serviceUri}/v3/groups", Resource.Platform);
             if (nextPageLink != null) {
                 request.AddHeader(HttpHeader.ContinuationToken, nextPageLink);
             }
@@ -82,7 +82,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Api.Clients {
             if (string.IsNullOrEmpty(groupId)) {
                 throw new ArgumentNullException(nameof(groupId));
             }
-            var request = _httpClient.NewRequest($"{_serviceUri}/v2/groups/{groupId}",
+            var request = _httpClient.NewRequest($"{_serviceUri}/v3/groups/{groupId}",
                 Resource.Platform);
             _serializer.SetAcceptHeaders(request);
             var response = await _httpClient.GetAsync(request, ct).ConfigureAwait(false);
@@ -102,7 +102,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Api.Clients {
             if (string.IsNullOrEmpty(groupId)) {
                 throw new ArgumentNullException(nameof(groupId));
             }
-            var request = _httpClient.NewRequest($"{_serviceUri}/v2/groups/{groupId}", Resource.Platform);
+            var request = _httpClient.NewRequest($"{_serviceUri}/v3/groups/{groupId}", Resource.Platform);
             _serializer.SerializeToRequest(request, model);
             var response = await _httpClient.PostAsync(request, ct).ConfigureAwait(false);
             response.Validate();
@@ -114,7 +114,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Api.Clients {
             if (model == null) {
                 throw new ArgumentNullException(nameof(model));
             }
-            var request = _httpClient.NewRequest($"{_serviceUri}/v2/groups/root", Resource.Platform);
+            var request = _httpClient.NewRequest($"{_serviceUri}/v3/groups/root", Resource.Platform);
             _serializer.SerializeToRequest(request, model);
             var response = await _httpClient.PutAsync(request, ct).ConfigureAwait(false);
             response.Validate();
@@ -127,7 +127,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Api.Clients {
             if (model == null) {
                 throw new ArgumentNullException(nameof(model));
             }
-            var request = _httpClient.NewRequest($"{_serviceUri}/v2/groups", Resource.Platform);
+            var request = _httpClient.NewRequest($"{_serviceUri}/v3/groups", Resource.Platform);
             _serializer.SerializeToRequest(request, model);
             var response = await _httpClient.PutAsync(request, ct).ConfigureAwait(false);
             response.Validate();
@@ -141,7 +141,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Api.Clients {
                 throw new ArgumentNullException(nameof(groupId));
             }
             var request = _httpClient.NewRequest(
-                $"{_serviceUri}/v2/groups/{groupId}/renew", Resource.Platform);
+                $"{_serviceUri}/v3/groups/{groupId}/renew", Resource.Platform);
             var response = await _httpClient.PostAsync(request, ct).ConfigureAwait(false);
             response.Validate();
             return _serializer.DeserializeResponse<X509CertificateApiModel>(response);
@@ -152,7 +152,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Api.Clients {
             if (string.IsNullOrEmpty(groupId)) {
                 throw new ArgumentNullException(nameof(groupId));
             }
-            var request = _httpClient.NewRequest($"{_serviceUri}/v2/groups/{groupId}", Resource.Platform);
+            var request = _httpClient.NewRequest($"{_serviceUri}/v3/groups/{groupId}", Resource.Platform);
             var response = await _httpClient.DeleteAsync(request, ct).ConfigureAwait(false);
             response.Validate();
         }
@@ -164,7 +164,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Api.Clients {
                 throw new ArgumentNullException(nameof(serialNumber));
             }
             var request = _httpClient.NewRequest(
-                $"{_serviceUri}/v2/certificates/{serialNumber}", Resource.Platform);
+                $"{_serviceUri}/v3/certificates/{serialNumber}", Resource.Platform);
             _serializer.SetAcceptHeaders(request);
             var response = await _httpClient.GetAsync(request, ct).ConfigureAwait(false);
             response.Validate();
@@ -178,7 +178,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Api.Clients {
                 throw new ArgumentNullException(nameof(serialNumber));
             }
             var request = _httpClient.NewRequest(
-                $"{_serviceUri}/v2/certificates/{serialNumber}/crls", Resource.Platform);
+                $"{_serviceUri}/v3/certificates/{serialNumber}/crls", Resource.Platform);
             _serializer.SetAcceptHeaders(request);
             var response = await _httpClient.GetAsync(request, ct).ConfigureAwait(false);
             response.Validate();
@@ -191,7 +191,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Api.Clients {
             if (model == null) {
                 throw new ArgumentNullException(nameof(model));
             }
-            var request = _httpClient.NewRequest($"{_serviceUri}/v2/requests/sign",
+            var request = _httpClient.NewRequest($"{_serviceUri}/v3/requests/sign",
                 Resource.Platform);
             _serializer.SerializeToRequest(request, model);
             var response = await _httpClient.PutAsync(request, ct).ConfigureAwait(false);
@@ -205,7 +205,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Api.Clients {
             if (string.IsNullOrEmpty(requestId)) {
                 throw new ArgumentNullException(nameof(requestId));
             }
-            var request = _httpClient.NewRequest($"{_serviceUri}/v2/requests/sign/{requestId}",
+            var request = _httpClient.NewRequest($"{_serviceUri}/v3/requests/sign/{requestId}",
                 Resource.Platform);
             _serializer.SetAcceptHeaders(request);
             var response = await _httpClient.GetAsync(request, ct).ConfigureAwait(false);
@@ -219,7 +219,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Api.Clients {
             if (model == null) {
                 throw new ArgumentNullException(nameof(model));
             }
-            var request = _httpClient.NewRequest($"{_serviceUri}/v2/requests/keypair",
+            var request = _httpClient.NewRequest($"{_serviceUri}/v3/requests/keypair",
                 Resource.Platform);
             _serializer.SerializeToRequest(request, model);
             var response = await _httpClient.PutAsync(request, ct).ConfigureAwait(false);
@@ -233,7 +233,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Api.Clients {
             if (string.IsNullOrEmpty(requestId)) {
                 throw new ArgumentNullException(nameof(requestId));
             }
-            var request = _httpClient.NewRequest($"{_serviceUri}/v2/requests/keypair/{requestId}",
+            var request = _httpClient.NewRequest($"{_serviceUri}/v3/requests/keypair/{requestId}",
                 Resource.Platform);
             _serializer.SetAcceptHeaders(request);
             var response = await _httpClient.GetAsync(request, ct).ConfigureAwait(false);
@@ -246,7 +246,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Api.Clients {
             if (string.IsNullOrEmpty(requestId)) {
                 throw new ArgumentNullException(nameof(requestId));
             }
-            var request = _httpClient.NewRequest($"{_serviceUri}/v2/requests/{requestId}/approve",
+            var request = _httpClient.NewRequest($"{_serviceUri}/v3/requests/{requestId}/approve",
                 Resource.Platform);
             var response = await _httpClient.PostAsync(request, ct).ConfigureAwait(false);
             response.Validate();
@@ -257,7 +257,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Api.Clients {
             if (string.IsNullOrEmpty(requestId)) {
                 throw new ArgumentNullException(nameof(requestId));
             }
-            var request = _httpClient.NewRequest($"{_serviceUri}/v2/requests/{requestId}/reject",
+            var request = _httpClient.NewRequest($"{_serviceUri}/v3/requests/{requestId}/reject",
                 Resource.Platform);
             var response = await _httpClient.PostAsync(request, ct).ConfigureAwait(false);
             response.Validate();
@@ -268,7 +268,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Api.Clients {
             if (string.IsNullOrEmpty(requestId)) {
                 throw new ArgumentNullException(nameof(requestId));
             }
-            var request = _httpClient.NewRequest($"{_serviceUri}/v2/requests/{requestId}/accept",
+            var request = _httpClient.NewRequest($"{_serviceUri}/v3/requests/{requestId}/accept",
                 Resource.Platform);
             var response = await _httpClient.PostAsync(request, ct).ConfigureAwait(false);
             response.Validate();
@@ -279,7 +279,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Api.Clients {
             if (string.IsNullOrEmpty(requestId)) {
                 throw new ArgumentNullException(nameof(requestId));
             }
-            var request = _httpClient.NewRequest($"{_serviceUri}/v2/requests/{requestId}",
+            var request = _httpClient.NewRequest($"{_serviceUri}/v3/requests/{requestId}",
                 Resource.Platform);
             var response = await _httpClient.DeleteAsync(request, ct).ConfigureAwait(false);
             response.Validate();
@@ -291,7 +291,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Api.Clients {
             if (string.IsNullOrEmpty(requestId)) {
                 throw new ArgumentNullException(nameof(requestId));
             }
-            var request = _httpClient.NewRequest($"{_serviceUri}/v2/requests/{requestId}",
+            var request = _httpClient.NewRequest($"{_serviceUri}/v3/requests/{requestId}",
                 Resource.Platform);
             _serializer.SetAcceptHeaders(request);
             var response = await _httpClient.GetAsync(request, ct).ConfigureAwait(false);
@@ -302,7 +302,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Api.Clients {
         /// <inheritdoc/>
         public async Task<CertificateRequestQueryResponseApiModel> QueryRequestsAsync(
             CertificateRequestQueryRequestApiModel query, int? pageSize, CancellationToken ct) {
-            var request = _httpClient.NewRequest($"{_serviceUri}/v2/requests/query",
+            var request = _httpClient.NewRequest($"{_serviceUri}/v3/requests/query",
                 Resource.Platform);
             if (pageSize != null) {
                 request.AddHeader(HttpHeader.MaxItemCount, pageSize.ToString());
@@ -318,7 +318,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Api.Clients {
         /// <inheritdoc/>
         public async Task<CertificateRequestQueryResponseApiModel> ListRequestsAsync(
             string nextPageLink, int? pageSize, CancellationToken ct) {
-            var request = _httpClient.NewRequest($"{_serviceUri}/v2/requests",
+            var request = _httpClient.NewRequest($"{_serviceUri}/v3/requests",
                 Resource.Platform);
             if (nextPageLink != null) {
                 request.AddHeader(HttpHeader.ContinuationToken, nextPageLink);
@@ -342,7 +342,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Api.Clients {
                 throw new ArgumentNullException(nameof(trustedEntityId));
             }
             var request = _httpClient.NewRequest(
-                $"{_serviceUri}/v2/trustlist/{entityId}/{trustedEntityId}",
+                $"{_serviceUri}/v3/trustlist/{entityId}/{trustedEntityId}",
                 Resource.Platform);
             var response = await _httpClient.PutAsync(request, ct).ConfigureAwait(false);
             response.Validate();
@@ -354,7 +354,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Api.Clients {
             if (string.IsNullOrEmpty(entityId)) {
                 throw new ArgumentNullException(nameof(entityId));
             }
-            var request = _httpClient.NewRequest($"{_serviceUri}/v2/trustlist/{entityId}",
+            var request = _httpClient.NewRequest($"{_serviceUri}/v3/trustlist/{entityId}",
                 Resource.Platform);
             if (nextPageLink != null) {
                 request.AddHeader(HttpHeader.ContinuationToken, nextPageLink);
@@ -378,7 +378,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Api.Clients {
                 throw new ArgumentNullException(nameof(untrustedEntityId));
             }
             var request = _httpClient.NewRequest(
-                $"{_serviceUri}/v2/trustlist/{entityId}/{untrustedEntityId}",
+                $"{_serviceUri}/v3/trustlist/{entityId}/{untrustedEntityId}",
                 Resource.Platform);
             var response = await _httpClient.DeleteAsync(request, ct).ConfigureAwait(false);
             response.Validate();

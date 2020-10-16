@@ -202,9 +202,9 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Storage {
             IQuery<ApplicationDocument> query, ApplicationRegistrationQueryModel filter) {
 
             if (filter != null) {
-                if (!(filter?.IncludeNotSeenSince ?? false)) {
+                if (filter?.Visibility != null) {
                     // Scope to non deleted applications
-                    query = query.Where(x => x.NotSeenSince == null);
+                    query = query.Where(x => x.Visibility == filter.Visibility.Value);
                 }
                 if (filter?.Locale != null) {
                     if (filter?.ApplicationName != null) {

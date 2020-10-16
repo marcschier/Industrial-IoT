@@ -44,12 +44,6 @@ namespace Microsoft.Azure.IIoT.Platform.Directory.Models {
         public virtual bool? IsDisabled { get; set; }
 
         /// <summary>
-        /// Last time application was seen
-        /// </summary>
-        [DataMember]
-        public virtual DateTime? NotSeenSince { get; set; }
-
-        /// <summary>
         /// Reported Type
         /// </summary>
         [DataMember]
@@ -81,9 +75,6 @@ namespace Microsoft.Azure.IIoT.Platform.Directory.Models {
             if ((IsDisabled ?? false) != (registration.IsDisabled ?? false)) {
                 return false;
             }
-            if (NotSeenSince != registration.NotSeenSince) {
-                return false;
-            }
             return true;
         }
 
@@ -104,8 +95,6 @@ namespace Microsoft.Azure.IIoT.Platform.Directory.Models {
                 EqualityComparer<string>.Default.GetHashCode(DeviceType);
             hashCode = (hashCode * -1521134295) +
                 EqualityComparer<bool>.Default.GetHashCode(IsDisabled ?? false);
-            hashCode = (hashCode * -1521134295) +
-                EqualityComparer<DateTime?>.Default.GetHashCode(NotSeenSince);
             return hashCode;
         }
     }

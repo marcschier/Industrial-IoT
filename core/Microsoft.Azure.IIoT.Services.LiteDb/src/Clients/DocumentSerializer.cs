@@ -63,8 +63,8 @@ namespace Microsoft.Azure.IIoT.Services.LiteDb.Clients {
         /// <returns></returns>
         private static BsonMapper CreateMapper() {
             var mapper = new BsonMapper {
-                EnumAsInteger = true, 
-                TrimWhitespace = false
+                // EnumAsInteger = true, 
+                // TrimWhitespace = false
             };
 
             var serializer = new NewtonSoftJsonSerializer();

@@ -68,7 +68,7 @@ namespace Microsoft.Azure.IIoT.Platform.Directory.Api.Clients {
             if (string.IsNullOrEmpty(discovererId)) {
                 throw new ArgumentNullException(nameof(discovererId));
             }
-            var request = _httpClient.NewRequest($"{_serviceUri}/v2/discovery/{discovererId}",
+            var request = _httpClient.NewRequest($"{_serviceUri}/v3/discovery/{discovererId}",
                 Resource.Platform);
             _serializer.SerializeToRequest(request, content);
             var response = await _httpClient.PatchAsync(request, ct).ConfigureAwait(false);
@@ -78,7 +78,7 @@ namespace Microsoft.Azure.IIoT.Platform.Directory.Api.Clients {
         /// <inheritdoc/>
         public async Task<DiscovererListApiModel> ListDiscoverersAsync(
             string continuation, int? pageSize, CancellationToken ct) {
-            var uri = new UriBuilder($"{_serviceUri}/v2/discovery");
+            var uri = new UriBuilder($"{_serviceUri}/v3/discovery");
             var request = _httpClient.NewRequest(uri.Uri, Resource.Platform);
             if (continuation != null) {
                 request.AddHeader(HttpHeader.ContinuationToken, continuation);
@@ -96,7 +96,7 @@ namespace Microsoft.Azure.IIoT.Platform.Directory.Api.Clients {
         public async Task<DiscovererListApiModel> QueryDiscoverersAsync(
             DiscovererQueryApiModel query, int? pageSize,
             CancellationToken ct) {
-            var uri = new UriBuilder($"{_serviceUri}/v2/discovery/query");
+            var uri = new UriBuilder($"{_serviceUri}/v3/discovery/query");
             var request = _httpClient.NewRequest(uri.Uri, Resource.Platform);
             if (pageSize != null) {
                 request.AddHeader(HttpHeader.MaxItemCount, pageSize.ToString());
@@ -113,7 +113,7 @@ namespace Microsoft.Azure.IIoT.Platform.Directory.Api.Clients {
             if (string.IsNullOrEmpty(discovererId)) {
                 throw new ArgumentNullException(nameof(discovererId));
             }
-            var uri = new UriBuilder($"{_serviceUri}/v2/discovery/{discovererId}");
+            var uri = new UriBuilder($"{_serviceUri}/v3/discovery/{discovererId}");
             var request = _httpClient.NewRequest(uri.Uri, Resource.Platform);
             _serializer.SetAcceptHeaders(request);
             var response = await _httpClient.GetAsync(request, ct).ConfigureAwait(false);
@@ -130,7 +130,7 @@ namespace Microsoft.Azure.IIoT.Platform.Directory.Api.Clients {
             if (string.IsNullOrEmpty(supervisorId)) {
                 throw new ArgumentNullException(nameof(supervisorId));
             }
-            var request = _httpClient.NewRequest($"{_serviceUri}/v2/supervisors/{supervisorId}",
+            var request = _httpClient.NewRequest($"{_serviceUri}/v3/supervisors/{supervisorId}",
                 Resource.Platform);
             _serializer.SerializeToRequest(request, content);
             var response = await _httpClient.PatchAsync(request, ct).ConfigureAwait(false);
@@ -140,7 +140,7 @@ namespace Microsoft.Azure.IIoT.Platform.Directory.Api.Clients {
         /// <inheritdoc/>
         public async Task<SupervisorListApiModel> ListSupervisorsAsync(
             string continuation, int? pageSize, CancellationToken ct) {
-            var uri = new UriBuilder($"{_serviceUri}/v2/supervisors");
+            var uri = new UriBuilder($"{_serviceUri}/v3/supervisors");
             var request = _httpClient.NewRequest(uri.Uri, Resource.Platform);
             if (continuation != null) {
                 request.AddHeader(HttpHeader.ContinuationToken, continuation);
@@ -158,7 +158,7 @@ namespace Microsoft.Azure.IIoT.Platform.Directory.Api.Clients {
         public async Task<SupervisorListApiModel> QuerySupervisorsAsync(
             SupervisorQueryApiModel query, int? pageSize,
             CancellationToken ct) {
-            var uri = new UriBuilder($"{_serviceUri}/v2/supervisors/query");
+            var uri = new UriBuilder($"{_serviceUri}/v3/supervisors/query");
             var request = _httpClient.NewRequest(uri.Uri, Resource.Platform);
             if (pageSize != null) {
                 request.AddHeader(HttpHeader.MaxItemCount, pageSize.ToString());
@@ -175,7 +175,7 @@ namespace Microsoft.Azure.IIoT.Platform.Directory.Api.Clients {
             if (string.IsNullOrEmpty(supervisorId)) {
                 throw new ArgumentNullException(nameof(supervisorId));
             }
-            var uri = new UriBuilder($"{_serviceUri}/v2/supervisors/{supervisorId}");
+            var uri = new UriBuilder($"{_serviceUri}/v3/supervisors/{supervisorId}");
             var request = _httpClient.NewRequest(uri.Uri, Resource.Platform);
             _serializer.SetAcceptHeaders(request);
             var response = await _httpClient.GetAsync(request, ct).ConfigureAwait(false);
@@ -186,7 +186,7 @@ namespace Microsoft.Azure.IIoT.Platform.Directory.Api.Clients {
         /// <inheritdoc/>
         public async Task<PublisherListApiModel> ListPublishersAsync(
             string continuation, int? pageSize, CancellationToken ct) {
-            var uri = new UriBuilder($"{_serviceUri}/v2/publishers");
+            var uri = new UriBuilder($"{_serviceUri}/v3/publishers");
             var request = _httpClient.NewRequest(uri.Uri, Resource.Platform);
             if (continuation != null) {
                 request.AddHeader(HttpHeader.ContinuationToken, continuation);
@@ -209,7 +209,7 @@ namespace Microsoft.Azure.IIoT.Platform.Directory.Api.Clients {
             if (string.IsNullOrEmpty(publisherId)) {
                 throw new ArgumentNullException(nameof(publisherId));
             }
-            var request = _httpClient.NewRequest($"{_serviceUri}/v2/publishers/{publisherId}",
+            var request = _httpClient.NewRequest($"{_serviceUri}/v3/publishers/{publisherId}",
                 Resource.Platform);
             _serializer.SerializeToRequest(request, content);
             var response = await _httpClient.PatchAsync(request, ct).ConfigureAwait(false);
@@ -220,7 +220,7 @@ namespace Microsoft.Azure.IIoT.Platform.Directory.Api.Clients {
         public async Task<PublisherListApiModel> QueryPublishersAsync(
             PublisherQueryApiModel query, int? pageSize,
             CancellationToken ct) {
-            var uri = new UriBuilder($"{_serviceUri}/v2/publishers/query");
+            var uri = new UriBuilder($"{_serviceUri}/v3/publishers/query");
             var request = _httpClient.NewRequest(uri.Uri, Resource.Platform);
             if (pageSize != null) {
                 request.AddHeader(HttpHeader.MaxItemCount, pageSize.ToString());
@@ -237,7 +237,7 @@ namespace Microsoft.Azure.IIoT.Platform.Directory.Api.Clients {
             if (string.IsNullOrEmpty(publisherId)) {
                 throw new ArgumentNullException(nameof(publisherId));
             }
-            var uri = new UriBuilder($"{_serviceUri}/v2/publishers/{publisherId}");
+            var uri = new UriBuilder($"{_serviceUri}/v3/publishers/{publisherId}");
             var request = _httpClient.NewRequest(uri.Uri, Resource.Platform);
             _serializer.SetAcceptHeaders(request);
             var response = await _httpClient.GetAsync(request, ct).ConfigureAwait(false);
@@ -248,7 +248,7 @@ namespace Microsoft.Azure.IIoT.Platform.Directory.Api.Clients {
         /// <inheritdoc/>
         public async Task<GatewayListApiModel> ListGatewaysAsync(
             string continuation, int? pageSize, CancellationToken ct) {
-            var uri = new UriBuilder($"{_serviceUri}/v2/gateways");
+            var uri = new UriBuilder($"{_serviceUri}/v3/gateways");
             var request = _httpClient.NewRequest(uri.Uri, Resource.Platform);
             if (continuation != null) {
                 request.AddHeader(HttpHeader.ContinuationToken, continuation);
@@ -271,7 +271,7 @@ namespace Microsoft.Azure.IIoT.Platform.Directory.Api.Clients {
             if (string.IsNullOrEmpty(gatewayId)) {
                 throw new ArgumentNullException(nameof(gatewayId));
             }
-            var request = _httpClient.NewRequest($"{_serviceUri}/v2/gateways/{gatewayId}",
+            var request = _httpClient.NewRequest($"{_serviceUri}/v3/gateways/{gatewayId}",
                 Resource.Platform);
             _serializer.SerializeToRequest(request, content);
             var response = await _httpClient.PatchAsync(request, ct).ConfigureAwait(false);
@@ -281,7 +281,7 @@ namespace Microsoft.Azure.IIoT.Platform.Directory.Api.Clients {
         /// <inheritdoc/>
         public async Task<GatewayListApiModel> QueryGatewaysAsync(
             GatewayQueryApiModel query, int? pageSize, CancellationToken ct) {
-            var uri = new UriBuilder($"{_serviceUri}/v2/gateways/query");
+            var uri = new UriBuilder($"{_serviceUri}/v3/gateways/query");
             var request = _httpClient.NewRequest(uri.Uri, Resource.Platform);
             if (pageSize != null) {
                 request.AddHeader(HttpHeader.MaxItemCount, pageSize.ToString());
@@ -298,7 +298,7 @@ namespace Microsoft.Azure.IIoT.Platform.Directory.Api.Clients {
             if (string.IsNullOrEmpty(gatewayId)) {
                 throw new ArgumentNullException(nameof(gatewayId));
             }
-            var uri = new UriBuilder($"{_serviceUri}/v2/gateways/{gatewayId}");
+            var uri = new UriBuilder($"{_serviceUri}/v3/gateways/{gatewayId}");
             var request = _httpClient.NewRequest(uri.Uri, Resource.Platform);
             _serializer.SetAcceptHeaders(request);
             var response = await _httpClient.GetAsync(request, ct).ConfigureAwait(false);
@@ -309,7 +309,7 @@ namespace Microsoft.Azure.IIoT.Platform.Directory.Api.Clients {
         /// <inheritdoc/>
         public async Task<GatewaySiteListApiModel> ListSitesAsync(
             string continuation, int? pageSize, CancellationToken ct) {
-            var request = _httpClient.NewRequest($"{_serviceUri}/v2/gateways/sites",
+            var request = _httpClient.NewRequest($"{_serviceUri}/v3/gateways/sites",
                 Resource.Platform);
             if (continuation != null) {
                 request.AddHeader(HttpHeader.ContinuationToken, continuation);

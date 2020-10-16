@@ -13,7 +13,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
     using System;
 
     /// <summary>
-    /// Twin (endpoint) document persisted and comparable
+    /// Endpoint document persisted and comparable
     /// </summary>
     [DataContract]
     public sealed class EndpointDocument {
@@ -31,10 +31,16 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
         public string ClassType { get; set; } = IdentityType.Endpoint;
 
         /// <summary>
-        /// Last time application was seen
+        /// Last time endpoint was seen
         /// </summary>
         [DataMember]
         public DateTime? NotSeenSince { get; set; }
+
+        /// <summary>
+        /// Endpoint visibility
+        /// </summary>
+        [DataMember]
+        public EntityVisibility Visibility { get; set; }
 
         /// <summary>
         /// Identity that owns the twin.

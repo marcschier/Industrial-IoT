@@ -436,7 +436,8 @@ namespace Microsoft.Azure.IIoT.Services.LiteDb.Clients {
 
             /// <inheritdoc/>
             public IQuery<T> Where(Expression<Func<T, bool>> predicate) {
-                if (!TestQueryable(q => q.Where(predicate), out var queryable)) {
+                if (IsUnsupportedStringComparison(predicate) ||
+                    !TestQueryable(q => q.Where(predicate), out var queryable)) {
                     return Execute().Where(predicate);
                 }
                 return new ServerSideQuery<T>(_collection, queryable, _pageSize);
@@ -510,6 +511,25 @@ namespace Microsoft.Azure.IIoT.Services.LiteDb.Clients {
                 queryable = _queryable is ILiteQueryable<T> q ?
                     Try.Op(() => call(q)) : null;
                 return queryable != null;
+            }
+
+            /// <summary>
+            /// Test whether predicate expression is an unsupported comparison
+            /// </summary>
+            /// <param name="predicate"></param>
+            /// <returns></returns>
+            private static bool IsUnsupportedStringComparison(
+                Expression<Func<T, bool>> predicate) {
+                if (predicate.Body is not MethodCallExpression mce) {
+                    return false;
+                }
+                return mce.Arguments.Any(a => {
+                    if (a is not ConstantExpression ce ||
+                        ce.Value is not StringComparison c) {
+                        return false;
+                    }
+                    return c != StringComparison.Ordinal;
+                });
             }
 
             private readonly DocumentCollection _collection;

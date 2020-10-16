@@ -79,7 +79,12 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
         public string DiscovererId { get; set; }
 
         /// <summary>
-        /// Last time application was seen
+        /// Application visibility
+        /// </summary>
+        public EntityVisibility? Visibility { get; set; }
+
+        /// <summary>
+        /// Last time application was seen if not visible
         /// </summary>
         public DateTime? NotSeenSince { get; set; }
 

@@ -223,6 +223,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                     .Build<EndpointInfoModel>()
                     .Create())
                 .Without(x => x.NotSeenSince)
+                .With(x => x.Visibility, EntityVisibility.Found)
                 .CreateMany(10)
                 .ToList();
 

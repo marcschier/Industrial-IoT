@@ -59,7 +59,7 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Api.Clients {
             if (user == null) {
                 throw new ArgumentNullException(nameof(user));
             }
-            var uri = new UriBuilder($"{_serviceUri}/v2/users");
+            var uri = new UriBuilder($"{_serviceUri}/v3/users");
             var request = _httpClient.NewRequest(uri.Uri, Resource.Platform);
             _serializer.SerializeToRequest(request, user);
             var response = await _httpClient.PutAsync(request, ct).ConfigureAwait(false);
@@ -72,7 +72,7 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Api.Clients {
             if (string.IsNullOrEmpty(name)) {
                 throw new ArgumentNullException(nameof(name));
             }
-            var uri = new UriBuilder($"{_serviceUri}/v2/users") {
+            var uri = new UriBuilder($"{_serviceUri}/v3/users") {
                 Query = $"name={name}"
             };
             var request = _httpClient.NewRequest(uri.Uri, Resource.Platform);
@@ -88,7 +88,7 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Api.Clients {
             if (string.IsNullOrEmpty(email)) {
                 throw new ArgumentNullException(nameof(email));
             }
-            var uri = new UriBuilder($"{_serviceUri}/v2/users") {
+            var uri = new UriBuilder($"{_serviceUri}/v3/users") {
                 Query = $"email={email}"
             };
             var request = _httpClient.NewRequest(uri.Uri, Resource.Platform);
@@ -104,7 +104,7 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Api.Clients {
             if (string.IsNullOrEmpty(userId)) {
                 throw new ArgumentNullException(nameof(userId));
             }
-            var uri = new UriBuilder($"{_serviceUri}/v2/users/{userId}");
+            var uri = new UriBuilder($"{_serviceUri}/v3/users/{userId}");
             var request = _httpClient.NewRequest(uri.Uri, Resource.Platform);
             _serializer.SetAcceptHeaders(request);
             var response = await _httpClient.GetAsync(request, ct).ConfigureAwait(false);
@@ -117,7 +117,7 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Api.Clients {
             if (string.IsNullOrEmpty(userId)) {
                 throw new ArgumentNullException(nameof(userId));
             }
-            var uri = new UriBuilder($"{_serviceUri}/v2/users/{userId}");
+            var uri = new UriBuilder($"{_serviceUri}/v3/users/{userId}");
             var request = _httpClient.NewRequest(uri.Uri, Resource.Platform);
             var response = await _httpClient.DeleteAsync(request, ct).ConfigureAwait(false);
             response.Validate();
@@ -132,7 +132,7 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Api.Clients {
             if (model == null) {
                 throw new ArgumentNullException(nameof(model));
             }
-            var uri = new UriBuilder($"{_serviceUri}/v2/users/{userId}/claims");
+            var uri = new UriBuilder($"{_serviceUri}/v3/users/{userId}/claims");
             var request = _httpClient.NewRequest(uri.Uri, Resource.Platform);
             _serializer.SerializeToRequest(request, model);
             var response = await _httpClient.PutAsync(request, ct).ConfigureAwait(false);
@@ -149,7 +149,7 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Api.Clients {
                 throw new ArgumentNullException(nameof(model));
             }
             var uri = new UriBuilder(
-                $"{_serviceUri}/v2/users/{userId}/claims/{model.Type}/{model.Value}");
+                $"{_serviceUri}/v3/users/{userId}/claims/{model.Type}/{model.Value}");
             var request = _httpClient.NewRequest(uri.Uri, Resource.Platform);
             var response = await _httpClient.DeleteAsync(request, ct).ConfigureAwait(false);
             response.Validate();
@@ -164,7 +164,7 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Api.Clients {
             if (string.IsNullOrEmpty(role)) {
                 throw new ArgumentNullException(nameof(role));
             }
-            var uri = new UriBuilder($"{_serviceUri}/v2/users/{userId}/roles/{role}");
+            var uri = new UriBuilder($"{_serviceUri}/v3/users/{userId}/roles/{role}");
             var request = _httpClient.NewRequest(uri.Uri, Resource.Platform);
             var response = await _httpClient.PutAsync(request, ct).ConfigureAwait(false);
             response.Validate();
@@ -176,7 +176,7 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Api.Clients {
             if (string.IsNullOrEmpty(role)) {
                 throw new ArgumentNullException(nameof(role));
             }
-            var uri = new UriBuilder($"{_serviceUri}/v2/users/roles/{role}");
+            var uri = new UriBuilder($"{_serviceUri}/v3/users/roles/{role}");
             var request = _httpClient.NewRequest(uri.Uri, Resource.Platform);
             _serializer.SetAcceptHeaders(request);
             var response = await _httpClient.GetAsync(request, ct).ConfigureAwait(false);
@@ -193,7 +193,7 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Api.Clients {
             if (string.IsNullOrEmpty(role)) {
                 throw new ArgumentNullException(nameof(role));
             }
-            var uri = new UriBuilder($"{_serviceUri}/v2/users/{userId}/roles/{role}");
+            var uri = new UriBuilder($"{_serviceUri}/v3/users/{userId}/roles/{role}");
             var request = _httpClient.NewRequest(uri.Uri, Resource.Platform);
             var response = await _httpClient.DeleteAsync(request, ct).ConfigureAwait(false);
             response.Validate();
@@ -204,7 +204,7 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Api.Clients {
             if (role == null) {
                 throw new ArgumentNullException(nameof(role));
             }
-            var uri = new UriBuilder($"{_serviceUri}/v2/roles");
+            var uri = new UriBuilder($"{_serviceUri}/v3/roles");
             var request = _httpClient.NewRequest(uri.Uri, Resource.Platform);
             _serializer.SerializeToRequest(request, role);
             var response = await _httpClient.PutAsync(request, ct).ConfigureAwait(false);
@@ -217,7 +217,7 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Api.Clients {
             if (string.IsNullOrEmpty(roleId)) {
                 throw new ArgumentNullException(nameof(roleId));
             }
-            var uri = new UriBuilder($"{_serviceUri}/v2/roles/{roleId}");
+            var uri = new UriBuilder($"{_serviceUri}/v3/roles/{roleId}");
             var request = _httpClient.NewRequest(uri.Uri, Resource.Platform);
             _serializer.SetAcceptHeaders(request);
             var response = await _httpClient.GetAsync(request, ct).ConfigureAwait(false);
@@ -230,7 +230,7 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Api.Clients {
             if (string.IsNullOrEmpty(roleId)) {
                 throw new ArgumentNullException(nameof(roleId));
             }
-            var uri = new UriBuilder($"{_serviceUri}/v2/roles/{roleId}");
+            var uri = new UriBuilder($"{_serviceUri}/v3/roles/{roleId}");
             var request = _httpClient.NewRequest(uri.Uri, Resource.Platform);
             var response = await _httpClient.DeleteAsync(request, ct).ConfigureAwait(false);
             response.Validate();

@@ -94,7 +94,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
                 model.Endpoint?.Url == that.Endpoint?.Url &&
                 model.AuthenticationMethods.IsSameAs(that.AuthenticationMethods) &&
                 model.DiscovererId == that.DiscovererId &&
-                model.IsDisabled() == that.IsDisabled() &&
+                model.Visibility == that.Visibility &&
                 model.SecurityLevel == that.SecurityLevel;
         }
 
@@ -116,13 +116,37 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
-        public static bool IsDisabled(this EndpointInfoModel model) {
+        public static bool IsNotSeen(this EndpointInfoModel model) {
             if (model == null) {
                 return true;
             }
-            return
-                model.NotSeenSince != null ||
-                model.ActivationState == EntityActivationState.Deactivated;
+            return model.Visibility != EntityVisibility.Found;
+        }
+
+        /// <summary>
+        /// Disable
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public static EndpointInfoModel SetNotSeen(this EndpointInfoModel model) {
+            if (model != null) {
+                model.Visibility = EntityVisibility.NotSeen;
+                model.NotSeenSince = DateTime.UtcNow;
+            }
+            return model;
+        }
+
+        /// <summary>
+        /// Enable
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public static EndpointInfoModel SetAsFound(this EndpointInfoModel model) {
+            if (model != null) {
+                model.Visibility = EntityVisibility.Found;
+                model.NotSeenSince = null;
+            }
+            return model;
         }
 
         /// <summary>
@@ -138,6 +162,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
                 ApplicationId = model.ApplicationId,
                 GenerationId = model.GenerationId,
                 NotSeenSince = model.NotSeenSince,
+                Visibility = model.Visibility,
                 ActivationState = model.ActivationState,
                 EndpointState = model.EndpointState,
                 Endpoint = model.Endpoint.Clone(),
@@ -167,6 +192,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
             }
             endpoint.ApplicationId = model.ApplicationId;
             endpoint.NotSeenSince = model.NotSeenSince;
+            endpoint.Visibility = model.Visibility;
             endpoint.ActivationState = model.ActivationState;
             endpoint.EndpointState = model.EndpointState;
             endpoint.Endpoint = model.Endpoint.Clone();

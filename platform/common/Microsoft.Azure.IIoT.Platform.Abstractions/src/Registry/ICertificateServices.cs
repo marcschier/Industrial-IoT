@@ -4,6 +4,7 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Platform.Registry {
+    using Microsoft.Azure.IIoT.Platform.Core.Models;
     using System.Threading;
     using System.Threading.Tasks;
 
@@ -19,7 +20,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry {
         /// <param name="id"></param>
         /// <param name="ct"></param>
         /// <returns></returns>
-        Task<byte[]> GetEndpointCertificateAsync(T id,
+        Task<X509CertificateChainModel> GetEndpointCertificateAsync(T id,
             CancellationToken ct = default);
     }
 }

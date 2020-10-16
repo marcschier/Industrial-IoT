@@ -149,8 +149,7 @@ namespace Microsoft.Azure.IIoT.Platform.Directory.Services {
         public async Task<GatewayListModel> ListGatewaysAsync(
             string continuation, int? pageSize, CancellationToken ct) {
             var query = "SELECT * FROM devices WHERE " +
-                $"tags.{TwinProperty.Type} = '{IdentityType.Gateway}' " +
-                $"AND NOT IS_DEFINED(tags.{nameof(EntityRegistration.NotSeenSince)})";
+                $"tags.{TwinProperty.Type} = '{IdentityType.Gateway}' ";
             var devices = await _iothub.QueryDeviceTwinsAsync(query,
                 continuation, pageSize, ct).ConfigureAwait(false);
             return new GatewayListModel {

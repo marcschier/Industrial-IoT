@@ -42,6 +42,12 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
         public DateTime? NotSeenSince { get; set; }
 
         /// <summary>
+        /// Application visibility
+        /// </summary>
+        [DataMember]
+        public EntityVisibility Visibility { get; set; }
+
+        /// <summary>
         /// Identity that owns the twin.
         /// </summary>
         [DataMember]

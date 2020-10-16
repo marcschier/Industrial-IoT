@@ -21,7 +21,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Service.Controllers {
     /// <summary>
     /// CRUD and Query data set writer groups resources
     /// </summary>
-    [ApiVersion("2")][ApiVersion("3")]
+    [ApiVersion("3")]
     [Route("v{version:apiVersion}/groups")]
     [ExceptionsFilter]
     [Authorize(Policy = Policies.CanRead)]

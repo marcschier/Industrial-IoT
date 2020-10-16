@@ -55,8 +55,8 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                 Assert.Single(inreg);
                 Assert.All(inreg, a => Assert.Equal(discoverer, a.Application.DiscovererId));
                 Assert.All(inreg, a => Assert.All(a.Endpoints, e => Assert.Equal(discoverer, e.DiscovererId)));
-                Assert.All(inreg, a => Assert.False(a.Application.IsDisabled()));
-                Assert.All(inreg, a => Assert.All(a.Endpoints, e => Assert.False(a.Application.IsDisabled())));
+                Assert.All(inreg, a => Assert.False(a.Application.IsNotSeen()));
+                Assert.All(inreg, a => Assert.All(a.Endpoints, e => Assert.False(a.Application.IsNotSeen())));
             }
         }
 
@@ -73,8 +73,8 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                 Assert.True(inreg.IsSameAs(expected));
                 Assert.All(inreg, a => Assert.Equal(discoverer, a.Application.DiscovererId));
                 Assert.All(inreg, a => Assert.All(a.Endpoints, e => Assert.Equal(discoverer, e.DiscovererId)));
-                Assert.All(inreg, a => Assert.False(a.Application.IsDisabled()));
-                Assert.All(inreg, a => Assert.All(a.Endpoints, e => Assert.False(a.Application.IsDisabled())));
+                Assert.All(inreg, a => Assert.False(a.Application.IsNotSeen()));
+                Assert.All(inreg, a => Assert.All(a.Endpoints, e => Assert.False(a.Application.IsNotSeen())));
             }
         }
 
@@ -91,8 +91,8 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                 Assert.True(inreg.IsSameAs(expected));
                 Assert.All(inreg, a => Assert.Equal(discoverer, a.Application.DiscovererId));
                 Assert.All(inreg, a => Assert.All(a.Endpoints, e => Assert.Equal(discoverer, e.DiscovererId)));
-                Assert.All(inreg, a => Assert.False(a.Application.IsDisabled()));
-                Assert.All(inreg, a => Assert.All(a.Endpoints, e => Assert.False(a.Application.IsDisabled())));
+                Assert.All(inreg, a => Assert.False(a.Application.IsNotSeen()));
+                Assert.All(inreg, a => Assert.All(a.Endpoints, e => Assert.False(a.Application.IsNotSeen())));
             }
         }
 
@@ -109,8 +109,8 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                 Assert.True(inreg.IsSameAs(expected));
                 Assert.All(inreg, a => Assert.Equal(discoverer, a.Application.DiscovererId));
                 Assert.All(inreg, a => Assert.All(a.Endpoints, e => Assert.Equal(discoverer, e.DiscovererId)));
-                Assert.All(inreg, a => Assert.False(a.Application.IsDisabled()));
-                Assert.All(inreg, a => Assert.All(a.Endpoints, e => Assert.False(a.Application.IsDisabled())));
+                Assert.All(inreg, a => Assert.False(a.Application.IsNotSeen()));
+                Assert.All(inreg, a => Assert.All(a.Endpoints, e => Assert.False(a.Application.IsNotSeen())));
             }
         }
 
@@ -137,8 +137,8 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                 // Assert that 5 new items was added and 5 old ones are in the database
                 var inreg = await ListApplicationsAsync(mock);
                 Assert.Equal(10, inreg.Count);
-                Assert.All(inreg, a => Assert.False(a.Application.IsDisabled()));
-                Assert.All(inreg, a => Assert.All(a.Endpoints, e => Assert.False(a.Application.IsDisabled())));
+                Assert.All(inreg, a => Assert.False(a.Application.IsNotSeen()));
+                Assert.All(inreg, a => Assert.All(a.Endpoints, e => Assert.False(a.Application.IsNotSeen())));
 
                 var oldItems = await ListApplicationsAsync(mock, discovererId: oldDiscovererId);
                 Assert.Equal(5, oldItems.Count);
@@ -175,8 +175,8 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                 // Assert that one new item was added and 5 old ones are in the database
                 var inreg = await ListApplicationsAsync(mock);
                 Assert.Equal(6, inreg.Count);
-                Assert.All(inreg, a => Assert.False(a.Application.IsDisabled()));
-                Assert.All(inreg, a => Assert.All(a.Endpoints, e => Assert.False(a.Application.IsDisabled())));
+                Assert.All(inreg, a => Assert.False(a.Application.IsNotSeen()));
+                Assert.All(inreg, a => Assert.All(a.Endpoints, e => Assert.False(a.Application.IsNotSeen())));
 
                 var oldItems = await ListApplicationsAsync(mock, discovererId: oldDiscovererId);
                 Assert.Equal(5, oldItems.Count);
@@ -190,16 +190,14 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
         }
 
         [Fact]
-        public async Task ProcessDiscoveryWithAllResultsWhenExistingDisabledAsync() {
+        public async Task ProcessDiscoveryWithAllResultsWhenExistingNotFoundAsync() {
             var fix = new Fixture();
             var discoverer2 = HubResource.Format(fix.Create<string>(), fix.Create<string>(), fix.Create<string>());
 
             using (var mock = Setup(out var discoverer, out var expected, out var discoveryResults,
                 fixupDatabase: x => {
-                    x.Application.NotSeenSince = DateTime.UtcNow;
-                    x.Endpoints.ForEach(e => {
-                        e.NotSeenSince = DateTime.UtcNow;
-                    });
+                    x.Application.SetNotSeen();
+                    x.Endpoints.ForEach(e => e.SetNotSeen());
                     return x;
                 })) {
                 var service = mock.Create<IApplicationBulkProcessor>();
@@ -211,23 +209,21 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                 var inreg = await ListApplicationsAsync(mock);
                 Assert.True(inreg.IsSameAs(expected));
                 Assert.All(inreg, a => Assert.Equal(discoverer, a.Application.DiscovererId));
-                Assert.All(inreg, a => Assert.False(a.Application.IsDisabled()));
+                Assert.All(inreg, a => Assert.False(a.Application.IsNotSeen()));
                 Assert.All(inreg, a => Assert.All(a.Endpoints, e => Assert.Equal(discoverer, e.DiscovererId)));
-                Assert.All(inreg, a => Assert.All(a.Endpoints, e => Assert.False(a.Application.IsDisabled())));
+                Assert.All(inreg, a => Assert.All(a.Endpoints, e => Assert.False(a.Application.IsNotSeen())));
             }
         }
 
         [Fact]
-        public async Task ProcessDiscoveryWithOneResultWhenExistingDisabledAsync() {
+        public async Task ProcessDiscoveryWithOneResultWhenExistingNotFoundAsync() {
             var fix = new Fixture();
             var discoverer2 = HubResource.Format(fix.Create<string>(), fix.Create<string>(), fix.Create<string>());
 
             using (var mock = Setup(out var discoverer, out var expected, out var discoveryResults,
                 fixupDatabase: x => {
-                    x.Application.NotSeenSince = DateTime.UtcNow;
-                    x.Endpoints.ForEach(e => {
-                        e.NotSeenSince = DateTime.UtcNow;
-                    });
+                    x.Application.SetNotSeen();
+                    x.Endpoints.ForEach(e => e.SetNotSeen());
                     return x;
                 })) {
                 var service = mock.Create<IApplicationBulkProcessor>();
@@ -235,21 +231,20 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                 // Run
                 await service.ProcessDiscoveryEventsAsync(discoverer, new DiscoveryContextModel(), discoveryResults.Take(1));
 
-                // Assert that one item is enabled and 4 are still disabled
+                // Assert that one item is enabled and 4 are still not found
                 var inreg = await ListApplicationsAsync(mock);
                 Assert.Equal(5, inreg.Count);
                 Assert.All(inreg, a => Assert.Equal(discoverer, a.Application.DiscovererId));
                 Assert.All(inreg, a => Assert.All(a.Endpoints, e => Assert.Equal(discoverer, e.DiscovererId)));
 
-                var disabled = await ListApplicationsAsync(mock);
-                disabled = disabled.Where(x => x.Application.NotSeenSince != null).ToList();
-                Assert.Equal(4, disabled.Count);
-                Assert.All(disabled, a => Assert.True(a.Application.IsDisabled()));
-                Assert.All(disabled, a => Assert.All(a.Endpoints, e => Assert.True(a.Application.IsDisabled())));
-                var enabled = await ListApplicationsAsync(mock, includeNotSeenSince: false);
-                Assert.Single(enabled);
-                Assert.All(enabled, a => Assert.False(a.Application.IsDisabled()));
-                Assert.All(enabled, a => Assert.All(a.Endpoints, e => Assert.False(a.Application.IsDisabled())));
+                var notSeen = await ListApplicationsAsync(mock, visibilty: EntityVisibility.NotSeen);
+                Assert.Equal(4, notSeen.Count);
+                Assert.All(notSeen, a => Assert.True(a.Application.IsNotSeen()));
+                Assert.All(notSeen, a => Assert.All(a.Endpoints, e => Assert.True(a.Application.IsNotSeen())));
+                var found = await ListApplicationsAsync(mock, visibilty: EntityVisibility.Found);
+                Assert.Single(found);
+                Assert.All(found, a => Assert.False(a.Application.IsNotSeen()));
+                Assert.All(found, a => Assert.All(a.Endpoints, e => Assert.False(a.Application.IsNotSeen())));
             }
         }
 
@@ -268,13 +263,13 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
 
                 // Assert
 
-                // Assert all applications and endpoints are disabled
+                // Assert all applications and endpoints were not found
                 var inreg = await ListApplicationsAsync(mock);
                 Assert.Equal(5, inreg.Count);
                 Assert.All(inreg, a => Assert.Equal(discoverer, a.Application.DiscovererId));
                 Assert.All(inreg, a => Assert.All(a.Endpoints, e => Assert.Equal(discoverer, e.DiscovererId)));
-                Assert.All(inreg, a => Assert.True(a.Application.IsDisabled()));
-                Assert.All(inreg, a => Assert.All(a.Endpoints, e => Assert.True(a.Application.IsDisabled())));
+                Assert.All(inreg, a => Assert.True(a.Application.IsNotSeen()));
+                Assert.All(inreg, a => Assert.All(a.Endpoints, e => Assert.True(a.Application.IsNotSeen())));
                 Assert.False(inreg.IsSameAs(expected));
             }
         }
@@ -300,9 +295,9 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                 Assert.True(inreg.Select(a => a.Application).IsSameAs(expected.Select(b => b.Application)));
                 Assert.All(inreg, a => Assert.Equal(discoverer, a.Application.DiscovererId));
                 Assert.All(inreg, a => Assert.All(a.Endpoints, e => Assert.Equal(discoverer, e.DiscovererId)));
-                Assert.All(inreg, a => Assert.False(a.Application.IsDisabled()));
+                Assert.All(inreg, a => Assert.False(a.Application.IsNotSeen()));
                 Assert.All(inreg, a => Assert.Single(a.Endpoints));
-                Assert.All(inreg, a => Assert.All(a.Endpoints, e => Assert.False(a.Application.IsDisabled())));
+                Assert.All(inreg, a => Assert.All(a.Endpoints, e => Assert.False(a.Application.IsNotSeen())));
             }
         }
 
@@ -310,11 +305,11 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
         /// Extract application registrations from registry
         /// </summary>
         private static async Task<List<ApplicationRegistrationModel>> ListApplicationsAsync(AutoMock mock,
-            bool includeNotSeenSince = true, string discovererId = null) {
+            EntityVisibility? visibilty = null, string discovererId = null) {
             IApplicationRegistry registry = mock.Create<ApplicationRegistry>();
             var apps = new List<ApplicationRegistrationModel>();
             var result = await registry.QueryAllApplicationsAsync(new ApplicationRegistrationQueryModel {
-                IncludeNotSeenSince = includeNotSeenSince,
+                Visibility = visibilty,
                 DiscovererId = discovererId
             });
             foreach (var app in result) {
@@ -354,6 +349,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                 .Do(c => c.Application = fixture
                     .Build<ApplicationInfoModel>()
                     .Without(x => x.NotSeenSince)
+                    .With(x => x.Visibility, EntityVisibility.Found)
                     .With(x => x.DiscovererId, discovererx)
                     .Create())
                 .Without(x => x.Endpoints)
@@ -361,6 +357,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                     .Build<EndpointInfoModel>()
                     .With(x => x.DiscovererId, discovererx)
                     .Without(x => x.NotSeenSince)
+                    .With(x => x.Visibility, EntityVisibility.Found)
                     .CreateMany(5)
                     .ToList())
                 .CreateMany(5)

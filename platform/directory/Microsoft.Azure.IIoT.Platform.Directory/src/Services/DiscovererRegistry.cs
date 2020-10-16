@@ -112,8 +112,7 @@ namespace Microsoft.Azure.IIoT.Platform.Directory.Services {
         public async Task<DiscovererListModel> ListDiscoverersAsync(
             string continuation, int? pageSize, CancellationToken ct) {
             var query = "SELECT * FROM devices.modules WHERE " +
-                $"properties.reported.{TwinProperty.Type} = '{IdentityType.Discoverer}' " +
-                $"AND NOT IS_DEFINED(tags.{nameof(EntityRegistration.NotSeenSince)})";
+                $"properties.reported.{TwinProperty.Type} = '{IdentityType.Discoverer}' ";
             var devices = await _iothub.QueryDeviceTwinsAsync(query, 
                 continuation, pageSize, ct).ConfigureAwait(false);
             return new DiscovererListModel {

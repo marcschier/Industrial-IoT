@@ -107,30 +107,37 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Models {
         public string DiscovererId { get; set; }
 
         /// <summary>
+        /// Application visibility
+        /// </summary>
+        [DataMember(Name = "visibility", Order = 14,
+            EmitDefaultValue = false)]
+        public EntityVisibility? Visibility { get; set; }
+
+        /// <summary>
         /// Last time application was seen
         /// </summary>
-        [DataMember(Name = "notSeenSince", Order = 14,
+        [DataMember(Name = "notSeenSince", Order = 15,
             EmitDefaultValue = false)]
         public DateTime? NotSeenSince { get; set; }
 
         /// <summary>
         /// Created
         /// </summary>
-        [DataMember(Name = "created", Order = 15,
+        [DataMember(Name = "created", Order = 16,
             EmitDefaultValue = false)]
         public RegistryOperationApiModel Created { get; set; }
 
         /// <summary>
         /// Updated
         /// </summary>
-        [DataMember(Name = "updated", Order = 16,
+        [DataMember(Name = "updated", Order = 17,
             EmitDefaultValue = false)]
         public RegistryOperationApiModel Updated { get; set; }
 
         /// <summary>
         /// Generation Id
         /// </summary>
-        [DataMember(Name = "generationId", Order = 17,
+        [DataMember(Name = "generationId", Order = 18,
             EmitDefaultValue = false)]
         public string GenerationId { get; set; }
     }

@@ -50,6 +50,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Models {
                                 result.Description.Server.ApplicationName.Text
                         },
                     NotSeenSince = null,
+                    Visibility = null,
                     Capabilities = new HashSet<string>(result.Capabilities)
                 },
                 Endpoints = new List<EndpointInfoModel> {
@@ -60,6 +61,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Models {
                         Id = null,
                         GenerationId = null,
                         NotSeenSince = null,
+                        Visibility = null,
                         ActivationState = null,
                         EndpointState = null,
 

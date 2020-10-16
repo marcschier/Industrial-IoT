@@ -17,7 +17,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Service.Controllers {
     /// <summary>
     /// Call node method services
     /// </summary>
-    [ApiVersion("2")][ApiVersion("3")]
+    [ApiVersion("3")]
     [Route("v{version:apiVersion}/call")]
     [ExceptionsFilter]
     [Authorize(Policy = Policies.CanControl)]

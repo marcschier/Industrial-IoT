@@ -2275,7 +2275,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
                 ApplicationType = options.GetValueOrDefault<ApplicationType>("-t", "--type", null),
                 ApplicationName = options.GetValueOrDefault<string>("-n", "--name", null),
                 Locale = options.GetValueOrDefault<string>("-l", "--locale", null),
-                IncludeNotSeenSince = options.IsProvidedOrNull("-d", "--deleted"),
+                Visibility = options.GetValueOrDefault<EntityVisibility>("-v", "--visibility", null),
                 DiscovererId = options.GetValueOrDefault<string>("-D", "--discovererId", null)
             };
             if (options.IsSet("-A", "--all")) {
@@ -2443,7 +2443,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
                     "-a", "--activated", null),
                 EndpointState = options.GetValueOrDefault<EndpointConnectivityState>(
                     "-s", "--state", null),
-                IncludeNotSeenSince = options.IsProvidedOrNull("-d", "--deleted"),
+                Visibility = options.GetValueOrDefault<EntityVisibility>("-v", "--visibility", null),
                 ApplicationId = options.GetValueOrDefault<string>("-R", "--applicationId", null),
                 DiscovererId = options.GetValueOrDefault<string>("-D", "--discovererId", null)
             };
@@ -3309,7 +3309,8 @@ Commands and Options
         -t, --type      Application type (default to all)
         -s, --state     Application state (default to all)
         -p, --product   Product uri of the application
-        -d, --deleted   Include soft deleted applications.
+        -v, --visibility
+                        Visibility state of the application..
         -D  --discovererId
                         Onboarded from specified discoverer.
         -F, --format    Json format for result
@@ -3382,7 +3383,8 @@ Commands and Options
         -a, --activated Only return activated or deactivated.
         -c, --connected Only return connected or disconnected.
         -s, --state     Only return endpoints with specified state.
-        -d, --deleted   Include soft deleted endpoints.
+        -v, --visibility
+                        Visibility state of the endpoint.
         -R  --applicationId
                         Return endpoints for specified Application.
         -D  --discovererId

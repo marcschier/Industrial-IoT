@@ -110,8 +110,7 @@ namespace Microsoft.Azure.IIoT.Platform.Directory.Services {
         public async Task<PublisherListModel> ListPublishersAsync(
             string continuation, int? pageSize, CancellationToken ct) {
             var query = "SELECT * FROM devices.modules WHERE " +
-                $"properties.reported.{TwinProperty.Type} = '{IdentityType.Publisher}' " +
-                $"AND NOT IS_DEFINED(tags.{nameof(EntityRegistration.NotSeenSince)})";
+                $"properties.reported.{TwinProperty.Type} = '{IdentityType.Publisher}' ";
             var devices = await _iothub.QueryDeviceTwinsAsync(continuation == null ? query : null,
                 continuation, pageSize, ct).ConfigureAwait(false);
             return new PublisherListModel {

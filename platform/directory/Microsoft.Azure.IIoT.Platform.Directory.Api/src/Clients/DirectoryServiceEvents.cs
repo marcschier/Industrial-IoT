@@ -49,7 +49,7 @@ namespace Microsoft.Azure.IIoT.Platform.Directory.Api {
             if (callback == null) {
                 throw new ArgumentNullException(nameof(callback));
             }
-            var hub = await _client.GetHubAsync($"{_serviceUri}/v2/gateways/events",
+            var hub = await _client.GetHubAsync($"{_serviceUri}/v3/gateways/events",
                 Resource.Platform).ConfigureAwait(false);
             var registration = hub.Register(EventTargets.GatewayEventTarget, callback);
             return new AsyncDisposable(registration);
@@ -61,7 +61,7 @@ namespace Microsoft.Azure.IIoT.Platform.Directory.Api {
             if (callback == null) {
                 throw new ArgumentNullException(nameof(callback));
             }
-            var hub = await _client.GetHubAsync($"{_serviceUri}/v2/supervisors/events",
+            var hub = await _client.GetHubAsync($"{_serviceUri}/v3/supervisors/events",
                 Resource.Platform).ConfigureAwait(false);
             var registration = hub.Register(EventTargets.SupervisorEventTarget, callback);
             return new AsyncDisposable(registration);
@@ -73,7 +73,7 @@ namespace Microsoft.Azure.IIoT.Platform.Directory.Api {
             if (callback == null) {
                 throw new ArgumentNullException(nameof(callback));
             }
-            var hub = await _client.GetHubAsync($"{_serviceUri}/v2/discovery/events",
+            var hub = await _client.GetHubAsync($"{_serviceUri}/v3/discovery/events",
                 Resource.Platform).ConfigureAwait(false);
             var registration = hub.Register(EventTargets.DiscovererEventTarget, callback);
             return new AsyncDisposable(registration);
@@ -85,7 +85,7 @@ namespace Microsoft.Azure.IIoT.Platform.Directory.Api {
             if (callback == null) {
                 throw new ArgumentNullException(nameof(callback));
             }
-            var hub = await _client.GetHubAsync($"{_serviceUri}/v2/publishers/events",
+            var hub = await _client.GetHubAsync($"{_serviceUri}/v3/publishers/events",
                 Resource.Platform).ConfigureAwait(false);
             var registration = hub.Register(EventTargets.PublisherEventTarget, callback);
             return new AsyncDisposable(registration);

@@ -38,7 +38,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Service.Controllers.Test {
             if (string.IsNullOrEmpty(endpointId)) {
                 throw new ArgumentNullException(nameof(endpointId));
             }
-            var path = new UriBuilder($"{_serviceUri}/v2/browse/{endpointId}");
+            var path = new UriBuilder($"{_serviceUri}/v3/browse/{endpointId}");
             if (!string.IsNullOrEmpty(content.NodeId)) {
                 path.Query = $"nodeId={content.NodeId.UrlEncode()}";
             }
@@ -61,7 +61,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Service.Controllers.Test {
             if (content.ContinuationToken == null) {
                 throw new ArgumentException("Missing continuation", nameof(content));
             }
-            var path = new UriBuilder($"{_serviceUri}/v2/browse/{endpointId}/next") {
+            var path = new UriBuilder($"{_serviceUri}/v3/browse/{endpointId}/next") {
                 Query = $"continuationToken={content.ContinuationToken}"
             };
             var request = _httpClient.NewRequest(path.ToString());
@@ -83,7 +83,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Service.Controllers.Test {
             if (string.IsNullOrEmpty(content.NodeId)) {
                 throw new ArgumentException("Missing nodeid", nameof(content));
             }
-            var path = new UriBuilder($"{_serviceUri}/v2/read/{endpointId}") {
+            var path = new UriBuilder($"{_serviceUri}/v3/read/{endpointId}") {
                 Query = $"nodeId={content.NodeId.UrlEncode()}"
             };
             var request = _httpClient.NewRequest(path.ToString());

@@ -17,7 +17,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Service.Controllers {
     /// <summary>
     /// Transfer services
     /// </summary>
-    [ApiVersion("2")][ApiVersion("3")]
+    [ApiVersion("3")]
     [Route("v{version:apiVersion}/transfer")]
     [ExceptionsFilter]
     [Authorize(Policy = Policies.CanUpload)]

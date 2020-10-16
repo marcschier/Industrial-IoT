@@ -1,4 +1,5 @@
 {
-    "name": "iot/opc-twin-service",
+    "name": "iotedge/opc-twin",
+    "buildAlways": true,
     "exposes": [9041]
 }

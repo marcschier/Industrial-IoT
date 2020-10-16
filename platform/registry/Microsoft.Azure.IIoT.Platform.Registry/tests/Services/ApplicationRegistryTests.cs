@@ -11,7 +11,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
     using Microsoft.Azure.IIoT.Storage;
     using Microsoft.Azure.IIoT.Exceptions;
     using Microsoft.Azure.IIoT.Hub;
-    using Microsoft.Azure.IIoT.Azure.IoTHub.Mock;
     using Microsoft.Azure.IIoT.Serializers.NewtonSoft;
     using Microsoft.Azure.IIoT.Serializers;
     using Autofac.Extras.Moq;
@@ -241,6 +240,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
         public async Task RegisterApplicationAsync() {
             using (var mock = CreateMock(out var hubName, out var discovererId, out var apps, true)) {
                 IApplicationRegistry service = mock.Create<ApplicationRegistry>();
+                apps.ForEach(a => a.Visibility = EntityVisibility.Unknown);
 
                 // Run
                 foreach (var app in apps) {
@@ -314,7 +314,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
             var discx = disc = HubResource.Format(hubx, fixture.Create<string>(), null);
             apps = fixture
                 .Build<ApplicationInfoModel>()
-                .Without(x => x.NotSeenSince)
+               // .Without(x => x.NotSeenSince)
                 .With(x => x.DiscovererId, discx)
                 .CreateMany(10)
                 .ToList();

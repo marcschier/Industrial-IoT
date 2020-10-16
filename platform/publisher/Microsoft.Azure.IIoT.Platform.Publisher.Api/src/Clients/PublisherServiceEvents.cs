@@ -57,7 +57,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api {
             if (callback == null) {
                 throw new ArgumentNullException(nameof(callback));
             }
-            var hub = await _client.GetHubAsync($"{_serviceUri}/v2/groups/events",
+            var hub = await _client.GetHubAsync($"{_serviceUri}/v3/groups/events",
                 Resource.Platform).ConfigureAwait(false);
             var registration = hub.Register(EventTargets.GroupEventTarget, callback);
             return new AsyncDisposable(registration);
@@ -70,7 +70,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api {
             if (callback == null) {
                 throw new ArgumentNullException(nameof(callback));
             }
-            var hub = await _client.GetHubAsync($"{_serviceUri}/v2/groups/events",
+            var hub = await _client.GetHubAsync($"{_serviceUri}/v3/groups/events",
                 Resource.Platform).ConfigureAwait(false);
             var registration = hub.Register(EventTargets.DataSetMessageTarget, callback);
             try {
@@ -92,7 +92,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api {
             if (callback == null) {
                 throw new ArgumentNullException(nameof(callback));
             }
-            var hub = await _client.GetHubAsync($"{_serviceUri}/v2/writers/events",
+            var hub = await _client.GetHubAsync($"{_serviceUri}/v3/writers/events",
                 Resource.Platform).ConfigureAwait(false);
             var registration = hub.Register(EventTargets.WriterEventTarget, callback);
             return new AsyncDisposable(registration);
@@ -105,7 +105,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api {
             if (callback == null) {
                 throw new ArgumentNullException(nameof(callback));
             }
-            var hub = await _client.GetHubAsync($"{_serviceUri}/v2/writers/events",
+            var hub = await _client.GetHubAsync($"{_serviceUri}/v3/writers/events",
                 Resource.Platform).ConfigureAwait(false);
             var registration = hub.Register(EventTargets.DataSetEventTarget, callback);
             try {
@@ -128,7 +128,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api {
             if (callback == null) {
                 throw new ArgumentNullException(nameof(callback));
             }
-            var hub = await _client.GetHubAsync($"{_serviceUri}/v2/publishers/events",
+            var hub = await _client.GetHubAsync($"{_serviceUri}/v3/publishers/events",
                 Resource.Platform).ConfigureAwait(false);
             var registration = hub.Register(EventTargets.PublisherSampleTarget, callback);
             try {
@@ -154,7 +154,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api {
                 throw new ArgumentNullException(nameof(connectionId));
             }
             var request = _httpClient.NewRequest(
-                $"{_serviceUri}/v2/writers/{dataSetWriterId}/status", Resource.Platform);
+                $"{_serviceUri}/v3/writers/{dataSetWriterId}/status", Resource.Platform);
             _serializer.SerializeToRequest(request, connectionId);
             var response = await _httpClient.PutAsync(request, ct).ConfigureAwait(false);
             response.Validate();
@@ -170,7 +170,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api {
                 throw new ArgumentNullException(nameof(connectionId));
             }
             var request = _httpClient.NewRequest(
-                $"{_serviceUri}/v2/writers/{dataSetWriterId}/status/{connectionId}",
+                $"{_serviceUri}/v3/writers/{dataSetWriterId}/status/{connectionId}",
                 Resource.Platform);
             var response = await _httpClient.DeleteAsync(request, ct).ConfigureAwait(false);
             response.Validate();
@@ -186,7 +186,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api {
                 throw new ArgumentNullException(nameof(connectionId));
             }
             var request = _httpClient.NewRequest(
-                $"{_serviceUri}/v2/groups/{dataSetWriterId}/messages", Resource.Platform);
+                $"{_serviceUri}/v3/groups/{dataSetWriterId}/messages", Resource.Platform);
             _serializer.SerializeToRequest(request, connectionId);
             var response = await _httpClient.PutAsync(request, ct).ConfigureAwait(false);
             response.Validate();
@@ -202,7 +202,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api {
                 throw new ArgumentNullException(nameof(connectionId));
             }
             var request = _httpClient.NewRequest(
-                $"{_serviceUri}/v2/groups/{dataSetWriterId}/messages/{connectionId}",
+                $"{_serviceUri}/v3/groups/{dataSetWriterId}/messages/{connectionId}",
                 Resource.Platform);
             var response = await _httpClient.DeleteAsync(request, ct).ConfigureAwait(false);
             response.Validate();
@@ -218,7 +218,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api {
                 throw new ArgumentNullException(nameof(connectionId));
             }
             var request = _httpClient.NewRequest(
-                $"{_serviceUri}/v2/endpoints/{endpointId}/samples", Resource.Platform);
+                $"{_serviceUri}/v3/endpoints/{endpointId}/samples", Resource.Platform);
             _serializer.SerializeToRequest(request, connectionId);
             var response = await _httpClient.PutAsync(request, ct).ConfigureAwait(false);
             response.Validate();
@@ -234,7 +234,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api {
                 throw new ArgumentNullException(nameof(connectionId));
             }
             var request = _httpClient.NewRequest(
-                $"{_serviceUri}/v2/endpoints/{endpointId}/samples/{connectionId}",
+                $"{_serviceUri}/v3/endpoints/{endpointId}/samples/{connectionId}",
                 Resource.Platform);
             var response = await _httpClient.DeleteAsync(request, ct).ConfigureAwait(false);
             response.Validate();

@@ -20,7 +20,7 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Users {
     /// <summary>
     /// Role manager controller
     /// </summary>
-    [ApiVersion("2")][ApiVersion("3")]
+    [ApiVersion("3")]
     [Route("v{version:apiVersion}/roles")]
     [ExceptionsFilter]
     [Authorize(Policy = Policies.CanManage)]

@@ -223,9 +223,8 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service.Api {
             var expected = new ApplicationEventModel {
                 Application = new ApplicationInfoModel {
                     ApplicationType = IIoT.Platform.Core.Models.ApplicationType.Client,
-                    NotSeenSince = DateTime.UtcNow,
                     Capabilities = new HashSet<string>{ "ag", "sadf", "" },
-                }
+                }.SetNotSeen()
             };
             var result = new TaskCompletionSource<ApplicationEventApiModel>(TaskCreationOptions.RunContinuationsAsynchronously);
             await using (await client.SubscribeApplicationEventsAsync(ev => {
@@ -259,9 +258,8 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service.Api {
             var expected = new ApplicationEventModel {
                 Application = new ApplicationInfoModel {
                     ApplicationType = IIoT.Platform.Core.Models.ApplicationType.Client,
-                    NotSeenSince = DateTime.UtcNow,
                     Capabilities = new HashSet<string> { "ag", "sadf", "" },
-                }
+                }.SetNotSeen()
             };
             var result = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
             var counter = 0;
@@ -292,8 +290,7 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service.Api {
                 Endpoint = new EndpointInfoModel {
                     ApplicationId = "TestSigfsdfg  ff",
                     ActivationState = IIoT.Platform.Registry.Models.EntityActivationState.Activated,
-                    NotSeenSince = DateTime.UtcNow
-                }
+                }.SetNotSeen()
             };
             var result = new TaskCompletionSource<EndpointEventApiModel>(TaskCreationOptions.RunContinuationsAsynchronously);
             await using (await client.SubscribeEndpointEventsAsync(ev => {
@@ -327,8 +324,7 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service.Api {
                 Endpoint = new EndpointInfoModel {
                     ApplicationId = "TestSigfsdfg  ff",
                     ActivationState = IIoT.Platform.Registry.Models.EntityActivationState.Activated,
-                    NotSeenSince = DateTime.UtcNow
-                }
+                }.SetNotSeen()
             };
             var result = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
             var counter = 0;

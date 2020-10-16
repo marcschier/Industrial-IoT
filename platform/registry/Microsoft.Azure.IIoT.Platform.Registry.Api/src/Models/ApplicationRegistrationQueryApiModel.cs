@@ -70,11 +70,11 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Models {
         public string GatewayServerUri { get; set; }
 
         /// <summary>
-        /// Whether to include apps that were soft deleted
+        /// Whether to test for visibility
         /// </summary>
-        [DataMember(Name = "includeNotSeenSince", Order = 9,
+        [DataMember(Name = "visibility", Order = 9,
             EmitDefaultValue = false)]
-        public bool? IncludeNotSeenSince { get; set; }
+        public EntityVisibility? Visibility { get; set; }
 
         /// <summary>
         /// Discoverer id to filter with

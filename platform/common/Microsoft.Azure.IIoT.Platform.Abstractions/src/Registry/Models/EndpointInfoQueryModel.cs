@@ -42,9 +42,9 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
         public EndpointConnectivityState? EndpointState { get; set; }
 
         /// <summary>
-        /// Whether to include endpoints that were soft deleted
+        /// Whether to test for visibility
         /// </summary>
-        public bool? IncludeNotSeenSince { get; set; }
+        public EntityVisibility? Visibility { get; set; }
 
         /// <summary>
         /// Discoverer id to filter with

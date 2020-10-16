@@ -73,30 +73,37 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Models {
         public EndpointConnectivityState? EndpointState { get; set; }
 
         /// <summary>
+        /// Endpoint visibility
+        /// </summary>
+        [DataMember(Name = "visibility", Order = 11,
+            EmitDefaultValue = false)]
+        public EntityVisibility? Visibility { get; set; }
+
+        /// <summary>
         /// Last time endpoint was seen
         /// </summary>
-        [DataMember(Name = "notSeenSince", Order = 11,
+        [DataMember(Name = "notSeenSince", Order = 12,
             EmitDefaultValue = false)]
         public DateTime? NotSeenSince { get; set; }
 
         /// <summary>
         /// Created
         /// </summary>
-        [DataMember(Name = "created", Order = 12,
+        [DataMember(Name = "created", Order = 13,
             EmitDefaultValue = false)]
         public RegistryOperationApiModel Created { get; set; }
 
         /// <summary>
         /// Updated
         /// </summary>
-        [DataMember(Name = "updated", Order = 13,
+        [DataMember(Name = "updated", Order = 14,
             EmitDefaultValue = false)]
         public RegistryOperationApiModel Updated { get; set; }
 
         /// <summary>
         /// Generation id
         /// </summary>
-        [DataMember(Name = "generationId", Order = 14)]
+        [DataMember(Name = "generationId", Order = 15)]
         [Required]
         public string GenerationId { get; set; }
     }

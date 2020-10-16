@@ -65,7 +65,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api.Clients {
             if (content == null) {
                 throw new ArgumentNullException(nameof(content));
             }
-            var request = _httpClient.NewRequest($"{_serviceUri}/v2/writers", Resource.Platform);
+            var request = _httpClient.NewRequest($"{_serviceUri}/v3/writers", Resource.Platform);
             _serializer.SerializeToRequest(request, content);
             var response = await _httpClient.PutAsync(request, ct).ConfigureAwait(false);
             response.Validate();
@@ -78,7 +78,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api.Clients {
             if (string.IsNullOrEmpty(dataSetWriterId)) {
                 throw new ArgumentNullException(nameof(dataSetWriterId));
             }
-            var request = _httpClient.NewRequest($"{_serviceUri}/v2/writers/{dataSetWriterId}",
+            var request = _httpClient.NewRequest($"{_serviceUri}/v3/writers/{dataSetWriterId}",
                 Resource.Platform);
             _serializer.SetAcceptHeaders(request);
             var response = await _httpClient.GetAsync(request, ct).ConfigureAwait(false);
@@ -95,7 +95,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api.Clients {
             if (content == null) {
                 throw new ArgumentNullException(nameof(content));
             }
-            var request = _httpClient.NewRequest($"{_serviceUri}/v2/writers/{dataSetWriterId}",
+            var request = _httpClient.NewRequest($"{_serviceUri}/v3/writers/{dataSetWriterId}",
                 Resource.Platform);
             _serializer.SerializeToRequest(request, content);
             var response = await _httpClient.PatchAsync(request, ct).ConfigureAwait(false);
@@ -108,7 +108,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api.Clients {
             if (content == null) {
                 throw new ArgumentNullException(nameof(content));
             }
-            var request = _httpClient.NewRequest($"{_serviceUri}/v2/writers/{dataSetWriterId}/event",
+            var request = _httpClient.NewRequest($"{_serviceUri}/v3/writers/{dataSetWriterId}/event",
                 Resource.Platform);
             _serializer.SerializeToRequest(request, content);
             var response = await _httpClient.PutAsync(request, ct).ConfigureAwait(false);
@@ -122,7 +122,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api.Clients {
             if (string.IsNullOrEmpty(dataSetWriterId)) {
                 throw new ArgumentNullException(nameof(dataSetWriterId));
             }
-            var request = _httpClient.NewRequest($"{_serviceUri}/v2/writers/{dataSetWriterId}/event",
+            var request = _httpClient.NewRequest($"{_serviceUri}/v3/writers/{dataSetWriterId}/event",
                 Resource.Platform);
             _serializer.SetAcceptHeaders(request);
             var response = await _httpClient.GetAsync(request, ct).ConfigureAwait(false);
@@ -139,7 +139,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api.Clients {
             if (content == null) {
                 throw new ArgumentNullException(nameof(content));
             }
-            var request = _httpClient.NewRequest($"{_serviceUri}/v2/writers/{dataSetWriterId}/event",
+            var request = _httpClient.NewRequest($"{_serviceUri}/v3/writers/{dataSetWriterId}/event",
                 Resource.Platform);
             _serializer.SerializeToRequest(request, content);
             var response = await _httpClient.PatchAsync(request, ct).ConfigureAwait(false);
@@ -156,7 +156,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api.Clients {
                 throw new ArgumentNullException(nameof(generationId));
             }
             var request = _httpClient.NewRequest(
-                $"{_serviceUri}/v2/writers/{dataSetWriterId}/event/{generationId}",
+                $"{_serviceUri}/v3/writers/{dataSetWriterId}/event/{generationId}",
                 Resource.Platform);
             var response = await _httpClient.DeleteAsync(request, ct).ConfigureAwait(false);
             response.Validate();
@@ -170,7 +170,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api.Clients {
                 throw new ArgumentNullException(nameof(content));
             }
             var request = _httpClient.NewRequest(
-                $"{_serviceUri}/v2/writers/{dataSetWriterId}/variables", Resource.Platform);
+                $"{_serviceUri}/v3/writers/{dataSetWriterId}/variables", Resource.Platform);
             _serializer.SerializeToRequest(request, content);
             var response = await _httpClient.PutAsync(request, ct).ConfigureAwait(false);
             response.Validate();
@@ -190,7 +190,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api.Clients {
                 throw new ArgumentNullException(nameof(content));
             }
             var request = _httpClient.NewRequest(
-                $"{_serviceUri}/v2/writers/{dataSetWriterId}/variables/{variableId}",
+                $"{_serviceUri}/v3/writers/{dataSetWriterId}/variables/{variableId}",
                 Resource.Platform);
             _serializer.SerializeToRequest(request, content);
             var response = await _httpClient.PatchAsync(request, ct).ConfigureAwait(false);
@@ -200,7 +200,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api.Clients {
         /// <inheritdoc/>
         public async Task<PublishedDataSetVariableListApiModel> ListDataSetVariablesAsync(
             string dataSetWriterId, string continuation, int? pageSize, CancellationToken ct) {
-            var uri = new UriBuilder($"{_serviceUri}/v2/writers/{dataSetWriterId}/variables");
+            var uri = new UriBuilder($"{_serviceUri}/v3/writers/{dataSetWriterId}/variables");
             var request = _httpClient.NewRequest(uri.Uri, Resource.Platform);
             if (continuation != null) {
                 request.AddHeader(HttpHeader.ContinuationToken, continuation);
@@ -218,7 +218,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api.Clients {
         public async Task<PublishedDataSetVariableListApiModel> QueryDataSetVariablesAsync(
             string dataSetWriterId, PublishedDataSetVariableQueryApiModel query, int? pageSize,
             CancellationToken ct) {
-            var uri = new UriBuilder($"{_serviceUri}/v2/writers/{dataSetWriterId}/variables/query");
+            var uri = new UriBuilder($"{_serviceUri}/v3/writers/{dataSetWriterId}/variables/query");
             var request = _httpClient.NewRequest(uri.Uri, Resource.Platform);
             if (pageSize != null) {
                 request.AddHeader(HttpHeader.MaxItemCount, pageSize.ToString());
@@ -242,7 +242,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api.Clients {
                 throw new ArgumentNullException(nameof(generationId));
             }
             var request = _httpClient.NewRequest(
-                $"{_serviceUri}/v2/writers/{dataSetWriterId}/variables/{variableId}/{generationId}",
+                $"{_serviceUri}/v3/writers/{dataSetWriterId}/variables/{variableId}/{generationId}",
                 Resource.Platform);
             var response = await _httpClient.DeleteAsync(request, ct).ConfigureAwait(false);
             response.Validate();
@@ -251,7 +251,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api.Clients {
         /// <inheritdoc/>
         public async Task<DataSetWriterInfoListApiModel> ListDataSetWritersAsync(
             string continuation, int? pageSize, CancellationToken ct) {
-            var uri = new UriBuilder($"{_serviceUri}/v2/writers");
+            var uri = new UriBuilder($"{_serviceUri}/v3/writers");
             var request = _httpClient.NewRequest(uri.Uri, Resource.Platform);
             if (continuation != null) {
                 request.AddHeader(HttpHeader.ContinuationToken, continuation);
@@ -268,7 +268,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api.Clients {
         /// <inheritdoc/>
         public async Task<DataSetWriterInfoListApiModel> QueryDataSetWritersAsync(
             DataSetWriterInfoQueryApiModel query, int? pageSize, CancellationToken ct) {
-            var uri = new UriBuilder($"{_serviceUri}/v2/writers/query");
+            var uri = new UriBuilder($"{_serviceUri}/v3/writers/query");
             var request = _httpClient.NewRequest(uri.Uri, Resource.Platform);
             if (pageSize != null) {
                 request.AddHeader(HttpHeader.MaxItemCount, pageSize.ToString());
@@ -289,7 +289,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api.Clients {
                 throw new ArgumentNullException(nameof(generationId));
             }
             var request = _httpClient.NewRequest(
-                $"{_serviceUri}/v2/writers/{dataSetWriterId}/{generationId}", Resource.Platform);
+                $"{_serviceUri}/v3/writers/{dataSetWriterId}/{generationId}", Resource.Platform);
             var response = await _httpClient.DeleteAsync(request, ct).ConfigureAwait(false);
             response.Validate();
         }
@@ -300,7 +300,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api.Clients {
             if (content == null) {
                 throw new ArgumentNullException(nameof(content));
             }
-            var request = _httpClient.NewRequest($"{_serviceUri}/v2/groups", Resource.Platform);
+            var request = _httpClient.NewRequest($"{_serviceUri}/v3/groups", Resource.Platform);
             _serializer.SerializeToRequest(request, content);
             var response = await _httpClient.PutAsync(request, ct).ConfigureAwait(false);
             response.Validate();
@@ -313,7 +313,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api.Clients {
             if (string.IsNullOrEmpty(writerGroupId)) {
                 throw new ArgumentNullException(nameof(writerGroupId));
             }
-            var request = _httpClient.NewRequest($"{_serviceUri}/v2/groups/{writerGroupId}",
+            var request = _httpClient.NewRequest($"{_serviceUri}/v3/groups/{writerGroupId}",
                 Resource.Platform);
             _serializer.SetAcceptHeaders(request);
             var response = await _httpClient.GetAsync(request, ct).ConfigureAwait(false);
@@ -330,7 +330,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api.Clients {
             if (content == null) {
                 throw new ArgumentNullException(nameof(content));
             }
-            var request = _httpClient.NewRequest($"{_serviceUri}/v2/groups/{writerGroupId}",
+            var request = _httpClient.NewRequest($"{_serviceUri}/v3/groups/{writerGroupId}",
                 Resource.Platform);
             _serializer.SerializeToRequest(request, content);
             var response = await _httpClient.PatchAsync(request, ct).ConfigureAwait(false);
@@ -342,7 +342,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api.Clients {
             if (string.IsNullOrEmpty(writerGroupId)) {
                 throw new ArgumentNullException(nameof(writerGroupId));
             }
-            var request = _httpClient.NewRequest($"{_serviceUri}/v2/groups/{writerGroupId}/activate",
+            var request = _httpClient.NewRequest($"{_serviceUri}/v3/groups/{writerGroupId}/activate",
                 Resource.Platform);
             _serializer.SetAcceptHeaders(request);
             var response = await _httpClient.PostAsync(request, ct).ConfigureAwait(false);
@@ -354,7 +354,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api.Clients {
             if (string.IsNullOrEmpty(writerGroupId)) {
                 throw new ArgumentNullException(nameof(writerGroupId));
             }
-            var request = _httpClient.NewRequest($"{_serviceUri}/v2/groups/{writerGroupId}/deactivate",
+            var request = _httpClient.NewRequest($"{_serviceUri}/v3/groups/{writerGroupId}/deactivate",
                 Resource.Platform);
             _serializer.SetAcceptHeaders(request);
             var response = await _httpClient.PostAsync(request, ct).ConfigureAwait(false);
@@ -364,7 +364,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api.Clients {
         /// <inheritdoc/>
         public async Task<WriterGroupInfoListApiModel> ListWriterGroupsAsync(
             string continuation, int? pageSize, CancellationToken ct) {
-            var uri = new UriBuilder($"{_serviceUri}/v2/groups");
+            var uri = new UriBuilder($"{_serviceUri}/v3/groups");
             var request = _httpClient.NewRequest(uri.Uri, Resource.Platform);
             if (continuation != null) {
                 request.AddHeader(HttpHeader.ContinuationToken, continuation);
@@ -381,7 +381,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api.Clients {
         /// <inheritdoc/>
         public async Task<WriterGroupInfoListApiModel> QueryWriterGroupsAsync(
             WriterGroupInfoQueryApiModel query, int? pageSize, CancellationToken ct) {
-            var uri = new UriBuilder($"{_serviceUri}/v2/groups/query");
+            var uri = new UriBuilder($"{_serviceUri}/v3/groups/query");
             var request = _httpClient.NewRequest(uri.Uri, Resource.Platform);
             if (pageSize != null) {
                 request.AddHeader(HttpHeader.MaxItemCount, pageSize.ToString());
@@ -402,7 +402,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api.Clients {
                 throw new ArgumentNullException(nameof(generationId));
             }
             var request = _httpClient.NewRequest(
-                $"{_serviceUri}/v2/groups/{writerGroupId}/{generationId}", Resource.Platform);
+                $"{_serviceUri}/v3/groups/{writerGroupId}/{generationId}", Resource.Platform);
             var response = await _httpClient.DeleteAsync(request, ct).ConfigureAwait(false);
             response.Validate();
         }
@@ -416,7 +416,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api.Clients {
             if (content == null) {
                 throw new ArgumentNullException(nameof(content));
             }
-            var request = _httpClient.NewRequest($"{_serviceUri}/v2/bulk/writers/{dataSetWriterId}",
+            var request = _httpClient.NewRequest($"{_serviceUri}/v3/bulk/writers/{dataSetWriterId}",
                 Resource.Platform);
             _serializer.SerializeToRequest(request, content);
             var response = await _httpClient.PostAsync(request, ct).ConfigureAwait(false);
@@ -433,7 +433,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api.Clients {
             if (content == null) {
                 throw new ArgumentNullException(nameof(content));
             }
-            var request = _httpClient.NewRequest($"{_serviceUri}/v2/bulk/endpoints/{endpointId}",
+            var request = _httpClient.NewRequest($"{_serviceUri}/v3/bulk/endpoints/{endpointId}",
                 Resource.Platform);
             _serializer.SerializeToRequest(request, content);
             var response = await _httpClient.PostAsync(request, ct).ConfigureAwait(false);
@@ -450,7 +450,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api.Clients {
             if (content == null) {
                 throw new ArgumentNullException(nameof(content));
             }
-            var request = _httpClient.NewRequest($"{_serviceUri}/v2/bulk/writers/{dataSetWriterId}/remove",
+            var request = _httpClient.NewRequest($"{_serviceUri}/v3/bulk/writers/{dataSetWriterId}/remove",
                 Resource.Platform);
             _serializer.SerializeToRequest(request, content);
             var response = await _httpClient.PostAsync(request, ct).ConfigureAwait(false);

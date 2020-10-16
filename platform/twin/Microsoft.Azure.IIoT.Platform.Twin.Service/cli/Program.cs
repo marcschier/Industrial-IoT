@@ -40,6 +40,13 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services.Module.Cli {
             Delete,
             List,
 
+            TestOpcUaModelBrowseEncoder,
+            TestOpcUaModelBrowseFile,
+            TestOpcUaModelArchiver,
+            TestOpcUaModelWriter,
+            TestOpcUaModelDesign,
+            TestBrowseServer,
+
             ResetAll,
             Cleanup,
             CleanupAll
@@ -52,7 +59,8 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services.Module.Cli {
             if (args is null) {
                 throw new ArgumentNullException(nameof(args));
             }
-
+            AppDomain.CurrentDomain.UnhandledException +=
+                (s, e) => Console.WriteLine("unhandled: " + e.ExceptionObject);
             var op = Op.None;
             var verbose = false;
             string deviceId = null, moduleId = null;
@@ -71,6 +79,10 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services.Module.Cli {
             }
             var diagnostics = new LogAnalyticsConfig(configuration);
             IIoTHubConfig config = null;
+            var endpoint = new EndpointModel();
+            string fileName = null;
+            var host = Utils.GetHostName();
+            var ports = new List<int>();
             try {
                 for (var i = 0; i < args.Length; i++) {
                     switch (args[i]) {
@@ -87,6 +99,66 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services.Module.Cli {
                             }
                             throw new ArgumentException(
                                 "Missing arguments for connection string");
+                        case "--test-browse":
+                            if (op != Op.None) {
+                                throw new ArgumentException("Operations are mutually exclusive");
+                            }
+                            op = Op.TestBrowseServer;
+                            i++;
+                            if (i < args.Length) {
+                                endpoint.Url = args[i];
+                            }
+                            break;
+                        case "--test-archive":
+                            if (op != Op.None) {
+                                throw new ArgumentException("Operations are mutually exclusive");
+                            }
+                            op = Op.TestOpcUaModelArchiver;
+                            i++;
+                            if (i < args.Length) {
+                                endpoint.Url = args[i];
+                            }
+                            break;
+                        case "--test-export":
+                            if (op != Op.None) {
+                                throw new ArgumentException("Operations are mutually exclusive");
+                            }
+                            op = Op.TestOpcUaModelBrowseEncoder;
+                            i++;
+                            if (i < args.Length) {
+                                endpoint.Url = args[i];
+                            }
+                            break;
+                        case "--test-file":
+                            if (op != Op.None) {
+                                throw new ArgumentException("Operations are mutually exclusive");
+                            }
+                            op = Op.TestOpcUaModelBrowseFile;
+                            i++;
+                            if (i < args.Length) {
+                                endpoint.Url = args[i];
+                            }
+                            break;
+                        case "--test-writer":
+                            if (op != Op.None) {
+                                throw new ArgumentException("Operations are mutually exclusive");
+                            }
+                            op = Op.TestOpcUaModelWriter;
+                            i++;
+                            if (i < args.Length) {
+                                endpoint.Url = args[i];
+                            }
+                            break;
+                        case "--test-design":
+                            if (op != Op.None) {
+                                throw new ArgumentException("Operations are mutually exclusive");
+                            }
+                            op = Op.TestOpcUaModelDesign;
+                            i++;
+                            if (i < args.Length) {
+                                fileName = args[i];
+                            }
+                            break;
                         case "-?":
                         case "-h":
                         case "--help":
@@ -186,36 +258,35 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services.Module.Cli {
                 Console.WriteLine(e.Message);
                 Console.WriteLine(
                     @"
-Usage:       Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Cli [options] operation [args]
+Usage:       [options] operation [args]
 
 Operations (Mutually exclusive):
 
     --list
              List all registered supervisor module identities.
-
     --add <deviceId> <moduleId>
              Add twin module with given device id and module id to device registry.
-
     --get <deviceId> <moduleId>
              Get twin module connection string from device registry.
-
     --host <deviceId> <moduleId>
              Host the twin module under the given device id and module id.
-
     --reset <deviceId> <moduleId>
              Reset registered module identity twin properties and tags.
-
     --delete <deviceId> <moduleId>
              Delete registered module identity.
-
     --reset-all
              Clear all registered supervisor module identities.
-
     --cleanup
              Clear entire Registry content.
-
     --delete-all
              Cleanup and delete all supervisor identities.
+
+    --test-browse           Tests server browsing.
+    --test_export           Tests server model export with passed endpoint url.
+    --test-design           Test model design import
+    --test-file             Tests server model export several files for perf.
+    --test-writer           Tests server model import.
+    --test-archive          Tests server model archiving to file.
 
 Options:
      -C
@@ -231,6 +302,9 @@ Options:
                 return;
             }
 
+            if (ports.Count == 0) {
+                ports.Add(51210);
+            }
             try {
                 switch (op) {
                     case Op.Host:
@@ -260,6 +334,26 @@ Options:
                     case Op.CleanupAll:
                         CleanupAsync(config, true).Wait();
                         break;
+                    case Op.TestOpcUaModelBrowseEncoder:
+                        TestOpcUaModelExportServiceAsync(endpoint).Wait();
+                        break;
+                    case Op.TestOpcUaModelBrowseFile:
+                        TestOpcUaModelExportToFileAsync(endpoint).Wait();
+                        break;
+                    case Op.TestOpcUaModelArchiver:
+                        TestOpcUaModelArchiveAsync(endpoint).Wait();
+                        break;
+                    case Op.TestOpcUaModelWriter:
+                        TestOpcUaModelWriterAsync(endpoint).Wait();
+                        break;
+                    case Op.TestOpcUaModelDesign:
+                        TestOpcUaModelDesignAsync(fileName).Wait();
+                        break;
+                    case Op.TestBrowseServer:
+                        TestBrowseServerAsync(endpoint).Wait();
+                        break;
+                    default:
+                        throw new ArgumentException("Unknown.");
                 }
             }
             catch (Exception e) {
@@ -474,6 +568,288 @@ Options:
             }
             var cs = await registry.GetConnectionStringAsync(deviceId, moduleId).ConfigureAwait(false);
             return cs;
+        }
+
+        /// <summary>
+        /// Test model browse encoder
+        /// </summary>
+        private static async Task TestOpcUaModelExportServiceAsync(EndpointModel endpoint) {
+            using (var logger = StackLogger.Create(ConsoleLogger.Create()))
+            using (var config = new TestClientServicesConfig())
+            using (var client = new ClientServices(logger.Logger, config))
+            using (var server = new ServerWrapper(endpoint, logger))
+            using (var stream = Console.OpenStandardOutput())
+            using (var writer = new StreamWriter(stream))
+            using (var json = new JsonTextWriter(writer) {
+                AutoCompleteOnClose = true,
+                Formatting = Formatting.Indented,
+                DateFormatHandling = DateFormatHandling.IsoDateFormat
+            })
+            using (var encoder = new JsonEncoderEx(json, null,
+                JsonEncoderEx.JsonEncoding.Array) {
+                IgnoreDefaultValues = true,
+                UseAdvancedEncoding = true
+            })
+            using (var browser = new BrowsedNodeStreamEncoder(client, endpoint, encoder,
+                null, logger.Logger, null)) {
+                await browser.EncodeAsync(CancellationToken.None).ConfigureAwait(false);
+            }
+        }
+
+        /// <summary>
+        /// Test model archiver
+        /// </summary>
+        private static async Task TestOpcUaModelArchiveAsync(EndpointModel endpoint) {
+            using (var logger = StackLogger.Create(ConsoleLogger.Create())) {
+                var storage = new ZipArchiveStorage();
+                var fileName = "tmp.zip";
+                using (var config = new TestClientServicesConfig())
+                using (var client = new ClientServices(logger.Logger, config))
+                using (var server = new ServerWrapper(endpoint, logger)) {
+                    var sw = Stopwatch.StartNew();
+                    using (var archive = await storage.OpenAsync(fileName, FileMode.Create, FileAccess.Write).ConfigureAwait(false))
+                    using (var archiver = new AddressSpaceArchiver(client, endpoint, archive, logger.Logger)) {
+                        await archiver.ArchiveAsync(CancellationToken.None).ConfigureAwait(false);
+                    }
+                    var elapsed = sw.Elapsed;
+                    using (var file = File.Open(fileName, FileMode.OpenOrCreate)) {
+                        Console.WriteLine($"Encode as to {fileName} took " +
+                            $"{elapsed}, and produced {file.Length} bytes.");
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Test model browse encoder to file
+        /// </summary>
+        private static async Task TestOpcUaModelExportToFileAsync(EndpointModel endpoint) {
+            using (var logger = StackLogger.Create(ConsoleLogger.Create())) {
+                // Run both encodings twice to prime server and get realistic timings the
+                // second time around
+                var runs = new Dictionary<string, string> {
+                    ["json1.zip"] = ContentMimeType.UaJson,
+                    //  ["bin1.zip"] = ContentEncodings.MimeTypeUaBinary,
+                    ["json2.zip"] = ContentMimeType.UaJson,
+                    //  ["bin2.zip"] = ContentEncodings.MimeTypeUaBinary,
+                    ["json1.gzip"] = ContentMimeType.UaJson,
+                    //  ["bin1.gzip"] = ContentEncodings.MimeTypeUaBinary,
+                    ["json2.gzip"] = ContentMimeType.UaJson,
+                    // ["bin2.gzip"] = ContentEncodings.MimeTypeUaBinary
+                };
+
+                using (var config = new TestClientServicesConfig())
+                using (var client = new ClientServices(logger.Logger, config))
+                using (var server = new ServerWrapper(endpoint, logger)) {
+                    foreach (var run in runs) {
+                        var zip = Path.GetExtension(run.Key) == ".zip";
+                        Console.WriteLine($"Writing {run.Key}...");
+                        var sw = Stopwatch.StartNew();
+                        using (var stream = new FileStream(run.Key, FileMode.Create)) {
+                            using (var zipped = zip ?
+                                new DeflateStream(stream, CompressionLevel.Optimal) :
+                                (Stream)new GZipStream(stream, CompressionLevel.Optimal))
+                            using (var browser = new BrowsedNodeStreamEncoder(client, endpoint, zipped,
+                                run.Value, null, logger.Logger, null)) {
+                                await browser.EncodeAsync(CancellationToken.None).ConfigureAwait(false);
+                            }
+                        }
+                        var elapsed = sw.Elapsed;
+                        using (var file = File.Open(run.Key, FileMode.OpenOrCreate)) {
+                            Console.WriteLine($"Encode as {run.Value} to {run.Key} took " +
+                                $"{elapsed}, and produced {file.Length} bytes.");
+                        }
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Test model export and import
+        /// </summary>
+        private static async Task TestOpcUaModelWriterAsync(EndpointModel endpoint) {
+            using (var logger = StackLogger.Create(ConsoleLogger.Create())) {
+                var filename = "model.zip";
+                using (var server = new ServerWrapper(endpoint, logger)) {
+                    using (var client = new ClientServices(logger.Logger, new TestClientServicesConfig())) {
+                        Console.WriteLine($"Reading into {filename}...");
+                        using (var stream = new FileStream(filename, FileMode.Create)) {
+                            using (var zipped = new DeflateStream(stream, CompressionLevel.Optimal))
+                            using (var browser = new BrowsedNodeStreamEncoder(client, endpoint, zipped,
+                                ContentMimeType.UaJson, null, logger.Logger, null)) {
+                                await browser.EncodeAsync(CancellationToken.None).ConfigureAwait(false);
+                            }
+                        }
+                    }
+                }
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+                var serializer = new NewtonSoftJsonSerializer();
+                for (var i = 0; ; i++) {
+                    Console.WriteLine($"{i}: Writing from {filename}...");
+                    var sw = Stopwatch.StartNew();
+                    using (var file = File.Open(filename, FileMode.OpenOrCreate)) {
+                        using (var unzipped = new DeflateStream(file, CompressionMode.Decompress)) {
+                            // TODO
+                            // var writer = new SourceStreamImporter(new ItemContainerFactory(database),
+                            //     new VariantEncoderFactory(), logger.Logger);
+                            // await writer.ImportAsync(unzipped, Path.GetFullPath(filename + i),
+                            //     ContentMimeType.UaJson, null, CancellationToken.None);
+                        }
+                    }
+                    var elapsed = sw.Elapsed;
+                    Console.WriteLine($"{i}: Writing took {elapsed}.");
+                }
+            }
+        }
+
+        /// <summary>
+        /// Test model design import
+        /// </summary>
+        /// <param name="designFile"></param>
+        /// <returns></returns>
+        private static Task TestOpcUaModelDesignAsync(string designFile) {
+            if (string.IsNullOrEmpty(designFile)) {
+                throw new ArgumentException("Design name invalid", nameof(designFile));
+            }
+            var design = Model.Load(designFile, new CompositeModelResolver());
+            design.Save(Path.GetDirectoryName(designFile));
+            return Task.CompletedTask;
+        }
+
+        /// <summary>
+        /// Test address space control
+        /// </summary>
+        private static async Task TestBrowseServerAsync(EndpointModel endpoint, bool silent = false) {
+
+            using (var logger = StackLogger.Create(ConsoleLogger.Create())) {
+
+                var request = new BrowseRequestModel {
+                    TargetNodesOnly = false
+                };
+                var nodes = new HashSet<string>(StringComparer.OrdinalIgnoreCase) {
+                    ObjectIds.RootFolder.ToString()
+                };
+
+                using (var config = new TestClientServicesConfig())
+                using (var client = new ClientServices(logger.Logger, config)) {
+                    var service = new AddressSpaceServices(client, new VariantEncoderFactory(), logger.Logger);
+                    using (var server = new ServerWrapper(endpoint, logger)) {
+                        var visited = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+                        var nodesRead = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+                        var errors = 0;
+                        var sw = Stopwatch.StartNew();
+                        while (nodes.Count > 0) {
+                            request.NodeId = nodes.First();
+                            nodes.Remove(request.NodeId);
+                            try {
+                                if (!silent) {
+                                    Console.WriteLine($"Browsing {request.NodeId}");
+                                    Console.WriteLine($"====================");
+                                }
+                                var result = await service.NodeBrowseAsync(endpoint, request).ConfigureAwait(false);
+                                visited.Add(request.NodeId);
+                                if (!silent) {
+                                    Console.WriteLine(JsonConvert.SerializeObject(result,
+                                        Formatting.Indented));
+                                }
+
+                                // Do recursive browse
+                                foreach (var r in result.References) {
+                                    if (!visited.Contains(r.ReferenceTypeId)) {
+                                        nodes.Add(r.ReferenceTypeId);
+                                    }
+                                    if (!visited.Contains(r.Target.NodeId)) {
+                                        nodes.Add(r.Target.NodeId);
+                                    }
+                                    if (nodesRead.Contains(r.Target.NodeId)) {
+                                        continue; // We have read this one already
+                                    }
+                                    if (!r.Target.NodeClass.HasValue ||
+                                        r.Target.NodeClass.Value != Core.Models.NodeClass.Variable) {
+                                        continue;
+                                    }
+                                    if (!silent) {
+                                        Console.WriteLine($"Reading {r.Target.NodeId}");
+                                        Console.WriteLine($"====================");
+                                    }
+                                    try {
+                                        nodesRead.Add(r.Target.NodeId);
+                                        var read = await service.NodeValueReadAsync(endpoint,
+                                            new ValueReadRequestModel {
+                                                NodeId = r.Target.NodeId
+                                            }).ConfigureAwait(false);
+                                        if (!silent) {
+                                            Console.WriteLine(JsonConvert.SerializeObject(result,
+                                                Formatting.Indented));
+                                        }
+                                    }
+                                    catch (Exception ex) {
+                                        Console.WriteLine($"Reading {r.Target.NodeId} resulted in {ex}");
+                                        errors++;
+                                    }
+                                }
+                            }
+                            catch (Exception e) {
+                                Console.WriteLine($"Browse {request.NodeId} resulted in {e}");
+                                errors++;
+                            }
+                        }
+                        Console.WriteLine($"Browse took {sw.Elapsed}. Visited " +
+                            $"{visited.Count} nodes and read {nodesRead.Count} of them with {errors} errors.");
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Wraps server and disposes after use
+        /// </summary>
+        private class ServerWrapper : IDisposable {
+
+            /// <summary>
+            /// Create wrapper
+            /// </summary>
+            /// <param name="endpoint"></param>
+            public ServerWrapper(EndpointModel endpoint, StackLogger logger) {
+                _cts = new CancellationTokenSource();
+                if (endpoint.Url == null) {
+                    _server = RunSampleServerAsync(logger.Logger, _cts.Token);
+                    endpoint.Url = "opc.tcp://" + Utils.GetHostName() +
+                        ":51210/UA/SampleServer";
+                }
+                else {
+                    _server = Task.CompletedTask;
+                }
+            }
+
+            /// <inheritdoc/>
+            public void Dispose() {
+                _cts.Cancel();
+                _server.Wait();
+                _cts.Dispose();
+            }
+
+            /// <summary>
+            /// Run server until cancelled
+            /// </summary>
+            /// <param name="ct"></param>
+            /// <returns></returns>
+            private static async Task RunSampleServerAsync(ILogger logger, CancellationToken ct) {
+                var tcs = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+                ct.Register(() => tcs.TrySetResult(true));
+                using (var server = new ServerConsoleHost(new ServerFactory(logger) {
+                    LogStatus = false
+                }, logger) {
+                    AutoAccept = true
+                }) {
+                    await server.StartAsync(new List<int> { 51210 }).ConfigureAwait(false);
+                    await tcs.Task.ConfigureAwait(false);
+                }
+            }
+
+            private readonly CancellationTokenSource _cts;
+            private readonly Task _server;
         }
 
         /// <summary>

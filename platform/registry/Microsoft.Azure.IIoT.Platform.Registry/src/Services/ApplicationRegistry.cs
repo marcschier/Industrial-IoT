@@ -145,7 +145,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                 throw new ResourceNotFoundException("Could not find application");
             }
             var endpoints = await _endpoints.GetApplicationEndpoints(applicationId, 
-                application.IsDisabled(), filterInactiveTwins, ct).ConfigureAwait(false);
+                application.IsNotSeen(), filterInactiveTwins, ct).ConfigureAwait(false);
             return new ApplicationRegistrationModel {
                 Application = application,
                 Endpoints = endpoints.ToList()
@@ -165,7 +165,8 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
             var absolute = DateTime.UtcNow - notSeenSince;
             string continuation = null;
             do {
-                var applications = await _database.QueryAsync(null, continuation, null, ct).ConfigureAwait(false);
+                var applications = await _database.QueryAsync(null, continuation, null, 
+                    ct).ConfigureAwait(false);
                 continuation = applications?.ContinuationToken;
                 if (applications?.Items == null) {
                     continue;
@@ -222,7 +223,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
             // Get all applications.
             var existing = await _database.QueryAllAsync(
                 new ApplicationRegistrationQueryModel {
-                    IncludeNotSeenSince = true,
                     DiscovererId = discovererId
                 }).ConfigureAwait(false);
 
@@ -272,7 +272,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
             var added = 0;
             var updated = 0;
             var unchanged = 0;
-            var disabled = 0;
+            var gone = 0;
 
             if (!(result.RegisterOnly ?? false)) {
                 // Remove applications
@@ -284,10 +284,10 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                         var application = await _database.UpdateAsync(removal.ApplicationId,
                             application => {
                                 // Disable application
-                                if (application.NotSeenSince == null) {
-                                    application.NotSeenSince = DateTime.UtcNow;
+                                if (!application.IsNotSeen()) {
+                                    application.SetNotSeen();
                                     application.Updated = context;
-                                    disabled++;
+                                    gone++;
                                     wasUpdated = true;
                                     return Task.FromResult(true);
                                 }
@@ -313,9 +313,9 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                     var application = addition.Clone();
                     application.Created = context;
                     application.Updated = context;
-                    application.NotSeenSince = null;
                     application.DiscovererId = discovererId;
                     application.SetApplicationId();
+                    application.SetAsFound();
                     var update = false;
                     application = await _database.AddOrUpdateAsync(application.ApplicationId, 
                         existing => {
@@ -356,9 +356,9 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
 
                     // Disable if not already disabled
                     var application = await _database.UpdateAsync(update.ApplicationId, application => {
-                        wasUpdated = application.IsDisabled();
+                        wasUpdated = application.IsNotSeen();
                         application.Patch(update);
-                        application.NotSeenSince = null;
+                        application.SetAsFound();
                         application.Updated = context;
                         return Task.FromResult(true);
                     }).ConfigureAwait(false);
@@ -380,7 +380,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
             }
             _logger.Information("... processed discovery results from {discovererId}: " +
                 "{added} applications added, {updated} updated, {disabled} disabled, and " +
-                "{unchanged} unchanged.", discovererId, added, updated, disabled, unchanged);
+                "{unchanged} unchanged.", discovererId, added, updated, gone, unchanged);
         }
 
         private readonly IApplicationRepository _database;

@@ -57,7 +57,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api {
             if (callback == null) {
                 throw new ArgumentNullException(nameof(callback));
             }
-            var hub = await _client.GetHubAsync($"{_serviceUri}/v2/applications/events",
+            var hub = await _client.GetHubAsync($"{_serviceUri}/v3/applications/events",
                 Resource.Platform).ConfigureAwait(false);
             var registration = hub.Register(EventTargets.ApplicationEventTarget, callback);
             return new AsyncDisposable(registration);
@@ -69,7 +69,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api {
             if (callback == null) {
                 throw new ArgumentNullException(nameof(callback));
             }
-            var hub = await _client.GetHubAsync($"{_serviceUri}/v2/endpoints/events",
+            var hub = await _client.GetHubAsync($"{_serviceUri}/v3/endpoints/events",
                 Resource.Platform).ConfigureAwait(false);
             var registration = hub.Register(EventTargets.EndpointEventTarget, callback);
             return new AsyncDisposable(registration);
@@ -81,7 +81,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api {
             if (callback == null) {
                 throw new ArgumentNullException(nameof(callback));
             }
-            var hub = await _client.GetHubAsync($"{_serviceUri}/v2/discovery/events",
+            var hub = await _client.GetHubAsync($"{_serviceUri}/v3/discovery/events",
                 Resource.Platform).ConfigureAwait(false);
             var registration = hub.Register(EventTargets.DiscoveryProgressTarget, callback);
             try {
@@ -103,7 +103,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api {
             if (callback == null) {
                 throw new ArgumentNullException(nameof(callback));
             }
-            var hub = await _client.GetHubAsync($"{_serviceUri}/v2/discovery/events",
+            var hub = await _client.GetHubAsync($"{_serviceUri}/v3/discovery/events",
                 Resource.Platform).ConfigureAwait(false);
             var registration = hub.Register(EventTargets.DiscoveryProgressTarget, callback);
             try {
@@ -129,7 +129,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api {
                 throw new ArgumentNullException(nameof(connectionId));
             }
             var request = _httpClient.NewRequest(
-                $"{_serviceUri}/v2/discovery/{discovererId}/events", Resource.Platform);
+                $"{_serviceUri}/v3/discovery/{discovererId}/events", Resource.Platform);
             _serializer.SerializeToRequest(request, connectionId);
             var response = await _httpClient.PutAsync(request, ct).ConfigureAwait(false);
             response.Validate();
@@ -145,7 +145,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api {
                 throw new ArgumentNullException(nameof(connectionId));
             }
             var request = _httpClient.NewRequest(
-                $"{_serviceUri}/v2/discovery/requests/{requestId}/events", Resource.Platform);
+                $"{_serviceUri}/v3/discovery/requests/{requestId}/events", Resource.Platform);
             _serializer.SerializeToRequest(request, connectionId);
             var response = await _httpClient.PutAsync(request, ct).ConfigureAwait(false);
             response.Validate();
@@ -161,7 +161,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api {
                 throw new ArgumentNullException(nameof(connectionId));
             }
             var request = _httpClient.NewRequest(
-                $"{_serviceUri}/v2/discovery/{discovererId}/events/{connectionId}",
+                $"{_serviceUri}/v3/discovery/{discovererId}/events/{connectionId}",
                 Resource.Platform);
             var response = await _httpClient.DeleteAsync(request, ct).ConfigureAwait(false);
             response.Validate();
@@ -177,7 +177,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api {
                 throw new ArgumentNullException(nameof(connectionId));
             }
             var request = _httpClient.NewRequest(
-                $"{_serviceUri}/v2/discovery/requests/{requestId}/events/{connectionId}",
+                $"{_serviceUri}/v3/discovery/requests/{requestId}/events/{connectionId}",
                 Resource.Platform);
             var response = await _httpClient.DeleteAsync(request, ct).ConfigureAwait(false);
             response.Validate();

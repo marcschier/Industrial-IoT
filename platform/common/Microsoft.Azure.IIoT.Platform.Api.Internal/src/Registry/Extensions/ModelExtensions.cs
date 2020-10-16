@@ -40,6 +40,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Models {
                 DiscoveryUrls = model.DiscoveryUrls,
                 Capabilities = model.Capabilities,
                 NotSeenSince = model.NotSeenSince,
+                Visibility = (EntityVisibility?)model.Visibility,
                 GatewayServerUri = model.GatewayServerUri,
                 Created = model.Created.ToApiModel(),
                 Updated = model.Updated.ToApiModel(),
@@ -71,6 +72,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Models {
                 DiscoveryUrls = model.DiscoveryUrls,
                 Capabilities = model.Capabilities,
                 NotSeenSince = model.NotSeenSince,
+                Visibility = (Registry.Models.EntityVisibility?)model.Visibility,
                 GatewayServerUri = model.GatewayServerUri,
                 Created = model.Created.ToServiceModel(),
                 Updated = model.Updated.ToServiceModel(),
@@ -166,7 +168,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Models {
                 ApplicationName = model.ApplicationName,
                 Locale = model.Locale,
                 Capability = model.Capability,
-                IncludeNotSeenSince = model.IncludeNotSeenSince,
+                Visibility = (EntityVisibility?)model.Visibility,
                 GatewayServerUri = model.GatewayServerUri,
                 DiscovererId = model.DiscovererId,
                 DiscoveryProfileUri = model.DiscoveryProfileUri
@@ -190,7 +192,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Models {
                 ApplicationName = model.ApplicationName,
                 Locale = model.Locale,
                 Capability = model.Capability,
-                IncludeNotSeenSince = model.IncludeNotSeenSince,
+                Visibility = (Registry.Models.EntityVisibility?)model.Visibility,
                 GatewayServerUri = model.GatewayServerUri,
                 DiscovererId = model.DiscovererId,
                 DiscoveryProfileUri = model.DiscoveryProfileUri
@@ -616,6 +618,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Models {
                 ApplicationId = model.ApplicationId,
                 GenerationId = model.GenerationId,
                 NotSeenSince = model.NotSeenSince,
+                Visibility = (EntityVisibility?)model.Visibility,
                 ActivationState = (EntityActivationState?)model.ActivationState,
                 EndpointState = (Core.Api.Models.EndpointConnectivityState?)model.EndpointState,
                 Id = model.Id,
@@ -644,6 +647,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Models {
                 ApplicationId = model.ApplicationId,
                 GenerationId = model.GenerationId,
                 NotSeenSince = model.NotSeenSince,
+                Visibility = (Registry.Models.EntityVisibility?)model.Visibility,
                 ActivationState = (Registry.Models.EntityActivationState?)model.ActivationState,
                 EndpointState = (Core.Models.EndpointConnectivityState?)model.EndpointState,
                 Id = model.Id,
@@ -713,7 +717,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Models {
                 SecurityMode = (Core.Api.Models.SecurityMode?)model.SecurityMode,
                 ApplicationId = model.ApplicationId,
                 DiscovererId = model.DiscovererId,
-                IncludeNotSeenSince = model.IncludeNotSeenSince
+                Visibility = (EntityVisibility?)model.Visibility,
             };
         }
 
@@ -736,7 +740,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Models {
                 SecurityMode = (Core.Models.SecurityMode?)model.SecurityMode,
                 ApplicationId = model.ApplicationId,
                 DiscovererId = model.DiscovererId,
-                IncludeNotSeenSince = model.IncludeNotSeenSince
+                Visibility = (Registry.Models.EntityVisibility?)model.Visibility,
             };
         }
 

@@ -56,11 +56,11 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Models {
         public EndpointConnectivityState? EndpointState { get; set; }
 
         /// <summary>
-        /// Whether to include endpoints that were soft deleted
+        /// Whether to test for visibility
         /// </summary>
-        [DataMember(Name = "includeNotSeenSince", Order = 7,
+        [DataMember(Name = "visibility", Order = 7,
             EmitDefaultValue = false)]
-        public bool? IncludeNotSeenSince { get; set; }
+        public EntityVisibility? Visibility { get; set; }
 
         /// <summary>
         /// Discoverer id to filter with

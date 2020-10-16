@@ -42,8 +42,6 @@ namespace Microsoft.Azure.IIoT.Platform.Directory.Models {
                 if (update?.IsDisabled != null && update.IsDisabled != existing?.IsDisabled) {
                     tags.Add(nameof(GatewayRegistration.IsDisabled), (update?.IsDisabled ?? false) ?
                         true : (bool?)null);
-                    tags.Add(nameof(GatewayRegistration.NotSeenSince), (update?.IsDisabled ?? false) ?
-                        DateTime.UtcNow : (DateTime?)null);
                 }
 
                 if (update?.SiteId != existing?.SiteId) {
@@ -93,8 +91,6 @@ namespace Microsoft.Azure.IIoT.Platform.Directory.Models {
 
                 IsDisabled =
                     twin.Tags.GetValueOrDefault<bool>(nameof(GatewayRegistration.IsDisabled), null),
-                NotSeenSince =
-                    twin.Tags.GetValueOrDefault<DateTime>(nameof(GatewayRegistration.NotSeenSince), null),
                 Type =
                     twin.Tags.GetValueOrDefault<string>(TwinProperty.Type, null),
                 SiteId =

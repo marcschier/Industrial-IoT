@@ -22,7 +22,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Service.Controllers {
     /// Trust group services.
     /// </summary>
     [ExceptionsFilter]
-    [ApiVersion("2")][ApiVersion("3")]
+    [ApiVersion("3")]
     [Route("v{version:apiVersion}/groups")]
     [Authorize(Policy = Policies.CanRead)]
     [ApiController]
