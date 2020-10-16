@@ -104,24 +104,6 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Storage.Services {
         public ushort? DataSetOffset { get; set; }
 
         /// <summary>
-        /// Keyframe count
-        /// </summary>
-        [DataMember]
-        public uint? KeyFrameCount { get; set; }
-
-        /// <summary>
-        /// Or keyframe timer interval (publisher extension)
-        /// </summary>
-        [DataMember]
-        public TimeSpan? KeyFrameInterval { get; set; }
-
-        /// <summary>
-        /// Metadata message sending interval (publisher extension)
-        /// </summary>
-        [DataMember]
-        public TimeSpan? DataSetMetaDataSendInterval { get; set; }
-
-        /// <summary>
         /// The operation timeout to create sessions.
         /// </summary>
         [DataMember]

@@ -6,7 +6,6 @@
 namespace Microsoft.Azure.IIoT.Platform.Core.Models {
     using Microsoft.Azure.IIoT.Serializers;
     using System.Collections.Generic;
-    using System.Linq;
 
     /// <summary>
     /// Authentication method model extensions

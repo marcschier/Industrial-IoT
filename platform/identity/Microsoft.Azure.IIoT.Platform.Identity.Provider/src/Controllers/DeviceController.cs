@@ -9,7 +9,6 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Provider.Controllers {
     using Microsoft.Azure.IIoT.AspNetCore.Authentication;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
-    using Microsoft.Extensions.Logging;
     using Microsoft.Extensions.Options;
     using IdentityServer4.Configuration;
     using IdentityServer4.Events;

@@ -8,12 +8,10 @@ namespace Microsoft.Azure.IIoT.Platform.Directory.Service.Controllers {
     using Microsoft.Azure.IIoT.Platform.Directory.Service.Filters;
     using Microsoft.Azure.IIoT.Platform.Directory.Api.Models;
     using Microsoft.Azure.IIoT.Platform.Directory;
-    using Microsoft.Azure.IIoT.Http;
     using Microsoft.Azure.IIoT.AspNetCore.OpenApi;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
-    using System.Linq;
     using System.Threading.Tasks;
     using System.ComponentModel.DataAnnotations;
     using System;

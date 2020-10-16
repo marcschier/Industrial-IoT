@@ -20,7 +20,7 @@ namespace Microsoft.Azure.IIoT.Platform.Subscriber.Handlers {
     public sealed class MonitoredItemSampleModelHandler : ITelemetryHandler {
 
         /// <inheritdoc/>
-        public string MessageSchema => Core.MessageSchemaTypes.MonitoredItemMessageModelJson;
+        public string MessageSchema => MessageSchemaTypes.MonitoredItemMessageModelJson;
 
         /// <summary>
         /// Create handler

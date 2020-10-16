@@ -9,7 +9,6 @@ namespace Microsoft.Azure.IIoT.Platform.Directory.Service.Controllers {
     using Microsoft.Azure.IIoT.Platform.Directory;
     using Microsoft.Azure.IIoT.Platform.Directory.Api.Models;
     using Microsoft.Azure.IIoT.Platform.Directory.Models;
-    using Microsoft.Azure.IIoT.Http;
     using Microsoft.Azure.IIoT.AspNetCore.OpenApi;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Authorization;
@@ -17,7 +16,6 @@ namespace Microsoft.Azure.IIoT.Platform.Directory.Service.Controllers {
     using System.Threading.Tasks;
     using System.ComponentModel.DataAnnotations;
     using System;
-    using System.Linq;
 
     /// <summary>
     /// Configure discovery

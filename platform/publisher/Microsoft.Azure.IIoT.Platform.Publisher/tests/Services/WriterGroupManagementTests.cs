@@ -109,7 +109,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
 
                 IDataSetWriterRegistry writers = mock.Create<WriterGroupRegistry>();
                 IWriterGroupRegistry groups = mock.Create<WriterGroupRegistry>();
-                IDataSetWriterStateUpdate service = mock.Create<WriterGroupManagement>();
+                IDataSetWriterStateUpdater service = mock.Create<WriterGroupManagement>();
 
                 var result1 = await groups.AddWriterGroupAsync(new WriterGroupAddRequestModel {
                     Name = "Test",
@@ -175,7 +175,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                 IDataSetWriterRegistry writers = mock.Create<WriterGroupRegistry>();
                 IDataSetBatchOperations batch = mock.Create<WriterGroupRegistry>();
                 IWriterGroupRegistry groups = mock.Create<WriterGroupRegistry>();
-                IDataSetWriterStateUpdate service = mock.Create<WriterGroupManagement>();
+                IDataSetWriterStateUpdater service = mock.Create<WriterGroupManagement>();
 
                 var result1 = await groups.AddWriterGroupAsync(new WriterGroupAddRequestModel {
                     Name = "Test",

@@ -3,7 +3,7 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Module.Cli {
+namespace Microsoft.Azure.IIoT.Platform.Publisher.Module.Cli {
     using Microsoft.Azure.IIoT.Platform.OpcUa.Sample;
     using Microsoft.Azure.IIoT.Platform.OpcUa.Services;
     using Microsoft.Azure.IIoT.Diagnostics;
@@ -128,7 +128,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Module.Cli {
                 Console.WriteLine(e.Message);
                 Console.WriteLine(
                     @"
-Usage:       Microsoft.Azure.IIoT.Platform.Publisher.Edge.Module.Cli [options]
+Usage:       Microsoft.Azure.IIoT.Platform.Publisher.Module.Cli [options]
 
 Options:
      -C

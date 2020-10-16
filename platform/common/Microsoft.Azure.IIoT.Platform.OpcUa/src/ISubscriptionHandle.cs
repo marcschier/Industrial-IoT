@@ -14,32 +14,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa {
     /// <summary>
     /// Subscription abstraction
     /// </summary>
-    public interface ISubscription : IDisposable {
-
-        /// <summary>
-        /// Subscription notification events
-        /// </summary>
-        event EventHandler<SubscriptionNotificationModel> OnSubscriptionNotification;
-
-        /// <summary>
-        /// Item notification events
-        /// </summary>
-        event EventHandler<SubscriptionNotificationModel> OnMonitoredItemNotification;
-
-        /// <summary>
-        /// Subscription status change events
-        /// </summary>
-        event EventHandler<SubscriptionStatusModel> OnSubscriptionStatusChange;
-
-        /// <summary>
-        /// Item status change events
-        /// </summary>
-        event EventHandler<MonitoredItemStatusModel> OnMonitoredItemStatusChange;
-
-        /// <summary>
-        /// Connectivity change events
-        /// </summary>
-        event EventHandler<EndpointConnectivityState> OnEndpointConnectivityChange;
+    public interface ISubscriptionHandle : IDisposable {
 
         /// <summary>
         /// Identifier of the subscription
@@ -68,12 +43,6 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa {
         /// <param name="newValue"></param>
         void UpdateConnectivityState(EndpointConnectivityState previous,
             EndpointConnectivityState newValue);
-
-        /// <summary>
-        /// Create snapshot
-        /// </summary>
-        /// <returns></returns>
-        Task<SubscriptionNotificationModel> GetSnapshotAsync();
 
         /// <summary>
         /// Apply desired state

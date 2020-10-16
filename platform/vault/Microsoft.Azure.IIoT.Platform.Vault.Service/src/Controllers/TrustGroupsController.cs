@@ -16,7 +16,6 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Service.Controllers {
     using System.Threading.Tasks;
     using System;
     using System.ComponentModel.DataAnnotations;
-    using System.Linq;
 
     /// <summary>
     /// Trust group services.

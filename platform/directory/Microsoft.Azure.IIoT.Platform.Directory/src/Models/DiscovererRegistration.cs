@@ -4,7 +4,6 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Platform.Directory.Models {
-    using Microsoft.Azure.IIoT.Utils;
     using Microsoft.Azure.IIoT.Hub;
     using System;
     using System.Collections.Generic;

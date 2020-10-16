@@ -16,7 +16,6 @@ namespace Microsoft.Azure.IIoT.AspNetCore.Authentication.Clients {
     using System.Threading;
     using System.Security.Claims;
     using Microsoft.Azure.IIoT.Utils;
-    using Microsoft.AspNetCore.Connections.Features;
 
     /// <summary>
     /// Revalidate all user token providers

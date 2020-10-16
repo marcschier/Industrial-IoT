@@ -22,7 +22,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Handlers {
     public sealed class DiscoveryResultEventHandler : ITelemetryHandler {
 
         /// <inheritdoc/>
-        public string MessageSchema => Models.MessageSchemaTypes.DiscoveryEvents;
+        public string MessageSchema => MessageSchemaTypes.DiscoveryEvents;
 
         /// <summary>
         /// Create handler

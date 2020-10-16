@@ -22,11 +22,8 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Models {
             return new DataSetWriterModel {
                 DataSet = model.DataSet.Clone(),
                 DataSetFieldContentMask = model.DataSetFieldContentMask,
-                DataSetMetaDataSendInterval = model.DataSetMetaDataSendInterval,
                 DataSetWriterId = model.DataSetWriterId,
-                KeyFrameCount = model.KeyFrameCount,
                 GenerationId = model.GenerationId,
-                KeyFrameInterval = model.KeyFrameInterval,
                 MessageSettings = model.MessageSettings.Clone()
             };
         }
@@ -52,11 +49,8 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Models {
                 Created = context,
                 Updated = context,
                 DataSetFieldContentMask = model.DataSetFieldContentMask,
-                DataSetMetaDataSendInterval = model.DataSetMetaDataSendInterval,
                 DataSetWriterId = model.DataSetWriterId,
-                KeyFrameCount = model.KeyFrameCount,
                 GenerationId = model.GenerationId,
-                KeyFrameInterval = model.KeyFrameInterval,
                 MessageSettings = model.MessageSettings.Clone()
             };
         }

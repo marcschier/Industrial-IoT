@@ -4,12 +4,9 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Platform.Directory.Models {
-    using Microsoft.Azure.IIoT.Utils;
     using Microsoft.Azure.IIoT.Serializers;
     using Microsoft.Azure.IIoT.Serializers.NewtonSoft;
     using AutoFixture;
-    using System.Collections.Generic;
-    using System;
     using System.Linq;
     using Xunit;
 

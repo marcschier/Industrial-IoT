@@ -114,7 +114,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
         }
 
         /// <inheritdoc/>
-        public void RegisterSubscription(ISubscription subscription) {
+        public void RegisterSubscription(ISubscriptionHandle subscription) {
             var id = new ConnectionIdentifier(subscription.Connection);
             _lock.Wait();
             try {
@@ -143,7 +143,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
         }
 
         /// <inheritdoc/>
-        public void UnregisterSubscription(ISubscription subscription) {
+        public void UnregisterSubscription(ISubscriptionHandle subscription) {
             var id = new ConnectionIdentifier(subscription.Connection);
             _lock.Wait();
             try {
@@ -939,8 +939,8 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
             /// <summary>
             /// registered subscriptions
             /// </summary>
-            public ConcurrentDictionary<string, ISubscription> Subscriptions { get; }
-                = new ConcurrentDictionary<string, ISubscription>();
+            public ConcurrentDictionary<string, ISubscriptionHandle> Subscriptions { get; }
+                = new ConcurrentDictionary<string, ISubscriptionHandle>();
 
             private EndpointConnectivityState _connectivity = EndpointConnectivityState.Disconnected;
         }

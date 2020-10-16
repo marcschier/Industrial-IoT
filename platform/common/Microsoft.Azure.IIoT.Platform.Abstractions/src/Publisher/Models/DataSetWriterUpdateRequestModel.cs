@@ -47,16 +47,6 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Models {
         public DataSetWriterMessageSettingsModel MessageSettings { get; set; }
 
         /// <summary>
-        /// Keyframe count
-        /// </summary>
-        public uint? KeyFrameCount { get; set; }
-
-        /// <summary>
-        /// Or keyframe timer interval (publisher extension)
-        /// </summary>
-        public TimeSpan? KeyFrameInterval { get; set; }
-
-        /// <summary>
         /// Extension fields in the dataset
         /// </summary>
         public IReadOnlyDictionary<string, string> ExtensionFields { get; set; }

@@ -92,7 +92,6 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                 var result2  = await service.AddDataSetWriterAsync(new DataSetWriterAddRequestModel {
                     EndpointId = "endpointfakeurl",
                     DataSetName = "Test",
-                    KeyFrameInterval = TimeSpan.FromSeconds(1),
                     SubscriptionSettings = new PublishedDataSetSourceSettingsModel {
                         Priority = 1
                     },
@@ -109,7 +108,6 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                 Assert.NotNull(writer.DataSet.DataSetSource.Connection);
                 Assert.NotNull(writer.DataSet.DataSetSource.Connection.Endpoint);
                 Assert.Equal("fakeurl", writer.DataSet.DataSetSource.Connection.Endpoint.Url);
-                Assert.Equal(TimeSpan.FromSeconds(1), writer.KeyFrameInterval);
                 Assert.NotNull(writer.DataSet.DataSetSource.SubscriptionSettings);
                 Assert.Equal((byte)1, writer.DataSet.DataSetSource.SubscriptionSettings.Priority);
 
@@ -189,7 +187,6 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                 var result2 = await service.AddDataSetWriterAsync(new DataSetWriterAddRequestModel {
                     EndpointId = "endpointfakeurl",
                     DataSetName = "Test",
-                    KeyFrameInterval = TimeSpan.FromSeconds(1),
                     SubscriptionSettings = new PublishedDataSetSourceSettingsModel {
                         Priority = 1
                     }
@@ -205,7 +202,6 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                 Assert.NotNull(writer.DataSet.DataSetSource.Connection);
                 Assert.NotNull(writer.DataSet.DataSetSource.Connection.Endpoint);
                 Assert.Equal("fakeurl", writer.DataSet.DataSetSource.Connection.Endpoint.Url);
-                Assert.Equal(TimeSpan.FromSeconds(1), writer.KeyFrameInterval);
                 Assert.NotNull(writer.DataSet.DataSetSource.SubscriptionSettings);
                 Assert.Equal((byte)1, writer.DataSet.DataSetSource.SubscriptionSettings.Priority);
 
@@ -240,7 +236,6 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                 var writer = await service.AddDataSetWriterAsync(new DataSetWriterAddRequestModel {
                     EndpointId = "endpointfakeurl",
                     DataSetName = "Test",
-                    KeyFrameInterval = TimeSpan.FromSeconds(1),
                     SubscriptionSettings = new PublishedDataSetSourceSettingsModel {
                         Priority = 1
                     },
@@ -306,7 +301,6 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                 var writer = await service.AddDataSetWriterAsync(new DataSetWriterAddRequestModel {
                     EndpointId = "endpointfakeurl",
                     DataSetName = "Test",
-                    KeyFrameInterval = TimeSpan.FromSeconds(1),
                     SubscriptionSettings = new PublishedDataSetSourceSettingsModel {
                         Priority = 1
                     },
@@ -367,7 +361,6 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                 var writer = await service.AddDataSetWriterAsync(new DataSetWriterAddRequestModel {
                     EndpointId = "endpointfakeurl",
                     DataSetName = "Test",
-                    KeyFrameInterval = TimeSpan.FromSeconds(1),
                     SubscriptionSettings = new PublishedDataSetSourceSettingsModel {
                         Priority = 1
                     },
@@ -565,7 +558,6 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                 var result2 = await service.AddDataSetWriterAsync(new DataSetWriterAddRequestModel {
                     EndpointId = "endpointfakeurl",
                     DataSetName = "Test",
-                    KeyFrameInterval = TimeSpan.FromSeconds(1),
                     SubscriptionSettings = new PublishedDataSetSourceSettingsModel {
                         Priority = 1
                     },
@@ -576,12 +568,10 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                     service.UpdateDataSetWriterAsync(result2.DataSetWriterId,
                     new DataSetWriterUpdateRequestModel {
                         GenerationId = "badgenerationid",
-                        KeyFrameInterval = TimeSpan.FromSeconds(5)
                     })).ConfigureAwait(false);
                 await service.UpdateDataSetWriterAsync(result2.DataSetWriterId,
                     new DataSetWriterUpdateRequestModel {
                         GenerationId = result2.GenerationId,
-                        KeyFrameInterval = TimeSpan.FromSeconds(5),
                         WriterGroupId = "noid",
                         DataSetFieldContentMask =
                             DataSetFieldContentMask.ApplicationUri |
@@ -590,7 +580,6 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                         ExtensionFields = new Dictionary<string, string> {
                             ["test"] = "total"
                         },
-                        KeyFrameCount = 566,
                         MessageSettings = new DataSetWriterMessageSettingsModel {
                             ConfiguredSize = 5,
                             DataSetMessageContentMask =
@@ -614,10 +603,8 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                     }).ConfigureAwait(false);
 
                 var writer = await service.GetDataSetWriterAsync(result2.DataSetWriterId).ConfigureAwait(false);
-                Assert.Equal(TimeSpan.FromSeconds(5), writer.KeyFrameInterval);
                 Assert.Equal(DataSetFieldContentMask.ApplicationUri |
                     DataSetFieldContentMask.DisplayName, writer.DataSetFieldContentMask);
-                Assert.Equal(566u, writer.KeyFrameCount);
                 Assert.NotNull(writer.DataSet);
                 Assert.Equal("supername", writer.DataSet.Name);
                 Assert.Equal("total", writer.DataSet.ExtensionFields["test"]);
@@ -643,12 +630,10 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                 await service.UpdateDataSetWriterAsync(result2.DataSetWriterId,
                     new DataSetWriterUpdateRequestModel {
                         GenerationId = writer.GenerationId,
-                        KeyFrameInterval = TimeSpan.FromSeconds(0),
                         WriterGroupId = "",
                         DataSetFieldContentMask = 0,
                         DataSetName = "",
                         ExtensionFields = new Dictionary<string, string>(),
-                        KeyFrameCount = 0,
                         MessageSettings = new DataSetWriterMessageSettingsModel {
                             ConfiguredSize = 0,
                             DataSetMessageContentMask = 0,
@@ -668,9 +653,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
 
                 // Assert
                 writer = await service.GetDataSetWriterAsync(result2.DataSetWriterId).ConfigureAwait(false);
-                Assert.Null(writer.KeyFrameInterval);
                 Assert.Null(writer.DataSetFieldContentMask);
-                Assert.Null(writer.KeyFrameCount);
                 Assert.NotNull(writer.DataSet);
                 Assert.Null(writer.DataSet.Name);
                 Assert.Empty(writer.DataSet.ExtensionFields);

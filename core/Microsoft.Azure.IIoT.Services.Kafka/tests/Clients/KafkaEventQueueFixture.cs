@@ -5,7 +5,6 @@
 
 namespace Microsoft.Azure.IIoT.Services.Kafka.Clients {
     using Microsoft.Azure.IIoT.Services.Kafka.Runtime;
-    using Microsoft.Azure.IIoT.Services.Kafka.Server;
     using Microsoft.Azure.IIoT.Messaging.Handlers;
     using Microsoft.Azure.IIoT.Messaging;
     using Microsoft.Azure.IIoT.Hub;

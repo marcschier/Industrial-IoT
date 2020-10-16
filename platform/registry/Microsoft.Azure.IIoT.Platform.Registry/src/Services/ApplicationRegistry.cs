@@ -9,7 +9,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
     using Microsoft.Azure.IIoT.Platform.Core.Models;
     using Microsoft.Azure.IIoT.Exceptions;
     using Microsoft.Azure.IIoT.Hub.Models;
-    using Prometheus;
     using Serilog;
     using System;
     using System.Collections.Generic;

@@ -3,8 +3,7 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-
-namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
+namespace Microsoft.Azure.IIoT.Platform.Publisher.Handlers {
     using Microsoft.Azure.IIoT.Platform.OpcUa;
     using Microsoft.Azure.IIoT.Platform.OpcUa.Services;
     using Microsoft.Azure.IIoT.Platform.Twin;
@@ -22,14 +21,14 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
     /// <summary>
     /// Bulk publisher
     /// </summary>
-    public class BulkPublishHandler : IBulkPublishHandler {
+    public class BulkPublishModelHandler : IBulkPublishHandler {
 
         /// <summary>
         /// Create handler
         /// </summary>
         /// <param name="processor"></param>
         /// <param name="publish"></param>
-        public BulkPublishHandler(INodeSetProcessor processor, IPublishServices publish) {
+        public BulkPublishModelHandler(INodeSetProcessor processor, IPublishServices publish) {
             _processor = processor ?? throw new ArgumentNullException(nameof(processor));
             _publish = publish ?? throw new ArgumentNullException(nameof(publish));
         }
@@ -58,7 +57,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
         /// </summary>
         private class PublishingSession : NodeHandlerBase {
 
-            public PublishingSession(BulkPublishHandler outer, string endpointId,
+            public PublishingSession(BulkPublishModelHandler outer, string endpointId,
                 string sessionId) {
                 _endpointId = endpointId;
                 _sessionId = sessionId;
@@ -108,7 +107,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
 #pragma warning disable IDE0052 // Remove unread private members
             private readonly string _sessionId;
 #pragma warning restore IDE0052 // Remove unread private members
-            private readonly BulkPublishHandler _outer;
+            private readonly BulkPublishModelHandler _outer;
         }
 
         private readonly INodeSetProcessor _processor;

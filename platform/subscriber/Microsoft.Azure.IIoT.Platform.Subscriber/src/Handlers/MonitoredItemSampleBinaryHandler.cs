@@ -24,7 +24,7 @@ namespace Microsoft.Azure.IIoT.Platform.Subscriber.Handlers {
     public sealed class MonitoredItemSampleBinaryHandler : ITelemetryHandler {
 
         /// <inheritdoc/>
-        public string MessageSchema => Core.MessageSchemaTypes.MonitoredItemMessageBinary;
+        public string MessageSchema => MessageSchemaTypes.MonitoredItemMessageBinary;
 
         /// <summary>
         /// Create handler

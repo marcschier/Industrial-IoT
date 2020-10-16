@@ -5,8 +5,6 @@
 
 namespace Microsoft.Azure.IIoT.Platform.Directory.Api {
     using Microsoft.Azure.IIoT.Platform.Directory.Api.Models;
-    using Microsoft.Azure.IIoT.Platform.Core.Api.Models;
-    using System;
     using System.Threading;
     using System.Threading.Tasks;
 

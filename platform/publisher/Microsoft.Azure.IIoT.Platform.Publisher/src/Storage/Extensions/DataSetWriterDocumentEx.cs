@@ -30,12 +30,6 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Storage.Services {
                 WriterGroupId = model.WriterGroupId,
                 DataSetFieldContentMask = model.DataSetFieldContentMask,
                 IsDisabled = model.IsDisabled ?? false,
-                DataSetMetaDataSendInterval = model.DataSetMetaDataSendInterval == TimeSpan.Zero ?
-                    null : model.DataSetMetaDataSendInterval,
-                KeyFrameCount = model.KeyFrameCount == 0 ?
-                    null : model.KeyFrameCount,
-                KeyFrameInterval = model.KeyFrameInterval == TimeSpan.Zero ?
-                    null : model.KeyFrameInterval,
                 ConfiguredSize = model.MessageSettings?.ConfiguredSize == 0 ?
                     null : model.MessageSettings?.ConfiguredSize,
                 DataSetMessageContentMask = model.MessageSettings?.DataSetMessageContentMask,
@@ -97,9 +91,6 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Storage.Services {
                 IsDisabled = document.IsDisabled ? true : (bool?)null,
                 DataSet = ToDataSetSourceInfo(document),
                 DataSetFieldContentMask = document.DataSetFieldContentMask,
-                DataSetMetaDataSendInterval = document.DataSetMetaDataSendInterval,
-                KeyFrameCount = document.KeyFrameCount,
-                KeyFrameInterval = document.KeyFrameInterval,
                 MessageSettings = ToMessageSettings(document),
                 Created = document.Created == null ? null : new PublisherOperationContextModel {
                     AuthorityId = document.CreatedAuditId,

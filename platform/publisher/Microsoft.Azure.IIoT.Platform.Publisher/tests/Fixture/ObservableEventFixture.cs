@@ -3,8 +3,8 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Services {
-    using Microsoft.Azure.IIoT.Platform.Publisher.Edge;
+namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
+    using Microsoft.Azure.IIoT.Platform.Publisher;
     using Microsoft.Azure.IIoT.Platform.Publisher.Models;
     using Microsoft.Azure.IIoT.Messaging;
     using Microsoft.Azure.IIoT.Serializers;
@@ -18,7 +18,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Services {
     /// <summary>
     /// Observe events emitted
     /// </summary>
-    public class ObservableEventFixture : IEventClient, IWriterGroupStateReporter {
+    public class ObservableEventFixture : IEventClient, IDataSetWriterStateReporter {
 
         public void OnDataSetEventStateChange(string dataSetWriterId,
             PublishedDataSetItemStateModel state) {

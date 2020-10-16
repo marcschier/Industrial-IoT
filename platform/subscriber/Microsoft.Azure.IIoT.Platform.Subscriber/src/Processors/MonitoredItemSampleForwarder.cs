@@ -33,7 +33,7 @@ namespace Microsoft.Azure.IIoT.Platform.Subscriber.Processors {
             // Set timestamp as source timestamp
             var properties = new Dictionary<string, string>() {
                 [CommonProperties.EventSchemaType] =
-                    Core.MessageSchemaTypes.MonitoredItemMessageModelJson
+                    MessageSchemaTypes.MonitoredItemMessageModelJson
             };
             return _client.SendAsync(null, _serializer.SerializeToBytes(sample).ToArray(),
                 properties, sample.DataSetWriterId);
@@ -43,7 +43,7 @@ namespace Microsoft.Azure.IIoT.Platform.Subscriber.Processors {
         public Task HandleMessageAsync(DataSetMessageModel message) {
             var properties = new Dictionary<string, string>() {
                 [CommonProperties.EventSchemaType] =
-                    Core.MessageSchemaTypes.NetworkMessageModelJson
+                    MessageSchemaTypes.NetworkMessageModelJson
             };
             return _client.SendAsync(null, _serializer.SerializeToBytes(message).ToArray(),
                 properties, message.DataSetWriterId);

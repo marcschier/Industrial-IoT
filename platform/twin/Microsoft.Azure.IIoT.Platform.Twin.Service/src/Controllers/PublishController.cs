@@ -15,7 +15,6 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Service.Controllers {
     using System;
     using System.Threading.Tasks;
     using System.ComponentModel.DataAnnotations;
-    using System.Linq;
 
     /// <summary>
     /// Value and Event publishing services

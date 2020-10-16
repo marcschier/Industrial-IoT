@@ -4,7 +4,6 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.App.Pages {
-    using System;
     using System.Threading.Tasks;
     using Microsoft.Azure.IIoT.App.Data;
     using Microsoft.Azure.IIoT.Platform.Directory.Api.Models;

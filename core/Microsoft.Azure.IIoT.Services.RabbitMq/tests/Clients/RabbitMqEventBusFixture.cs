@@ -5,7 +5,6 @@
 
 namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
     using Microsoft.Azure.IIoT.Services.RabbitMq.Runtime;
-    using Microsoft.Azure.IIoT.Services.RabbitMq.Server;
     using Microsoft.Azure.IIoT.Messaging.Default;
     using Microsoft.Azure.IIoT.Messaging;
     using Microsoft.Azure.IIoT.Utils;
@@ -13,7 +12,6 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
     using System;
     using System.Runtime.Serialization;
     using Autofac;
-    using Xunit;
 
     public sealed class RabbitMqEventBusFixture {
 

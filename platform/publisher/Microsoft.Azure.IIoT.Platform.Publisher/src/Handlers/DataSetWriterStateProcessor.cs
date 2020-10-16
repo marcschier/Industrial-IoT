@@ -6,8 +6,6 @@
 namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
     using Microsoft.Azure.IIoT.Platform.Publisher.Models;
     using Microsoft.Azure.IIoT.Platform.Publisher;
-    using Microsoft.Azure.IIoT.Platform.Registry.Models;
-    using Microsoft.Azure.IIoT.Platform.Registry;
     using Serilog;
     using System;
     using System.Threading.Tasks;
@@ -15,14 +13,14 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
     /// <summary>
     /// Process reported state change messages and update entites in registry
     /// </summary>
-    public sealed class DataSetWriterStateSync : IWriterGroupStateProcessor {
+    public sealed class DataSetWriterStateProcessor : IDataSetWriterStateProcessor {
 
         /// <summary>
         /// Create state processor service
         /// </summary>
         /// <param name="datasets"></param>
         /// <param name="logger"></param>
-        public DataSetWriterStateSync(IDataSetWriterStateUpdate datasets, ILogger logger) {
+        public DataSetWriterStateProcessor(IDataSetWriterStateUpdater datasets, ILogger logger) {
             _datasets = datasets ?? throw new ArgumentNullException(nameof(datasets));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
@@ -32,7 +30,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
         /// </summary>
         /// <param name="message"></param>
         /// <returns></returns>
-        public async Task OnWriterGroupStateChangeAsync(WriterGroupStateEventModel message) {
+        public async Task OnDataSetWriterStateChangeAsync(DataSetWriterStateEventModel message) {
             if (message is null) {
                 throw new ArgumentNullException(nameof(message));
             }
@@ -41,7 +39,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                 AuthorityId = null // TODO
             };
             switch (message.EventType) {
-                case PublisherStateEventType.Source:
+                case DataSetWriterStateEventType.Source:
                     var sourceState = new PublishedDataSetSourceStateModel {
                         LastResultChange = message.TimeStamp,
                         LastResult = message.LastResult,
@@ -59,7 +57,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                     _logger.Warning("Subscription event without dataset writer id");
                     break;
 
-                case PublisherStateEventType.PublishedItem:
+                case DataSetWriterStateEventType.PublishedItem:
                     var itemState = new PublishedDataSetItemStateModel {
                         LastResultChange = message.TimeStamp,
                         LastResult = message.LastResult,
@@ -89,7 +87,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
             }
         }
 
-        private readonly IDataSetWriterStateUpdate _datasets;
+        private readonly IDataSetWriterStateUpdater _datasets;
         private readonly ILogger _logger;
     }
 }

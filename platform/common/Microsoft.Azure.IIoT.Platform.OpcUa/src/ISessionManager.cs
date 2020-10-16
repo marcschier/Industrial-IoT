@@ -39,14 +39,14 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa {
         /// </summary>
         /// <param name="subscription"></param>
         /// <returns></returns>
-        void RegisterSubscription(ISubscription subscription);
+        void RegisterSubscription(ISubscriptionHandle subscription);
 
         /// <summary>
         /// Removes a subscription
         /// </summary>
         /// <param name="subscription"></param>
         /// <returns></returns>
-        void UnregisterSubscription(ISubscription subscription);
+        void UnregisterSubscription(ISubscriptionHandle subscription);
 
         /// <summary>
         /// stops all pending sessions

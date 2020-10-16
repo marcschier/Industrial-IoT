@@ -9,6 +9,7 @@ namespace Microsoft.Azure.IIoT.Platform.Edge.Events.Service {
     using Microsoft.Azure.IIoT.Platform.Registry.Handlers;
     using Microsoft.Azure.IIoT.Platform.Registry.Events.v2;
     using Microsoft.Azure.IIoT.Platform.Publisher;
+    using Microsoft.Azure.IIoT.Platform.Publisher.Handlers;
     using Microsoft.Azure.IIoT.Azure.AppInsights;
     using Microsoft.Azure.IIoT.Azure.ServiceBus;
     using Microsoft.Azure.IIoT.Azure.EventHub.Processor;
@@ -110,9 +111,7 @@ namespace Microsoft.Azure.IIoT.Platform.Edge.Events.Service {
 
             // 3.) Publisher events
             // TODO: because of dependencies should be in seperate processor
-            builder.RegisterType<WriterGroupTwinEventHandler>()
-                .AsImplementedInterfaces();
-            builder.RegisterType<WriterGroupEventHandler>()
+            builder.RegisterType<DataSetWriterEventHandler>()
                 .AsImplementedInterfaces();
             builder.RegisterModule<PublisherServices>();
 

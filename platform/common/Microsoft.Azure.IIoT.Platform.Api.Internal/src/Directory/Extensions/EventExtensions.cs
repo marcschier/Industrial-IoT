@@ -5,9 +5,6 @@
 
 namespace Microsoft.Azure.IIoT.Platform.Directory.Api.Models {
     using Microsoft.Azure.IIoT.Platform.Directory.Events.v2.Models;
-    using Microsoft.Azure.IIoT.Platform.Directory.Models;
-    using System.Collections.Generic;
-    using System.Linq;
 
     /// <summary>
     /// Event extensions

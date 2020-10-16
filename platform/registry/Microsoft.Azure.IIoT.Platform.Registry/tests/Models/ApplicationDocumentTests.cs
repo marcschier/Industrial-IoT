@@ -4,7 +4,6 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
-    using Microsoft.Azure.IIoT.Utils;
     using AutoFixture;
     using System.Linq;
     using Xunit;

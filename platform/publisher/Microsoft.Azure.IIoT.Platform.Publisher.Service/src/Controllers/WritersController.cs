@@ -9,14 +9,12 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Service.Controllers {
     using Microsoft.Azure.IIoT.Platform.Publisher.Api.Models;
     using Microsoft.Azure.IIoT.Platform.Publisher;
     using Microsoft.Azure.IIoT.Platform.Publisher.Models;
-    using Microsoft.Azure.IIoT.Http;
     using Microsoft.Azure.IIoT.AspNetCore.OpenApi;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using System.Threading.Tasks;
     using System;
-    using System.Linq;
 
     /// <summary>
     /// CRUD and Query data set writer and definition resources

@@ -15,7 +15,6 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Transport {
     using System.Security.Cryptography.X509Certificates;
     using System.Threading;
     using Autofac;
-    using Microsoft.Azure.IIoT.Utils;
 
     /// <summary>
     /// Enables websocket middleware to pass sockets on to listener

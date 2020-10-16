@@ -5,7 +5,6 @@
 
 namespace Microsoft.Azure.IIoT.Platform.Core.Api.Models {
     using System.Runtime.Serialization;
-    using System;
     using System.ComponentModel.DataAnnotations;
 
     /// <summary>

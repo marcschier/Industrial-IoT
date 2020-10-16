@@ -3,7 +3,7 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Services {
+namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
     using Microsoft.Azure.IIoT.Hub;
     using Serilog;
     using Prometheus;
@@ -12,9 +12,9 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Services {
     using System.Threading;
 
     /// <summary>
-    /// Log writer group diganotics
+    /// Log writer diganotics
     /// </summary>
-    public sealed class WriterGroupDiagnostics : IWriterGroupDiagnostics, IDisposable {
+    public sealed class DataSetWriterDiagnostics : IDataSetWriterDiagnostics, IDisposable {
 
         /// <inheritdoc/>
         public event EventHandler<EventArgs> BeforeDiagnosticsSending;
@@ -52,99 +52,99 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Services {
         /// </summary>
         /// <param name="identity"></param>
         /// <param name="logger"></param>
-        public WriterGroupDiagnostics(IIdentity identity, ILogger logger) {
+        public DataSetWriterDiagnostics(IIdentity identity, ILogger logger) {
             _identity = identity ?? throw new ArgumentNullException(nameof(identity));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _diagnosticsOutputTimer = new Timer(DiagnosticsOutputTimer_Elapsed);
         }
 
         /// <inheritdoc/>
-        public void ReportDataSetWriterSubscriptionNotifications(string writerGroupId,
-            string dataSetWriterId, long count) {
+        public void ReportDataSetWriterSubscriptionNotifications(string dataSetWriterId,
+            long count) {
             Interlocked.Add(ref _valueChangesCount, count);
             Interlocked.Increment(ref _dataChangesCount);
-            kDataChangesCount.WithLabels(DeviceId, ModuleId, writerGroupId)
+            kDataChangesCount.WithLabels(DeviceId, ModuleId, dataSetWriterId)
                 .Set(_dataChangesCount);
-            kValueChangesCount.WithLabels(DeviceId, ModuleId, writerGroupId)
+            kValueChangesCount.WithLabels(DeviceId, ModuleId, dataSetWriterId)
                 .Set(_valueChangesCount);
         }
 
         /// <inheritdoc/>
-        public void ReportBatchedDataSetMessageCount(string writerGroupId, long count) {
+        public void ReportBatchedDataSetMessageCount(string dataSetWriterId, long count) {
             Interlocked.Exchange(ref _batchedDataSetMessageCount, count);
         }
 
         /// <inheritdoc/>
-        public void ReportDataSetMessagesReadyToEncode(string writerGroupId, long count) {
+        public void ReportDataSetMessagesReadyToEncode(string dataSetWriterId, long count) {
             Interlocked.Exchange(ref _messagesReadyToEncodeCount, count);
         }
 
         /// <inheritdoc/>
-        public void ReportEncodedNetworkMessages(string writerGroupId, long count) {
+        public void ReportEncodedNetworkMessages(string dataSetWriterId, long count) {
             Interlocked.Exchange(ref _encodedNetworkMessageCount, count);
         }
 
         /// <inheritdoc/>
-        public void ReportNetworkMessagesReadyToSend(string writerGroupId, long count) {
+        public void ReportNetworkMessagesReadyToSend(string dataSetWriterId, long count) {
             Interlocked.Exchange(ref _readyToSendCount, count);
-            kIoTHubQueueBuffer.WithLabels(DeviceId, ModuleId, writerGroupId)
+            kIoTHubQueueBuffer.WithLabels(DeviceId, ModuleId, dataSetWriterId)
                 .Set(_readyToSendCount);
         }
 
         /// <inheritdoc/>
-        public void ReportNetworkMessageSent(string writerGroupId) {
+        public void ReportNetworkMessageSent(string dataSetWriterId) {
             Interlocked.Increment(ref _sentMessagesCount);
-            kSentMessagesCount.WithLabels(DeviceId, ModuleId, writerGroupId)
+            kSentMessagesCount.WithLabels(DeviceId, ModuleId, dataSetWriterId)
                 .Set(_sentMessagesCount);
         }
 
         /// <inheritdoc/>
-        public void ReportConnectionRetry(string writerGroupId, string dataSetWriterId) {
+        public void ReportConnectionRetry(string dataSetWriterId) {
             Interlocked.Increment(ref _numberOfConnectionRetries);
-            kNumberOfConnectionRetries.WithLabels(DeviceId, ModuleId, writerGroupId)
+            kNumberOfConnectionRetries.WithLabels(DeviceId, ModuleId, dataSetWriterId)
                 .Set(_numberOfConnectionRetries);
         }
 
         /// <inheritdoc/>
-        public void ReportEncoderNetworkMessagesProcessedCount(string writerGroupId,
+        public void ReportEncoderNetworkMessagesProcessedCount(string dataSetWriterId,
             string messageScheme, long count) {
             Interlocked.Exchange(ref _messagesProcessedCount, count);
-            kMessagesProcessedCount.WithLabels(DeviceId, ModuleId, writerGroupId)
+            kMessagesProcessedCount.WithLabels(DeviceId, ModuleId, dataSetWriterId)
                 .Set(_messagesProcessedCount);
         }
 
         /// <inheritdoc/>
-        public void ReportEncoderNotificationsDroppedCount(string writerGroupId,
+        public void ReportEncoderNotificationsDroppedCount(string dataSetWriterId,
             string messageScheme, long count) {
             Interlocked.Exchange(ref _notificationsDroppedCount, count);
-            kNotificationsDroppedCount.WithLabels(DeviceId, ModuleId, writerGroupId)
+            kNotificationsDroppedCount.WithLabels(DeviceId, ModuleId, dataSetWriterId)
                 .Set(_notificationsDroppedCount);
         }
 
         /// <inheritdoc/>
-        public void ReportEncoderNotificationsProcessedCount(string writerGroupId,
+        public void ReportEncoderNotificationsProcessedCount(string dataSetWriterId,
             string messageScheme, long count) {
             Interlocked.Exchange(ref _notificationsProcessedCount, count);
-            kNotificationsProcessedCount.WithLabels(DeviceId, ModuleId, writerGroupId)
+            kNotificationsProcessedCount.WithLabels(DeviceId, ModuleId, dataSetWriterId)
                 .Set(_notificationsProcessedCount);
         }
 
         /// <inheritdoc/>
-        public void ReportEncoderAvgNotificationsPerMessage(string writerGroupId,
+        public void ReportEncoderAvgNotificationsPerMessage(string dataSetWriterId,
             string messageScheme, double average) {
             Interlocked.Exchange(ref _avgNotificationsPerMessage, average);
-            kNotificationsPerMessageAvg.WithLabels(DeviceId, ModuleId, writerGroupId)
+            kNotificationsPerMessageAvg.WithLabels(DeviceId, ModuleId, dataSetWriterId)
                 .Set(_avgNotificationsPerMessage);
         }
 
         /// <inheritdoc/>
-        public void ReportEncoderAvgNetworkMessageSize(string writerGroupId,
+        public void ReportEncoderAvgNetworkMessageSize(string dataSetWriterId,
             string messageScheme, double average, long max) {
             Interlocked.Exchange(ref _avgMessageSize, average);
             Interlocked.Exchange(ref _maxEncodedMessageSize, max);
-            kMessageSizeAvg.WithLabels(DeviceId, ModuleId, writerGroupId)
+            kMessageSizeAvg.WithLabels(DeviceId, ModuleId, dataSetWriterId)
                 .Set(_avgMessageSize);
-            kChunkSizeAvg.WithLabels(DeviceId, ModuleId, writerGroupId)
+            kChunkSizeAvg.WithLabels(DeviceId, ModuleId, dataSetWriterId)
                 .Set(_avgMessageSize / (4 * 1024));
         }
 

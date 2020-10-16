@@ -14,7 +14,6 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Service.Controllers {
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using System.Threading.Tasks;
-    using System.Linq;
 
     /// <summary>
     /// Trust lists services.

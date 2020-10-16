@@ -25,10 +25,10 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Models {
                 GenerationId = model.GenerationId,
                 WriterGroupId = model.WriterGroupId,
                 DataSet = model.DataSet.Clone(),
+                IsDisabled = model.IsDisabled,
+                Created = model.Created.Clone(),
+                Updated = model.Updated.Clone(),
                 DataSetFieldContentMask = model.DataSetFieldContentMask,
-                DataSetMetaDataSendInterval = model.DataSetMetaDataSendInterval,
-                KeyFrameCount = model.KeyFrameCount,
-                KeyFrameInterval = model.KeyFrameInterval,
                 MessageSettings = model.MessageSettings.Clone()
             };
         }
@@ -52,9 +52,6 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Models {
                 GenerationId = model.GenerationId,
                 DataSet = model.DataSet.AsPublishedDataSetModel(connection, variables, events),
                 DataSetFieldContentMask = model.DataSetFieldContentMask,
-                DataSetMetaDataSendInterval = model.DataSetMetaDataSendInterval,
-                KeyFrameCount = model.KeyFrameCount,
-                KeyFrameInterval = model.KeyFrameInterval,
                 MessageSettings = model.MessageSettings.Clone()
             };
         }
@@ -86,12 +83,10 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Models {
                     OperationTimeout = null
                 },
                 DataSetFieldContentMask = model.DataSetFieldContentMask,
-                KeyFrameCount = model.KeyFrameCount,
-                KeyFrameInterval = model.KeyFrameInterval,
                 MessageSettings = model.MessageSettings.Clone(),
                 Created = context.Clone(),
                 Updated = context.Clone(),
-                DataSetMetaDataSendInterval = null, // TODO
+                IsDisabled = null
             };
         }
 

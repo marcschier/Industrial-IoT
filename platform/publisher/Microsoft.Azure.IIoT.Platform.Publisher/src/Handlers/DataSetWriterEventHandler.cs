@@ -3,8 +3,8 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Platform.Registry.Handlers {
-    using Microsoft.Azure.IIoT.Platform.Registry.Models;
+namespace Microsoft.Azure.IIoT.Platform.Publisher.Handlers {
+    using Microsoft.Azure.IIoT.Platform.Publisher.Models;
     using Microsoft.Azure.IIoT.Hub;
     using Microsoft.Azure.IIoT.Serializers;
     using Serilog;
@@ -15,12 +15,12 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Handlers {
     using System.Linq;
 
     /// <summary>
-    /// Writer group state event handling
+    /// Writer state event handling
     /// </summary>
-    public sealed class WriterGroupEventHandler : ITelemetryHandler {
+    public sealed class DataSetWriterEventHandler : ITelemetryHandler {
 
         /// <inheritdoc/>
-        public string MessageSchema => Models.MessageSchemaTypes.WriterGroupEvents;
+        public string MessageSchema => MessageSchemaTypes.DataSetWriterEvents;
 
         /// <summary>
         /// Create handler
@@ -28,7 +28,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Handlers {
         /// <param name="handlers"></param>
         /// <param name="serializer"></param>
         /// <param name="logger"></param>
-        public WriterGroupEventHandler(IEnumerable<IWriterGroupStateProcessor> handlers,
+        public DataSetWriterEventHandler(IEnumerable<IDataSetWriterStateProcessor> handlers,
             IJsonSerializer serializer, ILogger logger) {
             _serializer = serializer ??
                 throw new ArgumentNullException(nameof(serializer));
@@ -41,20 +41,21 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Handlers {
         /// <inheritdoc/>
         public async Task HandleAsync(string source, byte[] payload,
             IDictionary<string, string> properties, Func<Task> checkpoint) {
-            WriterGroupStateEventModel change;
+            DataSetWriterStateEventModel change;
             try {
-                change = _serializer.Deserialize<WriterGroupStateEventModel>(payload);
+                change = _serializer.Deserialize<DataSetWriterStateEventModel>(payload);
             }
             catch (Exception ex) {
-                _logger.Error(ex, "Failed to convert publisher state change event message {json}.",
+                _logger.Error(ex, "Failed to convert DataSetWriter state change event message {json}.",
                     Encoding.UTF8.GetString(payload));
                 return;
             }
             try {
-                await Task.WhenAll(_handlers.Select(h => h.OnWriterGroupStateChangeAsync(change))).ConfigureAwait(false);
+                await Task.WhenAll(_handlers.Select(h => h.OnDataSetWriterStateChangeAsync(
+                    change))).ConfigureAwait(false);
             }
             catch (Exception ex) {
-                _logger.Error(ex, "Handling publisher state event failed with exception - skip");
+                _logger.Error(ex, "Handling DataSetWriter state event failed with exception - skip");
             }
         }
 
@@ -65,6 +66,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Handlers {
 
         private readonly IJsonSerializer _serializer;
         private readonly ILogger _logger;
-        private readonly List<IWriterGroupStateProcessor> _handlers;
+        private readonly List<IDataSetWriterStateProcessor> _handlers;
     }
 }

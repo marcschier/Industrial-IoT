@@ -23,7 +23,7 @@ namespace Microsoft.Azure.IIoT.Platform.Subscriber.Handlers {
     public sealed class PubSubNetworkMessageBinaryHandler : ITelemetryHandler {
 
         /// <inheritdoc/>
-        public string MessageSchema => Core.MessageSchemaTypes.NetworkMessageUadp;
+        public string MessageSchema => MessageSchemaTypes.NetworkMessageUadp;
 
         /// <summary>
         /// Create handler

@@ -10,7 +10,6 @@ namespace Microsoft.Azure.IIoT.App.Services {
     using Microsoft.Azure.IIoT.Platform.Twin.Api.Models;
     using Microsoft.Azure.IIoT.Platform.Core.Api.Models;
     using Microsoft.Azure.IIoT.Serializers;
-    using Microsoft.Azure.IIoT.App.Common;
     using System;
     using System.Threading.Tasks;
     using Serilog;

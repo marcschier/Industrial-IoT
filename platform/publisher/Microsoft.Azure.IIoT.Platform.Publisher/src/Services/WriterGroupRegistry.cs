@@ -699,16 +699,6 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                         null : request.DataSetFieldContentMask;
                     updated = true;
                 }
-                if (request.KeyFrameCount != null) {
-                    existing.KeyFrameCount = request.KeyFrameCount == 0 ?
-                        null : request.KeyFrameCount;
-                    updated = true;
-                }
-                if (request.KeyFrameInterval != null) {
-                    existing.KeyFrameInterval = request.KeyFrameInterval <= TimeSpan.Zero ?
-                        null : request.KeyFrameInterval;
-                    updated = true;
-                }
 
                 if (existing.DataSet == null) {
                     existing.DataSet = new PublishedDataSetSourceInfoModel();

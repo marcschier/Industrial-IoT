@@ -6,7 +6,6 @@
 namespace Microsoft.Azure.IIoT.App.Pages {
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Components;
-    using Microsoft.Azure.IIoT.Platform.Registry.Api.Models;
 
 #pragma warning disable IDE0079 // Remove unnecessary suppression
 #pragma warning disable IDE1006 // Naming Styles

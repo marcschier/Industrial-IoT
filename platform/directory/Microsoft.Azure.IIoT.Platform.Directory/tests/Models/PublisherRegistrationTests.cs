@@ -7,7 +7,6 @@ namespace Microsoft.Azure.IIoT.Platform.Directory.Models {
     using Microsoft.Azure.IIoT.Serializers.NewtonSoft;
     using Microsoft.Azure.IIoT.Serializers;
     using AutoFixture;
-    using System;
     using System.Linq;
     using Xunit;
 

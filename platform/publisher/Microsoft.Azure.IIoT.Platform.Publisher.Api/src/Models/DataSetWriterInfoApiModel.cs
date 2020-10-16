@@ -55,44 +55,23 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api.Models {
         public DataSetWriterMessageSettingsApiModel MessageSettings { get; set; }
 
         /// <summary>
-        /// Keyframe count
-        /// </summary>
-        [DataMember(Name = "keyFrameCount", Order = 6,
-            EmitDefaultValue = false)]
-        public uint? KeyFrameCount { get; set; }
-
-        /// <summary>
-        /// Or keyframe timer interval (publisher extension)
-        /// </summary>
-        [DataMember(Name = "keyFrameInterval", Order = 7,
-            EmitDefaultValue = false)]
-        public TimeSpan? KeyFrameInterval { get; set; }
-
-        /// <summary>
-        /// Metadata message sending interval (publisher extension)
-        /// </summary>
-        [DataMember(Name = "dataSetMetaDataSendInterval", Order = 8,
-            EmitDefaultValue = false)]
-        public TimeSpan? DataSetMetaDataSendInterval { get; set; }
-
-        /// <summary>
         /// Dataset writer is disabled
         /// </summary>
-        [DataMember(Name = "isDisabled", Order = 9,
+        [DataMember(Name = "isDisabled", Order = 6,
             EmitDefaultValue = false)]
         public bool? IsDisabled { get; set; }
 
         /// <summary>
         /// Last updated
         /// </summary>
-        [DataMember(Name = "updated", Order = 19,
+        [DataMember(Name = "updated", Order = 7,
             EmitDefaultValue = false)]
         public PublisherOperationContextApiModel Updated { get; set; }
 
         /// <summary>
         /// Created
         /// </summary>
-        [DataMember(Name = "created", Order = 11,
+        [DataMember(Name = "created", Order = 8,
             EmitDefaultValue = false)]
         public PublisherOperationContextApiModel Created { get; set; }
     }

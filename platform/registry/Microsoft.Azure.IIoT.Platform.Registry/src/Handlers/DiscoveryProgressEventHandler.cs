@@ -20,7 +20,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Handlers {
     public sealed class DiscoveryProgressEventHandler : ITelemetryHandler {
 
         /// <inheritdoc/>
-        public string MessageSchema => Models.MessageSchemaTypes.DiscoveryMessage;
+        public string MessageSchema => MessageSchemaTypes.DiscoveryMessage;
 
         /// <summary>
         /// Create handler

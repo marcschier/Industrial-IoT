@@ -4,7 +4,6 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Crypto.Storage.Models {
-    using Microsoft.Azure.IIoT.Crypto.Models;
     using System.Runtime.Serialization;
     using Microsoft.Azure.IIoT.Serializers;
 

@@ -11,7 +11,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher {
     /// <summary>
     /// Allows update of data set writer and dataset state
     /// </summary>
-    public interface IDataSetWriterStateUpdate {
+    public interface IDataSetWriterStateUpdater {
 
         /// <summary>
         /// Update variable monitored item state

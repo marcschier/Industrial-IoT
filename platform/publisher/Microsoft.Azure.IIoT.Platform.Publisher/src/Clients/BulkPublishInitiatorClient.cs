@@ -14,14 +14,14 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
     /// Twin sourced publishing jobs. Fills publish jobs using twin either by
     /// browsing or through bulk import from an uploaded nodeset.
     /// </summary>
-    public sealed class BulkPublishService<T> : IBulkPublishInitiator<T> {
+    public sealed class BulkPublishInitiatorClient<T> : IBulkPublishInitiator<T> {
 
         /// <summary>
         /// Create client
         /// </summary>
         /// <param name="transfer"></param>
         /// <param name="service"></param>
-        public BulkPublishService(ITransferServices<T> transfer, IServiceEndpoint service) {
+        public BulkPublishInitiatorClient(ITransferServices<T> transfer, IServiceEndpoint service) {
             _transfer = transfer ?? throw new ArgumentNullException(nameof(transfer));
             _service = service ?? throw new ArgumentNullException(nameof(service));
         }

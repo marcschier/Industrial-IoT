@@ -3,7 +3,7 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Clients {
+namespace Microsoft.Azure.IIoT.Platform.Publisher.Clients {
     using Microsoft.Azure.IIoT.Platform.Publisher.Models;
     using Serilog;
     using System;
@@ -11,13 +11,13 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Clients {
     /// <summary>
     /// Logs state events
     /// </summary>
-    public sealed class WriterGroupStateLogger : IWriterGroupStateReporter {
+    public sealed class DataSetWriterStateLogger : IDataSetWriterStateReporter {
 
         /// <summary>
         /// Create listener
         /// </summary>
         /// <param name="logger"></param>
-        public WriterGroupStateLogger(ILogger logger) {
+        public DataSetWriterStateLogger(ILogger logger) {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 

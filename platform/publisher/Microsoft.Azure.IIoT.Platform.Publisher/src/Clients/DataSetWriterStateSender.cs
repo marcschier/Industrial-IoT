@@ -3,10 +3,8 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Clients {
+namespace Microsoft.Azure.IIoT.Platform.Publisher.Clients {
     using Microsoft.Azure.IIoT.Platform.Publisher.Models;
-    using Microsoft.Azure.IIoT.Platform.Registry.Models;
-    using Microsoft.Azure.IIoT.Platform.Directory;
     using Microsoft.Azure.IIoT.Serializers;
     using Microsoft.Azure.IIoT.Tasks;
     using Microsoft.Azure.IIoT.Hub;
@@ -18,7 +16,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Clients {
     /// <summary>
     /// Send data set writer state events
     /// </summary>
-    public sealed class WriterGroupStatePublisher : IWriterGroupStateReporter {
+    public sealed class DataSetWriterStateSender : IDataSetWriterStateReporter {
 
         /// <summary>
         /// Create listener
@@ -28,23 +26,22 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Clients {
         /// <param name="serializer"></param>
         /// <param name="processor"></param>
         /// <param name="logger"></param>
-        public WriterGroupStatePublisher(IEventClient events, IIdentity identity,
+        public DataSetWriterStateSender(IEventClient events, IIdentity identity,
             IJsonSerializer serializer, ITaskProcessor processor, ILogger logger) {
             _serializer = serializer ?? throw new ArgumentNullException(nameof(serializer));
             _processor = processor ?? throw new ArgumentNullException(nameof(processor));
             _events = events ?? throw new ArgumentNullException(nameof(events));
             _identity = identity ?? throw new ArgumentNullException(nameof(identity));
-            _logger = new WriterGroupStateLogger(logger);
+            _logger = new DataSetWriterStateLogger(logger);
         }
 
         /// <inheritdoc/>
         public void OnDataSetEventStateChange(string dataSetWriterId,
             PublishedDataSetItemStateModel state) {
             _logger.OnDataSetEventStateChange(dataSetWriterId, state);
-            var ev = new WriterGroupStateEventModel {
-                WriterGroupId = PublisherRegistryEx.ToWriterGroupId(_identity.DeviceId),
+            var ev = new DataSetWriterStateEventModel {
                 DataSetWriterId = dataSetWriterId,
-                EventType = PublisherStateEventType.PublishedItem,
+                EventType = DataSetWriterStateEventType.PublishedItem,
                 LastResult = state?.LastResult,
                 TimeStamp = DateTime.UtcNow
             };
@@ -55,10 +52,9 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Clients {
         public void OnDataSetVariableStateChange(string dataSetWriterId,
             string variableId, PublishedDataSetItemStateModel state) {
             _logger.OnDataSetVariableStateChange(dataSetWriterId, variableId, state);
-            var ev = new WriterGroupStateEventModel {
-                WriterGroupId = PublisherRegistryEx.ToWriterGroupId(_identity.DeviceId),
+            var ev = new DataSetWriterStateEventModel {
                 DataSetWriterId = dataSetWriterId,
-                EventType = PublisherStateEventType.PublishedItem,
+                EventType = DataSetWriterStateEventType.PublishedItem,
                 LastResult = state?.LastResult,
                 TimeStamp = DateTime.UtcNow,
                 PublishedVariableId = variableId
@@ -70,10 +66,9 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Clients {
         public void OnDataSetWriterStateChange(string dataSetWriterId,
             PublishedDataSetSourceStateModel state) {
             _logger.OnDataSetWriterStateChange(dataSetWriterId, state);
-            var ev = new WriterGroupStateEventModel {
-                WriterGroupId = PublisherRegistryEx.ToWriterGroupId(_identity.DeviceId),
+            var ev = new DataSetWriterStateEventModel {
                 DataSetWriterId = dataSetWriterId,
-                EventType = PublisherStateEventType.Source,
+                EventType = DataSetWriterStateEventType.Source,
                 LastResult = state?.LastResult,
                 TimeStamp = DateTime.UtcNow,
             };
@@ -85,13 +80,13 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Clients {
         /// </summary>
         /// <param name="state"></param>
         /// <returns></returns>
-        private Task SendAsync(WriterGroupStateEventModel state) {
+        private Task SendAsync(DataSetWriterStateEventModel state) {
             return _events.SendEventAsync(null,
                 _serializer.SerializeToBytes(state).ToArray(), ContentMimeType.Json,
-                Registry.Models.MessageSchemaTypes.WriterGroupEvents, "utf-8");
+                MessageSchemaTypes.DataSetWriterEvents, "utf-8");
         }
 
-        private readonly WriterGroupStateLogger _logger;
+        private readonly DataSetWriterStateLogger _logger;
         private readonly IJsonSerializer _serializer;
         private readonly ITaskProcessor _processor;
         private readonly IEventClient _events;

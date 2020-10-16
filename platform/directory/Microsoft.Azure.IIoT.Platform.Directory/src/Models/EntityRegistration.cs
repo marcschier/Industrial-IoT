@@ -5,7 +5,6 @@
 
 namespace Microsoft.Azure.IIoT.Platform.Directory.Models {
     using System.Runtime.Serialization;
-    using System;
     using System.Collections.Generic;
 
     /// <summary>

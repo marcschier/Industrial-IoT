@@ -12,7 +12,6 @@ namespace Microsoft.Azure.IIoT.Crypto.Services {
     using Microsoft.Azure.IIoT.Serializers;
     using Autofac.Extras.Moq;
     using System;
-    using System.Collections.Generic;
     using System.Linq;
     using System.Security.Cryptography.X509Certificates;
     using System.Threading.Tasks;

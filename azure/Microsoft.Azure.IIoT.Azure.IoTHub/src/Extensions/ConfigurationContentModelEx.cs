@@ -6,7 +6,6 @@
 namespace Microsoft.Azure.IIoT.Hub.Models {
     using Microsoft.Azure.Devices;
     using System.Collections.Generic;
-    using System;
     using System.Linq;
 
     /// <summary>

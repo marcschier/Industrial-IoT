@@ -16,11 +16,11 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
     /// <summary>
     /// Manage writer group and contained writer state
     /// </summary>
-    public sealed class WriterGroupManagement : IDataSetWriterStateUpdate,
+    public sealed class WriterGroupManagement : IDataSetWriterStateUpdater,
         IWriterGroupStateUpdate, IEndpointRegistryListener {
 
         /// <summary>
-        /// Create publisher registry service
+        /// Create registry management service
         /// </summary>
         /// <param name="dataSets"></param>
         /// <param name="writers"></param>
@@ -80,9 +80,11 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
             if (updated) {
                 // If updated notify about dataset writer change
                 await _itemEvents.NotifyAllAsync(
-                    l => l.OnPublishedDataSetEventsStateChangeAsync(context, dataSetWriterId, result)).ConfigureAwait(false);
+                    l => l.OnPublishedDataSetEventsStateChangeAsync(context, 
+                        dataSetWriterId, result)).ConfigureAwait(false);
                 await _writerEvents.NotifyAllAsync(
-                    l => l.OnDataSetWriterStateChangeAsync(context, dataSetWriterId, null)).ConfigureAwait(false);
+                    l => l.OnDataSetWriterStateChangeAsync(context, 
+                        dataSetWriterId, null)).ConfigureAwait(false);
             }
         }
 
@@ -124,9 +126,11 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
             if (updated) {
                 // If updated notify about dataset writer change
                 await _itemEvents.NotifyAllAsync(
-                    l => l.OnPublishedDataSetVariableStateChangeAsync(context, dataSetWriterId, result)).ConfigureAwait(false);
+                    l => l.OnPublishedDataSetVariableStateChangeAsync(context, 
+                        dataSetWriterId, result)).ConfigureAwait(false);
                 await _writerEvents.NotifyAllAsync(
-                    l => l.OnDataSetWriterStateChangeAsync(context, dataSetWriterId, null)).ConfigureAwait(false);
+                    l => l.OnDataSetWriterStateChangeAsync(context, 
+                        dataSetWriterId, null)).ConfigureAwait(false);
             }
         }
 
@@ -171,7 +175,8 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
             if (updated) {
                 // If updated notify about dataset writer state change
                 await _writerEvents.NotifyAllAsync(
-                    l => l.OnDataSetWriterStateChangeAsync(context, dataSetWriterId, writer)).ConfigureAwait(false);
+                    l => l.OnDataSetWriterStateChangeAsync(context, 
+                        dataSetWriterId, writer)).ConfigureAwait(false);
             }
         }
 
@@ -282,7 +287,8 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                     await Try.Async(() => EnableDataSetWriterAsync(writer.DataSetWriterId, enable,
                         context, ct)).ConfigureAwait(false);
                 }
-                results = await _writers.QueryAsync(null, continuationToken, null, ct).ConfigureAwait(false);
+                results = await _writers.QueryAsync(null, continuationToken,
+                        null, ct).ConfigureAwait(false);
                 continuationToken = results.ContinuationToken;
             }
             while (!string.IsNullOrEmpty(continuationToken));
@@ -316,7 +322,8 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
             if (updated) {
                 // If updated notify about dataset writer state change
                 await _writerEvents.NotifyAllAsync(
-                    l => l.OnDataSetWriterStateChangeAsync(context, dataSetWriterId, writer)).ConfigureAwait(false);
+                    l => l.OnDataSetWriterStateChangeAsync(context, 
+                        dataSetWriterId, writer)).ConfigureAwait(false);
             }
         }
 

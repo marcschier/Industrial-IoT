@@ -15,7 +15,6 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Service.Controllers {
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using System;
-    using System.Linq;
     using System.Threading.Tasks;
     using System.ComponentModel.DataAnnotations;
 

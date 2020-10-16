@@ -6,15 +6,12 @@
 namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
     using Microsoft.Azure.IIoT.Exceptions;
     using Microsoft.Azure.IIoT.Utils;
-    using Microsoft.Extensions.Diagnostics.HealthChecks;
     using Serilog;
     using System;
     using System.Collections.Concurrent;
     using System.Linq;
     using System.Threading.Tasks;
     using System.Collections.Generic;
-    using System.Threading;
-    using System.IO;
     using RabbitMQ.Client;
     using RabbitMQ.Client.Exceptions;
 

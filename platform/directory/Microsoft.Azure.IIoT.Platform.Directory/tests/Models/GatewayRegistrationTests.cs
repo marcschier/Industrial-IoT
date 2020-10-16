@@ -5,7 +5,6 @@
 
 namespace Microsoft.Azure.IIoT.Platform.Directory.Models {
     using AutoFixture;
-    using System;
     using System.Linq;
     using Xunit;
 

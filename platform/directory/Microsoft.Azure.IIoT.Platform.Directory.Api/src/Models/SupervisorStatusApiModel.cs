@@ -5,7 +5,6 @@
 
 namespace Microsoft.Azure.IIoT.Platform.Directory.Api.Models {
     using System.Runtime.Serialization;
-    using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
 
     /// <summary>

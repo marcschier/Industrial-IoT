@@ -4,8 +4,6 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Platform.Publisher.Models {
-    using System;
-
     /// <summary>
     /// Data set writer
     /// </summary>
@@ -35,20 +33,5 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Models {
         /// Data set message settings
         /// </summary>
         public DataSetWriterMessageSettingsModel MessageSettings { get; set; }
-
-        /// <summary>
-        /// Keyframe count
-        /// </summary>
-        public uint? KeyFrameCount { get; set; }
-
-        /// <summary>
-        /// Or keyframe timer interval (publisher extension)
-        /// </summary>
-        public TimeSpan? KeyFrameInterval { get; set; }
-
-        /// <summary>
-        /// Metadata message sending interval (publisher extension)
-        /// </summary>
-        public TimeSpan? DataSetMetaDataSendInterval { get; set; }
     }
 }

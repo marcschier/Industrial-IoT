@@ -5,7 +5,6 @@
 
 namespace Microsoft.Azure.IIoT.Platform.Directory.Models {
     using System.Collections.Generic;
-    using System.Linq;
 
     /// <summary>
     /// Service model extensions for discovery service

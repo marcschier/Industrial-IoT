@@ -6,14 +6,11 @@
 namespace Microsoft.Azure.IIoT.Platform.Directory.Api {
     using Microsoft.Azure.IIoT.Platform.Directory.Api.Models;
     using Microsoft.Azure.IIoT.Platform.Events.Api;
-    using Microsoft.Azure.IIoT.Serializers;
-    using Microsoft.Azure.IIoT.Serializers.NewtonSoft;
     using Microsoft.Azure.IIoT.Rpc;
     using Microsoft.Azure.IIoT.Http;
     using Microsoft.Azure.IIoT.Utils;
     using System;
     using System.Threading.Tasks;
-    using System.Threading;
 
     /// <summary>
     /// Directory service event client

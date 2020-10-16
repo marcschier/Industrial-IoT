@@ -3,15 +3,13 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Services {
+namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
     using Microsoft.Azure.IIoT.Platform.Core.Models;
-    using Microsoft.Azure.IIoT.Platform.Publisher.Services;
     using Microsoft.Azure.IIoT.Platform.Publisher.Storage.Services;
     using Microsoft.Azure.IIoT.Platform.Publisher.Models;
     using Microsoft.Azure.IIoT.Platform.Publisher;
     using Microsoft.Azure.IIoT.Platform.Publisher.Default;
     using Microsoft.Azure.IIoT.Platform.OpcUa.Services;
-    using Microsoft.Azure.IIoT.Platform.Publisher.Edge;
     using Microsoft.Azure.IIoT.Platform.Registry;
     using Microsoft.Azure.IIoT.Platform.Registry.Models;
     using Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Fixtures;
@@ -466,7 +464,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Services {
                 builder.RegisterType<WriterGroupManagement>().AsImplementedInterfaces().SingleInstance();
                 builder.RegisterType<WriterRegistryConnector>().AsImplementedInterfaces().SingleInstance()
                     .AutoActivate(); // Create and register with broker
-                builder.RegisterType<WriterGroupMessageEmitter>().AsImplementedInterfaces().SingleInstance();
+                builder.RegisterType<NetworkMessageSender>().AsImplementedInterfaces().SingleInstance();
                 builder.RegisterType<WriterGroupDataCollector>().AsImplementedInterfaces();
                 builder.RegisterType<UadpNetworkMessageEncoder>().AsImplementedInterfaces();
                 builder.RegisterType<JsonNetworkMessageEncoder>().AsImplementedInterfaces();

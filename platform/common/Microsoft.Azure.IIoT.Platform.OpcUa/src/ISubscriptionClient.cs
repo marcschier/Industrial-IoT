@@ -10,7 +10,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa {
     /// <summary>
     /// Subscription manager
     /// </summary>
-    public interface ISubscriptionManager {
+    public interface ISubscriptionClient {
 
         /// <summary>
         /// Total subscriptions
@@ -21,8 +21,10 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa {
         /// Get or create new subscription
         /// </summary>
         /// <param name="subscriptionModel"></param>
+        /// <param name="listener"></param>
         /// <returns></returns>
-        Task<ISubscription> GetOrCreateSubscriptionAsync(
-            SubscriptionModel subscriptionModel);
+        Task<ISubscriptionHandle> CreateSubscriptionAsync(
+            SubscriptionModel subscriptionModel, 
+            ISubscriptionListener listener);
     }
 }

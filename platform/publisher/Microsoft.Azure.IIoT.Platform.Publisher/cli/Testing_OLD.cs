@@ -3,12 +3,7 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Cli {
-    using Microsoft.Azure.IIoT.Platform.Publisher.Models;
-    using Microsoft.Azure.IIoT.Diagnostics;
-    using Serilog.Events;
-    using System;
-
+namespace Microsoft.Azure.IIoT.Platform.Publisher.Cli {
     /// <summary>
     /// Publisher module host process
     /// </summary>
@@ -120,7 +115,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Cli {
                 Console.WriteLine(e.Message);
                 Console.WriteLine(
                     @"
-Usage:       Microsoft.Azure.IIoT.Platform.Publisher.Edge.Cli [options]
+Usage:       Microsoft.Azure.IIoT.Platform.Publisher.Cli [options]
 
 Options:
 

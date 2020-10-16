@@ -3,23 +3,21 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Hub {
+namespace Microsoft.Azure.IIoT.Platform.Publisher.Models {
 
     /// <summary>
-    /// Message schema type constants
+    /// State event type
     /// </summary>
-    public static class MessageSchemaTypes {
+    public enum DataSetWriterStateEventType {
 
         /// <summary>
-        /// Content is a twin change event
+        /// Monitored item service result
         /// </summary>
-        public const string TwinChangeNotification =
-            "twinChangeNotification";
+        PublishedItem,
 
         /// <summary>
-        /// Content is a lifecycle event
+        /// Subscription service result
         /// </summary>
-        public const string DeviceLifecycleNotification =
-            "deviceLifecycleNotification";
+        Source
     }
 }

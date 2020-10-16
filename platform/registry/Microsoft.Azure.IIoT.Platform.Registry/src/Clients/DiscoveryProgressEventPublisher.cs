@@ -54,7 +54,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Clients {
         private Task SendAsync(DiscoveryProgressModel progress) {
             return Try.Async(() => _events.SendEventAsync(null, // TODO: Target
                 _serializer.SerializeToBytes(progress).ToArray(), ContentMimeType.Json,
-                Registry.Models.MessageSchemaTypes.DiscoveryMessage, "utf-8"));
+                MessageSchemaTypes.DiscoveryMessage, "utf-8"));
         }
 
         private readonly IJsonSerializer _serializer;

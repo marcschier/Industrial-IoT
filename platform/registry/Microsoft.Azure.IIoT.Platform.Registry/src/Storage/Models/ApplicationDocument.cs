@@ -5,7 +5,6 @@
 
 namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
     using Microsoft.Azure.IIoT.Platform.Core.Models;
-    using Microsoft.Azure.IIoT.Utils;
     using Microsoft.Azure.IIoT.Hub;
     using System.Runtime.Serialization;
     using System;

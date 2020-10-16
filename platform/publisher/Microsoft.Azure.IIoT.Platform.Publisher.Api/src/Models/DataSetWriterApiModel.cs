@@ -41,30 +41,9 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api.Models {
         public DataSetWriterMessageSettingsApiModel MessageSettings { get; set; }
 
         /// <summary>
-        /// Keyframe count
-        /// </summary>
-        [DataMember(Name = "keyFrameCount", Order = 4,
-            EmitDefaultValue = false)]
-        public uint? KeyFrameCount { get; set; }
-
-        /// <summary>
-        /// Or keyframe timer interval (publisher extension)
-        /// </summary>
-        [DataMember(Name = "keyFrameInterval", Order = 5,
-            EmitDefaultValue = false)]
-        public TimeSpan? KeyFrameInterval { get; set; }
-
-        /// <summary>
-        /// Metadata message sending interval (publisher extension)
-        /// </summary>
-        [DataMember(Name = "dataSetMetaDataSendInterval", Order = 6,
-            EmitDefaultValue = false)]
-        public TimeSpan? DataSetMetaDataSendInterval { get; set; }
-
-        /// <summary>
         /// Generation id
         /// </summary>
-        [DataMember(Name = "generationId", Order = 7,
+        [DataMember(Name = "generationId", Order = 4,
             EmitDefaultValue = false)]
         public string GenerationId { get; set; }
     }

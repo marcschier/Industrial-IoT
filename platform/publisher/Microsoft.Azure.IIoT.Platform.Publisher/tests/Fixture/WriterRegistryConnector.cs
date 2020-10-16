@@ -3,10 +3,9 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Services {
-    using Microsoft.Azure.IIoT.Platform.Publisher.Edge;
-    using Microsoft.Azure.IIoT.Platform.Publisher.Models;
+namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
     using Microsoft.Azure.IIoT.Platform.Publisher;
+    using Microsoft.Azure.IIoT.Platform.Publisher.Models;
     using System;
     using System.Collections.Concurrent;
     using System.Collections.Generic;
@@ -23,12 +22,12 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Services {
         IDataSetWriterRegistryListener {
 
         public WriterRegistryConnector(IDataSetWriterRegistry registry,
-            Func<IWriterGroupDataCollector> collectors, Func<IWriterGroupMessageEmitter> emitters,
+            Func<IWriterGroupMessageCollector> collectors, Func<INetworkMessageSender> senders,
             IPublisherEvents<IWriterGroupRegistryListener> b1,
             IPublisherEvents<IDataSetWriterRegistryListener> b2) {
             _registry = registry;
             _collectors = collectors;
-            _emitters = emitters;
+            _senders = senders;
 
             b1.Register(this);
             b2.Register(this);
@@ -38,7 +37,8 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Services {
             DataSetWriterInfoModel dataSetWriter) {
             // Same as what the edge module does remotely
             if (_twins.TryGetValue(dataSetWriter.WriterGroupId, out var writerGroupTwin)) {
-                var writer = await _registry.GetDataSetWriterAsync(dataSetWriter.DataSetWriterId).ConfigureAwait(false);
+                var writer = await _registry.GetDataSetWriterAsync(
+                    dataSetWriter.DataSetWriterId).ConfigureAwait(false);
                 writerGroupTwin.AddWriter(writer);
             }
         }
@@ -87,7 +87,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Services {
         public Task OnWriterGroupActivatedAsync(PublisherOperationContextModel context,
             WriterGroupInfoModel writerGroup) {
             if (_twins.TryGetValue(writerGroup.WriterGroupId, out var writerGroupTwin)) {
-                writerGroupTwin.Activate(_collectors.Invoke(), _emitters.Invoke());
+                writerGroupTwin.Activate(_collectors.Invoke(), _senders.Invoke());
             }
             return Task.CompletedTask;
         }
@@ -131,7 +131,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Services {
             public HashSet<DataSetWriterModel> Writers { get; } = new HashSet<DataSetWriterModel>(
                 Compare.Using<DataSetWriterModel>((a, b) => a.DataSetWriterId == b.DataSetWriterId));
 
-            public void Activate(IWriterGroupDataCollector collector, IWriterGroupMessageEmitter emitter) {
+            public void Activate(IWriterGroupMessageCollector collector, INetworkMessageSender emitter) {
                 _collector = collector;
                 _emitter = emitter;
                 UpdateWriterGroupProcessor();
@@ -184,15 +184,15 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Services {
                 Writers.RemoveWhere(w => w.DataSetWriterId == dataSetWriterId);
             }
 
-            private IWriterGroupDataCollector _collector;
-            private IWriterGroupMessageEmitter _emitter;
+            private IWriterGroupMessageCollector _collector;
+            private INetworkMessageSender _emitter;
             private WriterGroupInfoModel _group;
         }
 
         private readonly ConcurrentDictionary<string, WriterGroupTwin> _twins =
             new ConcurrentDictionary<string, WriterGroupTwin>();
         private readonly IDataSetWriterRegistry _registry;
-        private readonly Func<IWriterGroupDataCollector> _collectors;
-        private readonly Func<IWriterGroupMessageEmitter> _emitters;
+        private readonly Func<IWriterGroupMessageCollector> _collectors;
+        private readonly Func<INetworkMessageSender> _senders;
     }
 }

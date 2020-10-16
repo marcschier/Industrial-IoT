@@ -11,7 +11,6 @@ namespace Microsoft.Azure.IIoT.Services.Generic.Services {
     using System;
     using System.Runtime.Serialization;
     using Autofac;
-    using Xunit;
 
     public sealed class SimpleEventBusFixture : IDisposable {
 

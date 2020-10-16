@@ -3,13 +3,13 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge {
+namespace Microsoft.Azure.IIoT.Platform.Publisher {
     using System;
 
     /// <summary>
     /// Writer group diagnostics logger
     /// </summary>
-    public interface IWriterGroupDiagnostics {
+    public interface IDataSetWriterDiagnostics {
 
         /// <summary>
         /// Controls the interval with which diagnostics messages are emitted.
@@ -29,97 +29,95 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge {
         /// <summary>
         /// Writer received notifications
         /// </summary>
-        /// <param name="writerGroupId"></param>
         /// <param name="dataSetWriterId"></param>
         /// <param name="count"></param>
-        void ReportDataSetWriterSubscriptionNotifications(string writerGroupId,
+        void ReportDataSetWriterSubscriptionNotifications(
             string dataSetWriterId, long count);
 
         /// <summary>
         /// Update currently batched dataset messages
         /// </summary>
-        /// <param name="writerGroupId"></param>
+        /// <param name="dataSetWriterId"></param>
         /// <param name="count"></param>
-        void ReportBatchedDataSetMessageCount(string writerGroupId, long count);
+        void ReportBatchedDataSetMessageCount(string dataSetWriterId, long count);
 
         /// <summary>
         /// Report messages currently waiting to be encoded
         /// </summary>
-        /// <param name="writerGroupId"></param>
+        /// <param name="dataSetWriterId"></param>
         /// <param name="count"></param>
-        void ReportDataSetMessagesReadyToEncode(string writerGroupId, long count);
+        void ReportDataSetMessagesReadyToEncode(string dataSetWriterId, long count);
 
         /// <summary>
         /// Report so far encoded messages
         /// </summary>
-        /// <param name="writerGroupId"></param>
+        /// <param name="dataSetWriterId"></param>
         /// <param name="count"></param>
-        void ReportEncodedNetworkMessages(string writerGroupId, long count);
+        void ReportEncodedNetworkMessages(string dataSetWriterId, long count);
 
         /// <summary>
         /// Report network messages currently ready to be sent
         /// </summary>
-        /// <param name="writerGroupId"></param>
+        /// <param name="dataSetWriterId"></param>
         /// <param name="count"></param>
-        void ReportNetworkMessagesReadyToSend(string writerGroupId, long count);
+        void ReportNetworkMessagesReadyToSend(string dataSetWriterId, long count);
 
         /// <summary>
         /// Report Writer group has sent another network message
         /// </summary>
-        /// <param name="writerGroupId"></param>
-        void ReportNetworkMessageSent(string writerGroupId);
+        /// <param name="dataSetWriterId"></param>
+        void ReportNetworkMessageSent(string dataSetWriterId);
 
         /// <summary>
         /// Reports a server connection reconnect
         /// </summary>
-        /// <param name="writerGroupId"></param>
         /// <param name="dataSetWriterId"></param>
-        void ReportConnectionRetry(string writerGroupId, string dataSetWriterId);
+        void ReportConnectionRetry(string dataSetWriterId);
 
         /// <summary>
         /// Report processed messages by encoder
         /// </summary>
-        /// <param name="writerGroupId"></param>
+        /// <param name="dataSetWriterId"></param>
         /// <param name="messageScheme"></param>
         /// <param name="count"></param>
-        void ReportEncoderNetworkMessagesProcessedCount(string writerGroupId,
+        void ReportEncoderNetworkMessagesProcessedCount(string dataSetWriterId,
             string messageScheme, long count);
 
         /// <summary>
         /// Report dropped items in dataset message by encoder
         /// </summary>
-        /// <param name="writerGroupId"></param>
+        /// <param name="dataSetWriterId"></param>
         /// <param name="messageScheme"></param>
         /// <param name="count"></param>
-        void ReportEncoderNotificationsDroppedCount(string writerGroupId,
+        void ReportEncoderNotificationsDroppedCount(string dataSetWriterId,
             string messageScheme, long count);
 
         /// <summary>
         /// Report processed items in dataset message by encoder
         /// </summary>
-        /// <param name="writerGroupId"></param>
+        /// <param name="dataSetWriterId"></param>
         /// <param name="messageScheme"></param>
         /// <param name="count"></param>
-        void ReportEncoderNotificationsProcessedCount(string writerGroupId,
+        void ReportEncoderNotificationsProcessedCount(string dataSetWriterId,
             string messageScheme, long count);
 
         /// <summary>
         /// Report average items in each message by encoder
         /// </summary>
-        /// <param name="writerGroupId"></param>
+        /// <param name="dataSetWriterId"></param>
         /// <param name="messageScheme"></param>
         /// <param name="average"></param>
-        void ReportEncoderAvgNotificationsPerMessage(string writerGroupId,
+        void ReportEncoderAvgNotificationsPerMessage(string dataSetWriterId,
             string messageScheme, double average);
 
         /// <summary>
         /// Report average network message sizes by encoder
         /// </summary>
-        /// <param name="writerGroupId"></param>
+        /// <param name="dataSetWriterId"></param>
         /// <param name="messageScheme"></param>
         /// <param name="average"></param>
         /// <param name="max"></param>
-        void ReportEncoderAvgNetworkMessageSize(string writerGroupId,
+        void ReportEncoderAvgNetworkMessageSize(string dataSetWriterId,
             string messageScheme, double average, long max);
     }
 }

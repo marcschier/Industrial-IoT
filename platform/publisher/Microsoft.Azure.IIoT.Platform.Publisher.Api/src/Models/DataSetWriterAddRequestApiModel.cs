@@ -58,30 +58,16 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api.Models {
         public DataSetWriterMessageSettingsApiModel MessageSettings { get; set; }
 
         /// <summary>
-        /// Keyframe count
-        /// </summary>
-        [DataMember(Name = "keyFrameCount", Order = 6,
-            EmitDefaultValue = false)]
-        public uint? KeyFrameCount { get; set; }
-
-        /// <summary>
-        /// Or keyframe timer interval (publisher extension)
-        /// </summary>
-        [DataMember(Name = "keyFrameInterval", Order = 7,
-            EmitDefaultValue = false)]
-        public TimeSpan? KeyFrameInterval { get; set; }
-
-        /// <summary>
         /// Extension fields in the dataset
         /// </summary>
-        [DataMember(Name = "extensionFields", Order = 8,
+        [DataMember(Name = "extensionFields", Order = 6,
             EmitDefaultValue = false)]
         public Dictionary<string, string> ExtensionFields { get; set; }
 
         /// <summary>
         /// Subscription settings (publisher extension)
         /// </summary>
-        [DataMember(Name = "subscriptionSettings", Order = 9,
+        [DataMember(Name = "subscriptionSettings", Order = 7,
             EmitDefaultValue = false)]
         public PublishedDataSetSourceSettingsApiModel SubscriptionSettings { get; set; }
     }

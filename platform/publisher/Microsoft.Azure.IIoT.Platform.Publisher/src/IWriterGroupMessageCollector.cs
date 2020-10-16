@@ -3,7 +3,7 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge {
+namespace Microsoft.Azure.IIoT.Platform.Publisher {
     using Microsoft.Azure.IIoT.Platform.Publisher.Models;
     using System;
     using System.Collections.Generic;
@@ -11,7 +11,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge {
     /// <summary>
     /// Manages a group of writers all producing dataset messages
     /// </summary>
-    public interface IWriterGroupDataCollector {
+    public interface IWriterGroupMessageCollector {
 
         /// <summary>
         /// Group version

@@ -1076,8 +1076,6 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
                     options.GetValueOrDefault<DataSetFieldContentMask?>("-c", "--content", null),
                 EndpointId = options.GetValue<string>("-e", "--endpoint"),
                 WriterGroupId = options.GetValueOrDefault<string>("-g", "--group", null),
-                KeyFrameCount = options.GetValueOrDefault<uint>("-k", "--keyframes", null),
-                KeyFrameInterval = options.GetValueOrDefault<TimeSpan>("-f", "--interval", null),
                 DataSetName = options.GetValueOrDefault<string>("-n", "--name", null),
                // User = null,
                // ExtensionFields = null,
@@ -1107,8 +1105,6 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
                     DataSetFieldContentMask =
                         options.GetValueOrDefault<DataSetFieldContentMask?>("-c", "--content", null),
                     WriterGroupId = options.GetValueOrDefault<string>("-g", "--group", null),
-                    KeyFrameCount = options.GetValueOrDefault<uint>("-k", "--keyframes", null),
-                    KeyFrameInterval = options.GetValueOrDefault<TimeSpan>("-f", "--interval", null),
                     DataSetName = options.GetValueOrDefault<string>("-n", "--name", null),
                     // User = null,
                     // ExtensionFields = null,
@@ -3877,8 +3873,6 @@ Commands and Options
         -n, --name      Dataset name
         -p, --publish   Publishing interval
         -R, --resolve   Resolve display name
-        -k, --keyframes Keyframe count
-        -f, --interval  Keyframe interval
         -N, --number    Network message number
         -s, --size      Configured size
         -d, --dataset   Dataset message content mask
@@ -3902,8 +3896,6 @@ Commands and Options
         -n, --name      Dataset name
         -p, --publish   Publishing interval
         -R, --resolve   Resolve display name
-        -k, --keyframes Keyframe count
-        -f, --interval  Keyframe interval
         -N, --number    Network message number
         -s, --size      Configured size
         -d, --dataset   Dataset message content mask

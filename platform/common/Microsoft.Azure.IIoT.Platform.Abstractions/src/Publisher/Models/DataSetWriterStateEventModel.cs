@@ -3,19 +3,14 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
+namespace Microsoft.Azure.IIoT.Platform.Publisher.Models {
     using Microsoft.Azure.IIoT.Platform.Core.Models;
     using System;
 
     /// <summary>
-    /// Dataset writer group state change
+    /// Dataset writer state change
     /// </summary>
-    public class WriterGroupStateEventModel {
-
-        /// <summary>
-        /// Writer group
-        /// </summary>
-        public string WriterGroupId { get; set; }
+    public class DataSetWriterStateEventModel {
 
         /// <summary>
         /// Dataset writer id if dataset related or null
@@ -30,7 +25,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
         /// <summary>
         /// Type of event
         /// </summary>
-        public PublisherStateEventType EventType { get; set; }
+        public DataSetWriterStateEventType EventType { get; set; }
 
         /// <summary>
         /// Timestamp of event

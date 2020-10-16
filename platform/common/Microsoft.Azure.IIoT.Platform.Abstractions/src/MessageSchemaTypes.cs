@@ -3,10 +3,10 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Platform.Core {
+namespace Microsoft.Azure.IIoT.Platform {
 
     /// <summary>
-    /// Publisher related message schemas
+    /// Message schema type constants
     /// </summary>
     public static class MessageSchemaTypes {
 
@@ -45,5 +45,35 @@ namespace Microsoft.Azure.IIoT.Platform.Core {
         /// </summary>
         public const string NetworkMessageModelJson =
             "application/x-network-message-model-json-v1";
+
+        /// <summary>
+        /// Message contains writer events
+        /// </summary>
+        public const string DataSetWriterEvents =
+            "application/x-datasetwriter-event-v2-json";
+
+        /// <summary>
+        /// Content is a nodeset
+        /// </summary>
+        public const string NodeSet =
+            "application/x-node-set-v1";
+
+        /// <summary>
+        /// Message contains discover requests
+        /// </summary>
+        public const string DiscoveryRequest =
+            "application/x-discovery-request-v2-json";
+
+        /// <summary>
+        /// Message contains discovery events
+        /// </summary>
+        public const string DiscoveryEvents =
+            "application/x-discovery-event-v2-json";
+
+        /// <summary>
+        /// Message contains discovery progress messages
+        /// </summary>
+        public const string DiscoveryMessage =
+            "application/x-discovery-message-v2-json";
     }
 }

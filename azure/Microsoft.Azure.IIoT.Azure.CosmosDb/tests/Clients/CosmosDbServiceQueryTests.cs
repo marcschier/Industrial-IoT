@@ -849,20 +849,28 @@ namespace Microsoft.Azure.IIoT.Azure.CosmosDb.Clients {
         }
 
         [SkippableFact]
-        public async Task QueryWithStringMathAndArrayOperatorsAsync() {
+        public async Task QueryWithStringStartsWithAsync() {
             var documents = await _fixture.GetDocumentsAsync().ConfigureAwait(false);
             Skip.If(documents == null);
 
-            var query1 = documents.CreateQuery<Family>()
+            var query = documents.CreateQuery<Family>()
+                .Where(family => family.LastName != null)
                 .Where(family => family.LastName.StartsWith("An", StringComparison.Ordinal));
-            var results1 = await RunAsync(query1).ConfigureAwait(false);
-            Assert.Single(results1);
+            var results = await RunAsync(query).ConfigureAwait(false);
+            Assert.Single(results);
+        }
 
-            var query2 = documents.CreateQuery<Family>()
+
+        [SkippableFact]
+        public async Task QueryWithMathAndArrayOperatorsAsync() {
+            var documents = await _fixture.GetDocumentsAsync().ConfigureAwait(false);
+            Skip.If(documents == null);
+
+            var query = documents.CreateQuery<Family>()
                 .Select(family => (int)Math.Round((double)family.Children[0].Grade));
 
-            var results2 = await RunAsync(query2).ConfigureAwait(false);
-            Assert.Collection(results2, a => Assert.Equal(5, a.Value), a => Assert.Equal(8, a.Value));
+            var results = await RunAsync(query).ConfigureAwait(false);
+            Assert.Collection(results, a => Assert.Equal(5, a.Value), a => Assert.Equal(8, a.Value));
 
             var query3 = documents.CreateQuery<Family>()
 #pragma warning disable CA1829 // Use Length/Count property instead of Count() when available

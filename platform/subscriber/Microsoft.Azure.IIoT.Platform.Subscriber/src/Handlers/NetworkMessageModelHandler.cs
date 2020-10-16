@@ -20,7 +20,7 @@ namespace Microsoft.Azure.IIoT.Platform.Subscriber.Handlers {
     public sealed class NetworkMessageModelHandler : ITelemetryHandler {
 
         /// <inheritdoc/>
-        public string MessageSchema => Core.MessageSchemaTypes.NetworkMessageModelJson;
+        public string MessageSchema => MessageSchemaTypes.NetworkMessageModelJson;
 
         /// <summary>
         /// Create handler

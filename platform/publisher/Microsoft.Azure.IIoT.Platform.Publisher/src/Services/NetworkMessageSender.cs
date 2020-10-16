@@ -3,10 +3,8 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Services {
-    using Microsoft.Azure.IIoT.Platform.Publisher.Edge.Models;
+namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
     using Microsoft.Azure.IIoT.Platform.Publisher.Models;
-    using Microsoft.Azure.IIoT.Platform.Core;
     using Microsoft.Azure.IIoT.Messaging;
     using Serilog;
     using Prometheus;
@@ -19,9 +17,9 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Services {
     using System.Globalization;
 
     /// <summary>
-    /// Writer group processing engine
+    /// Writer group data flow engine
     /// </summary>
-    public sealed class WriterGroupMessageEmitter : IWriterGroupMessageEmitter,
+    public sealed class NetworkMessageSender : INetworkMessageSender, 
         IDisposable {
 
         /// <inheritdoc/>
@@ -149,7 +147,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Services {
         /// <param name="events"></param>
         /// <param name="diagnostics"></param>
         /// <param name="logger"></param>
-        public WriterGroupMessageEmitter(IEventClient events, IWriterGroupDiagnostics diagnostics,
+        public NetworkMessageSender(IEventClient events, IDataSetWriterDiagnostics diagnostics,
             IEnumerable<INetworkMessageEncoder> encoders, ILogger logger) {
 
             _events = events ?? throw new ArgumentNullException(nameof(events));
@@ -171,7 +169,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Services {
                 // Lazy re-create
                 if (_engine == null) {
                     if (_disposed) {
-                        throw new ObjectDisposedException(nameof(WriterGroupMessageEmitter));
+                        throw new ObjectDisposedException(nameof(NetworkMessageSender));
                     }
                     _engine = new DataFlowProcessingEngine(this);
                 }
@@ -230,7 +228,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Services {
             /// Create engine
             /// </summary>
             /// <param name="outer"></param>
-            internal DataFlowProcessingEngine(WriterGroupMessageEmitter outer) {
+            internal DataFlowProcessingEngine(NetworkMessageSender outer) {
                 _cts = new CancellationTokenSource();
                 _outer = outer ?? throw new ArgumentNullException(nameof(outer));
 
@@ -400,7 +398,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Services {
             /// <param name="sender"></param>
             /// <param name="evt"></param>
             private void OnUpdateWriterGroupDiagnostics(object sender, EventArgs evt) {
-                var diagnostics = (IWriterGroupDiagnostics)sender;
+                var diagnostics = (IDataSetWriterDiagnostics)sender;
                 var writerGroupId = _outer.WriterGroupId;
 
                 diagnostics.ReportBatchedDataSetMessageCount(writerGroupId,
@@ -429,7 +427,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Services {
             private readonly ActionBlock<NetworkMessageModel> _emit;
             private readonly CancellationTokenSource _cts;
             private readonly Timer _publishingIntervalTimer;
-            private readonly WriterGroupMessageEmitter _outer;
+            private readonly NetworkMessageSender _outer;
             private readonly INetworkMessageEncoder _encoder;
             private readonly TimeSpan _publishingInterval;
             private readonly uint _maxNetworkMessageSize;
@@ -437,7 +435,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Edge.Services {
         }
 
         private readonly Dictionary<string, INetworkMessageEncoder> _encoders;
-        private readonly IWriterGroupDiagnostics _diagnostics;
+        private readonly IDataSetWriterDiagnostics _diagnostics;
         private readonly IEventClient _events;
         private readonly ILogger _logger;
 

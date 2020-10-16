@@ -6,8 +6,6 @@
 namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
     using Microsoft.Azure.IIoT.Platform.Core.Models;
     using Microsoft.Azure.IIoT.Serializers;
-    using Microsoft.Azure.IIoT.Serializers.NewtonSoft;
-    using Microsoft.Azure.IIoT.Utils;
     using AutoFixture;
     using AutoFixture.Kernel;
     using System;
