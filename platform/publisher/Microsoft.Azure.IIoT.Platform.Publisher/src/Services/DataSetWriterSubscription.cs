@@ -8,19 +8,24 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
     using Microsoft.Azure.IIoT.Platform.Core.Models;
     using Microsoft.Azure.IIoT.Platform.OpcUa;
     using Microsoft.Azure.IIoT.Platform.OpcUa.Models;
-    using Microsoft.Extensions.Options;
     using Serilog;
     using System;
     using System.Threading.Tasks;
     using System.Collections.Generic;
+    using System.Threading;
     using Opc.Ua.Client;
     using Opc.Ua;
-    using System.Threading;
 
     /// <summary>
-    /// A dataset writer source
+    /// A dataSet writer subsription uses the stack subscription client to 
+    /// subscribe to published values and forwards the obtained data to a 
+    /// data set writer sink.
     /// </summary>
-    public sealed class DataSetWriterDataSource : ISubscriptionListener, IDisposable {
+    public sealed class DataSetWriterSubscription : ISubscriptionListener,
+        IDataSetWriterDataSource, IDisposable {
+
+        /// <inheritdoc/>
+        public string DataSetWriterId { get; set; }
 
         /// <summary>
         /// Create persistent writer data source
@@ -30,66 +35,41 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
         /// <param name="codec"></param>
         /// <param name="sink"></param>
         /// <param name="client"></param>
-        /// <param name="config"></param>
         /// <param name="logger"></param>
-        public DataSetWriterDataSource(ISubscriptionClient client, IDataSetWriterDataSink sink, 
-            IDataSetWriterDiagnostics diagnostics, IDataSetWriterStateReporter state, 
-            IOptions<DataSetWriterModel> config, IVariantEncoderFactory codec, ILogger logger) {
+        public DataSetWriterSubscription(ISubscriptionClient client, IDataSetWriterDataSink sink,
+            IDataSetWriterDiagnostics diagnostics, IDataSetWriterStateReporter state,
+            IVariantEncoderFactory codec, ILogger logger) {
             _diagnostics = diagnostics ?? throw new ArgumentNullException(nameof(diagnostics));
             _state = state ?? throw new ArgumentNullException(nameof(state));
             _codec = codec ?? throw new ArgumentNullException(nameof(codec));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _client = client ?? throw new ArgumentNullException(nameof(client));
             _sink = sink ?? throw new ArgumentNullException(nameof(sink));
-            _config = config ?? throw new ArgumentNullException(nameof(config));
         }
 
-        /// <summary>
-        /// Open subscription
-        /// </summary>
-        /// <returns></returns>
-        public async Task OpenAsync() {
+        /// <inheritdoc/>
+        public async Task ConfigureAsync(PublishedDataSetModel dataSet) {
             if (_subscription != null) {
-                _logger.Warning("Subscription already exists");
-                return;
+                await _subscription.CloseAsync().ConfigureAwait(false);
+                _subscription = null;
             }
 
-            var model = ToSubscriptionModel(_config.Value);
-            var sc = await _client.CreateSubscriptionAsync(
-                model, this).ConfigureAwait(false);
-
-            await sc.ApplyAsync(model.MonitoredItems,
-                model.Configuration).ConfigureAwait(false);
-            _subscription = sc;
-        }
-
-        /// <summary>
-        /// activate a subscription
-        /// </summary>
-        /// <returns></returns>
-        public async Task ActivateAsync() {
-            if (_subscription == null) {
-                _logger.Warning("Subscription not registered");
+            var config = ToSubscriptionModel(dataSet);
+            if (config == null) { // if dataset is null or empty
                 return;
             }
+            _dataSet = dataSet;
 
+            _subscription = await _client.CreateSubscriptionAsync(config, this).ConfigureAwait(false);
+            await _subscription.ApplyAsync(config.MonitoredItems, config.Configuration).ConfigureAwait(false);
+
+            //
             // only try to activate if already enabled. Otherwise the activation
-            // will be handled by the session's keep alive mechanism
+            // will be handled by the session's keep alive mechanism.
+            //
             if (_subscription.Enabled) {
                 await _subscription.ActivateAsync(null).ConfigureAwait(false);
             }
-        }
-
-        /// <summary>
-        /// deactivate a subscription
-        /// </summary>
-        /// <returns></returns>
-        public async Task DeactivateAsync() {
-            if (_subscription == null) {
-                _logger.Warning("Subscription not registered");
-                return;
-            }
-            await _subscription.CloseAsync().ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
@@ -98,9 +78,9 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
             var state = new PublishedDataSetSourceStateModel {
                 EndpointState = newState,
             };
-            _state.OnDataSetWriterStateChange(_config.Value.DataSetWriterId, state);
+            _state.OnDataSetWriterStateChange(DataSetWriterId, state);
             if (newState == EndpointConnectivityState.Connecting) {
-                _diagnostics.ReportConnectionRetry(_config.Value.DataSetWriterId);
+                _diagnostics.ReportConnectionRetry(DataSetWriterId);
             }
         }
 
@@ -120,12 +100,12 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
             };
             if (!isEvent) {
                 // Report as variable state change
-                _state.OnDataSetVariableStateChange(_config.Value.DataSetWriterId,
+                _state.OnDataSetVariableStateChange(DataSetWriterId,
                     monitoredItemId, state);
             }
             else {
                 // Report as event state
-                _state.OnDataSetEventStateChange(_config.Value.DataSetWriterId, state);
+                _state.OnDataSetEventStateChange(DataSetWriterId, state);
             }
         }
 
@@ -139,7 +119,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                 LastResult = codec.Encode(
                     lastResult?.StatusCode ?? lastResult?.InnerResult?.StatusCode),
             };
-            _state.OnDataSetWriterStateChange(_config.Value.DataSetWriterId, state);
+            _state.OnDataSetWriterStateChange(DataSetWriterId, state);
         }
 
         /// <inheritdoc/>
@@ -148,10 +128,9 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
             IList<string> stringTable) {
 
             _diagnostics.ReportDataSetWriterSubscriptionNotifications(
-                _config.Value.DataSetWriterId,
-                notification.MonitoredItems.Count);
+                DataSetWriterId, notification.MonitoredItems.Count);
 
-            _sink.Write(_config.Value, Interlocked.Increment(ref _sequenceNumber), 
+            _sink.Write(DataSetWriterId, _dataSet, Interlocked.Increment(ref _sequenceNumber),
                 notification, stringTable, subscription);
         }
 
@@ -161,9 +140,9 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
             IList<string> stringTable) {
 
             _diagnostics.ReportDataSetWriterSubscriptionNotifications(
-                _config.Value.DataSetWriterId, notification.Events.Count);
+                DataSetWriterId, notification.Events.Count);
 
-            _sink.Write(_config.Value, Interlocked.Increment(ref _sequenceNumber), 
+            _sink.Write(DataSetWriterId, _dataSet, Interlocked.Increment(ref _sequenceNumber),
                 notification, stringTable, subscription);
         }
 
@@ -176,36 +155,31 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
         /// <summary>
         /// Create subscription info model from writer model
         /// </summary>
-        /// <param name="dataSetWriter"></param>
+        /// <param name="dataSet"></param>
         /// <returns></returns>
-        private static SubscriptionModel ToSubscriptionModel(DataSetWriterModel dataSetWriter) {
-            if (dataSetWriter == null) {
+        private SubscriptionModel ToSubscriptionModel(PublishedDataSetModel dataSet) {
+            if (dataSet == null) {
                 return null;
             }
-            if (dataSetWriter.DataSetWriterId == null) {
-                throw new ArgumentException("Missing writer id", nameof(dataSetWriter));
+            if (dataSet.DataSetSource == null) {
+                throw new ArgumentException("Missing dataSet source", nameof(dataSet));
             }
-            if (dataSetWriter.DataSet == null) {
-                throw new ArgumentException("Missing dataset", nameof(dataSetWriter));
+            if (dataSet.DataSetSource.Connection == null) {
+                throw new ArgumentException("Missing dataSet connection", nameof(dataSet));
             }
-            if (dataSetWriter.DataSet.DataSetSource == null) {
-                throw new ArgumentException("Missing dataset source", nameof(dataSetWriter));
-            }
-            if (dataSetWriter.DataSet.DataSetSource.Connection == null) {
-                throw new ArgumentException("Missing dataset connection", nameof(dataSetWriter));
-            }
-            var monitoredItems = dataSetWriter.DataSet.DataSetSource.ToMonitoredItems();
+            var monitoredItems = dataSet.DataSetSource.ToMonitoredItems();
             return new SubscriptionModel {
-                Connection = dataSetWriter.DataSet.DataSetSource.Connection.Clone(),
-                Id = dataSetWriter.DataSetWriterId,
+                Connection = dataSet.DataSetSource.Connection.Clone(),
+                Id = DataSetWriterId,
                 MonitoredItems = monitoredItems,
-                ExtensionFields = dataSetWriter.DataSet.ExtensionFields,
-                Configuration = dataSetWriter.DataSet.DataSetSource
-                    .ToSubscriptionConfigurationModel()
+                ExtensionFields = dataSet.ExtensionFields,
+                Configuration = dataSet.DataSetSource.ToSubscriptionConfigurationModel()
             };
         }
 
         private ISubscriptionHandle _subscription;
+        private PublishedDataSetModel _dataSet;
+
         private volatile uint _sequenceNumber;
         private readonly IVariantEncoderFactory _codec;
         private readonly ISubscriptionClient _client;
@@ -213,6 +187,5 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
         private readonly IDataSetWriterStateReporter _state;
         private readonly ILogger _logger;
         private readonly IDataSetWriterDiagnostics _diagnostics;
-        private readonly IOptions<DataSetWriterModel> _config;
     }
 }

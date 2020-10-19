@@ -164,7 +164,7 @@ namespace Microsoft.Azure.IIoT.Platform.Service {
                 // Minimal processes
                 var processes = new List<Task> {
                     Task.Run(() => Subscriber.Service.Program.Main(args), _cts.Token),
-                    Task.Run(() => Registry.Events.Service.Program.Main(args), _cts.Token),
+                    Task.Run(() => Edge.Events.Service.Program.Main(args), _cts.Token),
                     Task.Run(() => Edge.Tunnel.Service.Program.Main(args), _cts.Token),
                 };
 

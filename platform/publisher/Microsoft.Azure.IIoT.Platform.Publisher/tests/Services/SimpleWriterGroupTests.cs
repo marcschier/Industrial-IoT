@@ -34,9 +34,9 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
     using Opc.Ua;
 
     [Collection(PublishCollection.Name)]
-    public class WriterGroupDataCollectorTests {
+    public class SimpleWriterGroupTests {
 
-        public WriterGroupDataCollectorTests(TestServerFixture server) {
+        public SimpleWriterGroupTests(TestServerFixture server) {
             _server = server;
             _hostEntry = Try.Op(() => Dns.GetHostEntry(Opc.Ua.Utils.GetHostName()))
                 ?? Try.Op(() => Dns.GetHostEntry("localhost"));
@@ -461,11 +461,11 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                 builder.RegisterType<DataSetWriterEventBroker>().AsImplementedInterfaces().SingleInstance();
                 builder.RegisterType<WriterGroupEventBroker>().AsImplementedInterfaces().SingleInstance();
                 builder.RegisterType<WriterGroupRegistry>().AsImplementedInterfaces().SingleInstance();
-                builder.RegisterType<WriterGroupManagement>().AsImplementedInterfaces().SingleInstance();
-                builder.RegisterType<WriterRegistryConnector>().AsImplementedInterfaces().SingleInstance()
+                builder.RegisterType<WriterGroupRegistrySync>().AsImplementedInterfaces().SingleInstance();
+                builder.RegisterType<SimpleWriterGroupEngineHost>().AsImplementedInterfaces().SingleInstance()
                     .AutoActivate(); // Create and register with broker
-                builder.RegisterType<NetworkMessageSender>().AsImplementedInterfaces().SingleInstance();
-                builder.RegisterType<WriterGroupProcessor>().AsImplementedInterfaces();
+                builder.RegisterType<SimpleNetworkMessageSink>().AsImplementedInterfaces().SingleInstance();
+                builder.RegisterType<SimpleWriterGroupDataSource>().AsImplementedInterfaces();
                 builder.RegisterType<UadpNetworkMessageEncoder>().AsImplementedInterfaces();
                 builder.RegisterType<JsonNetworkMessageEncoder>().AsImplementedInterfaces();
                 builder.RegisterType<BinarySampleMessageEncoder>().AsImplementedInterfaces();

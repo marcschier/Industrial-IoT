@@ -14,6 +14,11 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher {
     public interface IWriterGroupDataSource {
 
         /// <summary>
+        /// Writer group id
+        /// </summary>
+        string WriterGroupId { get; }
+
+        /// <summary>
         /// Group version
         /// </summary>
         uint? GroupVersion { get; set; }

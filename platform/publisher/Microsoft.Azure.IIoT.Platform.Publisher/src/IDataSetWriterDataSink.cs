@@ -17,25 +17,14 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher {
         /// <summary>
         /// Write notification
         /// </summary>
-        /// <param name="dataSetWriter"></param>
+        /// <param name="dataSetWriterId"></param>
+        /// <param name="dataSet"></param>
         /// <param name="sequenceNumber"></param>
         /// <param name="notification"></param>
         /// <param name="stringTable"></param>
         /// <param name="subscription"></param>
-        void Write(DataSetWriterModel dataSetWriter, uint sequenceNumber,
-            DataChangeNotification notification, IList<string> stringTable,
-            Subscription subscription);
-
-        /// <summary>
-        /// Write notification
-        /// </summary>
-        /// <param name="dataSetWriter"></param>
-        /// <param name="sequenceNumber"></param>
-        /// <param name="notification"></param>
-        /// <param name="stringTable"></param>
-        /// <param name="subscription"></param>
-        void Write(DataSetWriterModel dataSetWriter, uint sequenceNumber,
-            EventNotificationList notification, IList<string> stringTable,
-            Subscription subscription);
+        void Write(string dataSetWriterId, PublishedDataSetModel dataSet, 
+            uint sequenceNumber, NotificationData notification, 
+            IList<string> stringTable, Subscription subscription);
     }
 }

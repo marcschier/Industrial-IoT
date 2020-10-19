@@ -36,7 +36,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
 
                 IDataSetWriterRegistry writers = mock.Create<WriterGroupRegistry>();
                 IWriterGroupRegistry groups = mock.Create<WriterGroupRegistry>();
-                IWriterGroupStateUpdate service = mock.Create<WriterGroupManagement>();
+                IWriterGroupStateUpdate service = mock.Create<WriterGroupRegistrySync>();
 
                 // Act
                 var result1 = await groups.AddWriterGroupAsync(new WriterGroupAddRequestModel {
@@ -109,7 +109,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
 
                 IDataSetWriterRegistry writers = mock.Create<WriterGroupRegistry>();
                 IWriterGroupRegistry groups = mock.Create<WriterGroupRegistry>();
-                IDataSetWriterStateUpdater service = mock.Create<WriterGroupManagement>();
+                IDataSetWriterStateUpdater service = mock.Create<WriterGroupRegistrySync>();
 
                 var result1 = await groups.AddWriterGroupAsync(new WriterGroupAddRequestModel {
                     Name = "Test",
@@ -174,7 +174,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                 IDataSetWriterRegistry writers = mock.Create<WriterGroupRegistry>();
                 IDataSetBatchOperations batch = mock.Create<WriterGroupRegistry>();
                 IWriterGroupRegistry groups = mock.Create<WriterGroupRegistry>();
-                IDataSetWriterStateUpdater service = mock.Create<WriterGroupManagement>();
+                IDataSetWriterStateUpdater service = mock.Create<WriterGroupRegistrySync>();
 
                 var result1 = await groups.AddWriterGroupAsync(new WriterGroupAddRequestModel {
                     Name = "Test",
@@ -261,7 +261,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
 
                 IDataSetWriterRegistry writers = mock.Create<WriterGroupRegistry>();
                 IWriterGroupRegistry groups = mock.Create<WriterGroupRegistry>();
-                IEndpointRegistryListener service = mock.Create<WriterGroupManagement>();
+                IEndpointRegistryListener service = mock.Create<WriterGroupRegistrySync>();
 
                 var endpoint = new EndpointInfoModel {
                     Id = "endpoint1",
@@ -389,7 +389,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                     }));
                 builder.RegisterMock(registry);
                 builder.RegisterType<WriterGroupRegistry>().AsImplementedInterfaces();
-                builder.RegisterType<WriterGroupManagement>().AsImplementedInterfaces();
+                builder.RegisterType<WriterGroupRegistrySync>().AsImplementedInterfaces();
             });
 
             return mock;

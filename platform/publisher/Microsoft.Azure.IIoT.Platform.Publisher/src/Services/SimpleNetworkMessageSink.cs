@@ -19,7 +19,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
     /// <summary>
     /// Writer group data flow engine
     /// </summary>
-    public sealed class NetworkMessageSender : IWriterGroupDataSink, IDisposable {
+    public sealed class SimpleNetworkMessageSink : IWriterGroupDataSink, IDisposable {
 
         /// <inheritdoc/>
         public string WriterGroupId { get; set; }
@@ -146,7 +146,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
         /// <param name="events"></param>
         /// <param name="diagnostics"></param>
         /// <param name="logger"></param>
-        public NetworkMessageSender(IEventClient events, IDataSetWriterDiagnostics diagnostics,
+        public SimpleNetworkMessageSink(IEventClient events, IDataSetWriterDiagnostics diagnostics,
             IEnumerable<INetworkMessageEncoder> encoders, ILogger logger) {
 
             _events = events ?? throw new ArgumentNullException(nameof(events));
@@ -168,7 +168,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                 // Lazy re-create
                 if (_engine == null) {
                     if (_disposed) {
-                        throw new ObjectDisposedException(nameof(NetworkMessageSender));
+                        throw new ObjectDisposedException(nameof(SimpleNetworkMessageSink));
                     }
                     _engine = new DataFlowProcessingEngine(this);
                 }
@@ -227,7 +227,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
             /// Create engine
             /// </summary>
             /// <param name="outer"></param>
-            internal DataFlowProcessingEngine(NetworkMessageSender outer) {
+            internal DataFlowProcessingEngine(SimpleNetworkMessageSink outer) {
                 _cts = new CancellationTokenSource();
                 _outer = outer ?? throw new ArgumentNullException(nameof(outer));
 
@@ -377,20 +377,6 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                 _armed = false; // once sent we re-arm the interval timer
             }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
             /// <summary>
             /// Triggers updating diagnostics
             /// </summary>
@@ -426,7 +412,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
             private readonly ActionBlock<NetworkMessageModel> _emit;
             private readonly CancellationTokenSource _cts;
             private readonly Timer _publishingIntervalTimer;
-            private readonly NetworkMessageSender _outer;
+            private readonly SimpleNetworkMessageSink _outer;
             private readonly INetworkMessageEncoder _encoder;
             private readonly TimeSpan _publishingInterval;
             private readonly uint _maxNetworkMessageSize;

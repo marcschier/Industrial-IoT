@@ -16,7 +16,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
     /// <summary>
     /// Manage writer group and contained writer state
     /// </summary>
-    public sealed class WriterGroupManagement : IDataSetWriterStateUpdater,
+    public sealed class WriterGroupRegistrySync : IDataSetWriterStateUpdater,
         IWriterGroupStateUpdate, IEndpointRegistryListener {
 
         /// <summary>
@@ -28,7 +28,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
         /// <param name="itemEvents"></param>
         /// <param name="writerEvents"></param>
         /// <param name="groupEvents"></param>
-        public WriterGroupManagement(IDataSetEntityRepository dataSets,
+        public WriterGroupRegistrySync(IDataSetEntityRepository dataSets,
             IDataSetWriterRepository writers, IWriterGroupRepository groups,
             IPublisherEventBroker<IPublishedDataSetListener> itemEvents,
             IPublisherEventBroker<IDataSetWriterRegistryListener> writerEvents,

@@ -22,7 +22,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher {
 
             builder.RegisterType<WriterGroupRegistry>()
                 .AsImplementedInterfaces().InstancePerLifetimeScope();
-            builder.RegisterType<WriterGroupManagement>()
+            builder.RegisterType<WriterGroupRegistrySync>()
                 .AsImplementedInterfaces().InstancePerLifetimeScope();
 
             builder.RegisterType<DataSetWriterEventBroker>()
