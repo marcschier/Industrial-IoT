@@ -14,7 +14,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Models {
         /// <summary>
         /// State indicator
         /// </summary>
-        public WriterGroupState State { get; set; }
+        public WriterGroupStatus LastState { get; set; }
 
         /// <summary>
         /// Last state change

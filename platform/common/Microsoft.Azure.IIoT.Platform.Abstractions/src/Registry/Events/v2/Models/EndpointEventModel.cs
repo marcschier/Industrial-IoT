@@ -5,6 +5,7 @@
 
 namespace Microsoft.Azure.IIoT.Platform.Registry.Events.v2.Models {
     using Microsoft.Azure.IIoT.Platform.Registry.Models;
+    using Microsoft.Azure.IIoT.Platform.Core.Models;
 
     /// <summary>
     /// Endpoint Event model for event bus
@@ -19,7 +20,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Events.v2.Models {
         /// <summary>
         /// Context
         /// </summary>
-        public RegistryOperationContextModel Context { get; set; }
+        public OperationContextModel Context { get; set; }
 
         /// <summary>
         /// Endpoint id

@@ -41,12 +41,10 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
                         null : document.SecurityPolicy,
                     Certificate = document.Thumbprint
                 },
-                ActivationState = document.ActivationState,
                 Updated = ToOperationModel(document.UpdateAuthorityId, document.UpdateTime),
                 Created = ToOperationModel(document.CreateAuthorityId, document.CreateTime),
                 Visibility = document.Visibility,
                 NotSeenSince = document.NotSeenSince,
-                EndpointState = document.EndpointState
             };
         }
 
@@ -61,7 +59,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
             }
             return new EndpointDocument {
                 Id = model.Id,
-                EndpointState = model.EndpointState ?? EndpointConnectivityState.Disconnected,
                 Visibility = model.Visibility ?? EntityVisibility.Unknown,
                 NotSeenSince = model.NotSeenSince,
                 ApplicationId = model.ApplicationId,
@@ -73,7 +70,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
                 SecurityMode = model.Endpoint.SecurityMode ?? SecurityMode.Best,
                 SecurityPolicy = model.Endpoint.SecurityPolicy ?? string.Empty,
                 Thumbprint = model.Endpoint.Certificate ?? string.Empty,
-                ActivationState = model.ActivationState ?? EntityActivationState.Deactivated,
                 CreateAuthorityId = model.Created?.AuthorityId,
                 CreateTime = model.Created?.Time ?? DateTime.UtcNow,
                 UpdateAuthorityId = model.Updated?.AuthorityId,
@@ -87,12 +83,12 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
         /// <param name="authorityId"></param>
         /// <param name="time"></param>
         /// <returns></returns>
-        private static RegistryOperationContextModel ToOperationModel(
+        private static OperationContextModel ToOperationModel(
             string authorityId, DateTime? time) {
             if (string.IsNullOrEmpty(authorityId) && time == null) {
                 return null;
             }
-            return new RegistryOperationContextModel {
+            return new OperationContextModel {
                 AuthorityId = authorityId,
                 Time = time ?? DateTime.MinValue
             };

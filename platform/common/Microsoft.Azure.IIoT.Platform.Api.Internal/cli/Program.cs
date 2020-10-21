@@ -13,6 +13,8 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
     using Microsoft.Azure.IIoT.Platform.Registry.Api;
     using Microsoft.Azure.IIoT.Platform.Registry.Api.Clients;
     using Microsoft.Azure.IIoT.Platform.Registry.Api.Models;
+    using Microsoft.Azure.IIoT.Platform.Directory.Api;
+    using Microsoft.Azure.IIoT.Platform.Directory.Api.Models;
     using Microsoft.Azure.IIoT.Platform.Twin.Api;
     using Microsoft.Azure.IIoT.Platform.Twin.Api.Clients;
     using Microsoft.Azure.IIoT.Platform.Twin.Api.Models;
@@ -33,8 +35,6 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
     using System.Linq;
     using System.Threading.Tasks;
     using Prometheus;
-    using Microsoft.Azure.IIoT.Platform.Directory.Api;
-    using Microsoft.Azure.IIoT.Platform.Directory.Api.Models;
 
     /// <summary>
     /// Api command line interface
@@ -262,12 +262,6 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
                                 case "validate":
                                     await GetEndpointCertificateAsync(options).ConfigureAwait(false);
                                     break;
-                                case "activate":
-                                    await ActivateEndpointsAsync(options).ConfigureAwait(false);
-                                    break;
-                                case "deactivate":
-                                    await DeactivateEndpointsAsync(options).ConfigureAwait(false);
-                                    break;
                                 case "-?":
                                 case "-h":
                                 case "--help":
@@ -276,6 +270,29 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
                                     break;
                                 default:
                                     throw new ArgumentException($"Unknown command {command}.");
+                            }
+                            break;
+                        case "twins":
+                            if (args.Length < 2) {
+                                throw new ArgumentException("Need a command!");
+                            }
+                            command = args[1];
+                            options = new CliOptions(args, 2);
+                            switch (command) {
+#if FALSE
+                                case "activate":
+                                    await ActivateEndpointsAsync(options).ConfigureAwait(false);
+                                    break;
+                                case "deactivate":
+                                    await DeactivateEndpointsAsync(options).ConfigureAwait(false);
+                                    break;
+#endif
+                                case "-?":
+                                case "-h":
+                                case "--help":
+                                case "help":
+                                    PrintTwinsHelp();
+                                    break;
                             }
                             break;
                         case "groups":
@@ -387,6 +404,9 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
                                 case "query":
                                     await QueryDataSetVariablesAsync(options).ConfigureAwait(false);
                                     break;
+                                case "monitor":
+                                    await MonitorDataSetVariableAsync(options).ConfigureAwait(false);
+                                    break;
                                 case "-?":
                                 case "-h":
                                 case "--help":
@@ -415,6 +435,9 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
                                     break;
                                 case "remove":
                                     await RemoveEventDataSetAsync(options).ConfigureAwait(false);
+                                    break;
+                                case "monitor":
+                                    await MonitorEventDataSetAsync(options).ConfigureAwait(false);
                                     break;
                                 case "-?":
                                 case "-h":
@@ -699,18 +722,6 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
                                 case "select":
                                     await SelectNodeAsync(options).ConfigureAwait(false);
                                     break;
-                                case "publish":
-                                    await PublishAsync(options).ConfigureAwait(false);
-                                    break;
-                                case "monitor":
-                                    await MonitorSamplesAsync(options).ConfigureAwait(false);
-                                    break;
-                                case "unpublish":
-                                    await UnpublishAsync(options).ConfigureAwait(false);
-                                    break;
-                                case "list":
-                                    await ListPublishedNodesAsync(options).ConfigureAwait(false);
-                                    break;
                                 case "read":
                                     await ReadAsync(options).ConfigureAwait(false);
                                     break;
@@ -953,73 +964,6 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
                 $"{visited.Count} nodes and read {nodesRead.Count} of them with {errors} errors.");
         }
 
-
-        /// <summary>
-        /// Publish node
-        /// </summary>
-        private async Task PublishAsync(CliOptions options) {
-            var result = await _twin.NodePublishStartAsync(
-                GetEndpointId(options),
-                new PublishStartRequestApiModel {
-                    Item = new PublishedItemApiModel {
-                        NodeId = GetNodeId(options),
-                        SamplingInterval = TimeSpan.FromMilliseconds(1000),
-                        PublishingInterval = TimeSpan.FromMilliseconds(1000)
-                    }
-                }).ConfigureAwait(false);
-            if (result.ErrorInfo != null) {
-                PrintResult(options, result);
-            }
-        }
-
-        /// <summary>
-        /// Monitor samples from endpoint
-        /// </summary>
-        private async Task MonitorSamplesAsync(CliOptions options) {
-            var endpointId = GetEndpointId(options);
-            var events = _scope.Resolve<IPublisherServiceEvents>();
-            Console.WriteLine("Press any key to stop.");
-
-            var finish = await events.NodePublishSubscribeByEndpointAsync(
-                endpointId, PrintSample).ConfigureAwait(false);
-            try {
-                Console.ReadKey();
-            }
-            finally {
-                await finish.DisposeAsync();
-            }
-        }
-
-        /// <summary>
-        /// Unpublish node
-        /// </summary>
-        private async Task UnpublishAsync(CliOptions options) {
-            var result = await _twin.NodePublishStopAsync(
-                GetEndpointId(options),
-                new PublishStopRequestApiModel {
-                    NodeId = GetNodeId(options)
-                }).ConfigureAwait(false);
-            if (result.ErrorInfo != null) {
-                PrintResult(options, result);
-            }
-        }
-
-        /// <summary>
-        /// List published nodes
-        /// </summary>
-        private async Task ListPublishedNodesAsync(CliOptions options) {
-            if (options.IsSet("-A", "--all")) {
-                var result = await _twin.NodePublishListAllAsync(GetEndpointId(options)).ConfigureAwait(false);
-                PrintResult(options, result);
-                Console.WriteLine($"{result.Count()} item(s) found...");
-            }
-            else {
-                var result = await _twin.NodePublishListAsync(GetEndpointId(options),
-                    options.GetValueOrDefault<string>("-C", "--continuation", null)).ConfigureAwait(false);
-                PrintResult(options, result);
-            }
-        }
-
         private string _dataSetWriterId;
 
         /// <summary>
@@ -1170,7 +1114,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
                 Console.ReadKey();
             }
             finally {
-                await complete.DisposeAsync();
+                await complete.DisposeAsync().ConfigureAwait(false);
             }
         }
 
@@ -1214,6 +1158,24 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
                     Filter = null, // TODO
                     SelectedFields = null // TODO
                 }).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Monitor samples from variable
+        /// </summary>
+        private async Task MonitorEventDataSetAsync(CliOptions options) {
+            var dataSetWriterId = GetDataSetWriterId(options);
+            var events = _scope.Resolve<IPublisherServiceEvents>();
+            Console.WriteLine("Press any key to stop.");
+
+            var finish = await events.SubscribeEventDataSetMessagesAsync(
+                dataSetWriterId, PrintSample).ConfigureAwait(false);
+            try {
+                Console.ReadKey();
+            }
+            finally {
+                await finish.DisposeAsync().ConfigureAwait(false);
+            }
         }
 
         /// <summary>
@@ -1311,6 +1273,25 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
                     GetDataSetWriterId(options), query,
                     options.GetValueOrDefault<int>("-P", "--page-size", null)).ConfigureAwait(false);
                 PrintResult(options, result);
+            }
+        }
+
+        /// <summary>
+        /// Monitor samples from variable
+        /// </summary>
+        private async Task MonitorDataSetVariableAsync(CliOptions options) {
+            var dataSetWriterId = GetDataSetWriterId(options);
+            var events = _scope.Resolve<IPublisherServiceEvents>();
+            Console.WriteLine("Press any key to stop.");
+
+            var variableId = options.GetValue<string>("-v", "--variableId");
+            var finish = await events.SubscribeDataSetVariableMessagesAsync(
+                dataSetWriterId, variableId, PrintSample).ConfigureAwait(false);
+            try {
+                Console.ReadKey();
+            }
+            finally {
+                await finish.DisposeAsync().ConfigureAwait(false);
             }
         }
 
@@ -1476,7 +1457,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
                 Console.ReadKey();
             }
             finally {
-                await complete.DisposeAsync();
+                await complete.DisposeAsync().ConfigureAwait(false);
             }
         }
 
@@ -1594,7 +1575,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
                 Console.ReadKey();
             }
             finally {
-                await complete.DisposeAsync();
+                await complete.DisposeAsync().ConfigureAwait(false);
             }
         }
 
@@ -1729,7 +1710,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
                 Console.ReadKey();
             }
             finally {
-                await complete.DisposeAsync();
+                await complete.DisposeAsync().ConfigureAwait(false);
             }
         }
 
@@ -1837,7 +1818,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
                 Console.ReadKey();
             }
             finally {
-                await complete.DisposeAsync();
+                await complete.DisposeAsync().ConfigureAwait(false);
             }
         }
 
@@ -1968,7 +1949,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
                 Console.ReadKey();
             }
             finally {
-                await complete.DisposeAsync();
+                await complete.DisposeAsync().ConfigureAwait(false);
             }
         }
 
@@ -2009,7 +1990,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
                     new DiscoveryConfigApiModel()).ConfigureAwait(false);
             }
             catch {
-                await discovery.DisposeAsync();
+                await discovery.DisposeAsync().ConfigureAwait(false);
             }
         }
 
@@ -2108,7 +2089,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
                     await tcs.Task.ConfigureAwait(false); // For completion
                 }
                 finally {
-                    await discovery.DisposeAsync();
+                    await discovery.DisposeAsync().ConfigureAwait(false);
                 }
             }
             else {
@@ -2153,7 +2134,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
                     await tcs.Task.ConfigureAwait(false); // For completion
                 }
                 finally {
-                    await discovery.DisposeAsync();
+                    await discovery.DisposeAsync().ConfigureAwait(false);
                 }
 
             }
@@ -2211,7 +2192,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
                 return;
             }
 
-            var query = new ApplicationRegistrationQueryApiModel {
+            var query = new ApplicationInfoQueryApiModel {
                 ApplicationUri = options.GetValueOrDefault<string>("-u", "--uri", null),
                 ApplicationType = options.GetValueOrDefault<ApplicationType>("-t", "--type", null),
                 ApplicationName = options.GetValueOrDefault<string>("-n", "--name", null),
@@ -2263,7 +2244,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
         /// Query applications
         /// </summary>
         private async Task QueryApplicationsAsync(CliOptions options) {
-            var query = new ApplicationRegistrationQueryApiModel {
+            var query = new ApplicationInfoQueryApiModel {
                 ApplicationUri = options.GetValueOrDefault<string>("-u", "--uri", null),
                 ProductUri = options.GetValueOrDefault<string>("-p", "--product", null),
                 GatewayServerUri = options.GetValueOrDefault<string>("-g", "--gwuri", null),
@@ -2305,7 +2286,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
                 Console.ReadKey();
             }
             finally {
-                await complete.DisposeAsync();
+                await complete.DisposeAsync().ConfigureAwait(false);
             }
         }
 
@@ -2334,27 +2315,27 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
                                     Console.ReadKey();
                                 }
                                 finally {
-                                    await discovery.DisposeAsync();
+                                    await discovery.DisposeAsync().ConfigureAwait(false);
                                 }
                             }
                             finally {
-                                await discoverers.DisposeAsync();
+                                await discoverers.DisposeAsync().ConfigureAwait(false);
                             }
                         }
                         finally {
-                            await publisher.DisposeAsync();
+                            await publisher.DisposeAsync().ConfigureAwait(false);
                         }
                     }
                     finally {
-                        await supervisor.DisposeAsync();
+                        await supervisor.DisposeAsync().ConfigureAwait(false);
                     }
                 }
                 finally {
-                    await endpoint.DisposeAsync();
+                    await endpoint.DisposeAsync().ConfigureAwait(false);
                 }
             }
             finally {
-                await apps.DisposeAsync();
+                await apps.DisposeAsync().ConfigureAwait(false);
             }
         }
 
@@ -2435,10 +2416,6 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
                 SecurityMode = options
                     .GetValueOrDefault<Platform.Core.Api.Models.SecurityMode>("-m", "--mode", null),
                 SecurityPolicy = options.GetValueOrDefault<string>("-l", "--policy", null),
-                ActivationState = options.GetValueOrDefault<EntityActivationState?>(
-                    "-a", "--activated", null),
-                EndpointState = options.GetValueOrDefault<EndpointConnectivityState>(
-                    "-s", "--state", null),
                 Visibility = options.GetValueOrDefault<EntityVisibility>("-v", "--visibility", null),
                 ApplicationId = options.GetValueOrDefault<string>("-R", "--applicationId", null),
                 DiscovererId = options.GetValueOrDefault<string>("-D", "--discovererId", null)
@@ -2455,6 +2432,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
             }
         }
 
+#if FALSE
         /// <summary>
         /// Activate endpoints
         /// </summary>
@@ -2508,6 +2486,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
                 }
             }
         }
+#endif
 
         /// <summary>
         /// Get endpoint
@@ -2536,7 +2515,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
                 Console.ReadKey();
             }
             finally {
-                await complete.DisposeAsync();
+                await complete.DisposeAsync().ConfigureAwait(false);
             }
         }
 
@@ -3376,8 +3355,6 @@ Commands and Options
         -u, --uri       Endpoint uri to seach for
         -m, --mode      Security mode to search for
         -p, --policy    Security policy to match
-        -a, --activated Only return activated or deactivated.
-        -c, --connected Only return connected or disconnected.
         -s, --state     Only return endpoints with specified state.
         -v, --visibility
                         Visibility state of the endpoint.
@@ -3408,6 +3385,59 @@ Commands and Options
         with ...
         -i, --id        Id of endpoint or ...
         -m, --mode      Security mode (default:SignAndEncrypt)
+
+     help, -h, -? --help
+                 Prints out this help.
+"
+                );
+        }
+
+        /// <summary>
+        /// Print help
+        /// </summary>
+        private static void PrintTwinsHelp() {
+            Console.WriteLine(
+                @"
+Manage twins.
+
+Commands and Options
+
+     select      Select twin as -i/--id argument in all calls.
+        with ...
+        -i, --id        Endpoint id to select.
+        -c, --clear     Clear current selection
+        -s, --show      Show current selection
+
+     monitor     Monitor changes to twins.
+
+     list        List twins
+        with ...
+        -C, --continuation
+                        Continuation from previous result.
+        -P, --page-size Size of page
+        -A, --all       Return all twins (unpaged)
+        -F, --format    Json format for result
+
+     query       Find twins
+        -s, --state     Only return twins with specified state.
+        -e  --endpointId
+                        Return twins for specified Endpoint.
+        -P, --page-size Size of page
+        -A, --all       Return all twins (unpaged)
+        -F, --format    Json format for result
+
+     get         Get twin
+        with ...
+        -i, --id        Id of twin to retrieve (mandatory)
+        -F, --format    Json format for result
+
+     activate    Activate twins
+        with ...
+        -i, --id        Id of endpoint
+
+     deactivate  Deactivate twins
+        with ...
+        -i, --id        Id of twin
 
      help, -h, -? --help
                  Prints out this help.
@@ -3474,28 +3504,6 @@ Commands and Options
         -i, --id        Id of endpoint to call method on (mandatory)
         -n, --nodeid    Method Node to call (mandatory)
         -o, --objectid  Object context for method
-
-     publish     Publish items from endpoint
-        with ...
-        -i, --id        Id of endpoint to publish value from (mandatory)
-        -n, --nodeid    Node to browse (mandatory)
-
-     monitor     Monitor published items on endpoint
-        with ...
-        -i, --id        Id of endpoint to monitor nodes on (mandatory)
-
-     list        List published items on endpoint
-        with ...
-        -i, --id        Id of endpoint with published nodes (mandatory)
-        -C, --continuation
-                        Continuation from previous result.
-        -A, --all       Return all items (unpaged)
-        -F, --format    Json format for result
-
-     unpublish   Unpublish items on endpoint
-        with ...
-        -i, --id        Id of endpoint to publish value from (mandatory)
-        -n, --nodeid    Node to browse (mandatory)
 
      help, -h, -? --help
                  Prints out this help.
@@ -3959,6 +3967,10 @@ Commands and Options
         -i, --id        Dataset writer id (mandatory)
         -g, --genid     Generation of variable to remove (mandatory)
 
+     data        Monitor event
+        with ...
+        -i, --id        Dataset writer id with event to monitor (mandatory)
+
      help, -h, -? --help
                  Prints out this help.
 "
@@ -4034,6 +4046,11 @@ Commands and Options
         -i, --id        Dataset writer id (mandatory)
         -v, --variable  Variable id (mandatory)
         -g, --genid     Generation of variable to remove (mandatory)
+
+     data        Monitor variable
+        with ...
+        -i, --id        Dataset writer id (mandatory)
+        -v, --variable  Variable id to monitor (mandatory)
 
      help, -h, -? --help
                  Prints out this help.

@@ -6,10 +6,10 @@
 namespace Microsoft.Azure.IIoT.Platform.Twin.Clients {
     using Microsoft.Azure.IIoT.Platform.Twin;
     using Microsoft.Azure.IIoT.Platform.Twin.Models;
-    using Microsoft.Azure.IIoT.Platform.Registry;
     using Microsoft.Azure.IIoT.Platform.Core.Models;
     using System;
     using System.Threading.Tasks;
+    using System.Threading;
 
     /// <summary>
     /// Implements transfer services as adapter through endpoint registry
@@ -21,20 +21,20 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Clients {
         /// </summary>
         /// <param name="registry"></param>
         /// <param name="transfer"></param>
-        public TransferServicesAdapter(IEndpointRegistry registry,
-            ITransferServices<EndpointModel> transfer) {
+        public TransferServicesAdapter(ITwinRegistry registry,
+            ITransferServices<ConnectionModel> transfer) {
             _registry = registry ?? throw new ArgumentNullException(nameof(registry));
             _transfer = transfer ?? throw new ArgumentNullException(nameof(transfer));
         }
 
         /// <inheritdoc/>
         public async Task<ModelUploadStartResultModel> ModelUploadStartAsync(
-            string endpoint, ModelUploadStartRequestModel request) {
-            var ep = await _registry.GetActivatedEndpointAsync(endpoint).ConfigureAwait(false);
-            return await _transfer.ModelUploadStartAsync(ep, request).ConfigureAwait(false);
+            string twin, ModelUploadStartRequestModel request, CancellationToken ct) {
+            var conn = await _registry.GetConnectionAsync(twin, ct: ct).ConfigureAwait(false);
+            return await _transfer.ModelUploadStartAsync(conn, request, ct).ConfigureAwait(false);
         }
 
-        private readonly IEndpointRegistry _registry;
-        private readonly ITransferServices<EndpointModel> _transfer;
+        private readonly ITwinRegistry _registry;
+        private readonly ITransferServices<ConnectionModel> _transfer;
     }
 }

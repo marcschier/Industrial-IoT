@@ -62,8 +62,6 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Models {
                         GenerationId = null,
                         NotSeenSince = null,
                         Visibility = null,
-                        ActivationState = null,
-                        EndpointState = null,
 
                         SecurityLevel = result.Description.SecurityLevel,
                         AuthenticationMethods = result.Description.UserIdentityTokens

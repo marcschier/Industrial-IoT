@@ -27,10 +27,10 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
                 ?? Try.Op(() => Dns.GetHostEntry("localhost"));
         }
 
-        private HistoryReadValuesTests<EndpointModel> GetTests() {
+        private HistoryReadValuesTests<ConnectionModel> GetTests() {
             var codec = new VariantEncoderFactory();
-            return new HistoryReadValuesTests<EndpointModel>(
-                () => new HistorianServicesAdapter<EndpointModel>(new AddressSpaceServices(_server.Client,
+            return new HistoryReadValuesTests<ConnectionModel>(
+                () => new HistorianServicesAdapter<ConnectionModel>(new AddressSpaceServices(_server.Client,
                     codec, _server.Logger), codec),
                 new EndpointModel {
                     Url = $"opc.tcp://{_hostEntry?.HostName ?? "localhost"}:{_server.Port}/UA/SampleServer",
@@ -38,7 +38,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
                         .Where(ip => ip.AddressFamily == AddressFamily.InterNetwork)
                         .Select(ip => $"opc.tcp://{ip}:{_server.Port}/UA/SampleServer").ToHashSet(),
                     Certificate = _server.Certificate?.RawData?.ToThumbprint()
-                });
+                }.ToConnectionModel());
         }
 
         [Fact]

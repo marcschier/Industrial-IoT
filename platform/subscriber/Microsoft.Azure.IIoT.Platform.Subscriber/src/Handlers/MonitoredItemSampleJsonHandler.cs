@@ -76,7 +76,7 @@ namespace Microsoft.Azure.IIoT.Platform.Subscriber.Handlers {
                             ? null : message?.Value?.ServerTimestamp,
                         ServerPicoseconds = (message?.Value?.ServerPicoseconds == 0)
                             ? null : message?.Value?.ServerPicoseconds,
-                        EndpointId = (message.ExtensionFields != null &&
+                        VariableId = (message.ExtensionFields != null &&
                             message.ExtensionFields.TryGetValue("EndpointId", out var endpointId))
                                 ? endpointId : message.ApplicationUri ?? message.EndpointUrl,
                     };

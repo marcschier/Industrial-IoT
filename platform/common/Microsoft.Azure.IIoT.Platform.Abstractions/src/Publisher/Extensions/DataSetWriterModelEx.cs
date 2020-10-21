@@ -4,6 +4,7 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Platform.Publisher.Models {
+    using Microsoft.Azure.IIoT.Platform.Core.Models;
 
     /// <summary>
     /// Dataset writer model extensions
@@ -38,7 +39,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Models {
         /// <returns></returns>
         public static DataSetWriterInfoModel AsDataSetWriterInfo(
             this DataSetWriterModel model, string writerGroupId, string endpointId,
-            PublisherOperationContextModel context) {
+            OperationContextModel context) {
             if (model == null) {
                 return null;
             }

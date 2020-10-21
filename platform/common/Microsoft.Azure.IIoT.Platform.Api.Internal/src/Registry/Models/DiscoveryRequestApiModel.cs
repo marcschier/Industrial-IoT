@@ -4,6 +4,7 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Models {
+    using Microsoft.Azure.IIoT.Platform.Core.Api.Models;
     using System.Runtime.Serialization;
 
     /// <summary>
@@ -17,6 +18,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Models {
         /// </summary>
         [DataMember(Name = "context", Order = 10,
             EmitDefaultValue = false)]
-        public RegistryOperationContextApiModel Context { get; set; }
+        public OperationContextApiModel Context { get; set; }
     }
 }

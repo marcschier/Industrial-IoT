@@ -124,7 +124,7 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
                     }
                 },
                 header => Set(header, target, contentType, eventSchema, contentEncoding));
-            await tcs.Task;
+            await tcs.Task.ConfigureAwait(false);
         }
 
         /// <inheritdoc/>

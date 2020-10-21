@@ -4,6 +4,7 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Platform.Core.Api.Models {
+    using System;
     using System.Runtime.Serialization;
 
     /// <summary>
@@ -31,5 +32,19 @@ namespace Microsoft.Azure.IIoT.Platform.Core.Api.Models {
         [DataMember(Name = "diagnostics", Order = 2,
              EmitDefaultValue = false)]
         public DiagnosticsApiModel Diagnostics { get; set; }
+
+        /// <summary>
+        /// Certificate thumbprint to validate.
+        /// </summary>
+        [DataMember(Name = "thumbprint", Order = 3,
+             EmitDefaultValue = false)]
+        public string Thumbprint { get; set; }
+
+        /// <summary>
+        /// The operation timeout to create sessions.
+        /// </summary>
+        [DataMember(Name = "operationTimeout", Order = 4,
+             EmitDefaultValue = false)]
+        public TimeSpan? OperationTimeout { get; set; }
     }
 }

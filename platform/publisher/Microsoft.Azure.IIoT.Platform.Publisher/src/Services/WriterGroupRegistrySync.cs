@@ -8,6 +8,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
     using Microsoft.Azure.IIoT.Platform.Publisher.Models;
     using Microsoft.Azure.IIoT.Platform.Registry;
     using Microsoft.Azure.IIoT.Platform.Registry.Models;
+    using Microsoft.Azure.IIoT.Platform.Core.Models;
     using Microsoft.Azure.IIoT.Utils;
     using System.Threading.Tasks;
     using System.Threading;
@@ -17,7 +18,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
     /// Manage writer group and contained writer state
     /// </summary>
     public sealed class WriterGroupRegistrySync : IDataSetWriterStateUpdater,
-        IWriterGroupStateUpdate, IEndpointRegistryListener {
+        IWriterGroupStateUpdater, IEndpointRegistryListener {
 
         /// <summary>
         /// Create registry management service
@@ -48,7 +49,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
 
         /// <inheritdoc/>
         public async Task UpdateDataSetEventStateAsync(string dataSetWriterId,
-            PublishedDataSetItemStateModel state, PublisherOperationContextModel context,
+            PublishedDataSetItemStateModel state, OperationContextModel context,
             CancellationToken ct) {
             if (string.IsNullOrEmpty(dataSetWriterId)) {
                 throw new ArgumentNullException(nameof(dataSetWriterId));
@@ -91,7 +92,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
         /// <inheritdoc/>
         public async Task UpdateDataSetVariableStateAsync(string dataSetWriterId,
             string variableId, PublishedDataSetItemStateModel state,
-            PublisherOperationContextModel context, CancellationToken ct) {
+            OperationContextModel context, CancellationToken ct) {
             if (string.IsNullOrEmpty(dataSetWriterId)) {
                 throw new ArgumentNullException(nameof(dataSetWriterId));
             }
@@ -137,7 +138,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
 
         /// <inheritdoc/>
         public async Task UpdateDataSetWriterStateAsync(string dataSetWriterId,
-            PublishedDataSetSourceStateModel state, PublisherOperationContextModel context,
+            PublishedDataSetSourceStateModel state, OperationContextModel context,
             CancellationToken ct) {
             if (string.IsNullOrEmpty(dataSetWriterId)) {
                 throw new ArgumentNullException(nameof(dataSetWriterId));
@@ -150,8 +151,8 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
             var writer = await _writers.UpdateAsync(dataSetWriterId, existing => {
                 if (existing?.DataSet?.State != null) {
                     updated = true;
-                    if (state.LastResultChange == null && state.EndpointState != null) {
-                        existing.DataSet.State.EndpointState = state.EndpointState;
+                    if (state.LastResultChange == null && state.ConnectionState != null) {
+                        existing.DataSet.State.ConnectionState = state.ConnectionState.Clone();
                     }
                     else {
                         existing.DataSet.State.LastResult = state.LastResult;
@@ -165,9 +166,9 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                     }
                     existing.DataSet.State = new PublishedDataSetSourceStateModel {
                         LastResult = state.LastResult,
-                        LastResultChange = state.EndpointState == null || state.LastResult != null ?
+                        LastResultChange = state.ConnectionState == null || state.LastResult != null ?
                             lastResultChange : (DateTime?)null,
-                        EndpointState = state.EndpointState
+                        ConnectionState = state.ConnectionState.Clone()
                     };
                 }
                 return Task.FromResult(updated);
@@ -182,20 +183,20 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
 
         /// <inheritdoc/>
         public async Task UpdateWriterGroupStateAsync(string writerGroupId,
-            WriterGroupState? state, PublisherOperationContextModel context, CancellationToken ct) {
+            WriterGroupStatus? state, OperationContextModel context, CancellationToken ct) {
             if (string.IsNullOrEmpty(writerGroupId)) {
                 throw new ArgumentNullException(nameof(writerGroupId));
             }
             var updated = false;
             var lastResultChange = context?.Time ?? DateTime.UtcNow;
             var group = await _groups.UpdateAsync(writerGroupId, existing => {
-                var existingState = existing.State?.State ?? WriterGroupState.Disabled;
-                var updatedState = state ?? WriterGroupState.Disabled;
-                if (existingState != WriterGroupState.Disabled &&
+                var existingState = existing.State?.LastState ?? WriterGroupStatus.Disabled;
+                var updatedState = state ?? WriterGroupStatus.Disabled;
+                if (existingState != WriterGroupStatus.Disabled &&
                     existingState != updatedState) {
                     updated = true;
                     existing.State = new WriterGroupStateModel {
-                        State = updatedState,
+                        LastState = updatedState,
                         LastStateChange = lastResultChange
                     };
                 }
@@ -209,56 +210,56 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
         }
 
         /// <inheritdoc/>
-        public Task OnEndpointNewAsync(RegistryOperationContextModel context,
+        public Task OnEndpointNewAsync(OperationContextModel context,
             EndpointInfoModel endpoint) {
             if (endpoint is null) {
                 throw new ArgumentNullException(nameof(endpoint));
             }
             return EnableWritersWithEndpointAsync(endpoint.Id, true,
-                context == null ? null : new PublisherOperationContextModel {
+                context == null ? null : new OperationContextModel {
                     AuthorityId = context.AuthorityId,
                     Time = context.Time
                 });
         }
 
         /// <inheritdoc/>
-        public Task OnEndpointUpdatedAsync(RegistryOperationContextModel context,
+        public Task OnEndpointUpdatedAsync(OperationContextModel context,
             EndpointInfoModel endpoint) {
             // No changes required
             return Task.CompletedTask;
         }
 
         /// <inheritdoc/>
-        public Task OnEndpointActivatedAsync(RegistryOperationContextModel context,
+        public Task OnEndpointActivatedAsync(OperationContextModel context,
             EndpointInfoModel endpoint) {
             if (endpoint is null) {
                 throw new ArgumentNullException(nameof(endpoint));
             }
             return EnableWritersWithEndpointAsync(endpoint.Id, true,
-                context == null ? null : new PublisherOperationContextModel {
+                context == null ? null : new OperationContextModel {
                     AuthorityId = context.AuthorityId,
                     Time = context.Time
                 });
         }
 
         /// <inheritdoc/>
-        public Task OnEndpointDeactivatedAsync(RegistryOperationContextModel context,
+        public Task OnEndpointDeactivatedAsync(OperationContextModel context,
             EndpointInfoModel endpoint) {
             if (endpoint is null) {
                 throw new ArgumentNullException(nameof(endpoint));
             }
             return EnableWritersWithEndpointAsync(endpoint.Id, false,
-                context == null ? null : new PublisherOperationContextModel {
+                context == null ? null : new OperationContextModel {
                     AuthorityId = context.AuthorityId,
                     Time = context.Time
                 });
         }
 
         /// <inheritdoc/>
-        public Task OnEndpointDeletedAsync(RegistryOperationContextModel context,
+        public Task OnEndpointDeletedAsync(OperationContextModel context,
             string endpointId, EndpointInfoModel endpoint) {
             return EnableWritersWithEndpointAsync(endpointId, false,
-                context == null ? null : new PublisherOperationContextModel {
+                context == null ? null : new OperationContextModel {
                     AuthorityId = context.AuthorityId,
                     Time = context.Time
                 });
@@ -273,7 +274,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
         /// <param name="ct"></param>
         /// <returns></returns>
         private async Task EnableWritersWithEndpointAsync(string endpointId, bool enable,
-            PublisherOperationContextModel context, CancellationToken ct = default) {
+            OperationContextModel context, CancellationToken ct = default) {
             if (string.IsNullOrEmpty(endpointId)) {
                 throw new ArgumentNullException(nameof(endpointId));
             }
@@ -303,7 +304,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
         /// <param name="ct"></param>
         /// <returns></returns>
         private async Task EnableDataSetWriterAsync(string dataSetWriterId, bool enable,
-            PublisherOperationContextModel context, CancellationToken ct = default) {
+            OperationContextModel context, CancellationToken ct = default) {
             var updated = true;
             var writer = await _writers.UpdateAsync(dataSetWriterId, existing => {
                 if (existing.IsDisabled == true && enable) {

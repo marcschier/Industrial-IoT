@@ -3,8 +3,9 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Platform.Publisher.Storage.Services {
+namespace Microsoft.Azure.IIoT.Platform.Publisher.Storage {
     using Microsoft.Azure.IIoT.Platform.Publisher.Models;
+    using Microsoft.Azure.IIoT.Platform.Core.Models;
     using System;
     using System.Linq;
 
@@ -44,9 +45,8 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Storage.Services {
                 UpdatedAuditId = model.Updated?.AuthorityId,
                 Created = model.Created?.Time ?? DateTime.UtcNow,
                 CreatedAuditId = model.Created?.AuthorityId,
-                LastState = model.State?.State ?? WriterGroupState.Disabled,
-                LastStateChange = model.State?.LastStateChange ?? DateTime.UtcNow,
-                ClassType = WriterGroupDocument.ClassTypeName
+                LastState = model.State?.LastState ?? WriterGroupStatus.Disabled,
+                LastStateChange = model.State?.LastStateChange ?? DateTime.UtcNow
             };
         }
 
@@ -80,14 +80,14 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Storage.Services {
                     SamplingOffset = document.SamplingOffset
                 },
                 State = new WriterGroupStateModel {
-                    State = document.LastState,
+                    LastState = document.LastState,
                     LastStateChange = document.LastStateChange
                 },
-                Updated = document.Updated == null ? null : new PublisherOperationContextModel {
+                Updated = document.Updated == null ? null : new OperationContextModel {
                     Time = document.Updated.Value,
                     AuthorityId = document.UpdatedAuditId
                 },
-                Created = document.Created == null ? null : new PublisherOperationContextModel {
+                Created = document.Created == null ? null : new OperationContextModel {
                     Time = document.Created.Value,
                     AuthorityId = document.CreatedAuditId
                 },

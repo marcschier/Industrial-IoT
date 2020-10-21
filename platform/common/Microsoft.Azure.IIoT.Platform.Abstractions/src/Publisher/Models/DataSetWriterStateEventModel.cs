@@ -38,8 +38,8 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Models {
         public ServiceResultModel LastResult { get; set; }
 
         /// <summary>
-        /// Endpoint state if state changed
+        /// Connection state if state changed
         /// </summary>
-        public EndpointConnectivityState? EndpointState { get; set; }
+        public ConnectionStateModel ConnectionState { get; set; }
     }
 }

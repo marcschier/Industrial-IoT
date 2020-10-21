@@ -50,19 +50,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Clients {
         }
 
         /// <inheritdoc/>
-        public async Task<X509CertificateChainModel> GetEndpointCertificateAsync(
-            string id, CancellationToken ct) {
-            var result = await _client.GetEndpointCertificateAsync(id, ct).ConfigureAwait(false);
-            return result.ToServiceModel();
-        }
-
-        /// <inheritdoc/>
-        public async Task UpdateEndpointAsync(string id,
-            EndpointInfoUpdateModel request, CancellationToken ct) {
-            await _client.UpdateEndpointAsync(id, request.ToApiModel(), ct).ConfigureAwait(false);
-        }
-
-        /// <inheritdoc/>
         public async Task<ApplicationRegistrationResultModel> RegisterApplicationAsync(
             ApplicationRegistrationRequestModel request, CancellationToken ct) {
             var result = await _client.RegisterAsync(request.ToApiModel(), ct).ConfigureAwait(false);
@@ -71,9 +58,8 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Clients {
 
         /// <inheritdoc/>
         public async Task<ApplicationRegistrationModel> GetApplicationAsync(
-            string applicationId, bool filterInactiveTwins, CancellationToken ct) {
-            var result = await _client.GetApplicationAsync(applicationId
-                /* TODO ,filterInactiveTwins */, ct).ConfigureAwait(false);
+            string applicationId, CancellationToken ct) {
+            var result = await _client.GetApplicationAsync(applicationId, ct).ConfigureAwait(false);
             return result.ToServiceModel();
         }
 
@@ -93,7 +79,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Clients {
 
         /// <inheritdoc/>
         public async Task<ApplicationInfoListModel> QueryApplicationsAsync(
-            ApplicationRegistrationQueryModel query, int? pageSize, CancellationToken ct) {
+            ApplicationInfoQueryModel query, int? pageSize, CancellationToken ct) {
             var result = await _client.QueryApplicationsAsync(query.ToApiModel(),
                 pageSize, ct).ConfigureAwait(false);
             return result.ToServiceModel();
@@ -101,13 +87,13 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Clients {
 
         /// <inheritdoc/>
         public Task UnregisterApplicationAsync(string applicationId, string generationId,
-            RegistryOperationContextModel context, CancellationToken ct) {
+            OperationContextModel context, CancellationToken ct) {
             return _client.UnregisterApplicationAsync(applicationId, generationId, ct);
         }
 
         /// <inheritdoc/>
         public Task PurgeDisabledApplicationsAsync(TimeSpan notSeenFor,
-            RegistryOperationContextModel context, CancellationToken ct) {
+            OperationContextModel context, CancellationToken ct) {
             return _client.PurgeDisabledApplicationsAsync(notSeenFor, ct);
         }
 

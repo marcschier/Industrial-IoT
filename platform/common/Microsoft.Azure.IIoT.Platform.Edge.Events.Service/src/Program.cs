@@ -100,20 +100,23 @@ namespace Microsoft.Azure.IIoT.Platform.Edge.Events.Service {
 
             // --- Logic ---
 
-            // 1.) Handler for discovery progress
+            // 1.) Handler for discovery progress with publishing to eventbus
             builder.RegisterType<DiscoveryProgressEventHandler>()
                 .AsImplementedInterfaces();
             builder.RegisterType<DiscoveryProgressEventBusPublisher>()
                 .AsImplementedInterfaces();
 
-            // 2.) Handlers for twin and device change events ...
-            builder.RegisterModule<RegistryEventHandlers>();
+            // 2.) Registry storage for data plane control events
+            builder.RegisterModule<RegistryStorage>();
+          //  builder.RegisterType<ConnectionEventHandler>()
+          //      .AsImplementedInterfaces();
 
-            // 3.) Publisher events
-            // TODO: because of dependencies should be in seperate processor
+            // 3.) Publisher storage for edge events
+            builder.RegisterModule<PublisherStorage>();
+            builder.RegisterType<WriterGroupEventHandler>()
+                .AsImplementedInterfaces();
             builder.RegisterType<DataSetWriterEventHandler>()
                 .AsImplementedInterfaces();
-            builder.RegisterModule<PublisherServices>();
 
             // --- Dependencies ---
 

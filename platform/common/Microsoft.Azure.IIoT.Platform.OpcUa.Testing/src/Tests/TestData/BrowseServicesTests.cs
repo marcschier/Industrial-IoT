@@ -20,9 +20,9 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
         /// <summary>
         /// Create browse services tests
         /// </summary>
-        public BrowseServicesTests(Func<IBrowseServices<T>> services, T endpoint) {
+        public BrowseServicesTests(Func<IBrowseServices<T>> services, T twin) {
             _services = services;
-            _endpoint = endpoint;
+            _twin = twin;
             _serializer = new NewtonSoftJsonSerializer();
         }
 
@@ -31,7 +31,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
             var browser = _services();
 
             // Act
-            var results = await browser.NodeBrowseAsync(_endpoint,
+            var results = await browser.NodeBrowseAsync(_twin,
                 new BrowseRequestModel()).ConfigureAwait(false);
 
             // Assert
@@ -76,7 +76,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
             var browser = _services();
 
             // Act
-            var results = await browser.NodeBrowseAsync(_endpoint,
+            var results = await browser.NodeBrowseAsync(_twin,
                 new BrowseRequestModel {
                     TargetNodesOnly = true,
                     ReadVariableValues = true
@@ -125,7 +125,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
             var browser = _services();
 
             // Act
-            var results = await browser.NodeBrowseFirstAsync(_endpoint,
+            var results = await browser.NodeBrowseFirstAsync(_twin,
                 new BrowseRequestModel {
                     TargetNodesOnly = false,
                     MaxReferencesToReturn = 1
@@ -157,7 +157,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
             var browser = _services();
 
             // Act
-            var results = await browser.NodeBrowseFirstAsync(_endpoint,
+            var results = await browser.NodeBrowseFirstAsync(_twin,
                 new BrowseRequestModel {
                     TargetNodesOnly = false,
                     MaxReferencesToReturn = 2
@@ -197,7 +197,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
             var browser = _services();
 
             // Act
-            var results = await browser.NodeBrowseAsync(_endpoint,
+            var results = await browser.NodeBrowseAsync(_twin,
                 new BrowseRequestModel {
                     NodeId = "http://opcfoundation.org/UA/Boiler/#i=1240",
                     TargetNodesOnly = true
@@ -240,7 +240,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
             var browser = _services();
 
             // Act
-            var results = await browser.NodeBrowseAsync(_endpoint,
+            var results = await browser.NodeBrowseAsync(_twin,
                 new BrowseRequestModel {
                     NodeId = "nsu=DataAccess;s=0:TestData/Static",
                     TargetNodesOnly = false
@@ -323,7 +323,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
             var browser = _services();
 
             // Act
-            var results = await browser.NodeBrowseAsync(_endpoint,
+            var results = await browser.NodeBrowseAsync(_twin,
                 new BrowseRequestModel {
                     NodeId = "DataAccess#s=0:TestData/Static",
                     TargetNodesOnly = false
@@ -406,7 +406,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
             var browser = _services();
 
             // Act
-            var results = await browser.NodeBrowseAsync(_endpoint,
+            var results = await browser.NodeBrowseAsync(_twin,
                 new BrowseRequestModel {
                     NodeId = "nsu=DataAccess;s=0:TestData/Static",
                     TargetNodesOnly = true,
@@ -496,7 +496,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
             var browser = _services();
 
             // Act
-            var results = await browser.NodeBrowseAsync(_endpoint,
+            var results = await browser.NodeBrowseAsync(_twin,
                 new BrowseRequestModel {
                     NodeId = "DataAccess#s=0:TestData/Static",
                     TargetNodesOnly = true,
@@ -587,7 +587,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
             var browser = _services();
 
             // Act
-            var results = await browser.NodeBrowseAsync(_endpoint,
+            var results = await browser.NodeBrowseAsync(_twin,
                 new BrowseRequestModel {
                     NodeId = "nsu=DataAccess;s=1:FC1001",
                     TargetNodesOnly = false
@@ -656,7 +656,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
             var browser = _services();
 
             // Act
-            var results = await browser.NodeBrowseAsync(_endpoint,
+            var results = await browser.NodeBrowseAsync(_twin,
                 new BrowseRequestModel {
                     NodeId = "nsu=DataAccess;s=1:FC1001",
                     TargetNodesOnly = true,
@@ -730,7 +730,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
             var browser = _services();
 
             // Act
-            var results = await browser.NodeBrowseAsync(_endpoint,
+            var results = await browser.NodeBrowseAsync(_twin,
                 new BrowseRequestModel {
                     NodeId = "http://opcfoundation.org/UA/Boiler/#i=1240",
                     TargetNodesOnly = false
@@ -790,7 +790,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
             var browser = _services();
 
             // Act
-            var results = await browser.NodeBrowseAsync(_endpoint,
+            var results = await browser.NodeBrowseAsync(_twin,
                 new BrowseRequestModel {
                     NodeId = "http://test.org/UA/Data/#i=10159",
                     TargetNodesOnly = true
@@ -1191,7 +1191,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
             var browser = _services();
 
             // Act
-            var results = await browser.NodeBrowseAsync(_endpoint,
+            var results = await browser.NodeBrowseAsync(_twin,
                 new BrowseRequestModel {
                     NodeId = "http://test.org/UA/Data/#i=10159",
                     TargetNodesOnly = true,
@@ -1233,7 +1233,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
             var browser = _services();
 
             // Act
-            var results = await browser.NodeBrowseAsync(_endpoint,
+            var results = await browser.NodeBrowseAsync(_twin,
                 new BrowseRequestModel {
                     NodeId = "http://test.org/UA/Data/#i=10159",
                     TargetNodesOnly = true,
@@ -1265,7 +1265,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
             var browser = _services();
 
             // Act
-            var results = await browser.NodeBrowseAsync(_endpoint,
+            var results = await browser.NodeBrowseAsync(_twin,
                 new BrowseRequestModel {
                     NodeId = "http://test.org/UA/Data/#i=10243",
                     TargetNodesOnly = true
@@ -1753,7 +1753,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
             var browser = _services();
 
             // Act
-            var results = await browser.NodeBrowseAsync(_endpoint,
+            var results = await browser.NodeBrowseAsync(_twin,
                 new BrowseRequestModel {
                     NodeId = "http://test.org/UA/Data/#i=10243",
                     TargetNodesOnly = true,
@@ -2044,7 +2044,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
             var browser = _services();
 
             // Act
-            var results = await browser.NodeBrowseAsync(_endpoint,
+            var results = await browser.NodeBrowseAsync(_twin,
                 new BrowseRequestModel {
                     NodeId = "http://opcfoundation.org/UA/Boiler/#i=1240",
                     NodeIdsOnly = true
@@ -2106,7 +2106,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
             var browser = _services();
 
             // Act
-            var results = await browser.NodeBrowseFirstAsync(_endpoint,
+            var results = await browser.NodeBrowseFirstAsync(_twin,
                 new BrowseRequestModel {
                     NodeId = "http://samples.org/UA/memorybuffer/Instance#s=UInt32",
                     MaxReferencesToReturn = 5
@@ -2117,7 +2117,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
             Assert.Equal(5, results.References.Count);
 
             // Act
-            _ = await browser.NodeBrowseNextAsync(_endpoint,
+            _ = await browser.NodeBrowseNextAsync(_twin,
                 new BrowseNextRequestModel {
                     ContinuationToken = results.ContinuationToken
                 }).ConfigureAwait(false);
@@ -2133,7 +2133,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
             var browser = _services();
 
             // Act
-            var results = await browser.NodeBrowseFirstAsync(_endpoint,
+            var results = await browser.NodeBrowseFirstAsync(_twin,
                 new BrowseRequestModel {
                     NodeId = "http://samples.org/UA/memorybuffer/Instance#s=UInt32",
                     MaxReferencesToReturn = 200
@@ -2144,7 +2144,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
             Assert.Equal(200, results.References.Count);
 
             // Act
-            _ = await browser.NodeBrowseNextAsync(_endpoint,
+            _ = await browser.NodeBrowseNextAsync(_twin,
                 new BrowseNextRequestModel {
                     ContinuationToken = results.ContinuationToken
                 }).ConfigureAwait(false);
@@ -2159,7 +2159,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
             var browser = _services();
 
             // Act
-            var results = await browser.NodeBrowseFirstAsync(_endpoint,
+            var results = await browser.NodeBrowseFirstAsync(_twin,
                 new BrowseRequestModel {
                     NodeId = "http://samples.org/UA/memorybuffer/Instance#s=UInt32",
                     MaxReferencesToReturn = 1,
@@ -2182,7 +2182,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
             var browser = _services();
 
             // Act
-            var results = await browser.NodeBrowsePathAsync(_endpoint,
+            var results = await browser.NodeBrowsePathAsync(_twin,
                 new BrowsePathRequestModel {
                     Header = new RequestHeaderModel {
                         Diagnostics = new DiagnosticsModel {
@@ -2216,7 +2216,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
             var browser = _services();
 
             // Act
-            var results = await browser.NodeBrowsePathAsync(_endpoint,
+            var results = await browser.NodeBrowsePathAsync(_twin,
                 new BrowsePathRequestModel {
                     Header = new RequestHeaderModel {
                         Diagnostics = new DiagnosticsModel {
@@ -2250,7 +2250,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
             var browser = _services();
 
             // Act
-            var results = await browser.NodeBrowsePathAsync(_endpoint,
+            var results = await browser.NodeBrowsePathAsync(_twin,
                 new BrowsePathRequestModel {
                     Header = new RequestHeaderModel {
                         Diagnostics = new DiagnosticsModel {
@@ -2289,7 +2289,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
             var browser = _services();
 
             // Act
-            var results = await browser.NodeBrowsePathAsync(_endpoint,
+            var results = await browser.NodeBrowsePathAsync(_twin,
                 new BrowsePathRequestModel {
                     Header = new RequestHeaderModel {
                         Diagnostics = new DiagnosticsModel {
@@ -2323,7 +2323,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
             var browser = _services();
 
             // Act
-            var results = await browser.NodeBrowseAsync(_endpoint,
+            var results = await browser.NodeBrowseAsync(_twin,
                 new BrowseRequestModel {
                     Header = new RequestHeaderModel {
                         Diagnostics = new DiagnosticsModel {
@@ -2347,7 +2347,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
             var browser = _services();
 
             // Act
-            var results = await browser.NodeBrowseAsync(_endpoint,
+            var results = await browser.NodeBrowseAsync(_twin,
                 new BrowseRequestModel {
                     Header = new RequestHeaderModel {
                         Diagnostics = new DiagnosticsModel {
@@ -2375,7 +2375,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
             var browser = _services();
 
             // Act
-            var results = await browser.NodeBrowseAsync(_endpoint,
+            var results = await browser.NodeBrowseAsync(_twin,
                 new BrowseRequestModel {
                     Header = new RequestHeaderModel {
                         Diagnostics = new DiagnosticsModel {
@@ -2403,7 +2403,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
             var browser = _services();
 
             // Act
-            var results = await browser.NodeBrowseAsync(_endpoint,
+            var results = await browser.NodeBrowseAsync(_twin,
                 new BrowseRequestModel {
                     Header = new RequestHeaderModel {
                         Diagnostics = new DiagnosticsModel {
@@ -2419,7 +2419,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
             Assert.True(results.ErrorInfo.Diagnostics.IsListOfValues);
         }
 
-        private readonly T _endpoint;
+        private readonly T _twin;
         private readonly IJsonSerializer _serializer;
         private readonly Func<IBrowseServices<T>> _services;
     }

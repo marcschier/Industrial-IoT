@@ -603,8 +603,8 @@ Options:
                 IgnoreDefaultValues = true,
                 UseAdvancedEncoding = true
             })
-            using (var browser = new BrowsedNodeStreamEncoder(client, endpoint, encoder,
-                null, logger.Logger, null)) {
+            using (var browser = new BrowsedNodeStreamEncoder(client, 
+                endpoint.ToConnectionModel(), encoder, null, logger.Logger)) {
                 await browser.EncodeAsync(CancellationToken.None).ConfigureAwait(false);
             }
         }
@@ -620,8 +620,10 @@ Options:
                 using (var client = new ClientServices(logger.Logger, config))
                 using (var server = new ServerWrapper(endpoint, logger)) {
                     var sw = Stopwatch.StartNew();
-                    using (var archive = await storage.OpenAsync(fileName, FileMode.Create, FileAccess.Write).ConfigureAwait(false))
-                    using (var archiver = new AddressSpaceArchiver(client, endpoint, archive, logger.Logger)) {
+                    using (var archive = await storage.OpenAsync(fileName, FileMode.Create, 
+                        FileAccess.Write).ConfigureAwait(false))
+                    using (var archiver = new AddressSpaceArchiver(client,
+                        endpoint.ToConnectionModel(), archive, logger.Logger)) {
                         await archiver.ArchiveAsync(CancellationToken.None).ConfigureAwait(false);
                     }
                     var elapsed = sw.Elapsed;
@@ -662,8 +664,9 @@ Options:
                             using (var zipped = zip ?
                                 new DeflateStream(stream, CompressionLevel.Optimal) :
                                 (Stream)new GZipStream(stream, CompressionLevel.Optimal))
-                            using (var browser = new BrowsedNodeStreamEncoder(client, endpoint, zipped,
-                                run.Value, null, logger.Logger, null)) {
+                            using (var browser = new BrowsedNodeStreamEncoder(client,
+                                endpoint.ToConnectionModel(), zipped,
+                                run.Value, null, logger.Logger)) {
                                 await browser.EncodeAsync(CancellationToken.None).ConfigureAwait(false);
                             }
                         }
@@ -688,8 +691,9 @@ Options:
                         Console.WriteLine($"Reading into {filename}...");
                         using (var stream = new FileStream(filename, FileMode.Create)) {
                             using (var zipped = new DeflateStream(stream, CompressionLevel.Optimal))
-                            using (var browser = new BrowsedNodeStreamEncoder(client, endpoint, zipped,
-                                ContentMimeType.UaJson, null, logger.Logger, null)) {
+                            using (var browser = new BrowsedNodeStreamEncoder(client,
+                                endpoint.ToConnectionModel(), zipped,
+                                ContentMimeType.UaJson, null, logger.Logger)) {
                                 await browser.EncodeAsync(CancellationToken.None).ConfigureAwait(false);
                             }
                         }
@@ -760,7 +764,8 @@ Options:
                                     Console.WriteLine($"Browsing {request.NodeId}");
                                     Console.WriteLine($"====================");
                                 }
-                                var result = await service.NodeBrowseAsync(endpoint, request).ConfigureAwait(false);
+                                var result = await service.NodeBrowseAsync(
+                                    endpoint.ToConnectionModel(), request).ConfigureAwait(false);
                                 visited.Add(request.NodeId);
                                 if (!silent) {
                                     Console.WriteLine(JsonConvert.SerializeObject(result,
@@ -788,10 +793,10 @@ Options:
                                     }
                                     try {
                                         nodesRead.Add(r.Target.NodeId);
-                                        var read = await service.NodeValueReadAsync(endpoint,
+                                        var read = await service.NodeValueReadAsync(endpoint.ToConnectionModel(),
                                             new ValueReadRequestModel {
                                                 NodeId = r.Target.NodeId
-                                            }).ConfigureAwait(false);
+                                            }, default).ConfigureAwait(false);
                                         if (!silent) {
                                             Console.WriteLine(JsonConvert.SerializeObject(result,
                                                 Formatting.Indented));

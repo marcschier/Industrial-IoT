@@ -32,16 +32,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
         public SecurityMode? SecurityMode { get; set; }
 
         /// <summary>
-        /// Whether the endpoint is activated
-        /// </summary>
-        public EntityActivationState? ActivationState { get; set; }
-
-        /// <summary>
-        /// The last state of the the activated endpoint
-        /// </summary>
-        public EndpointConnectivityState? EndpointState { get; set; }
-
-        /// <summary>
         /// Whether to test for visibility
         /// </summary>
         public EntityVisibility? Visibility { get; set; }

@@ -23,9 +23,9 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
         /// <summary>
         /// Create node services tests
         /// </summary>
-        public CallScalarMethodTests(Func<INodeServices<T>> services, T endpoint) {
+        public CallScalarMethodTests(Func<INodeServices<T>> services, T twin) {
             _services = services;
-            _endpoint = endpoint;
+            _twin = twin;
             _serializer = new NewtonSoftJsonSerializer();
         }
 
@@ -36,7 +36,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
             var objectId = "http://test.org/UA/Data/#i=10755";
 
             // Act
-            var result = await service.NodeMethodGetMetadataAsync(_endpoint,
+            var result = await service.NodeMethodGetMetadataAsync(_twin,
                 new MethodMetadataRequestModel {
                     MethodId = methodId
                 }).ConfigureAwait(false);
@@ -275,7 +275,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
             var objectId = "http://test.org/UA/Data/#i=10755";
 
             // Act
-            var result = await service.NodeMethodGetMetadataAsync(_endpoint,
+            var result = await service.NodeMethodGetMetadataAsync(_twin,
                 new MethodMetadataRequestModel {
                     MethodId = methodId
                 }).ConfigureAwait(false);
@@ -494,7 +494,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
             var objectId = "http://test.org/UA/Data/#i=10755";
 
             // Act
-            var result = await service.NodeMethodGetMetadataAsync(_endpoint,
+            var result = await service.NodeMethodGetMetadataAsync(_twin,
                 new MethodMetadataRequestModel {
                     MethodId = methodId
                 }).ConfigureAwait(false);
@@ -575,7 +575,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
             };
 
             // Act
-            var result = await service.NodeMethodGetMetadataAsync(_endpoint,
+            var result = await service.NodeMethodGetMetadataAsync(_twin,
                 new MethodMetadataRequestModel {
                     MethodId = objectId,
                     MethodBrowsePath = path
@@ -660,7 +660,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
             };
 
             // Act
-            var result = await service.NodeMethodGetMetadataAsync(_endpoint,
+            var result = await service.NodeMethodGetMetadataAsync(_twin,
                 new MethodMetadataRequestModel {
                     MethodBrowsePath = path
                 }).ConfigureAwait(false);
@@ -786,7 +786,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
             };
 
             // Act
-            var result = await service.NodeMethodCallAsync(_endpoint,
+            var result = await service.NodeMethodCallAsync(_twin,
                 new MethodCallRequestModel {
                     MethodId = methodId,
                     ObjectId = objectId,
@@ -853,7 +853,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
             };
 
             // Act
-            var result = await service.NodeMethodCallAsync(_endpoint,
+            var result = await service.NodeMethodCallAsync(_twin,
                 new MethodCallRequestModel {
                     MethodId = methodId,
                     ObjectId = objectId,
@@ -905,7 +905,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
             var objectId = "http://test.org/UA/Data/#i=10755";
 
             // Act
-            var result = await service.NodeMethodCallAsync(_endpoint,
+            var result = await service.NodeMethodCallAsync(_twin,
                 new MethodCallRequestModel {
                     MethodId = methodId,
                     ObjectId = objectId
@@ -955,7 +955,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
             var objectId = "http://test.org/UA/Data/#i=10755";
 
             // Act
-            var result = await service.NodeMethodCallAsync(_endpoint,
+            var result = await service.NodeMethodCallAsync(_twin,
                 new MethodCallRequestModel {
                     MethodId = methodId,
                     ObjectId = objectId,
@@ -1033,7 +1033,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
             };
 
             // Act
-            var result = await service.NodeMethodCallAsync(_endpoint,
+            var result = await service.NodeMethodCallAsync(_twin,
                 new MethodCallRequestModel {
                     MethodId = methodId,
                     ObjectId = objectId,
@@ -1136,7 +1136,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
             };
 
             // Act
-            var result = await service.NodeMethodCallAsync(_endpoint,
+            var result = await service.NodeMethodCallAsync(_twin,
                 new MethodCallRequestModel {
                     MethodId = methodId,
                     ObjectId = objectId,
@@ -1201,7 +1201,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
                 "QualifiedName","LocalizedText","StatusCode" };
 
             // Act
-            var result = await service.NodeMethodCallAsync(_endpoint,
+            var result = await service.NodeMethodCallAsync(_twin,
                 new MethodCallRequestModel {
                     MethodId = methodId,
                     ObjectId = objectId
@@ -1282,7 +1282,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
             };
 
             // Act
-            var result = await service.NodeMethodCallAsync(_endpoint,
+            var result = await service.NodeMethodCallAsync(_twin,
                 new MethodCallRequestModel {
                     MethodId = methodId,
                     ObjectId = objectId,
@@ -1330,7 +1330,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
             };
 
             // Act
-            var result = await service.NodeMethodCallAsync(_endpoint,
+            var result = await service.NodeMethodCallAsync(_twin,
                 new MethodCallRequestModel {
                     MethodId = methodId,
                     ObjectId = objectId,
@@ -1389,7 +1389,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
             };
 
             // Act
-            var result = await service.NodeMethodCallAsync(_endpoint,
+            var result = await service.NodeMethodCallAsync(_twin,
                 new MethodCallRequestModel {
                     MethodBrowsePath = methodPath,
                     ObjectBrowsePath = objectPath,
@@ -1443,7 +1443,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
             };
 
             // Act
-            var result = await service.NodeMethodCallAsync(_endpoint,
+            var result = await service.NodeMethodCallAsync(_twin,
                 new MethodCallRequestModel {
                     MethodBrowsePath = methodPath,
                     ObjectId = objectId,
@@ -1501,7 +1501,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
             };
 
             // Act
-            var result = await service.NodeMethodCallAsync(_endpoint,
+            var result = await service.NodeMethodCallAsync(_twin,
                 new MethodCallRequestModel {
                     MethodBrowsePath = methodPath,
                     ObjectId = objectId,
@@ -1565,7 +1565,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
             };
 
             // Act
-            var result = await service.NodeMethodCallAsync(_endpoint,
+            var result = await service.NodeMethodCallAsync(_twin,
                 new MethodCallRequestModel {
                     MethodBrowsePath = methodPath,
                     ObjectBrowsePath = objectPath,
@@ -1628,7 +1628,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
             };
 
             // Act
-            var result = await service.NodeMethodCallAsync(_endpoint,
+            var result = await service.NodeMethodCallAsync(_twin,
                 new MethodCallRequestModel {
                     MethodBrowsePath = methodPath,
                     ObjectBrowsePath = objectPath,
@@ -1659,7 +1659,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
             var objectId = "ns=4;i=31";
 
             // Act
-            var result = await service.NodeMethodCallAsync(_endpoint,
+            var result = await service.NodeMethodCallAsync(_twin,
                 new MethodCallRequestModel {
                     MethodId = methodId,
                     ObjectId = objectId
@@ -1678,7 +1678,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
             var objectId = "http://opcfoundation.org/UA/Boiler/#i=1287";
 
             // Act
-            var result = await service.NodeMethodCallAsync(_endpoint,
+            var result = await service.NodeMethodCallAsync(_twin,
                 new MethodCallRequestModel {
                     MethodId = methodId,
                     ObjectId = objectId,
@@ -1690,7 +1690,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
             Assert.Null(result.ErrorInfo);
         }
 
-        private readonly T _endpoint;
+        private readonly T _twin;
         private readonly Func<INodeServices<T>> _services;
         private readonly IJsonSerializer _serializer;
     }

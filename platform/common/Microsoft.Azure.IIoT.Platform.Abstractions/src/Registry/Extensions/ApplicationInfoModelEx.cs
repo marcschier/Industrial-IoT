@@ -162,7 +162,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
         /// <param name="context"></param>
         /// <returns></returns>
         public static ApplicationRegistrationRequestModel ToRegistrationRequest(
-            this ApplicationInfoModel model, RegistryOperationContextModel context = null) {
+            this ApplicationInfoModel model, OperationContextModel context = null) {
             if (model is null) {
                 return null;
             }
@@ -189,7 +189,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
         /// <returns></returns>
         public static ApplicationInfoModel ToApplicationInfo(
             this ApplicationRegistrationRequestModel request,
-            RegistryOperationContextModel context) {
+            OperationContextModel context) {
             if (request is null) {
                 return null;
             }
@@ -222,7 +222,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
         /// <param name="context"></param>
         /// <returns></returns>
         public static ApplicationInfoUpdateModel ToUpdateRequest(
-            this ApplicationInfoModel model, RegistryOperationContextModel context = null) {
+            this ApplicationInfoModel model, OperationContextModel context = null) {
             if (model is null) {
                 return null;
             }

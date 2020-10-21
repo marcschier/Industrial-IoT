@@ -3,7 +3,7 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Platform.Publisher.Storage.Services {
+namespace Microsoft.Azure.IIoT.Platform.Publisher.Storage {
     using Microsoft.Azure.IIoT.Platform.Publisher.Models;
     using Microsoft.Azure.IIoT.Exceptions;
     using Microsoft.Azure.IIoT.Storage;
@@ -12,6 +12,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Storage.Services {
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.Azure.IIoT.Hub;
 
     /// <summary>
     /// Database group repository
@@ -200,7 +201,8 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Storage.Services {
             if (string.IsNullOrEmpty(generationId)) {
                 throw new ArgumentNullException(nameof(generationId));
             }
-            await _documents.DeleteAsync<WriterGroupDocument>(writerGroupId, null, generationId, ct).ConfigureAwait(false);
+            await _documents.DeleteAsync<WriterGroupDocument>(writerGroupId, null, 
+                generationId, ct).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -211,26 +213,27 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Storage.Services {
         /// <returns></returns>
         private static IResultFeed<IDocumentInfo<WriterGroupDocument>> CreateQuery(
             IQuery<WriterGroupDocument> query, WriterGroupInfoQueryModel filter) {
-
-            if (filter?.GroupVersion != null) {
-                query = query.Where(x => x.GroupVersion == filter.GroupVersion.Value);
+            if (filter != null) {
+                if (filter.GroupVersion != null) {
+                    query = query.Where(x => x.GroupVersion == filter.GroupVersion.Value);
+                }
+                if (filter.Encoding != null) {
+                    query = query.Where(x => x.MessageEncoding == filter.Encoding.Value);
+                }
+                if (filter.Schema != null) {
+                    query = query.Where(x => x.Schema == filter.Schema.Value);
+                }
+                if (filter.Priority != null) {
+                    query = query.Where(x => x.Priority == filter.Priority.Value);
+                }
+                if (filter.State != null) {
+                    query = query.Where(x => x.LastState == filter.State.Value);
+                }
+                if (filter.Name != null) {
+                    query = query.Where(x => x.Name == filter.Name);
+                }
             }
-            if (filter?.Encoding != null) {
-                query = query.Where(x => x.MessageEncoding == filter.Encoding.Value);
-            }
-            if (filter?.Schema != null) {
-                query = query.Where(x => x.Schema == filter.Schema.Value);
-            }
-            if (filter?.Priority != null) {
-                query = query.Where(x => x.Priority == filter.Priority.Value);
-            }
-            if (filter?.State != null) {
-                query = query.Where(x => x.LastState == filter.State.Value);
-            }
-            if (filter?.Name != null) {
-                query = query.Where(x => x.Name == filter.Name);
-            }
-            query = query.Where(x => x.ClassType == WriterGroupDocument.ClassTypeName);
+            query = query.Where(x => x.ClassType == IdentityType.WriterGroup);
             return query.GetResults();
         }
 

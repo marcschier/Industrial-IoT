@@ -18,29 +18,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry {
     public static class EndpointRegistryEx {
 
         /// <summary>
-        /// Get activated endopint
-        /// </summary>
-        /// <param name="registry"></param>
-        /// <param name="endpointId"></param>
-        /// <param name="ct"></param>
-        /// <returns></returns>
-        public static async Task<EndpointModel> GetActivatedEndpointAsync(
-            this IEndpointRegistry registry, string endpointId,
-            CancellationToken ct = default) {
-            if (registry is null) {
-                throw new ArgumentNullException(nameof(registry));
-            }
-            if (string.IsNullOrEmpty(endpointId)) {
-                throw new ArgumentNullException(nameof(endpointId));
-            }
-            var ep = await registry.GetEndpointAsync(endpointId, ct).ConfigureAwait(false);
-            if (ep.ActivationState != EntityActivationState.Activated) {
-                throw new ArgumentException("Endpoint not activated", nameof(endpointId));
-            }
-            return ep.Endpoint;
-        }
-
-        /// <summary>
         /// Find endpoint.
         /// </summary>
         /// <param name="service"></param>
@@ -97,48 +74,5 @@ namespace Microsoft.Azure.IIoT.Platform.Registry {
             }
             return registrations;
         }
-
-        /// <summary>
-        /// Deactivate an endpoint
-        /// </summary>
-        /// <param name="service"></param>
-        /// <param name="endpointId"></param>
-        /// <param name="generationId"></param>
-        /// <param name="ct"></param>
-        /// <returns></returns>
-        public static async Task DeactivateEndpointAsync(this IEndpointRegistry service,
-            string endpointId, string generationId = null, CancellationToken ct = default) {
-            if (string.IsNullOrEmpty(generationId)) {
-                var ep = await service.GetEndpointAsync(endpointId, ct).ConfigureAwait(false);
-                generationId = ep.GenerationId;
-            }
-            await service.UpdateEndpointAsync(endpointId,
-                new EndpointInfoUpdateModel {
-                    GenerationId = generationId,
-                    ActivationState = EntityActivationState.Deactivated
-                }, ct).ConfigureAwait(false);
-        }
-
-        /// <summary>
-        /// Activate an endpoint
-        /// </summary>
-        /// <param name="service"></param>
-        /// <param name="endpointId"></param>
-        /// <param name="generationId"></param>
-        /// <param name="ct"></param>
-        /// <returns></returns>
-        public static async Task ActivateEndpointAsync(this IEndpointRegistry service,
-            string endpointId, string generationId = null, CancellationToken ct = default) {
-            if (string.IsNullOrEmpty(generationId)) {
-                var ep = await service.GetEndpointAsync(endpointId, ct).ConfigureAwait(false);
-                generationId = ep.GenerationId;
-            }
-            await service.UpdateEndpointAsync(endpointId,
-                new EndpointInfoUpdateModel {
-                    GenerationId = generationId,
-                    ActivationState = EntityActivationState.Activated
-                }, ct).ConfigureAwait(false);
-        }
-
     }
 }

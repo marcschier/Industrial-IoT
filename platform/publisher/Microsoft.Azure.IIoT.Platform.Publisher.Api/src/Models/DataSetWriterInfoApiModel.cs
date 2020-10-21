@@ -4,6 +4,7 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Platform.Publisher.Api.Models {
+    using Microsoft.Azure.IIoT.Platform.Core.Api.Models;
     using System.Runtime.Serialization;
     using System;
 
@@ -66,13 +67,13 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api.Models {
         /// </summary>
         [DataMember(Name = "updated", Order = 7,
             EmitDefaultValue = false)]
-        public PublisherOperationContextApiModel Updated { get; set; }
+        public OperationContextApiModel Updated { get; set; }
 
         /// <summary>
         /// Created
         /// </summary>
         [DataMember(Name = "created", Order = 8,
             EmitDefaultValue = false)]
-        public PublisherOperationContextApiModel Created { get; set; }
+        public OperationContextApiModel Created { get; set; }
     }
 }

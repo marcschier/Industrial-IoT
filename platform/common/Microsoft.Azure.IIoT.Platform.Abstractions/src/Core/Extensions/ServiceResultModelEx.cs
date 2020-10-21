@@ -10,6 +10,25 @@ namespace Microsoft.Azure.IIoT.Platform.Core.Models {
     public static class ServiceResultModelEx {
 
         /// <summary>
+        /// Equality comparison
+        /// </summary>
+        /// <param name="model"></param>
+        /// <param name="that"></param>
+        /// <returns></returns>
+        public static bool IsSameAs(this ServiceResultModel model, ServiceResultModel that) {
+            if (model == that) {
+                return true;
+            }
+            if (model == null || that == null) {
+                return false;
+            }
+            if (that.StatusCode != model.StatusCode) {
+                return false;
+            }
+            return true;
+        }
+
+        /// <summary>
         /// Clone
         /// </summary>
         /// <param name="model"></param>

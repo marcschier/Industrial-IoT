@@ -42,37 +42,23 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Models {
         public string SecurityPolicy { get; set; }
 
         /// <summary>
-        /// Whether the endpoint was activated
-        /// </summary>
-        [DataMember(Name = "activationState", Order = 4,
-            EmitDefaultValue = false)]
-        public EntityActivationState? ActivationState { get; set; }
-
-        /// <summary>
-        /// The last state of the the activated endpoint
-        /// </summary>
-        [DataMember(Name = "endpointState", Order = 6,
-            EmitDefaultValue = false)]
-        public EndpointConnectivityState? EndpointState { get; set; }
-
-        /// <summary>
         /// Whether to test for visibility
         /// </summary>
-        [DataMember(Name = "visibility", Order = 7,
+        [DataMember(Name = "visibility", Order = 4,
             EmitDefaultValue = false)]
         public EntityVisibility? Visibility { get; set; }
 
         /// <summary>
         /// Discoverer id to filter with
         /// </summary>
-        [DataMember(Name = "discovererId", Order = 8,
+        [DataMember(Name = "discovererId", Order = 5,
             EmitDefaultValue = false)]
         public string DiscovererId { get; set; }
 
         /// <summary>
         /// Application id to filter
         /// </summary>
-        [DataMember(Name = "applicationId", Order = 9,
+        [DataMember(Name = "applicationId", Order = 6,
             EmitDefaultValue = false)]
         public string ApplicationId { get; set; }
     }

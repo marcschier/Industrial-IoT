@@ -31,22 +31,20 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
         /// Create history encoder
         /// </summary>
         /// <param name="client"></param>
-        /// <param name="endpoint"></param>
+        /// <param name="connection"></param>
         /// <param name="stream"></param>
         /// <param name="contentType"></param>
         /// <param name="nodeId"></param>
         /// <param name="logger"></param>
-        /// <param name="elevation"></param>
         /// <param name="startTime"></param>
         /// <param name="endTime"></param>
         /// <param name="maxValues"></param>
         /// <param name="priority"></param>
-        public HistoricValueStreamEncoder(IEndpointServices client, EndpointModel endpoint,
-            Stream stream, string contentType, string nodeId, ILogger logger,
-            CredentialModel elevation = null, DateTime? startTime = null,
-            DateTime? endTime = null, int? maxValues = null, int priority = int.MaxValue) :
-            this(client, endpoint, nodeId, logger, elevation, startTime, endTime,
-                maxValues, priority) {
+        public HistoricValueStreamEncoder(IConnectionServices client, ConnectionModel connection,
+            Stream stream, string contentType, string nodeId, ILogger logger, 
+            DateTime? startTime = null, DateTime? endTime = null, int? maxValues = null, 
+            int priority = int.MaxValue) :
+            this(client, connection, nodeId, logger, startTime, endTime, maxValues, priority) {
             _encoder = new ModelEncoder(stream, contentType);
         }
 
@@ -54,21 +52,18 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
         /// Create history encoder
         /// </summary>
         /// <param name="client"></param>
-        /// <param name="endpoint"></param>
+        /// <param name="connection"></param>
         /// <param name="encoder"></param>
         /// <param name="nodeId"></param>
         /// <param name="logger"></param>
-        /// <param name="elevation"></param>
         /// <param name="startTime"></param>
         /// <param name="endTime"></param>
         /// <param name="maxValues"></param>
         /// <param name="priority"></param>
-        public HistoricValueStreamEncoder(IEndpointServices client, EndpointModel endpoint,
-            IEncoder encoder, string nodeId, ILogger logger, CredentialModel elevation = null,
-            DateTime? startTime = null, DateTime? endTime = null, int? maxValues = null,
-            int priority = int.MaxValue) :
-            this(client, endpoint, nodeId, logger, elevation, startTime, endTime,
-                maxValues, priority) {
+        public HistoricValueStreamEncoder(IConnectionServices client, ConnectionModel connection,
+            IEncoder encoder, string nodeId, ILogger logger, DateTime? startTime = null, 
+            DateTime? endTime = null, int? maxValues = null, int priority = int.MaxValue) :
+            this(client, connection, nodeId, logger, startTime, endTime, maxValues, priority) {
             _encoder = new ModelEncoder(encoder);
         }
 
@@ -76,28 +71,26 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
         /// Create history encoder
         /// </summary>
         /// <param name="client"></param>
-        /// <param name="endpoint"></param>
+        /// <param name="connection"></param>
         /// <param name="nodeId"></param>
         /// <param name="logger"></param>
-        /// <param name="elevation"></param>
         /// <param name="startTime"></param>
         /// <param name="endTime"></param>
         /// <param name="maxValues"></param>
         /// <param name="priority"></param>
-        private HistoricValueStreamEncoder(IEndpointServices client, EndpointModel endpoint,
-            string nodeId, ILogger logger, CredentialModel elevation, DateTime? startTime,
-            DateTime? endTime, int? maxValues, int priority) {
+        private HistoricValueStreamEncoder(IConnectionServices client, ConnectionModel connection,
+            string nodeId, ILogger logger, DateTime? startTime, DateTime? endTime, 
+            int? maxValues, int priority) {
 
             _client = client ?? throw new ArgumentNullException(nameof(client));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            _endpoint = endpoint ?? throw new ArgumentNullException(nameof(endpoint));
+            _connection = connection ?? throw new ArgumentNullException(nameof(connection));
 
             if (string.IsNullOrEmpty(nodeId)) {
                 throw new ArgumentNullException(nameof(nodeId));
             }
 
             _nodeId = nodeId;
-            _elevation = elevation;
             _startTime = startTime ?? DateTime.UtcNow.AddDays(-1);
             _endTime = endTime ?? DateTime.UtcNow;
             _maxValues = maxValues ?? short.MaxValue * 2;
@@ -116,7 +109,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
             }
             bool eventSource;
             try {
-                var node = await _client.ExecuteServiceAsync(_endpoint, _elevation,
+                var node = await _client.ExecuteServiceAsync(_connection, 
                     _priority, async session => {
                         _encoder.Context.UpdateFromSession(session);
                         var nodeId = _nodeId.ToNodeId(session.MessageContext);
@@ -310,7 +303,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
         /// <param name="ct"></param>
         /// <returns></returns>
         private Task<EventFilter> ReadEventFilterAsync(CancellationToken ct) {
-            return _client.ExecuteServiceAsync(_endpoint, _elevation, _priority, async session => {
+            return _client.ExecuteServiceAsync(_connection, _priority, async session => {
                 _encoder.Context.UpdateFromSession(session);
                 var nodeId = _nodeId.ToNodeId(session.MessageContext);
                 var filterNode = await session.TranslateBrowsePathsToNodeIdsAsync(null,
@@ -346,7 +339,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
         /// <returns></returns>
         private Task<(byte[] continuationToken, T history)> ReadHistoryAsync<T>(
             object details, CancellationToken ct, byte[] continuationToken = null) {
-            return _client.ExecuteServiceAsync(_endpoint, _elevation, _priority, async session => {
+            return _client.ExecuteServiceAsync(_connection, _priority, async session => {
                 _encoder.Context.UpdateFromSession(session);
                 var nodeId = _nodeId.ToNodeId(session.MessageContext);
                 var response = await session.HistoryReadAsync(null,
@@ -365,8 +358,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
                 var encodeable = ExtensionObject.ToEncodeable(
                     response.Results[0].HistoryData);
                 return (continuationToken, encodeable is T t ? t : default);
-            },
-                ct);
+            }, ct);
         }
 
         private int _count;
@@ -376,9 +368,8 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
         private readonly DateTime _startTime;
         private readonly DateTime _endTime;
         private readonly string _nodeId;
-        private readonly IEndpointServices _client;
-        private readonly EndpointModel _endpoint;
-        private readonly CredentialModel _elevation;
+        private readonly IConnectionServices _client;
+        private readonly ConnectionModel _connection;
         private readonly ModelEncoder _encoder;
         private readonly ILogger _logger;
         private readonly List<OperationResultModel> _diagnostics =

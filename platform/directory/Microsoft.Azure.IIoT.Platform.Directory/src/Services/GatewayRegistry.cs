@@ -42,7 +42,7 @@ namespace Microsoft.Azure.IIoT.Platform.Directory.Services {
             var query = $"SELECT tags.{tag}, COUNT() FROM devices WHERE " +
                 $"tags.{nameof(EntityRegistration.DeviceType)} = '{IdentityType.Gateway}' " +
                 $"GROUP BY tags.{tag}";
-            var result = await _iothub.QueryAsync(query, continuation, pageSize, ct);
+            var result = await _iothub.QueryAsync(query, continuation, pageSize, ct).ConfigureAwait(false);
             return new GatewaySiteListModel {
                 ContinuationToken = result.ContinuationToken,
                 Sites = result.Result

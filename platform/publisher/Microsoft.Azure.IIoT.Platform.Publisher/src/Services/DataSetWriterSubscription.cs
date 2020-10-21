@@ -31,37 +31,42 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
         /// Create persistent writer data source
         /// </summary>
         /// <param name="diagnostics"></param>
-        /// <param name="state"></param>
+        /// <param name="writerState"></param>
         /// <param name="codec"></param>
         /// <param name="sink"></param>
         /// <param name="client"></param>
         /// <param name="logger"></param>
         public DataSetWriterSubscription(ISubscriptionClient client, IDataSetWriterDataSink sink,
-            IDataSetWriterDiagnostics diagnostics, IDataSetWriterStateReporter state,
+            IDataSetWriterDiagnostics diagnostics, IDataSetWriterStateReporter writerState,
             IVariantEncoderFactory codec, ILogger logger) {
             _diagnostics = diagnostics ?? throw new ArgumentNullException(nameof(diagnostics));
-            _state = state ?? throw new ArgumentNullException(nameof(state));
-            _codec = codec ?? throw new ArgumentNullException(nameof(codec));
+            _writerState = writerState ?? throw new ArgumentNullException(nameof(writerState));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _client = client ?? throw new ArgumentNullException(nameof(client));
+            _codec = codec ?? throw new ArgumentNullException(nameof(codec));
             _sink = sink ?? throw new ArgumentNullException(nameof(sink));
         }
 
         /// <inheritdoc/>
         public async Task ConfigureAsync(PublishedDataSetModel dataSet) {
             if (_subscription != null) {
+                _logger.Information("Stopping {writer} subscription...", DataSetWriterId);
                 await _subscription.CloseAsync().ConfigureAwait(false);
                 _subscription = null;
             }
 
             var config = ToSubscriptionModel(dataSet);
             if (config == null) { // if dataset is null or empty
+                _logger.Information("{writer} successfully disabled", DataSetWriterId);
                 return;
             }
             _dataSet = dataSet;
 
-            _subscription = await _client.CreateSubscriptionAsync(config, this).ConfigureAwait(false);
-            await _subscription.ApplyAsync(config.MonitoredItems, config.Configuration).ConfigureAwait(false);
+            _subscription = await _client.CreateSubscriptionAsync(config,
+                this).ConfigureAwait(false);
+            await _subscription.ApplyAsync(config.MonitoredItems, 
+                config.Configuration).ConfigureAwait(false);
+            _logger.Information("Started {writer} subscription...", DataSetWriterId);
 
             //
             // only try to activate if already enabled. Otherwise the activation
@@ -69,17 +74,22 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
             //
             if (_subscription.Enabled) {
                 await _subscription.ActivateAsync(null).ConfigureAwait(false);
+                _logger.Information("Activated {writer} subscription...", DataSetWriterId);
             }
+
+            _logger.Information("{writer} successfully reconfigured.", DataSetWriterId);
         }
 
         /// <inheritdoc/>
-        public void OnEndpointConnectivityChange(EndpointConnectivityState previous,
-            EndpointConnectivityState newState) {
+        public void OnConnectivityChange(ConnectionStatus previous, ConnectionStatus newState) {
             var state = new PublishedDataSetSourceStateModel {
-                EndpointState = newState,
+                ConnectionState = new ConnectionStateModel {
+                    State = newState,
+                    LastResultChange = DateTime.UtcNow
+                }
             };
-            _state.OnDataSetWriterStateChange(DataSetWriterId, state);
-            if (newState == EndpointConnectivityState.Connecting) {
+            _writerState.OnDataSetWriterStateChange(DataSetWriterId, state);
+            if (newState == ConnectionStatus.Connecting) {
                 _diagnostics.ReportConnectionRetry(DataSetWriterId);
             }
         }
@@ -100,12 +110,12 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
             };
             if (!isEvent) {
                 // Report as variable state change
-                _state.OnDataSetVariableStateChange(DataSetWriterId,
+                _writerState.OnDataSetVariableStateChange(DataSetWriterId,
                     monitoredItemId, state);
             }
             else {
                 // Report as event state
-                _state.OnDataSetEventStateChange(DataSetWriterId, state);
+                _writerState.OnDataSetEventStateChange(DataSetWriterId, state);
             }
         }
 
@@ -119,7 +129,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                 LastResult = codec.Encode(
                     lastResult?.StatusCode ?? lastResult?.InnerResult?.StatusCode),
             };
-            _state.OnDataSetWriterStateChange(DataSetWriterId, state);
+            _writerState.OnDataSetWriterStateChange(DataSetWriterId, state);
         }
 
         /// <inheritdoc/>
@@ -130,7 +140,8 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
             _diagnostics.ReportDataSetWriterSubscriptionNotifications(
                 DataSetWriterId, notification.MonitoredItems.Count);
 
-            _sink.Write(DataSetWriterId, _dataSet, Interlocked.Increment(ref _sequenceNumber),
+            _sink.OnDataSetNotification(DataSetWriterId, _dataSet, 
+                Interlocked.Increment(ref _sequenceNumber),
                 notification, stringTable, subscription);
         }
 
@@ -142,7 +153,8 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
             _diagnostics.ReportDataSetWriterSubscriptionNotifications(
                 DataSetWriterId, notification.Events.Count);
 
-            _sink.Write(DataSetWriterId, _dataSet, Interlocked.Increment(ref _sequenceNumber),
+            _sink.OnDataSetNotification(DataSetWriterId, _dataSet, 
+                Interlocked.Increment(ref _sequenceNumber),
                 notification, stringTable, subscription);
         }
 
@@ -184,7 +196,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
         private readonly IVariantEncoderFactory _codec;
         private readonly ISubscriptionClient _client;
         private readonly IDataSetWriterDataSink _sink;
-        private readonly IDataSetWriterStateReporter _state;
+        private readonly IDataSetWriterStateReporter _writerState;
         private readonly ILogger _logger;
         private readonly IDataSetWriterDiagnostics _diagnostics;
     }

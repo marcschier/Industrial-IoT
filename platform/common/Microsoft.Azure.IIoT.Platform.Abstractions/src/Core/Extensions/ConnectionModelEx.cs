@@ -68,6 +68,7 @@ namespace Microsoft.Azure.IIoT.Platform.Core.Models {
             return new ConnectionModel {
                 Endpoint = model.Endpoint.Clone(),
                 User = model.User.Clone(),
+                OperationTimeout = model.OperationTimeout,
                 Diagnostics = model.Diagnostics.Clone()
             };
         }

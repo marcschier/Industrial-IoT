@@ -41,8 +41,8 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa {
         /// </summary>
         /// <param name="previous"></param>
         /// <param name="newValue"></param>
-        void UpdateConnectivityState(EndpointConnectivityState previous,
-            EndpointConnectivityState newValue);
+        void UpdateConnectivityState(ConnectionStatus previous,
+            ConnectionStatus newValue);
 
         /// <summary>
         /// Apply desired state

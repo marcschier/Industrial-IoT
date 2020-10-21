@@ -4,6 +4,7 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Platform.Publisher.Models {
+
     /// <summary>
     /// State model extensions
     /// </summary>
@@ -16,11 +17,11 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Models {
         /// <returns></returns>
         public static WriterGroupStateModel Clone(this WriterGroupStateModel model) {
             if (model?.LastStateChange == null &&
-                model?.State == null) {
+                model?.LastState == null) {
                 return null;
             }
             return new WriterGroupStateModel {
-                State = model.State,
+                LastState = model.LastState,
                 LastStateChange = model.LastStateChange
             };
         }

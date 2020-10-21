@@ -66,7 +66,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
 
         /// <inheritdoc/>
         public async Task UnregisterApplicationAsync(string applicationId, string generationId,
-            RegistryOperationContextModel context, CancellationToken ct) {
+            OperationContextModel context, CancellationToken ct) {
             context = context.Validate();
 
             var application = await _database.DeleteAsync(applicationId, application => {
@@ -138,13 +138,13 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
 
         /// <inheritdoc/>
         public async Task<ApplicationRegistrationModel> GetApplicationAsync(
-            string applicationId, bool filterInactiveTwins, CancellationToken ct) {
+            string applicationId, CancellationToken ct) {
             var application = await _database.FindAsync(applicationId, ct).ConfigureAwait(false);
             if (application == null) {
                 throw new ResourceNotFoundException("Could not find application");
             }
-            var endpoints = await _endpoints.GetApplicationEndpoints(applicationId, 
-                application.IsNotSeen(), filterInactiveTwins, ct).ConfigureAwait(false);
+            var endpoints = await _endpoints.GetApplicationEndpointsAsync(applicationId, 
+                application.IsNotSeen(), ct).ConfigureAwait(false);
             return new ApplicationRegistrationModel {
                 Application = application,
                 Endpoints = endpoints.ToList()
@@ -159,7 +159,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
 
         /// <inheritdoc/>
         public async Task PurgeDisabledApplicationsAsync(TimeSpan notSeenSince,
-            RegistryOperationContextModel context, CancellationToken ct) {
+            OperationContextModel context, CancellationToken ct) {
             context = context.Validate();
             var absolute = DateTime.UtcNow - notSeenSince;
             string continuation = null;
@@ -201,7 +201,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
 
         /// <inheritdoc/>
         public Task<ApplicationInfoListModel> QueryApplicationsAsync(
-            ApplicationRegistrationQueryModel model, int? pageSize, CancellationToken ct) {
+            ApplicationInfoQueryModel model, int? pageSize, CancellationToken ct) {
             return _database.QueryAsync(model, null, pageSize, ct);
         }
 
@@ -221,7 +221,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
 
             // Get all applications.
             var existing = await _database.QueryAllAsync(
-                new ApplicationRegistrationQueryModel {
+                new ApplicationInfoQueryModel {
                     DiscovererId = discovererId
                 }).ConfigureAwait(false);
 

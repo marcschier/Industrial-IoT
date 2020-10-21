@@ -27,16 +27,13 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
         /// <param name="database"></param>
         /// <param name="broker"></param>
         /// <param name="logger"></param>
-        /// <param name="certificates"></param>
         /// <param name="events"></param>
         public EndpointRegistry(IEndpointRepository database,
-            IRegistryEventBroker<IEndpointRegistryListener> broker,
-            ICertificateServices<EndpointInfoModel> certificates, ILogger logger,
+            IRegistryEventBroker<IEndpointRegistryListener> broker, ILogger logger,
             IRegistryEvents<IApplicationRegistryListener> events = null) {
 
             _database = database ?? throw new ArgumentNullException(nameof(database));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            _certificates = certificates ?? throw new ArgumentNullException(nameof(certificates));
             _broker = broker ?? throw new ArgumentNullException(nameof(broker));
 
             // Register for application registry events
@@ -76,43 +73,19 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
         }
 
         /// <inheritdoc/>
-        public async Task UpdateEndpointAsync(string endpointId,
-            EndpointInfoUpdateModel request, CancellationToken ct) {
-            if (request == null) {
-                throw new ArgumentNullException(nameof(request));
-            }
-            var context = request.Context.Validate();
-
-            var endpoint = await _database.UpdateAsync(endpointId, existing => {
-                if (existing.GenerationId != request.GenerationId) {
-                    throw new ResourceOutOfDateException("Generation id no match");
-                }
-                if (request.ActivationState != null) {
-                    existing.ActivationState = request.ActivationState.Value;
-                }
-                existing.Updated = context;
-                return Task.FromResult(true);
-            }, ct).ConfigureAwait(false);
-
-            // Send update to through broker
-            await _broker.NotifyAllAsync(l => l.OnEndpointUpdatedAsync(context,
-                endpoint)).ConfigureAwait(false);
-        }
-
-        /// <inheritdoc/>
-        public Task OnApplicationNewAsync(RegistryOperationContextModel context,
+        public Task OnApplicationNewAsync(OperationContextModel context,
             ApplicationInfoModel application) {
             return Task.CompletedTask;
         }
 
         /// <inheritdoc/>
-        public Task OnApplicationUpdatedAsync(RegistryOperationContextModel context,
+        public Task OnApplicationUpdatedAsync(OperationContextModel context,
             ApplicationInfoModel application) {
             return Task.CompletedTask;
         }
 
         /// <inheritdoc/>
-        public async Task OnApplicationDeletedAsync(RegistryOperationContextModel context,
+        public async Task OnApplicationDeletedAsync(OperationContextModel context,
             string applicationId, ApplicationInfoModel application) {
             // Get all endpoint registrations and for each one, call delete, if failure,
             // stop half way and throw and do not complete.
@@ -126,17 +99,13 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
         }
 
         /// <inheritdoc/>
-        public async Task<IEnumerable<EndpointInfoModel>> GetApplicationEndpoints(
-            string applicationId, bool includeDeleted, bool filterInactiveTwins,
-            CancellationToken ct) {
+        public async Task<IEnumerable<EndpointInfoModel>> GetApplicationEndpointsAsync(
+            string applicationId, bool includeDeleted, CancellationToken ct) {
             // Include non-visible twins if the application itself is not visible. Otherwise omit.
             var endpoints = await GetEndpointsAsync(applicationId, 
                 includeDeleted ? (EntityVisibility?)null : EntityVisibility.Found, 
                     ct).ConfigureAwait(false);
-            if (!filterInactiveTwins) {
-                return endpoints;
-            }
-            return endpoints.Where(e => e.IsActivated());
+            return endpoints;
         }
 
         /// <inheritdoc/>
@@ -217,14 +186,13 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                     // Get the new one we will patch over the existing one...
                     var patch = change.First(x =>
                         EndpointInfoModelEx.Logical.Equals(x, exists));
-                    patch.ActivationState = exists.ActivationState;
-                    var endpoint = await _database.UpdateAsync(exists.Id, (Func<EndpointInfoModel, Task<bool>>)(existing => {
+                    var endpoint = await _database.UpdateAsync(exists.Id, existing => {
                         wasUpdated = existing.IsNotSeen();
                         existing.Patch(patch);
                         existing.SetAsFound();
                         existing.Updated = operationContext;
                         return Task.FromResult(true);
-                    })).ConfigureAwait(false);
+                    }).ConfigureAwait(false);
                     if (wasUpdated) {
                         await _broker.NotifyAllAsync(
                             l => l.OnEndpointUpdatedAsync(operationContext,
@@ -294,7 +262,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
             }, ct).ConfigureAwait(false);
         }
 
-        private readonly ICertificateServices<EndpointInfoModel> _certificates;
         private readonly IRegistryEventBroker<IEndpointRegistryListener> _broker;
         private readonly IEndpointRepository _database;
         private readonly Action _unregister;

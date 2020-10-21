@@ -6,6 +6,7 @@
 namespace Microsoft.Azure.IIoT.Platform.Registry.Events.v2 {
     using Microsoft.Azure.IIoT.Platform.Registry.Events.v2.Models;
     using Microsoft.Azure.IIoT.Platform.Registry.Models;
+    using Microsoft.Azure.IIoT.Platform.Core.Models;
     using Microsoft.Azure.IIoT.Messaging;
     using System;
     using System.Threading.Tasks;
@@ -24,7 +25,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Events.v2 {
         }
 
         /// <inheritdoc/>
-        public Task OnApplicationDeletedAsync(RegistryOperationContextModel context,
+        public Task OnApplicationDeletedAsync(OperationContextModel context,
             string applicationId, ApplicationInfoModel application) {
             return _bus.PublishAsync(Wrap(ApplicationEventType.Deleted, context,
                 applicationId, application));
@@ -32,13 +33,13 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Events.v2 {
 
         /// <inheritdoc/>
         public Task OnApplicationNewAsync(
-            RegistryOperationContextModel context, ApplicationInfoModel application) {
+            OperationContextModel context, ApplicationInfoModel application) {
             return _bus.PublishAsync(Wrap(ApplicationEventType.New, context,
                 application.ApplicationId, application));
         }
 
         /// <inheritdoc/>
-        public Task OnApplicationUpdatedAsync(RegistryOperationContextModel context,
+        public Task OnApplicationUpdatedAsync(OperationContextModel context,
             ApplicationInfoModel application) {
             return _bus.PublishAsync(Wrap(ApplicationEventType.Updated, context,
                 application.ApplicationId, application));
@@ -53,7 +54,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Events.v2 {
         /// <param name="application"></param>
         /// <returns></returns>
         private static ApplicationEventModel Wrap(ApplicationEventType type,
-            RegistryOperationContextModel context, string applicationId,
+            OperationContextModel context, string applicationId,
             ApplicationInfoModel application) {
             return new ApplicationEventModel {
                 EventType = type,

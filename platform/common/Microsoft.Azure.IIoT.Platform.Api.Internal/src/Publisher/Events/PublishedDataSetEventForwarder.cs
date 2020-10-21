@@ -25,7 +25,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api.Clients {
         public Task HandleAsync(PublishedDataSetItemEventModel eventData) {
             var arguments = new object[] { eventData.ToApiModel() };
             return _callback.BroadcastAsync(
-                EventTargets.DataSetEventTarget, arguments);
+                EventTargets.DataSetItemEventTarget, arguments);
         }
 
         private readonly ICallbackInvoker _callback;

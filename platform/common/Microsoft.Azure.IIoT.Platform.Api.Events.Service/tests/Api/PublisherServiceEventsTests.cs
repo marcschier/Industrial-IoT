@@ -32,16 +32,17 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service.Api {
             var bus = _factory.Resolve<ISubscriberMessageProcessor>();
             var client = _factory.Resolve<IPublisherServiceEvents>();
 
-            var endpointId = "testid";
+            var dataSetWriterId = "testid";
+            var variableId = "testvid";
 
             var result = new TaskCompletionSource<MonitoredItemMessageApiModel>(TaskCreationOptions.RunContinuationsAsynchronously);
-            await using (await client.NodePublishSubscribeByEndpointAsync(endpointId, ev => {
+            await using (await client.SubscribeDataSetVariableMessagesAsync(dataSetWriterId, variableId, ev => {
                 result.SetResult(ev);
                 return Task.CompletedTask;
             }).ConfigureAwait(false)) {
                 var expected = new MonitoredItemMessageModel {
-                    DataSetWriterId = "testid",
-                    EndpointId = endpointId,
+                    DataSetWriterId = dataSetWriterId,
+                    VariableId = variableId,
                     DisplayName = "holla",
                     NodeId = "nodeid",
                     SourceTimestamp = DateTime.UtcNow,
@@ -74,10 +75,11 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service.Api {
             var bus = _factory.Resolve<ISubscriberMessageProcessor>();
             var client = _factory.Resolve<IPublisherServiceEvents>();
 
-            var endpointId = "testid";
+            var dataSetWriterId = "testid";
+            var variableId = "testvid";
             var expected = new MonitoredItemMessageModel {
-                DataSetWriterId = "testid",
-                EndpointId = endpointId,
+                DataSetWriterId = dataSetWriterId,
+                VariableId = variableId,
                 DisplayName = "holla",
                 NodeId = "nodeid",
                 SourceTimestamp = DateTime.UtcNow,
@@ -86,7 +88,7 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service.Api {
             };
             var result = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
             var counter = 0;
-            await using (await client.NodePublishSubscribeByEndpointAsync(endpointId, ev => {
+            await using (await client.SubscribeDataSetVariableMessagesAsync(dataSetWriterId, variableId, ev => {
                 counter++;
                 if (counter == total) {
                     result.SetResult(true);

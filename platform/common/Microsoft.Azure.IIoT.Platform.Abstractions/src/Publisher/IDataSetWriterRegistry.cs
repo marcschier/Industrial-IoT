@@ -5,6 +5,7 @@
 
 namespace Microsoft.Azure.IIoT.Platform.Publisher {
     using Microsoft.Azure.IIoT.Platform.Publisher.Models;
+    using Microsoft.Azure.IIoT.Platform.Core.Models;
     using System.Threading;
     using System.Threading.Tasks;
 
@@ -22,7 +23,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher {
         /// <returns></returns>
         Task<DataSetWriterAddResultModel> AddDataSetWriterAsync(
             DataSetWriterAddRequestModel request,
-            PublisherOperationContextModel context = null,
+            OperationContextModel context = null,
             CancellationToken ct = default);
 
         /// <summary>
@@ -46,7 +47,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher {
         /// <returns></returns>
         Task UpdateDataSetWriterAsync(string dataSetWriterId,
             DataSetWriterUpdateRequestModel request,
-            PublisherOperationContextModel context = null,
+            OperationContextModel context = null,
             CancellationToken ct = default);
 
         /// <summary>
@@ -59,7 +60,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher {
         /// <returns></returns>
         Task<DataSetAddEventResultModel> AddEventDataSetAsync(
             string dataSetWriterId, DataSetAddEventRequestModel request,
-            PublisherOperationContextModel context = null,
+            OperationContextModel context = null,
             CancellationToken ct = default);
 
         /// <summary>
@@ -81,7 +82,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher {
         /// <returns></returns>
         Task UpdateEventDataSetAsync(string dataSetWriterId,
             DataSetUpdateEventRequestModel request,
-            PublisherOperationContextModel context = null,
+            OperationContextModel context = null,
             CancellationToken ct = default);
 
         /// <summary>
@@ -93,7 +94,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher {
         /// <param name="ct"></param>
         /// <returns></returns>
         Task RemoveEventDataSetAsync(string dataSetWriterId,
-            string generationId, PublisherOperationContextModel context = null,
+            string generationId, OperationContextModel context = null,
             CancellationToken ct = default);
 
         /// <summary>
@@ -106,7 +107,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher {
         /// <returns></returns>
         Task<DataSetAddVariableResultModel> AddDataSetVariableAsync(
             string dataSetWriterId, DataSetAddVariableRequestModel request,
-            PublisherOperationContextModel context = null,
+            OperationContextModel context = null,
             CancellationToken ct = default);
 
         /// <summary>
@@ -120,7 +121,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher {
         /// <returns></returns>
         Task UpdateDataSetVariableAsync(string dataSetWriterId,
             string variableId, DataSetUpdateVariableRequestModel request,
-            PublisherOperationContextModel context = null,
+            OperationContextModel context = null,
             CancellationToken ct = default);
 
         /// <summary>
@@ -158,7 +159,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher {
         /// <returns></returns>
         Task RemoveDataSetVariableAsync(string dataSetWriterId,
             string variableId, string generationId,
-            PublisherOperationContextModel context = null,
+            OperationContextModel context = null,
             CancellationToken ct = default);
 
         /// <summary>
@@ -195,7 +196,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher {
         /// <returns></returns>
         Task RemoveDataSetWriterAsync(string dataSetWriterId,
             string generationId,
-            PublisherOperationContextModel context = null,
+            OperationContextModel context = null,
             CancellationToken ct = default);
     }
 }

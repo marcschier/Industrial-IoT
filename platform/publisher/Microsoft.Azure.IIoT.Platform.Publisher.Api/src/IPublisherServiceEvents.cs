@@ -6,6 +6,7 @@
 namespace Microsoft.Azure.IIoT.Platform.Publisher.Api {
     using Microsoft.Azure.IIoT.Platform.Publisher.Api.Models;
     using System;
+    using System.Threading;
     using System.Threading.Tasks;
 
     /// <summary>
@@ -30,13 +31,24 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api {
             Func<DataSetWriterEventApiModel, Task> callback);
 
         /// <summary>
-        /// Subscribe to monitored item messages
+        /// Subscribe to variable value changes
         /// </summary>
-        /// <param name="endpointId"></param>
+        /// <param name="dataSetWriterId"></param>
+        /// <param name="variableId"></param>
         /// <param name="callback"></param>
         /// <returns></returns>
-        Task<IAsyncDisposable> NodePublishSubscribeByEndpointAsync(
-            string endpointId,
+        Task<IAsyncDisposable> SubscribeDataSetVariableMessagesAsync(
+            string dataSetWriterId, string variableId,
+            Func<MonitoredItemMessageApiModel, Task> callback);
+
+        /// <summary>
+        /// Subscribe to variable value changes
+        /// </summary>
+        /// <param name="dataSetWriterId"></param>
+        /// <param name="callback"></param>
+        /// <returns></returns>
+        Task<IAsyncDisposable> SubscribeEventDataSetMessagesAsync(
+            string dataSetWriterId, 
             Func<MonitoredItemMessageApiModel, Task> callback);
 
         /// <summary>
@@ -46,16 +58,6 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api {
         /// <param name="callback"></param>
         /// <returns></returns>
         Task<IAsyncDisposable> SubscribeDataSetItemStatusAsync(
-            string dataSetWriterId,
-            Func<MonitoredItemMessageApiModel, Task> callback);
-
-        /// <summary>
-        /// Subscribe to dataset telemetry
-        /// </summary>
-        /// <param name="dataSetWriterId"></param>
-        /// <param name="callback"></param>
-        /// <returns></returns>
-        Task<IAsyncDisposable> SubscribeDataSetWriterMessagesAsync(
             string dataSetWriterId,
             Func<MonitoredItemMessageApiModel, Task> callback);
     }

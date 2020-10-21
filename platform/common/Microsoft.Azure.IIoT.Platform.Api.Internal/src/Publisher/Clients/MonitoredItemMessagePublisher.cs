@@ -28,10 +28,13 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api.Clients {
         /// <inheritdoc/>
         public async Task HandleSampleAsync(MonitoredItemMessageModel sample) {
             var arguments = new object[] { sample.ToApiModel() };
-            if (!string.IsNullOrEmpty(sample.EndpointId)) {
-                // Send to endpoint listeners
-                await _callback.MulticastAsync(sample.EndpointId,
-                    EventTargets.PublisherSampleTarget, arguments).ConfigureAwait(false);
+            if (!string.IsNullOrEmpty(sample.VariableId)) {
+                await _callback.MulticastAsync(sample.DataSetWriterId + "_" + sample.VariableId,
+                    EventTargets.DataSetVariableMessageTarget, arguments).ConfigureAwait(false);
+            }
+            else {
+                await _callback.MulticastAsync(sample.DataSetWriterId,
+                    EventTargets.DataSetEventMessageTarget, arguments).ConfigureAwait(false);
             }
 
             // TODO: Should we convert to dataset message like below?
@@ -50,6 +53,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api.Clients {
                         PublisherId = message.PublisherId,
                         NodeId = datapoint.Key,
                         DisplayName = datapoint.Key,
+                        VariableId = datapoint.Key,
                         Value = datapoint.Value?.Value?.Copy(),
                         Status = datapoint.Value?.Status,
                         SourceTimestamp = datapoint.Value?.SourceTimestamp,
@@ -57,13 +61,17 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api.Clients {
                         ServerTimestamp = datapoint.Value?.ServerTimestamp,
                         ServerPicoseconds = datapoint.Value?.ServerPicoseconds,
                         DataType = datapoint.Value?.DataType,
-                        SequenceNumber = message.SequenceNumber,
-                        EndpointId = null // TODO Remove
+                        SequenceNumber = message.SequenceNumber
                     }
                 };
-                // Send to endpoint listeners
-                await _callback.MulticastAsync(message.DataSetWriterId,
-                    EventTargets.PublisherSampleTarget, arguments).ConfigureAwait(false);
+                if (!string.IsNullOrEmpty(datapoint.Key)) {
+                    await _callback.MulticastAsync(message.DataSetWriterId + "_" + datapoint.Key,
+                        EventTargets.DataSetVariableMessageTarget, arguments).ConfigureAwait(false);
+                }
+                else {
+                    await _callback.MulticastAsync(message.DataSetWriterId,
+                        EventTargets.DataSetEventMessageTarget, arguments).ConfigureAwait(false);
+                }
             }
         }
 

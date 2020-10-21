@@ -7,6 +7,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Cli {
     using Microsoft.Azure.IIoT.Platform.Registry.Services;
     using Microsoft.Azure.IIoT.Platform.Registry;
     using Microsoft.Azure.IIoT.Platform.Registry.Models;
+    using Microsoft.Azure.IIoT.Platform.Core.Models;
     using Microsoft.Azure.IIoT.Platform.OpcUa.Services;
     using Microsoft.Azure.IIoT.Platform.OpcUa.Transport.Probe;
     using Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Runtime;
@@ -414,56 +415,56 @@ Operations (Mutually exclusive):
             }
 
             /// <inheritdoc/>
-            public Task OnApplicationDeletedAsync(RegistryOperationContextModel context,
+            public Task OnApplicationDeletedAsync(OperationContextModel context,
                 string applicationId, ApplicationInfoModel application) {
                 Console.WriteLine($"Deleted {applicationId}");
                 return Task.CompletedTask;
             }
 
             /// <inheritdoc/>
-            public Task OnApplicationNewAsync(RegistryOperationContextModel context,
+            public Task OnApplicationNewAsync(OperationContextModel context,
                 ApplicationInfoModel application) {
                 Console.WriteLine($"Created {application.ApplicationId}");
                 return Task.CompletedTask;
             }
 
             /// <inheritdoc/>
-            public Task OnApplicationUpdatedAsync(RegistryOperationContextModel context,
+            public Task OnApplicationUpdatedAsync(OperationContextModel context,
                 ApplicationInfoModel application) {
                 Console.WriteLine($"Updated {application.ApplicationId}");
                 return Task.CompletedTask;
             }
 
             /// <inheritdoc/>
-            public Task OnEndpointActivatedAsync(RegistryOperationContextModel context,
+            public Task OnEndpointActivatedAsync(OperationContextModel context,
                 EndpointInfoModel endpoint) {
                 Console.WriteLine($"Activated {endpoint.Id}");
                 return Task.CompletedTask;
             }
 
             /// <inheritdoc/>
-            public Task OnEndpointDeactivatedAsync(RegistryOperationContextModel context,
+            public Task OnEndpointDeactivatedAsync(OperationContextModel context,
                 EndpointInfoModel endpoint) {
                 Console.WriteLine($"Deactivated {endpoint.Id}");
                 return Task.CompletedTask;
             }
 
             /// <inheritdoc/>
-            public Task OnEndpointDeletedAsync(RegistryOperationContextModel context,
+            public Task OnEndpointDeletedAsync(OperationContextModel context,
                 string endpointId, EndpointInfoModel endpoint) {
                 Console.WriteLine($"Deleted {endpointId}");
                 return Task.CompletedTask;
             }
 
             /// <inheritdoc/>
-            public Task OnEndpointNewAsync(RegistryOperationContextModel context,
+            public Task OnEndpointNewAsync(OperationContextModel context,
                 EndpointInfoModel endpoint) {
                 Console.WriteLine($"Created {endpoint.Id}");
                 return Task.CompletedTask;
             }
 
             /// <inheritdoc/>
-            public Task OnEndpointUpdatedAsync(RegistryOperationContextModel context,
+            public Task OnEndpointUpdatedAsync(OperationContextModel context,
                 EndpointInfoModel endpoint) {
                 Console.WriteLine($"Updated {endpoint.Id}");
                 return Task.CompletedTask;

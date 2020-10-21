@@ -61,7 +61,7 @@ namespace Microsoft.Azure.IIoT.Utils {
                 }
                 try {
                     _logger.Debug("Stopping {host} host...", Name);
-                    await _host.DisposeAsync();
+                    await _host.DisposeAsync().ConfigureAwait(false);
                     _logger.Information("{host} host stopped.", Name);
                 }
                 finally {

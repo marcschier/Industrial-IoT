@@ -23,7 +23,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry {
         /// <returns></returns>
         public static async Task<IEnumerable<ApplicationInfoModel>> QueryAllAsync(
             this IApplicationRepository service,
-            ApplicationRegistrationQueryModel query = null,
+            ApplicationInfoQueryModel query = null,
             CancellationToken ct = default) {
 
             var registrations = new List<ApplicationInfoModel>();

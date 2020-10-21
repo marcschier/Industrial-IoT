@@ -95,19 +95,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
         public string Thumbprint { get; set; }
 
         /// <summary>
-        /// Activation state
-        /// </summary>
-        /// <returns></returns>
-        [DataMember]
-        public EntityActivationState ActivationState { get; set; }
-
-        /// <summary>
-        /// Endpoint connectivity status
-        /// </summary>
-        [DataMember]
-        public EndpointConnectivityState EndpointState { get; set; }
-
-        /// <summary>
         /// Create time
         /// </summary>
         [DataMember]
@@ -143,12 +130,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
                 return false;
             }
             if (NotSeenSince != document.NotSeenSince) {
-                return false;
-            }
-            if (ActivationState != document.ActivationState) {
-                return false;
-            }
-            if (EndpointState != document.EndpointState) {
                 return false;
             }
             if (DiscovererId != document.DiscovererId) {
@@ -202,8 +183,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
             hash.Add(Id);
             hash.Add(ClassType);
             hash.Add(NotSeenSince);
-            hash.Add(EndpointState);
-            hash.Add(ActivationState);
             hash.Add(EndpointUrl);
             hash.Add(DiscovererId);
             hash.Add(ApplicationId);

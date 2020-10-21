@@ -55,48 +55,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api {
         }
 
         /// <summary>
-        /// Deactivate an endpoint
-        /// </summary>
-        /// <param name="service"></param>
-        /// <param name="endpointId"></param>
-        /// <param name="generationId"></param>
-        /// <param name="ct"></param>
-        /// <returns></returns>
-        public static async Task DeactivateEndpointAsync(this IRegistryServiceApi service,
-            string endpointId, string generationId = null, CancellationToken ct = default) {
-            if (string.IsNullOrEmpty(generationId)) {
-                var ep = await service.GetEndpointAsync(endpointId, ct).ConfigureAwait(false);
-                generationId = ep.GenerationId;
-            }
-            await service.UpdateEndpointAsync(endpointId,
-                new EndpointInfoUpdateApiModel {
-                    GenerationId = generationId,
-                    ActivationState = EntityActivationState.Deactivated
-                }, ct).ConfigureAwait(false);
-        }
-
-        /// <summary>
-        /// Activate an endpoint
-        /// </summary>
-        /// <param name="service"></param>
-        /// <param name="endpointId"></param>
-        /// <param name="generationId"></param>
-        /// <param name="ct"></param>
-        /// <returns></returns>
-        public static async Task ActivateEndpointAsync(this IRegistryServiceApi service,
-            string endpointId, string generationId = null, CancellationToken ct = default) {
-            if (string.IsNullOrEmpty(generationId)) {
-                var ep = await service.GetEndpointAsync(endpointId, ct).ConfigureAwait(false);
-                generationId = ep.GenerationId;
-            }
-            await service.UpdateEndpointAsync(endpointId,
-                new EndpointInfoUpdateApiModel {
-                    GenerationId = generationId,
-                    ActivationState = EntityActivationState.Activated
-                }, ct).ConfigureAwait(false);
-        }
-
-        /// <summary>
         /// Find applications
         /// </summary>
         /// <param name="service"></param>
@@ -104,7 +62,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api {
         /// <param name="ct"></param>
         /// <returns></returns>
         public static async Task<IEnumerable<ApplicationInfoApiModel>> QueryAllApplicationsAsync(
-            this IRegistryServiceApi service, ApplicationRegistrationQueryApiModel query,
+            this IRegistryServiceApi service, ApplicationInfoQueryApiModel query,
             CancellationToken ct = default) {
             var registrations = new List<ApplicationInfoApiModel>();
             var result = await service.QueryApplicationsAsync(query, null, ct).ConfigureAwait(false);

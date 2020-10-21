@@ -3,10 +3,11 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Platform.Publisher.Storage.Services {
+namespace Microsoft.Azure.IIoT.Platform.Publisher.Storage {
     using Microsoft.Azure.IIoT.Platform.Publisher.Models;
     using Microsoft.Azure.IIoT.Exceptions;
     using Microsoft.Azure.IIoT.Storage;
+    using Microsoft.Azure.IIoT.Hub;
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -372,7 +373,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Storage.Services {
             }
             var results = _documents.CreateQuery<DataSetEntityDocument>()
                 .Where(x => x.DataSetWriterId == dataSetWriterId)
-                .Where(x => x.ClassType == DataSetEntityDocument.ClassTypeName)
+                .Where(x => x.ClassType == IdentityType.DataSetEntity)
                 .GetResults();
             await results.ForEachAsync(d =>
                 _documents.DeleteAsync<DataSetEntityDocument>(d.Id, ct: ct), ct).ConfigureAwait(false);
@@ -411,17 +412,19 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Storage.Services {
             if (!string.IsNullOrEmpty(dataSetWriterId)) {
                 query = query.Where(x => x.DataSetWriterId == dataSetWriterId);
             }
-            if (filter?.Attribute != null) {
-                query = query.Where(x => x.Attribute == filter.Attribute.Value);
-            }
-            if (filter?.PublishedVariableDisplayName != null) {
-                query = query.Where(x => x.DisplayName == filter.PublishedVariableDisplayName);
-            }
-            if (filter?.PublishedVariableNodeId != null) {
-                query = query.Where(x => x.NodeId == filter.PublishedVariableNodeId);
+            if (filter != null) {
+                if (filter.Attribute != null) {
+                    query = query.Where(x => x.Attribute == filter.Attribute.Value);
+                }
+                if (filter.PublishedVariableDisplayName != null) {
+                    query = query.Where(x => x.DisplayName == filter.PublishedVariableDisplayName);
+                }
+                if (filter.PublishedVariableNodeId != null) {
+                    query = query.Where(x => x.NodeId == filter.PublishedVariableNodeId);
+                }
             }
             query = query
-                .Where(x => x.ClassType == DataSetEntityDocument.ClassTypeName)
+                .Where(x => x.ClassType == IdentityType.DataSetEntity)
                 .OrderBy(x => x.NodeId);
             return query.GetResults();
         }

@@ -24,10 +24,9 @@ namespace Microsoft.Azure.IIoT.Platform.Registry {
         /// <param name="ct"></param>
         /// <returns></returns>
         public static async Task<ApplicationRegistrationModel> FindApplicationAsync(
-            this IApplicationRegistry service, string applicationId,
-            CancellationToken ct = default) {
+            this IApplicationRegistry service, string applicationId, CancellationToken ct = default) {
             try {
-                return await service.GetApplicationAsync(applicationId, false, ct).ConfigureAwait(false);
+                return await service.GetApplicationAsync(applicationId, ct).ConfigureAwait(false);
             }
             catch (ResourceNotFoundException) {
                 return null;
@@ -42,13 +41,14 @@ namespace Microsoft.Azure.IIoT.Platform.Registry {
         /// <param name="ct"></param>
         /// <returns></returns>
         public static async Task<List<ApplicationInfoModel>> QueryAllApplicationsAsync(
-            this IApplicationRegistry service, ApplicationRegistrationQueryModel query,
+            this IApplicationRegistry service, ApplicationInfoQueryModel query,
             CancellationToken ct = default) {
             var registrations = new List<ApplicationInfoModel>();
             var result = await service.QueryApplicationsAsync(query, null, ct).ConfigureAwait(false);
             registrations.AddRange(result.Items);
             while (result.ContinuationToken != null) {
-                result = await service.ListApplicationsAsync(result.ContinuationToken, null, ct).ConfigureAwait(false);
+                result = await service.ListApplicationsAsync(result.ContinuationToken, 
+                    null, ct).ConfigureAwait(false);
                 registrations.AddRange(result.Items);
             }
             return registrations;
@@ -83,7 +83,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry {
             var registrations = new List<ApplicationRegistrationModel>();
             var infos = await service.ListAllApplicationsAsync(ct).ConfigureAwait(false);
             foreach (var info in infos) {
-                var registration = await service.GetApplicationAsync(info.ApplicationId, false, ct).ConfigureAwait(false);
+                var registration = await service.GetApplicationAsync(info.ApplicationId, ct).ConfigureAwait(false);
                 registrations.Add(registration);
             }
             return registrations;

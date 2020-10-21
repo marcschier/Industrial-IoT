@@ -5,6 +5,7 @@
 
 namespace Microsoft.Azure.IIoT.Platform.Registry {
     using Microsoft.Azure.IIoT.Platform.Registry.Models;
+    using Microsoft.Azure.IIoT.Platform.Core.Models;
     using System;
     using System.Threading;
     using System.Threading.Tasks;
@@ -30,12 +31,10 @@ namespace Microsoft.Azure.IIoT.Platform.Registry {
         /// endpoints if there are any.
         /// </summary>
         /// <param name="applicationId">The applicationId</param>
-        /// <param name="filterInactiveEndpoints"></param>
         /// <param name="ct"></param>
         /// <returns></returns>
         Task<ApplicationRegistrationModel> GetApplicationAsync(
-            string applicationId, bool filterInactiveEndpoints = false,
-            CancellationToken ct = default);
+            string applicationId, CancellationToken ct = default);
 
         /// <summary>
         /// Update an existing application, e.g. server
@@ -70,7 +69,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry {
         /// <param name="ct"></param>
         /// <returns></returns>
         Task<ApplicationInfoListModel> QueryApplicationsAsync(
-            ApplicationRegistrationQueryModel query, int? pageSize = null,
+            ApplicationInfoQueryModel query, int? pageSize = null,
             CancellationToken ct = default);
 
         /// <summary>
@@ -83,7 +82,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry {
         /// <returns></returns>
         Task UnregisterApplicationAsync(string applicationId,
             string generationId,
-            RegistryOperationContextModel context = null,
+            OperationContextModel context = null,
             CancellationToken ct = default);
 
         /// <summary>
@@ -95,7 +94,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry {
         /// <param name="ct"></param>
         /// <returns></returns>
         Task PurgeDisabledApplicationsAsync(TimeSpan notSeenFor,
-            RegistryOperationContextModel context = null,
+            OperationContextModel context = null,
             CancellationToken ct = default);
     }
 }

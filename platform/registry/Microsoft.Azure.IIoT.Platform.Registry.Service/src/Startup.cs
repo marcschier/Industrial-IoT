@@ -7,7 +7,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service {
     using Microsoft.Azure.IIoT.Platform.Registry.Service.Runtime;
     using Microsoft.Azure.IIoT.Platform.Registry.Service.Auth;
     using Microsoft.Azure.IIoT.Platform.Registry;
-    using Microsoft.Azure.IIoT.Platform.OpcUa.Services;
+    using Microsoft.Azure.IIoT.Platform.OpcUa;
     using Microsoft.Azure.IIoT.Authentication;
     using Microsoft.Azure.IIoT.Utils;
     using Microsoft.Azure.IIoT.Http.Clients;
@@ -22,6 +22,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service {
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
     using Microsoft.Extensions.Logging;
+    using Microsoft.Azure.IIoT.Azure.LogAnalytics.Runtime;
     using Microsoft.Azure.IIoT.Azure.AppInsights;
     using Microsoft.Azure.IIoT.Azure.ServiceBus;
     using Microsoft.Azure.IIoT.Azure.CosmosDb;
@@ -183,13 +184,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service {
 
             // Registries, discovery service and repositories
             builder.RegisterModule<RegistryServices>();
-
-            // Register opc stack services for discovery and certs
-            builder.RegisterType<ClientServices>()
-                .AsImplementedInterfaces().InstancePerLifetimeScope();
-            builder.RegisterType<StackLogger>()
-                .AsImplementedInterfaces().InstancePerLifetimeScope()
-                .AutoActivate();
+            builder.RegisterModule<ClientStack>();
 
             // ... and auto start
             builder.RegisterType<HostAutoStart>()
@@ -198,13 +193,15 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service {
 
             // --- Dependencies ---
 
-            // Add App Insights logging
-            builder.AddAppInsightsLogging(Config);
             // Add service to service authentication
             builder.RegisterModule<WebApiAuthentication>();
+            builder.RegisterType<LogAnalyticsConfig>()
+                .AsImplementedInterfaces().SingleInstance();
+            // Add diagnostics
+            builder.AddAppInsightsLogging(Config);
             // Register event bus for integration events
             builder.RegisterModule<ServiceBusEventBusSupport>();
-            // Register Cosmos db for registry storage
+            // Register Cosmos db for publisher storage
             builder.RegisterModule<CosmosDbModule>();
         }
     }

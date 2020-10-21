@@ -41,12 +41,11 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
         /// <param name="contentType"></param>
         /// <param name="diagnostics"></param>
         /// <param name="logger"></param>
-        /// <param name="elevation"></param>
         /// <param name="priority"></param>
-        public BrowsedNodeStreamEncoder(IEndpointServices client, EndpointModel endpoint,
+        public BrowsedNodeStreamEncoder(IConnectionServices client, ConnectionModel endpoint,
             Stream stream, string contentType, DiagnosticsModel diagnostics, ILogger logger,
-            CredentialModel elevation = null, int priority = int.MaxValue) :
-            this(client, endpoint, diagnostics, logger, elevation, priority) {
+            int priority = int.MaxValue) :
+            this(client, endpoint, diagnostics, logger,  priority) {
             _encoder = new ModelEncoder(stream, contentType, PushNode);
         }
 
@@ -58,12 +57,11 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
         /// <param name="encoder"></param>
         /// <param name="diagnostics"></param>
         /// <param name="logger"></param>
-        /// <param name="elevation"></param>
         /// <param name="priority"></param>
-        public BrowsedNodeStreamEncoder(IEndpointServices client, EndpointModel endpoint,
+        public BrowsedNodeStreamEncoder(IConnectionServices client, ConnectionModel endpoint,
             IEncoder encoder, DiagnosticsModel diagnostics, ILogger logger,
-            CredentialModel elevation = null, int priority = int.MaxValue) :
-            this(client, endpoint, diagnostics, logger, elevation, priority) {
+            int priority = int.MaxValue) :
+            this(client, endpoint, diagnostics, logger, priority) {
             _encoder = new ModelEncoder(encoder, PushNode);
         }
 
@@ -74,15 +72,12 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
         /// <param name="endpoint"></param>
         /// <param name="diagnostics"></param>
         /// <param name="logger"></param>
-        /// <param name="elevation"></param>
         /// <param name="priority"></param>
-        private BrowsedNodeStreamEncoder(IEndpointServices client, EndpointModel endpoint,
-            DiagnosticsModel diagnostics, ILogger logger, CredentialModel elevation, 
-            int priority) {
+        private BrowsedNodeStreamEncoder(IConnectionServices client, ConnectionModel endpoint,
+            DiagnosticsModel diagnostics, ILogger logger, int priority) {
             _client = client ?? throw new ArgumentNullException(nameof(client));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _endpoint = endpoint ?? throw new ArgumentNullException(nameof(endpoint));
-            _elevation = elevation;
             _diagnostics = diagnostics;
             _priority = priority;
             _browseStack.Push(ObjectIds.RootFolder);
@@ -158,8 +153,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
         internal async Task FetchReferencesAsync(BaseNodeModel nodeModel, CancellationToken ct) {
             try {
                 // Read node with value
-                var response = await _client.ExecuteServiceAsync(_endpoint, _elevation,
-                    _priority, session => {
+                var response = await _client.ExecuteServiceAsync(_endpoint, _priority, session => {
                         _encoder.Context.UpdateFromSession(session);
                         return session.BrowseAsync(_diagnostics.ToStackModel(), null,
                             nodeModel.NodeId, 0u, Opc.Ua.BrowseDirection.Both,
@@ -178,8 +172,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
                     if (response.Results[0].ContinuationPoint == null) {
                         break;
                     }
-                    response = await _client.ExecuteServiceAsync(_endpoint, _elevation,
-                    _priority, session => {
+                    response = await _client.ExecuteServiceAsync(_endpoint, _priority, session => {
                         _encoder.Context.UpdateFromSession(session);
                         return session.BrowseNextAsync(_diagnostics.ToStackModel(), false,
                             new ByteStringCollection { response.Results[0].ContinuationPoint });
@@ -204,8 +197,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
         private async Task<BaseNodeModel> ReadNodeAsync(NodeId nodeId, CancellationToken ct) {
             try {
                 // Read node with value
-                return await _client.ExecuteServiceAsync(_endpoint, _elevation,
-                    _priority, async session => {
+                return await _client.ExecuteServiceAsync(_endpoint, _priority, async session => {
                         _encoder.Context.UpdateFromSession(session);
                         var node = await RawNodeModel.ReadAsync(session, _diagnostics.ToStackModel(),
                             nodeId, false, Diagnostics, false).ConfigureAwait(false);
@@ -233,9 +225,8 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
         }
 
         private readonly int _priority;
-        private readonly IEndpointServices _client;
-        private readonly EndpointModel _endpoint;
-        private readonly CredentialModel _elevation;
+        private readonly IConnectionServices _client;
+        private readonly ConnectionModel _endpoint;
         private readonly DiagnosticsModel _diagnostics;
         private readonly ModelEncoder _encoder;
         private readonly ILogger _logger;

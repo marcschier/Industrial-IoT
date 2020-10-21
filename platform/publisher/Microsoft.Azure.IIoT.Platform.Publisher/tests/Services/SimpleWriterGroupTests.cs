@@ -5,7 +5,7 @@
 
 namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
     using Microsoft.Azure.IIoT.Platform.Core.Models;
-    using Microsoft.Azure.IIoT.Platform.Publisher.Storage.Services;
+    using Microsoft.Azure.IIoT.Platform.Publisher.Storage;
     using Microsoft.Azure.IIoT.Platform.Publisher.Models;
     using Microsoft.Azure.IIoT.Platform.Publisher;
     using Microsoft.Azure.IIoT.Platform.Publisher.Default;
@@ -462,7 +462,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                 builder.RegisterType<WriterGroupEventBroker>().AsImplementedInterfaces().SingleInstance();
                 builder.RegisterType<WriterGroupRegistry>().AsImplementedInterfaces().SingleInstance();
                 builder.RegisterType<WriterGroupRegistrySync>().AsImplementedInterfaces().SingleInstance();
-                builder.RegisterType<SimpleWriterGroupEngineHost>().AsImplementedInterfaces().SingleInstance()
+                builder.RegisterType<SimpleWriterGroupManager>().AsImplementedInterfaces().SingleInstance()
                     .AutoActivate(); // Create and register with broker
                 builder.RegisterType<SimpleNetworkMessageSink>().AsImplementedInterfaces().SingleInstance();
                 builder.RegisterType<SimpleWriterGroupDataSource>().AsImplementedInterfaces();

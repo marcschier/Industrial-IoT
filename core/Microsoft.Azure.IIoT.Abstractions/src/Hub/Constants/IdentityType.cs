@@ -48,6 +48,16 @@ namespace Microsoft.Azure.IIoT.Hub {
         /// <summary>
         /// Dataset identity
         /// </summary>
-        public const string DataSet = "DataSet";
+        public const string DataSetWriter = "DataSetWriter";
+
+        /// <summary>
+        /// Dataset item
+        /// </summary>
+        public const string DataSetEntity = "DataSetEntity";
+
+        /// <summary>
+        /// Twin identity
+        /// </summary>
+        public const string Twin = "Twin";
     }
 }

@@ -42,15 +42,5 @@ namespace Microsoft.Azure.IIoT.Platform.Registry {
         /// <returns></returns>
         Task<EndpointInfoModel> GetEndpointAsync(string endpointId,
             CancellationToken ct = default);
-
-        /// <summary>
-        /// Update the endpoint
-        /// </summary>
-        /// <param name="endpointId"></param>
-        /// <param name="model"></param>
-        /// <param name="ct"></param>
-        /// <returns></returns>
-        Task UpdateEndpointAsync(string endpointId,
-            EndpointInfoUpdateModel model, CancellationToken ct = default);
     }
 }

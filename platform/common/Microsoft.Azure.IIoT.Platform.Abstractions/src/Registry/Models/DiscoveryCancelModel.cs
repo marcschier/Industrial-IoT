@@ -4,6 +4,7 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
+    using Microsoft.Azure.IIoT.Platform.Core.Models;
 
     /// <summary>
     /// Cancel discovery
@@ -18,6 +19,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
         /// <summary>
         /// Operation audit context
         /// </summary>
-        public RegistryOperationContextModel Context { get; set; }
+        public OperationContextModel Context { get; set; }
     }
 }

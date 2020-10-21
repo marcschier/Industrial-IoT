@@ -29,8 +29,9 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Clients {
         /// <inheritdoc/>
         public async Task<X509CertificateChainModel> GetEndpointCertificateAsync(string endpoint, 
             CancellationToken ct) {
-            var ep = await _registry.GetActivatedEndpointAsync(endpoint, ct).ConfigureAwait(false);
-            return await _certificates.GetEndpointCertificateAsync(ep, ct).ConfigureAwait(false);
+            var ep = await _registry.GetEndpointAsync(endpoint, ct).ConfigureAwait(false);
+            return await _certificates.GetEndpointCertificateAsync(
+                ep.Endpoint, ct).ConfigureAwait(false);
         }
 
         private readonly IEndpointRegistry _registry;

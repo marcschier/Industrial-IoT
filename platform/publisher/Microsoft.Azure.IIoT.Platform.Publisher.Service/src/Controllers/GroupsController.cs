@@ -8,7 +8,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Service.Controllers {
     using Microsoft.Azure.IIoT.Platform.Publisher.Service.Filters;
     using Microsoft.Azure.IIoT.Platform.Publisher.Api.Models;
     using Microsoft.Azure.IIoT.Platform.Publisher;
-    using Microsoft.Azure.IIoT.Platform.Publisher.Models;
+    using Microsoft.Azure.IIoT.Platform.Core.Models;
     using Microsoft.Azure.IIoT.AspNetCore.OpenApi;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Authorization;
@@ -51,7 +51,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Service.Controllers {
                 throw new ArgumentNullException(nameof(request));
             }
             var result = await _groups.AddWriterGroupAsync(
-                request.ToServiceModel(), new PublisherOperationContextModel {
+                request.ToServiceModel(), new OperationContextModel {
                     Time = DateTime.UtcNow,
                     AuthorityId = HttpContext.User.Identity.Name
                 }).ConfigureAwait(false);
@@ -91,7 +91,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Service.Controllers {
                 throw new ArgumentNullException(nameof(writerGroupId));
             }
             await _groups.ActivateWriterGroupAsync(writerGroupId,
-                new PublisherOperationContextModel {
+                new OperationContextModel {
                     Time = DateTime.UtcNow,
                     AuthorityId = HttpContext.User.Identity.Name
                 }).ConfigureAwait(false);
@@ -112,7 +112,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Service.Controllers {
                 throw new ArgumentNullException(nameof(writerGroupId));
             }
             await _groups.DeactivateWriterGroupAsync(writerGroupId,
-                new PublisherOperationContextModel {
+                new OperationContextModel {
                     Time = DateTime.UtcNow,
                     AuthorityId = HttpContext.User.Identity.Name
                 }).ConfigureAwait(false);
@@ -137,7 +137,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Service.Controllers {
                 throw new ArgumentNullException(nameof(writerGroupId));
             }
             await _groups.UpdateWriterGroupAsync(writerGroupId,
-                request.ToServiceModel(), new PublisherOperationContextModel {
+                request.ToServiceModel(), new OperationContextModel {
                     Time = DateTime.UtcNow,
                     AuthorityId = HttpContext.User.Identity.Name
                 }).ConfigureAwait(false);
@@ -211,7 +211,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Service.Controllers {
                 throw new ArgumentNullException(nameof(generationId));
             }
             await _groups.RemoveWriterGroupAsync(writerGroupId, generationId,
-                new PublisherOperationContextModel {
+                new OperationContextModel {
                     Time = DateTime.UtcNow,
                     AuthorityId = HttpContext.User.Identity.Name
                 }).ConfigureAwait(false);

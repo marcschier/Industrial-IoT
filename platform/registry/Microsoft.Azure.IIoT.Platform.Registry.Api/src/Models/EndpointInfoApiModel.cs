@@ -59,51 +59,37 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Models {
         public string ApplicationId { get; set; }
 
         /// <summary>
-        /// Activation state of endpoint
-        /// </summary>
-        [DataMember(Name = "activationState", Order = 9,
-            EmitDefaultValue = false)]
-        public EntityActivationState? ActivationState { get; set; }
-
-        /// <summary>
-        /// Last state of the activated endpoint
-        /// </summary>
-        [DataMember(Name = "endpointState", Order = 10,
-            EmitDefaultValue = false)]
-        public EndpointConnectivityState? EndpointState { get; set; }
-
-        /// <summary>
         /// Endpoint visibility
         /// </summary>
-        [DataMember(Name = "visibility", Order = 11,
+        [DataMember(Name = "visibility", Order = 9,
             EmitDefaultValue = false)]
         public EntityVisibility? Visibility { get; set; }
 
         /// <summary>
         /// Last time endpoint was seen
         /// </summary>
-        [DataMember(Name = "notSeenSince", Order = 12,
+        [DataMember(Name = "notSeenSince", Order = 10,
             EmitDefaultValue = false)]
         public DateTime? NotSeenSince { get; set; }
 
         /// <summary>
         /// Created
         /// </summary>
-        [DataMember(Name = "created", Order = 13,
+        [DataMember(Name = "created", Order = 11,
             EmitDefaultValue = false)]
-        public RegistryOperationApiModel Created { get; set; }
+        public OperationContextApiModel Created { get; set; }
 
         /// <summary>
         /// Updated
         /// </summary>
-        [DataMember(Name = "updated", Order = 14,
+        [DataMember(Name = "updated", Order = 12,
             EmitDefaultValue = false)]
-        public RegistryOperationApiModel Updated { get; set; }
+        public OperationContextApiModel Updated { get; set; }
 
         /// <summary>
         /// Generation id
         /// </summary>
-        [DataMember(Name = "generationId", Order = 15)]
+        [DataMember(Name = "generationId", Order = 13)]
         [Required]
         public string GenerationId { get; set; }
     }

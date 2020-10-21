@@ -3,7 +3,7 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Platform.Publisher.Storage.Services {
+namespace Microsoft.Azure.IIoT.Platform.Publisher.Storage {
     using Microsoft.Azure.IIoT.Platform.Core.Models;
     using Microsoft.Azure.IIoT.Platform.Publisher.Models;
     using System;
@@ -80,8 +80,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Storage.Services {
                 ClientId = model.State?.ClientId,
                 LastResultErrorMessage = model.State?.LastResult?.ErrorMessage,
                 LastResultStatusCode = model.State?.LastResult?.StatusCode,
-                Type = DataSetEntityDocument.EventSet,
-                ClassType = DataSetEntityDocument.ClassTypeName
+                Type = DataSetEntityDocument.EventSet
             };
         }
 
@@ -131,8 +130,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Storage.Services {
                 UpdatedAuditId = model.Updated?.AuthorityId,
                 Created = model.Created?.Time ?? DateTime.UtcNow,
                 CreatedAuditId = model.Created?.AuthorityId,
-                Type = DataSetEntityDocument.Variable,
-                ClassType = DataSetEntityDocument.ClassTypeName
+                Type = DataSetEntityDocument.Variable
             };
         }
 
@@ -160,11 +158,11 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Storage.Services {
                 },
                 SelectedFields = document.SelectedFields?.ToList(),
                 State = ToDataSetItemState(document),
-                Updated = document.Updated == null ? null : new PublisherOperationContextModel {
+                Updated = document.Updated == null ? null : new OperationContextModel {
                     Time = document.Updated.Value,
                     AuthorityId = document.UpdatedAuditId
                 },
-                Created = document.Created == null ? null : new PublisherOperationContextModel {
+                Created = document.Created == null ? null : new OperationContextModel {
                     Time = document.Created.Value,
                     AuthorityId = document.CreatedAuditId
                 }
@@ -202,11 +200,11 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Storage.Services {
                 SubstituteValue = document.SubstituteValue?.Copy(),
                 TriggerId = document.TriggerId,
                 State = ToDataSetItemState(document),
-                Updated = document.Updated == null ? null : new PublisherOperationContextModel {
+                Updated = document.Updated == null ? null : new OperationContextModel {
                     Time = document.Updated.Value,
                     AuthorityId = document.UpdatedAuditId
                 },
-                Created = document.Created == null ? null : new PublisherOperationContextModel {
+                Created = document.Created == null ? null : new OperationContextModel {
                     Time = document.Created.Value,
                     AuthorityId = document.CreatedAuditId
                 }

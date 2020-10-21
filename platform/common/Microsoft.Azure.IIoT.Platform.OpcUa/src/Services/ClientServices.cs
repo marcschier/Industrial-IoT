@@ -27,7 +27,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
     /// <summary>
     /// Opc ua stack based service client
     /// </summary>
-    public sealed class ClientServices : IClientHost, IEndpointServices, IEndpointDiscovery,
+    public sealed class ClientServices : IClientHost, IConnectionServices, IEndpointDiscovery,
         ICertificateServices<EndpointModel>, IDisposable {
 
         /// <summary>
@@ -159,7 +159,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
 
         /// <inheritdoc/>
         public IDisposable RegisterCallback(ConnectionModel connection,
-            Func<EndpointConnectivityState, Task> callback) {
+            Func<ConnectionStatus, Task> callback) {
             if (connection is null) {
                 throw new ArgumentNullException(nameof(connection));
             }
@@ -486,7 +486,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
         /// <param name="state"></param>
         /// <returns></returns>
         private async Task NotifyStateChangeAsync(ConnectionModel connection,
-            EndpointConnectivityState state) {
+            ConnectionStatus state) {
             var id = new ConnectionIdentifier(connection);
             if (_callbacks.TryGetValue(id, out var list)) {
                 List<CallbackHandle> copy;
@@ -508,7 +508,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
             /// <summary>
             /// Callback
             /// </summary>
-            public Func<EndpointConnectivityState, Task> Callback { get; }
+            public Func<ConnectionStatus, Task> Callback { get; }
 
             /// <summary>
             /// Create handle
@@ -517,7 +517,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
             /// <param name="connection"></param>
             /// <param name="callback"></param>
             public CallbackHandle(ClientServices outer, ConnectionModel connection,
-                Func<EndpointConnectivityState, Task> callback) {
+                Func<ConnectionStatus, Task> callback) {
                 Callback = callback;
                 _outer = outer;
                 _connection = new ConnectionIdentifier(connection);

@@ -156,12 +156,12 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Models {
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
-        public static ApplicationRegistrationQueryApiModel ToApiModel(
-            this ApplicationRegistrationQueryModel model) {
+        public static ApplicationInfoQueryApiModel ToApiModel(
+            this ApplicationInfoQueryModel model) {
             if (model == null) {
                 return null;
             }
-            return new ApplicationRegistrationQueryApiModel {
+            return new ApplicationInfoQueryApiModel {
                 ApplicationType = (Core.Api.Models.ApplicationType?)model.ApplicationType,
                 ApplicationUri = model.ApplicationUri,
                 ProductUri = model.ProductUri,
@@ -180,12 +180,12 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Models {
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
-        public static ApplicationRegistrationQueryModel ToServiceModel(
-            this ApplicationRegistrationQueryApiModel model) {
+        public static ApplicationInfoQueryModel ToServiceModel(
+            this ApplicationInfoQueryApiModel model) {
             if (model == null) {
                 return null;
             }
-            return new ApplicationRegistrationQueryModel {
+            return new ApplicationInfoQueryModel {
                 ApplicationType = (Core.Models.ApplicationType?)model.ApplicationType,
                 ApplicationUri = model.ApplicationUri,
                 ProductUri = model.ProductUri,
@@ -507,38 +507,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Models {
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
-        public static EntityActivationStatusApiModel ToApiModel(
-            this EntityActivationStatusModel model) {
-            if (model == null) {
-                return null;
-            }
-            return new EntityActivationStatusApiModel {
-                Id = model.Id,
-                ActivationState = (EntityActivationState?)model.ActivationState
-            };
-        }
-
-        /// <summary>
-        /// Create service model
-        /// </summary>
-        /// <param name="model"></param>
-        /// <returns></returns>
-        public static EntityActivationStatusModel ToServiceModel(
-            this EntityActivationStatusApiModel model) {
-            if (model == null) {
-                return null;
-            }
-            return new EntityActivationStatusModel {
-                Id = model.Id,
-                ActivationState = (Registry.Models.EntityActivationState?)model.ActivationState
-            };
-        }
-
-        /// <summary>
-        /// Create api model
-        /// </summary>
-        /// <param name="model"></param>
-        /// <returns></returns>
         public static EndpointApiModel ToApiModel(
             this EndpointModel model) {
             if (model == null) {
@@ -573,38 +541,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Models {
         }
 
         /// <summary>
-        /// Convert to api model
-        /// </summary>
-        /// <param name="model"></param>
-        /// <returns></returns>
-        public static EndpointInfoUpdateApiModel ToApiModel(
-            this EndpointInfoUpdateModel model) {
-            if (model == null) {
-                return null;
-            }
-            return new EndpointInfoUpdateApiModel {
-                GenerationId = model.GenerationId,
-                ActivationState = (EntityActivationState?)model.ActivationState,
-            };
-        }
-
-        /// <summary>
-        /// Convert to service model
-        /// </summary>
-        /// <param name="model"></param>
-        /// <returns></returns>
-        public static EndpointInfoUpdateModel ToServiceModel(
-            this EndpointInfoUpdateApiModel model) {
-            if (model == null) {
-                return null;
-            }
-            return new EndpointInfoUpdateModel {
-                GenerationId = model.GenerationId,
-                ActivationState = (Registry.Models.EntityActivationState?)model.ActivationState,
-            };
-        }
-
-        /// <summary>
         /// Create api model
         /// </summary>
         /// <param name="model"></param>
@@ -619,8 +555,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Models {
                 GenerationId = model.GenerationId,
                 NotSeenSince = model.NotSeenSince,
                 Visibility = (EntityVisibility?)model.Visibility,
-                ActivationState = (EntityActivationState?)model.ActivationState,
-                EndpointState = (Core.Api.Models.EndpointConnectivityState?)model.EndpointState,
                 Id = model.Id,
                 Endpoint = model.Endpoint.ToApiModel(),
                 AuthenticationMethods = model.AuthenticationMethods?
@@ -648,8 +582,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Models {
                 GenerationId = model.GenerationId,
                 NotSeenSince = model.NotSeenSince,
                 Visibility = (Registry.Models.EntityVisibility?)model.Visibility,
-                ActivationState = (Registry.Models.EntityActivationState?)model.ActivationState,
-                EndpointState = (Core.Models.EndpointConnectivityState?)model.EndpointState,
                 Id = model.Id,
                 Endpoint = model.Endpoint.ToServiceModel(),
                 AuthenticationMethods = model.AuthenticationMethods?
@@ -710,8 +642,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Models {
             }
             return new EndpointInfoQueryApiModel {
                 Url = model.Url,
-                ActivationState = (Registry.Api.Models.EntityActivationState?)model.ActivationState,
-                EndpointState = (Core.Api.Models.EndpointConnectivityState?)model.EndpointState,
                 Certificate = model.Certificate,
                 SecurityPolicy = model.SecurityPolicy,
                 SecurityMode = (Core.Api.Models.SecurityMode?)model.SecurityMode,
@@ -733,8 +663,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Models {
             }
             return new EndpointInfoQueryModel {
                 Url = model.Url,
-                ActivationState = (Registry.Models.EntityActivationState?)model.ActivationState,
-                EndpointState = (Core.Models.EndpointConnectivityState?)model.EndpointState,
                 Certificate = model.Certificate,
                 SecurityPolicy = model.SecurityPolicy,
                 SecurityMode = (Core.Models.SecurityMode?)model.SecurityMode,
@@ -749,12 +677,12 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Models {
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
-        public static RegistryOperationApiModel ToApiModel(
-            this RegistryOperationContextModel model) {
+        public static OperationContextApiModel ToApiModel(
+            this OperationContextModel model) {
             if (model == null) {
                 return null;
             }
-            return new RegistryOperationApiModel {
+            return new OperationContextApiModel {
                 Time = model.Time,
                 AuthorityId = model.AuthorityId
             };
@@ -765,12 +693,12 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Models {
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
-        public static RegistryOperationContextModel ToServiceModel(
-            this RegistryOperationApiModel model) {
+        public static OperationContextModel ToServiceModel(
+            this OperationContextApiModel model) {
             if (model == null) {
                 return null;
             }
-            return new RegistryOperationContextModel {
+            return new OperationContextModel {
                 Time = model.Time,
                 AuthorityId = model.AuthorityId
             };

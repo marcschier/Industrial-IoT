@@ -136,7 +136,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Storage {
         }
 
         /// <inheritdoc/>
-        public async Task<ApplicationInfoListModel> QueryAsync(ApplicationRegistrationQueryModel query,
+        public async Task<ApplicationInfoListModel> QueryAsync(ApplicationInfoQueryModel query,
             string continuationToken, int? maxResults, CancellationToken ct) {
             var results = continuationToken != null ?
                 _documents.ContinueQuery<ApplicationDocument>(continuationToken, maxResults) :
@@ -199,7 +199,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Storage {
         /// <param name="query"></param>
         /// <returns></returns>
         private static IResultFeed<IDocumentInfo<ApplicationDocument>> CreateQuery(
-            IQuery<ApplicationDocument> query, ApplicationRegistrationQueryModel filter) {
+            IQuery<ApplicationDocument> query, ApplicationInfoQueryModel filter) {
 
             if (filter != null) {
                 if (filter?.Visibility != null) {

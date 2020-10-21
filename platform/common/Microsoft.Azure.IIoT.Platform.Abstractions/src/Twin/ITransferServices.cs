@@ -5,6 +5,7 @@
 
 namespace Microsoft.Azure.IIoT.Platform.Twin {
     using Microsoft.Azure.IIoT.Platform.Twin.Models;
+    using System.Threading;
     using System.Threading.Tasks;
 
     /// <summary>
@@ -13,12 +14,14 @@ namespace Microsoft.Azure.IIoT.Platform.Twin {
     public interface ITransferServices<T> {
 
         /// <summary>
-        /// Start exporting model to an endpoint
+        /// Start exporting model to an twin
         /// </summary>
-        /// <param name="endpoint"></param>
+        /// <param name="twin"></param>
         /// <param name="request"></param>
+        /// <param name="ct"></param>
         /// <returns>file name of the model exported</returns>
-        Task<ModelUploadStartResultModel> ModelUploadStartAsync(T endpoint,
-            ModelUploadStartRequestModel request);
+        Task<ModelUploadStartResultModel> ModelUploadStartAsync(T twin,
+            ModelUploadStartRequestModel request, 
+            CancellationToken ct = default);
     }
 }

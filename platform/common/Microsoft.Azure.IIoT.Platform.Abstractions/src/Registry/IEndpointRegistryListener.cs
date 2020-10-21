@@ -5,6 +5,7 @@
 
 namespace Microsoft.Azure.IIoT.Platform.Registry {
     using Microsoft.Azure.IIoT.Platform.Registry.Models;
+    using Microsoft.Azure.IIoT.Platform.Core.Models;
     using System.Threading.Tasks;
 
     /// <summary>
@@ -18,25 +19,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry {
         /// <param name="context"></param>
         /// <param name="endpoint"></param>
         /// <returns></returns>
-        Task OnEndpointNewAsync(RegistryOperationContextModel context,
-            EndpointInfoModel endpoint);
-
-        /// <summary>
-        /// Activated endpoint
-        /// </summary>
-        /// <param name="context"></param>
-        /// <param name="endpoint"></param>
-        /// <returns></returns>
-        Task OnEndpointActivatedAsync(RegistryOperationContextModel context,
-            EndpointInfoModel endpoint);
-
-        /// <summary>
-        /// Endpoint was deactivated
-        /// </summary>
-        /// <param name="context"></param>
-        /// <param name="endpoint"></param>
-        /// <returns></returns>
-        Task OnEndpointDeactivatedAsync(RegistryOperationContextModel context,
+        Task OnEndpointNewAsync(OperationContextModel context,
             EndpointInfoModel endpoint);
 
         /// <summary>
@@ -45,7 +28,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry {
         /// <param name="context"></param>
         /// <param name="endpoint"></param>
         /// <returns></returns>
-        Task OnEndpointUpdatedAsync(RegistryOperationContextModel context,
+        Task OnEndpointUpdatedAsync(OperationContextModel context,
             EndpointInfoModel endpoint);
 
         /// <summary>
@@ -55,7 +38,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry {
         /// <param name="endpointId"></param>
         /// <param name="endpoint"></param>
         /// <returns></returns>
-        Task OnEndpointDeletedAsync(RegistryOperationContextModel context,
+        Task OnEndpointDeletedAsync(OperationContextModel context,
             string endpointId, EndpointInfoModel endpoint);
     }
 }

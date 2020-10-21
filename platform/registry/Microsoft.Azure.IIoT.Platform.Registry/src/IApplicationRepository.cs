@@ -24,7 +24,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry {
         /// <param name="ct"></param>
         /// <returns></returns>
         Task<ApplicationInfoListModel> QueryAsync(
-            ApplicationRegistrationQueryModel query = null,
+            ApplicationInfoQueryModel query = null,
             string continuationToken = null, int? maxResults = null,
             CancellationToken ct = default);
 

@@ -16,10 +16,10 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
         /// Create browse services tests
         /// </summary>
         /// <param name="services"></param>
-        /// <param name="endpoint"></param>
-        public HistoryReadValuesTests(Func<IHistorianServices<T>> services, T endpoint) {
+        /// <param name="twin"></param>
+        public HistoryReadValuesTests(Func<IHistorianServices<T>> services, T twin) {
             _services = services;
-            _endpoint = endpoint;
+            _twin = twin;
         }
 
         public async Task HistoryReadInt64ValuesTest1Async() {
@@ -27,7 +27,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
             var services = _services();
             var samples = "s=1:Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Servers.HistoricalAccess.Data.Sample.Int64.txt";
 
-            var results = await services.HistoryReadValuesAsync(_endpoint,
+            var results = await services.HistoryReadValuesAsync(_twin,
                 new HistoryReadRequestModel<ReadValuesDetailsModel> {
                     NodeId = "http://opcfoundation.org/HistoricalAccess#" + samples,
                     Details = new ReadValuesDetailsModel {
@@ -103,7 +103,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
             var services = _services();
             var samples = "s=1:Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Servers.HistoricalAccess.Data.Sample.Int64.txt";
 
-            var results = await services.HistoryReadValuesAsync(_endpoint,
+            var results = await services.HistoryReadValuesAsync(_twin,
                 new HistoryReadRequestModel<ReadValuesDetailsModel> {
                     NodeId = "http://opcfoundation.org/HistoricalAccess#" + samples,
                     Details = new ReadValuesDetailsModel {
@@ -162,7 +162,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
             var services = _services();
             var samples = "s=1:Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Servers.HistoricalAccess.Data.Sample.Int64.txt";
 
-            var results = await services.HistoryReadValuesAsync(_endpoint,
+            var results = await services.HistoryReadValuesAsync(_twin,
                 new HistoryReadRequestModel<ReadValuesDetailsModel> {
                     NodeId = "http://opcfoundation.org/HistoricalAccess#" + samples,
                     Details = new ReadValuesDetailsModel {
@@ -229,7 +229,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
             var services = _services();
             var samples = "s=1:Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Servers.HistoricalAccess.Data.Sample.Int64.txt";
 
-            var results = await services.HistoryReadValuesAsync(_endpoint,
+            var results = await services.HistoryReadValuesAsync(_twin,
                 new HistoryReadRequestModel<ReadValuesDetailsModel> {
                     NodeId = "http://opcfoundation.org/HistoricalAccess#" + samples,
                     Details = new ReadValuesDetailsModel {
@@ -283,7 +283,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
                 });
         }
 
-        private readonly T _endpoint;
+        private readonly T _twin;
         private readonly Func<IHistorianServices<T>> _services;
     }
 }

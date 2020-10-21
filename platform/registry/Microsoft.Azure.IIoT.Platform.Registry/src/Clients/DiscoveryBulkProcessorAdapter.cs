@@ -37,7 +37,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Clients {
             try {
                 await _processor.ProcessDiscoveryEventsAsync(_identity.AsHubResource(),
                     results.LastOrDefault(r => r.Result != null).Result,
-                    results.Where(r => r.Application != null));
+                    results.Where(r => r.Application != null)).ConfigureAwait(false);
             }
             catch (Exception ex) {
                 _logger.Error(ex, "Failed to process discovery result");

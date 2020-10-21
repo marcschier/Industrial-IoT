@@ -24,9 +24,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Models {
             if (endpoint == null) {
                 endpoint = new EndpointInfoApiModel();
             }
-            endpoint.ActivationState = update.ActivationState;
             endpoint.ApplicationId = update.ApplicationId;
-            endpoint.EndpointState = update.EndpointState;
             endpoint.NotSeenSince = update.NotSeenSince;
             endpoint.AuthenticationMethods = update.AuthenticationMethods;
             endpoint.DiscovererId = update.DiscovererId;

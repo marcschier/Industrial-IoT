@@ -15,11 +15,11 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api.Models {
     public class PublishedDataSetSourceStateApiModel {
 
         /// <summary>
-        /// Current endpoint state
+        /// Current connection state
         /// </summary>
-        [DataMember(Name = "endpointState", Order = 0,
+        [DataMember(Name = "connectionState", Order = 0,
             EmitDefaultValue = false)]
-        public EndpointConnectivityState? EndpointState { get; set; }
+        public ConnectionStateApiModel ConnectionState { get; set; }
 
         /// <summary>
         /// Last operation result

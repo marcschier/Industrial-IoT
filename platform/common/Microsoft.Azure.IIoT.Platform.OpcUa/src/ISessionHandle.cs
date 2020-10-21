@@ -22,7 +22,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa {
         /// <summary>
         /// State
         /// </summary>
-        EndpointConnectivityState State { get; }
+        ConnectionStatus State { get; }
 
         /// <summary>
         /// Session

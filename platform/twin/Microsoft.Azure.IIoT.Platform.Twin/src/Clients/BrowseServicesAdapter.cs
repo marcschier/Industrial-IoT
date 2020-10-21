@@ -6,13 +6,13 @@
 namespace Microsoft.Azure.IIoT.Platform.Twin.Clients {
     using Microsoft.Azure.IIoT.Platform.Twin;
     using Microsoft.Azure.IIoT.Platform.Twin.Models;
-    using Microsoft.Azure.IIoT.Platform.Registry;
     using Microsoft.Azure.IIoT.Platform.Core.Models;
     using System;
     using System.Threading.Tasks;
+    using System.Threading;
 
     /// <summary>
-    /// Implements node services as adapter through endpoint registry
+    /// Implements node services as adapter through twin registry
     /// </summary>
     public sealed class BrowseServicesAdapter : IBrowseServices<string> {
 
@@ -21,34 +21,34 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Clients {
         /// </summary>
         /// <param name="registry"></param>
         /// <param name="browse"></param>
-        public BrowseServicesAdapter(IEndpointRegistry registry,
-            IBrowseServices<EndpointModel> browse) {
+        public BrowseServicesAdapter(ITwinRegistry registry, 
+            IBrowseServices<ConnectionModel> browse) {
             _registry = registry ?? throw new ArgumentNullException(nameof(registry));
             _browse = browse ?? throw new ArgumentNullException(nameof(browse));
         }
 
         /// <inheritdoc/>
         public async Task<BrowseResultModel> NodeBrowseFirstAsync(
-            string endpoint, BrowseRequestModel request) {
-            var ep = await _registry.GetActivatedEndpointAsync(endpoint).ConfigureAwait(false);
-            return await _browse.NodeBrowseFirstAsync(ep, request).ConfigureAwait(false);
+            string twin, BrowseRequestModel request, CancellationToken ct) {
+            var conn = await _registry.GetConnectionAsync(twin, ct: ct).ConfigureAwait(false);
+            return await _browse.NodeBrowseFirstAsync(conn, request, ct).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
         public async Task<BrowseNextResultModel> NodeBrowseNextAsync(
-            string endpoint, BrowseNextRequestModel request) {
-            var ep = await _registry.GetActivatedEndpointAsync(endpoint).ConfigureAwait(false);
-            return await _browse.NodeBrowseNextAsync(ep, request).ConfigureAwait(false);
+            string twin, BrowseNextRequestModel request, CancellationToken ct) {
+            var conn = await _registry.GetConnectionAsync(twin, ct: ct).ConfigureAwait(false);
+            return await _browse.NodeBrowseNextAsync(conn, request, ct).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
         public async Task<BrowsePathResultModel> NodeBrowsePathAsync(
-            string endpoint, BrowsePathRequestModel request) {
-            var ep = await _registry.GetActivatedEndpointAsync(endpoint).ConfigureAwait(false);
-            return await _browse.NodeBrowsePathAsync(ep, request).ConfigureAwait(false);
+            string twin, BrowsePathRequestModel request, CancellationToken ct) {
+            var conn = await _registry.GetConnectionAsync(twin, ct: ct).ConfigureAwait(false);
+            return await _browse.NodeBrowsePathAsync(conn, request, ct).ConfigureAwait(false);
         }
 
-        private readonly IEndpointRegistry _registry;
-        private readonly IBrowseServices<EndpointModel> _browse;
+        private readonly ITwinRegistry _registry;
+        private readonly IBrowseServices<ConnectionModel> _browse;
     }
 }

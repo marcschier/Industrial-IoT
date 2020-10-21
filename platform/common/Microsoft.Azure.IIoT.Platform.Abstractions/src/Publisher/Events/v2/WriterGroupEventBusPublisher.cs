@@ -6,6 +6,7 @@
 namespace Microsoft.Azure.IIoT.Platform.Publisher.Events.v2 {
     using Microsoft.Azure.IIoT.Platform.Publisher.Events.v2.Models;
     using Microsoft.Azure.IIoT.Platform.Publisher.Models;
+    using Microsoft.Azure.IIoT.Platform.Core.Models;
     using Microsoft.Azure.IIoT.Messaging;
     using System;
     using System.Threading.Tasks;
@@ -25,42 +26,42 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Events.v2 {
 
 
         /// <inheritdoc/>
-        public Task OnWriterGroupAddedAsync(PublisherOperationContextModel context,
+        public Task OnWriterGroupAddedAsync(OperationContextModel context,
             WriterGroupInfoModel writerGroup) {
             return _bus.PublishAsync(Wrap(WriterGroupEventType.Added, context,
                 writerGroup.WriterGroupId, writerGroup));
         }
 
         /// <inheritdoc/>
-        public Task OnWriterGroupUpdatedAsync(PublisherOperationContextModel context,
+        public Task OnWriterGroupUpdatedAsync(OperationContextModel context,
             WriterGroupInfoModel writerGroup) {
             return _bus.PublishAsync(Wrap(WriterGroupEventType.Updated, context,
                 writerGroup.WriterGroupId, writerGroup));
         }
 
         /// <inheritdoc/>
-        public Task OnWriterGroupStateChangeAsync(PublisherOperationContextModel context,
+        public Task OnWriterGroupStateChangeAsync(OperationContextModel context,
             WriterGroupInfoModel writerGroup) {
             return _bus.PublishAsync(Wrap(WriterGroupEventType.StateChange, context,
                 writerGroup.WriterGroupId, writerGroup));
         }
 
         /// <inheritdoc/>
-        public Task OnWriterGroupActivatedAsync(PublisherOperationContextModel context,
+        public Task OnWriterGroupActivatedAsync(OperationContextModel context,
             WriterGroupInfoModel writerGroup) {
             return _bus.PublishAsync(Wrap(WriterGroupEventType.Activated, context,
                 writerGroup.WriterGroupId, writerGroup));
         }
 
         /// <inheritdoc/>
-        public Task OnWriterGroupDeactivatedAsync(PublisherOperationContextModel context,
+        public Task OnWriterGroupDeactivatedAsync(OperationContextModel context,
             WriterGroupInfoModel writerGroup) {
             return _bus.PublishAsync(Wrap(WriterGroupEventType.Deactivated, context,
                 writerGroup.WriterGroupId, writerGroup));
         }
 
         /// <inheritdoc/>
-        public Task OnWriterGroupRemovedAsync(PublisherOperationContextModel context,
+        public Task OnWriterGroupRemovedAsync(OperationContextModel context,
             string writerGroupId) {
             return _bus.PublishAsync(Wrap(WriterGroupEventType.Removed, context,
                 writerGroupId, null));
@@ -75,7 +76,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Events.v2 {
         /// <param name="writerGroup"></param>
         /// <returns></returns>
         private static WriterGroupEventModel Wrap(WriterGroupEventType type,
-            PublisherOperationContextModel context, string writerGroupId,
+            OperationContextModel context, string writerGroupId,
             WriterGroupInfoModel writerGroup) {
             return new WriterGroupEventModel {
                 EventType = type,

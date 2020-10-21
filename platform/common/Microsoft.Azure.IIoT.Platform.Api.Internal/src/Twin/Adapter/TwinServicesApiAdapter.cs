@@ -9,12 +9,13 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
     using Microsoft.Azure.IIoT.Platform.Twin.Models;
     using System;
     using System.Threading.Tasks;
+    using System.Threading;
 
     /// <summary>
     /// Implements node services as adapter on top of api.
     /// </summary>
     public sealed class TwinServicesApiAdapter : IBrowseServices<string>,
-        INodeServices<string>, ITransferServices<string> {
+        INodeServices<string>, ITransferServices<string>, ITwinRegistry {
 
         /// <summary>
         /// Create adapter
@@ -25,114 +26,128 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
         }
 
         /// <inheritdoc/>
+        public async Task<TwinActivationResultModel> ActivateTwinAsync(
+            TwinActivationRequestModel request, CancellationToken ct) {
+            var result = await _client.ActivateTwinAsync(
+                request.ToApiModel(), ct).ConfigureAwait(false);
+            return result.ToServiceModel();
+        }
+
+        /// <inheritdoc/>
+        public async Task<TwinInfoListModel> ListTwinsAsync(
+            string continuation, int? pageSize, CancellationToken ct) {
+            var result = await _client.ListTwinsAsync(
+                continuation, pageSize, ct).ConfigureAwait(false);
+            return result.ToServiceModel();
+        }
+
+        /// <inheritdoc/>
+        public async Task<TwinInfoListModel> QueryTwinsAsync(
+            TwinInfoQueryModel query, int? pageSize, CancellationToken ct) {
+            var result = await _client.QueryTwinsAsync(query.ToApiModel(), 
+                pageSize, ct).ConfigureAwait(false);
+            return result.ToServiceModel();
+        }
+
+        /// <inheritdoc/>
+        public async Task<TwinModel> GetTwinAsync(string twin, 
+            CancellationToken ct) {
+            var result = await _client.GetTwinAsync(twin,
+                ct).ConfigureAwait(false);
+            return result.ToServiceModel();
+        }
+
+        /// <inheritdoc/>
+        public async Task UpdateTwinAsync(string twin, TwinInfoUpdateModel 
+            request, CancellationToken ct) {
+            await _client.UpdateTwinAsync(twin, request.ToApiModel(),
+                ct).ConfigureAwait(false);
+        }
+
+        /// <inheritdoc/>
+        public async Task DectivateTwinAsync(string twin, string generationId,
+            CancellationToken ct) {
+            await _client.DectivateTwinAsync(twin, generationId, 
+                ct).ConfigureAwait(false);
+        }
+
+        /// <inheritdoc/>
         public async Task<BrowseResultModel> NodeBrowseFirstAsync(
-            string endpoint, BrowseRequestModel request) {
-            var result = await _client.NodeBrowseFirstAsync(endpoint,
-                request.ToApiModel()).ConfigureAwait(false);
+            string twin, BrowseRequestModel request, CancellationToken ct) {
+            var result = await _client.NodeBrowseFirstAsync(twin, 
+                request.ToApiModel(), ct).ConfigureAwait(false);
             return result.ToServiceModel();
         }
 
         /// <inheritdoc/>
         public async Task<BrowseNextResultModel> NodeBrowseNextAsync(
-            string endpoint, BrowseNextRequestModel request) {
-            var result = await _client.NodeBrowseNextAsync(endpoint,
-                request.ToApiModel()).ConfigureAwait(false);
+            string twin, BrowseNextRequestModel request, CancellationToken ct) {
+            var result = await _client.NodeBrowseNextAsync(twin,
+                request.ToApiModel(), ct).ConfigureAwait(false);
             return result.ToServiceModel();
         }
 
         /// <inheritdoc/>
         public async Task<BrowsePathResultModel> NodeBrowsePathAsync(
-            string endpoint, BrowsePathRequestModel request) {
-            var result = await _client.NodeBrowsePathAsync(endpoint,
-                request.ToApiModel()).ConfigureAwait(false);
+            string twin, BrowsePathRequestModel request, CancellationToken ct) {
+            var result = await _client.NodeBrowsePathAsync(twin,
+                request.ToApiModel(), ct).ConfigureAwait(false);
             return result.ToServiceModel();
         }
 
         /// <inheritdoc/>
         public async Task<ValueReadResultModel> NodeValueReadAsync(
-            string endpoint, ValueReadRequestModel request) {
-            var result = await _client.NodeValueReadAsync(endpoint,
-                request.ToApiModel()).ConfigureAwait(false);
+            string twin, ValueReadRequestModel request, CancellationToken ct) {
+            var result = await _client.NodeValueReadAsync(twin,
+                request.ToApiModel(), ct).ConfigureAwait(false);
             return result.ToServiceModel();
         }
 
         /// <inheritdoc/>
         public async Task<ValueWriteResultModel> NodeValueWriteAsync(
-            string endpoint, ValueWriteRequestModel request) {
-            var result = await _client.NodeValueWriteAsync(endpoint,
-                request.ToApiModel()).ConfigureAwait(false);
+            string twin, ValueWriteRequestModel request, CancellationToken ct) {
+            var result = await _client.NodeValueWriteAsync(twin,
+                request.ToApiModel(), ct).ConfigureAwait(false);
             return result.ToServiceModel();
         }
 
         /// <inheritdoc/>
         public async Task<MethodMetadataResultModel> NodeMethodGetMetadataAsync(
-            string endpoint, MethodMetadataRequestModel request) {
-            var result = await _client.NodeMethodGetMetadataAsync(endpoint,
-                request.ToApiModel()).ConfigureAwait(false);
+            string twin, MethodMetadataRequestModel request, CancellationToken ct) {
+            var result = await _client.NodeMethodGetMetadataAsync(twin,
+                request.ToApiModel(), ct).ConfigureAwait(false);
             return result.ToServiceModel();
         }
 
         /// <inheritdoc/>
         public async Task<MethodCallResultModel> NodeMethodCallAsync(
-            string endpoint, MethodCallRequestModel request) {
-            var result = await _client.NodeMethodCallAsync(endpoint,
-                request.ToApiModel()).ConfigureAwait(false);
+            string twin, MethodCallRequestModel request, CancellationToken ct) {
+            var result = await _client.NodeMethodCallAsync(twin,
+                request.ToApiModel(), ct).ConfigureAwait(false);
             return result.ToServiceModel();
         }
 
         /// <inheritdoc/>
         public async Task<ReadResultModel> NodeReadAsync(
-            string endpoint, ReadRequestModel request) {
-            var result = await _client.NodeReadAsync(endpoint,
-                request.ToApiModel()).ConfigureAwait(false);
+            string twin, ReadRequestModel request, CancellationToken ct) {
+            var result = await _client.NodeReadAsync(twin,
+                request.ToApiModel(), ct).ConfigureAwait(false);
             return result.ToServiceModel();
         }
 
         /// <inheritdoc/>
         public async Task<WriteResultModel> NodeWriteAsync(
-            string endpoint, WriteRequestModel request) {
-            var result = await _client.NodeWriteAsync(endpoint,
-                request.ToApiModel()).ConfigureAwait(false);
+            string twin, WriteRequestModel request, CancellationToken ct) {
+            var result = await _client.NodeWriteAsync(twin, 
+                request.ToApiModel(), ct).ConfigureAwait(false);
             return result.ToServiceModel();
         }
 
         /// <inheritdoc/>
         public async Task<ModelUploadStartResultModel> ModelUploadStartAsync(
-            string endpoint, ModelUploadStartRequestModel request) {
-            var result = await _client.ModelUploadStartAsync(endpoint,
-                request.ToApiModel()).ConfigureAwait(false);
-            return result.ToServiceModel();
-        }
-
-        /// <inheritdoc/>
-        public async Task<PublishStartResultModel> NodePublishStartAsync(
-            string endpoint, PublishStartRequestModel request) {
-            var result = await _client.NodePublishStartAsync(endpoint,
-                request.ToApiModel()).ConfigureAwait(false);
-            return result.ToServiceModel();
-        }
-
-        /// <inheritdoc/>
-        public async Task<PublishStopResultModel> NodePublishStopAsync(
-            string endpoint, PublishStopRequestModel request) {
-            var result = await _client.NodePublishStopAsync(endpoint,
-                request.ToApiModel()).ConfigureAwait(false);
-            return result.ToServiceModel();
-        }
-
-        /// <inheritdoc/>
-        public async Task<PublishBulkResultModel> NodePublishBulkAsync(
-            string endpoint, PublishBulkRequestModel request) {
-            var result = await _client.NodePublishBulkAsync(endpoint,
-                request.ToApiModel()).ConfigureAwait(false);
-            return result.ToServiceModel();
-        }
-
-        /// <inheritdoc/>
-        public async Task<PublishedItemListResultModel> NodePublishListAsync(
-            string endpoint, PublishedItemListRequestModel request) {
-            var result = await _client.NodePublishListAsync(endpoint,
-                request.ToApiModel()).ConfigureAwait(false);
+            string twin, ModelUploadStartRequestModel request, CancellationToken ct) {
+            var result = await _client.ModelUploadStartAsync(twin, 
+                request.ToApiModel(), ct).ConfigureAwait(false);
             return result.ToServiceModel();
         }
 

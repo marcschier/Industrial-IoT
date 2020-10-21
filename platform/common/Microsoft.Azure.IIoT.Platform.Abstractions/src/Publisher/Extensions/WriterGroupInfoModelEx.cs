@@ -90,7 +90,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Models {
         /// <returns></returns>
         public static WriterGroupInfoModel AsWriterGroupInfo(
             this WriterGroupAddRequestModel model,
-            PublisherOperationContextModel context) {
+            OperationContextModel context) {
             if (model == null) {
                 return null;
             }

@@ -47,7 +47,7 @@ namespace Microsoft.Azure.IIoT.Platform.Directory {
         /// <param name="dataSetWriterId"></param>
         /// <returns></returns>
         public static string ToPropertyName(string dataSetWriterId) {
-            return IdentityType.DataSet + "_" + dataSetWriterId;
+            return IdentityType.DataSetWriter + "_" + dataSetWriterId;
         }
 
         /// <summary>
@@ -59,8 +59,8 @@ namespace Microsoft.Azure.IIoT.Platform.Directory {
             if (string.IsNullOrEmpty(propertyName)) {
                 return null;
             }
-            if (propertyName.StartsWith(IdentityType.DataSet)) {
-                return propertyName.Replace(IdentityType.DataSet + "_", "");
+            if (propertyName.StartsWith(IdentityType.DataSetWriter)) {
+                return propertyName.Replace(IdentityType.DataSetWriter + "_", "");
             }
             throw new ArgumentException("Not a data set writer id");
         }
@@ -74,7 +74,7 @@ namespace Microsoft.Azure.IIoT.Platform.Directory {
             if (string.IsNullOrEmpty(propertyName)) {
                 return false;
             }
-            return propertyName.StartsWith(IdentityType.DataSet);
+            return propertyName.StartsWith(IdentityType.DataSetWriter);
         }
 
         /// <summary>

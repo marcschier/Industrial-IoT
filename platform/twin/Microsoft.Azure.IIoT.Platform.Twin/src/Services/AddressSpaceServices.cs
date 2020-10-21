@@ -20,14 +20,15 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
+    using System.Threading;
 
     /// <summary>
     /// This class provides access to a servers address space providing node
     /// and browse services.  It uses the OPC ua client interface to access
     /// the server.
     /// </summary>
-    public sealed class AddressSpaceServices : INodeServices<EndpointModel>,
-        IHistoricAccessServices<EndpointModel>, IBrowseServices<EndpointModel> {
+    public sealed class AddressSpaceServices : INodeServices<ConnectionModel>,
+        IHistoricAccessServices<ConnectionModel>, IBrowseServices<ConnectionModel> {
 
         /// <summary>
         /// Create node service
@@ -35,7 +36,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
         /// <param name="client"></param>
         /// <param name="codec"></param>
         /// <param name="logger"></param>
-        public AddressSpaceServices(IEndpointServices client,
+        public AddressSpaceServices(IConnectionServices client,
             IVariantEncoderFactory codec, ILogger logger) {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _codec = codec ?? throw new ArgumentNullException(nameof(codec));
@@ -43,9 +44,9 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
         }
 
         /// <inheritdoc/>
-        public Task<BrowseResultModel> NodeBrowseFirstAsync(EndpointModel endpoint,
-            BrowseRequestModel request) {
-            return _client.ExecuteServiceAsync(endpoint, request?.Header?.Elevation, async session => {
+        public Task<BrowseResultModel> NodeBrowseFirstAsync(ConnectionModel connection,
+            BrowseRequestModel request, CancellationToken ct) {
+            return _client.ExecuteServiceAsync(connection, request?.Header?.Elevation, async session => {
                 var rootId = request.NodeId.ToNodeId(session.MessageContext);
                 if (NodeId.IsNull(rootId)) {
                     rootId = ObjectIds.RootFolder;
@@ -87,7 +88,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
                         (request.Header?.Diagnostics).ToStackModel(), request.TargetNodesOnly ?? false,
                         request.ReadVariableValues ?? false, rawMode, references, diagnostics,
                         response.Results[0].ContinuationPoint, 
-                        response.Results[0].References).ConfigureAwait(false);
+                        response.Results[0].References, ct).ConfigureAwait(false);
 
                     result.References = references;
                 }
@@ -95,15 +96,15 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
                 result.Node = await ReadNodeModelAsync(session, codec,
                     (request.Header?.Diagnostics).ToStackModel(), rootId, null, true, rawMode,
                     !excludeReferences ? result.References.Count != 0 : (bool?)null,
-                    diagnostics, true).ConfigureAwait(false);
+                    diagnostics, true, ct).ConfigureAwait(false);
                 result.ErrorInfo = codec.Encode(diagnostics, request.Header?.Diagnostics);
                 return result;
-            });
+            }, ct: ct);
         }
 
         /// <inheritdoc/>
-        public Task<BrowseNextResultModel> NodeBrowseNextAsync(
-            EndpointModel endpoint, BrowseNextRequestModel request) {
+        public Task<BrowseNextResultModel> NodeBrowseNextAsync(ConnectionModel connection, 
+            BrowseNextRequestModel request, CancellationToken ct) {
             if (request == null) {
                 throw new ArgumentNullException(nameof(request));
             }
@@ -111,12 +112,12 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
                 throw new ArgumentException("Missing continuation token", nameof(request));
             }
             var continuationPoint = request.ContinuationToken.DecodeAsBase64();
-            return _client.ExecuteServiceAsync(endpoint, request.Header?.Elevation, async session => {
+            return _client.ExecuteServiceAsync(connection, request.Header?.Elevation, async session => {
                 var diagnostics = new List<OperationResultModel>();
                 var references = new List<NodeReferenceModel>();
                 var response = await session.BrowseNextAsync(
-                    (request.Header?.Diagnostics).ToStackModel(),
-                    request.Abort ?? false, new ByteStringCollection { continuationPoint }).ConfigureAwait(false);
+                    (request.Header?.Diagnostics).ToStackModel(), request.Abort ?? false, 
+                    new ByteStringCollection { continuationPoint }).ConfigureAwait(false);
                 OperationResultEx.Validate("BrowseNext_" + request.ContinuationToken,
                     diagnostics, response.Results.Select(r => r.StatusCode),
                     response.DiagnosticInfos, false);
@@ -126,19 +127,19 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
                     (request.Header?.Diagnostics).ToStackModel(), request.TargetNodesOnly ?? false,
                     request.ReadVariableValues ?? false, request.NodeIdsOnly ?? false,
                     references, diagnostics, response.Results[0].ContinuationPoint,
-                    response.Results[0].References).ConfigureAwait(false);
+                    response.Results[0].References, ct).ConfigureAwait(false);
 
                 return new BrowseNextResultModel {
                     References = references,
                     ContinuationToken = continuationToken,
                     ErrorInfo = codec.Encode(diagnostics, request.Header?.Diagnostics)
                 };
-            });
+            }, ct: ct);
         }
 
         /// <inheritdoc/>
-        public Task<BrowsePathResultModel> NodeBrowsePathAsync(
-            EndpointModel endpoint, BrowsePathRequestModel request) {
+        public Task<BrowsePathResultModel> NodeBrowsePathAsync(ConnectionModel connection, 
+            BrowsePathRequestModel request, CancellationToken ct) {
             if (request == null) {
                 throw new ArgumentNullException(nameof(request));
             }
@@ -147,7 +148,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
                 request.BrowsePaths.Any(p => p == null || p.Count == 0)) {
                 throw new ArgumentException("Bad browse path", nameof(request));
             }
-            return _client.ExecuteServiceAsync(endpoint, request.Header?.Elevation, async session => {
+            return _client.ExecuteServiceAsync(connection, request.Header?.Elevation, async session => {
                 var rootId = request?.NodeId.ToNodeId(session.MessageContext);
                 if (NodeId.IsNull(rootId)) {
                     rootId = ObjectIds.RootFolder;
@@ -170,18 +171,18 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
                         (request.Header?.Diagnostics).ToStackModel(),
                         request.ReadVariableValues ?? false, request.NodeIdsOnly ?? false,
                         targets, diagnostics, response.Results[index].Targets,
-                        request.BrowsePaths[index]?.ToArray()).ConfigureAwait(false);
+                        request.BrowsePaths[index]?.ToArray(), ct).ConfigureAwait(false);
                 }
                 return new BrowsePathResultModel {
                     Targets = targets,
                     ErrorInfo = codec.Encode(diagnostics, request.Header?.Diagnostics)
                 };
-            });
+            }, ct: ct);
         }
 
         /// <inheritdoc/>
         public Task<MethodMetadataResultModel> NodeMethodGetMetadataAsync(
-            EndpointModel endpoint, MethodMetadataRequestModel request) {
+            ConnectionModel connection, MethodMetadataRequestModel request, CancellationToken ct) {
             if (request == null) {
                 throw new ArgumentNullException(nameof(request));
             }
@@ -189,7 +190,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
                 (request.MethodBrowsePath == null || request.MethodBrowsePath.Count == 0)) {
                 throw new ArgumentException("Method id missing or browse path", nameof(request));
             }
-            return _client.ExecuteServiceAsync(endpoint, request.Header?.Elevation, async session => {
+            return _client.ExecuteServiceAsync(connection, request.Header?.Elevation, async session => {
                 var diagnostics = new List<OperationResultModel>();
                 var methodId = request.MethodId.ToNodeId(session.MessageContext);
                 if (request.MethodBrowsePath != null && request.MethodBrowsePath.Count > 0) {
@@ -244,7 +245,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
                     foreach (var argument in argumentsList.Select(a => (Argument)a.Body)) {
                         var dataTypeIdNode = await ReadNodeModelAsync(session, codec,
                             (request.Header?.Diagnostics).ToStackModel(), argument.DataType, null,
-                            false, false, false, diagnostics, false).ConfigureAwait(false);
+                            false, false, false, diagnostics, false, ct).ConfigureAwait(false);
                         var arg = new MethodMetadataArgumentModel {
                             Name = argument.Name,
                             DefaultValue = argument.Value == null ? VariantValue.Null :
@@ -266,12 +267,12 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
                 }
                 result.ErrorInfo = codec.Encode(diagnostics, request.Header?.Diagnostics);
                 return result;
-            });
+            }, ct: ct);
         }
 
         /// <inheritdoc/>
-        public Task<MethodCallResultModel> NodeMethodCallAsync(EndpointModel endpoint,
-            MethodCallRequestModel request) {
+        public Task<MethodCallResultModel> NodeMethodCallAsync(ConnectionModel connection,
+            MethodCallRequestModel request, CancellationToken ct) {
             if (request == null) {
                 throw new ArgumentNullException(nameof(request));
             }
@@ -279,7 +280,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
                 (request.ObjectBrowsePath == null || request.ObjectBrowsePath.Count == 0)) {
                 throw new ArgumentException("Object id missing or bad browse path", nameof(request));
             }
-            return _client.ExecuteServiceAsync(endpoint, request.Header?.Elevation, async session => {
+            return _client.ExecuteServiceAsync(connection, request.Header?.Elevation, async session => {
                 var diagnostics = new List<OperationResultModel>();
                 //
                 // A method call request can specify the targets in several ways:
@@ -426,12 +427,12 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
                 }
                 result.ErrorInfo = codec.Encode(diagnostics, request.Header?.Diagnostics);
                 return result;
-            });
+            }, ct: ct);
         }
 
         /// <inheritdoc/>
-        public Task<ValueReadResultModel> NodeValueReadAsync(EndpointModel endpoint,
-            ValueReadRequestModel request) {
+        public Task<ValueReadResultModel> NodeValueReadAsync(ConnectionModel connection,
+            ValueReadRequestModel request, CancellationToken ct) {
             if (request == null) {
                 throw new ArgumentNullException(nameof(request));
             }
@@ -439,7 +440,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
                 (request.BrowsePath == null || request.BrowsePath.Count == 0)) {
                 throw new ArgumentException("Bad node id or browse path missing", nameof(request));
             }
-            return _client.ExecuteServiceAsync(endpoint, request.Header?.Elevation, async session => {
+            return _client.ExecuteServiceAsync(connection, request.Header?.Elevation, async session => {
                 var diagnostics = new List<OperationResultModel>();
                 var readNode = request.NodeId.ToNodeId(session.MessageContext);
                 if (request.BrowsePath != null && request.BrowsePath.Count > 0) {
@@ -488,12 +489,12 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
                 }
                 result.ErrorInfo = codec.Encode(diagnostics, request.Header?.Diagnostics);
                 return result;
-            });
+            }, ct: ct);
         }
 
         /// <inheritdoc/>
-        public Task<ValueWriteResultModel> NodeValueWriteAsync(EndpointModel endpoint,
-            ValueWriteRequestModel request) {
+        public Task<ValueWriteResultModel> NodeValueWriteAsync(ConnectionModel connection,
+            ValueWriteRequestModel request, CancellationToken ct) {
             if (request == null) {
                 throw new ArgumentNullException(nameof(request));
             }
@@ -504,7 +505,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
                 (request.BrowsePath == null || request.BrowsePath.Count == 0)) {
                 throw new ArgumentException("Bad node id or browse path missing", nameof(request));
             }
-            return _client.ExecuteServiceAsync(endpoint, request.Header?.Elevation, async session => {
+            return _client.ExecuteServiceAsync(connection, request.Header?.Elevation, async session => {
                 var diagnostics = new List<OperationResultModel>();
                 var writeNode = request.NodeId.ToNodeId(session.MessageContext);
                 if (request.BrowsePath != null && request.BrowsePath.Count > 0) {
@@ -544,12 +545,12 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
                 SessionClientEx.Validate(response.Results, response.DiagnosticInfos);
                 result.ErrorInfo = codec.Encode(diagnostics, request.Header?.Diagnostics);
                 return result;
-            });
+            }, ct: ct);
         }
 
         /// <inheritdoc/>
-        public Task<ReadResultModel> NodeReadAsync(EndpointModel endpoint,
-            ReadRequestModel request) {
+        public Task<ReadResultModel> NodeReadAsync(ConnectionModel connection,
+            ReadRequestModel request, CancellationToken ct) {
             if (request == null) {
                 throw new ArgumentNullException(nameof(request));
             }
@@ -559,8 +560,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
             if (request.Attributes.Any(a => string.IsNullOrEmpty(a.NodeId))) {
                 throw new ArgumentException("Bad attributes", nameof(request));
             }
-            return _client.ExecuteServiceAsync(endpoint, request.Header?.Elevation,
-                async session => {
+            return _client.ExecuteServiceAsync(connection, request.Header?.Elevation, async session => {
                     var codec = _codec.Create(session.MessageContext);
                     var requests = new ReadValueIdCollection(request.Attributes
                         .Select(a => new ReadValueId {
@@ -584,12 +584,12 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
                                 };
                             }).ToList()
                     };
-                });
+                }, ct: ct);
         }
 
         /// <inheritdoc/>
-        public Task<WriteResultModel> NodeWriteAsync(EndpointModel endpoint,
-            WriteRequestModel request) {
+        public Task<WriteResultModel> NodeWriteAsync(ConnectionModel connection,
+            WriteRequestModel request, CancellationToken ct) {
             if (request == null) {
                 throw new ArgumentNullException(nameof(request));
             }
@@ -599,8 +599,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
             if (request.Attributes.Any(a => string.IsNullOrEmpty(a.NodeId))) {
                 throw new ArgumentException("Missing node id in attributes", nameof(request));
             }
-            return _client.ExecuteServiceAsync(endpoint, request.Header?.Elevation,
-                async session => {
+            return _client.ExecuteServiceAsync(connection, request.Header?.Elevation, async session => {
                     var codec = _codec.Create(session.MessageContext);
                     var requests = new WriteValueCollection(request.Attributes
                         .Select(a => new WriteValue {
@@ -624,12 +623,12 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
                                 };
                             }).ToList()
                     };
-                });
+                }, ct: ct);
         }
 
         /// <inheritdoc/>
-        public Task<HistoryReadResultModel<VariantValue>> HistoryReadAsync(EndpointModel endpoint,
-            HistoryReadRequestModel<VariantValue> request) {
+        public Task<HistoryReadResultModel<VariantValue>> HistoryReadAsync(ConnectionModel connection,
+            HistoryReadRequestModel<VariantValue> request, CancellationToken ct) {
             if (request == null) {
                 throw new ArgumentNullException(nameof(request));
             }
@@ -640,7 +639,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
                 (request.BrowsePath == null || request.BrowsePath.Count == 0)) {
                 throw new ArgumentException("Bad node id or browse path missing", nameof(request));
             }
-            return _client.ExecuteServiceAsync(endpoint, request.Header?.Elevation, async session => {
+            return _client.ExecuteServiceAsync(connection, request.Header?.Elevation, async session => {
                 var diagnostics = new List<OperationResultModel>();
                 var nodeId = request.NodeId.ToNodeId(session.MessageContext);
                 if (request.BrowsePath != null && request.BrowsePath.Count > 0) {
@@ -675,20 +674,19 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
                     History = codec.Encode(new Variant(response.Results[0].HistoryData), out var tmp),
                     ErrorInfo = codec.Encode(diagnostics, request.Header?.Diagnostics)
                 };
-            });
+            }, ct: ct);
         }
 
         /// <inheritdoc/>
-        public Task<HistoryReadNextResultModel<VariantValue>> HistoryReadNextAsync(EndpointModel endpoint,
-            HistoryReadNextRequestModel request) {
+        public Task<HistoryReadNextResultModel<VariantValue>> HistoryReadNextAsync(
+            ConnectionModel connection, HistoryReadNextRequestModel request, CancellationToken ct) {
             if (request == null) {
                 throw new ArgumentNullException(nameof(request));
             }
             if (string.IsNullOrEmpty(request.ContinuationToken)) {
                 throw new ArgumentException("Missing continuation", nameof(request));
             }
-            return _client.ExecuteServiceAsync(endpoint, request.Header?.Elevation,
-                async session => {
+            return _client.ExecuteServiceAsync(connection, request.Header?.Elevation, async session => {
                     var codec = _codec.Create(session.MessageContext);
                     var diagnostics = new List<OperationResultModel>();
                     var response = await session.HistoryReadAsync(
@@ -709,19 +707,19 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
                             out var tmp),
                         ErrorInfo = codec.Encode(diagnostics, request.Header?.Diagnostics)
                     };
-                });
+                }, ct: ct);
         }
 
         /// <inheritdoc/>
-        public Task<HistoryUpdateResultModel> HistoryUpdateAsync(EndpointModel endpoint,
-            HistoryUpdateRequestModel<VariantValue> request) {
+        public Task<HistoryUpdateResultModel> HistoryUpdateAsync(ConnectionModel connection,
+            HistoryUpdateRequestModel<VariantValue> request, CancellationToken ct) {
             if (request == null) {
                 throw new ArgumentNullException(nameof(request));
             }
             if (request.Details == null) {
                 throw new ArgumentException("Missing details", nameof(request));
             }
-            return _client.ExecuteServiceAsync(endpoint, request.Header?.Elevation, async session => {
+            return _client.ExecuteServiceAsync(connection, request.Header?.Elevation, async session => {
                 var codec = _codec.Create(session.MessageContext);
                 var diagnostics = new List<OperationResultModel>();
                 var nodeId = request.NodeId.ToNodeId(session.MessageContext);
@@ -759,7 +757,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
                     }).ToList(),
                     ErrorInfo = codec.Encode(diagnostics, request.Header?.Diagnostics)
                 };
-            });
+            }, ct: ct);
         }
 
         /// <summary>
@@ -775,10 +773,12 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
         /// <param name="children"></param>
         /// <param name="diagnostics"></param>
         /// <param name="traceOnly"></param>
+        /// <param name="ct"></param>
         /// <returns></returns>
         private static async Task<NodeModel> ReadNodeModelAsync(Session session, IVariantEncoder codec,
             RequestHeader header, NodeId nodeId, Opc.Ua.NodeClass? nodeClass, bool skipValue,
-            bool rawMode, bool? children, List<OperationResultModel> diagnostics, bool traceOnly) {
+            bool rawMode, bool? children, List<OperationResultModel> diagnostics, bool traceOnly,
+            CancellationToken ct) {
             var id = nodeId.AsString(session.MessageContext);
             if (rawMode) {
                 return new NodeModel { NodeId = id, NodeClass = nodeClass?.ToServiceType() };
@@ -845,11 +845,12 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
         /// <param name="diagnostics"></param>
         /// <param name="continuationPoint"></param>
         /// <param name="references"></param>
+        /// <param name="ct"></param>
         /// <returns></returns>
         private async Task<string> AddReferencesToBrowseResultAsync(Session session,
             IVariantEncoder codec, RequestHeader header, bool targetNodesOnly, bool readValues,
             bool rawMode, List<NodeReferenceModel> result, List<OperationResultModel> diagnostics,
-            byte[] continuationPoint, List<ReferenceDescription> references) {
+            byte[] continuationPoint, List<ReferenceDescription> references, CancellationToken ct) {
             if (references == null) {
                 return null;
             }
@@ -887,7 +888,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
                     }
                     var model = await ReadNodeModelAsync(session, codec, header, nodeId,
                         reference.NodeClass, !readValues, rawMode, children, diagnostics,
-                        true).ConfigureAwait(false);
+                        true, ct).ConfigureAwait(false);
                     if (rawMode) {
                         model.BrowseName = reference.BrowseName.AsString(
                             session.MessageContext);
@@ -928,16 +929,18 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
         /// <param name="diagnostics"></param>
         /// <param name="targets"></param>
         /// <param name="path"></param>
+        /// <param name="ct"></param>
         /// <returns></returns>
         private static async Task AddTargetsToBrowseResultAsync(Session session, IVariantEncoder codec,
             RequestHeader header, bool readValues, bool rawMode, List<NodePathTargetModel> result,
-            List<OperationResultModel> diagnostics, BrowsePathTargetCollection targets, string[] path) {
+            List<OperationResultModel> diagnostics, BrowsePathTargetCollection targets, string[] path, 
+            CancellationToken ct) {
             if (targets != null) {
                 foreach (var target in targets) {
                     try {
                         var nodeId = target.TargetId.ToNodeId(session.NamespaceUris);
                         var model = await ReadNodeModelAsync(session, codec, header, nodeId,
-                            null, !readValues, rawMode, false, diagnostics, true).ConfigureAwait(false);
+                            null, !readValues, rawMode, false, diagnostics, true, ct).ConfigureAwait(false);
                         result.Add(new NodePathTargetModel {
                             BrowsePath = path,
                             Target = model,
@@ -1001,6 +1004,6 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
 
         private readonly ILogger _logger;
         private readonly IVariantEncoderFactory _codec;
-        private readonly IEndpointServices _client;
+        private readonly IConnectionServices _client;
     }
 }

@@ -39,7 +39,7 @@ namespace Microsoft.Azure.IIoT.Utils {
         public async ValueTask DisposeAsync() {
             var result = _worker.DisposeAsync();
             _event.Set();
-            await result;
+            await result.ConfigureAwait(false);
         }
 
         private readonly Worker _worker;

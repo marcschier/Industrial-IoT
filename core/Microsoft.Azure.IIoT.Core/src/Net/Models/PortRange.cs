@@ -161,19 +161,19 @@ namespace Microsoft.Azure.IIoT.Net.Models {
                     var lows = x[0].Trim();
                     var highs = (x.Length == 2) ? x[1].Trim() : lows;
 
-                    int lowsInt = IPEndPoint.MinPort;
-                    int highsInt = IPEndPoint.MaxPort;
+                    var lowsInt = IPEndPoint.MinPort;
+                    var highsInt = IPEndPoint.MaxPort;
 
-                    if (lows != "*"){
+                    if (lows != "*") {
                         lowsInt = int.Parse(lows);
                     }
-                    if (highs != "*"){
+                    if (highs != "*") {
                         highsInt = int.Parse(highs);
                     }
 
-                    if (lowsInt < IPEndPoint.MinPort || 
+                    if (lowsInt < IPEndPoint.MinPort ||
                         highsInt > IPEndPoint.MaxPort ||
-                        lowsInt > highsInt){
+                        lowsInt > highsInt) {
                         throw new Exception("Port numbers are out of the range");
                     }
 
@@ -204,7 +204,8 @@ namespace Microsoft.Azure.IIoT.Net.Models {
                 yield return new PortRange(50000);
                 yield return new PortRange(51200, 51300);
                 yield return new PortRange(62222);
-                // TODO
+
+                // ... add more ports to well known range here
             }
         }
 

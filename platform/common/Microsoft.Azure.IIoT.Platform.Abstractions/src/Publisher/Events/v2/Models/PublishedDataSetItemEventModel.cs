@@ -5,6 +5,7 @@
 
 namespace Microsoft.Azure.IIoT.Platform.Publisher.Events.v2.Models {
     using Microsoft.Azure.IIoT.Platform.Publisher.Models;
+    using Microsoft.Azure.IIoT.Platform.Core.Models;
 
     /// <summary>
     /// Dataset item event
@@ -19,7 +20,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Events.v2.Models {
         /// <summary>
         /// Context
         /// </summary>
-        public PublisherOperationContextModel Context { get; set; }
+        public OperationContextModel Context { get; set; }
 
         /// <summary>
         /// Writer id

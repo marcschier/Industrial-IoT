@@ -7,6 +7,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
     using Microsoft.Azure.IIoT.Platform.Registry.Models;
     using Microsoft.Azure.IIoT.Platform.Registry.Clients;
     using Microsoft.Azure.IIoT.Platform.Registry;
+    using Microsoft.Azure.IIoT.Platform.Core.Models;
     using Microsoft.Azure.IIoT.Platform.OpcUa.Transport.Probe;
     using Microsoft.Azure.IIoT.Platform.OpcUa.Models;
     using Microsoft.Azure.IIoT.Platform.OpcUa;
@@ -317,7 +318,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                     Result = new DiscoveryContextModel {
                         DiscoveryConfig = request.Configuration,
                         Id = request.Request.Id,
-                        Context = request.Request.Context,
+                        Context = request.Request.Context.Clone(),
                         RegisterOnly = request.Mode == DiscoveryMode.Off,
                         Diagnostics = diagnostics == null ? null :
                             _serializer.FromObject(diagnostics)
@@ -328,7 +329,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                     discovery.Index = i;
                     return discovery;
                 });
-            await _publish.ReportResultsAsync(messages, ct);
+            await _publish.ReportResultsAsync(messages, ct).ConfigureAwait(false);
             _logger.Information("{count} results uploaded.", discovered.Count);
         }
 

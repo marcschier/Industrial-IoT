@@ -48,7 +48,7 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Provider.Controllers {
             var vm = new ErrorViewModel();
 
             // retrieve error details from identityserver
-            var message = await _interaction.GetErrorContextAsync(errorId);
+            var message = await _interaction.GetErrorContextAsync(errorId).ConfigureAwait(false);
             if (message != null) {
                 vm.Error = message;
 

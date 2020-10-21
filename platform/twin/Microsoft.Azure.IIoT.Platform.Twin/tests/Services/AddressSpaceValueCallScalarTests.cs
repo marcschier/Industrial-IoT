@@ -19,8 +19,8 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
     [Collection(WriteCollection.Name)]
     public class AddressSpaceValueCallScalarTests {
 
-        private CallScalarMethodTests<EndpointModel> GetTests() {
-            return new CallScalarMethodTests<EndpointModel>(
+        private CallScalarMethodTests<ConnectionModel> GetTests() {
+            return new CallScalarMethodTests<ConnectionModel>(
                 () => new AddressSpaceServices(_server.Client,
                     new VariantEncoderFactory(), _server.Logger),
                 new EndpointModel {
@@ -29,7 +29,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
                         .Where(ip => ip.AddressFamily == AddressFamily.InterNetwork)
                         .Select(ip => $"opc.tcp://{ip}:{_server.Port}/UA/SampleServer").ToHashSet(),
                     Certificate = _server.Certificate?.RawData?.ToThumbprint()
-                });
+                }.ToConnectionModel());
         }
 
         private readonly TestServerFixture _server;

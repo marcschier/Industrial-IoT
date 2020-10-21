@@ -21,8 +21,8 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa {
         /// <param name="previous"></param>
         /// <param name="newState"></param>
         /// 
-        void OnEndpointConnectivityChange(EndpointConnectivityState previous,
-            EndpointConnectivityState newState);
+        void OnConnectivityChange(ConnectionStatus previous,
+            ConnectionStatus newState);
 
         /// <summary>
         /// Monitored item state changed

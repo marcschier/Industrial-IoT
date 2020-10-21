@@ -99,19 +99,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
         }
 
         /// <summary>
-        /// Is activated
-        /// </summary>
-        /// <param name="model"></param>
-        /// <returns></returns>
-        public static bool IsActivated(this EndpointInfoModel model) {
-            if (model == null) {
-                return false;
-            }
-            return
-                model.ActivationState == EntityActivationState.Activated;
-        }
-
-        /// <summary>
         /// Is disabled
         /// </summary>
         /// <param name="model"></param>
@@ -163,8 +150,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
                 GenerationId = model.GenerationId,
                 NotSeenSince = model.NotSeenSince,
                 Visibility = model.Visibility,
-                ActivationState = model.ActivationState,
-                EndpointState = model.EndpointState,
                 Endpoint = model.Endpoint.Clone(),
                 Id = model.Id,
                 AuthenticationMethods = model.AuthenticationMethods?
@@ -193,8 +178,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
             endpoint.ApplicationId = model.ApplicationId;
             endpoint.NotSeenSince = model.NotSeenSince;
             endpoint.Visibility = model.Visibility;
-            endpoint.ActivationState = model.ActivationState;
-            endpoint.EndpointState = model.EndpointState;
             endpoint.Endpoint = model.Endpoint.Clone();
             endpoint.Id = model.Id;
             endpoint.AuthenticationMethods = model.AuthenticationMethods?

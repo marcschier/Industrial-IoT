@@ -5,11 +5,12 @@
 
 namespace Microsoft.Azure.IIoT.Platform.Twin.Api {
     using Microsoft.Azure.IIoT.Platform.Twin.Api.Models;
+    using Microsoft.Azure.IIoT.Serializers;
     using System.Threading;
     using System.Threading.Tasks;
 
     /// <summary>
-    /// Represents OPC twin service api functions
+    /// Represents OPC twinId service api functions
     /// </summary>
     public interface ITwinServiceApi {
 
@@ -21,143 +22,195 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api {
         Task<string> GetServiceStatusAsync(CancellationToken ct = default);
 
         /// <summary>
-        /// Browse node on endpoint
+        /// Activate a new twinId for communication
         /// </summary>
-        /// <param name="endpointId"></param>
         /// <param name="request"></param>
         /// <param name="ct"></param>
         /// <returns></returns>
-        Task<BrowseResponseApiModel> NodeBrowseFirstAsync(string endpointId,
+        Task<TwinActivationResponseApiModel> ActivateTwinAsync(
+            TwinActivationRequestApiModel request, CancellationToken ct = default);
+
+        /// <summary>
+        /// Get all twins in paged form
+        /// </summary>
+        /// <param name="continuation"></param>
+        /// <param name="pageSize"></param>
+        /// <param name="ct"></param>
+        /// <returns></returns>
+        Task<TwinInfoListApiModel> ListTwinsAsync(string continuation,
+            int? pageSize = null, CancellationToken ct = default);
+
+        /// <summary>
+        /// Find registration of the supplied twinId.
+        /// </summary>
+        /// <param name="query"></param>
+        /// <param name="pageSize"></param>
+        /// <param name="ct"></param>
+        /// <returns></returns>
+        Task<TwinInfoListApiModel> QueryTwinsAsync(
+            TwinInfoQueryApiModel query, int? pageSize = null,
+            CancellationToken ct = default);
+
+        /// <summary>
+        /// Get twinId by identifer.
+        /// </summary>
+        /// <param name="twinId"></param>
+        /// <param name="ct"></param>
+        /// <returns></returns>
+        Task<TwinApiModel> GetTwinAsync(string twinId,
+            CancellationToken ct = default);
+
+        /// <summary>
+        /// Update the twinId
+        /// </summary>
+        /// <param name="twinId"></param>
+        /// <param name="model"></param>
+        /// <param name="ct"></param>
+        /// <returns></returns>
+        Task UpdateTwinAsync(string twinId,
+            TwinInfoUpdateApiModel model, CancellationToken ct = default);
+
+        /// <summary>
+        /// Browse node on twinId
+        /// </summary>
+        /// <param name="twinId"></param>
+        /// <param name="request"></param>
+        /// <param name="ct"></param>
+        /// <returns></returns>
+        Task<BrowseResponseApiModel> NodeBrowseFirstAsync(string twinId,
             BrowseRequestApiModel request, CancellationToken ct = default);
 
         /// <summary>
-        /// Browse next references on endpoint
+        /// Browse next references on twinId
         /// </summary>
-        /// <param name="endpointId"></param>
+        /// <param name="twinId"></param>
         /// <param name="request"></param>
         /// <param name="ct"></param>
         /// <returns></returns>
-        Task<BrowseNextResponseApiModel> NodeBrowseNextAsync(string endpointId,
+        Task<BrowseNextResponseApiModel> NodeBrowseNextAsync(string twinId,
             BrowseNextRequestApiModel request, CancellationToken ct = default);
 
         /// <summary>
-        /// Browse by path on endpoint
+        /// Browse by path on twinId
         /// </summary>
-        /// <param name="endpointId"></param>
+        /// <param name="twinId"></param>
         /// <param name="request"></param>
         /// <param name="ct"></param>
         /// <returns></returns>
-        Task<BrowsePathResponseApiModel> NodeBrowsePathAsync(string endpointId,
+        Task<BrowsePathResponseApiModel> NodeBrowsePathAsync(string twinId,
             BrowsePathRequestApiModel request, CancellationToken ct = default);
 
         /// <summary>
-        /// Call method on endpoint
+        /// Call method on twinId
         /// </summary>
-        /// <param name="endpointId"></param>
+        /// <param name="twinId"></param>
         /// <param name="request"></param>
         /// <param name="ct"></param>
         /// <returns></returns>
-        Task<MethodCallResponseApiModel> NodeMethodCallAsync(string endpointId,
+        Task<MethodCallResponseApiModel> NodeMethodCallAsync(string twinId,
             MethodCallRequestApiModel request, CancellationToken ct = default);
 
         /// <summary>
-        /// Get meta data for method call on endpoint
+        /// Get meta data for method call on twinId
         /// </summary>
-        /// <param name="endpointId"></param>
+        /// <param name="twinId"></param>
         /// <param name="request"></param>
         /// <param name="ct"></param>
         /// <returns></returns>
-        Task<MethodMetadataResponseApiModel> NodeMethodGetMetadataAsync(string endpointId,
+        Task<MethodMetadataResponseApiModel> NodeMethodGetMetadataAsync(string twinId,
             MethodMetadataRequestApiModel request, CancellationToken ct = default);
 
         /// <summary>
-        /// Read node value on endpoint
+        /// Read node value on twinId
         /// </summary>
-        /// <param name="endpointId"></param>
+        /// <param name="twinId"></param>
         /// <param name="request"></param>
         /// <param name="ct"></param>
         /// <returns></returns>
-        Task<ValueReadResponseApiModel> NodeValueReadAsync(string endpointId,
+        Task<ValueReadResponseApiModel> NodeValueReadAsync(string twinId,
             ValueReadRequestApiModel request, CancellationToken ct = default);
 
         /// <summary>
-        /// Write node value on endpoint
+        /// Write node value on twinId
         /// </summary>
-        /// <param name="endpointId"></param>
+        /// <param name="twinId"></param>
         /// <param name="request"></param>
         /// <param name="ct"></param>
         /// <returns></returns>
-        Task<ValueWriteResponseApiModel> NodeValueWriteAsync(string endpointId,
+        Task<ValueWriteResponseApiModel> NodeValueWriteAsync(string twinId,
             ValueWriteRequestApiModel request, CancellationToken ct = default);
 
         /// <summary>
-        /// Read node attributes on endpoint
+        /// Read node attributes on twinId
         /// </summary>
-        /// <param name="endpointId"></param>
+        /// <param name="twinId"></param>
         /// <param name="request"></param>
         /// <param name="ct"></param>
         /// <returns></returns>
-        Task<ReadResponseApiModel> NodeReadAsync(string endpointId,
+        Task<ReadResponseApiModel> NodeReadAsync(string twinId,
             ReadRequestApiModel request, CancellationToken ct = default);
 
         /// <summary>
-        /// Write node attributes on endpoint
+        /// Write node attributes on twinId
         /// </summary>
-        /// <param name="endpointId"></param>
+        /// <param name="twinId"></param>
         /// <param name="request"></param>
         /// <param name="ct"></param>
         /// <returns></returns>
-        Task<WriteResponseApiModel> NodeWriteAsync(string endpointId,
+        Task<WriteResponseApiModel> NodeWriteAsync(string twinId,
             WriteRequestApiModel request, CancellationToken ct = default);
 
         /// <summary>
-        /// Start publishing node values
+        /// Read node history with custom encoded extension object details
         /// </summary>
         /// <param name="endpointId"></param>
         /// <param name="request"></param>
         /// <param name="ct"></param>
         /// <returns></returns>
-        Task<PublishStartResponseApiModel> NodePublishStartAsync(string endpointId,
-            PublishStartRequestApiModel request, CancellationToken ct = default);
+        Task<HistoryReadResponseApiModel<VariantValue>> HistoryReadRawAsync(
+            string endpointId, HistoryReadRequestApiModel<VariantValue> request,
+            CancellationToken ct = default);
 
         /// <summary>
-        /// Start publishing node values
+        /// Read history call with custom encoded extension object details
         /// </summary>
         /// <param name="endpointId"></param>
         /// <param name="request"></param>
         /// <param name="ct"></param>
         /// <returns></returns>
-        Task<PublishStopResponseApiModel> NodePublishStopAsync(string endpointId,
-            PublishStopRequestApiModel request, CancellationToken ct = default);
+        Task<HistoryReadNextResponseApiModel<VariantValue>> HistoryReadRawNextAsync(
+            string endpointId, HistoryReadNextRequestApiModel request,
+            CancellationToken ct = default);
 
         /// <summary>
-        /// Add or remove published node from endpoint in bulk
+        /// Update using raw extension object details
         /// </summary>
         /// <param name="endpointId"></param>
         /// <param name="request"></param>
         /// <param name="ct"></param>
         /// <returns></returns>
-        Task<PublishBulkResponseApiModel> NodePublishBulkAsync(string endpointId,
-            PublishBulkRequestApiModel request, CancellationToken ct = default);
-
-        /// <summary>
-        /// Get all published nodes for endpoint.
-        /// </summary>
-        /// <param name="endpointId"></param>
-        /// <param name="request"></param>
-        /// <param name="ct"></param>
-        /// <returns></returns>
-        Task<PublishedItemListResponseApiModel> NodePublishListAsync(string endpointId,
-            PublishedItemListRequestApiModel request, CancellationToken ct = default);
+        Task<HistoryUpdateResponseApiModel> HistoryUpdateRawAsync(
+            string endpointId, HistoryUpdateRequestApiModel<VariantValue> request,
+            CancellationToken ct = default);
 
         /// <summary>
         /// Start model upload
         /// </summary>
-        /// <param name="endpointId"></param>
+        /// <param name="twinId"></param>
         /// <param name="content"></param>
         /// <param name="ct"></param>
         /// <returns></returns>
-        Task<ModelUploadStartResponseApiModel> ModelUploadStartAsync(string endpointId,
+        Task<ModelUploadStartResponseApiModel> ModelUploadStartAsync(string twinId,
             ModelUploadStartRequestApiModel content, CancellationToken ct = default);
+
+        /// <summary>
+        /// Deactivate a twinId for communication
+        /// </summary>
+        /// <param name="twinId"></param>
+        /// <param name="generationId"></param>
+        /// <param name="ct"></param>
+        /// <returns></returns>
+        Task DectivateTwinAsync(string twinId, string generationId, 
+            CancellationToken ct = default);
     }
 }

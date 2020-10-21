@@ -4,6 +4,7 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Platform.Core.Models {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
 
@@ -11,6 +12,25 @@ namespace Microsoft.Azure.IIoT.Platform.Core.Models {
     /// Endpoint model extensions
     /// </summary>
     public static class EndpointModelEx {
+
+        /// <summary>
+        /// Convert to connection model
+        /// </summary>
+        /// <param name="model"></param>
+        /// <param name="user"></param>
+        /// <param name="diagnostics"></param>
+        /// <param name="operationTimeout"></param>
+        /// <returns></returns>
+        public static ConnectionModel ToConnectionModel(this EndpointModel model,
+            CredentialModel user = null, DiagnosticsModel diagnostics = null, 
+            TimeSpan? operationTimeout = null) {
+            return new ConnectionModel {
+                Endpoint = model.Clone(),
+                User = user.Clone(),
+                OperationTimeout = operationTimeout,
+                Diagnostics = diagnostics.Clone(),
+            };
+        }
 
         /// <summary>
         /// Equality comparison
@@ -50,7 +70,8 @@ namespace Microsoft.Azure.IIoT.Platform.Core.Models {
             if (!that.Certificate.SequenceEqualsSafe(model.Certificate)) {
                 return false;
             }
-            if (that.SecurityPolicy != model.SecurityPolicy && that.SecurityPolicy != null && model.SecurityPolicy != null) {
+            if (that.SecurityPolicy != model.SecurityPolicy && 
+                that.SecurityPolicy != null && model.SecurityPolicy != null) {
                 return false;
             }
             if ((that.SecurityMode ?? SecurityMode.Best) !=
@@ -73,8 +94,6 @@ namespace Microsoft.Azure.IIoT.Platform.Core.Models {
             var hashCode = -1971667340;
             hashCode = (hashCode * -1521134295) +
                 endpoint.GetAllUrls().SequenceGetHashSafe();
-            hashCode = (hashCode * -1521134295) +
-                endpoint.Certificate.SequenceGetHashSafe();
             hashCode = (hashCode * -1521134295) +
                 EqualityComparer<string>.Default.GetHashCode(endpoint.SecurityPolicy);
             hashCode = (hashCode * -1521134295) +

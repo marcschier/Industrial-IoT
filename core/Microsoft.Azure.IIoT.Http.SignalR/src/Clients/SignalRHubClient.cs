@@ -76,7 +76,7 @@ namespace Microsoft.Azure.IIoT.Http.SignalR {
 
         /// <inheritdoc/>
         public async ValueTask DisposeAsync() {
-            await CloseAsync();
+            await CloseAsync().ConfigureAwait(false);
         }
 
         /// <summary>

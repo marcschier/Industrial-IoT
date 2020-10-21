@@ -55,7 +55,7 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Provider.Controllers {
 #pragma warning disable IDE1006 // Naming Styles
         public async Task<IActionResult> Index(string returnUrl) {
 #pragma warning restore IDE1006 // Naming Styles
-            var vm = await BuildViewModelAsync(returnUrl);
+            var vm = await BuildViewModelAsync(returnUrl).ConfigureAwait(false);
             if (vm != null) {
                 return View("Index", vm);
             }
@@ -71,10 +71,10 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Provider.Controllers {
 #pragma warning disable IDE1006 // Naming Styles
         public async Task<IActionResult> Index(ConsentInputModel model) {
 #pragma warning restore IDE1006 // Naming Styles
-            var result = await ProcessConsent(model);
+            var result = await ProcessConsent(model).ConfigureAwait(false);
 
             if (result.IsRedirect) {
-                var context = await _interaction.GetAuthorizationContextAsync(model.ReturnUrl);
+                var context = await _interaction.GetAuthorizationContextAsync(model.ReturnUrl).ConfigureAwait(false);
                 if (context?.IsNativeClient() == true) {
                     // The client is native, so this change in how to
                     // return the response is for better UX for the end user.
@@ -104,7 +104,7 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Provider.Controllers {
             var result = new ProcessConsentResult();
 
             // validate return url is still valid
-            var request = await _interaction.GetAuthorizationContextAsync(model.ReturnUrl);
+            var request = await _interaction.GetAuthorizationContextAsync(model.ReturnUrl).ConfigureAwait(false);
             if (request == null) {
                 return result;
             }
@@ -116,7 +116,7 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Provider.Controllers {
                 grantedConsent = new ConsentResponse { Error = AuthorizationError.AccessDenied };
 
                 // emit event
-                await _events.RaiseAsync(new ConsentDeniedEvent(User.GetSubjectId(), request.Client.ClientId, request.ValidatedResources.RawScopeValues));
+                await _events.RaiseAsync(new ConsentDeniedEvent(User.GetSubjectId(), request.Client.ClientId, request.ValidatedResources.RawScopeValues)).ConfigureAwait(false);
             }
             // user clicked 'yes' - validate the data
             else if (model?.Button == "yes") {
@@ -134,7 +134,7 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Provider.Controllers {
                     };
 
                     // emit event
-                    await _events.RaiseAsync(new ConsentGrantedEvent(User.GetSubjectId(), request.Client.ClientId, request.ValidatedResources.RawScopeValues, grantedConsent.ScopesValuesConsented, grantedConsent.RememberConsent));
+                    await _events.RaiseAsync(new ConsentGrantedEvent(User.GetSubjectId(), request.Client.ClientId, request.ValidatedResources.RawScopeValues, grantedConsent.ScopesValuesConsented, grantedConsent.RememberConsent)).ConfigureAwait(false);
                 }
                 else {
                     result.ValidationError = ConsentOptions.MustChooseOneErrorMessage;
@@ -146,7 +146,7 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Provider.Controllers {
 
             if (grantedConsent != null) {
                 // communicate outcome of consent back to identityserver
-                await _interaction.GrantConsentAsync(request, grantedConsent);
+                await _interaction.GrantConsentAsync(request, grantedConsent).ConfigureAwait(false);
 
                 // indicate that's it ok to redirect back to authorization endpoint
                 result.RedirectUri = model.ReturnUrl;
@@ -154,14 +154,14 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Provider.Controllers {
             }
             else {
                 // we need to redisplay the consent UI
-                result.ViewModel = await BuildViewModelAsync(model.ReturnUrl, model);
+                result.ViewModel = await BuildViewModelAsync(model.ReturnUrl, model).ConfigureAwait(false);
             }
 
             return result;
         }
 
         private async Task<ConsentViewModel> BuildViewModelAsync(string returnUrl, ConsentInputModel model = null) {
-            var request = await _interaction.GetAuthorizationContextAsync(returnUrl);
+            var request = await _interaction.GetAuthorizationContextAsync(returnUrl).ConfigureAwait(false);
             if (request != null) {
                 return CreateConsentViewModel(model, returnUrl, request);
             }

@@ -9,6 +9,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service.Controllers {
     using Microsoft.Azure.IIoT.Platform.Registry.Api.Models;
     using Microsoft.Azure.IIoT.Platform.Registry;
     using Microsoft.Azure.IIoT.Platform.Registry.Models;
+    using Microsoft.Azure.IIoT.Platform.Core.Models;
     using Microsoft.Azure.IIoT.AspNetCore.OpenApi;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Http;
@@ -179,7 +180,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service.Controllers {
             if (string.IsNullOrEmpty(generationId)) {
                 throw new ArgumentNullException(nameof(generationId));
             }
-            var context = (RegistryOperationContextModel)null;
+            var context = (OperationContextModel)null;
             // TODO: context.AuthorityId = User.Identity.Name;
             await _applications.UnregisterApplicationAsync(applicationId, generationId,
                 context).ConfigureAwait(false);
@@ -197,7 +198,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service.Controllers {
         [Authorize(Policy = Policies.CanManage)]
         public async Task DeleteAllDisabledApplicationsAsync(
             [FromQuery] TimeSpan? notSeenFor) {
-            var context = (RegistryOperationContextModel)null;
+            var context = (OperationContextModel)null;
             // TODO: context.AuthorityId = User.Identity.Name;
             await _applications.PurgeDisabledApplicationsAsync(
                 notSeenFor ?? TimeSpan.FromTicks(0), context).ConfigureAwait(false);
@@ -248,7 +249,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service.Controllers {
         /// <returns>Applications</returns>
         [HttpPost("query")]
         public async Task<ApplicationInfoListApiModel> QueryApplicationsAsync(
-            [FromBody] [Required] ApplicationRegistrationQueryApiModel query,
+            [FromBody] [Required] ApplicationInfoQueryApiModel query,
             [FromQuery] int? pageSize) {
 
             if (query == null) {
@@ -276,7 +277,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service.Controllers {
         /// <returns>Applications</returns>
         [HttpGet("query")]
         public async Task<ApplicationInfoListApiModel> GetFilteredListOfApplicationsAsync(
-            [FromBody] [Required] ApplicationRegistrationQueryApiModel query,
+            [FromBody] [Required] ApplicationInfoQueryApiModel query,
             [FromQuery] int? pageSize) {
 
             if (query == null) {

@@ -64,7 +64,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Models {
         /// <returns></returns>
         public static DataSetWriterInfoModel AsDataSetWriterInfo(
             this DataSetWriterAddRequestModel model,
-            PublisherOperationContextModel context) {
+            OperationContextModel context) {
             if (model == null) {
                 return null;
             }

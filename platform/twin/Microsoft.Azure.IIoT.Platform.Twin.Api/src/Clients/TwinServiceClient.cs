@@ -14,10 +14,9 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
     using System.Threading;
 
     /// <summary>
-    /// Implementation of twin service api.
+    /// Implementation of twinId service api.
     /// </summary>
-    public sealed class TwinServiceClient : ITwinServiceApi,
-        IHistoryServiceApi, IHistoryServiceRawApi {
+    public sealed class TwinServiceClient : ITwinServiceApi, IHistoryServiceApi {
 
         /// <summary>
         /// Create service client
@@ -40,7 +39,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
             ISerializer serializer = null) {
             if (string.IsNullOrWhiteSpace(serviceUri)) {
                 throw new ArgumentNullException(nameof(serviceUri),
-                    "Please configure the Url of the endpoint micro service.");
+                    "Please configure the Url of the twinId micro service.");
             }
             _serviceUri = serviceUri.TrimEnd('/');
             _serializer = serializer ?? new NewtonSoftJsonSerializer();
@@ -62,12 +61,105 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
         }
 
         /// <inheritdoc/>
-        public async Task<BrowseResponseApiModel> NodeBrowseFirstAsync(string endpointId,
-            BrowseRequestApiModel content, CancellationToken ct) {
-            if (string.IsNullOrEmpty(endpointId)) {
-                throw new ArgumentNullException(nameof(endpointId));
+        public async Task<TwinActivationResponseApiModel> ActivateTwinAsync(
+            TwinActivationRequestApiModel content, CancellationToken ct) {
+            if (content == null) {
+                throw new ArgumentNullException(nameof(content));
             }
-            var request = _httpClient.NewRequest($"{_serviceUri}/v3/browse/{endpointId}",
+            if (string.IsNullOrEmpty(content.EndpointId)) {
+                throw new ArgumentException("Missing endpoint id", nameof(content));
+            }
+            var request = _httpClient.NewRequest($"{_serviceUri}/v3/twins", Resource.Platform);
+            _serializer.SerializeToRequest(request, content);
+            var response = await _httpClient.PutAsync(request, ct).ConfigureAwait(false);
+            response.Validate();
+            return _serializer.DeserializeResponse<TwinActivationResponseApiModel>(response);
+        }
+
+        /// <inheritdoc/>
+        public async Task UpdateTwinAsync(string twinId, TwinInfoUpdateApiModel content,
+            CancellationToken ct) {
+            if (content == null) {
+                throw new ArgumentNullException(nameof(content));
+            }
+            if (string.IsNullOrEmpty(twinId)) {
+                throw new ArgumentNullException(nameof(twinId));
+            }
+            var request = _httpClient.NewRequest(
+                $"{_serviceUri}/v3/twins/{twinId}", Resource.Platform);
+            _serializer.SerializeToRequest(request, content);
+            var response = await _httpClient.PatchAsync(request, ct).ConfigureAwait(false);
+            response.Validate();
+        }
+
+        /// <inheritdoc/>
+        public async Task DectivateTwinAsync(string twinId, string generationId, 
+            CancellationToken ct) {
+            if (string.IsNullOrEmpty(twinId)) {
+                throw new ArgumentNullException(nameof(twinId));
+            }
+            if (string.IsNullOrEmpty(generationId)) {
+                throw new ArgumentNullException(nameof(generationId));
+            }
+            var request = _httpClient.NewRequest(
+                $"{_serviceUri}/v3/twins/{twinId}/{generationId}", Resource.Platform);
+            var response = await _httpClient.DeleteAsync(request, ct).ConfigureAwait(false);
+            response.Validate();
+        }
+
+        /// <inheritdoc/>
+        public async Task<TwinInfoListApiModel> ListTwinsAsync(string continuation,
+            int? pageSize, CancellationToken ct) {
+            var uri = new UriBuilder($"{_serviceUri}/v3/twins");
+            var request = _httpClient.NewRequest(uri.Uri, Resource.Platform);
+            if (continuation != null) {
+                request.AddHeader(HttpHeader.ContinuationToken, continuation);
+            }
+            if (pageSize != null) {
+                request.AddHeader(HttpHeader.MaxItemCount, pageSize.ToString());
+            }
+            _serializer.SetAcceptHeaders(request);
+            var response = await _httpClient.GetAsync(request, ct).ConfigureAwait(false);
+            response.Validate();
+            return _serializer.DeserializeResponse<TwinInfoListApiModel>(response);
+        }
+
+        /// <inheritdoc/>
+        public async Task<TwinInfoListApiModel> QueryTwinsAsync(
+            TwinInfoQueryApiModel query, int? pageSize,
+            CancellationToken ct) {
+            var uri = new UriBuilder($"{_serviceUri}/v3/twins/query");
+            var request = _httpClient.NewRequest(uri.Uri, Resource.Platform);
+            if (pageSize != null) {
+                request.AddHeader(HttpHeader.MaxItemCount, pageSize.ToString());
+            }
+            _serializer.SerializeToRequest(request, query);
+            var response = await _httpClient.PostAsync(request, ct).ConfigureAwait(false);
+            response.Validate();
+            return _serializer.DeserializeResponse<TwinInfoListApiModel>(response);
+        }
+
+        /// <inheritdoc/>
+        public async Task<TwinApiModel> GetTwinAsync(string twinId,
+            CancellationToken ct) {
+            if (string.IsNullOrEmpty(twinId)) {
+                throw new ArgumentNullException(nameof(twinId));
+            }
+            var uri = new UriBuilder($"{_serviceUri}/v3/twins/{twinId}");
+            var request = _httpClient.NewRequest(uri.Uri, Resource.Platform);
+            _serializer.SetAcceptHeaders(request);
+            var response = await _httpClient.GetAsync(request, ct).ConfigureAwait(false);
+            response.Validate();
+            return _serializer.DeserializeResponse<TwinApiModel>(response);
+        }
+
+        /// <inheritdoc/>
+        public async Task<BrowseResponseApiModel> NodeBrowseFirstAsync(string twinId,
+            BrowseRequestApiModel content, CancellationToken ct) {
+            if (string.IsNullOrEmpty(twinId)) {
+                throw new ArgumentNullException(nameof(twinId));
+            }
+            var request = _httpClient.NewRequest($"{_serviceUri}/v3/browse/{twinId}",
                 Resource.Platform);
             _serializer.SerializeToRequest(request, content);
             var response = await _httpClient.PostAsync(request, ct).ConfigureAwait(false);
@@ -76,10 +168,10 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
         }
 
         /// <inheritdoc/>
-        public async Task<BrowseNextResponseApiModel> NodeBrowseNextAsync(string endpointId,
+        public async Task<BrowseNextResponseApiModel> NodeBrowseNextAsync(string twinId,
             BrowseNextRequestApiModel content, CancellationToken ct) {
-            if (string.IsNullOrEmpty(endpointId)) {
-                throw new ArgumentNullException(nameof(endpointId));
+            if (string.IsNullOrEmpty(twinId)) {
+                throw new ArgumentNullException(nameof(twinId));
             }
             if (content == null) {
                 throw new ArgumentNullException(nameof(content));
@@ -87,7 +179,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
             if (content.ContinuationToken == null) {
                 throw new ArgumentException("Missing continuation", nameof(content));
             }
-            var request = _httpClient.NewRequest($"{_serviceUri}/v3/browse/{endpointId}/next",
+            var request = _httpClient.NewRequest($"{_serviceUri}/v3/browse/{twinId}/next",
                 Resource.Platform);
             _serializer.SerializeToRequest(request, content);
             var response = await _httpClient.PostAsync(request, ct).ConfigureAwait(false);
@@ -96,10 +188,10 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
         }
 
         /// <inheritdoc/>
-        public async Task<BrowsePathResponseApiModel> NodeBrowsePathAsync(string endpointId,
+        public async Task<BrowsePathResponseApiModel> NodeBrowsePathAsync(string twinId,
             BrowsePathRequestApiModel content, CancellationToken ct) {
-            if (string.IsNullOrEmpty(endpointId)) {
-                throw new ArgumentNullException(nameof(endpointId));
+            if (string.IsNullOrEmpty(twinId)) {
+                throw new ArgumentNullException(nameof(twinId));
             }
             if (content == null) {
                 throw new ArgumentNullException(nameof(content));
@@ -108,7 +200,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
                 content.BrowsePaths.Any(p => p == null || p.Count == 0)) {
                 throw new ArgumentException("Bad browse paths", nameof(content));
             }
-            var request = _httpClient.NewRequest($"{_serviceUri}/v3/browse/{endpointId}/path",
+            var request = _httpClient.NewRequest($"{_serviceUri}/v3/browse/{twinId}/path",
                 Resource.Platform);
             _serializer.SerializeToRequest(request, content);
             var response = await _httpClient.PostAsync(request, ct).ConfigureAwait(false);
@@ -117,10 +209,10 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
         }
 
         /// <inheritdoc/>
-        public async Task<ReadResponseApiModel> NodeReadAsync(string endpointId,
+        public async Task<ReadResponseApiModel> NodeReadAsync(string twinId,
             ReadRequestApiModel content, CancellationToken ct) {
-            if (string.IsNullOrEmpty(endpointId)) {
-                throw new ArgumentNullException(nameof(endpointId));
+            if (string.IsNullOrEmpty(twinId)) {
+                throw new ArgumentNullException(nameof(twinId));
             }
             if (content == null) {
                 throw new ArgumentNullException(nameof(content));
@@ -129,7 +221,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
                 throw new ArgumentException(nameof(content.Attributes));
             }
             var request = _httpClient.NewRequest(
-                $"{_serviceUri}/v3/read/{endpointId}/attributes", Resource.Platform);
+                $"{_serviceUri}/v3/read/{twinId}/attributes", Resource.Platform);
             _serializer.SerializeToRequest(request, content);
             var response = await _httpClient.PostAsync(request, ct).ConfigureAwait(false);
             response.Validate();
@@ -137,10 +229,10 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
         }
 
         /// <inheritdoc/>
-        public async Task<WriteResponseApiModel> NodeWriteAsync(string endpointId,
+        public async Task<WriteResponseApiModel> NodeWriteAsync(string twinId,
             WriteRequestApiModel content, CancellationToken ct) {
-            if (string.IsNullOrEmpty(endpointId)) {
-                throw new ArgumentNullException(nameof(endpointId));
+            if (string.IsNullOrEmpty(twinId)) {
+                throw new ArgumentNullException(nameof(twinId));
             }
             if (content == null) {
                 throw new ArgumentNullException(nameof(content));
@@ -149,7 +241,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
                 throw new ArgumentException(nameof(content.Attributes));
             }
             var request = _httpClient.NewRequest(
-                $"{_serviceUri}/v3/write/{endpointId}/attributes", Resource.Platform);
+                $"{_serviceUri}/v3/write/{twinId}/attributes", Resource.Platform);
             _serializer.SerializeToRequest(request, content);
             var response = await _httpClient.PostAsync(request, ct).ConfigureAwait(false);
             response.Validate();
@@ -157,15 +249,15 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
         }
 
         /// <inheritdoc/>
-        public async Task<ValueReadResponseApiModel> NodeValueReadAsync(string endpointId,
+        public async Task<ValueReadResponseApiModel> NodeValueReadAsync(string twinId,
             ValueReadRequestApiModel content, CancellationToken ct) {
-            if (string.IsNullOrEmpty(endpointId)) {
-                throw new ArgumentNullException(nameof(endpointId));
+            if (string.IsNullOrEmpty(twinId)) {
+                throw new ArgumentNullException(nameof(twinId));
             }
             if (content == null) {
                 throw new ArgumentNullException(nameof(content));
             }
-            var request = _httpClient.NewRequest($"{_serviceUri}/v3/read/{endpointId}",
+            var request = _httpClient.NewRequest($"{_serviceUri}/v3/read/{twinId}",
                 Resource.Platform);
             _serializer.SerializeToRequest(request, content);
             var response = await _httpClient.PostAsync(request, ct).ConfigureAwait(false);
@@ -174,10 +266,10 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
         }
 
         /// <inheritdoc/>
-        public async Task<ValueWriteResponseApiModel> NodeValueWriteAsync(string endpointId,
+        public async Task<ValueWriteResponseApiModel> NodeValueWriteAsync(string twinId,
             ValueWriteRequestApiModel content, CancellationToken ct) {
-            if (string.IsNullOrEmpty(endpointId)) {
-                throw new ArgumentNullException(nameof(endpointId));
+            if (string.IsNullOrEmpty(twinId)) {
+                throw new ArgumentNullException(nameof(twinId));
             }
             if (content == null) {
                 throw new ArgumentNullException(nameof(content));
@@ -185,7 +277,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
             if (content.Value == null) {
                 throw new ArgumentException("Missing value", nameof(content));
             }
-            var request = _httpClient.NewRequest($"{_serviceUri}/v3/write/{endpointId}",
+            var request = _httpClient.NewRequest($"{_serviceUri}/v3/write/{twinId}",
                 Resource.Platform);
             _serializer.SerializeToRequest(request, content);
             var response = await _httpClient.PostAsync(request, ct).ConfigureAwait(false);
@@ -195,14 +287,14 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
 
         /// <inheritdoc/>
         public async Task<MethodMetadataResponseApiModel> NodeMethodGetMetadataAsync(
-            string endpointId, MethodMetadataRequestApiModel content, CancellationToken ct) {
-            if (string.IsNullOrEmpty(endpointId)) {
-                throw new ArgumentNullException(nameof(endpointId));
+            string twinId, MethodMetadataRequestApiModel content, CancellationToken ct) {
+            if (string.IsNullOrEmpty(twinId)) {
+                throw new ArgumentNullException(nameof(twinId));
             }
             if (content == null) {
                 throw new ArgumentNullException(nameof(content));
             }
-            var request = _httpClient.NewRequest($"{_serviceUri}/v3/call/{endpointId}/metadata",
+            var request = _httpClient.NewRequest($"{_serviceUri}/v3/call/{twinId}/metadata",
                 Resource.Platform);
             _serializer.SerializeToRequest(request, content);
             var response = await _httpClient.PostAsync(request, ct).ConfigureAwait(false);
@@ -212,14 +304,14 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
 
         /// <inheritdoc/>
         public async Task<MethodCallResponseApiModel> NodeMethodCallAsync(
-            string endpointId, MethodCallRequestApiModel content, CancellationToken ct) {
-            if (string.IsNullOrEmpty(endpointId)) {
-                throw new ArgumentNullException(nameof(endpointId));
+            string twinId, MethodCallRequestApiModel content, CancellationToken ct) {
+            if (string.IsNullOrEmpty(twinId)) {
+                throw new ArgumentNullException(nameof(twinId));
             }
             if (content == null) {
                 throw new ArgumentNullException(nameof(content));
             }
-            var request = _httpClient.NewRequest($"{_serviceUri}/v3/call/{endpointId}",
+            var request = _httpClient.NewRequest($"{_serviceUri}/v3/call/{twinId}",
                 Resource.Platform);
             _serializer.SerializeToRequest(request, content);
             var response = await _httpClient.PostAsync(request, ct).ConfigureAwait(false);
@@ -229,14 +321,14 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
 
         /// <inheritdoc/>
         public async Task<ModelUploadStartResponseApiModel> ModelUploadStartAsync(
-            string endpointId, ModelUploadStartRequestApiModel content, CancellationToken ct) {
-            if (string.IsNullOrEmpty(endpointId)) {
-                throw new ArgumentNullException(nameof(endpointId));
+            string twinId, ModelUploadStartRequestApiModel content, CancellationToken ct) {
+            if (string.IsNullOrEmpty(twinId)) {
+                throw new ArgumentNullException(nameof(twinId));
             }
             if (content == null) {
                 throw new ArgumentNullException(nameof(content));
             }
-            var request = _httpClient.NewRequest($"{_serviceUri}/v3/transfer/{endpointId}/model",
+            var request = _httpClient.NewRequest($"{_serviceUri}/v3/transfer/{twinId}/model",
                 Resource.Platform);
             _serializer.SerializeToRequest(request, content);
             var response = await _httpClient.PostAsync(request, ct).ConfigureAwait(false);
@@ -245,78 +337,10 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
         }
 
         /// <inheritdoc/>
-        public async Task<PublishStartResponseApiModel> NodePublishStartAsync(string endpointId,
-            PublishStartRequestApiModel content, CancellationToken ct) {
-            if (string.IsNullOrEmpty(endpointId)) {
-                throw new ArgumentNullException(nameof(endpointId));
-            }
-            if (content == null) {
-                throw new ArgumentNullException(nameof(content));
-            }
-            if (content.Item == null) {
-                throw new ArgumentException("Missing item", nameof(content));
-            }
-            var request = _httpClient.NewRequest($"{_serviceUri}/v3/publish/{endpointId}/start",
-                Resource.Platform);
-            _serializer.SerializeToRequest(request, content);
-            var response = await _httpClient.PostAsync(request, ct).ConfigureAwait(false);
-            response.Validate();
-            return _serializer.DeserializeResponse<PublishStartResponseApiModel>(response);
-        }
-
-        /// <inheritdoc/>
-        public async Task<PublishBulkResponseApiModel> NodePublishBulkAsync(string endpointId,
-            PublishBulkRequestApiModel content, CancellationToken ct = default) {
-            if (string.IsNullOrEmpty(endpointId)) {
-                throw new ArgumentNullException(nameof(endpointId));
-            }
-            if (content == null) {
-                throw new ArgumentNullException(nameof(content));
-            }
-            var request = _httpClient.NewRequest($"{_serviceUri}/v3/publish/{endpointId}/bulk",
-                Resource.Platform);
-            _serializer.SerializeToRequest(request, content);
-            var response = await _httpClient.PostAsync(request, ct).ConfigureAwait(false);
-            response.Validate();
-            return _serializer.DeserializeResponse<PublishBulkResponseApiModel>(response);
-        }
-
-        /// <inheritdoc/>
-        public async Task<PublishedItemListResponseApiModel> NodePublishListAsync(
-            string endpointId, PublishedItemListRequestApiModel content, CancellationToken ct) {
-            if (string.IsNullOrEmpty(endpointId)) {
-                throw new ArgumentNullException(nameof(endpointId));
-            }
-            var request = _httpClient.NewRequest($"{_serviceUri}/v3/publish/{endpointId}",
-                Resource.Platform);
-            _serializer.SerializeToRequest(request, content);
-            var response = await _httpClient.PostAsync(request, ct).ConfigureAwait(false);
-            response.Validate();
-            return _serializer.DeserializeResponse<PublishedItemListResponseApiModel>(response);
-        }
-
-        /// <inheritdoc/>
-        public async Task<PublishStopResponseApiModel> NodePublishStopAsync(string endpointId,
-            PublishStopRequestApiModel content, CancellationToken ct) {
-            if (string.IsNullOrEmpty(endpointId)) {
-                throw new ArgumentNullException(nameof(endpointId));
-            }
-            if (content == null) {
-                throw new ArgumentNullException(nameof(content));
-            }
-            var request = _httpClient.NewRequest($"{_serviceUri}/v3/publish/{endpointId}/stop",
-                Resource.Platform);
-            _serializer.SerializeToRequest(request, content);
-            var response = await _httpClient.PostAsync(request, ct).ConfigureAwait(false);
-            response.Validate();
-            return _serializer.DeserializeResponse<PublishStopResponseApiModel>(response);
-        }
-
-        /// <inheritdoc/>
         public async Task<HistoryReadResponseApiModel<VariantValue>> HistoryReadRawAsync(
-            string endpointId, HistoryReadRequestApiModel<VariantValue> content, CancellationToken ct) {
-            if (string.IsNullOrEmpty(endpointId)) {
-                throw new ArgumentNullException(nameof(endpointId));
+            string twinId, HistoryReadRequestApiModel<VariantValue> content, CancellationToken ct) {
+            if (string.IsNullOrEmpty(twinId)) {
+                throw new ArgumentNullException(nameof(twinId));
             }
             if (content == null) {
                 throw new ArgumentNullException(nameof(content));
@@ -325,7 +349,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
                 throw new ArgumentException("Missing details", nameof(content));
             }
             var request = _httpClient.NewRequest(
-                $"{_serviceUri}/v3/history/read/{endpointId}", Resource.Platform);
+                $"{_serviceUri}/v3/history/read/{twinId}", Resource.Platform);
             _serializer.SerializeToRequest(request, content);
             var response = await _httpClient.PostAsync(request, ct).ConfigureAwait(false);
             response.Validate();
@@ -334,9 +358,9 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
 
         /// <inheritdoc/>
         public async Task<HistoryReadNextResponseApiModel<VariantValue>> HistoryReadRawNextAsync(
-            string endpointId, HistoryReadNextRequestApiModel content, CancellationToken ct) {
-            if (string.IsNullOrEmpty(endpointId)) {
-                throw new ArgumentNullException(nameof(endpointId));
+            string twinId, HistoryReadNextRequestApiModel content, CancellationToken ct) {
+            if (string.IsNullOrEmpty(twinId)) {
+                throw new ArgumentNullException(nameof(twinId));
             }
             if (content == null) {
                 throw new ArgumentNullException(nameof(content));
@@ -345,7 +369,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
                 throw new ArgumentException("Missing continuation", nameof(content));
             }
             var request = _httpClient.NewRequest(
-                $"{_serviceUri}/v3/history/read/{endpointId}/next", Resource.Platform);
+                $"{_serviceUri}/v3/history/read/{twinId}/next", Resource.Platform);
             _serializer.SerializeToRequest(request, content);
             var response = await _httpClient.PostAsync(request, ct).ConfigureAwait(false);
             response.Validate();
@@ -354,9 +378,9 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
 
         /// <inheritdoc/>
         public async Task<HistoryUpdateResponseApiModel> HistoryUpdateRawAsync(
-            string endpointId, HistoryUpdateRequestApiModel<VariantValue> content, CancellationToken ct) {
-            if (string.IsNullOrEmpty(endpointId)) {
-                throw new ArgumentNullException(nameof(endpointId));
+            string twinId, HistoryUpdateRequestApiModel<VariantValue> content, CancellationToken ct) {
+            if (string.IsNullOrEmpty(twinId)) {
+                throw new ArgumentNullException(nameof(twinId));
             }
             if (content == null) {
                 throw new ArgumentNullException(nameof(content));
@@ -365,7 +389,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
                 throw new ArgumentException("Missing details", nameof(content));
             }
             var request = _httpClient.NewRequest(
-                $"{_serviceUri}/v3/history/update/{endpointId}", Resource.Platform);
+                $"{_serviceUri}/v3/history/update/{twinId}", Resource.Platform);
             _serializer.SerializeToRequest(request, content);
             var response = await _httpClient.PostAsync(request, ct).ConfigureAwait(false);
             response.Validate();
@@ -374,16 +398,16 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
 
         /// <inheritdoc/>
         public async Task<HistoryReadResponseApiModel<HistoricValueApiModel[]>> HistoryReadValuesAsync(
-            string endpointId, HistoryReadRequestApiModel<ReadValuesDetailsApiModel> content,
+            string twinId, HistoryReadRequestApiModel<ReadValuesDetailsApiModel> content,
             CancellationToken ct) {
-            if (string.IsNullOrEmpty(endpointId)) {
-                throw new ArgumentNullException(nameof(endpointId));
+            if (string.IsNullOrEmpty(twinId)) {
+                throw new ArgumentNullException(nameof(twinId));
             }
             if (content == null) {
                 throw new ArgumentNullException(nameof(content));
             }
             var request = _httpClient.NewRequest(
-                $"{_serviceUri}/v3/read/{endpointId}/values", Resource.Platform);
+                $"{_serviceUri}/v3/read/{twinId}/values", Resource.Platform);
             _serializer.SerializeToRequest(request, content);
             var response = await _httpClient.PostAsync(request, ct).ConfigureAwait(false);
             response.Validate();
@@ -392,16 +416,16 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
 
         /// <inheritdoc/>
         public async Task<HistoryReadResponseApiModel<HistoricValueApiModel[]>> HistoryReadModifiedValuesAsync(
-            string endpointId, HistoryReadRequestApiModel<ReadModifiedValuesDetailsApiModel> content,
+            string twinId, HistoryReadRequestApiModel<ReadModifiedValuesDetailsApiModel> content,
             CancellationToken ct) {
-            if (string.IsNullOrEmpty(endpointId)) {
-                throw new ArgumentNullException(nameof(endpointId));
+            if (string.IsNullOrEmpty(twinId)) {
+                throw new ArgumentNullException(nameof(twinId));
             }
             if (content == null) {
                 throw new ArgumentNullException(nameof(content));
             }
             var request = _httpClient.NewRequest(
-                $"{_serviceUri}/v3/read/{endpointId}/values/modified", Resource.Platform);
+                $"{_serviceUri}/v3/read/{twinId}/values/modified", Resource.Platform);
             _serializer.SerializeToRequest(request, content);
             var response = await _httpClient.PostAsync(request, ct).ConfigureAwait(false);
             response.Validate();
@@ -410,16 +434,16 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
 
         /// <inheritdoc/>
         public async Task<HistoryReadResponseApiModel<HistoricValueApiModel[]>> HistoryReadValuesAtTimesAsync(
-            string endpointId, HistoryReadRequestApiModel<ReadValuesAtTimesDetailsApiModel> content,
+            string twinId, HistoryReadRequestApiModel<ReadValuesAtTimesDetailsApiModel> content,
             CancellationToken ct) {
-            if (string.IsNullOrEmpty(endpointId)) {
-                throw new ArgumentNullException(nameof(endpointId));
+            if (string.IsNullOrEmpty(twinId)) {
+                throw new ArgumentNullException(nameof(twinId));
             }
             if (content == null) {
                 throw new ArgumentNullException(nameof(content));
             }
             var request = _httpClient.NewRequest(
-                $"{_serviceUri}/v3/read/{endpointId}/values/pick", Resource.Platform);
+                $"{_serviceUri}/v3/read/{twinId}/values/pick", Resource.Platform);
             _serializer.SerializeToRequest(request, content);
             var response = await _httpClient.PostAsync(request, ct).ConfigureAwait(false);
             response.Validate();
@@ -428,16 +452,16 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
 
         /// <inheritdoc/>
         public async Task<HistoryReadResponseApiModel<HistoricValueApiModel[]>> HistoryReadProcessedValuesAsync(
-            string endpointId, HistoryReadRequestApiModel<ReadProcessedValuesDetailsApiModel> content,
+            string twinId, HistoryReadRequestApiModel<ReadProcessedValuesDetailsApiModel> content,
             CancellationToken ct) {
-            if (string.IsNullOrEmpty(endpointId)) {
-                throw new ArgumentNullException(nameof(endpointId));
+            if (string.IsNullOrEmpty(twinId)) {
+                throw new ArgumentNullException(nameof(twinId));
             }
             if (content == null) {
                 throw new ArgumentNullException(nameof(content));
             }
             var request = _httpClient.NewRequest(
-                $"{_serviceUri}/v3/read/{endpointId}/values/processed", Resource.Platform);
+                $"{_serviceUri}/v3/read/{twinId}/values/processed", Resource.Platform);
             _serializer.SerializeToRequest(request, content);
             var response = await _httpClient.PostAsync(request, ct).ConfigureAwait(false);
             response.Validate();
@@ -446,9 +470,9 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
 
         /// <inheritdoc/>
         public async Task<HistoryReadNextResponseApiModel<HistoricValueApiModel[]>> HistoryReadValuesNextAsync(
-            string endpointId, HistoryReadNextRequestApiModel content, CancellationToken ct) {
-            if (string.IsNullOrEmpty(endpointId)) {
-                throw new ArgumentNullException(nameof(endpointId));
+            string twinId, HistoryReadNextRequestApiModel content, CancellationToken ct) {
+            if (string.IsNullOrEmpty(twinId)) {
+                throw new ArgumentNullException(nameof(twinId));
             }
             if (content == null) {
                 throw new ArgumentNullException(nameof(content));
@@ -457,7 +481,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
                 throw new ArgumentException("Missing continuation", nameof(content));
             }
             var request = _httpClient.NewRequest(
-                $"{_serviceUri}/v3/read/{endpointId}/values/next", Resource.Platform);
+                $"{_serviceUri}/v3/read/{twinId}/values/next", Resource.Platform);
             _serializer.SerializeToRequest(request, content);
             var response = await _httpClient.PostAsync(request, ct).ConfigureAwait(false);
             response.Validate();
@@ -466,16 +490,16 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
 
         /// <inheritdoc/>
         public async Task<HistoryReadResponseApiModel<HistoricEventApiModel[]>> HistoryReadEventsAsync(
-            string endpointId, HistoryReadRequestApiModel<ReadEventsDetailsApiModel> content,
+            string twinId, HistoryReadRequestApiModel<ReadEventsDetailsApiModel> content,
             CancellationToken ct) {
-            if (string.IsNullOrEmpty(endpointId)) {
-                throw new ArgumentNullException(nameof(endpointId));
+            if (string.IsNullOrEmpty(twinId)) {
+                throw new ArgumentNullException(nameof(twinId));
             }
             if (content == null) {
                 throw new ArgumentNullException(nameof(content));
             }
             var request = _httpClient.NewRequest(
-                $"{_serviceUri}/v3/read/{endpointId}/events", Resource.Platform);
+                $"{_serviceUri}/v3/read/{twinId}/events", Resource.Platform);
             _serializer.SerializeToRequest(request, content);
             var response = await _httpClient.PostAsync(request, ct).ConfigureAwait(false);
             response.Validate();
@@ -484,9 +508,9 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
 
         /// <inheritdoc/>
         public async Task<HistoryReadNextResponseApiModel<HistoricEventApiModel[]>> HistoryReadEventsNextAsync(
-            string endpointId, HistoryReadNextRequestApiModel content, CancellationToken ct) {
-            if (string.IsNullOrEmpty(endpointId)) {
-                throw new ArgumentNullException(nameof(endpointId));
+            string twinId, HistoryReadNextRequestApiModel content, CancellationToken ct) {
+            if (string.IsNullOrEmpty(twinId)) {
+                throw new ArgumentNullException(nameof(twinId));
             }
             if (content == null) {
                 throw new ArgumentNullException(nameof(content));
@@ -495,7 +519,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
                 throw new ArgumentException("Missing continuation", nameof(content));
             }
             var request = _httpClient.NewRequest(
-                $"{_serviceUri}/v3/read/{endpointId}/events/next", Resource.Platform);
+                $"{_serviceUri}/v3/read/{twinId}/events/next", Resource.Platform);
             _serializer.SerializeToRequest(request, content);
             var response = await _httpClient.PostAsync(request, ct).ConfigureAwait(false);
             response.Validate();
@@ -503,16 +527,16 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
         }
 
         /// <inheritdoc/>
-        public async Task<HistoryUpdateResponseApiModel> HistoryReplaceValuesAsync(string endpointId,
+        public async Task<HistoryUpdateResponseApiModel> HistoryReplaceValuesAsync(string twinId,
             HistoryUpdateRequestApiModel<ReplaceValuesDetailsApiModel> content, CancellationToken ct) {
-            if (string.IsNullOrEmpty(endpointId)) {
-                throw new ArgumentNullException(nameof(endpointId));
+            if (string.IsNullOrEmpty(twinId)) {
+                throw new ArgumentNullException(nameof(twinId));
             }
             if (content == null) {
                 throw new ArgumentNullException(nameof(content));
             }
             var request = _httpClient.NewRequest(
-                $"{_serviceUri}/v3/replace/{endpointId}/values", Resource.Platform);
+                $"{_serviceUri}/v3/replace/{twinId}/values", Resource.Platform);
             _serializer.SerializeToRequest(request, content);
             var response = await _httpClient.PostAsync(request, ct).ConfigureAwait(false);
             response.Validate();
@@ -520,16 +544,16 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
         }
 
         /// <inheritdoc/>
-        public async Task<HistoryUpdateResponseApiModel> HistoryReplaceEventsAsync(string endpointId,
+        public async Task<HistoryUpdateResponseApiModel> HistoryReplaceEventsAsync(string twinId,
             HistoryUpdateRequestApiModel<ReplaceEventsDetailsApiModel> content, CancellationToken ct) {
-            if (string.IsNullOrEmpty(endpointId)) {
-                throw new ArgumentNullException(nameof(endpointId));
+            if (string.IsNullOrEmpty(twinId)) {
+                throw new ArgumentNullException(nameof(twinId));
             }
             if (content == null) {
                 throw new ArgumentNullException(nameof(content));
             }
             var request = _httpClient.NewRequest(
-                $"{_serviceUri}/v3/replace/{endpointId}/events", Resource.Platform);
+                $"{_serviceUri}/v3/replace/{twinId}/events", Resource.Platform);
             _serializer.SerializeToRequest(request, content);
             var response = await _httpClient.PostAsync(request, ct).ConfigureAwait(false);
             response.Validate();
@@ -537,16 +561,16 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
         }
 
         /// <inheritdoc/>
-        public async Task<HistoryUpdateResponseApiModel> HistoryInsertValuesAsync(string endpointId,
+        public async Task<HistoryUpdateResponseApiModel> HistoryInsertValuesAsync(string twinId,
             HistoryUpdateRequestApiModel<InsertValuesDetailsApiModel> content, CancellationToken ct) {
-            if (string.IsNullOrEmpty(endpointId)) {
-                throw new ArgumentNullException(nameof(endpointId));
+            if (string.IsNullOrEmpty(twinId)) {
+                throw new ArgumentNullException(nameof(twinId));
             }
             if (content == null) {
                 throw new ArgumentNullException(nameof(content));
             }
             var request = _httpClient.NewRequest(
-                $"{_serviceUri}/v3/insert/{endpointId}/values", Resource.Platform);
+                $"{_serviceUri}/v3/insert/{twinId}/values", Resource.Platform);
             _serializer.SerializeToRequest(request, content);
             var response = await _httpClient.PostAsync(request, ct).ConfigureAwait(false);
             response.Validate();
@@ -554,16 +578,16 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
         }
 
         /// <inheritdoc/>
-        public async Task<HistoryUpdateResponseApiModel> HistoryInsertEventsAsync(string endpointId,
+        public async Task<HistoryUpdateResponseApiModel> HistoryInsertEventsAsync(string twinId,
             HistoryUpdateRequestApiModel<InsertEventsDetailsApiModel> content, CancellationToken ct) {
-            if (string.IsNullOrEmpty(endpointId)) {
-                throw new ArgumentNullException(nameof(endpointId));
+            if (string.IsNullOrEmpty(twinId)) {
+                throw new ArgumentNullException(nameof(twinId));
             }
             if (content == null) {
                 throw new ArgumentNullException(nameof(content));
             }
             var request = _httpClient.NewRequest(
-                $"{_serviceUri}/v3/insert/{endpointId}/events", Resource.Platform);
+                $"{_serviceUri}/v3/insert/{twinId}/events", Resource.Platform);
             _serializer.SerializeToRequest(request, content);
             var response = await _httpClient.PostAsync(request, ct).ConfigureAwait(false);
             response.Validate();
@@ -571,16 +595,16 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
         }
 
         /// <inheritdoc/>
-        public async Task<HistoryUpdateResponseApiModel> HistoryDeleteValuesAsync(string endpointId,
+        public async Task<HistoryUpdateResponseApiModel> HistoryDeleteValuesAsync(string twinId,
             HistoryUpdateRequestApiModel<DeleteValuesDetailsApiModel> content, CancellationToken ct) {
-            if (string.IsNullOrEmpty(endpointId)) {
-                throw new ArgumentNullException(nameof(endpointId));
+            if (string.IsNullOrEmpty(twinId)) {
+                throw new ArgumentNullException(nameof(twinId));
             }
             if (content == null) {
                 throw new ArgumentNullException(nameof(content));
             }
             var request = _httpClient.NewRequest(
-                $"{_serviceUri}/v3/delete/{endpointId}/values", Resource.Platform);
+                $"{_serviceUri}/v3/delete/{twinId}/values", Resource.Platform);
             _serializer.SerializeToRequest(request, content);
             var response = await _httpClient.PostAsync(request, ct).ConfigureAwait(false);
             response.Validate();
@@ -588,16 +612,16 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
         }
 
         /// <inheritdoc/>
-        public async Task<HistoryUpdateResponseApiModel> HistoryDeleteValuesAtTimesAsync(string endpointId,
+        public async Task<HistoryUpdateResponseApiModel> HistoryDeleteValuesAtTimesAsync(string twinId,
             HistoryUpdateRequestApiModel<DeleteValuesAtTimesDetailsApiModel> content, CancellationToken ct) {
-            if (string.IsNullOrEmpty(endpointId)) {
-                throw new ArgumentNullException(nameof(endpointId));
+            if (string.IsNullOrEmpty(twinId)) {
+                throw new ArgumentNullException(nameof(twinId));
             }
             if (content == null) {
                 throw new ArgumentNullException(nameof(content));
             }
             var request = _httpClient.NewRequest(
-                $"{_serviceUri}/v3/delete/{endpointId}/values/pick", Resource.Platform);
+                $"{_serviceUri}/v3/delete/{twinId}/values/pick", Resource.Platform);
             _serializer.SerializeToRequest(request, content);
             var response = await _httpClient.PostAsync(request, ct).ConfigureAwait(false);
             response.Validate();
@@ -605,16 +629,16 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
         }
 
         /// <inheritdoc/>
-        public async Task<HistoryUpdateResponseApiModel> HistoryDeleteModifiedValuesAsync(string endpointId,
+        public async Task<HistoryUpdateResponseApiModel> HistoryDeleteModifiedValuesAsync(string twinId,
             HistoryUpdateRequestApiModel<DeleteModifiedValuesDetailsApiModel> content, CancellationToken ct) {
-            if (string.IsNullOrEmpty(endpointId)) {
-                throw new ArgumentNullException(nameof(endpointId));
+            if (string.IsNullOrEmpty(twinId)) {
+                throw new ArgumentNullException(nameof(twinId));
             }
             if (content == null) {
                 throw new ArgumentNullException(nameof(content));
             }
             var request = _httpClient.NewRequest(
-                $"{_serviceUri}/v3/delete/{endpointId}/values/modified", Resource.Platform);
+                $"{_serviceUri}/v3/delete/{twinId}/values/modified", Resource.Platform);
             _serializer.SerializeToRequest(request, content);
             var response = await _httpClient.PostAsync(request, ct).ConfigureAwait(false);
             response.Validate();
@@ -622,16 +646,16 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
         }
 
         /// <inheritdoc/>
-        public async Task<HistoryUpdateResponseApiModel> HistoryDeleteEventsAsync(string endpointId,
+        public async Task<HistoryUpdateResponseApiModel> HistoryDeleteEventsAsync(string twinId,
             HistoryUpdateRequestApiModel<DeleteEventsDetailsApiModel> content, CancellationToken ct) {
-            if (string.IsNullOrEmpty(endpointId)) {
-                throw new ArgumentNullException(nameof(endpointId));
+            if (string.IsNullOrEmpty(twinId)) {
+                throw new ArgumentNullException(nameof(twinId));
             }
             if (content == null) {
                 throw new ArgumentNullException(nameof(content));
             }
             var request = _httpClient.NewRequest(
-                $"{_serviceUri}/v3/delete/{endpointId}/events", Resource.Platform);
+                $"{_serviceUri}/v3/delete/{twinId}/events", Resource.Platform);
             _serializer.SerializeToRequest(request, content);
             var response = await _httpClient.PostAsync(request, ct).ConfigureAwait(false);
             response.Validate();

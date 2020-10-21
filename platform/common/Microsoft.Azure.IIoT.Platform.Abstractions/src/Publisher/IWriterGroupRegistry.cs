@@ -5,6 +5,7 @@
 
 namespace Microsoft.Azure.IIoT.Platform.Publisher {
     using Microsoft.Azure.IIoT.Platform.Publisher.Models;
+    using Microsoft.Azure.IIoT.Platform.Core.Models;
     using System.Threading;
     using System.Threading.Tasks;
 
@@ -22,7 +23,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher {
         /// <returns></returns>
         Task<WriterGroupAddResultModel> AddWriterGroupAsync(
             WriterGroupAddRequestModel request,
-            PublisherOperationContextModel context = null,
+            OperationContextModel context = null,
             CancellationToken ct = default);
 
         /// <summary>
@@ -46,7 +47,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher {
         /// <returns></returns>
         Task UpdateWriterGroupAsync(string writerGroupId,
             WriterGroupUpdateRequestModel request,
-            PublisherOperationContextModel context = null,
+            OperationContextModel context = null,
             CancellationToken ct = default);
 
         /// <summary>
@@ -57,7 +58,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher {
         /// <param name="ct"></param>
         /// <returns></returns>
         Task ActivateWriterGroupAsync(string writerGroupId,
-            PublisherOperationContextModel context = null,
+            OperationContextModel context = null,
             CancellationToken ct = default);
 
         /// <summary>
@@ -92,7 +93,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher {
         /// <param name="ct"></param>
         /// <returns></returns>
         Task DeactivateWriterGroupAsync(string writerGroupId,
-            PublisherOperationContextModel context = null,
+            OperationContextModel context = null,
             CancellationToken ct = default);
 
         /// <summary>
@@ -105,7 +106,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher {
         /// <param name="ct"></param>
         /// <returns></returns>
         Task RemoveWriterGroupAsync(string writerGroupId, string generationId,
-            PublisherOperationContextModel context = null,
+            OperationContextModel context = null,
             CancellationToken ct = default);
     }
 }

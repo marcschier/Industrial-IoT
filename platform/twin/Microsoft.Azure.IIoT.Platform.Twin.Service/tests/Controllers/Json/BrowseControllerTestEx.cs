@@ -24,34 +24,34 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Service.Controllers.Json {
     public class BrowseControllerTestEx : IClassFixture<WebAppFixture> {
 
         public BrowseControllerTestEx(WebAppFixture factory, TestServerFixture server) {
-            _factory = factory;
+            _fixture = factory;
             _server = server;
             _hostEntry = Try.Op(() => Dns.GetHostEntry(Utils.GetHostName()))
                 ?? Try.Op(() => Dns.GetHostEntry("localhost"));
         }
 
         private BrowseServicesTests<string> GetTests() {
-            var client = _factory.CreateClient(); // Call to create server
-            var module = _factory.Resolve<ITestModule>();
-            module.Endpoint = Endpoint;
-            var log = _factory.Resolve<ILogger>();
-            var serializer = _factory.Resolve<IJsonSerializer>();
+            var client = _fixture.CreateClient(); // Call to create server
+            var module = _fixture.Resolve<ITestRegistry>();
+            module.Connection = Connection;
+            var log = _fixture.Resolve<ILogger>();
+            var serializer = _fixture.Resolve<IJsonSerializer>();
             return new BrowseServicesTests<string>(() => // Create an adapter over the api
                 new TwinServicesApiAdapter(
                     new ControllerTestClient(
-                       new HttpClient(_factory, log), new TestConfig(client.BaseAddress),
+                       new HttpClient(_fixture, log), new TestConfig(client.BaseAddress),
                             serializer)), "fakeid");
         }
 
-        public EndpointModel Endpoint => new EndpointModel {
+        public ConnectionModel Connection => new EndpointModel {
             Url = $"opc.tcp://{_hostEntry?.HostName ?? "localhost"}:{_server.Port}/UA/SampleServer",
             AlternativeUrls = _hostEntry?.AddressList
                 .Where(ip => ip.AddressFamily == AddressFamily.InterNetwork)
                 .Select(ip => $"opc.tcp://{ip}:{_server.Port}/UA/SampleServer").ToHashSet(),
             Certificate = _server.Certificate?.RawData?.ToThumbprint()
-        };
+        }.ToConnectionModel();
 
-        private readonly WebAppFixture _factory;
+        private readonly WebAppFixture _fixture;
         private readonly TestServerFixture _server;
         private readonly IPHostEntry _hostEntry;
 

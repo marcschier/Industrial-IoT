@@ -293,7 +293,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
                     wrapper.Session.Reconnect();
                     wrapper.ReportedStatus = StatusCodes.Good;
                     wrapper.State = SessionState.Running;
-                    wrapper.Connectivity = EndpointConnectivityState.Ready;
+                    wrapper.Connectivity = ConnectionStatus.Ready;
                     wrapper.MissedKeepAlives = 0;
 
                     // reactivate all subscriptons
@@ -304,7 +304,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
                     }
                 }
                 else {
-                    wrapper.Connectivity = EndpointConnectivityState.Disconnected;
+                    wrapper.Connectivity = ConnectionStatus.Disconnected;
                 }
                 return;
             }
@@ -411,7 +411,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
                 foreach (var endpointUrl in endpointUrlCandidates) {
                     try {
                         if (!ct.IsCancellationRequested) {
-                            wrapper.Connectivity = EndpointConnectivityState.Connecting;
+                            wrapper.Connectivity = ConnectionStatus.Connecting;
                             var session = await CreateSessionAsync(endpointUrl, id, wrapper).ConfigureAwait(false);
                             if (session != null) {
                                 _logger.Information("Connected to '{endpointUrl}'", endpointUrl);
@@ -424,7 +424,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
                                     await subscription.ActivateAsync(wrapper.Session).ConfigureAwait(false);
                                 }
                                 wrapper.State = SessionState.Running;
-                                wrapper.Connectivity = EndpointConnectivityState.Ready;
+                                wrapper.Connectivity = ConnectionStatus.Ready;
                                 _logger.Debug("Session '{id}' successfully initialized", id);
                                 return;
                             }
@@ -449,7 +449,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
             catch (Exception ex) {
                 _logger.Error(ex, "Failed to create session '{id}'", id);
             }
-            wrapper.Connectivity = EndpointConnectivityState.Error;
+            wrapper.Connectivity = ConnectionStatus.Error;
             wrapper.State = SessionState.Failed;
         }
 
@@ -475,7 +475,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
                             }
                             _logger.Debug("Refreshing done for session '{id}'", id);
                             wrapper.State = SessionState.Running;
-                            wrapper.Connectivity = EndpointConnectivityState.Ready;
+                            wrapper.Connectivity = ConnectionStatus.Ready;
                             return;
                         }
                         wrapper.ReportedStatus = StatusCodes.BadNoCommunication;
@@ -485,7 +485,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
                 }
                 else {
                     wrapper.State = SessionState.Failed;
-                    wrapper.Connectivity = EndpointConnectivityState.Error;
+                    wrapper.Connectivity = ConnectionStatus.Error;
                     await HandleInitAsync(id, wrapper, ct).ConfigureAwait(false);
                 }
             }
@@ -511,7 +511,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
             }
             try {
                 if (wrapper != null && wrapper.Session != null) {
-                    wrapper.Connectivity = EndpointConnectivityState.Disconnected;
+                    wrapper.Connectivity = ConnectionStatus.Disconnected;
                     wrapper.Session.Handle = null;
                     // Remove subscriptions
                     if (wrapper.Session.SubscriptionCount > 0) {
@@ -743,8 +743,8 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
         /// <param name="ex"></param>
         /// <param name="reconnecting"></param>
         /// <returns></returns>
-        public EndpointConnectivityState ToConnectivityState(Exception ex, bool reconnecting = true) {
-            var state = EndpointConnectivityState.Error;
+        public ConnectionStatus ToConnectivityState(Exception ex, bool reconnecting = true) {
+            var state = ConnectionStatus.Error;
             switch (ex) {
                 case ServiceResultException sre:
                     switch (sre.StatusCode) {
@@ -753,7 +753,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
                         case StatusCodes.BadTcpServerTooBusy:
                         case StatusCodes.BadTooManySessions:
                         case StatusCodes.BadTooManyOperations:
-                            state = EndpointConnectivityState.Busy;
+                            state = ConnectionStatus.Busy;
                             break;
                         case StatusCodes.BadCertificateRevocationUnknown:
                         case StatusCodes.BadCertificateIssuerRevocationUnknown:
@@ -768,32 +768,32 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
                         case StatusCodes.BadCertificateInvalid:
                         case StatusCodes.BadCertificateHostNameInvalid:
                         case StatusCodes.BadNoValidCertificates:
-                            state = EndpointConnectivityState.CertificateInvalid;
+                            state = ConnectionStatus.CertificateInvalid;
                             break;
                         case StatusCodes.BadCertificateUntrusted:
                         case StatusCodes.BadSecurityChecksFailed:
-                            state = EndpointConnectivityState.NoTrust;
+                            state = ConnectionStatus.NoTrust;
                             break;
                         case StatusCodes.BadSecureChannelClosed:
-                            state = reconnecting ? EndpointConnectivityState.NoTrust :
-                                EndpointConnectivityState.Error;
+                            state = reconnecting ? ConnectionStatus.NoTrust :
+                                ConnectionStatus.Error;
                             break;
                         case StatusCodes.BadRequestTimeout:
                         case StatusCodes.BadNotConnected:
-                            state = EndpointConnectivityState.NotReachable;
+                            state = ConnectionStatus.NotReachable;
                             break;
                         case StatusCodes.BadUserAccessDenied:
                         case StatusCodes.BadUserSignatureInvalid:
-                            state = EndpointConnectivityState.Unauthorized;
+                            state = ConnectionStatus.Unauthorized;
                             break;
                         default:
-                            state = EndpointConnectivityState.Error;
+                            state = ConnectionStatus.Error;
                             break;
                     }
                     _logger.Debug("{result} => {state}", sre.Result, state);
                     break;
                 default:
-                    state = EndpointConnectivityState.Error;
+                    state = ConnectionStatus.Error;
                     _logger.Debug("{message} => {state}", ex.Message, state);
                     break;
             }
@@ -904,7 +904,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
             /// <summary>
             /// the number of connect retries
             /// </summary>
-            public EndpointConnectivityState Connectivity {
+            public ConnectionStatus Connectivity {
                 get => _connectivity;
                 set {
                     if (value != _connectivity) {
@@ -942,7 +942,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
             public ConcurrentDictionary<string, ISubscriptionHandle> Subscriptions { get; }
                 = new ConcurrentDictionary<string, ISubscriptionHandle>();
 
-            private EndpointConnectivityState _connectivity = EndpointConnectivityState.Disconnected;
+            private ConnectionStatus _connectivity = ConnectionStatus.Disconnected;
         }
 
         /// <summary>

@@ -47,10 +47,22 @@ namespace Microsoft.Azure.IIoT.Platform {
             "application/x-network-message-model-json-v1";
 
         /// <summary>
+        /// Message contains writer group events
+        /// </summary>
+        public const string WriterGroupEvents =
+            "application/x-writergroup-event-v2-json";
+
+        /// <summary>
         /// Message contains writer events
         /// </summary>
         public const string DataSetWriterEvents =
             "application/x-datasetwriter-event-v2-json";
+
+        /// <summary>
+        /// Message contains endpoint state events
+        /// </summary>
+        public const string EndpointEvents =
+            "application/x-endpoint-event-v2-json";
 
         /// <summary>
         /// Content is a nodeset

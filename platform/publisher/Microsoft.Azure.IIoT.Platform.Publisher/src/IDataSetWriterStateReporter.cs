@@ -7,7 +7,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher {
     using Microsoft.Azure.IIoT.Platform.Publisher.Models;
 
     /// <summary>
-    /// Report state for writer group
+    /// Report state for dataset and dataset writer
     /// </summary>
     public interface IDataSetWriterStateReporter {
 

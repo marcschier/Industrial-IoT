@@ -21,10 +21,10 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
         /// <summary>
         /// Create node services tests
         /// </summary>
-        public WriteArrayValueTests(Func<INodeServices<T>> services, T endpoint,
+        public WriteArrayValueTests(Func<INodeServices<T>> services, T twin,
             Func<T, string, Task<VariantValue>> readExpected) {
             _services = services;
-            _endpoint = endpoint;
+            _twin = twin;
             _serializer = new NewtonSoftJsonSerializer();
             _readExpected = readExpected;
         }
@@ -40,7 +40,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
                 "true,true,true,false]");
 
             // Act
-            var result = await browser.NodeValueWriteAsync(_endpoint,
+            var result = await browser.NodeValueWriteAsync(_twin,
                 new ValueWriteRequestModel {
                     NodeId = node,
                     Value = expected,
@@ -64,7 +64,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
                 "63,-45,-103,2]");
 
             // Act
-            var result = await browser.NodeValueWriteAsync(_endpoint,
+            var result = await browser.NodeValueWriteAsync(_twin,
                 new ValueWriteRequestModel {
                     NodeId = node,
                     Value = expected,
@@ -86,7 +86,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
                 "qdeiRVY94AJSUZ\"");
 
             // Act
-            var result = await browser.NodeValueWriteAsync(_endpoint,
+            var result = await browser.NodeValueWriteAsync(_twin,
                 new ValueWriteRequestModel {
                     NodeId = node,
                     Value = expected,
@@ -108,7 +108,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
             var expected = _serializer.FromObject(_generator.GetRandomArray<short>());
 
             // Act
-            var result = await browser.NodeValueWriteAsync(_endpoint,
+            var result = await browser.NodeValueWriteAsync(_twin,
                 new ValueWriteRequestModel {
                     NodeId = node,
                     Value = expected,
@@ -128,7 +128,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
             var expected = _serializer.FromObject(_generator.GetRandomArray<ushort>());
 
             // Act
-            var result = await browser.NodeValueWriteAsync(_endpoint,
+            var result = await browser.NodeValueWriteAsync(_twin,
                 new ValueWriteRequestModel {
                     NodeId = node,
                     Value = expected,
@@ -148,7 +148,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
             var expected = _serializer.FromObject(_generator.GetRandomArray<int>());
 
             // Act
-            var result = await browser.NodeValueWriteAsync(_endpoint,
+            var result = await browser.NodeValueWriteAsync(_twin,
                 new ValueWriteRequestModel {
                     NodeId = node,
                     Value = expected,
@@ -168,7 +168,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
             var expected = _serializer.FromObject(_generator.GetRandomArray<uint>());
 
             // Act
-            var result = await browser.NodeValueWriteAsync(_endpoint,
+            var result = await browser.NodeValueWriteAsync(_twin,
                 new ValueWriteRequestModel {
                     NodeId = node,
                     Value = expected,
@@ -188,7 +188,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
             var expected = _serializer.FromObject(_generator.GetRandomArray<long>());
 
             // Act
-            var result = await browser.NodeValueWriteAsync(_endpoint,
+            var result = await browser.NodeValueWriteAsync(_twin,
                 new ValueWriteRequestModel {
                     NodeId = node,
                     Value = expected,
@@ -208,7 +208,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
             var expected = _serializer.FromObject(_generator.GetRandomArray<ulong>());
 
             // Act
-            var result = await browser.NodeValueWriteAsync(_endpoint,
+            var result = await browser.NodeValueWriteAsync(_twin,
                 new ValueWriteRequestModel {
                     NodeId = node,
                     Value = expected,
@@ -236,7 +236,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
             });
 
             // Act
-            var result = await browser.NodeValueWriteAsync(_endpoint,
+            var result = await browser.NodeValueWriteAsync(_twin,
                 new ValueWriteRequestModel {
                     NodeId = node,
                     Value = expected,
@@ -267,7 +267,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
             });
 
             // Act
-            var result = await browser.NodeValueWriteAsync(_endpoint,
+            var result = await browser.NodeValueWriteAsync(_twin,
                 new ValueWriteRequestModel {
                     NodeId = node,
                     Value = expected,
@@ -294,7 +294,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
             });
 
             // Act
-            var result = await browser.NodeValueWriteAsync(_endpoint,
+            var result = await browser.NodeValueWriteAsync(_twin,
                 new ValueWriteRequestModel {
                     NodeId = node,
                     Value = expected,
@@ -314,7 +314,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
             var expected = _serializer.FromObject(_generator.GetRandomArray<string>());
 
             // Act
-            var result = await browser.NodeValueWriteAsync(_endpoint,
+            var result = await browser.NodeValueWriteAsync(_twin,
                 new ValueWriteRequestModel {
                     NodeId = node,
                     Value = expected,
@@ -334,7 +334,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
             var expected = _serializer.FromObject(_generator.GetRandomArray<DateTime>());
 
             // Act
-            var result = await browser.NodeValueWriteAsync(_endpoint,
+            var result = await browser.NodeValueWriteAsync(_twin,
                 new ValueWriteRequestModel {
                     NodeId = node,
                     Value = expected,
@@ -354,7 +354,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
             var expected = _serializer.FromObject(_generator.GetRandomArray<Guid>());
 
             // Act
-            var result = await browser.NodeValueWriteAsync(_endpoint,
+            var result = await browser.NodeValueWriteAsync(_twin,
                 new ValueWriteRequestModel {
                     NodeId = node,
                     Value = expected,
@@ -486,7 +486,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
                 "=\"]");
 
             // Act
-            var result = await browser.NodeValueWriteAsync(_endpoint,
+            var result = await browser.NodeValueWriteAsync(_twin,
                 new ValueWriteRequestModel {
                     NodeId = node,
                     Value = expected,
@@ -506,7 +506,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
             var expected = _serializer.FromObject(_generator.GetRandomArray<XmlElement>());
 
             // Act
-            var result = await browser.NodeValueWriteAsync(_endpoint,
+            var result = await browser.NodeValueWriteAsync(_twin,
                 new ValueWriteRequestModel {
                     NodeId = node,
                     Value = expected,
@@ -560,7 +560,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
                 "\"http://test.org/UA/Data/#g=1ad3ae1c-1c15-e1b1-0f18-96aa0c4f3766\"]");
 
             // Act
-            var result = await browser.NodeValueWriteAsync(_endpoint,
+            var result = await browser.NodeValueWriteAsync(_twin,
                 new ValueWriteRequestModel {
                     NodeId = node,
                     Value = expected,
@@ -585,7 +585,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
                 "\"http://opcfoundation.org/UA/Boiler/#g=7e12cb12-9cea-2be5-5753-ab5e78b7d3d7\"]");
 
             // Act
-            var result = await browser.NodeValueWriteAsync(_endpoint,
+            var result = await browser.NodeValueWriteAsync(_twin,
                 new ValueWriteRequestModel {
                     NodeId = node,
                     Value = expected,
@@ -618,7 +618,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
             });
 
             // Act
-            var result = await browser.NodeValueWriteAsync(_endpoint,
+            var result = await browser.NodeValueWriteAsync(_twin,
                 new ValueWriteRequestModel {
                     NodeId = node,
                     Value = expected,
@@ -662,7 +662,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
                 "{\"Text\":\"白色' 芒果 狗 芒果) 红色 桃子, 桃子; 蛇- 鼠 鼠 草莓 黄色 红色 蓝色* 白色&quot 葡萄%\",\"Locale\":\"zh-CN\"}]");
 
             // Act
-            var result = await browser.NodeValueWriteAsync(_endpoint,
+            var result = await browser.NodeValueWriteAsync(_twin,
             new ValueWriteRequestModel {
                 NodeId = node,
                 Value = expected,
@@ -682,7 +682,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
             var expected = _serializer.Parse("[2555904,9306112]");
 
             // Act
-            var result = await browser.NodeValueWriteAsync(_endpoint,
+            var result = await browser.NodeValueWriteAsync(_twin,
                 new ValueWriteRequestModel {
                     NodeId = node,
                     Value = expected,
@@ -711,7 +711,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
                 }));
 
             // Act
-            var result = await browser.NodeValueWriteAsync(_endpoint,
+            var result = await browser.NodeValueWriteAsync(_twin,
                 new ValueWriteRequestModel {
                     NodeId = node,
                     Value = expected,
@@ -746,7 +746,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
                 "20264719]");
 
             // Act
-            var result = await browser.NodeValueWriteAsync(_endpoint,
+            var result = await browser.NodeValueWriteAsync(_twin,
                 new ValueWriteRequestModel {
                     NodeId = node,
                     Value = expected,
@@ -1256,7 +1256,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
 ]
 ");
             // Act
-            var result = await browser.NodeValueWriteAsync(_endpoint,
+            var result = await browser.NodeValueWriteAsync(_twin,
                 new ValueWriteRequestModel {
                     NodeId = node,
                     Value = expected,
@@ -1283,7 +1283,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
                 }));
 
             // Act
-            var result = await browser.NodeValueWriteAsync(_endpoint,
+            var result = await browser.NodeValueWriteAsync(_twin,
                 new ValueWriteRequestModel {
                     NodeId = node,
                     Value = expected,
@@ -1304,7 +1304,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
             var expected = _serializer.FromObject(values);
 
             // Act
-            var result = await browser.NodeValueWriteAsync(_endpoint,
+            var result = await browser.NodeValueWriteAsync(_twin,
                 new ValueWriteRequestModel {
                     NodeId = node,
                     Value = expected,
@@ -1330,7 +1330,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
                 }));
 
             // Act
-            var result = await browser.NodeValueWriteAsync(_endpoint,
+            var result = await browser.NodeValueWriteAsync(_twin,
                 new ValueWriteRequestModel {
                     NodeId = node,
                     Value = expected,
@@ -1351,7 +1351,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
             var expected = _serializer.FromObject(values);
 
             // Act
-            var result = await browser.NodeValueWriteAsync(_endpoint,
+            var result = await browser.NodeValueWriteAsync(_twin,
                 new ValueWriteRequestModel {
                     NodeId = node,
                     Value = expected,
@@ -1377,7 +1377,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
                 }));
 
             // Act
-            var result = await browser.NodeValueWriteAsync(_endpoint,
+            var result = await browser.NodeValueWriteAsync(_twin,
                 new ValueWriteRequestModel {
                     NodeId = node,
                     Value = expected,
@@ -1398,7 +1398,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
             var expected = _serializer.FromObject(values);
 
             // Act
-            var result = await browser.NodeValueWriteAsync(_endpoint,
+            var result = await browser.NodeValueWriteAsync(_twin,
                 new ValueWriteRequestModel {
                     NodeId = node,
                     Value = expected,
@@ -1411,14 +1411,14 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
 
         private async Task AssertResultAsync(string node, VariantValue expected,
             ValueWriteResultModel result) {
-            var value = await _readExpected(_endpoint, node).ConfigureAwait(false);
+            var value = await _readExpected(_twin, node).ConfigureAwait(false);
             Assert.NotNull(value);
             Assert.Null(result.ErrorInfo);
             Assert.True(expected.Equals(value), $"{expected} != {value}");
             Assert.Equal(expected, value);
         }
 
-        private readonly T _endpoint;
+        private readonly T _twin;
         private readonly Func<T, string, Task<VariantValue>> _readExpected;
         private readonly Func<INodeServices<T>> _services;
         private readonly IJsonSerializer _serializer;

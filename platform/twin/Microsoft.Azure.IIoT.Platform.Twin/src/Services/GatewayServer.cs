@@ -748,7 +748,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
             if (serverUris != null && serverUris.Count > 0) {
                 var results = await Task.WhenAll(serverUris
                     .Select(uri => _registry.QueryAllApplicationsAsync(
-                        new ApplicationRegistrationQueryModel {
+                        new ApplicationInfoQueryModel {
                             ApplicationUri = uri
                         }))).ConfigureAwait(false);
                 applications = results.SelectMany(t => t);
@@ -775,7 +775,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
             if (string.IsNullOrEmpty(applicationId)) {
                 return new EndpointDescriptionCollection();
             }
-            var registration = await _registry.GetApplicationAsync(applicationId, true).ConfigureAwait(false);
+            var registration = await _registry.GetApplicationAsync(applicationId).ConfigureAwait(false);
             // Make endpoints and publish on all transport endpoints
             var server = ToApplicationDescription(registration.Application);
             var endpoints = _endpoints.SelectMany(ep => {

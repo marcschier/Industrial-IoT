@@ -26,8 +26,8 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
                 ?? Try.Op(() => Dns.GetHostEntry("localhost"));
         }
 
-        private WriteArrayValueTests<EndpointModel> GetTests() {
-            return new WriteArrayValueTests<EndpointModel>(
+        private WriteArrayValueTests<ConnectionModel> GetTests() {
+            return new WriteArrayValueTests<ConnectionModel>(
                 () => new AddressSpaceServices(_server.Client,
                     new VariantEncoderFactory(), _server.Logger),
                 new EndpointModel {
@@ -37,7 +37,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
                         .Select(ip => $"opc.tcp://{ip}:{_server.Port}/UA/SampleServer")
                         .ToHashSet(),
                     Certificate = _server.Certificate?.RawData?.ToThumbprint()
-                }, _server.Client.ReadValueAsync);
+                }.ToConnectionModel(), _server.Client.ReadValueAsync);
         }
 
         private readonly TestServerFixture _server;

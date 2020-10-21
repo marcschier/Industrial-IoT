@@ -54,7 +54,7 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Provider.Controllers {
                 return View("UserCodeCapture");
             }
 
-            var vm = await BuildViewModelAsync(userCode);
+            var vm = await BuildViewModelAsync(userCode).ConfigureAwait(false);
             if (vm == null) {
                 return View("Error");
             }
@@ -73,7 +73,7 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Provider.Controllers {
 #pragma warning disable IDE1006 // Naming Styles
         public async Task<IActionResult> UserCodeCapture(string userCode) {
 #pragma warning restore IDE1006 // Naming Styles
-            var vm = await BuildViewModelAsync(userCode);
+            var vm = await BuildViewModelAsync(userCode).ConfigureAwait(false);
             if (vm == null) {
                 return View("Error");
             }
@@ -95,7 +95,7 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Provider.Controllers {
                 throw new ArgumentNullException(nameof(model));
             }
 
-            var result = await ProcessConsent(model);
+            var result = await ProcessConsent(model).ConfigureAwait(false);
             if (result.HasValidationError) {
                 return View("Error");
             }
@@ -114,7 +114,7 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Provider.Controllers {
             DeviceAuthorizationInputModel model) {
             var result = new ProcessConsentResult();
 
-            var request = await _interaction.GetAuthorizationContextAsync(model.UserCode);
+            var request = await _interaction.GetAuthorizationContextAsync(model.UserCode).ConfigureAwait(false);
             if (request == null) {
                 return result;
             }
@@ -126,7 +126,7 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Provider.Controllers {
                 grantedConsent = new ConsentResponse { Error = AuthorizationError.AccessDenied };
 
                 // emit event
-                await _events.RaiseAsync(new ConsentDeniedEvent(User.GetSubjectId(), request.Client.ClientId, request.ValidatedResources.RawScopeValues));
+                await _events.RaiseAsync(new ConsentDeniedEvent(User.GetSubjectId(), request.Client.ClientId, request.ValidatedResources.RawScopeValues)).ConfigureAwait(false);
             }
             // user clicked 'yes' - validate the data
             else if (model.Button == "yes") {
@@ -144,7 +144,7 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Provider.Controllers {
                     };
 
                     // emit event
-                    await _events.RaiseAsync(new ConsentGrantedEvent(User.GetSubjectId(), request.Client.ClientId, request.ValidatedResources.RawScopeValues, grantedConsent.ScopesValuesConsented, grantedConsent.RememberConsent));
+                    await _events.RaiseAsync(new ConsentGrantedEvent(User.GetSubjectId(), request.Client.ClientId, request.ValidatedResources.RawScopeValues, grantedConsent.ScopesValuesConsented, grantedConsent.RememberConsent)).ConfigureAwait(false);
                 }
                 else {
                     result.ValidationError = ConsentOptions.MustChooseOneErrorMessage;
@@ -156,7 +156,7 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Provider.Controllers {
 
             if (grantedConsent != null) {
                 // communicate outcome of consent back to identityserver
-                await _interaction.HandleRequestAsync(model.UserCode, grantedConsent);
+                await _interaction.HandleRequestAsync(model.UserCode, grantedConsent).ConfigureAwait(false);
 
                 // indicate that's it ok to redirect back to authorization endpoint
                 result.RedirectUri = model.ReturnUrl;
@@ -171,7 +171,7 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Provider.Controllers {
         }
 
         private async Task<DeviceAuthorizationViewModel> BuildViewModelAsync(string userCode, DeviceAuthorizationInputModel model = null) {
-            var request = await _interaction.GetAuthorizationContextAsync(userCode);
+            var request = await _interaction.GetAuthorizationContextAsync(userCode).ConfigureAwait(false);
             if (request != null) {
                 return CreateConsentViewModel(userCode, model, request);
             }

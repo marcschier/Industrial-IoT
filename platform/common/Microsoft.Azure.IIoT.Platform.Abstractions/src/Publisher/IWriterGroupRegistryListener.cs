@@ -5,6 +5,7 @@
 
 namespace Microsoft.Azure.IIoT.Platform.Publisher {
     using Microsoft.Azure.IIoT.Platform.Publisher.Models;
+    using Microsoft.Azure.IIoT.Platform.Core.Models;
     using System.Threading.Tasks;
 
     /// <summary>
@@ -18,7 +19,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher {
         /// <param name="context"></param>
         /// <param name="writerGroup"></param>
         /// <returns></returns>
-        Task OnWriterGroupAddedAsync(PublisherOperationContextModel context,
+        Task OnWriterGroupAddedAsync(OperationContextModel context,
             WriterGroupInfoModel writerGroup);
 
         /// <summary>
@@ -27,7 +28,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher {
         /// <param name="context"></param>
         /// <param name="writerGroup"></param>
         /// <returns></returns>
-        Task OnWriterGroupUpdatedAsync(PublisherOperationContextModel context,
+        Task OnWriterGroupUpdatedAsync(OperationContextModel context,
             WriterGroupInfoModel writerGroup);
 
         /// <summary>
@@ -36,7 +37,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher {
         /// <param name="context"></param>
         /// <param name="writerGroup"></param>
         /// <returns></returns>
-        Task OnWriterGroupStateChangeAsync(PublisherOperationContextModel context,
+        Task OnWriterGroupStateChangeAsync(OperationContextModel context,
             WriterGroupInfoModel writerGroup);
 
         /// <summary>
@@ -45,7 +46,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher {
         /// <param name="context"></param>
         /// <param name="writerGroup"></param>
         /// <returns></returns>
-        Task OnWriterGroupActivatedAsync(PublisherOperationContextModel context,
+        Task OnWriterGroupActivatedAsync(OperationContextModel context,
             WriterGroupInfoModel writerGroup);
 
         /// <summary>
@@ -54,7 +55,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher {
         /// <param name="context"></param>
         /// <param name="writerGroup"></param>
         /// <returns></returns>
-        Task OnWriterGroupDeactivatedAsync(PublisherOperationContextModel context,
+        Task OnWriterGroupDeactivatedAsync(OperationContextModel context,
             WriterGroupInfoModel writerGroup);
 
         /// <summary>
@@ -63,7 +64,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher {
         /// <param name="context"></param>
         /// <param name="writerGroupId"></param>
         /// <returns></returns>
-        Task OnWriterGroupRemovedAsync(PublisherOperationContextModel context,
+        Task OnWriterGroupRemovedAsync(OperationContextModel context,
             string writerGroupId);
     }
 }

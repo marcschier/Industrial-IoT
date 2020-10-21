@@ -3,6 +3,9 @@
     <TargetFramework>net5.0</TargetFramework>
    </PropertyGroup>
   <ItemGroup>
+    <None Remove="Controllers\ve-95F2.tmp" />
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="5.0.0-rc.2.20475.17" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.7.1" />
     <PackageReference Include="Moq" Version="4.14.7" />

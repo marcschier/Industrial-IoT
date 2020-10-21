@@ -5,40 +5,42 @@
 
 namespace Microsoft.Azure.IIoT.Platform.Twin {
     using Microsoft.Azure.IIoT.Platform.Twin.Models;
+    using System.Threading;
     using System.Threading.Tasks;
 
     /// <summary>
-    /// Browse services via handle
+    /// Browse services via twin
     /// </summary>
     public interface IBrowseServices<T> {
 
         /// <summary>
-        /// Browse nodes on endpoint
+        /// Browse nodes on twin
         /// </summary>
-        /// <param name="endpoint">Endpoint url of the server
-        /// to talk to</param>
+        /// <param name="twin">Twin of the server to talk to</param>
         /// <param name="request">Browse request</param>
+        /// <param name="ct"></param>
         /// <returns></returns>
-        Task<BrowseResultModel> NodeBrowseFirstAsync(T endpoint,
-            BrowseRequestModel request);
+        Task<BrowseResultModel> NodeBrowseFirstAsync(T twin,
+            BrowseRequestModel request, CancellationToken ct = default);
 
         /// <summary>
         /// Browse remainder of references
         /// </summary>
-        /// <param name="endpoint">Endpoint url of the server
-        /// to talk to</param>
+        /// <param name="twin">Twin of the server to talk to</param>
         /// <param name="request">Continuation token</param>
+        /// <param name="ct"></param>
         /// <returns></returns>
-        Task<BrowseNextResultModel> NodeBrowseNextAsync(T endpoint,
-            BrowseNextRequestModel request);
+        Task<BrowseNextResultModel> NodeBrowseNextAsync(T twin,
+            BrowseNextRequestModel request, CancellationToken ct = default);
 
         /// <summary>
         /// Browse by path
         /// </summary>
-        /// <param name="endpoint"></param>
+        /// <param name="twin">Twin of the server to talk to</param>
         /// <param name="request"></param>
+        /// <param name="ct"></param>
         /// <returns></returns>
-        Task<BrowsePathResultModel> NodeBrowsePathAsync(T endpoint,
-            BrowsePathRequestModel request);
+        Task<BrowsePathResultModel> NodeBrowsePathAsync(T twin,
+            BrowsePathRequestModel request, CancellationToken ct = default);
     }
 }

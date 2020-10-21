@@ -4,8 +4,8 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Models {
-    using Microsoft.Azure.IIoT.Platform.Core.Api.Models;
     using Microsoft.Azure.IIoT.Platform.Twin.Models;
+    using Microsoft.Azure.IIoT.Platform.Core.Api.Models;
     using Microsoft.Azure.IIoT.Platform.Core.Models;
     using Microsoft.Azure.IIoT.Serializers;
     using System.Linq;
@@ -15,6 +15,349 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Models {
     /// Model conversion extensions
     /// </summary>
     public static class ModelExtensions {
+
+        /// <summary>
+        /// Create api model from service model
+        /// </summary>
+        /// <param name="model"></param>
+        public static EndpointApiModel ToApiModel(
+            this EndpointModel model) {
+            if (model == null) {
+                return null;
+            }
+            return new EndpointApiModel {
+                Url = model.Url,
+                AlternativeUrls = model.AlternativeUrls,
+                Certificate = model.Certificate,
+                SecurityMode = (Core.Api.Models.SecurityMode?)model.SecurityMode,
+                SecurityPolicy = model.SecurityPolicy
+            };
+        }
+
+        /// <summary>
+        /// Create service model from api model
+        /// </summary>
+        public static EndpointModel ToServiceModel(
+            this EndpointApiModel model) {
+            if (model == null) {
+                return null;
+            }
+            return new EndpointModel {
+                Url = model.Url,
+                AlternativeUrls = model.AlternativeUrls,
+                Certificate = model.Certificate,
+                SecurityMode = (Core.Models.SecurityMode?)model.SecurityMode,
+                SecurityPolicy = model.SecurityPolicy
+            };
+        }
+
+        /// <summary>
+        /// Create api model from service model
+        /// </summary>
+        /// <param name="model"></param>
+        public static ConnectionApiModel ToApiModel(
+            this ConnectionModel model) {
+            if (model == null) {
+                return null;
+            }
+            return new ConnectionApiModel {
+                Endpoint = model.Endpoint.ToApiModel(),
+                User = model.User.ToApiModel(),
+                OperationTimeout = model.OperationTimeout,
+                Diagnostics = model.Diagnostics.ToApiModel()
+            };
+        }
+
+        /// <summary>
+        /// Create service model from api model
+        /// </summary>
+        public static ConnectionModel ToServiceModel(
+            this ConnectionApiModel model) {
+            if (model == null) {
+                return null;
+            }
+            return new ConnectionModel {
+                Endpoint = model.Endpoint.ToServiceModel(),
+                User = model.User.ToServiceModel(),
+                OperationTimeout = model.OperationTimeout,
+                Diagnostics = model.Diagnostics.ToServiceModel()
+            };
+        }
+
+        /// <summary>
+        /// Create api model from service model
+        /// </summary>
+        /// <param name="model"></param>
+        public static ConnectionStateApiModel ToApiModel(
+            this ConnectionStateModel model) {
+            if (model == null) {
+                return null;
+            }
+            return new ConnectionStateApiModel {
+                State = (Core.Api.Models.ConnectionStatus)model.State,
+                LastResult = model.LastResult.ToApiModel(),
+                LastResultChange = model.LastResultChange,
+            };
+        }
+
+        /// <summary>
+        /// Create service model from api model
+        /// </summary>
+        public static ConnectionStateModel ToServiceModel(
+            this ConnectionStateApiModel model) {
+            if (model == null) {
+                return null;
+            }
+            return new ConnectionStateModel {
+                State = (Core.Models.ConnectionStatus)model.State,
+                LastResult = model.LastResult.ToServiceModel(),
+                LastResultChange = model.LastResultChange,
+            };
+        }
+
+        /// <summary>
+        /// Create from service model
+        /// </summary>
+        /// <param name="model"></param>
+        public static TwinActivationRequestApiModel ToApiModel(
+            this TwinActivationRequestModel model) {
+            if (model == null) {
+                return null;
+            }
+            return new TwinActivationRequestApiModel {
+                EndpointId = model.EndpointId,
+                Id = model.Id,
+                OperationTimeout = model.OperationTimeout,
+                User = model.User.ToApiModel(),
+                Diagnostics = model.Diagnostics.ToApiModel(),
+            };
+        }
+
+        /// <summary>
+        /// Convert back to service model
+        /// </summary>
+        /// <returns></returns>
+        public static TwinActivationRequestModel ToServiceModel(
+            this TwinActivationRequestApiModel model) {
+            if (model == null) {
+                return null;
+            }
+            return new TwinActivationRequestModel {
+                EndpointId = model.EndpointId,
+                Id = model.Id,
+                OperationTimeout = model.OperationTimeout,
+                User = model.User.ToServiceModel(),
+                Diagnostics = model.Diagnostics.ToServiceModel(),
+            };
+        }
+
+        /// <summary>
+        /// Create from service model
+        /// </summary>
+        /// <param name="model"></param>
+        public static TwinActivationResponseApiModel ToApiModel(
+            this TwinActivationResultModel model) {
+            if (model == null) {
+                return null;
+            }
+            return new TwinActivationResponseApiModel {
+                GenerationId = model.GenerationId,
+                Id = model.Id,
+            };
+        }
+
+        /// <summary>
+        /// Convert back to service model
+        /// </summary>
+        /// <returns></returns>
+        public static TwinActivationResultModel ToServiceModel(
+            this TwinActivationResponseApiModel model) {
+            if (model == null) {
+                return null;
+            }
+            return new TwinActivationResultModel {
+                GenerationId = model.GenerationId,
+                Id = model.Id,
+            };
+        }
+
+        /// <summary>
+        /// Create from service model
+        /// </summary>
+        /// <param name="model"></param>
+        public static TwinApiModel ToApiModel(
+            this TwinModel model) {
+            if (model == null) {
+                return null;
+            }
+            return new TwinApiModel {
+                Connection = model.Connection.ToApiModel(),
+                Id = model.Id,
+                ConnectionState = model.ConnectionState.ToApiModel(),
+                GenerationId = model.GenerationId,
+                Created = model.Created.ToApiModel(),
+                Updated = model.Updated.ToApiModel(),
+            };
+        }
+
+        /// <summary>
+        /// Convert back to service model
+        /// </summary>
+        /// <returns></returns>
+        public static TwinModel ToServiceModel(
+            this TwinApiModel model) {
+            if (model == null) {
+                return null;
+            }
+            return new TwinModel {
+                Connection = model.Connection.ToServiceModel(),
+                Id = model.Id,
+                ConnectionState = model.ConnectionState.ToServiceModel(),
+                GenerationId = model.GenerationId,
+                Created = model.Created.ToServiceModel(),
+                Updated = model.Updated.ToServiceModel(),
+            };
+        }
+
+        /// <summary>
+        /// Create from service model
+        /// </summary>
+        /// <param name="model"></param>
+        public static TwinInfoApiModel ToApiModel(
+            this TwinInfoModel model) {
+            if (model == null) {
+                return null;
+            }
+            return new TwinInfoApiModel {
+                EndpointId = model.EndpointId,
+                Id = model.Id,
+                OperationTimeout = model.OperationTimeout,
+                User = model.User.ToApiModel(),
+                Diagnostics = model.Diagnostics.ToApiModel(),
+                ConnectionState = model.ConnectionState.ToApiModel(),
+                GenerationId = model.GenerationId,
+                Created = model.Created.ToApiModel(),
+                Updated = model.Updated.ToApiModel(),
+            };
+        }
+
+        /// <summary>
+        /// Convert back to service model
+        /// </summary>
+        /// <returns></returns>
+        public static TwinInfoModel ToServiceModel(
+            this TwinInfoApiModel model) {
+            if (model == null) {
+                return null;
+            }
+            return new TwinInfoModel {
+                EndpointId = model.EndpointId,
+                Id = model.Id,
+                OperationTimeout = model.OperationTimeout,
+                User = model.User.ToServiceModel(),
+                Diagnostics = model.Diagnostics.ToServiceModel(),
+                ConnectionState = model.ConnectionState.ToServiceModel(),
+                GenerationId = model.GenerationId,
+                Created = model.Created.ToServiceModel(),
+                Updated = model.Updated.ToServiceModel(),
+            };
+        }
+
+        /// <summary>
+        /// Create from service model
+        /// </summary>
+        /// <param name="model"></param>
+        public static TwinInfoListApiModel ToApiModel(
+            this TwinInfoListModel model) {
+            if (model == null) {
+                return null;
+            }
+            return new TwinInfoListApiModel {
+                ContinuationToken = model.ContinuationToken,
+                Items = model.Items?.Select(t => t.ToApiModel()).ToList(),
+            };
+        }
+
+        /// <summary>
+        /// Convert back to service model
+        /// </summary>
+        /// <returns></returns>
+        public static TwinInfoListModel ToServiceModel(
+            this TwinInfoListApiModel model) {
+            if (model == null) {
+                return null;
+            }
+            return new TwinInfoListModel {
+                ContinuationToken = model.ContinuationToken,
+                Items = model.Items?.Select(t => t.ToServiceModel()).ToList(),
+            };
+        }
+
+        /// <summary>
+        /// Create from service model
+        /// </summary>
+        /// <param name="model"></param>
+        public static TwinInfoQueryApiModel ToApiModel(
+            this TwinInfoQueryModel model) {
+            if (model == null) {
+                return null;
+            }
+            return new TwinInfoQueryApiModel {
+                EndpointId = model.EndpointId,
+                Credential = (Core.Api.Models.CredentialType?)model.Credential,
+                State = (Core.Api.Models.ConnectionStatus?)model.State,
+            };
+        }
+
+        /// <summary>
+        /// Convert back to service model
+        /// </summary>
+        /// <returns></returns>
+        public static TwinInfoQueryModel ToServiceModel(
+            this TwinInfoQueryApiModel model) {
+            if (model == null) {
+                return null;
+            }
+            return new TwinInfoQueryModel {
+                EndpointId = model.EndpointId,
+                Credential = (Core.Models.CredentialType?)model.Credential,
+                State = (Core.Models.ConnectionStatus?)model.State,
+            };
+        }
+
+        /// <summary>
+        /// Create from service model
+        /// </summary>
+        /// <param name="model"></param>
+        public static TwinInfoUpdateApiModel ToApiModel(
+            this TwinInfoUpdateModel model) {
+            if (model == null) {
+                return null;
+            }
+            return new TwinInfoUpdateApiModel {
+                User = model.User.ToApiModel(),
+                Diagnostics = model.Diagnostics.ToApiModel(),
+                OperationTimeout = model.OperationTimeout,
+                GenerationId = model.GenerationId,
+            };
+        }
+
+        /// <summary>
+        /// Convert back to service model
+        /// </summary>
+        /// <returns></returns>
+        public static TwinInfoUpdateModel ToServiceModel(
+            this TwinInfoUpdateApiModel model) {
+            if (model == null) {
+                return null;
+            }
+            return new TwinInfoUpdateModel {
+                User = model.User.ToServiceModel(),
+                Diagnostics = model.Diagnostics.ToServiceModel(),
+                OperationTimeout = model.OperationTimeout,
+                GenerationId = model.GenerationId,
+            };
+        }
 
         /// <summary>
         /// Create from service model
@@ -909,6 +1252,36 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Models {
         }
 
         /// <summary>
+        /// Create api model from service model
+        /// </summary>
+        /// <returns></returns>
+        public static OperationContextApiModel ToApiModel(
+            this OperationContextModel model) {
+            if (model == null) {
+                return null;
+            }
+            return new OperationContextApiModel {
+                AuthorityId = model.AuthorityId,
+                Time = model.Time
+            };
+        }
+
+        /// <summary>
+        /// Convert back to service model
+        /// </summary>
+        /// <returns></returns>
+        public static OperationContextModel ToServiceModel(
+            this OperationContextApiModel model) {
+            if (model == null) {
+                return null;
+            }
+            return new OperationContextModel {
+                AuthorityId = model.AuthorityId,
+                Time = model.Time
+            };
+        }
+
+        /// <summary>
         /// Create from service model
         /// </summary>
         /// <param name="model"></param>
@@ -1272,286 +1645,6 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Models {
             };
         }
 
-        /// <summary>
-        /// Create api model from service model
-        /// </summary>
-        /// <param name="model"></param>
-        public static PublishedItemApiModel ToApiModel(
-            this PublishedItemModel model) {
-            if (model == null) {
-                return null;
-            }
-            return new PublishedItemApiModel {
-                NodeId = model.NodeId,
-                DisplayName = model.DisplayName,
-                HeartbeatInterval = model.HeartbeatInterval,
-                SamplingInterval = model.SamplingInterval,
-                PublishingInterval = model.PublishingInterval
-            };
-        }
-
-        /// <summary>
-        /// Create service model from api model
-        /// </summary>
-        public static PublishedItemModel ToServiceModel(
-            this PublishedItemApiModel model) {
-            if (model == null) {
-                return null;
-            }
-            return new PublishedItemModel {
-                NodeId = model.NodeId,
-                DisplayName = model.DisplayName,
-                HeartbeatInterval = model.HeartbeatInterval,
-                SamplingInterval = model.SamplingInterval,
-                PublishingInterval = model.PublishingInterval
-            };
-        }
-
-        /// <summary>
-        /// Create api model from service model
-        /// </summary>
-        public static PublishedItemListRequestApiModel ToApiModel(
-            this PublishedItemListRequestModel model) {
-            if (model == null) {
-                return null;
-            }
-            return new PublishedItemListRequestApiModel {
-                ContinuationToken = model.ContinuationToken
-            };
-        }
-
-        /// <summary>
-        /// Create service model from api model
-        /// </summary>
-        public static PublishedItemListRequestModel ToServiceModel(
-            this PublishedItemListRequestApiModel model) {
-            if (model == null) {
-                return null;
-            }
-            return new PublishedItemListRequestModel {
-                ContinuationToken = model.ContinuationToken
-            };
-        }
-
-        /// <summary>
-        /// Create api model from service model
-        /// </summary>
-        /// <param name="model"></param>
-        public static PublishedItemListResponseApiModel ToApiModel(
-            this PublishedItemListResultModel model) {
-            if (model == null) {
-                return null;
-            }
-            return new PublishedItemListResponseApiModel {
-                ContinuationToken = model.ContinuationToken,
-                Items = model.Items?
-                    .Select(n => n.ToApiModel())
-                    .ToList()
-            };
-        }
-
-        /// <summary>
-        /// Create service model from api model
-        /// </summary>
-        /// <param name="model"></param>
-        public static PublishedItemListResultModel ToServiceModel(
-            this PublishedItemListResponseApiModel model) {
-            if (model == null) {
-                return null;
-            }
-            return new PublishedItemListResultModel {
-                ContinuationToken = model.ContinuationToken,
-                Items = model.Items?
-                    .Select(n => n.ToServiceModel())
-                    .ToList()
-            };
-        }
-
-        /// <summary>
-        /// Create api model from service model
-        /// </summary>
-        public static PublishStartRequestApiModel ToApiModel(
-            this PublishStartRequestModel model) {
-            if (model == null) {
-                return null;
-            }
-            return new PublishStartRequestApiModel {
-                Item = model.Item?.ToApiModel(),
-                Header = model.Header?.ToApiModel()
-            };
-        }
-
-        /// <summary>
-        /// Create service model from api model
-        /// </summary>
-        public static PublishStartRequestModel ToServiceModel(
-            this PublishStartRequestApiModel model) {
-            if (model == null) {
-                return null;
-            }
-            return new PublishStartRequestModel {
-                Item = model.Item?.ToServiceModel(),
-                Header = model.Header?.ToServiceModel()
-            };
-        }
-
-        /// <summary>
-        /// Create api model from service model
-        /// </summary>
-        /// <param name="model"></param>
-        public static PublishStartResponseApiModel ToApiModel(
-            this PublishStartResultModel model) {
-            if (model == null) {
-                return null;
-            }
-            return new PublishStartResponseApiModel {
-                ErrorInfo = model.ErrorInfo.ToApiModel()
-            };
-        }
-
-        /// <summary>
-        /// Create service model from api model
-        /// </summary>
-        /// <param name="model"></param>
-        public static PublishStartResultModel ToServiceModel(
-            this PublishStartResponseApiModel model) {
-            if (model == null) {
-                return null;
-            }
-            return new PublishStartResultModel {
-                ErrorInfo = model.ErrorInfo.ToServiceModel()
-            };
-        }
-
-        /// <summary>
-        /// Create api model from service model
-        /// </summary>
-        public static PublishStopRequestApiModel ToApiModel(
-            this PublishStopRequestModel model) {
-            if (model == null) {
-                return null;
-            }
-            return new PublishStopRequestApiModel {
-                NodeId = model.NodeId,
-                Header = model.Header?.ToApiModel()
-            };
-        }
-
-        /// <summary>
-        /// Create service model from api model
-        /// </summary>
-        public static PublishStopRequestModel ToServiceModel(
-            this PublishStopRequestApiModel model) {
-            if (model == null) {
-                return null;
-            }
-            return new PublishStopRequestModel {
-                NodeId = model.NodeId,
-                Header = model.Header?.ToServiceModel()
-            };
-        }
-
-        /// <summary>
-        /// Create api model from service model
-        /// </summary>
-        /// <param name="model"></param>
-        public static PublishStopResponseApiModel ToApiModel(
-            this PublishStopResultModel model) {
-            if (model == null) {
-                return null;
-            }
-            return new PublishStopResponseApiModel {
-                ErrorInfo = model.ErrorInfo.ToApiModel()
-            };
-        }
-
-        /// <summary>
-        /// Create service model from api model
-        /// </summary>
-        /// <param name="model"></param>
-        public static PublishStopResultModel ToServiceModel(
-            this PublishStopResponseApiModel model) {
-            if (model == null) {
-                return null;
-            }
-            return new PublishStopResultModel {
-                ErrorInfo = model.ErrorInfo.ToServiceModel()
-            };
-        }
-
-        /// <summary>
-        /// Create api model from service model
-        /// </summary>
-        public static PublishBulkRequestApiModel ToApiModel(
-            this PublishBulkRequestModel model) {
-            if (model == null) {
-                return null;
-            }
-            return new PublishBulkRequestApiModel {
-                NodesToAdd = model.NodesToAdd?
-                    .Select(n => n.ToApiModel())
-                    .ToList(),
-                NodesToRemove = model.NodesToRemove?
-                    .ToList(),
-                Header = model.Header?.ToApiModel()
-            };
-        }
-
-        /// <summary>
-        /// Create service model from api model
-        /// </summary>
-        public static PublishBulkRequestModel ToServiceModel(
-            this PublishBulkRequestApiModel model) {
-            if (model == null) {
-                return null;
-            }
-            return new PublishBulkRequestModel {
-                NodesToAdd = model.NodesToAdd?
-                    .Select(n => n.ToServiceModel())
-                    .ToList(),
-                NodesToRemove = model.NodesToRemove?
-                    .ToList(),
-                Header = model.Header?.ToServiceModel()
-            };
-        }
-
-        /// <summary>
-        /// Create api model from service model
-        /// </summary>
-        /// <param name="model"></param>
-        public static PublishBulkResponseApiModel ToApiModel(
-            this PublishBulkResultModel model) {
-            if (model == null) {
-                return null;
-            }
-            return new PublishBulkResponseApiModel {
-                NodesToAdd = model.NodesToAdd?
-                    .Select(n => n.ToApiModel())
-                    .ToList(),
-                NodesToRemove = model.NodesToRemove?
-                    .Select(n => n.ToApiModel())
-                    .ToList()
-            };
-        }
-
-        /// <summary>
-        /// Create service model from api model
-        /// </summary>
-        /// <param name="model"></param>
-        public static PublishBulkResultModel ToServiceModel(
-            this PublishBulkResponseApiModel model) {
-            if (model == null) {
-                return null;
-            }
-            return new PublishBulkResultModel {
-                NodesToAdd = model.NodesToAdd?
-                    .Select(n => n.ToServiceModel())
-                    .ToList(),
-                NodesToRemove = model.NodesToRemove?
-                    .Select(n => n.ToServiceModel())
-                    .ToList()
-            };
-        }
         /// <summary>
         /// Create api model
         /// </summary>

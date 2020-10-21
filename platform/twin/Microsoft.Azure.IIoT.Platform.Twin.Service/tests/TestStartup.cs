@@ -5,15 +5,8 @@
 
 namespace Microsoft.Azure.IIoT.Platform.Twin.Service {
     using Microsoft.Azure.IIoT.Platform.Twin.Service.Runtime;
-    using Microsoft.Azure.IIoT.Platform.Twin.Services;
-    using Microsoft.Azure.IIoT.Platform.OpcUa.Services;
     using Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Runtime;
-    using Microsoft.Azure.IIoT.Platform.Core.Models;
-    using Microsoft.Azure.IIoT.Azure.IoTHub;
     using Microsoft.Azure.IIoT.Authentication;
-    using Microsoft.Azure.IIoT.Utils;
-    using Microsoft.Azure.IIoT.Hub;
-    using Microsoft.Azure.IIoT.Hub.Models;
     using Microsoft.Azure.IIoT.Serializers.NewtonSoft;
     using Microsoft.Azure.IIoT.Serializers.MessagePack;
     using Microsoft.Extensions.Hosting;
@@ -21,13 +14,8 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Service {
     using Microsoft.AspNetCore.Mvc.Testing;
     using Autofac;
     using Autofac.Extensions.Hosting;
-    using System;
     using System.Net.Http;
-    using System.Text;
     using System.Collections.Generic;
-    using System.Threading.Tasks;
-    using System.Threading;
-    using System.Linq;
 
     /// <summary>
     /// Startup class for tests
@@ -45,23 +33,11 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Service {
         public override void ConfigureContainer(ContainerBuilder builder) {
             base.ConfigureContainer(builder);
 
-            builder.RegisterType<TestIoTHubConfig>()
-                .AsImplementedInterfaces();
-            builder.RegisterType<TestModule>()
-                .AsImplementedInterfaces().SingleInstance();
-            builder.RegisterType<TestIdentity>()
-                .AsImplementedInterfaces().SingleInstance();
-            builder.RegisterType<ClientServices>()
+            // Add fakes
+            builder.RegisterType<TestRegistry>()
                 .AsImplementedInterfaces().SingleInstance();
             builder.RegisterType<TestClientServicesConfig>()
                 .AsImplementedInterfaces().SingleInstance();
-            builder.RegisterType<AddressSpaceServices>()
-                .AsImplementedInterfaces();
-            builder.RegisterType<TransferServicesStub<EndpointModel>>()
-                .AsImplementedInterfaces();
-            builder.RegisterType<VariantEncoderFactory>()
-                .AsImplementedInterfaces().SingleInstance();
-
             builder.RegisterType<TestAuthConfig>()
                 .AsImplementedInterfaces();
         }
@@ -69,38 +45,6 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Service {
         public class TestAuthConfig : IServerAuthConfig {
             public bool AllowAnonymousAccess => true;
             public IEnumerable<IOAuthServerConfig> JwtBearerProviders { get; }
-        }
-
-        public class TestIoTHubConfig : IIoTHubConfig, IDeviceDeploymentServices {
-            public string IoTHubConnString =>
-                ConnectionString.CreateServiceConnectionString(
-                    "test.test.org", "iothubowner", Convert.ToBase64String(
-                        Encoding.UTF8.GetBytes(Guid.NewGuid().ToString()))).ToString();
-
-            public Task ApplyConfigurationAsync(string deviceId,
-                ConfigurationContentModel configuration, CancellationToken ct = default) {
-                return Task.CompletedTask;
-            }
-
-            public Task<ConfigurationModel> CreateOrUpdateConfigurationAsync(
-                ConfigurationModel configuration, bool forceUpdate, CancellationToken ct = default) {
-                return Task.FromResult<ConfigurationModel>(new ConfigurationModel());
-            }
-
-            public Task DeleteConfigurationAsync(string configurationId, string etag,
-                CancellationToken ct = default) {
-                return Task.CompletedTask;
-            }
-
-            public Task<ConfigurationModel> GetConfigurationAsync(string configurationId,
-                CancellationToken ct = default) {
-                return Task.FromResult<ConfigurationModel>(new ConfigurationModel());
-            }
-
-            public Task<IEnumerable<ConfigurationModel>> ListConfigurationsAsync(
-                int? maxCount, CancellationToken ct = default) {
-                return Task.FromResult(Enumerable.Empty<ConfigurationModel>());
-            }
         }
     }
 

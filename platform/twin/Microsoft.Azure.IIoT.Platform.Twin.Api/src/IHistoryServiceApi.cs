@@ -22,165 +22,165 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api {
         /// <summary>
         /// Read raw historic values
         /// </summary>
-        /// <param name="endpointId"></param>
+        /// <param name="twinId"></param>
         /// <param name="request"></param>
         /// <param name="ct"></param>
         /// <returns></returns>
         Task<HistoryReadResponseApiModel<HistoricValueApiModel[]>> HistoryReadValuesAsync(
-            string endpointId, HistoryReadRequestApiModel<ReadValuesDetailsApiModel> request,
+            string twinId, HistoryReadRequestApiModel<ReadValuesDetailsApiModel> request,
             CancellationToken ct = default);
 
         /// <summary>
         /// Read modified historic values
         /// </summary>
-        /// <param name="endpointId"></param>
+        /// <param name="twinId"></param>
         /// <param name="request"></param>
         /// <param name="ct"></param>
         /// <returns></returns>
         Task<HistoryReadResponseApiModel<HistoricValueApiModel[]>> HistoryReadModifiedValuesAsync(
-            string endpointId, HistoryReadRequestApiModel<ReadModifiedValuesDetailsApiModel> request,
+            string twinId, HistoryReadRequestApiModel<ReadModifiedValuesDetailsApiModel> request,
             CancellationToken ct = default);
 
         /// <summary>
         /// Read historic values at specific datum
         /// </summary>
-        /// <param name="endpointId"></param>
+        /// <param name="twinId"></param>
         /// <param name="request"></param>
         /// <param name="ct"></param>
         /// <returns></returns>
         Task<HistoryReadResponseApiModel<HistoricValueApiModel[]>> HistoryReadValuesAtTimesAsync(
-            string endpointId, HistoryReadRequestApiModel<ReadValuesAtTimesDetailsApiModel> request,
+            string twinId, HistoryReadRequestApiModel<ReadValuesAtTimesDetailsApiModel> request,
             CancellationToken ct = default);
 
         /// <summary>
         /// Read processed historic values
         /// </summary>
-        /// <param name="endpointId"></param>
+        /// <param name="twinId"></param>
         /// <param name="request"></param>
         /// <param name="ct"></param>
         /// <returns></returns>
         Task<HistoryReadResponseApiModel<HistoricValueApiModel[]>> HistoryReadProcessedValuesAsync(
-            string endpointId, HistoryReadRequestApiModel<ReadProcessedValuesDetailsApiModel> request,
+            string twinId, HistoryReadRequestApiModel<ReadProcessedValuesDetailsApiModel> request,
             CancellationToken ct = default);
 
         /// <summary>
         /// Read next set of historic values
         /// </summary>
-        /// <param name="endpointId"></param>
+        /// <param name="twinId"></param>
         /// <param name="request"></param>
         /// <param name="ct"></param>
         /// <returns></returns>
         Task<HistoryReadNextResponseApiModel<HistoricValueApiModel[]>> HistoryReadValuesNextAsync(
-            string endpointId, HistoryReadNextRequestApiModel request,
+            string twinId, HistoryReadNextRequestApiModel request,
             CancellationToken ct = default);
 
         /// <summary>
         /// Replace historic values
         /// </summary>
-        /// <param name="endpointId"></param>
+        /// <param name="twinId"></param>
         /// <param name="request"></param>
         /// <param name="ct"></param>
         /// <returns></returns>
-        Task<HistoryUpdateResponseApiModel> HistoryReplaceValuesAsync(string endpointId,
+        Task<HistoryUpdateResponseApiModel> HistoryReplaceValuesAsync(string twinId,
             HistoryUpdateRequestApiModel<ReplaceValuesDetailsApiModel> request,
             CancellationToken ct = default);
 
         /// <summary>
         /// Insert historic values
         /// </summary>
-        /// <param name="endpointId"></param>
+        /// <param name="twinId"></param>
         /// <param name="request"></param>
         /// <param name="ct"></param>
         /// <returns></returns>
-        Task<HistoryUpdateResponseApiModel> HistoryInsertValuesAsync(string endpointId,
+        Task<HistoryUpdateResponseApiModel> HistoryInsertValuesAsync(string twinId,
             HistoryUpdateRequestApiModel<InsertValuesDetailsApiModel> request,
             CancellationToken ct = default);
 
         /// <summary>
         /// Delete historic values
         /// </summary>
-        /// <param name="endpointId"></param>
+        /// <param name="twinId"></param>
         /// <param name="request"></param>
         /// <param name="ct"></param>
         /// <returns></returns>
-        Task<HistoryUpdateResponseApiModel> HistoryDeleteValuesAsync(string endpointId,
+        Task<HistoryUpdateResponseApiModel> HistoryDeleteValuesAsync(string twinId,
             HistoryUpdateRequestApiModel<DeleteValuesDetailsApiModel> request,
             CancellationToken ct = default);
 
         /// <summary>
         /// Delete historic values
         /// </summary>
-        /// <param name="endpointId"></param>
+        /// <param name="twinId"></param>
         /// <param name="request"></param>
         /// <param name="ct"></param>
         /// <returns></returns>
-        Task<HistoryUpdateResponseApiModel> HistoryDeleteModifiedValuesAsync(string endpointId,
+        Task<HistoryUpdateResponseApiModel> HistoryDeleteModifiedValuesAsync(string twinId,
             HistoryUpdateRequestApiModel<DeleteModifiedValuesDetailsApiModel> request,
             CancellationToken ct = default);
 
         /// <summary>
         /// Delete historic values at specified datum
         /// </summary>
-        /// <param name="endpointId"></param>
+        /// <param name="twinId"></param>
         /// <param name="request"></param>
         /// <param name="ct"></param>
         /// <returns></returns>
-        Task<HistoryUpdateResponseApiModel> HistoryDeleteValuesAtTimesAsync(string endpointId,
+        Task<HistoryUpdateResponseApiModel> HistoryDeleteValuesAtTimesAsync(string twinId,
             HistoryUpdateRequestApiModel<DeleteValuesAtTimesDetailsApiModel> request,
             CancellationToken ct = default);
 
         /// <summary>
         /// Read event history
         /// </summary>
-        /// <param name="endpointId"></param>
+        /// <param name="twinId"></param>
         /// <param name="request"></param>
         /// <param name="ct"></param>
         /// <returns></returns>
         Task<HistoryReadResponseApiModel<HistoricEventApiModel[]>> HistoryReadEventsAsync(
-            string endpointId, HistoryReadRequestApiModel<ReadEventsDetailsApiModel> request,
+            string twinId, HistoryReadRequestApiModel<ReadEventsDetailsApiModel> request,
             CancellationToken ct = default);
 
         /// <summary>
         /// Read next set of historic events
         /// </summary>
-        /// <param name="endpointId"></param>
+        /// <param name="twinId"></param>
         /// <param name="request"></param>
         /// <param name="ct"></param>
         /// <returns></returns>
         Task<HistoryReadNextResponseApiModel<HistoricEventApiModel[]>> HistoryReadEventsNextAsync(
-            string endpointId, HistoryReadNextRequestApiModel request,
+            string twinId, HistoryReadNextRequestApiModel request,
             CancellationToken ct = default);
 
         /// <summary>
         /// Replace historic events
         /// </summary>
-        /// <param name="endpointId"></param>
+        /// <param name="twinId"></param>
         /// <param name="request"></param>
         /// <param name="ct"></param>
         /// <returns></returns>
-        Task<HistoryUpdateResponseApiModel> HistoryReplaceEventsAsync(string endpointId,
+        Task<HistoryUpdateResponseApiModel> HistoryReplaceEventsAsync(string twinId,
             HistoryUpdateRequestApiModel<ReplaceEventsDetailsApiModel> request,
             CancellationToken ct = default);
 
         /// <summary>
         /// Insert historic events
         /// </summary>
-        /// <param name="endpointId"></param>
+        /// <param name="twinId"></param>
         /// <param name="request"></param>
         /// <param name="ct"></param>
         /// <returns></returns>
-        Task<HistoryUpdateResponseApiModel> HistoryInsertEventsAsync(string endpointId,
+        Task<HistoryUpdateResponseApiModel> HistoryInsertEventsAsync(string twinId,
             HistoryUpdateRequestApiModel<InsertEventsDetailsApiModel> request,
             CancellationToken ct = default);
 
         /// <summary>
         /// Delete event history
         /// </summary>
-        /// <param name="endpointId"></param>
+        /// <param name="twinId"></param>
         /// <param name="request"></param>
         /// <param name="ct"></param>
         /// <returns></returns>
-        Task<HistoryUpdateResponseApiModel> HistoryDeleteEventsAsync(string endpointId,
+        Task<HistoryUpdateResponseApiModel> HistoryDeleteEventsAsync(string twinId,
             HistoryUpdateRequestApiModel<DeleteEventsDetailsApiModel> request,
             CancellationToken ct = default);
     }

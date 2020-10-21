@@ -5,6 +5,7 @@
 
 namespace Microsoft.Azure.IIoT.Platform.Publisher {
     using Microsoft.Azure.IIoT.Platform.Publisher.Models;
+    using Microsoft.Azure.IIoT.Platform.Core.Models;
     using System.Threading;
     using System.Threading.Tasks;
 
@@ -23,7 +24,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher {
         /// <returns></returns>
         Task<DataSetAddVariableBatchResultModel> AddVariablesToDataSetWriterAsync(
             string dataSetWriterId, DataSetAddVariableBatchRequestModel request,
-            PublisherOperationContextModel context = null,
+            OperationContextModel context = null,
             CancellationToken ct = default);
 
         /// <summary>
@@ -36,7 +37,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher {
         /// <returns></returns>
         Task<DataSetAddVariableBatchResultModel> AddVariablesToDefaultDataSetWriterAsync(
             string endpointId, DataSetAddVariableBatchRequestModel request,
-            PublisherOperationContextModel context = null,
+            OperationContextModel context = null,
             CancellationToken ct = default);
 
         /// <summary>
@@ -49,7 +50,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher {
         /// <returns></returns>
         Task<DataSetRemoveVariableBatchResultModel> RemoveVariablesFromDataSetWriterAsync(
             string dataSetWriterId, DataSetRemoveVariableBatchRequestModel request,
-            PublisherOperationContextModel context = null,
+            OperationContextModel context = null,
             CancellationToken ct = default);
     }
 }

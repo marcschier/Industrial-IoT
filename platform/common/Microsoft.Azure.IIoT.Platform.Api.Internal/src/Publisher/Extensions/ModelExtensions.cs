@@ -28,7 +28,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api.Models {
             return new MonitoredItemMessageApiModel {
                 PublisherId = model.PublisherId,
                 DataSetWriterId = model.DataSetWriterId,
-                EndpointId = model.EndpointId,
+                VariableId = model.VariableId,
                 NodeId = model.NodeId,
                 DisplayName = model.DisplayName,
                 ServerTimestamp = model.ServerTimestamp,
@@ -84,6 +84,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api.Models {
             return new ConnectionApiModel {
                 Endpoint = model.Endpoint.ToApiModel(),
                 User = model.User.ToApiModel(),
+                OperationTimeout = model.OperationTimeout,
                 Diagnostics = model.Diagnostics.ToApiModel()
             };
         }
@@ -99,7 +100,39 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api.Models {
             return new ConnectionModel {
                 Endpoint = model.Endpoint.ToServiceModel(),
                 User = model.User.ToServiceModel(),
+                OperationTimeout = model.OperationTimeout,
                 Diagnostics = model.Diagnostics.ToServiceModel()
+            };
+        }
+
+        /// <summary>
+        /// Create api model from service model
+        /// </summary>
+        /// <param name="model"></param>
+        public static ConnectionStateApiModel ToApiModel(
+            this ConnectionStateModel model) {
+            if (model == null) {
+                return null;
+            }
+            return new ConnectionStateApiModel {
+                State = (Core.Api.Models.ConnectionStatus)model.State,
+                LastResult = model.LastResult.ToApiModel(),
+                LastResultChange = model.LastResultChange,
+            };
+        }
+
+        /// <summary>
+        /// Create service model from api model
+        /// </summary>
+        public static ConnectionStateModel ToServiceModel(
+            this ConnectionStateApiModel model) {
+            if (model == null) {
+                return null;
+            }
+            return new ConnectionStateModel {
+                State = (Core.Models.ConnectionStatus)model.State,
+                LastResult = model.LastResult.ToServiceModel(),
+                LastResultChange = model.LastResultChange,
             };
         }
 
@@ -1976,7 +2009,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api.Models {
                 return null;
             }
             return new PublishedDataSetSourceStateApiModel {
-                EndpointState = (Core.Api.Models.EndpointConnectivityState?)model.EndpointState,
+                ConnectionState = model.ConnectionState.ToApiModel(),
                 LastResult = model.LastResult.ToApiModel(),
                 LastResultChange = model.LastResultChange
             };
@@ -1992,7 +2025,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api.Models {
                 return null;
             }
             return new PublishedDataSetSourceStateModel {
-                EndpointState = (Core.Models.EndpointConnectivityState?)model.EndpointState,
+                ConnectionState = model.ConnectionState.ToServiceModel(),
                 LastResult = model.LastResult.ToServiceModel(),
                 LastResultChange = model.LastResultChange
             };
@@ -2150,7 +2183,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api.Models {
                 return null;
             }
             return new WriterGroupStateApiModel {
-                State = (WriterGroupState)model.State,
+                LastState = (WriterGroupStatus)model.LastState,
                 LastStateChange = model.LastStateChange
             };
         }
@@ -2164,7 +2197,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api.Models {
                 return null;
             }
             return new WriterGroupStateModel {
-                State = (Publisher.Models.WriterGroupState)model.State,
+                LastState = (Publisher.Models.WriterGroupStatus)model.LastState,
                 LastStateChange = model.LastStateChange
             };
         }
@@ -2217,7 +2250,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api.Models {
                 Name = model.Name,
                 Encoding = (MessageEncoding?)model.Encoding,
                 Schema = (MessageSchema?)model.Schema,
-                State = (WriterGroupState?)model.State,
+                State = (WriterGroupStatus?)model.State,
                 GroupVersion = model.GroupVersion,
             };
         }
@@ -2236,7 +2269,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api.Models {
                 Name = model.Name,
                 Encoding = (Publisher.Models.MessageEncoding?)model.Encoding,
                 Schema = (Publisher.Models.MessageSchema?)model.Schema,
-                State = (Publisher.Models.WriterGroupState?)model.State,
+                State = (Publisher.Models.WriterGroupStatus?)model.State,
                 GroupVersion = model.GroupVersion,
             };
         }
@@ -2293,12 +2326,12 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api.Models {
         /// Create api model from service model
         /// </summary>
         /// <returns></returns>
-        public static PublisherOperationContextApiModel ToApiModel(
-            this PublisherOperationContextModel model) {
+        public static OperationContextApiModel ToApiModel(
+            this OperationContextModel model) {
             if (model == null) {
                 return null;
             }
-            return new PublisherOperationContextApiModel {
+            return new OperationContextApiModel {
                 AuthorityId = model.AuthorityId,
                 Time = model.Time
             };
@@ -2308,12 +2341,12 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api.Models {
         /// Convert back to service model
         /// </summary>
         /// <returns></returns>
-        public static PublisherOperationContextModel ToServiceModel(
-            this PublisherOperationContextApiModel model) {
+        public static OperationContextModel ToServiceModel(
+            this OperationContextApiModel model) {
             if (model == null) {
                 return null;
             }
-            return new PublisherOperationContextModel {
+            return new OperationContextModel {
                 AuthorityId = model.AuthorityId,
                 Time = model.Time
             };

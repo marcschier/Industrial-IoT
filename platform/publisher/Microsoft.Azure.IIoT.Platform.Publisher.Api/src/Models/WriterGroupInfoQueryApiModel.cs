@@ -45,7 +45,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api.Models {
         /// </summary>
         [DataMember(Name = "state", Order = 5,
             EmitDefaultValue = false)]
-        public WriterGroupState? State { get; set; }
+        public WriterGroupStatus? State { get; set; }
 
         /// <summary>
         /// Return groups with this priority

@@ -20,12 +20,12 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
         /// Create node services tests
         /// </summary>
         /// <param name="services"></param>
-        /// <param name="endpoint"></param>
+        /// <param name="twin"></param>
         /// <param name="readExpected"></param>
-        public ReadArrayValueTests(Func<INodeServices<T>> services, T endpoint,
+        public ReadArrayValueTests(Func<INodeServices<T>> services, T twin,
             Func<T, string, Task<VariantValue>> readExpected) {
             _services = services;
-            _endpoint = endpoint;
+            _twin = twin;
             _readExpected = readExpected;
         }
 
@@ -43,7 +43,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
             }
 
             // Act
-            var result = await browser.NodeReadAsync(_endpoint,
+            var result = await browser.NodeReadAsync(_twin,
                 new ReadRequestModel {
                     Header = new RequestHeaderModel {
                         Diagnostics = new DiagnosticsModel {
@@ -76,7 +76,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
             }
 
             // Act
-            var result = await browser.NodeReadAsync(_endpoint,
+            var result = await browser.NodeReadAsync(_twin,
                 new ReadRequestModel {
                     Header = new RequestHeaderModel {
                         Diagnostics = new DiagnosticsModel {
@@ -109,7 +109,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
             }
 
             // Act
-            var result = await browser.NodeReadAsync(_endpoint,
+            var result = await browser.NodeReadAsync(_twin,
                 new ReadRequestModel {
                     Header = new RequestHeaderModel {
                         Diagnostics = new DiagnosticsModel {
@@ -142,7 +142,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
             }
 
             // Act
-            var result = await browser.NodeReadAsync(_endpoint,
+            var result = await browser.NodeReadAsync(_twin,
                 new ReadRequestModel {
                     Header = new RequestHeaderModel {
                         Diagnostics = new DiagnosticsModel {
@@ -166,10 +166,10 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
 
             var browser = _services();
             var node = "http://test.org/UA/Data/#i=10300";
-            var expected = await _readExpected(_endpoint, node).ConfigureAwait(false);
+            var expected = await _readExpected(_twin, node).ConfigureAwait(false);
 
             // Act
-            var result = await browser.NodeValueReadAsync(_endpoint,
+            var result = await browser.NodeValueReadAsync(_twin,
                 new ValueReadRequestModel {
                     NodeId = node
                 }).ConfigureAwait(false);
@@ -195,10 +195,10 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
 
             var browser = _services();
             var node = "http://test.org/UA/Data/#i=10301";
-            var expected = await _readExpected(_endpoint, node).ConfigureAwait(false);
+            var expected = await _readExpected(_twin, node).ConfigureAwait(false);
 
             // Act
-            var result = await browser.NodeValueReadAsync(_endpoint,
+            var result = await browser.NodeValueReadAsync(_twin,
                 new ValueReadRequestModel {
                     NodeId = node
                 }).ConfigureAwait(false);
@@ -224,10 +224,10 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
 
             var browser = _services();
             var node = "http://test.org/UA/Data/#i=10302";
-            var expected = await _readExpected(_endpoint, node).ConfigureAwait(false);
+            var expected = await _readExpected(_twin, node).ConfigureAwait(false);
 
             // Act
-            var result = await browser.NodeValueReadAsync(_endpoint,
+            var result = await browser.NodeValueReadAsync(_twin,
                 new ValueReadRequestModel {
                     NodeId = node
                 }).ConfigureAwait(false);
@@ -248,10 +248,10 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
 
             var browser = _services();
             var node = "http://test.org/UA/Data/#i=10303";
-            var expected = await _readExpected(_endpoint, node).ConfigureAwait(false);
+            var expected = await _readExpected(_twin, node).ConfigureAwait(false);
 
             // Act
-            var result = await browser.NodeValueReadAsync(_endpoint,
+            var result = await browser.NodeValueReadAsync(_twin,
                 new ValueReadRequestModel {
                     NodeId = node
                 }).ConfigureAwait(false);
@@ -277,10 +277,10 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
 
             var browser = _services();
             var node = "http://test.org/UA/Data/#i=10304";
-            var expected = await _readExpected(_endpoint, node).ConfigureAwait(false);
+            var expected = await _readExpected(_twin, node).ConfigureAwait(false);
 
             // Act
-            var result = await browser.NodeValueReadAsync(_endpoint,
+            var result = await browser.NodeValueReadAsync(_twin,
                 new ValueReadRequestModel {
                     NodeId = node
                 }).ConfigureAwait(false);
@@ -306,10 +306,10 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
 
             var browser = _services();
             var node = "http://test.org/UA/Data/#i=10305";
-            var expected = await _readExpected(_endpoint, node).ConfigureAwait(false);
+            var expected = await _readExpected(_twin, node).ConfigureAwait(false);
 
             // Act
-            var result = await browser.NodeValueReadAsync(_endpoint,
+            var result = await browser.NodeValueReadAsync(_twin,
                 new ValueReadRequestModel {
                     NodeId = node
                 }).ConfigureAwait(false);
@@ -335,10 +335,10 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
 
             var browser = _services();
             var node = "http://test.org/UA/Data/#i=10306";
-            var expected = await _readExpected(_endpoint, node).ConfigureAwait(false);
+            var expected = await _readExpected(_twin, node).ConfigureAwait(false);
 
             // Act
-            var result = await browser.NodeValueReadAsync(_endpoint,
+            var result = await browser.NodeValueReadAsync(_twin,
                 new ValueReadRequestModel {
                     NodeId = node
                 }).ConfigureAwait(false);
@@ -364,10 +364,10 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
 
             var browser = _services();
             var node = "http://test.org/UA/Data/#i=10307";
-            var expected = await _readExpected(_endpoint, node).ConfigureAwait(false);
+            var expected = await _readExpected(_twin, node).ConfigureAwait(false);
 
             // Act
-            var result = await browser.NodeValueReadAsync(_endpoint,
+            var result = await browser.NodeValueReadAsync(_twin,
                 new ValueReadRequestModel {
                     NodeId = node
                 }).ConfigureAwait(false);
@@ -393,10 +393,10 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
 
             var browser = _services();
             var node = "http://test.org/UA/Data/#i=10308";
-            var expected = await _readExpected(_endpoint, node).ConfigureAwait(false);
+            var expected = await _readExpected(_twin, node).ConfigureAwait(false);
 
             // Act
-            var result = await browser.NodeValueReadAsync(_endpoint,
+            var result = await browser.NodeValueReadAsync(_twin,
                 new ValueReadRequestModel {
                     NodeId = node
                 }).ConfigureAwait(false);
@@ -422,10 +422,10 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
 
             var browser = _services();
             var node = "http://test.org/UA/Data/#i=10309";
-            var expected = await _readExpected(_endpoint, node).ConfigureAwait(false);
+            var expected = await _readExpected(_twin, node).ConfigureAwait(false);
 
             // Act
-            var result = await browser.NodeValueReadAsync(_endpoint,
+            var result = await browser.NodeValueReadAsync(_twin,
                 new ValueReadRequestModel {
                     NodeId = node
                 }).ConfigureAwait(false);
@@ -451,10 +451,10 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
 
             var browser = _services();
             var node = "http://test.org/UA/Data/#i=10310";
-            var expected = await _readExpected(_endpoint, node).ConfigureAwait(false);
+            var expected = await _readExpected(_twin, node).ConfigureAwait(false);
 
             // Act
-            var result = await browser.NodeValueReadAsync(_endpoint,
+            var result = await browser.NodeValueReadAsync(_twin,
                 new ValueReadRequestModel {
                     NodeId = node
                 }).ConfigureAwait(false);
@@ -480,10 +480,10 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
 
             var browser = _services();
             var node = "http://test.org/UA/Data/#i=10311";
-            var expected = await _readExpected(_endpoint, node).ConfigureAwait(false);
+            var expected = await _readExpected(_twin, node).ConfigureAwait(false);
 
             // Act
-            var result = await browser.NodeValueReadAsync(_endpoint,
+            var result = await browser.NodeValueReadAsync(_twin,
                 new ValueReadRequestModel {
                     NodeId = node
                 }).ConfigureAwait(false);
@@ -509,10 +509,10 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
 
             var browser = _services();
             var node = "http://test.org/UA/Data/#i=10312";
-            var expected = await _readExpected(_endpoint, node).ConfigureAwait(false);
+            var expected = await _readExpected(_twin, node).ConfigureAwait(false);
 
             // Act
-            var result = await browser.NodeValueReadAsync(_endpoint,
+            var result = await browser.NodeValueReadAsync(_twin,
                 new ValueReadRequestModel {
                     NodeId = node
                 }).ConfigureAwait(false);
@@ -538,10 +538,10 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
 
             var browser = _services();
             var node = "http://test.org/UA/Data/#i=10313";
-            var expected = await _readExpected(_endpoint, node).ConfigureAwait(false);
+            var expected = await _readExpected(_twin, node).ConfigureAwait(false);
 
             // Act
-            var result = await browser.NodeValueReadAsync(_endpoint,
+            var result = await browser.NodeValueReadAsync(_twin,
                 new ValueReadRequestModel {
                     NodeId = node
                 }).ConfigureAwait(false);
@@ -567,10 +567,10 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
 
             var browser = _services();
             var node = "http://test.org/UA/Data/#i=10314";
-            var expected = await _readExpected(_endpoint, node).ConfigureAwait(false);
+            var expected = await _readExpected(_twin, node).ConfigureAwait(false);
 
             // Act
-            var result = await browser.NodeValueReadAsync(_endpoint,
+            var result = await browser.NodeValueReadAsync(_twin,
                 new ValueReadRequestModel {
                     NodeId = node
                 }).ConfigureAwait(false);
@@ -599,10 +599,10 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
 
             var browser = _services();
             var node = "http://test.org/UA/Data/#i=10315";
-            var expected = await _readExpected(_endpoint, node).ConfigureAwait(false);
+            var expected = await _readExpected(_twin, node).ConfigureAwait(false);
 
             // Act
-            var result = await browser.NodeValueReadAsync(_endpoint,
+            var result = await browser.NodeValueReadAsync(_twin,
                 new ValueReadRequestModel {
                     NodeId = node
                 }).ConfigureAwait(false);
@@ -628,10 +628,10 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
 
             var browser = _services();
             var node = "http://test.org/UA/Data/#i=10316";
-            var expected = await _readExpected(_endpoint, node).ConfigureAwait(false);
+            var expected = await _readExpected(_twin, node).ConfigureAwait(false);
 
             // Act
-            var result = await browser.NodeValueReadAsync(_endpoint,
+            var result = await browser.NodeValueReadAsync(_twin,
                 new ValueReadRequestModel {
                     NodeId = node
                 }).ConfigureAwait(false);
@@ -657,10 +657,10 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
 
             var browser = _services();
             var node = "http://test.org/UA/Data/#i=10317";
-            var expected = await _readExpected(_endpoint, node).ConfigureAwait(false);
+            var expected = await _readExpected(_twin, node).ConfigureAwait(false);
 
             // Act
-            var result = await browser.NodeValueReadAsync(_endpoint,
+            var result = await browser.NodeValueReadAsync(_twin,
                 new ValueReadRequestModel {
                     NodeId = node
                 }).ConfigureAwait(false);
@@ -686,10 +686,10 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
 
             var browser = _services();
             var node = "http://test.org/UA/Data/#i=10318";
-            var expected = await _readExpected(_endpoint, node).ConfigureAwait(false);
+            var expected = await _readExpected(_twin, node).ConfigureAwait(false);
 
             // Act
-            var result = await browser.NodeValueReadAsync(_endpoint,
+            var result = await browser.NodeValueReadAsync(_twin,
                 new ValueReadRequestModel {
                     NodeId = node
                 }).ConfigureAwait(false);
@@ -715,10 +715,10 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
 
             var browser = _services();
             var node = "http://test.org/UA/Data/#i=10319";
-            var expected = await _readExpected(_endpoint, node).ConfigureAwait(false);
+            var expected = await _readExpected(_twin, node).ConfigureAwait(false);
 
             // Act
-            var result = await browser.NodeValueReadAsync(_endpoint,
+            var result = await browser.NodeValueReadAsync(_twin,
                 new ValueReadRequestModel {
                     NodeId = node
                 }).ConfigureAwait(false);
@@ -744,10 +744,10 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
 
             var browser = _services();
             var node = "http://test.org/UA/Data/#i=10320";
-            var expected = await _readExpected(_endpoint, node).ConfigureAwait(false);
+            var expected = await _readExpected(_twin, node).ConfigureAwait(false);
 
             // Act
-            var result = await browser.NodeValueReadAsync(_endpoint,
+            var result = await browser.NodeValueReadAsync(_twin,
                 new ValueReadRequestModel {
                     NodeId = node
                 }).ConfigureAwait(false);
@@ -774,10 +774,10 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
 
             var browser = _services();
             var node = "http://test.org/UA/Data/#i=10321";
-            var expected = await _readExpected(_endpoint, node).ConfigureAwait(false);
+            var expected = await _readExpected(_twin, node).ConfigureAwait(false);
 
             // Act
-            var result = await browser.NodeValueReadAsync(_endpoint,
+            var result = await browser.NodeValueReadAsync(_twin,
                 new ValueReadRequestModel {
                     NodeId = node
                 }).ConfigureAwait(false);
@@ -797,10 +797,10 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
 
             var browser = _services();
             var node = "http://test.org/UA/Data/#i=10322";
-            var expected = await _readExpected(_endpoint, node).ConfigureAwait(false);
+            var expected = await _readExpected(_twin, node).ConfigureAwait(false);
 
             // Act
-            var result = await browser.NodeValueReadAsync(_endpoint,
+            var result = await browser.NodeValueReadAsync(_twin,
                 new ValueReadRequestModel {
                     NodeId = node
                 }).ConfigureAwait(false);
@@ -826,10 +826,10 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
 
             var browser = _services();
             var node = "http://test.org/UA/Data/#i=10323";
-            var expected = await _readExpected(_endpoint, node).ConfigureAwait(false);
+            var expected = await _readExpected(_twin, node).ConfigureAwait(false);
 
             // Act
-            var result = await browser.NodeValueReadAsync(_endpoint,
+            var result = await browser.NodeValueReadAsync(_twin,
                 new ValueReadRequestModel {
                     NodeId = node
                 }).ConfigureAwait(false);
@@ -856,10 +856,10 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
 
             var browser = _services();
             var node = "http://test.org/UA/Data/#i=10324";
-            var expected = await _readExpected(_endpoint, node).ConfigureAwait(false);
+            var expected = await _readExpected(_twin, node).ConfigureAwait(false);
 
             // Act
-            var result = await browser.NodeValueReadAsync(_endpoint,
+            var result = await browser.NodeValueReadAsync(_twin,
                 new ValueReadRequestModel {
                     NodeId = node
                 }).ConfigureAwait(false);
@@ -884,10 +884,10 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
 
             var browser = _services();
             var node = "http://test.org/UA/Data/#i=10325";
-            var expected = await _readExpected(_endpoint, node).ConfigureAwait(false);
+            var expected = await _readExpected(_twin, node).ConfigureAwait(false);
 
             // Act
-            var result = await browser.NodeValueReadAsync(_endpoint,
+            var result = await browser.NodeValueReadAsync(_twin,
                 new ValueReadRequestModel {
                     NodeId = node
                 }).ConfigureAwait(false);
@@ -912,10 +912,10 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
 
             var browser = _services();
             var node = "http://test.org/UA/Data/#i=10326";
-            var expected = await _readExpected(_endpoint, node).ConfigureAwait(false);
+            var expected = await _readExpected(_twin, node).ConfigureAwait(false);
 
             // Act
-            var result = await browser.NodeValueReadAsync(_endpoint,
+            var result = await browser.NodeValueReadAsync(_twin,
                 new ValueReadRequestModel {
                     NodeId = node
                 }).ConfigureAwait(false);
@@ -946,7 +946,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Tests {
                 $"Expected: {expected}  != Actual: {value} ");
         }
 
-        private readonly T _endpoint;
+        private readonly T _twin;
         private readonly Func<T, string, Task<VariantValue>> _readExpected;
         private readonly Func<INodeServices<T>> _services;
     }

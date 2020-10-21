@@ -24,23 +24,25 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api {
         /// <see cref="ITwinServiceApi.NodeBrowseFirstAsync"/>
         /// </summary>
         /// <param name="service"></param>
-        /// <param name="endpoint"></param>
+        /// <param name="twin"></param>
         /// <param name="request"></param>
         /// <param name="ct"></param>
         /// <returns></returns>
         public static async Task<BrowseResponseApiModel> NodeBrowseAsync(
-            this ITwinServiceApi service, string endpoint, BrowseRequestApiModel request,
+            this ITwinServiceApi service, string twin, BrowseRequestApiModel request,
             CancellationToken ct = default) {
             if (request.MaxReferencesToReturn != null) {
-                return await service.NodeBrowseFirstAsync(endpoint, request, ct).ConfigureAwait(false);
+                return await service.NodeBrowseFirstAsync(twin, request, 
+                    ct).ConfigureAwait(false);
             }
             while (true) {
                 // Limit size of batches to a reasonable default to avoid communication timeouts.
                 request.MaxReferencesToReturn = 500;
-                var result = await service.NodeBrowseFirstAsync(endpoint, request, ct).ConfigureAwait(false);
+                var result = await service.NodeBrowseFirstAsync(twin, request, 
+                    ct).ConfigureAwait(false);
                 while (result.ContinuationToken != null) {
                     try {
-                        var next = await service.NodeBrowseNextAsync(endpoint,
+                        var next = await service.NodeBrowseNextAsync(twin,
                             new BrowseNextRequestApiModel {
                                 ContinuationToken = result.ContinuationToken,
                                 Header = request.Header,
@@ -51,7 +53,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api {
                         result.ContinuationToken = next.ContinuationToken;
                     }
                     catch (Exception) {
-                        await Try.Async(() => service.NodeBrowseNextAsync(endpoint,
+                        await Try.Async(() => service.NodeBrowseNextAsync(twin,
                             new BrowseNextRequestApiModel {
                                 ContinuationToken = result.ContinuationToken,
                                 Abort = true
@@ -64,110 +66,93 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api {
         }
 
         /// <summary>
-        /// Get list of published nodes
-        /// </summary>
-        /// <param name="service"></param>
-        /// <param name="endpointId"></param>
-        /// <returns></returns>
-        public static async Task<IEnumerable<PublishedItemApiModel>> NodePublishListAllAsync(
-            this ITwinServiceApi service, string endpointId) {
-            var nodes = new List<PublishedItemApiModel>();
-            var result = await service.NodePublishListAsync(endpointId).ConfigureAwait(false);
-            nodes.AddRange(result.Items);
-            while (result.ContinuationToken != null) {
-                result = await service.NodePublishListAsync(endpointId,
-                    result.ContinuationToken).ConfigureAwait(false);
-                nodes.AddRange(result.Items);
-            }
-            return nodes;
-        }
-
-        /// <summary>
-        /// Get list of published nodes
-        /// </summary>
-        /// <param name="service"></param>
-        /// <param name="endpointId"></param>
-        /// <param name="continuation"></param>
-        /// <returns></returns>
-        public static Task<PublishedItemListResponseApiModel> NodePublishListAsync(
-            this ITwinServiceApi service, string endpointId, string continuation = null) {
-            return service.NodePublishListAsync(endpointId, new PublishedItemListRequestApiModel {
-                ContinuationToken = continuation
-            });
-        }
-        /// <summary>
         /// Read all historic values
         /// </summary>
         /// <param name="client"></param>
-        /// <param name="endpointId"></param>
+        /// <param name="twinId"></param>
         /// <param name="request"></param>
+        /// <param name="ct"></param>
         /// <returns></returns>
         public static async Task<IEnumerable<HistoricValueApiModel>> HistoryReadAllValuesAsync(
-            this IHistoryServiceApi client, string endpointId,
-            HistoryReadRequestApiModel<ReadValuesDetailsApiModel> request) {
-            var result = await client.HistoryReadValuesAsync(endpointId, request).ConfigureAwait(false);
-            return await HistoryReadAllRemainingValuesAsync(client, endpointId, request.Header,
-                result.ContinuationToken, result.History.AsEnumerable()).ConfigureAwait(false);
+            this IHistoryServiceApi client, string twinId,
+            HistoryReadRequestApiModel<ReadValuesDetailsApiModel> request,
+            CancellationToken ct = default) {
+            var result = await client.HistoryReadValuesAsync(twinId, request,
+                ct).ConfigureAwait(false);
+            return await HistoryReadAllRemainingValuesAsync(client, twinId, request.Header,
+                result.ContinuationToken, result.History.AsEnumerable(), ct).ConfigureAwait(false);
         }
 
         /// <summary>
         /// Read entire list of modified values
         /// </summary>
         /// <param name="client"></param>
-        /// <param name="endpointId"></param>
+        /// <param name="twinId"></param>
         /// <param name="request"></param>
+        /// <param name="ct"></param>
         /// <returns></returns>
         public static async Task<IEnumerable<HistoricValueApiModel>> HistoryReadAllModifiedValuesAsync(
-            this IHistoryServiceApi client, string endpointId,
-            HistoryReadRequestApiModel<ReadModifiedValuesDetailsApiModel> request) {
-            var result = await client.HistoryReadModifiedValuesAsync(endpointId, request).ConfigureAwait(false);
-            return await HistoryReadAllRemainingValuesAsync(client, endpointId, request.Header,
-                result.ContinuationToken, result.History.AsEnumerable()).ConfigureAwait(false);
+            this IHistoryServiceApi client, string twinId,
+            HistoryReadRequestApiModel<ReadModifiedValuesDetailsApiModel> request, 
+            CancellationToken ct = default) {
+            var result = await client.HistoryReadModifiedValuesAsync(twinId, request,
+                ct).ConfigureAwait(false);
+            return await HistoryReadAllRemainingValuesAsync(client, twinId, request.Header,
+                result.ContinuationToken, result.History.AsEnumerable(), ct).ConfigureAwait(false);
         }
 
         /// <summary>
         /// Read entire historic values at specific datum
         /// </summary>
         /// <param name="client"></param>
-        /// <param name="endpointId"></param>
+        /// <param name="twinId"></param>
         /// <param name="request"></param>
+        /// <param name="ct"></param>
         /// <returns></returns>
         public static async Task<IEnumerable<HistoricValueApiModel>> HistoryReadAllValuesAtTimesAsync(
-            this IHistoryServiceApi client, string endpointId,
-            HistoryReadRequestApiModel<ReadValuesAtTimesDetailsApiModel> request) {
-            var result = await client.HistoryReadValuesAtTimesAsync(endpointId, request).ConfigureAwait(false);
-            return await HistoryReadAllRemainingValuesAsync(client, endpointId, request.Header,
-                result.ContinuationToken, result.History.AsEnumerable()).ConfigureAwait(false);
+            this IHistoryServiceApi client, string twinId,
+            HistoryReadRequestApiModel<ReadValuesAtTimesDetailsApiModel> request,
+            CancellationToken ct = default) {
+            var result = await client.HistoryReadValuesAtTimesAsync(twinId, request,
+                ct).ConfigureAwait(false);
+            return await HistoryReadAllRemainingValuesAsync(client, twinId, request.Header,
+                result.ContinuationToken, result.History.AsEnumerable(), ct).ConfigureAwait(false);
         }
 
         /// <summary>
         /// Read entire processed historic values
         /// </summary>
         /// <param name="client"></param>
-        /// <param name="endpointId"></param>
+        /// <param name="twinId"></param>
         /// <param name="request"></param>
+        /// <param name="ct"></param>
         /// <returns></returns>
         public static async Task<IEnumerable<HistoricValueApiModel>> HistoryReadAllProcessedValuesAsync(
-            this IHistoryServiceApi client, string endpointId,
-            HistoryReadRequestApiModel<ReadProcessedValuesDetailsApiModel> request) {
-            var result = await client.HistoryReadProcessedValuesAsync(endpointId, request).ConfigureAwait(false);
-            return await HistoryReadAllRemainingValuesAsync(client, endpointId, request.Header,
-                result.ContinuationToken, result.History.AsEnumerable()).ConfigureAwait(false);
+            this IHistoryServiceApi client, string twinId,
+            HistoryReadRequestApiModel<ReadProcessedValuesDetailsApiModel> request,
+            CancellationToken ct = default) {
+            var result = await client.HistoryReadProcessedValuesAsync(twinId, request,
+                ct).ConfigureAwait(false);
+            return await HistoryReadAllRemainingValuesAsync(client, twinId, request.Header,
+                result.ContinuationToken, result.History.AsEnumerable(), ct).ConfigureAwait(false);
         }
 
         /// <summary>
         /// Read entire event history
         /// </summary>
         /// <param name="client"></param>
-        /// <param name="endpointId"></param>
+        /// <param name="twinId"></param>
         /// <param name="request"></param>
+        /// <param name="ct"></param>
         /// <returns></returns>
         public static async Task<IEnumerable<HistoricEventApiModel>> HistoryReadAllEventsAsync(
-            this IHistoryServiceApi client, string endpointId,
-            HistoryReadRequestApiModel<ReadEventsDetailsApiModel> request) {
-            var result = await client.HistoryReadEventsAsync(endpointId, request).ConfigureAwait(false);
-            return await HistoryReadAllRemainingEventsAsync(client, endpointId, request.Header,
-                result.ContinuationToken, result.History.AsEnumerable()).ConfigureAwait(false);
+            this IHistoryServiceApi client, string twinId,
+            HistoryReadRequestApiModel<ReadEventsDetailsApiModel> request,
+            CancellationToken ct = default) {
+            var result = await client.HistoryReadEventsAsync(twinId, request,
+                ct).ConfigureAwait(false);
+            return await HistoryReadAllRemainingEventsAsync(client, twinId, request.Header, 
+                result.ContinuationToken, result.History.AsEnumerable(), ct).ConfigureAwait(false);
         }
 
 
@@ -175,19 +160,22 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api {
         /// Read all remaining values
         /// </summary>
         /// <param name="client"></param>
-        /// <param name="endpointId"></param>
+        /// <param name="twinId"></param>
         /// <param name="header"></param>
         /// <param name="continuationToken"></param>
         /// <param name="returning"></param>
+        /// <param name="ct"></param>
         /// <returns></returns>
         private static async Task<IEnumerable<HistoricValueApiModel>> HistoryReadAllRemainingValuesAsync(
-            IHistoryServiceApi client, string endpointId, RequestHeaderApiModel header,
-            string continuationToken, IEnumerable<HistoricValueApiModel> returning) {
+            IHistoryServiceApi client, string twinId, RequestHeaderApiModel header,
+            string continuationToken, IEnumerable<HistoricValueApiModel> returning,
+            CancellationToken ct = default) {
             while (continuationToken != null) {
-                var response = await client.HistoryReadValuesNextAsync(endpointId, new HistoryReadNextRequestApiModel {
-                    ContinuationToken = continuationToken,
-                    Header = header
-                }).ConfigureAwait(false);
+                var response = await client.HistoryReadValuesNextAsync(twinId, 
+                    new HistoryReadNextRequestApiModel {
+                        ContinuationToken = continuationToken,
+                        Header = header
+                    }, ct).ConfigureAwait(false);
                 continuationToken = response.ContinuationToken;
                 returning = returning.Concat(response.History);
             }
@@ -198,19 +186,22 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api {
         /// Read all remaining events
         /// </summary>
         /// <param name="client"></param>
-        /// <param name="endpointId"></param>
+        /// <param name="twinId"></param>
         /// <param name="header"></param>
         /// <param name="continuationToken"></param>
         /// <param name="returning"></param>
+        /// <param name="ct"></param>
         /// <returns></returns>
         private static async Task<IEnumerable<HistoricEventApiModel>> HistoryReadAllRemainingEventsAsync(
-            IHistoryServiceApi client, string endpointId, RequestHeaderApiModel header,
-            string continuationToken, IEnumerable<HistoricEventApiModel> returning) {
+            IHistoryServiceApi client, string twinId, RequestHeaderApiModel header,
+            string continuationToken, IEnumerable<HistoricEventApiModel> returning,
+            CancellationToken ct = default) {
             while (continuationToken != null) {
-                var response = await client.HistoryReadEventsNextAsync(endpointId, new HistoryReadNextRequestApiModel {
-                    ContinuationToken = continuationToken,
-                    Header = header
-                }).ConfigureAwait(false);
+                var response = await client.HistoryReadEventsNextAsync(twinId, 
+                    new HistoryReadNextRequestApiModel {
+                        ContinuationToken = continuationToken,
+                        Header = header
+                    }, ct).ConfigureAwait(false);
                 continuationToken = response.ContinuationToken;
                 returning = returning.Concat(response.History);
             }

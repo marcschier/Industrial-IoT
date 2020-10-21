@@ -101,7 +101,7 @@ namespace Microsoft.Azure.IIoT.Platform.Subscriber.Cdm.Storage {
         public async Task UnlockAsync(string corpusPath) {
             if (_locks.TryRemove(FormatCorpusPath(corpusPath), out var locked)) {
                 var file = await locked.ConfigureAwait(false);
-                await file.DisposeAsync();
+                await file.DisposeAsync().ConfigureAwait(false);
             }
         }
 

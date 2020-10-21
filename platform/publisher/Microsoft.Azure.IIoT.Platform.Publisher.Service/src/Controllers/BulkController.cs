@@ -7,8 +7,8 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Service.Controllers {
     using Microsoft.Azure.IIoT.Platform.Publisher.Service.Auth;
     using Microsoft.Azure.IIoT.Platform.Publisher.Service.Filters;
     using Microsoft.Azure.IIoT.Platform.Publisher.Api.Models;
-    using Microsoft.Azure.IIoT.Platform.Publisher.Models;
     using Microsoft.Azure.IIoT.Platform.Publisher;
+    using Microsoft.Azure.IIoT.Platform.Core.Models;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using System.Threading.Tasks;
@@ -52,7 +52,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Service.Controllers {
                 throw new ArgumentNullException(nameof(request));
             }
             var result = await _bulk.AddVariablesToDataSetWriterAsync(dataSetWriterId,
-                request.ToServiceModel(), new PublisherOperationContextModel {
+                request.ToServiceModel(), new OperationContextModel {
                     Time = DateTime.UtcNow,
                     AuthorityId = HttpContext.User.Identity.Name
                 }).ConfigureAwait(false);
@@ -80,7 +80,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Service.Controllers {
                 throw new ArgumentNullException(nameof(request));
             }
             var result = await _bulk.AddVariablesToDefaultDataSetWriterAsync(endpointId,
-                request.ToServiceModel(), new PublisherOperationContextModel {
+                request.ToServiceModel(), new OperationContextModel {
                     Time = DateTime.UtcNow,
                     AuthorityId = HttpContext.User.Identity.Name
                 }).ConfigureAwait(false);
@@ -108,7 +108,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Service.Controllers {
                 throw new ArgumentNullException(nameof(request));
             }
             var result = await _bulk.RemoveVariablesFromDataSetWriterAsync(dataSetWriterId,
-                request.ToServiceModel(), new PublisherOperationContextModel {
+                request.ToServiceModel(), new OperationContextModel {
                     Time = DateTime.UtcNow,
                     AuthorityId = HttpContext.User.Identity.Name
                 }).ConfigureAwait(false);

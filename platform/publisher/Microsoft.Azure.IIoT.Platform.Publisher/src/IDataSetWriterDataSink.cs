@@ -23,7 +23,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher {
         /// <param name="notification"></param>
         /// <param name="stringTable"></param>
         /// <param name="subscription"></param>
-        void Write(string dataSetWriterId, PublishedDataSetModel dataSet, 
+        void OnDataSetNotification(string dataSetWriterId, PublishedDataSetModel dataSet, 
             uint sequenceNumber, NotificationData notification, 
             IList<string> stringTable, Subscription subscription);
     }

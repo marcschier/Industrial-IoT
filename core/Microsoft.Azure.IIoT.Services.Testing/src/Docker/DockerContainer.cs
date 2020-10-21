@@ -201,7 +201,7 @@ namespace Microsoft.Azure.IIoT.Services.Docker {
                 if (existing.Count > 1) {
                     // Remove ambigous networks
                     foreach (var network in existing) {
-                        await dockerClient.Networks.DeleteNetworkAsync(network.ID);
+                        await dockerClient.Networks.DeleteNetworkAsync(network.ID).ConfigureAwait(false);
                     }
                     existing.Clear();
                 }

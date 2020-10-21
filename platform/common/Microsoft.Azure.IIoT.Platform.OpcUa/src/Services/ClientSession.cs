@@ -35,7 +35,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
         public int Pending => _queue.Count + (_curOperation == null ? 0 : 1);
 
         private ClientSession(ApplicationConfiguration config, ConnectionModel connection,
-            ILogger logger, Func<ConnectionModel, EndpointConnectivityState, Task> statusCb,
+            ILogger logger, Func<ConnectionModel, ConnectionStatus, Task> statusCb,
             TimeSpan? maxOpTimeout, string sessionName, TimeSpan? timeout,
             TimeSpan? keepAlive) {
             _sessionName = sessionName ?? Guid.NewGuid().ToString();
@@ -51,7 +51,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
                 _config.ClientConfiguration.DefaultSessionTimeout);
             _statusCb = statusCb;
             _cts = new CancellationTokenSource();
-            _lastState = EndpointConnectivityState.Connecting;
+            _lastState = ConnectionStatus.Connecting;
             _keepAlive = keepAlive ?? TimeSpan.FromSeconds(5);
             _lastActivity = DateTime.UtcNow;
             // Align the default device method timeout
@@ -80,7 +80,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
         /// <param name="keepAlive">Keep alive interval</param>
         public static IClientSession Create(ApplicationConfiguration config,
             ConnectionModel connection, ILogger logger, Func<ConnectionModel,
-                EndpointConnectivityState, Task> statusCb,
+                ConnectionStatus, Task> statusCb,
             TimeSpan? maxOpTimeout = null, string sessionName = null,
             TimeSpan? timeout = null, TimeSpan? keepAlive = null) {
 
@@ -101,7 +101,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
         /// <param name="keepAlive">Keep alive interval</param>
         public static (IClientSession, ISessionHandle) CreateWithHandle(
             ApplicationConfiguration config, ConnectionModel connection,
-            ILogger logger, Func<ConnectionModel, EndpointConnectivityState, Task> statusCb,
+            ILogger logger, Func<ConnectionModel, ConnectionStatus, Task> statusCb,
             TimeSpan? maxOpTimeout = null, string sessionName = null,
             TimeSpan? timeout = null, TimeSpan? keepAlive = null) {
 
@@ -378,8 +378,8 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
                         }
                         await Task.Run(() => _curOperation.Complete(_session), _cts.Token).ConfigureAwait(false);
                         _lastActivity = DateTime.UtcNow;
-                        if (!(_curOperation is KeepAlive) || _lastState != EndpointConnectivityState.Unauthorized) {
-                            await NotifyConnectivityStateChangeAsync(EndpointConnectivityState.Ready).ConfigureAwait(false);
+                        if (!(_curOperation is KeepAlive) || _lastState != ConnectionStatus.Unauthorized) {
+                            await NotifyConnectivityStateChangeAsync(ConnectionStatus.Ready).ConfigureAwait(false);
                         }
                         _logger.Verbose("Session operation completed.");
                         _curOperation = null;
@@ -508,8 +508,8 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
         /// <param name="ex"></param>
         /// <param name="reconnecting"></param>
         /// <returns></returns>
-        public EndpointConnectivityState ToConnectivityState(Exception ex, bool reconnecting = true) {
-            var state = EndpointConnectivityState.Error;
+        public ConnectionStatus ToConnectivityState(Exception ex, bool reconnecting = true) {
+            var state = ConnectionStatus.Error;
             switch (ex) {
                 case ServiceResultException sre:
                     switch (sre.StatusCode) {
@@ -518,7 +518,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
                         case StatusCodes.BadTcpServerTooBusy:
                         case StatusCodes.BadTooManySessions:
                         case StatusCodes.BadTooManyOperations:
-                            state = EndpointConnectivityState.Busy;
+                            state = ConnectionStatus.Busy;
                             break;
                         case StatusCodes.BadCertificateRevocationUnknown:
                         case StatusCodes.BadCertificateIssuerRevocationUnknown:
@@ -533,32 +533,32 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
                         case StatusCodes.BadCertificateInvalid:
                         case StatusCodes.BadCertificateHostNameInvalid:
                         case StatusCodes.BadNoValidCertificates:
-                            state = EndpointConnectivityState.CertificateInvalid;
+                            state = ConnectionStatus.CertificateInvalid;
                             break;
                         case StatusCodes.BadCertificateUntrusted:
                         case StatusCodes.BadSecurityChecksFailed:
-                            state = EndpointConnectivityState.NoTrust;
+                            state = ConnectionStatus.NoTrust;
                             break;
                         case StatusCodes.BadSecureChannelClosed:
-                            state = reconnecting ? EndpointConnectivityState.NoTrust :
-                                EndpointConnectivityState.Error;
+                            state = reconnecting ? ConnectionStatus.NoTrust :
+                                ConnectionStatus.Error;
                             break;
                         case StatusCodes.BadRequestTimeout:
                         case StatusCodes.BadNotConnected:
-                            state = EndpointConnectivityState.NotReachable;
+                            state = ConnectionStatus.NotReachable;
                             break;
                         case StatusCodes.BadUserAccessDenied:
                         case StatusCodes.BadUserSignatureInvalid:
-                            state = EndpointConnectivityState.Unauthorized;
+                            state = ConnectionStatus.Unauthorized;
                             break;
                         default:
-                            state = EndpointConnectivityState.Error;
+                            state = ConnectionStatus.Error;
                             break;
                     }
                     _logger.Debug("{result} => {state}", sre.Result, state);
                     break;
                 default:
-                    state = EndpointConnectivityState.Error;
+                    state = ConnectionStatus.Error;
                     _logger.Debug("{message} => {state}", ex.Message, state);
                     break;
             }
@@ -570,14 +570,14 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
         /// </summary>
         /// <param name="state"></param>
         /// <returns></returns>
-        private async Task NotifyConnectivityStateChangeAsync(EndpointConnectivityState state) {
+        private async Task NotifyConnectivityStateChangeAsync(ConnectionStatus state) {
             var previous = _lastState;
             if (previous == state) {
                 return;
             }
-            if (previous != EndpointConnectivityState.Connecting &&
-                previous != EndpointConnectivityState.Ready &&
-                state == EndpointConnectivityState.Error) {
+            if (previous != ConnectionStatus.Connecting &&
+                previous != ConnectionStatus.Ready &&
+                state == ConnectionStatus.Error) {
                 // Do not change state to generic error once we have
                 // a specific error state already set...
                 _logger.Debug(
@@ -597,7 +597,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
                 _logger.Error(ex, "Exception during state callback");
             }
 
-            if (state == EndpointConnectivityState.Ready) {
+            if (state == ConnectionStatus.Ready) {
                 // Notify waiting threads that a session is ready
                 _acquired.TrySetResult(_session);
             }
@@ -948,7 +948,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
             public Session Session => _outer._session;
 
             /// <inheritdoc/>
-            public EndpointConnectivityState State => _outer._lastState;
+            public ConnectionStatus State => _outer._lastState;
 
             /// <inheritdoc/>
             internal ClientSessionHandle(ClientSession outer) {
@@ -993,7 +993,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
         private DateTime _lastActivity;
         private Session _session;
         private TaskCompletionSource<Session> _acquired;
-        private EndpointConnectivityState _lastState;
+        private ConnectionStatus _lastState;
         private string _endpointUrl;
         private readonly TimeSpan _opTimeout;
         private readonly string _sessionName;
@@ -1007,6 +1007,6 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
         private readonly ConcurrentQueue<string> _urlQueue;
         private readonly PriorityQueue<int, SessionOperation> _queue;
         private volatile TaskCompletionSource<bool> _enqueueEvent;
-        private readonly Func<ConnectionModel, EndpointConnectivityState, Task> _statusCb;
+        private readonly Func<ConnectionModel, ConnectionStatus, Task> _statusCb;
     }
 }

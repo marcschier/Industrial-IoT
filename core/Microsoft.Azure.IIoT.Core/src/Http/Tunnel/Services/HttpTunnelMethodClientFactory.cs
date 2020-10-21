@@ -87,7 +87,7 @@ namespace Microsoft.Azure.IIoT.Http.Tunnel.Services {
                 var trequest = new HttpTunnelRequestModel {
                     ResourceId = null, // TODO - fill in somehow from outer handler
                     Uri = request.RequestUri.ToString(),
-                    TraceId = "", // TODO
+                    TraceId = "", // TODO - add trace id to tunnel request
                     RequestHeaders = request.Headers?
                         .ToDictionary(h => h.Key, h => h.Value.ToList()),
                     Method = request.Method.ToString()

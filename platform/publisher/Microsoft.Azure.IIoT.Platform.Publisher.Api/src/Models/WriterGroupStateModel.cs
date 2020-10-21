@@ -16,9 +16,9 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api.Models {
         /// <summary>
         /// State indicator
         /// </summary>
-        [DataMember(Name = "state", Order = 0,
+        [DataMember(Name = "lastState", Order = 0,
             EmitDefaultValue = false)]
-        public WriterGroupState State { get; set; }
+        public WriterGroupStatus LastState { get; set; }
 
         /// <summary>
         /// Last state change

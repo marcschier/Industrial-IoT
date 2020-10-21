@@ -25,7 +25,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
     /// <summary>
     /// Transfer large data to and from cloud
     /// </summary>
-    public sealed class DataTransferServices : ITransferServices<EndpointModel>, 
+    public sealed class DataTransferServices : ITransferServices<ConnectionModel>, 
         IDisposable {
 
         /// <summary>
@@ -36,7 +36,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
         /// <param name="tokens"></param>
         /// <param name="scheduler"></param>
         /// <param name="logger"></param>
-        public DataTransferServices(IEndpointServices client, IHttpClient http,
+        public DataTransferServices(IConnectionServices client, IHttpClient http,
             ISasTokenGenerator tokens, ITaskScheduler scheduler, ILogger logger) {
             _client = client ?? throw new ArgumentNullException(nameof(client));
             _http = http ?? throw new ArgumentNullException(nameof(http));
@@ -47,19 +47,19 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
         }
 
         /// <inheritdoc/>
-        public Task<ModelUploadStartResultModel> ModelUploadStartAsync(EndpointModel endpoint,
-            ModelUploadStartRequestModel request) {
-            if (endpoint == null) {
-                throw new ArgumentNullException(nameof(endpoint));
+        public Task<ModelUploadStartResultModel> ModelUploadStartAsync(
+            ConnectionModel connection, ModelUploadStartRequestModel request, 
+            CancellationToken ct) {
+            if (connection == null) {
+                throw new ArgumentNullException(nameof(connection));
             }
             if (request == null) {
                 throw new ArgumentNullException(nameof(request));
             }
 
             // Get or add new task
-            var task = _tasks.GetOrAdd(new ConnectionIdentifier(new ConnectionModel {
-                Endpoint = endpoint
-            }), id => new ModelUploadTask(this, id, request, _logger));
+            var task = _tasks.GetOrAdd(new ConnectionIdentifier(connection),
+                id => new ModelUploadTask(this, id, request, _logger, ct));
 
             // Return info about task
             return Task.FromResult(new ModelUploadStartResultModel {
@@ -116,17 +116,18 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
             /// <param name="id"></param>
             /// <param name="request"></param>
             /// <param name="logger"></param>
+            /// <param name="ct"></param>
             public ModelUploadTask(DataTransferServices outer, ConnectionIdentifier id,
-                ModelUploadStartRequestModel request, ILogger logger) {
+                ModelUploadStartRequestModel request, ILogger logger, CancellationToken ct) {
                 _outer = outer;
-                _cts = new CancellationTokenSource();
+                _cts = CancellationTokenSource.CreateLinkedTokenSource(ct);
                 MimeType = ValidateEncoding(request.ContentMimeType, out var extension);
                 Authorization = request.AuthorizationHeader;
                 Url = request.UploadEndpointUrl;
                 StartTime = DateTime.UtcNow;
                 FileName = $"{id.GetHashCode()}_{StartTime.ToBinary()}{extension}";
                 _logger = logger.ForContext("SourceContext", new {
-                    endpoint = id.Connection.Endpoint.Url,
+                    connection = id.Connection.Endpoint.Url,
                     url = Url,
                     fileName = FileName,
                     mimeType = MimeType
@@ -154,7 +155,8 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
 
 
                             // Otherwise browse model
-                            await BrowseEncodeModelAsync(id.Connection.Endpoint, diagnostics, stream, ct).ConfigureAwait(false);
+                            await BrowseEncodeModelAsync(id.Connection, diagnostics, stream, 
+                                ct).ConfigureAwait(false);
                         }
 
                         // Rewind
@@ -193,15 +195,15 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
             /// <summary>
             /// Export using browse encoder
             /// </summary>
-            /// <param name="endpoint"></param>
+            /// <param name="connection"></param>
             /// <param name="diagnostics"></param>
             /// <param name="stream"></param>
             /// <param name="ct"></param>
             /// <returns></returns>
-            private async Task BrowseEncodeModelAsync(EndpointModel endpoint,
+            private async Task BrowseEncodeModelAsync(ConnectionModel connection,
                 DiagnosticsModel diagnostics, Stream stream, CancellationToken ct) {
-                using (var encoder = new BrowsedNodeStreamEncoder(_outer._client, endpoint,
-                    stream, MimeType, diagnostics, _logger, null)) {
+                using (var encoder = new BrowsedNodeStreamEncoder(_outer._client, connection,
+                    stream, MimeType, diagnostics, _logger)) {
                     await encoder.EncodeAsync(ct).ConfigureAwait(false);
                 }
             }
@@ -251,7 +253,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
             private readonly ILogger _logger;
         }
 
-        private readonly IEndpointServices _client;
+        private readonly IConnectionServices _client;
         private readonly IHttpClient _http;
         private readonly ISasTokenGenerator _tokens;
         private readonly ITaskScheduler _scheduler;

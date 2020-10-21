@@ -58,31 +58,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service.Controllers {
         }
 
         /// <summary>
-        /// Update endpoint information
-        /// </summary>
-        /// <remarks>
-        /// The endpoint information is updated with new properties.  Note that
-        /// this information might be overridden if the endpoint is re-discovered
-        /// during a discovery run (recurring or one-time).
-        /// </remarks>
-        /// <param name="endpointId">The identifier of the endpoint</param>
-        /// <param name="request">Endpoint update request</param>
-        [HttpPatch("{endpointId}")]
-        [Authorize(Policy = Policies.CanChange)]
-        public async Task UpdateEndpointAsync(string endpointId,
-            [FromBody][Required] EndpointInfoUpdateApiModel request) {
-            if (string.IsNullOrEmpty(endpointId)) {
-                throw new ArgumentNullException(nameof(endpointId));
-            }
-            if (request == null) {
-                throw new ArgumentNullException(nameof(request));
-            }
-            var model = request.ToServiceModel();
-            // TODO: model.AuthorityId = User.Identity.Name;
-            await _endpoints.UpdateEndpointAsync(endpointId, model).ConfigureAwait(false);
-        }
-
-        /// <summary>
         /// Get endpoint information
         /// </summary>
         /// <remarks>

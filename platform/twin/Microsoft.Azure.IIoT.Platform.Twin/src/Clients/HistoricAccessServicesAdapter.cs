@@ -6,14 +6,14 @@
 namespace Microsoft.Azure.IIoT.Platform.Twin.Clients {
     using Microsoft.Azure.IIoT.Platform.Twin;
     using Microsoft.Azure.IIoT.Platform.Twin.Models;
-    using Microsoft.Azure.IIoT.Platform.Registry;
     using Microsoft.Azure.IIoT.Platform.Core.Models;
+    using Microsoft.Azure.IIoT.Serializers;
     using System;
     using System.Threading.Tasks;
-    using Microsoft.Azure.IIoT.Serializers;
+    using System.Threading;
 
     /// <summary>
-    /// Implements ha services as adapter through endpoint registry
+    /// Implements ha services as adapter through twin registry
     /// </summary>
     public sealed class HistoricAccessServicesAdapter : IHistoricAccessServices<string> {
 
@@ -22,34 +22,34 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Clients {
         /// </summary>
         /// <param name="registry"></param>
         /// <param name="history"></param>
-        public HistoricAccessServicesAdapter(IEndpointRegistry registry,
-            IHistoricAccessServices<EndpointModel> history) {
+        public HistoricAccessServicesAdapter(ITwinRegistry registry,
+            IHistoricAccessServices<ConnectionModel> history) {
             _registry = registry ?? throw new ArgumentNullException(nameof(registry));
             _history = history ?? throw new ArgumentNullException(nameof(history));
         }
 
         /// <inheritdoc/>
         public async Task<HistoryReadResultModel<VariantValue>> HistoryReadAsync(
-            string endpoint, HistoryReadRequestModel<VariantValue> request) {
-            var ep = await _registry.GetActivatedEndpointAsync(endpoint).ConfigureAwait(false);
-            return await _history.HistoryReadAsync(ep, request).ConfigureAwait(false);
+            string twin, HistoryReadRequestModel<VariantValue> request, CancellationToken ct) {
+            var conn = await _registry.GetConnectionAsync(twin, ct: ct).ConfigureAwait(false);
+            return await _history.HistoryReadAsync(conn, request, ct).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
         public async Task<HistoryReadNextResultModel<VariantValue>> HistoryReadNextAsync(
-            string endpoint, HistoryReadNextRequestModel request) {
-            var ep = await _registry.GetActivatedEndpointAsync(endpoint).ConfigureAwait(false);
-            return await _history.HistoryReadNextAsync(ep, request).ConfigureAwait(false);
+            string twin, HistoryReadNextRequestModel request, CancellationToken ct) {
+            var conn = await _registry.GetConnectionAsync(twin, ct: ct).ConfigureAwait(false);
+            return await _history.HistoryReadNextAsync(conn, request, ct).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
         public async Task<HistoryUpdateResultModel> HistoryUpdateAsync(
-            string endpoint, HistoryUpdateRequestModel<VariantValue> request) {
-            var ep = await _registry.GetActivatedEndpointAsync(endpoint).ConfigureAwait(false);
-            return await _history.HistoryUpdateAsync(ep, request).ConfigureAwait(false);
+            string twin, HistoryUpdateRequestModel<VariantValue> request, CancellationToken ct) {
+            var conn = await _registry.GetConnectionAsync(twin, ct: ct).ConfigureAwait(false);
+            return await _history.HistoryUpdateAsync(conn, request, ct).ConfigureAwait(false);
         }
 
-        private readonly IEndpointRegistry _registry;
-        private readonly IHistoricAccessServices<EndpointModel> _history;
+        private readonly ITwinRegistry _registry;
+        private readonly IHistoricAccessServices<ConnectionModel> _history;
     }
 }

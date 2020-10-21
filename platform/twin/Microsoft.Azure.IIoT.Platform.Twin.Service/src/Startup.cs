@@ -7,7 +7,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Service {
     using Microsoft.Azure.IIoT.Platform.Twin.Service.Runtime;
     using Microsoft.Azure.IIoT.Platform.Twin.Service.Auth;
     using Microsoft.Azure.IIoT.Platform.Registry.Api.Clients;
-    using Microsoft.Azure.IIoT.Platform.OpcUa.Services;
+    using Microsoft.Azure.IIoT.Platform.OpcUa;
     using Microsoft.Azure.IIoT.Azure.LogAnalytics.Runtime;
     using Microsoft.Azure.IIoT.Azure.AppInsights;
     using Microsoft.Azure.IIoT.Authentication;
@@ -182,19 +182,13 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Service {
 
             // Register Twin services
             builder.RegisterModule<TwinServices>();
+            builder.RegisterModule<ClientStack>();
 
             // Registry services are required to lookup endpoints.
             builder.RegisterType<RegistryServicesApiAdapter>()
                 .AsImplementedInterfaces();
             builder.RegisterType<RegistryServiceClient>()
                 .AsImplementedInterfaces();
-
-            // Register opc ua stack to do discovery
-            builder.RegisterType<ClientServices>()
-                .AsImplementedInterfaces().InstancePerLifetimeScope();
-            builder.RegisterType<StackLogger>()
-                .AsImplementedInterfaces().InstancePerLifetimeScope()
-                .AutoActivate();
 
             // ... and auto start
             builder.RegisterType<HostAutoStart>()

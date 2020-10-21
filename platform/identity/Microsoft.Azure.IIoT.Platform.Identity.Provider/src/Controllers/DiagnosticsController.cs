@@ -24,7 +24,7 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Provider.Controllers {
                 return NotFound();
             }
 
-            var model = new DiagnosticsViewModel(await HttpContext.AuthenticateAsync());
+            var model = new DiagnosticsViewModel(await HttpContext.AuthenticateAsync().ConfigureAwait(false));
             return View(model);
         }
     }

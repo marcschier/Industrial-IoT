@@ -65,7 +65,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
         /// <summary>
         /// Operation audit context
         /// </summary>
-        public RegistryOperationContextModel Context { get; set; }
+        public OperationContextModel Context { get; set; }
     }
 }
 

@@ -7,6 +7,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api.Clients {
     using Microsoft.Azure.IIoT.Platform.Publisher.Api.Models;
     using Microsoft.Azure.IIoT.Platform.Publisher.Models;
     using Microsoft.Azure.IIoT.Platform.Publisher;
+    using Microsoft.Azure.IIoT.Platform.Core.Models;
     using System;
     using System.Threading.Tasks;
     using System.Threading;
@@ -28,7 +29,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api.Clients {
         /// <inheritdoc/>
         public async Task<DataSetWriterAddResultModel> AddDataSetWriterAsync(
             DataSetWriterAddRequestModel request,
-            PublisherOperationContextModel context, CancellationToken ct) {
+            OperationContextModel context, CancellationToken ct) {
             var result = await _client.AddDataSetWriterAsync(
                 request.ToApiModel(), ct).ConfigureAwait(false);
             return result.ToServiceModel();
@@ -45,7 +46,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api.Clients {
         /// <inheritdoc/>
         public async Task UpdateDataSetWriterAsync(string dataSetWriterId,
             DataSetWriterUpdateRequestModel request,
-            PublisherOperationContextModel context, CancellationToken ct) {
+            OperationContextModel context, CancellationToken ct) {
             await _client.UpdateDataSetWriterAsync(dataSetWriterId,
                 request.ToApiModel(), ct).ConfigureAwait(false);
         }
@@ -53,7 +54,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api.Clients {
         /// <inheritdoc/>
         public async Task<DataSetAddEventResultModel> AddEventDataSetAsync(
             string dataSetWriterId, DataSetAddEventRequestModel request,
-            PublisherOperationContextModel context, CancellationToken ct) {
+            OperationContextModel context, CancellationToken ct) {
             var result = await _client.AddEventDataSetAsync(dataSetWriterId,
                 request.ToApiModel(), ct).ConfigureAwait(false);
             return result.ToServiceModel();
@@ -69,14 +70,14 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api.Clients {
         /// <inheritdoc/>
         public async Task UpdateEventDataSetAsync(string dataSetWriterId,
             DataSetUpdateEventRequestModel request,
-            PublisherOperationContextModel context, CancellationToken ct) {
+            OperationContextModel context, CancellationToken ct) {
             await _client.UpdateEventDataSetAsync(dataSetWriterId,
                 request.ToApiModel(), ct).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
         public async Task RemoveEventDataSetAsync(string dataSetWriterId,
-            string generationId, PublisherOperationContextModel context,
+            string generationId, OperationContextModel context,
             CancellationToken ct) {
             await _client.RemoveEventDataSetAsync(dataSetWriterId,
                 generationId, ct).ConfigureAwait(false);
@@ -85,7 +86,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api.Clients {
         /// <inheritdoc/>
         public async Task<DataSetAddVariableResultModel> AddDataSetVariableAsync(
             string dataSetWriterId, DataSetAddVariableRequestModel request,
-            PublisherOperationContextModel context, CancellationToken ct) {
+            OperationContextModel context, CancellationToken ct) {
             var result = await _client.AddDataSetVariableAsync(dataSetWriterId,
                 request.ToApiModel(), ct).ConfigureAwait(false);
             return result.ToServiceModel();
@@ -94,7 +95,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api.Clients {
         /// <inheritdoc/>
         public async Task UpdateDataSetVariableAsync(string dataSetWriterId,
             string variableId, DataSetUpdateVariableRequestModel request,
-            PublisherOperationContextModel context, CancellationToken ct) {
+            OperationContextModel context, CancellationToken ct) {
             await _client.UpdateDataSetVariableAsync(dataSetWriterId,
                 variableId, request.ToApiModel(), ct).ConfigureAwait(false);
         }
@@ -120,7 +121,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api.Clients {
         /// <inheritdoc/>
         public async Task RemoveDataSetVariableAsync(string dataSetWriterId,
             string variableId, string generationId,
-            PublisherOperationContextModel context, CancellationToken ct) {
+            OperationContextModel context, CancellationToken ct) {
             await _client.RemoveDataSetVariableAsync(dataSetWriterId, variableId,
                 generationId, ct).ConfigureAwait(false);
         }
@@ -143,7 +144,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api.Clients {
 
         /// <inheritdoc/>
         public async Task RemoveDataSetWriterAsync(string dataSetWriterId,
-            string generationId, PublisherOperationContextModel context,
+            string generationId, OperationContextModel context,
             CancellationToken ct) {
             await _client.RemoveDataSetWriterAsync(dataSetWriterId, generationId, ct).ConfigureAwait(false);
         }
@@ -151,7 +152,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api.Clients {
         /// <inheritdoc/>
         public async Task<WriterGroupAddResultModel> AddWriterGroupAsync(
             WriterGroupAddRequestModel request,
-            PublisherOperationContextModel context, CancellationToken ct) {
+            OperationContextModel context, CancellationToken ct) {
             var result = await _client.AddWriterGroupAsync(
                 request.ToApiModel(), ct).ConfigureAwait(false);
             return result.ToServiceModel();
@@ -159,13 +160,13 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api.Clients {
 
         /// <inheritdoc/>
         public async Task ActivateWriterGroupAsync(string writerGroupId,
-            PublisherOperationContextModel context, CancellationToken ct) {
+            OperationContextModel context, CancellationToken ct) {
             await _client.ActivateWriterGroupAsync(writerGroupId, ct).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
         public async Task DeactivateWriterGroupAsync(string writerGroupId,
-            PublisherOperationContextModel context, CancellationToken ct) {
+            OperationContextModel context, CancellationToken ct) {
             await _client.DeactivateWriterGroupAsync(writerGroupId, ct).ConfigureAwait(false);
         }
 
@@ -179,7 +180,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api.Clients {
         /// <inheritdoc/>
         public async Task UpdateWriterGroupAsync(string writerGroupId,
             WriterGroupUpdateRequestModel request,
-            PublisherOperationContextModel context, CancellationToken ct) {
+            OperationContextModel context, CancellationToken ct) {
             await _client.UpdateWriterGroupAsync(writerGroupId,
                 request.ToApiModel(), ct).ConfigureAwait(false);
         }
@@ -202,7 +203,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api.Clients {
 
         /// <inheritdoc/>
         public async Task RemoveWriterGroupAsync(string writerGroupId,
-            string generationId, PublisherOperationContextModel context,
+            string generationId, OperationContextModel context,
             CancellationToken ct) {
             await _client.RemoveWriterGroupAsync(writerGroupId,
                 generationId, ct).ConfigureAwait(false);
@@ -211,7 +212,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api.Clients {
         /// <inheritdoc/>
         public async Task<DataSetAddVariableBatchResultModel> AddVariablesToDataSetWriterAsync(
             string dataSetWriterId, DataSetAddVariableBatchRequestModel request,
-            PublisherOperationContextModel context, CancellationToken ct) {
+            OperationContextModel context, CancellationToken ct) {
             var result = await _client.AddVariablesToDataSetWriterAsync(dataSetWriterId,
                 request.ToApiModel(), ct).ConfigureAwait(false);
             return result.ToServiceModel();
@@ -220,7 +221,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api.Clients {
         /// <inheritdoc/>
         public async Task<DataSetAddVariableBatchResultModel> AddVariablesToDefaultDataSetWriterAsync(
             string endpointId, DataSetAddVariableBatchRequestModel request,
-            PublisherOperationContextModel context, CancellationToken ct) {
+            OperationContextModel context, CancellationToken ct) {
             var result = await _client.AddVariablesToDefaultDataSetWriterAsync(endpointId,
                 request.ToApiModel(), ct).ConfigureAwait(false);
             return result.ToServiceModel();
@@ -229,7 +230,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api.Clients {
         /// <inheritdoc/>
         public async Task<DataSetRemoveVariableBatchResultModel> RemoveVariablesFromDataSetWriterAsync(
             string dataSetWriterId, DataSetRemoveVariableBatchRequestModel request,
-            PublisherOperationContextModel context, CancellationToken ct) {
+            OperationContextModel context, CancellationToken ct) {
             var result = await _client.RemoveVariablesFromDataSetWriterAsync(dataSetWriterId,
                 request.ToApiModel(), ct).ConfigureAwait(false);
             return result.ToServiceModel();

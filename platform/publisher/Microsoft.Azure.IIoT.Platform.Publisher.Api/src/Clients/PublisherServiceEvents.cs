@@ -64,29 +64,6 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api {
         }
 
         /// <inheritdoc/>
-        public async Task<IAsyncDisposable> SubscribeDataSetWriterMessagesAsync(
-            string dataSetWriterId, Func<MonitoredItemMessageApiModel, Task> callback) {
-
-            if (callback == null) {
-                throw new ArgumentNullException(nameof(callback));
-            }
-            var hub = await _client.GetHubAsync($"{_serviceUri}/v3/groups/events",
-                Resource.Platform).ConfigureAwait(false);
-            var registration = hub.Register(EventTargets.DataSetMessageTarget, callback);
-            try {
-                await SubscribeDataSetWriterMessagesAsync(dataSetWriterId, hub.ConnectionId,
-                    CancellationToken.None).ConfigureAwait(false);
-                return new AsyncDisposable(registration,
-                    () => UnsubscribeDataSetWriterMessagesAsync(dataSetWriterId,
-                        hub.ConnectionId, CancellationToken.None));
-            }
-            catch {
-                registration.Dispose();
-                throw;
-            }
-        }
-
-        /// <inheritdoc/>
         public async Task<IAsyncDisposable> SubscribeDataSetWriterEventsAsync(
             Func<DataSetWriterEventApiModel, Task> callback) {
             if (callback == null) {
@@ -107,7 +84,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api {
             }
             var hub = await _client.GetHubAsync($"{_serviceUri}/v3/writers/events",
                 Resource.Platform).ConfigureAwait(false);
-            var registration = hub.Register(EventTargets.DataSetEventTarget, callback);
+            var registration = hub.Register(EventTargets.DataSetItemEventTarget, callback);
             try {
                 await SubscribeDataSetItemStatusAsync(dataSetWriterId, hub.ConnectionId,
                     CancellationToken.None).ConfigureAwait(false);
@@ -122,20 +99,44 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api {
         }
 
         /// <inheritdoc/>
-        public async Task<IAsyncDisposable> NodePublishSubscribeByEndpointAsync(
-            string endpointId, Func<MonitoredItemMessageApiModel, Task> callback) {
+        public async Task<IAsyncDisposable> SubscribeEventDataSetMessagesAsync(
+            string dataSetWriterId, Func<MonitoredItemMessageApiModel, Task> callback) {
 
             if (callback == null) {
                 throw new ArgumentNullException(nameof(callback));
             }
-            var hub = await _client.GetHubAsync($"{_serviceUri}/v3/publishers/events",
+            var hub = await _client.GetHubAsync($"{_serviceUri}/v3/writers/events",
                 Resource.Platform).ConfigureAwait(false);
-            var registration = hub.Register(EventTargets.PublisherSampleTarget, callback);
+            var registration = hub.Register(EventTargets.DataSetEventMessageTarget, callback);
             try {
-                await NodePublishSubscribeByEndpointAsync(endpointId, hub.ConnectionId,
+                await SubscribeDataSetEventMessagesAsync(dataSetWriterId, hub.ConnectionId,
                     CancellationToken.None).ConfigureAwait(false);
                 return new AsyncDisposable(registration,
-                    () => NodePublishUnsubscribeByEndpointAsync(endpointId,
+                    () => UnsubscribeDataSetEventMessagesAsync(dataSetWriterId,
+                        hub.ConnectionId, CancellationToken.None));
+            }
+            catch {
+                registration.Dispose();
+                throw;
+            }
+        }
+
+        /// <inheritdoc/>
+        public async Task<IAsyncDisposable> SubscribeDataSetVariableMessagesAsync(
+            string dataSetWriterId, string variableId, 
+            Func<MonitoredItemMessageApiModel, Task> callback) {
+
+            if (callback == null) {
+                throw new ArgumentNullException(nameof(callback));
+            }
+            var hub = await _client.GetHubAsync($"{_serviceUri}/v3/writers/events",
+                Resource.Platform).ConfigureAwait(false);
+            var registration = hub.Register(EventTargets.DataSetVariableMessageTarget, callback);
+            try {
+                await SubscribeDataSetVariableMessagesAsync(dataSetWriterId, variableId, 
+                    hub.ConnectionId, CancellationToken.None).ConfigureAwait(false);
+                return new AsyncDisposable(registration,
+                    () => UnsubscribeDataSetVariableMessagesAsync(dataSetWriterId, variableId,
                         hub.ConnectionId, CancellationToken.None));
             }
             catch {
@@ -177,8 +178,8 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api {
         }
 
         /// <inheritdoc/>
-        public async Task SubscribeDataSetWriterMessagesAsync(string dataSetWriterId,
-            string connectionId, CancellationToken ct) {
+        public async Task SubscribeDataSetVariableMessagesAsync(string dataSetWriterId,
+            string variableId, string connectionId, CancellationToken ct) {
             if (string.IsNullOrEmpty(dataSetWriterId)) {
                 throw new ArgumentNullException(nameof(dataSetWriterId));
             }
@@ -186,15 +187,16 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api {
                 throw new ArgumentNullException(nameof(connectionId));
             }
             var request = _httpClient.NewRequest(
-                $"{_serviceUri}/v3/groups/{dataSetWriterId}/messages", Resource.Platform);
+                $"{_serviceUri}/v3/writers/{dataSetWriterId}/variable/{variableId}",
+                Resource.Platform);
             _serializer.SerializeToRequest(request, connectionId);
             var response = await _httpClient.PutAsync(request, ct).ConfigureAwait(false);
             response.Validate();
         }
 
         /// <inheritdoc/>
-        public async Task UnsubscribeDataSetWriterMessagesAsync(string dataSetWriterId,
-            string connectionId, CancellationToken ct) {
+        public async Task UnsubscribeDataSetVariableMessagesAsync(string dataSetWriterId,
+            string variableId, string connectionId, CancellationToken ct) {
             if (string.IsNullOrEmpty(dataSetWriterId)) {
                 throw new ArgumentNullException(nameof(dataSetWriterId));
             }
@@ -202,39 +204,39 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api {
                 throw new ArgumentNullException(nameof(connectionId));
             }
             var request = _httpClient.NewRequest(
-                $"{_serviceUri}/v3/groups/{dataSetWriterId}/messages/{connectionId}",
+                $"{_serviceUri}/v3/writers/{dataSetWriterId}/variable/{variableId}/{connectionId}",
                 Resource.Platform);
             var response = await _httpClient.DeleteAsync(request, ct).ConfigureAwait(false);
             response.Validate();
         }
 
         /// <inheritdoc/>
-        public async Task NodePublishSubscribeByEndpointAsync(string endpointId,
+        public async Task SubscribeDataSetEventMessagesAsync(string dataSetWriterId,
             string connectionId, CancellationToken ct) {
-            if (string.IsNullOrEmpty(endpointId)) {
-                throw new ArgumentNullException(nameof(endpointId));
+            if (string.IsNullOrEmpty(dataSetWriterId)) {
+                throw new ArgumentNullException(nameof(dataSetWriterId));
             }
             if (string.IsNullOrEmpty(connectionId)) {
                 throw new ArgumentNullException(nameof(connectionId));
             }
             var request = _httpClient.NewRequest(
-                $"{_serviceUri}/v3/endpoints/{endpointId}/samples", Resource.Platform);
+                $"{_serviceUri}/v3/writers/{dataSetWriterId}/event", Resource.Platform);
             _serializer.SerializeToRequest(request, connectionId);
             var response = await _httpClient.PutAsync(request, ct).ConfigureAwait(false);
             response.Validate();
         }
 
         /// <inheritdoc/>
-        public async Task NodePublishUnsubscribeByEndpointAsync(string endpointId,
+        public async Task UnsubscribeDataSetEventMessagesAsync(string dataSetWriterId,
             string connectionId, CancellationToken ct) {
-            if (string.IsNullOrEmpty(endpointId)) {
-                throw new ArgumentNullException(nameof(endpointId));
+            if (string.IsNullOrEmpty(dataSetWriterId)) {
+                throw new ArgumentNullException(nameof(dataSetWriterId));
             }
             if (string.IsNullOrEmpty(connectionId)) {
                 throw new ArgumentNullException(nameof(connectionId));
             }
             var request = _httpClient.NewRequest(
-                $"{_serviceUri}/v3/endpoints/{endpointId}/samples/{connectionId}",
+                $"{_serviceUri}/v3/writers/{dataSetWriterId}/event/{connectionId}",
                 Resource.Platform);
             var response = await _httpClient.DeleteAsync(request, ct).ConfigureAwait(false);
             response.Validate();

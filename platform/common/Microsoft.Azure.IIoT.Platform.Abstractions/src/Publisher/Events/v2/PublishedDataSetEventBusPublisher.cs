@@ -6,6 +6,7 @@
 namespace Microsoft.Azure.IIoT.Platform.Publisher.Events.v2 {
     using Microsoft.Azure.IIoT.Platform.Publisher.Events.v2.Models;
     using Microsoft.Azure.IIoT.Platform.Publisher.Models;
+    using Microsoft.Azure.IIoT.Platform.Core.Models;
     using Microsoft.Azure.IIoT.Messaging;
     using System;
     using System.Threading.Tasks;
@@ -24,56 +25,56 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Events.v2 {
         }
 
         /// <inheritdoc/>
-        public Task OnPublishedDataSetVariableAddedAsync(PublisherOperationContextModel context,
+        public Task OnPublishedDataSetVariableAddedAsync(OperationContextModel context,
             string dataSetWriterId, PublishedDataSetVariableModel dataSetVariable) {
             return _bus.PublishAsync(Wrap(PublishedDataSetItemEventType.Added, context,
                 dataSetWriterId, dataSetVariable.Id, dataSetVariable));
         }
 
         /// <inheritdoc/>
-        public Task OnPublishedDataSetVariableUpdatedAsync(PublisherOperationContextModel context,
+        public Task OnPublishedDataSetVariableUpdatedAsync(OperationContextModel context,
             string dataSetWriterId, PublishedDataSetVariableModel dataSetVariable) {
             return _bus.PublishAsync(Wrap(PublishedDataSetItemEventType.Updated, context,
                 dataSetWriterId, dataSetVariable.Id, dataSetVariable));
         }
 
         /// <inheritdoc/>
-        public Task OnPublishedDataSetVariableStateChangeAsync(PublisherOperationContextModel context,
+        public Task OnPublishedDataSetVariableStateChangeAsync(OperationContextModel context,
             string dataSetWriterId, PublishedDataSetVariableModel dataSetVariable) {
             return _bus.PublishAsync(Wrap(PublishedDataSetItemEventType.StateChange, context,
                 dataSetWriterId, dataSetVariable.Id, dataSetVariable));
         }
 
         /// <inheritdoc/>
-        public Task OnPublishedDataSetVariableRemovedAsync(PublisherOperationContextModel context,
+        public Task OnPublishedDataSetVariableRemovedAsync(OperationContextModel context,
             string dataSetWriterId, string variableId) {
             return _bus.PublishAsync(Wrap(PublishedDataSetItemEventType.Removed, context,
                 dataSetWriterId, variableId, null));
         }
 
         /// <inheritdoc/>
-        public Task OnPublishedDataSetEventsAddedAsync(PublisherOperationContextModel context,
+        public Task OnPublishedDataSetEventsAddedAsync(OperationContextModel context,
             string dataSetWriterId, PublishedDataSetEventsModel eventDataSet) {
             return _bus.PublishAsync(Wrap(PublishedDataSetItemEventType.Added, context,
                 dataSetWriterId, eventDataSet));
         }
 
         /// <inheritdoc/>
-        public Task OnPublishedDataSetEventsUpdatedAsync(PublisherOperationContextModel context,
+        public Task OnPublishedDataSetEventsUpdatedAsync(OperationContextModel context,
             string dataSetWriterId, PublishedDataSetEventsModel eventDataSet) {
             return _bus.PublishAsync(Wrap(PublishedDataSetItemEventType.Updated, context,
                 dataSetWriterId, eventDataSet));
         }
 
         /// <inheritdoc/>
-        public Task OnPublishedDataSetEventsStateChangeAsync(PublisherOperationContextModel context,
+        public Task OnPublishedDataSetEventsStateChangeAsync(OperationContextModel context,
             string dataSetWriterId, PublishedDataSetEventsModel eventDataSet) {
             return _bus.PublishAsync(Wrap(PublishedDataSetItemEventType.StateChange, context,
                 dataSetWriterId, eventDataSet));
         }
 
         /// <inheritdoc/>
-        public Task OnPublishedDataSetEventsRemovedAsync(PublisherOperationContextModel context,
+        public Task OnPublishedDataSetEventsRemovedAsync(OperationContextModel context,
             string dataSetWriterId) {
             return _bus.PublishAsync(Wrap(PublishedDataSetItemEventType.Removed, context,
                 dataSetWriterId, null));
@@ -89,7 +90,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Events.v2 {
         /// <param name="dataSetVariable"></param>
         /// <returns></returns>
         private static PublishedDataSetItemEventModel Wrap(PublishedDataSetItemEventType type,
-            PublisherOperationContextModel context, string dataSetWriterId, string dataSetVariableId,
+            OperationContextModel context, string dataSetWriterId, string dataSetVariableId,
             PublishedDataSetVariableModel dataSetVariable) {
             return new PublishedDataSetItemEventModel {
                 EventType = type,
@@ -110,7 +111,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Events.v2 {
         /// <param name="dataSetEvent"></param>
         /// <returns></returns>
         private static PublishedDataSetItemEventModel Wrap(PublishedDataSetItemEventType type,
-            PublisherOperationContextModel context, string dataSetWriterId,
+            OperationContextModel context, string dataSetWriterId,
             PublishedDataSetEventsModel dataSetEvent) {
             return new PublishedDataSetItemEventModel {
                 EventType = type,

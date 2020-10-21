@@ -5,6 +5,7 @@
 
 namespace Microsoft.Azure.IIoT.Platform.Registry {
     using Microsoft.Azure.IIoT.Platform.Registry.Models;
+    using Microsoft.Azure.IIoT.Platform.Core.Models;
     using System.Threading.Tasks;
 
     /// <summary>
@@ -18,7 +19,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry {
         /// <param name="context"></param>
         /// <param name="application"></param>
         /// <returns></returns>
-        Task OnApplicationNewAsync(RegistryOperationContextModel context,
+        Task OnApplicationNewAsync(OperationContextModel context,
             ApplicationInfoModel application);
 
         /// <summary>
@@ -27,7 +28,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry {
         /// <param name="context"></param>
         /// <param name="application"></param>
         /// <returns></returns>
-        Task OnApplicationUpdatedAsync(RegistryOperationContextModel context,
+        Task OnApplicationUpdatedAsync(OperationContextModel context,
             ApplicationInfoModel application);
 
         /// <summary>
@@ -37,7 +38,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry {
         /// <param name="applicationId"></param>
         /// <param name="application"></param>
         /// <returns></returns>
-        Task OnApplicationDeletedAsync(RegistryOperationContextModel context,
+        Task OnApplicationDeletedAsync(OperationContextModel context,
             string applicationId, ApplicationInfoModel application);
     }
 }

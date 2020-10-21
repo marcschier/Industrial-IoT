@@ -3,10 +3,11 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Platform.Publisher.Storage.Services {
+namespace Microsoft.Azure.IIoT.Platform.Publisher.Storage {
     using Microsoft.Azure.IIoT.Platform.Publisher.Models;
     using Microsoft.Azure.IIoT.Platform.Core.Models;
     using Microsoft.Azure.IIoT.Serializers;
+    using Microsoft.Azure.IIoT.Hub;
     using System.Runtime.Serialization;
     using System;
     using System.Collections.Generic;
@@ -21,9 +22,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Storage.Services {
         /// Document type
         /// </summary>
         [DataMember]
-        public string ClassType { get; set; } = ClassTypeName;
-        /// <summary/>
-        public static readonly string ClassTypeName = "DataSetWriter";
+        public string ClassType { get; set; } = IdentityType.DataSetWriter;
 
         /// <summary>
         /// Identifier of the document
@@ -203,7 +202,31 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Storage.Services {
         /// Endpoint state
         /// </summary>
         [DataMember]
-        public EndpointConnectivityState? EndpointState { get; set; }
+        public ConnectionStatus? ConnectionState { get; set; }
+
+        /// <summary>
+        /// Last Connection Error code - if null operation succeeded.
+        /// </summary>
+        [DataMember]
+        public uint? ConnectionLastResultStatusCode { get; set; }
+
+        /// <summary>
+        /// Error message in case of error or null.
+        /// </summary>
+        [DataMember]
+        public string ConnectionLastResultErrorMessage { get; set; }
+
+        /// <summary>
+        /// Additional Connection diagnostics information
+        /// </summary>
+        [DataMember]
+        public VariantValue ConnectionLastResultDiagnostics { get; set; }
+
+        /// <summary>
+        /// Last Connection result change
+        /// </summary>
+        [DataMember]
+        public DateTime? ConnectionLastResultChange { get; set; }
 
         /// <summary>
         /// Writer is disabled

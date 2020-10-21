@@ -55,7 +55,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Models {
         /// <param name="context"></param>
         /// <returns></returns>
         public static WriterGroupInfoModel AsWriterGroupInfo(this WriterGroupModel model,
-            PublisherOperationContextModel context) {
+            OperationContextModel context) {
             return new WriterGroupInfoModel {
                 BatchSize = model.BatchSize,
                 PublishingInterval = model.PublishingInterval,

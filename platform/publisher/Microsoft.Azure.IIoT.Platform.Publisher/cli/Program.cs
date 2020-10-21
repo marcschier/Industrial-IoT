@@ -39,10 +39,8 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Module.Cli {
         /// </summary>
         public static void Main(string[] args) {
             var checkTrust = true;
-            var legacyTest = false;
             var withServer = false;
             var verbose = false;
-            var scale = 1;
             string deviceId = null, moduleId = null;
             Console.WriteLine("Publisher module command line interface.");
             var configuration = new ConfigurationBuilder()
@@ -83,18 +81,6 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Module.Cli {
                         case "-s":
                         case "--with-server":
                             withServer = true;
-                            break;
-                        case "-l":
-                        case "--legacy-test":
-                        case "--scale-test":
-                            legacyTest = true;
-                            withServer = true;
-                            i++;
-                            if (i < args.Length) {
-                                if (!int.TryParse(args[i], out scale)) {
-                                    i--;
-                                }
-                            }
                             break;
                         case "-v":
                         case "--verbose":
@@ -163,7 +149,7 @@ Options:
                 }
                 else {
                     WithServerAsync(config, diagnostics, logger, deviceId,
-                        moduleId, args, legacyTest, scale, verbose).Wait();
+                        moduleId, args, verbose).Wait();
                 }
             }
             catch (Exception e) {
@@ -200,11 +186,10 @@ Options:
         }
 
         /// <summary>
-        /// setup publishing from sample server
+        /// Setup publishing from sample server
         /// </summary>
         private static async Task WithServerAsync(IIoTHubConfig config, ILogAnalyticsConfig diagnostics,
-            ILogger logger, string deviceId, string moduleId, string[] args, bool startLegacy, int scale,
-            bool verbose) {
+            ILogger logger, string deviceId, string moduleId, string[] args, bool verbose) {
             var fileName = Path.GetRandomFileName() + ".json";
             try {
                 using (var cts = new CancellationTokenSource())

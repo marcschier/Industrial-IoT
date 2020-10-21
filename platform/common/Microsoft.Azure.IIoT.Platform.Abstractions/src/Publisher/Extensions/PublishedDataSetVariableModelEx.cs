@@ -4,6 +4,7 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Platform.Publisher.Models {
+    using Microsoft.Azure.IIoT.Platform.Core.Models;
     using System.Linq;
 
     /// <summary>
@@ -53,7 +54,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Models {
         /// <returns></returns>
         public static PublishedDataSetVariableModel AsDataSetVariable(
             this DataSetAddVariableRequestModel model,
-            PublisherOperationContextModel context) {
+            OperationContextModel context) {
             if (model == null) {
                 return null;
             }

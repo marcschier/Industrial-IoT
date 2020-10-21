@@ -43,7 +43,7 @@ namespace System.Threading.Tasks {
             if (result != task) {
                 throw new TimeoutException($"Timeout after {timeout}");
             }
-            return await task;
+            return await task.ConfigureAwait(false);
         }
 
         /// <summary>
@@ -57,7 +57,7 @@ namespace System.Threading.Tasks {
             if (result != task) {
                 throw new TimeoutException($"Timeout after {timeout}");
             }
-            await task;
+            await task.ConfigureAwait(false);
         }
 
         /// <summary>

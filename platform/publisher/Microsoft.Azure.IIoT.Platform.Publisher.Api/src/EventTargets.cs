@@ -31,19 +31,19 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api {
         public const string Writers = "writers";
 
         /// <summary>
-        /// Publisher sample target
-        /// </summary>
-        public const string PublisherSampleTarget = "PublisherMessage";
-
-        /// <summary>
         /// Dataset message target
         /// </summary>
-        public const string DataSetMessageTarget = "DataSetMessage";
+        public const string DataSetVariableMessageTarget = "DataSetVariableMessage";
 
         /// <summary>
         /// Dataset event targets
         /// </summary>
-        public const string DataSetEventTarget = "DataSetEvent";
+        public const string DataSetEventMessageTarget = "DataSetEventMessage";
+
+        /// <summary>
+        /// Dataset item event targets
+        /// </summary>
+        public const string DataSetItemEventTarget = "DataSetItemEvent";
 
         /// <summary>
         /// Writer event targets

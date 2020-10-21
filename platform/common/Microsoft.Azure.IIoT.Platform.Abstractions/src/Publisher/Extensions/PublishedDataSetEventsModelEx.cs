@@ -47,7 +47,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Models {
         /// <returns></returns>
         public static PublishedDataSetEventsModel AsEventDataSet(
             this DataSetAddEventRequestModel model,
-            PublisherOperationContextModel context) {
+            OperationContextModel context) {
             if (model == null) {
                 return null;
             }

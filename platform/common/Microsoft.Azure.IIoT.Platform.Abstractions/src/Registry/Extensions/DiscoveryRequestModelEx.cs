@@ -4,6 +4,7 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
+    using Microsoft.Azure.IIoT.Platform.Core.Models;
 
     /// <summary>
     /// Discovery request model extensions

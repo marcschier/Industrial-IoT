@@ -5,6 +5,7 @@
 
 namespace Microsoft.Azure.IIoT.Platform.Publisher {
     using Microsoft.Azure.IIoT.Platform.Publisher.Models;
+    using Microsoft.Azure.IIoT.Platform.Core.Models;
     using System.Threading.Tasks;
 
     /// <summary>
@@ -19,7 +20,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher {
         /// <param name="dataSetWriterId"></param>
         /// <param name="dataSetVariable"></param>
         /// <returns></returns>
-        Task OnPublishedDataSetVariableAddedAsync(PublisherOperationContextModel context,
+        Task OnPublishedDataSetVariableAddedAsync(OperationContextModel context,
             string dataSetWriterId, PublishedDataSetVariableModel dataSetVariable);
 
         /// <summary>
@@ -29,7 +30,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher {
         /// <param name="dataSetWriterId"></param>
         /// <param name="dataSetVariable"></param>
         /// <returns></returns>
-        Task OnPublishedDataSetVariableUpdatedAsync(PublisherOperationContextModel context,
+        Task OnPublishedDataSetVariableUpdatedAsync(OperationContextModel context,
             string dataSetWriterId, PublishedDataSetVariableModel dataSetVariable);
 
         /// <summary>
@@ -39,7 +40,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher {
         /// <param name="dataSetWriterId"></param>
         /// <param name="dataSetVariable"></param>
         /// <returns></returns>
-        Task OnPublishedDataSetVariableStateChangeAsync(PublisherOperationContextModel context,
+        Task OnPublishedDataSetVariableStateChangeAsync(OperationContextModel context,
             string dataSetWriterId, PublishedDataSetVariableModel dataSetVariable);
 
         /// <summary>
@@ -49,7 +50,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher {
         /// <param name="dataSetWriterId"></param>
         /// <param name="variableId"></param>
         /// <returns></returns>
-        Task OnPublishedDataSetVariableRemovedAsync(PublisherOperationContextModel context,
+        Task OnPublishedDataSetVariableRemovedAsync(OperationContextModel context,
             string dataSetWriterId, string variableId);
 
         /// <summary>
@@ -59,7 +60,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher {
         /// <param name="dataSetWriterId"></param>
         /// <param name="eventDataSet"></param>
         /// <returns></returns>
-        Task OnPublishedDataSetEventsAddedAsync(PublisherOperationContextModel context,
+        Task OnPublishedDataSetEventsAddedAsync(OperationContextModel context,
             string dataSetWriterId, PublishedDataSetEventsModel eventDataSet);
 
         /// <summary>
@@ -69,7 +70,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher {
         /// <param name="dataSetWriterId"></param>
         /// <param name="eventDataSet"></param>
         /// <returns></returns>
-        Task OnPublishedDataSetEventsUpdatedAsync(PublisherOperationContextModel context,
+        Task OnPublishedDataSetEventsUpdatedAsync(OperationContextModel context,
             string dataSetWriterId, PublishedDataSetEventsModel eventDataSet);
 
         /// <summary>
@@ -79,7 +80,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher {
         /// <param name="dataSetWriterId"></param>
         /// <param name="eventDataSet"></param>
         /// <returns></returns>
-        Task OnPublishedDataSetEventsStateChangeAsync(PublisherOperationContextModel context,
+        Task OnPublishedDataSetEventsStateChangeAsync(OperationContextModel context,
             string dataSetWriterId, PublishedDataSetEventsModel eventDataSet);
 
         /// <summary>
@@ -88,7 +89,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher {
         /// <param name="context"></param>
         /// <param name="dataSetWriterId"></param>
         /// <returns></returns>
-        Task OnPublishedDataSetEventsRemovedAsync(PublisherOperationContextModel context,
+        Task OnPublishedDataSetEventsRemovedAsync(OperationContextModel context,
             string dataSetWriterId);
     }
 }

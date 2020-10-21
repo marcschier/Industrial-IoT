@@ -53,7 +53,7 @@ namespace Microsoft.Azure.IIoT.Platform.Directory.Api.Clients {
         /// <inheritdoc/>
         public async Task UpdateSupervisorAsync(string supervisorId,
             SupervisorUpdateModel request, CancellationToken ct) {
-            await _client.UpdateSupervisorAsync(supervisorId, request.ToApiModel(), ct);
+            await _client.UpdateSupervisorAsync(supervisorId, request.ToApiModel(), ct).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>

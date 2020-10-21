@@ -5,6 +5,7 @@
 
 namespace Microsoft.Azure.IIoT.Platform.Publisher {
     using Microsoft.Azure.IIoT.Platform.Publisher.Models;
+    using Microsoft.Azure.IIoT.Platform.Core.Models;
     using System.Threading;
     using System.Threading.Tasks;
 
@@ -21,7 +22,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher {
         /// <param name="ct"></param>
         /// <returns></returns>
         Task ImportWriterGroupAsync(WriterGroupModel writerGroup,
-            PublisherOperationContextModel context = null,
+            OperationContextModel context = null,
             CancellationToken ct = default);
     }
 }

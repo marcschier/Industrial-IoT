@@ -33,7 +33,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api.Models {
         /// </summary>
         [DataMember(Name = "endpointId", Order = 2,
             EmitDefaultValue = false)]
-        public string EndpointId { get; set; }
+        public string VariableId { get; set; }
 
         /// <summary>
         /// Node id

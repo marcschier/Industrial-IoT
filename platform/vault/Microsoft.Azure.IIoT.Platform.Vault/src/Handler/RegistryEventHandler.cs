@@ -7,6 +7,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Handler {
     using Microsoft.Azure.IIoT.Platform.Vault.Models;
     using Microsoft.Azure.IIoT.Platform.Registry;
     using Microsoft.Azure.IIoT.Platform.Registry.Models;
+    using Microsoft.Azure.IIoT.Platform.Core.Models;
     using Microsoft.Azure.IIoT.Utils;
     using System;
     using System.Threading.Tasks;
@@ -26,49 +27,49 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Handler {
         }
 
         /// <inheritdoc/>
-        public Task OnApplicationNewAsync(RegistryOperationContextModel context,
+        public Task OnApplicationNewAsync(OperationContextModel context,
             ApplicationInfoModel application) {
             return Task.CompletedTask;
         }
 
         /// <inheritdoc/>
-        public Task OnApplicationUpdatedAsync(RegistryOperationContextModel context,
+        public Task OnApplicationUpdatedAsync(OperationContextModel context,
             ApplicationInfoModel application) {
             return Task.CompletedTask;
         }
 
         /// <inheritdoc/>
-        public Task OnApplicationDeletedAsync(RegistryOperationContextModel context,
+        public Task OnApplicationDeletedAsync(OperationContextModel context,
             string applicationId, ApplicationInfoModel application) {
             return RemoveAllRequestsForEntityAsync(applicationId, context);
         }
 
         /// <inheritdoc/>
-        public Task OnEndpointNewAsync(RegistryOperationContextModel context,
+        public Task OnEndpointNewAsync(OperationContextModel context,
             EndpointInfoModel endpoint) {
             return Task.CompletedTask;
         }
 
         /// <inheritdoc/>
-        public Task OnEndpointActivatedAsync(RegistryOperationContextModel context,
+        public Task OnEndpointActivatedAsync(OperationContextModel context,
             EndpointInfoModel endpoint) {
             return Task.CompletedTask;
         }
 
         /// <inheritdoc/>
-        public Task OnEndpointDeactivatedAsync(RegistryOperationContextModel context,
+        public Task OnEndpointDeactivatedAsync(OperationContextModel context,
             EndpointInfoModel endpoint) {
             return Task.CompletedTask;
         }
 
         /// <inheritdoc/>
-        public Task OnEndpointUpdatedAsync(RegistryOperationContextModel context,
+        public Task OnEndpointUpdatedAsync(OperationContextModel context,
             EndpointInfoModel endpoint) {
             return Task.CompletedTask;
         }
 
         /// <inheritdoc/>
-        public Task OnEndpointDeletedAsync(RegistryOperationContextModel context,
+        public Task OnEndpointDeletedAsync(OperationContextModel context,
             string endpointId, EndpointInfoModel endpoint) {
             return RemoveAllRequestsForEntityAsync(endpointId, context);
         }
@@ -80,7 +81,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Handler {
         /// <param name="context"></param>
         /// <returns></returns>
         private async Task RemoveAllRequestsForEntityAsync(string entityId,
-            RegistryOperationContextModel context) {
+            OperationContextModel context) {
             string nextPageLink = null;
             var result = await _requests.QueryRequestsAsync(
                 new CertificateRequestQueryRequestModel {

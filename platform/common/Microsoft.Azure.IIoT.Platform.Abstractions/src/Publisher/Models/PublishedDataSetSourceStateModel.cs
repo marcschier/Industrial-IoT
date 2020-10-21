@@ -13,9 +13,9 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Models {
     public class PublishedDataSetSourceStateModel {
 
         /// <summary>
-        /// Last endpoint state
+        /// Connection state
         /// </summary>
-        public EndpointConnectivityState? EndpointState { get; set; }
+        public ConnectionStateModel ConnectionState { get; set; }
 
         /// <summary>
         /// Last operation result

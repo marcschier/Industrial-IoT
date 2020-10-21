@@ -28,11 +28,11 @@ namespace Microsoft.Azure.IIoT.Platform.Subscriber.Models {
         public string DataSetWriterId { get; set; }
 
         /// <summary>
-        /// Endpoint identifier
+        /// Variable identifier
         /// </summary>
-        [DataMember(Name = "endpointId", Order = 2,
+        [DataMember(Name = "variableId", Order = 2,
             EmitDefaultValue = false)]
-        public string EndpointId { get; set; }
+        public string VariableId { get; set; }
 
         /// <summary>
         /// Node id

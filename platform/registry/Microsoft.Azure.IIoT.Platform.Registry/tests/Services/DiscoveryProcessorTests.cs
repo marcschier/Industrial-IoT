@@ -34,10 +34,10 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                 discoveryResults = new List<DiscoveryResultModel>();
 
                 // Run
-                await service.ProcessDiscoveryEventsAsync(discoverer, new DiscoveryContextModel(), discoveryResults);
+                await service.ProcessDiscoveryEventsAsync(discoverer, new DiscoveryContextModel(), discoveryResults).ConfigureAwait(false);
 
                 // Assert
-                var inreg = await ListApplicationsAsync(mock);
+                var inreg = await ListApplicationsAsync(mock).ConfigureAwait(false);
                 Assert.Empty(inreg);
             }
         }
@@ -48,10 +48,10 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                 var service = mock.Create<IApplicationBulkProcessor>();
 
                 // Run
-                await service.ProcessDiscoveryEventsAsync(discoverer, new DiscoveryContextModel(), discoveryResults.Take(1));
+                await service.ProcessDiscoveryEventsAsync(discoverer, new DiscoveryContextModel(), discoveryResults.Take(1)).ConfigureAwait(false);
 
                 // Assert
-                var inreg = await ListApplicationsAsync(mock);
+                var inreg = await ListApplicationsAsync(mock).ConfigureAwait(false);
                 Assert.Single(inreg);
                 Assert.All(inreg, a => Assert.Equal(discoverer, a.Application.DiscovererId));
                 Assert.All(inreg, a => Assert.All(a.Endpoints, e => Assert.Equal(discoverer, e.DiscovererId)));
@@ -66,10 +66,10 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                 var service = mock.Create<IApplicationBulkProcessor>();
 
                 // Run
-                await service.ProcessDiscoveryEventsAsync(discoverer, new DiscoveryContextModel(), discoveryResults);
+                await service.ProcessDiscoveryEventsAsync(discoverer, new DiscoveryContextModel(), discoveryResults).ConfigureAwait(false);
 
                 // Assert
-                var inreg = await ListApplicationsAsync(mock);
+                var inreg = await ListApplicationsAsync(mock).ConfigureAwait(false);
                 Assert.True(inreg.IsSameAs(expected));
                 Assert.All(inreg, a => Assert.Equal(discoverer, a.Application.DiscovererId));
                 Assert.All(inreg, a => Assert.All(a.Endpoints, e => Assert.Equal(discoverer, e.DiscovererId)));
@@ -84,10 +84,10 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                 var service = mock.Create<IApplicationBulkProcessor>();
 
                 // Run
-                await service.ProcessDiscoveryEventsAsync(discoverer, new DiscoveryContextModel(), discoveryResults);
+                await service.ProcessDiscoveryEventsAsync(discoverer, new DiscoveryContextModel(), discoveryResults).ConfigureAwait(false);
 
                 // Assert
-                var inreg = await ListApplicationsAsync(mock);
+                var inreg = await ListApplicationsAsync(mock).ConfigureAwait(false);
                 Assert.True(inreg.IsSameAs(expected));
                 Assert.All(inreg, a => Assert.Equal(discoverer, a.Application.DiscovererId));
                 Assert.All(inreg, a => Assert.All(a.Endpoints, e => Assert.Equal(discoverer, e.DiscovererId)));
@@ -102,10 +102,10 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                 var service = mock.Create<IApplicationBulkProcessor>();
 
                 // Run
-                await service.ProcessDiscoveryEventsAsync(discoverer, new DiscoveryContextModel(), discoveryResults);
+                await service.ProcessDiscoveryEventsAsync(discoverer, new DiscoveryContextModel(), discoveryResults).ConfigureAwait(false);
 
                 // Assert
-                var inreg = await ListApplicationsAsync(mock);
+                var inreg = await ListApplicationsAsync(mock).ConfigureAwait(false);
                 Assert.True(inreg.IsSameAs(expected));
                 Assert.All(inreg, a => Assert.Equal(discoverer, a.Application.DiscovererId));
                 Assert.All(inreg, a => Assert.All(a.Endpoints, e => Assert.Equal(discoverer, e.DiscovererId)));
@@ -130,22 +130,22 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                 var service = mock.Create<IApplicationBulkProcessor>();
 
                 // Run
-                await service.ProcessDiscoveryEventsAsync(discoverer, new DiscoveryContextModel(), discoveryResults);
+                await service.ProcessDiscoveryEventsAsync(discoverer, new DiscoveryContextModel(), discoveryResults).ConfigureAwait(false);
 
                 // Assert
 
                 // Assert that 5 new items was added and 5 old ones are in the database
-                var inreg = await ListApplicationsAsync(mock);
+                var inreg = await ListApplicationsAsync(mock).ConfigureAwait(false);
                 Assert.Equal(10, inreg.Count);
                 Assert.All(inreg, a => Assert.False(a.Application.IsNotSeen()));
                 Assert.All(inreg, a => Assert.All(a.Endpoints, e => Assert.False(a.Application.IsNotSeen())));
 
-                var oldItems = await ListApplicationsAsync(mock, discovererId: oldDiscovererId);
+                var oldItems = await ListApplicationsAsync(mock, discovererId: oldDiscovererId).ConfigureAwait(false);
                 Assert.Equal(5, oldItems.Count);
                 Assert.All(oldItems, a => Assert.Equal(oldDiscovererId, a.Application.DiscovererId));
                 Assert.All(oldItems, a => Assert.All(a.Endpoints, e => Assert.Equal(oldDiscovererId, e.DiscovererId)));
 
-                var newItems = await ListApplicationsAsync(mock, discovererId: discoverer);
+                var newItems = await ListApplicationsAsync(mock, discovererId: discoverer).ConfigureAwait(false);
                 Assert.True(newItems.IsSameAs(expected));
                 Assert.All(newItems, a => Assert.Equal(discoverer, a.Application.DiscovererId));
                 Assert.All(newItems, a => Assert.All(a.Endpoints, e => Assert.Equal(discoverer, e.DiscovererId)));
@@ -170,19 +170,19 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                 // Assert there is still the same content as originally
 
                 // Run
-                await service.ProcessDiscoveryEventsAsync(discoverer, new DiscoveryContextModel(), discoveryResults);
+                await service.ProcessDiscoveryEventsAsync(discoverer, new DiscoveryContextModel(), discoveryResults).ConfigureAwait(false);
 
                 // Assert that one new item was added and 5 old ones are in the database
-                var inreg = await ListApplicationsAsync(mock);
+                var inreg = await ListApplicationsAsync(mock).ConfigureAwait(false);
                 Assert.Equal(6, inreg.Count);
                 Assert.All(inreg, a => Assert.False(a.Application.IsNotSeen()));
                 Assert.All(inreg, a => Assert.All(a.Endpoints, e => Assert.False(a.Application.IsNotSeen())));
 
-                var oldItems = await ListApplicationsAsync(mock, discovererId: oldDiscovererId);
+                var oldItems = await ListApplicationsAsync(mock, discovererId: oldDiscovererId).ConfigureAwait(false);
                 Assert.Equal(5, oldItems.Count);
                 Assert.All(oldItems, a => Assert.Equal(oldDiscovererId, a.Application.DiscovererId));
                 Assert.All(oldItems, a => Assert.All(a.Endpoints, e => Assert.Equal(oldDiscovererId, e.DiscovererId)));
-                var newItems = await ListApplicationsAsync(mock, discovererId: discoverer);
+                var newItems = await ListApplicationsAsync(mock, discovererId: discoverer).ConfigureAwait(false);
                 Assert.Single(newItems);
                 Assert.All(newItems, a => Assert.Equal(discoverer, a.Application.DiscovererId));
                 Assert.All(newItems, a => Assert.All(a.Endpoints, e => Assert.Equal(discoverer, e.DiscovererId)));
@@ -203,10 +203,10 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                 var service = mock.Create<IApplicationBulkProcessor>();
 
                 // Run
-                await service.ProcessDiscoveryEventsAsync(discoverer, new DiscoveryContextModel(), discoveryResults);
+                await service.ProcessDiscoveryEventsAsync(discoverer, new DiscoveryContextModel(), discoveryResults).ConfigureAwait(false);
 
                 // Assert
-                var inreg = await ListApplicationsAsync(mock);
+                var inreg = await ListApplicationsAsync(mock).ConfigureAwait(false);
                 Assert.True(inreg.IsSameAs(expected));
                 Assert.All(inreg, a => Assert.Equal(discoverer, a.Application.DiscovererId));
                 Assert.All(inreg, a => Assert.False(a.Application.IsNotSeen()));
@@ -229,19 +229,19 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                 var service = mock.Create<IApplicationBulkProcessor>();
 
                 // Run
-                await service.ProcessDiscoveryEventsAsync(discoverer, new DiscoveryContextModel(), discoveryResults.Take(1));
+                await service.ProcessDiscoveryEventsAsync(discoverer, new DiscoveryContextModel(), discoveryResults.Take(1)).ConfigureAwait(false);
 
                 // Assert that one item is enabled and 4 are still not found
-                var inreg = await ListApplicationsAsync(mock);
+                var inreg = await ListApplicationsAsync(mock).ConfigureAwait(false);
                 Assert.Equal(5, inreg.Count);
                 Assert.All(inreg, a => Assert.Equal(discoverer, a.Application.DiscovererId));
                 Assert.All(inreg, a => Assert.All(a.Endpoints, e => Assert.Equal(discoverer, e.DiscovererId)));
 
-                var notSeen = await ListApplicationsAsync(mock, visibilty: EntityVisibility.NotSeen);
+                var notSeen = await ListApplicationsAsync(mock, visibilty: EntityVisibility.NotSeen).ConfigureAwait(false);
                 Assert.Equal(4, notSeen.Count);
                 Assert.All(notSeen, a => Assert.True(a.Application.IsNotSeen()));
                 Assert.All(notSeen, a => Assert.All(a.Endpoints, e => Assert.True(a.Application.IsNotSeen())));
-                var found = await ListApplicationsAsync(mock, visibilty: EntityVisibility.Found);
+                var found = await ListApplicationsAsync(mock, visibilty: EntityVisibility.Found).ConfigureAwait(false);
                 Assert.Single(found);
                 Assert.All(found, a => Assert.False(a.Application.IsNotSeen()));
                 Assert.All(found, a => Assert.All(a.Endpoints, e => Assert.False(a.Application.IsNotSeen())));
@@ -259,12 +259,12 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                 var service = mock.Create<IApplicationBulkProcessor>();
 
                 // Run
-                await service.ProcessDiscoveryEventsAsync(discoverer, new DiscoveryContextModel(), discoveryResults);
+                await service.ProcessDiscoveryEventsAsync(discoverer, new DiscoveryContextModel(), discoveryResults).ConfigureAwait(false);
 
                 // Assert
 
                 // Assert all applications and endpoints were not found
-                var inreg = await ListApplicationsAsync(mock);
+                var inreg = await ListApplicationsAsync(mock).ConfigureAwait(false);
                 Assert.Equal(5, inreg.Count);
                 Assert.All(inreg, a => Assert.Equal(discoverer, a.Application.DiscovererId));
                 Assert.All(inreg, a => Assert.All(a.Endpoints, e => Assert.Equal(discoverer, e.DiscovererId)));
@@ -287,11 +287,11 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                 var service = mock.Create<IApplicationBulkProcessor>();
 
                 // Run
-                await service.ProcessDiscoveryEventsAsync(discoverer, new DiscoveryContextModel(), discoveryResults);
+                await service.ProcessDiscoveryEventsAsync(discoverer, new DiscoveryContextModel(), discoveryResults).ConfigureAwait(false);
 
                 // Assert
                 // All applications, but only one endpoint each is enabled
-                var inreg = await ListApplicationsAsync(mock);
+                var inreg = await ListApplicationsAsync(mock).ConfigureAwait(false);
                 Assert.True(inreg.Select(a => a.Application).IsSameAs(expected.Select(b => b.Application)));
                 Assert.All(inreg, a => Assert.Equal(discoverer, a.Application.DiscovererId));
                 Assert.All(inreg, a => Assert.All(a.Endpoints, e => Assert.Equal(discoverer, e.DiscovererId)));
@@ -308,12 +308,12 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
             EntityVisibility? visibilty = null, string discovererId = null) {
             IApplicationRegistry registry = mock.Create<ApplicationRegistry>();
             var apps = new List<ApplicationRegistrationModel>();
-            var result = await registry.QueryAllApplicationsAsync(new ApplicationRegistrationQueryModel {
+            var result = await registry.QueryAllApplicationsAsync(new ApplicationInfoQueryModel {
                 Visibility = visibilty,
                 DiscovererId = discovererId
-            });
+            }).ConfigureAwait(false);
             foreach (var app in result) {
-                var reg = await registry.GetApplicationAsync(app.ApplicationId);
+                var reg = await registry.GetApplicationAsync(app.ApplicationId).ConfigureAwait(false);
                 apps.Add(reg);
             }
             return apps;

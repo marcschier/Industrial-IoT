@@ -289,7 +289,6 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service.Api {
             var expected = new EndpointEventModel {
                 Endpoint = new EndpointInfoModel {
                     ApplicationId = "TestSigfsdfg  ff",
-                    ActivationState = IIoT.Platform.Registry.Models.EntityActivationState.Activated,
                 }.SetNotSeen()
             };
             var result = new TaskCompletionSource<EndpointEventApiModel>(TaskCreationOptions.RunContinuationsAsynchronously);
@@ -306,8 +305,6 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service.Api {
                 Assert.NotNull(received?.Endpoint);
                 Assert.Equal(expected.Endpoint.NotSeenSince, received.Endpoint.NotSeenSince);
                 Assert.Equal(expected.Endpoint.ApplicationId, received.Endpoint.ApplicationId);
-                Assert.Equal(expected.Endpoint.ActivationState,
-                    (IIoT.Platform.Registry.Models.EntityActivationState)received.Endpoint.ActivationState);
             }
         }
 
@@ -323,7 +320,6 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service.Api {
             var expected = new EndpointEventModel {
                 Endpoint = new EndpointInfoModel {
                     ApplicationId = "TestSigfsdfg  ff",
-                    ActivationState = IIoT.Platform.Registry.Models.EntityActivationState.Activated,
                 }.SetNotSeen()
             };
             var result = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);

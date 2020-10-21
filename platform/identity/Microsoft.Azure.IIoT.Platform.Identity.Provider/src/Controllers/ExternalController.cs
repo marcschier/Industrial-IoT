@@ -92,7 +92,7 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Provider.Controllers {
         public async Task<IActionResult> Callback() {
 #pragma warning restore IDE1006 // Naming Styles
             // read external identity from the temporary cookie
-            var result = await HttpContext.AuthenticateAsync(IdentityServerConstants.ExternalCookieAuthenticationScheme);
+            var result = await HttpContext.AuthenticateAsync(IdentityServerConstants.ExternalCookieAuthenticationScheme).ConfigureAwait(false);
             if (result?.Succeeded != true) {
                 throw new Exception("External authentication error");
             }
@@ -103,12 +103,12 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Provider.Controllers {
             }
 
             // lookup our user and external provider info
-            var (user, provider, providerUserId, claims) = await FindUserFromExternalProviderAsync(result);
+            var (user, provider, providerUserId, claims) = await FindUserFromExternalProviderAsync(result).ConfigureAwait(false);
             if (user == null) {
                 // this might be where you might initiate a custom workflow for user registration
                 // in this sample we don't show how that would be done, as our sample implementation
                 // simply auto-provisions new external user
-                user = await AutoProvisionUserAsync(provider, providerUserId, claims);
+                user = await AutoProvisionUserAsync(provider, providerUserId, claims).ConfigureAwait(false);
             }
 
             // this allows us to collect any additional claims or properties
@@ -121,7 +121,7 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Provider.Controllers {
             // issue authentication cookie for user
             // we must issue the cookie maually, and can't use the SignInManager because
             // it doesn't expose an API to issue additional claims from the login workflow
-            var principal = await _signInManager.CreateUserPrincipalAsync(user);
+            var principal = await _signInManager.CreateUserPrincipalAsync(user).ConfigureAwait(false);
             additionalLocalClaims.AddRange(principal.Claims);
             var name = principal.FindFirst(JwtClaimTypes.Name)?.Value ?? user.Id;
 
@@ -131,17 +131,17 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Provider.Controllers {
                 AdditionalClaims = additionalLocalClaims
             };
 
-            await HttpContext.SignInAsync(isuser, localSignInProps);
+            await HttpContext.SignInAsync(isuser, localSignInProps).ConfigureAwait(false);
 
             // delete temporary cookie used during external authentication
-            await HttpContext.SignOutAsync(IdentityServerConstants.ExternalCookieAuthenticationScheme);
+            await HttpContext.SignOutAsync(IdentityServerConstants.ExternalCookieAuthenticationScheme).ConfigureAwait(false);
 
             // retrieve return URL
             var returnUrl = result.Properties.Items["returnUrl"] ?? "~/";
 
             // check if external login is in the context of an OIDC request
-            var context = await _interaction.GetAuthorizationContextAsync(returnUrl);
-            await _events.RaiseAsync(new UserLoginSuccessEvent(provider, providerUserId, user.Id, name, true, context?.Client.ClientId));
+            var context = await _interaction.GetAuthorizationContextAsync(returnUrl).ConfigureAwait(false);
+            await _events.RaiseAsync(new UserLoginSuccessEvent(provider, providerUserId, user.Id, name, true, context?.Client.ClientId)).ConfigureAwait(false);
 
             if (context != null) {
                 if (context.IsNativeClient()) {
@@ -173,7 +173,7 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Provider.Controllers {
             var providerUserId = userIdClaim.Value;
 
             // find external user
-            var user = await _userManager.FindByLoginAsync(provider, providerUserId);
+            var user = await _userManager.FindByLoginAsync(provider, providerUserId).ConfigureAwait(false);
 
             return (user, provider, providerUserId, claims);
         }
@@ -214,19 +214,19 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Provider.Controllers {
             var user = new UserModel {
                 UserName = Guid.NewGuid().ToString(),
             };
-            var identityResult = await _userManager.CreateAsync(user);
+            var identityResult = await _userManager.CreateAsync(user).ConfigureAwait(false);
             if (!identityResult.Succeeded) {
                 throw new Exception(identityResult.Errors.First().Description);
             }
 
             if (filtered.Any()) {
-                identityResult = await _userManager.AddClaimsAsync(user, filtered);
+                identityResult = await _userManager.AddClaimsAsync(user, filtered).ConfigureAwait(false);
                 if (!identityResult.Succeeded) {
                     throw new Exception(identityResult.Errors.First().Description);
                 }
             }
 
-            identityResult = await _userManager.AddLoginAsync(user, new UserLoginInfo(provider, providerUserId, provider));
+            identityResult = await _userManager.AddLoginAsync(user, new UserLoginInfo(provider, providerUserId, provider)).ConfigureAwait(false);
             if (!identityResult.Succeeded) {
                 throw new Exception(identityResult.Errors.First().Description);
             }

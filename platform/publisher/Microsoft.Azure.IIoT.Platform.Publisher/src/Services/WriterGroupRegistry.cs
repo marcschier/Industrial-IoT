@@ -62,7 +62,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
         /// <inheritdoc/>
         public async Task<DataSetAddVariableBatchResultModel> AddVariablesToDataSetWriterAsync(
             string dataSetWriterId, DataSetAddVariableBatchRequestModel request,
-            PublisherOperationContextModel context, CancellationToken ct) {
+            OperationContextModel context, CancellationToken ct) {
             if (request is null) {
                 throw new ArgumentNullException(nameof(request));
             }
@@ -121,7 +121,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
         /// <inheritdoc/>
         public async Task<DataSetAddVariableBatchResultModel> AddVariablesToDefaultDataSetWriterAsync(
             string endpointId, DataSetAddVariableBatchRequestModel request,
-            PublisherOperationContextModel context, CancellationToken ct) {
+            OperationContextModel context, CancellationToken ct) {
             if (string.IsNullOrEmpty(endpointId)) {
                 throw new ArgumentNullException(nameof(endpointId));
             }
@@ -184,7 +184,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
 
         /// <inheritdoc/>
         public async Task ImportWriterGroupAsync(WriterGroupModel writerGroup,
-            PublisherOperationContextModel context, CancellationToken ct) {
+            OperationContextModel context, CancellationToken ct) {
             if (writerGroup == null) {
                 throw new ArgumentNullException(nameof(writerGroup));
             }
@@ -200,7 +200,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                     if (existing == null) {
                         // keep disabled until we activate
                         group.State = new WriterGroupStateModel {
-                            State = WriterGroupState.Disabled,
+                            LastState = WriterGroupStatus.Disabled,
                             LastStateChange = DateTime.UtcNow
                         };
                     }
@@ -300,7 +300,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
         /// <inheritdoc/>
         public async Task<DataSetAddEventResultModel> AddEventDataSetAsync(
             string dataSetWriterId, DataSetAddEventRequestModel request,
-            PublisherOperationContextModel context, CancellationToken ct) {
+            OperationContextModel context, CancellationToken ct) {
             if (string.IsNullOrEmpty(dataSetWriterId)) {
                 throw new ArgumentNullException(nameof(dataSetWriterId));
             }
@@ -326,7 +326,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
         /// <inheritdoc/>
         public async Task<DataSetAddVariableResultModel> AddDataSetVariableAsync(
             string dataSetWriterId, DataSetAddVariableRequestModel request,
-            PublisherOperationContextModel context, CancellationToken ct) {
+            OperationContextModel context, CancellationToken ct) {
             if (string.IsNullOrEmpty(dataSetWriterId)) {
                 throw new ArgumentNullException(nameof(dataSetWriterId));
             }
@@ -353,7 +353,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
         /// <inheritdoc/>
         public async Task<DataSetWriterAddResultModel> AddDataSetWriterAsync(
             DataSetWriterAddRequestModel request,
-            PublisherOperationContextModel context, CancellationToken ct) {
+            OperationContextModel context, CancellationToken ct) {
             if (request == null) {
                 throw new ArgumentNullException(nameof(request));
             }
@@ -405,7 +405,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
         /// <inheritdoc/>
         public async Task<WriterGroupAddResultModel> AddWriterGroupAsync(
             WriterGroupAddRequestModel request,
-            PublisherOperationContextModel context, CancellationToken ct) {
+            OperationContextModel context, CancellationToken ct) {
             if (request == null) {
                 throw new ArgumentNullException(nameof(request));
             }
@@ -425,13 +425,13 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
 
         /// <inheritdoc/>
         public Task ActivateWriterGroupAsync(string writerGroupId,
-            PublisherOperationContextModel context, CancellationToken ct) {
+            OperationContextModel context, CancellationToken ct) {
             return ActivateDeactivateWriterGroupAsync(writerGroupId, true, context, ct);
         }
 
         /// <inheritdoc/>
         public Task DeactivateWriterGroupAsync(string writerGroupId,
-            PublisherOperationContextModel context, CancellationToken ct) {
+            OperationContextModel context, CancellationToken ct) {
             return ActivateDeactivateWriterGroupAsync(writerGroupId, false, context, ct);
         }
 
@@ -531,7 +531,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
 
         /// <inheritdoc/>
         public async Task UpdateEventDataSetAsync(string dataSetWriterId,
-            DataSetUpdateEventRequestModel request, PublisherOperationContextModel context,
+            DataSetUpdateEventRequestModel request, OperationContextModel context,
             CancellationToken ct) {
             if (string.IsNullOrEmpty(dataSetWriterId)) {
                 throw new ArgumentNullException(nameof(dataSetWriterId));
@@ -589,7 +589,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
         /// <inheritdoc/>
         public async Task UpdateDataSetVariableAsync(string dataSetWriterId,
             string variableId, DataSetUpdateVariableRequestModel request,
-            PublisherOperationContextModel context, CancellationToken ct) {
+            OperationContextModel context, CancellationToken ct) {
             if (string.IsNullOrEmpty(dataSetWriterId)) {
                 throw new ArgumentNullException(nameof(dataSetWriterId));
             }
@@ -676,7 +676,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
         /// <inheritdoc/>
         public async Task UpdateDataSetWriterAsync(string dataSetWriterId,
             DataSetWriterUpdateRequestModel request,
-            PublisherOperationContextModel context, CancellationToken ct) {
+            OperationContextModel context, CancellationToken ct) {
             if (string.IsNullOrEmpty(dataSetWriterId)) {
                 throw new ArgumentNullException(nameof(dataSetWriterId));
             }
@@ -797,7 +797,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
         /// <inheritdoc/>
         public async Task UpdateWriterGroupAsync(string writerGroupId,
             WriterGroupUpdateRequestModel request,
-            PublisherOperationContextModel context, CancellationToken ct) {
+            OperationContextModel context, CancellationToken ct) {
             if (string.IsNullOrEmpty(writerGroupId)) {
                 throw new ArgumentNullException(nameof(writerGroupId));
             }
@@ -899,7 +899,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
         /// <inheritdoc/>
         public async Task<DataSetRemoveVariableBatchResultModel> RemoveVariablesFromDataSetWriterAsync(
             string dataSetWriterId, DataSetRemoveVariableBatchRequestModel request,
-            PublisherOperationContextModel context, CancellationToken ct) {
+            OperationContextModel context, CancellationToken ct) {
             if (string.IsNullOrEmpty(dataSetWriterId)) {
                 throw new ArgumentNullException(nameof(dataSetWriterId));
             }
@@ -950,7 +950,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
         /// <inheritdoc/>
         public async Task RemoveDataSetVariableAsync(
             string dataSetWriterId, string variableId, string generationId,
-            PublisherOperationContextModel context, CancellationToken ct) {
+            OperationContextModel context, CancellationToken ct) {
             if (string.IsNullOrEmpty(variableId)) {
                 throw new ArgumentNullException(nameof(variableId));
             }
@@ -967,7 +967,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
 
         /// <inheritdoc/>
         public async Task RemoveEventDataSetAsync(string dataSetWriterId,
-            string generationId, PublisherOperationContextModel context,
+            string generationId, OperationContextModel context,
             CancellationToken ct) {
             if (string.IsNullOrEmpty(dataSetWriterId)) {
                 throw new ArgumentNullException(nameof(dataSetWriterId));
@@ -985,7 +985,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
 
         /// <inheritdoc/>
         public async Task RemoveDataSetWriterAsync(string dataSetWriterId,
-            string generationId, PublisherOperationContextModel context,
+            string generationId, OperationContextModel context,
             CancellationToken ct) {
             if (string.IsNullOrEmpty(dataSetWriterId)) {
                 throw new ArgumentNullException(nameof(dataSetWriterId));
@@ -1009,7 +1009,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
 
         /// <inheritdoc/>
         public async Task RemoveWriterGroupAsync(string writerGroupId,
-            string generationId, PublisherOperationContextModel context,
+            string generationId, OperationContextModel context,
             CancellationToken ct) {
             if (string.IsNullOrEmpty(writerGroupId)) {
                 throw new ArgumentNullException(nameof(writerGroupId));
@@ -1073,7 +1073,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
         /// 
         /// <returns></returns>
         private async Task<WriterGroupInfoModel> EnsureDefaultWriterGroupExistsAsync(
-            PublisherOperationContextModel context, CancellationToken ct) {
+            OperationContextModel context, CancellationToken ct) {
             var group = await _groups.AddOrUpdateAsync(kDefaultGroupId,
                 existing => {
                     if (existing != null) {
@@ -1089,7 +1089,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                             Schema = MessageSchema.PubSub,
                             Encoding = MessageEncoding.Json,
                             State = new WriterGroupStateModel {
-                                State = WriterGroupState.Disabled,
+                                LastState = WriterGroupStatus.Disabled,
                                 LastStateChange = DateTime.UtcNow
                             }
                         };
@@ -1119,7 +1119,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
         /// <param name="ct"></param>
         /// <returns></returns>
         private async Task<DataSetWriterInfoModel> EnsureDefaultDataSetWriterExistsAsync(
-            string endpointId, PublisherOperationContextModel context,
+            string endpointId, OperationContextModel context,
             TimeSpan? publishingInterval, CredentialModel user, CancellationToken ct) {
             // Find the specified endpoint and fail if not exist
             var endpoint = await _endpoints.FindEndpointAsync(endpointId, ct).ConfigureAwait(false);
@@ -1200,27 +1200,27 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
         /// <param name="ct"></param>
         /// <returns></returns>
         private async Task ActivateDeactivateWriterGroupAsync(string writerGroupId,
-            bool activate, PublisherOperationContextModel context, CancellationToken ct) {
+            bool activate, OperationContextModel context, CancellationToken ct) {
             if (string.IsNullOrEmpty(writerGroupId)) {
                 throw new ArgumentNullException(nameof(writerGroupId));
             }
             var updated = false;
             var lastResultChange = context?.Time ?? DateTime.UtcNow;
             var group = await _groups.UpdateAsync(writerGroupId, existing => {
-                var existingState = existing.State?.State ?? WriterGroupState.Disabled;
+                var existingState = existing.State?.LastState ?? WriterGroupStatus.Disabled;
                 updated = false;
-                if (existingState == WriterGroupState.Disabled && activate) {
+                if (existingState == WriterGroupStatus.Disabled && activate) {
                     // Activate
                     updated = true;
                     existing.State = new WriterGroupStateModel {
-                        State = WriterGroupState.Pending,
+                        LastState = WriterGroupStatus.Pending,
                         LastStateChange = lastResultChange
                     };
                 }
-                else if (existingState != WriterGroupState.Disabled && !activate) {
+                else if (existingState != WriterGroupStatus.Disabled && !activate) {
                     // Deactivate
                     existing.State = new WriterGroupStateModel {
-                        State = WriterGroupState.Disabled,
+                        LastState = WriterGroupStatus.Disabled,
                         LastStateChange = lastResultChange
                     };
                     updated = true;

@@ -3,7 +3,7 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Platform.Publisher.Storage.Services {
+namespace Microsoft.Azure.IIoT.Platform.Publisher.Storage {
     using Microsoft.Azure.IIoT.Platform.Core.Models;
     using Microsoft.Azure.IIoT.Platform.Publisher.Models;
     using Microsoft.Azure.IIoT.Serializers;
@@ -64,14 +64,15 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Storage.Services {
                     null : model.DataSet?.SubscriptionSettings?.PublishingInterval,
                 ResolveDisplayName = model.DataSet?.SubscriptionSettings?.ResolveDisplayName == false ?
                     null : model.DataSet?.SubscriptionSettings?.ResolveDisplayName,
-                LastResultChange = model.DataSet?.State?.LastResultChange,
-                EndpointState = model.DataSet?.State?.EndpointState == EndpointConnectivityState.Disconnected ?
-                    null : model.DataSet?.State?.EndpointState,
+                ConnectionState = model.DataSet?.State?.ConnectionState?.State,
+                ConnectionLastResultDiagnostics = model.DataSet?.State?.ConnectionState?.LastResult?.Diagnostics,
+                ConnectionLastResultErrorMessage = model.DataSet?.State?.ConnectionState?.LastResult?.ErrorMessage,
+                ConnectionLastResultStatusCode = model.DataSet?.State?.ConnectionState?.LastResult?.StatusCode,
+                ConnectionLastResultChange = model.DataSet?.State?.ConnectionState?.LastResultChange,
                 LastResultDiagnostics = model.DataSet?.State?.LastResult?.Diagnostics,
                 LastResultErrorMessage = model.DataSet?.State?.LastResult?.ErrorMessage,
-                LastResultStatusCode = model.DataSet?.State?.LastResult?.StatusCode == 0 ?
-                    null : model.DataSet?.State?.LastResult?.StatusCode,
-                ClassType = DataSetWriterDocument.ClassTypeName
+                LastResultStatusCode = model.DataSet?.State?.LastResult?.StatusCode,
+                LastResultChange = model.DataSet?.State?.LastResultChange
             };
         }
 
@@ -92,11 +93,11 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Storage.Services {
                 DataSet = ToDataSetSourceInfo(document),
                 DataSetFieldContentMask = document.DataSetFieldContentMask,
                 MessageSettings = ToMessageSettings(document),
-                Created = document.Created == null ? null : new PublisherOperationContextModel {
+                Created = document.Created == null ? null : new OperationContextModel {
                     AuthorityId = document.CreatedAuditId,
                     Time = document.Created.Value
                 },
-                Updated = document.Updated == null ? null : new PublisherOperationContextModel {
+                Updated = document.Updated == null ? null : new OperationContextModel {
                     AuthorityId = document.UpdatedAuditId,
                     Time = document.Updated.Value
                 }
@@ -170,34 +171,65 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Storage.Services {
         /// <param name="document"></param>
         /// <returns></returns>
         private static PublishedDataSetSourceStateModel ToDataSetSourceState(DataSetWriterDocument document) {
-            var lastResult = ToServiceResultModel(document);
-            if (lastResult == null &&
-                document?.LastResultChange == null &&
-                document?.EndpointState == null) {
+            if (document == null) {
+                return null;
+            }
+            var lastResult = ToServiceResultModel(document.LastResultDiagnostics,
+                document.LastResultStatusCode, document.LastResultErrorMessage);
+            var connectionState = ToConnectionStateModel(document); 
+            if (lastResult == null && connectionState == null &&
+                document.LastResultChange == null) {
                 return null;
             }
             return new PublishedDataSetSourceStateModel {
                 LastResult = lastResult,
                 LastResultChange = document.LastResultChange,
-                EndpointState = document.EndpointState
+                ConnectionState = connectionState
+            };
+        }
+
+        /// <summary>
+        /// Create connection state model
+        /// </summary>
+        /// <param name="document"></param>
+        /// <returns></returns>
+        private static ConnectionStateModel ToConnectionStateModel(DataSetWriterDocument document) {
+            if (document == null) {
+                return null;
+            }
+            var lastConnectionResult = ToServiceResultModel(document.ConnectionLastResultDiagnostics,
+                document.ConnectionLastResultStatusCode, document.ConnectionLastResultErrorMessage);
+            if (lastConnectionResult == null &&
+                document.ConnectionLastResultChange == null &&
+                (document.ConnectionState == null || 
+                    document.ConnectionState.Value == ConnectionStatus.Disconnected)) {
+                return null;
+            }
+            return new ConnectionStateModel {
+                State = document.ConnectionState ?? ConnectionStatus.Disconnected,
+                LastResult = lastConnectionResult,
+                LastResultChange = document.ConnectionLastResultChange
             };
         }
 
         /// <summary>
         /// Create service result model
         /// </summary>
-        /// <param name="document"></param>
+        /// <param name="diagnostics"></param>
+        /// <param name="statusCode"></param>
+        /// <param name="errorMessage"></param>
         /// <returns></returns>
-        private static ServiceResultModel ToServiceResultModel(DataSetWriterDocument document) {
-            if (document.LastResultDiagnostics.IsNull() &&
-                document.LastResultStatusCode == null &&
-                string.IsNullOrEmpty(document.LastResultErrorMessage)) {
+        private static ServiceResultModel ToServiceResultModel(
+            VariantValue diagnostics, uint? statusCode, string errorMessage) {
+            if (diagnostics.IsNull() &&
+                statusCode == null &&
+                string.IsNullOrEmpty(errorMessage)) {
                 return null;
             }
             return new ServiceResultModel {
-                ErrorMessage = document.LastResultErrorMessage,
-                Diagnostics = document.LastResultDiagnostics,
-                StatusCode = document.LastResultStatusCode,
+                ErrorMessage = errorMessage,
+                Diagnostics = diagnostics,
+                StatusCode = statusCode,
             };
         }
 

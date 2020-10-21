@@ -8,6 +8,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Clients {
     using Microsoft.Azure.IIoT.Platform.OpcUa;
     using System;
     using System.Threading.Tasks;
+    using System.Threading;
 
     /// <summary>
     /// Adapts historian services to historic access services
@@ -27,105 +28,116 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Clients {
 
         /// <inheritdoc/>
         public Task<HistoryUpdateResultModel> HistoryDeleteEventsAsync(
-            T endpoint, HistoryUpdateRequestModel<DeleteEventsDetailsModel> request) {
-            return _client.HistoryUpdateAsync(endpoint, request.ToRawModel(_codec.Encode));
+            T twin, HistoryUpdateRequestModel<DeleteEventsDetailsModel> request,
+            CancellationToken ct) {
+            return _client.HistoryUpdateAsync(twin, request.ToRawModel(_codec.Encode), ct);
         }
 
         /// <inheritdoc/>
         public Task<HistoryUpdateResultModel> HistoryDeleteValuesAtTimesAsync(
-            T endpoint, HistoryUpdateRequestModel<DeleteValuesAtTimesDetailsModel> request) {
-            return _client.HistoryUpdateAsync(endpoint, request.ToRawModel(_codec.Encode));
+            T twin, HistoryUpdateRequestModel<DeleteValuesAtTimesDetailsModel> request,
+            CancellationToken ct) {
+            return _client.HistoryUpdateAsync(twin, request.ToRawModel(_codec.Encode), ct);
         }
 
         /// <inheritdoc/>
         public Task<HistoryUpdateResultModel> HistoryDeleteModifiedValuesAsync(
-            T endpoint, HistoryUpdateRequestModel<DeleteModifiedValuesDetailsModel> request) {
-            return _client.HistoryUpdateAsync(endpoint, request.ToRawModel(_codec.Encode));
+            T twin, HistoryUpdateRequestModel<DeleteModifiedValuesDetailsModel> request,
+            CancellationToken ct) {
+            return _client.HistoryUpdateAsync(twin, request.ToRawModel(_codec.Encode), ct);
         }
 
         /// <inheritdoc/>
         public Task<HistoryUpdateResultModel> HistoryDeleteValuesAsync(
-            T endpoint, HistoryUpdateRequestModel<DeleteValuesDetailsModel> request) {
-            return _client.HistoryUpdateAsync(endpoint, request.ToRawModel(_codec.Encode));
+            T twin, HistoryUpdateRequestModel<DeleteValuesDetailsModel> request,
+            CancellationToken ct) {
+            return _client.HistoryUpdateAsync(twin, request.ToRawModel(_codec.Encode), ct);
         }
 
         /// <inheritdoc/>
         public Task<HistoryUpdateResultModel> HistoryReplaceEventsAsync(
-            T endpoint, HistoryUpdateRequestModel<ReplaceEventsDetailsModel> request) {
-            return _client.HistoryUpdateAsync(endpoint, request.ToRawModel(_codec.Encode));
+            T twin, HistoryUpdateRequestModel<ReplaceEventsDetailsModel> request,
+            CancellationToken ct) {
+            return _client.HistoryUpdateAsync(twin, request.ToRawModel(_codec.Encode), ct);
         }
 
         /// <inheritdoc/>
         public Task<HistoryUpdateResultModel> HistoryReplaceValuesAsync(
-            T endpoint, HistoryUpdateRequestModel<ReplaceValuesDetailsModel> request) {
-            return _client.HistoryUpdateAsync(endpoint, request.ToRawModel(_codec.Encode));
+            T twin, HistoryUpdateRequestModel<ReplaceValuesDetailsModel> request,
+            CancellationToken ct) {
+            return _client.HistoryUpdateAsync(twin, request.ToRawModel(_codec.Encode), ct);
         }
 
         /// <inheritdoc/>
         public Task<HistoryUpdateResultModel> HistoryInsertEventsAsync(
-            T endpoint, HistoryUpdateRequestModel<InsertEventsDetailsModel> request) {
-            return _client.HistoryUpdateAsync(endpoint, request.ToRawModel(_codec.Encode));
+            T twin, HistoryUpdateRequestModel<InsertEventsDetailsModel> request,
+            CancellationToken ct) {
+            return _client.HistoryUpdateAsync(twin, request.ToRawModel(_codec.Encode), ct);
         }
 
         /// <inheritdoc/>
         public Task<HistoryUpdateResultModel> HistoryInsertValuesAsync(
-            T endpoint, HistoryUpdateRequestModel<InsertValuesDetailsModel> request) {
-            return _client.HistoryUpdateAsync(endpoint, request.ToRawModel(_codec.Encode));
+            T twin, HistoryUpdateRequestModel<InsertValuesDetailsModel> request,
+            CancellationToken ct) {
+            return _client.HistoryUpdateAsync(twin, request.ToRawModel(_codec.Encode), ct);
         }
 
         /// <inheritdoc/>
         public async Task<HistoryReadResultModel<HistoricEventModel[]>> HistoryReadEventsAsync(
-            T endpoint, HistoryReadRequestModel<ReadEventsDetailsModel> request) {
-            var results = await _client.HistoryReadAsync(endpoint, 
-                request.ToRawModel(_codec.Encode)).ConfigureAwait(false);
+            T twin, HistoryReadRequestModel<ReadEventsDetailsModel> request,
+            CancellationToken ct) {
+            var results = await _client.HistoryReadAsync(twin, request.ToRawModel(_codec.Encode), 
+                ct).ConfigureAwait(false);
             return results.ToSpecificModel(_codec.DecodeEvents);
         }
 
         /// <inheritdoc/>
         public async Task<HistoryReadNextResultModel<HistoricEventModel[]>> HistoryReadEventsNextAsync(
-            T endpoint, HistoryReadNextRequestModel request) {
-            var results = await _client.HistoryReadNextAsync(endpoint, 
-                request).ConfigureAwait(false);
+            T twin, HistoryReadNextRequestModel request, CancellationToken ct) {
+            var results = await _client.HistoryReadNextAsync(twin, request, ct).ConfigureAwait(false);
             return results.ToSpecificModel(_codec.DecodeEvents);
         }
 
         /// <inheritdoc/>
         public async Task<HistoryReadResultModel<HistoricValueModel[]>> HistoryReadValuesAsync(
-            T endpoint, HistoryReadRequestModel<ReadValuesDetailsModel> request) {
-            var results = await _client.HistoryReadAsync(endpoint,
-                request.ToRawModel(_codec.Encode)).ConfigureAwait(false);
+            T twin, HistoryReadRequestModel<ReadValuesDetailsModel> request,
+            CancellationToken ct) {
+            var results = await _client.HistoryReadAsync(twin, request.ToRawModel(_codec.Encode),
+                ct).ConfigureAwait(false);
             return results.ToSpecificModel(_codec.DecodeValues);
         }
 
         /// <inheritdoc/>
         public async Task<HistoryReadResultModel<HistoricValueModel[]>> HistoryReadValuesAtTimesAsync(
-            T endpoint, HistoryReadRequestModel<ReadValuesAtTimesDetailsModel> request) {
-            var results = await _client.HistoryReadAsync(endpoint, 
-                request.ToRawModel(_codec.Encode)).ConfigureAwait(false);
+            T twin, HistoryReadRequestModel<ReadValuesAtTimesDetailsModel> request,
+            CancellationToken ct) {
+            var results = await _client.HistoryReadAsync(twin, request.ToRawModel(_codec.Encode), 
+                ct).ConfigureAwait(false);
             return results.ToSpecificModel(_codec.DecodeValues);
         }
 
         /// <inheritdoc/>
         public async Task<HistoryReadResultModel<HistoricValueModel[]>> HistoryReadProcessedValuesAsync(
-            T endpoint, HistoryReadRequestModel<ReadProcessedValuesDetailsModel> request) {
-            var results = await _client.HistoryReadAsync(endpoint, 
-                request.ToRawModel(_codec.Encode)).ConfigureAwait(false);
+            T twin, HistoryReadRequestModel<ReadProcessedValuesDetailsModel> request,
+            CancellationToken ct) {
+            var results = await _client.HistoryReadAsync(twin, request.ToRawModel(_codec.Encode),
+                ct).ConfigureAwait(false);
             return results.ToSpecificModel(_codec.DecodeValues);
         }
 
         /// <inheritdoc/>
         public async Task<HistoryReadResultModel<HistoricValueModel[]>> HistoryReadModifiedValuesAsync(
-            T endpoint, HistoryReadRequestModel<ReadModifiedValuesDetailsModel> request) {
-            var results = await _client.HistoryReadAsync(endpoint, 
-                request.ToRawModel(_codec.Encode)).ConfigureAwait(false);
+            T twin, HistoryReadRequestModel<ReadModifiedValuesDetailsModel> request,
+            CancellationToken ct) {
+            var results = await _client.HistoryReadAsync(twin, request.ToRawModel(_codec.Encode), 
+                ct).ConfigureAwait(false);
             return results.ToSpecificModel(_codec.DecodeValues);
         }
 
         /// <inheritdoc/>
         public async Task<HistoryReadNextResultModel<HistoricValueModel[]>> HistoryReadValuesNextAsync(
-            T endpoint, HistoryReadNextRequestModel request) {
-            var results = await _client.HistoryReadNextAsync(endpoint,
-                request).ConfigureAwait(false);
+            T twin, HistoryReadNextRequestModel request, CancellationToken ct) {
+            var results = await _client.HistoryReadNextAsync(twin, request, ct).ConfigureAwait(false);
             return results.ToSpecificModel(_codec.DecodeValues);
         }
 

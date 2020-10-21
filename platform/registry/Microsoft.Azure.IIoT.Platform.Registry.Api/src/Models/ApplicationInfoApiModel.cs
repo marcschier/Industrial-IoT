@@ -125,14 +125,14 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Models {
         /// </summary>
         [DataMember(Name = "created", Order = 16,
             EmitDefaultValue = false)]
-        public RegistryOperationApiModel Created { get; set; }
+        public OperationContextApiModel Created { get; set; }
 
         /// <summary>
         /// Updated
         /// </summary>
         [DataMember(Name = "updated", Order = 17,
             EmitDefaultValue = false)]
-        public RegistryOperationApiModel Updated { get; set; }
+        public OperationContextApiModel Updated { get; set; }
 
         /// <summary>
         /// Generation Id

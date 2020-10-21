@@ -31,9 +31,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Models {
             if (endpoint == null) {
                 throw new ArgumentNullException(nameof(endpoint));
             }
-            Connection = new ConnectionModel {
-                Endpoint = endpoint.Clone()
-            };
+            Connection = endpoint.ToConnectionModel();
             _hash = Connection.CreateConsistentHash();
         }
 

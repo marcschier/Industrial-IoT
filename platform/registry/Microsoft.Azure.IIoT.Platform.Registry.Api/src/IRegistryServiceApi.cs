@@ -100,7 +100,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api {
         /// <param name="ct"></param>
         /// <returns></returns>
         Task<ApplicationInfoListApiModel> QueryApplicationsAsync(
-            ApplicationRegistrationQueryApiModel query, int? pageSize = null,
+            ApplicationInfoQueryApiModel query, int? pageSize = null,
             CancellationToken ct = default);
 
         /// <summary>
@@ -140,17 +140,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api {
         /// <returns></returns>
         Task<X509CertificateChainApiModel> GetEndpointCertificateAsync(
             string endpointId, CancellationToken ct = default);
-
-        /// <summary>
-        /// Update endpoint information including activation state
-        /// </summary>
-        /// <param name="endpointId"></param>
-        /// <param name="request"></param>
-        /// <param name="ct"></param>
-        /// <returns></returns>
-        Task UpdateEndpointAsync(string endpointId,
-            EndpointInfoUpdateApiModel request,
-            CancellationToken ct = default);
 
         /// <summary>
         /// List all endpoints

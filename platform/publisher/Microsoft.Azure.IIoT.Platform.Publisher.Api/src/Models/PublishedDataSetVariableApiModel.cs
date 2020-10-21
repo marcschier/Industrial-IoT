@@ -164,13 +164,13 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api.Models {
         /// </summary>
         [DataMember(Name = "updated", Order = 20,
             EmitDefaultValue = false)]
-        public PublisherOperationContextApiModel Updated { get; set; }
+        public OperationContextApiModel Updated { get; set; }
 
         /// <summary>
         /// Created
         /// </summary>
         [DataMember(Name = "created", Order = 21,
             EmitDefaultValue = false)]
-        public PublisherOperationContextApiModel Created { get; set; }
+        public OperationContextApiModel Created { get; set; }
     }
 }

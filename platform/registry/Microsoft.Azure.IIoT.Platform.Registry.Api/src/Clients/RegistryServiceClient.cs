@@ -170,7 +170,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Clients {
 
         /// <inheritdoc/>
         public async Task<ApplicationInfoListApiModel> QueryApplicationsAsync(
-            ApplicationRegistrationQueryApiModel query, int? pageSize, CancellationToken ct) {
+            ApplicationInfoQueryApiModel query, int? pageSize, CancellationToken ct) {
             var request = _httpClient.NewRequest($"{_serviceUri}/v3/applications/query",
                 Resource.Platform);
             if (pageSize != null) {
@@ -299,22 +299,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Clients {
             var response = await _httpClient.GetAsync(request, ct).ConfigureAwait(false);
             response.Validate();
             return _serializer.DeserializeResponse<X509CertificateChainApiModel>(response);
-        }
-
-        /// <inheritdoc/>
-        public async Task UpdateEndpointAsync(string endpointId,
-            EndpointInfoUpdateApiModel content, CancellationToken ct) {
-            if (content == null) {
-                throw new ArgumentNullException(nameof(content));
-            }
-            if (string.IsNullOrEmpty(endpointId)) {
-                throw new ArgumentNullException(nameof(endpointId));
-            }
-            var request = _httpClient.NewRequest($"{_serviceUri}/v3/endpoints/{endpointId}",
-                Resource.Platform);
-            _serializer.SerializeToRequest(request, content);
-            var response = await _httpClient.PatchAsync(request, ct).ConfigureAwait(false);
-            response.Validate();
         }
 
         private readonly IHttpClient _httpClient;

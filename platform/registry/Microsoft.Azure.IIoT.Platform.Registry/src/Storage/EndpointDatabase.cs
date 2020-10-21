@@ -237,12 +237,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Storage {
                     query = query.Where(x => x.SecurityPolicy.Equals(filter.SecurityPolicy,
                         StringComparison.Ordinal));
                 }
-                if (filter?.EndpointState != null) {
-                    query = query.Where(x => x.EndpointState == filter.EndpointState.Value);
-                }
-                if (filter?.ActivationState != null) {
-                    query = query.Where(x => x.ActivationState == filter.ActivationState.Value);
-                }
             }
             query = query.Where(x => x.ClassType == IdentityType.Endpoint);
             return query.GetResults();

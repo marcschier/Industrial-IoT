@@ -6,7 +6,7 @@
 namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
     using Microsoft.Azure.IIoT.Platform.Publisher;
     using Microsoft.Azure.IIoT.Platform.Publisher.Models;
-    using Microsoft.Azure.IIoT.Platform.Publisher.Storage.Services;
+    using Microsoft.Azure.IIoT.Platform.Publisher.Storage;
     using Microsoft.Azure.IIoT.Platform.Registry;
     using Microsoft.Azure.IIoT.Platform.Registry.Models;
     using Microsoft.Azure.IIoT.Platform.Core.Models;
@@ -674,27 +674,27 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                 Assert.Null(writer.MessageSettings.DataSetOffset);
 
                 var foundGroups = await groups.QueryAllWriterGroupsAsync(new WriterGroupInfoQueryModel {
-                    State = WriterGroupState.Disabled
+                    State = WriterGroupStatus.Disabled
                 }).ConfigureAwait(false);
                 Assert.Single(foundGroups);
 
                 // Act
                 await groups.ActivateWriterGroupAsync(group.WriterGroupId).ConfigureAwait(false);
                 foundGroups = await groups.QueryAllWriterGroupsAsync(new WriterGroupInfoQueryModel {
-                    State = WriterGroupState.Disabled
+                    State = WriterGroupStatus.Disabled
                 }).ConfigureAwait(false);
                 Assert.Empty(foundGroups);
                 foundGroups = await groups.QueryAllWriterGroupsAsync(new WriterGroupInfoQueryModel {
-                    State = WriterGroupState.Pending
+                    State = WriterGroupStatus.Pending
                 }).ConfigureAwait(false);
                 Assert.Single(foundGroups);
                 await groups.DeactivateWriterGroupAsync(group.WriterGroupId).ConfigureAwait(false);
                 foundGroups = await groups.QueryAllWriterGroupsAsync(new WriterGroupInfoQueryModel {
-                    State = WriterGroupState.Disabled
+                    State = WriterGroupStatus.Disabled
                 }).ConfigureAwait(false);
                 Assert.Single(foundGroups);
                 foundGroups = await groups.QueryAllWriterGroupsAsync(new WriterGroupInfoQueryModel {
-                    State = WriterGroupState.Pending
+                    State = WriterGroupStatus.Pending
                 }).ConfigureAwait(false);
                 Assert.Empty(foundGroups);
 
@@ -1283,27 +1283,27 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                 }).ConfigureAwait(false);
 
                 var foundGroups = await groups.QueryAllWriterGroupsAsync(new WriterGroupInfoQueryModel {
-                    State = WriterGroupState.Disabled
+                    State = WriterGroupStatus.Disabled
                 }).ConfigureAwait(false);
                 Assert.Single(foundGroups);
 
                 // Act
                 await groups.ActivateWriterGroupAsync(result1.WriterGroupId).ConfigureAwait(false);
                 foundGroups = await groups.QueryAllWriterGroupsAsync(new WriterGroupInfoQueryModel {
-                    State = WriterGroupState.Disabled
+                    State = WriterGroupStatus.Disabled
                 }).ConfigureAwait(false);
                 Assert.Empty(foundGroups);
                 foundGroups = await groups.QueryAllWriterGroupsAsync(new WriterGroupInfoQueryModel {
-                    State = WriterGroupState.Pending
+                    State = WriterGroupStatus.Pending
                 }).ConfigureAwait(false);
                 Assert.Single(foundGroups);
                 await groups.DeactivateWriterGroupAsync(result1.WriterGroupId).ConfigureAwait(false);
                 foundGroups = await groups.QueryAllWriterGroupsAsync(new WriterGroupInfoQueryModel {
-                    State = WriterGroupState.Disabled
+                    State = WriterGroupStatus.Disabled
                 }).ConfigureAwait(false);
                 Assert.Single(foundGroups);
                 foundGroups = await groups.QueryAllWriterGroupsAsync(new WriterGroupInfoQueryModel {
-                    State = WriterGroupState.Pending
+                    State = WriterGroupStatus.Pending
                 }).ConfigureAwait(false);
                 Assert.Empty(foundGroups);
             }

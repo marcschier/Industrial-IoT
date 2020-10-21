@@ -5,6 +5,7 @@
 
 namespace Microsoft.Azure.IIoT.Platform.Publisher {
     using Microsoft.Azure.IIoT.Platform.Publisher.Models;
+    using Microsoft.Azure.IIoT.Platform.Core.Models;
     using System.Threading.Tasks;
 
     /// <summary>
@@ -18,7 +19,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher {
         /// <param name="context"></param>
         /// <param name="dataSetWriter"></param>
         /// <returns></returns>
-        Task OnDataSetWriterAddedAsync(PublisherOperationContextModel context,
+        Task OnDataSetWriterAddedAsync(OperationContextModel context,
             DataSetWriterInfoModel dataSetWriter);
 
         /// <summary>
@@ -28,7 +29,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher {
         /// <param name="dataSetWriterId"></param>
         /// <param name="dataSetWriter"></param>
         /// <returns></returns>
-        Task OnDataSetWriterUpdatedAsync(PublisherOperationContextModel context,
+        Task OnDataSetWriterUpdatedAsync(OperationContextModel context,
             string dataSetWriterId, DataSetWriterInfoModel dataSetWriter = null);
 
         /// <summary>
@@ -38,7 +39,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher {
         /// <param name="dataSetWriterId"></param>
         /// <param name="dataSetWriter"></param>
         /// <returns></returns>
-        Task OnDataSetWriterStateChangeAsync(PublisherOperationContextModel context,
+        Task OnDataSetWriterStateChangeAsync(OperationContextModel context,
             string dataSetWriterId, DataSetWriterInfoModel dataSetWriter = null);
 
         /// <summary>
@@ -48,7 +49,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher {
         /// <param name="context"></param>
         /// <param name="dataSetWriter"></param>
         /// <returns></returns>
-        Task OnDataSetWriterRemovedAsync(PublisherOperationContextModel context,
+        Task OnDataSetWriterRemovedAsync(OperationContextModel context,
             DataSetWriterInfoModel dataSetWriter);
     }
 }

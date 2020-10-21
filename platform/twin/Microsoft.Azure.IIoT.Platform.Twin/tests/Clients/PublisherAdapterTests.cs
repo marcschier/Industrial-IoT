@@ -9,7 +9,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
     using Microsoft.Azure.IIoT.Platform.Registry.Models;
     using Microsoft.Azure.IIoT.Platform.Core.Models;
     using Microsoft.Azure.IIoT.Platform.Publisher.Services;
-    using Microsoft.Azure.IIoT.Platform.Publisher.Storage.Services;
+    using Microsoft.Azure.IIoT.Platform.Publisher.Storage;
     using Microsoft.Azure.IIoT.Platform.Twin;
     using Microsoft.Azure.IIoT.Platform.Twin.Clients;
     using Microsoft.Azure.IIoT.Storage;
@@ -468,11 +468,6 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
                 throw new NotImplementedException();
             }
 
-            public Task<X509CertificateChainModel> GetEndpointCertificateAsync(
-                string endpointId, CancellationToken ct = default) {
-                throw new NotImplementedException();
-            }
-
             public Task<EndpointInfoListModel> ListEndpointsAsync(string continuation,
                 int? pageSize = null, CancellationToken ct = default) {
                 throw new NotImplementedException();
@@ -481,11 +476,6 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
             public Task<EndpointInfoListModel> QueryEndpointsAsync(
                 EndpointInfoQueryModel query,
                 int? pageSize = null, CancellationToken ct = default) {
-                throw new NotImplementedException();
-            }
-
-            public Task UpdateEndpointAsync(string endpointId, EndpointInfoUpdateModel model,
-                CancellationToken ct = default) {
                 throw new NotImplementedException();
             }
         }

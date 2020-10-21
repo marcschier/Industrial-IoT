@@ -5,6 +5,7 @@
 
 namespace Microsoft.Azure.IIoT.Platform.Publisher {
     using Microsoft.Azure.IIoT.Platform.Publisher.Models;
+    using Microsoft.Azure.IIoT.Platform.Core.Models;
     using System.Threading;
     using System.Threading.Tasks;
 
@@ -24,7 +25,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher {
         /// <returns></returns>
         Task UpdateDataSetVariableStateAsync(string dataSetWriterId,
             string variableId, PublishedDataSetItemStateModel state,
-            PublisherOperationContextModel context = null,
+            OperationContextModel context = null,
             CancellationToken ct = default);
 
         /// <summary>
@@ -37,7 +38,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher {
         /// <returns></returns>
         Task UpdateDataSetEventStateAsync(string dataSetWriterId,
             PublishedDataSetItemStateModel state,
-            PublisherOperationContextModel context = null,
+            OperationContextModel context = null,
             CancellationToken ct = default);
 
         /// <summary>
@@ -50,7 +51,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher {
         /// <returns></returns>
         Task UpdateDataSetWriterStateAsync(string dataSetWriterId,
             PublishedDataSetSourceStateModel state,
-            PublisherOperationContextModel context = null,
+            OperationContextModel context = null,
             CancellationToken ct = default);
     }
 }

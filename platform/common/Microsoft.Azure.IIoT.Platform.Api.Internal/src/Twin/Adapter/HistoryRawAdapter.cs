@@ -10,6 +10,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api {
     using Microsoft.Azure.IIoT.Serializers;
     using System;
     using System.Threading.Tasks;
+    using System.Threading;
 
     /// <summary>
     /// Implements historic access services as adapter on top of api.
@@ -20,34 +21,36 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api {
         /// Create service
         /// </summary>
         /// <param name="client"></param>
-        public HistoryRawAdapter(IHistoryServiceRawApi client) {
+        public HistoryRawAdapter(ITwinServiceApi client) {
             _client = client ?? throw new ArgumentNullException(nameof(client));
         }
 
         /// <inheritdoc/>
         public async Task<HistoryReadResultModel<VariantValue>> HistoryReadAsync(
-            string endpoint, HistoryReadRequestModel<VariantValue> request) {
-            var result = await _client.HistoryReadRawAsync(endpoint,
-                request.ToApiModel()).ConfigureAwait(false);
+            string twin, HistoryReadRequestModel<VariantValue> request, 
+            CancellationToken ct) {
+            var result = await _client.HistoryReadRawAsync(twin, 
+                request.ToApiModel(), ct).ConfigureAwait(false);
             return result.ToServiceModel();
         }
 
         /// <inheritdoc/>
         public async Task<HistoryReadNextResultModel<VariantValue>> HistoryReadNextAsync(
-            string endpoint, HistoryReadNextRequestModel request) {
-            var result = await _client.HistoryReadRawNextAsync(endpoint,
-                request.ToApiModel()).ConfigureAwait(false);
+            string twin, HistoryReadNextRequestModel request, CancellationToken ct) {
+            var result = await _client.HistoryReadRawNextAsync(twin, 
+                request.ToApiModel(), ct).ConfigureAwait(false);
             return result.ToServiceModel();
         }
 
         /// <inheritdoc/>
         public async Task<HistoryUpdateResultModel> HistoryUpdateAsync(
-            string endpoint, HistoryUpdateRequestModel<VariantValue> request) {
-            var result = await _client.HistoryUpdateRawAsync(endpoint,
-                request.ToApiModel()).ConfigureAwait(false);
+            string twin, HistoryUpdateRequestModel<VariantValue> request,
+            CancellationToken ct) {
+            var result = await _client.HistoryUpdateRawAsync(twin, 
+                request.ToApiModel(), ct).ConfigureAwait(false);
             return result.ToServiceModel();
         }
 
-        private readonly IHistoryServiceRawApi _client;
+        private readonly ITwinServiceApi _client;
     }
 }

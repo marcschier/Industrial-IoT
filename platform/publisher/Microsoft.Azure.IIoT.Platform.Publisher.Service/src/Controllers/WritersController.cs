@@ -8,7 +8,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Service.Controllers {
     using Microsoft.Azure.IIoT.Platform.Publisher.Service.Filters;
     using Microsoft.Azure.IIoT.Platform.Publisher.Api.Models;
     using Microsoft.Azure.IIoT.Platform.Publisher;
-    using Microsoft.Azure.IIoT.Platform.Publisher.Models;
+    using Microsoft.Azure.IIoT.Platform.Core.Models;
     using Microsoft.Azure.IIoT.AspNetCore.OpenApi;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Authorization;
@@ -51,7 +51,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Service.Controllers {
                 throw new ArgumentNullException(nameof(request));
             }
             var result = await _writers.AddDataSetWriterAsync(
-                request.ToServiceModel(), new PublisherOperationContextModel {
+                request.ToServiceModel(), new OperationContextModel {
                     Time = DateTime.UtcNow,
                     AuthorityId = HttpContext.User.Identity.Name
                 }).ConfigureAwait(false);
@@ -99,7 +99,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Service.Controllers {
                 throw new ArgumentNullException(nameof(dataSetWriterId));
             }
             await _writers.UpdateDataSetWriterAsync(dataSetWriterId,
-                request.ToServiceModel(), new PublisherOperationContextModel {
+                request.ToServiceModel(), new OperationContextModel {
                     Time = DateTime.UtcNow,
                     AuthorityId = HttpContext.User.Identity.Name
                 }).ConfigureAwait(false);
@@ -124,7 +124,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Service.Controllers {
                 throw new ArgumentNullException(nameof(request));
             }
             var result = await _writers.AddEventDataSetAsync(dataSetWriterId,
-                request.ToServiceModel(), new PublisherOperationContextModel {
+                request.ToServiceModel(), new OperationContextModel {
                     Time = DateTime.UtcNow,
                     AuthorityId = HttpContext.User.Identity.Name
                 }).ConfigureAwait(false);
@@ -168,7 +168,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Service.Controllers {
                 throw new ArgumentNullException(nameof(dataSetWriterId));
             }
             await _writers.UpdateEventDataSetAsync(dataSetWriterId,
-                request.ToServiceModel(), new PublisherOperationContextModel {
+                request.ToServiceModel(), new OperationContextModel {
                     Time = DateTime.UtcNow,
                     AuthorityId = HttpContext.User.Identity.Name
                 }).ConfigureAwait(false);
@@ -196,7 +196,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Service.Controllers {
                 throw new ArgumentNullException(nameof(generationId));
             }
             await _writers.RemoveEventDataSetAsync(dataSetWriterId,
-                generationId, new PublisherOperationContextModel {
+                generationId, new OperationContextModel {
                     Time = DateTime.UtcNow,
                     AuthorityId = HttpContext.User.Identity.Name
                 }).ConfigureAwait(false);
@@ -221,7 +221,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Service.Controllers {
                 throw new ArgumentNullException(nameof(request));
             }
             var result = await _writers.AddDataSetVariableAsync(dataSetWriterId,
-                request.ToServiceModel(), new PublisherOperationContextModel {
+                request.ToServiceModel(), new OperationContextModel {
                     Time = DateTime.UtcNow,
                     AuthorityId = HttpContext.User.Identity.Name
                 }).ConfigureAwait(false);
@@ -251,7 +251,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Service.Controllers {
                 throw new ArgumentNullException(nameof(variableId));
             }
             await _writers.UpdateDataSetVariableAsync(dataSetWriterId,
-                variableId, request.ToServiceModel(), new PublisherOperationContextModel {
+                variableId, request.ToServiceModel(), new OperationContextModel {
                     Time = DateTime.UtcNow,
                     AuthorityId = HttpContext.User.Identity.Name
                 }).ConfigureAwait(false);
@@ -336,7 +336,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Service.Controllers {
                 throw new ArgumentNullException(nameof(generationId));
             }
             await _writers.RemoveDataSetVariableAsync(dataSetWriterId, variableId,
-                generationId, new PublisherOperationContextModel {
+                generationId, new OperationContextModel {
                     Time = DateTime.UtcNow,
                     AuthorityId = HttpContext.User.Identity.Name
                 }).ConfigureAwait(false);
@@ -410,7 +410,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Service.Controllers {
                 throw new ArgumentNullException(nameof(generationId));
             }
             await _writers.RemoveDataSetWriterAsync(dataSetWriterId, generationId,
-                new PublisherOperationContextModel {
+                new OperationContextModel {
                     Time = DateTime.UtcNow,
                     AuthorityId = HttpContext.User.Identity.Name
                 }).ConfigureAwait(false);

@@ -32,18 +32,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Events.v2 {
                             eventData.Context, eventData.Endpoint)
                         .ContinueWith(t => Task.CompletedTask))).ConfigureAwait(false);
                     break;
-                case EndpointEventType.Deactivated:
-                    await Task.WhenAll(_listeners
-                        .Select(l => l.OnEndpointDeactivatedAsync(
-                            eventData.Context, eventData.Endpoint)
-                        .ContinueWith(t => Task.CompletedTask))).ConfigureAwait(false);
-                    break;
-                case EndpointEventType.Activated:
-                    await Task.WhenAll(_listeners
-                        .Select(l => l.OnEndpointActivatedAsync(
-                            eventData.Context, eventData.Endpoint)
-                        .ContinueWith(t => Task.CompletedTask))).ConfigureAwait(false);
-                    break;
                 case EndpointEventType.Updated:
                     await Task.WhenAll(_listeners
                         .Select(l => l.OnEndpointUpdatedAsync(

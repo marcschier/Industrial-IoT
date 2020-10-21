@@ -33,7 +33,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Models {
         /// <summary>
         /// Return groups in the specified state
         /// </summary>
-        public WriterGroupState? State { get; set; }
+        public WriterGroupStatus? State { get; set; }
 
         /// <summary>
         /// Return groups only in the specified state

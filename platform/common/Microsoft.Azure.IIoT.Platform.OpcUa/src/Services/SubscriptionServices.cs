@@ -101,11 +101,11 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
             }
 
             /// <inheritdoc/>
-            public void UpdateConnectivityState(EndpointConnectivityState previous,
-                EndpointConnectivityState newValue) {
+            public void UpdateConnectivityState(ConnectionStatus previous,
+                ConnectionStatus newValue) {
                 _logger.Information("Subscription {id} connectivitiy state changed from" +
                     " {previous} to {newValue}", _subscription.Id, previous, newValue);
-                _listener.OnEndpointConnectivityChange(previous, newValue);
+                _listener.OnConnectivityChange(previous, newValue);
             }
 
             /// <inheritdoc/>
@@ -431,7 +431,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
                     rawSubscription.ApplyChanges();
 
                     foreach (var item in currentState.Concat(nowMonitored).Distinct()) {
-                        item.UpdateStatus(_listener, Connection, _subscription.Id, rawSubscription);
+                        item.UpdateStatus(_listener, _subscription.Id, rawSubscription);
                     }
 
                     _currentlyMonitored = nowMonitored;
@@ -468,7 +468,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
                         }
 
                         foreach (var item in _currentlyMonitored) {
-                            item.UpdateStatus(_listener, Connection, _subscription.Id, rawSubscription);
+                            item.UpdateStatus(_listener, _subscription.Id, rawSubscription);
                         }
 
                         count = _currentlyMonitored.Count(m => m.Item.Status.Error == null);
@@ -496,7 +496,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
                         rawSubscription.ApplyChanges();
 
                         foreach (var item in _currentlyMonitored) {
-                            item.UpdateStatus(_listener, Connection, _subscription.Id, rawSubscription);
+                            item.UpdateStatus(_listener, _subscription.Id, rawSubscription);
                         }
                     }
                 }
@@ -520,7 +520,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
                         }
 
                         foreach (var item in change) {
-                            item.UpdateStatus(_listener, Connection, _subscription.Id, rawSubscription);
+                            item.UpdateStatus(_listener, _subscription.Id, rawSubscription);
                         }
                     }
                 }
@@ -948,11 +948,10 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
             /// Update status
             /// </summary>
             /// <param name="listener"></param>
-            /// <param name="connection"></param>
             /// <param name="subscriptionId"></param>
             /// <param name="subscription"></param>
             internal void UpdateStatus(ISubscriptionListener listener,
-                ConnectionModel connection, string subscriptionId, Subscription subscription) {
+                string subscriptionId, Subscription subscription) {
                 listener.OnMonitoredItemStatusChange(subscriptionId, subscription,
                     Template.Id, Item?.NodeClass != null && Item.NodeClass != Opc.Ua.NodeClass.Variable,
                     Item?.Status?.ClientHandle,

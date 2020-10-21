@@ -6,6 +6,7 @@
 namespace Microsoft.Azure.IIoT.Platform.Publisher.Events.v2 {
     using Microsoft.Azure.IIoT.Platform.Publisher.Events.v2.Models;
     using Microsoft.Azure.IIoT.Platform.Publisher.Models;
+    using Microsoft.Azure.IIoT.Platform.Core.Models;
     using Microsoft.Azure.IIoT.Messaging;
     using System;
     using System.Threading.Tasks;
@@ -24,28 +25,28 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Events.v2 {
         }
 
         /// <inheritdoc/>
-        public Task OnDataSetWriterAddedAsync(PublisherOperationContextModel context,
+        public Task OnDataSetWriterAddedAsync(OperationContextModel context,
             DataSetWriterInfoModel dataSetWriter) {
             return _bus.PublishAsync(Wrap(DataSetWriterEventType.Added, context,
                 dataSetWriter.DataSetWriterId, dataSetWriter));
         }
 
         /// <inheritdoc/>
-        public Task OnDataSetWriterStateChangeAsync(PublisherOperationContextModel context,
+        public Task OnDataSetWriterStateChangeAsync(OperationContextModel context,
             string dataSetWriterId, DataSetWriterInfoModel dataSetWriter) {
             return _bus.PublishAsync(Wrap(DataSetWriterEventType.StateChange, context,
                 dataSetWriterId, dataSetWriter));
         }
 
         /// <inheritdoc/>
-        public Task OnDataSetWriterUpdatedAsync(PublisherOperationContextModel context,
+        public Task OnDataSetWriterUpdatedAsync(OperationContextModel context,
             string dataSetWriterId, DataSetWriterInfoModel dataSetWriter) {
             return _bus.PublishAsync(Wrap(DataSetWriterEventType.Updated, context,
                 dataSetWriterId, dataSetWriter));
         }
 
         /// <inheritdoc/>
-        public Task OnDataSetWriterRemovedAsync(PublisherOperationContextModel context,
+        public Task OnDataSetWriterRemovedAsync(OperationContextModel context,
             DataSetWriterInfoModel dataSetWriter) {
             return _bus.PublishAsync(Wrap(DataSetWriterEventType.Removed, context,
                 dataSetWriter.DataSetWriterId, dataSetWriter));
@@ -60,7 +61,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Events.v2 {
         /// <param name="dataSetWriter"></param>
         /// <returns></returns>
         private static DataSetWriterEventModel Wrap(DataSetWriterEventType type,
-            PublisherOperationContextModel context, string dataSetWriterId,
+            OperationContextModel context, string dataSetWriterId,
             DataSetWriterInfoModel dataSetWriter) {
             return new DataSetWriterEventModel {
                 EventType = type,

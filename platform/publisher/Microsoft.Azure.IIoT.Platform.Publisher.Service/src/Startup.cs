@@ -8,6 +8,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Service {
     using Microsoft.Azure.IIoT.Platform.Publisher.Service.Runtime;
     using Microsoft.Azure.IIoT.Platform.Publisher;
     using Microsoft.Azure.IIoT.Platform.Registry.Api.Clients;
+    using Microsoft.Azure.IIoT.Platform.Twin.Api.Clients;
     using Microsoft.Azure.IIoT.Platform.OpcUa.Services;
     using Microsoft.Azure.IIoT.Http.Clients;
     using Microsoft.Azure.IIoT.Authentication;
@@ -33,6 +34,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Service {
     using Prometheus;
     using System;
     using ILogger = Serilog.ILogger;
+    using Microsoft.Azure.IIoT.Platform.OpcUa;
 
     /// <summary>
     /// Webservice startup
@@ -181,8 +183,9 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Service {
 
             // --- Logic ---
 
-            // ... Publisher services
+            // ... Publisher services and client stack
             builder.RegisterModule<PublisherServices>();
+            builder.RegisterModule<ClientStack>();
 
             // Registry services are required to lookup endpoints.
             builder.RegisterType<RegistryServicesApiAdapter>()
@@ -190,13 +193,11 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Service {
             builder.RegisterType<RegistryServiceClient>()
                 .AsImplementedInterfaces();
 
-            // Register opc stack services for publisher
-            builder.RegisterType<ClientServices>()
-                .AsImplementedInterfaces().InstancePerLifetimeScope();
-            builder.RegisterType<StackLogger>()
-                .AsImplementedInterfaces().InstancePerLifetimeScope()
-                .AutoActivate();
-
+            // Registry services are required to lookup endpoints.
+            builder.RegisterType<TwinServicesApiAdapter>()
+                .AsImplementedInterfaces();
+            builder.RegisterType<TwinServiceClient>()
+                .AsImplementedInterfaces();
             // ... and auto start
             builder.RegisterType<HostAutoStart>()
                 .AutoActivate()

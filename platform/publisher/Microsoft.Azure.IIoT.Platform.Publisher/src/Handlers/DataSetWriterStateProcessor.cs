@@ -6,6 +6,7 @@
 namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
     using Microsoft.Azure.IIoT.Platform.Publisher.Models;
     using Microsoft.Azure.IIoT.Platform.Publisher;
+    using Microsoft.Azure.IIoT.Platform.Core.Models;
     using Serilog;
     using System;
     using System.Threading.Tasks;
@@ -34,7 +35,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
             if (message is null) {
                 throw new ArgumentNullException(nameof(message));
             }
-            var context = new PublisherOperationContextModel {
+            var context = new OperationContextModel {
                 Time = message.TimeStamp,
                 AuthorityId = null // TODO
             };
@@ -43,7 +44,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                     var sourceState = new PublishedDataSetSourceStateModel {
                         LastResultChange = message.TimeStamp,
                         LastResult = message.LastResult,
-                        EndpointState = message.EndpointState,
+                        ConnectionState = message.ConnectionState.Clone(),
                         // ...
                     };
 

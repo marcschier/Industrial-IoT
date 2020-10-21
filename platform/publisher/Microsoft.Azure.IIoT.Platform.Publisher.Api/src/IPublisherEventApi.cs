@@ -16,60 +16,64 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api {
         /// Subscribe to dataset item status changes
         /// </summary>
         /// <param name="dataSetWriterId"></param>
-        /// <param name="userId"></param>
+        /// <param name="connectionId"></param>
         /// <param name="ct"></param>
         /// <returns></returns>
         Task SubscribeDataSetItemStatusAsync(string dataSetWriterId,
-            string userId, CancellationToken ct = default);
+            string connectionId, CancellationToken ct = default);
 
         /// <summary>
         /// Unsubscribe from dataset item status changes
         /// </summary>
         /// <param name="dataSetWriterId"></param>
-        /// <param name="userId"></param>
+        /// <param name="connectionId"></param>
         /// <param name="ct"></param>
         /// <returns></returns>
         Task UnsubscribeDataSetItemStatusAsync(string dataSetWriterId,
-            string userId, CancellationToken ct = default);
-
-        /// <summary>
-        /// Subscribe to dataset writer messages
-        /// </summary>
-        /// <param name="dataSetWriterId"></param>
-        /// <param name="userId"></param>
-        /// <param name="ct"></param>
-        /// <returns></returns>
-        Task SubscribeDataSetWriterMessagesAsync(string dataSetWriterId,
-            string userId, CancellationToken ct = default);
-
-        /// <summary>
-        /// Unsubscribe from receiving dataset writer messages
-        /// </summary>
-        /// <param name="dataSetWriterId"></param>
-        /// <param name="userId"></param>
-        /// <param name="ct"></param>
-        /// <returns></returns>
-        Task UnsubscribeDataSetWriterMessagesAsync(string dataSetWriterId,
-            string userId, CancellationToken ct = default);
+            string connectionId, CancellationToken ct = default);
 
         /// <summary>
         /// Subscribe client to receive published samples
         /// </summary>
-        /// <param name="endpointId"></param>
-        /// <param name="userId"></param>
+        /// <param name="dataSetWriterId"></param>
+        /// <param name="variableId"></param>
+        /// <param name="connectionId"></param>
         /// <param name="ct"></param>
         /// <returns></returns>
-        Task NodePublishSubscribeByEndpointAsync(string endpointId,
-            string userId, CancellationToken ct = default);
+        Task SubscribeDataSetVariableMessagesAsync(string dataSetWriterId,
+            string variableId, string connectionId, 
+            CancellationToken ct = default);
 
         /// <summary>
         /// Unsubscribe client from receiving samples
         /// </summary>
-        /// <param name="endpointId"></param>
-        /// <param name="userId"></param>
+        /// <param name="dataSetWriterId"></param>
+        /// <param name="variableId"></param>
+        /// <param name="connectionId"></param>
         /// <param name="ct"></param>
         /// <returns></returns>
-        Task NodePublishUnsubscribeByEndpointAsync(string endpointId,
-            string userId, CancellationToken ct = default);
+        Task UnsubscribeDataSetVariableMessagesAsync(string dataSetWriterId,
+            string variableId, string connectionId, 
+            CancellationToken ct = default);
+
+        /// <summary>
+        /// Subscribe to event changes
+        /// </summary>
+        /// <param name="dataSetWriterId"></param>
+        /// <param name="connectionId"></param>
+        /// <param name="ct"></param>
+        /// <returns></returns>
+        Task SubscribeDataSetEventMessagesAsync(string dataSetWriterId, 
+            string connectionId, CancellationToken ct = default);
+
+        /// <summary>
+        /// Unsubscribe client from receiving events
+        /// </summary>
+        /// <param name="dataSetWriterId"></param>
+        /// <param name="connectionId"></param>
+        /// <param name="ct"></param>
+        /// <returns></returns>
+        Task UnsubscribeDataSetEventMessagesAsync(string dataSetWriterId, 
+            string connectionId, CancellationToken ct = default);
     }
 }

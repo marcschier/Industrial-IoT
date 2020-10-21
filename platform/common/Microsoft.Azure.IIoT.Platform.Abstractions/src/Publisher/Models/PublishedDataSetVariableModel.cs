@@ -122,11 +122,11 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Models {
         /// <summary>
         /// Last updated
         /// </summary>
-        public PublisherOperationContextModel Updated { get; set; }
+        public OperationContextModel Updated { get; set; }
 
         /// <summary>
         /// Created
         /// </summary>
-        public PublisherOperationContextModel Created { get; set; }
+        public OperationContextModel Created { get; set; }
     }
 }

@@ -63,20 +63,20 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Provider.Controllers {
 #pragma warning disable IDE1006 // Naming Styles
         public async Task<IActionResult> Revoke(string clientId) {
 #pragma warning restore IDE1006 // Naming Styles
-            await _interaction.RevokeUserConsentAsync(clientId);
-            await _events.RaiseAsync(new GrantsRevokedEvent(User.GetSubjectId(), clientId));
+            await _interaction.RevokeUserConsentAsync(clientId).ConfigureAwait(false);
+            await _events.RaiseAsync(new GrantsRevokedEvent(User.GetSubjectId(), clientId)).ConfigureAwait(false);
 
             return RedirectToAction("Index");
         }
 
         private async Task<GrantsViewModel> BuildViewModelAsync() {
-            var grants = await _interaction.GetAllUserGrantsAsync();
+            var grants = await _interaction.GetAllUserGrantsAsync().ConfigureAwait(false);
 
             var list = new List<GrantViewModel>();
             foreach (var grant in grants) {
-                var client = await _clients.FindClientByIdAsync(grant.ClientId);
+                var client = await _clients.FindClientByIdAsync(grant.ClientId).ConfigureAwait(false);
                 if (client != null) {
-                    var resources = await _resources.FindResourcesByScopeAsync(grant.Scopes);
+                    var resources = await _resources.FindResourcesByScopeAsync(grant.Scopes).ConfigureAwait(false);
 
                     var item = new GrantViewModel() {
                         ClientId = client.ClientId,

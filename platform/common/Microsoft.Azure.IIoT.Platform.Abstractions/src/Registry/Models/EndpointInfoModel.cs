@@ -56,24 +56,14 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
         public DateTime? NotSeenSince { get; set; }
 
         /// <summary>
-        /// Whether endpoint is activated in the twin module
-        /// </summary>
-        public EntityActivationState? ActivationState { get; set; }
-
-        /// <summary>
-        /// The last state of the endpoint
-        /// </summary>
-        public EndpointConnectivityState? EndpointState { get; set; }
-
-        /// <summary>
         /// Created
         /// </summary>
-        public RegistryOperationContextModel Created { get; set; }
+        public OperationContextModel Created { get; set; }
 
         /// <summary>
         /// Updated
         /// </summary>
-        public RegistryOperationContextModel Updated { get; set; }
+        public OperationContextModel Updated { get; set; }
 
         /// <summary>
         /// Generation id

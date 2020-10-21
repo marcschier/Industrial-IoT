@@ -20,11 +20,11 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Models {
             this PublishedDataSetSourceStateModel model) {
             if (model?.LastResultChange == null &&
                 model?.LastResult == null &&
-                model?.EndpointState == null) {
+                model?.ConnectionState == null) {
                 return null;
             }
             return new PublishedDataSetSourceStateModel {
-                EndpointState = model.EndpointState,
+                ConnectionState = model.ConnectionState.Clone(),
                 LastResultChange = model.LastResultChange,
                 LastResult = model.LastResult.Clone()
             };

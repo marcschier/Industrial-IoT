@@ -3,7 +3,7 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Platform.Publisher.Storage.Services {
+namespace Microsoft.Azure.IIoT.Platform.Publisher.Storage {
     using Microsoft.Azure.IIoT.Platform.Publisher.Models;
     using Microsoft.Azure.IIoT.Exceptions;
     using Microsoft.Azure.IIoT.Storage;
@@ -12,6 +12,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Storage.Services {
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.Azure.IIoT.Hub;
 
     /// <summary>
     /// Database writer repository
@@ -209,19 +210,21 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Storage.Services {
         /// <returns></returns>
         private static IResultFeed<IDocumentInfo<DataSetWriterDocument>> CreateQuery(
             IQuery<DataSetWriterDocument> query, DataSetWriterInfoQueryModel filter) {
-            if (filter?.WriterGroupId != null) {
-                query = query.Where(x => x.WriterGroupId == filter.WriterGroupId);
+            if (filter != null) {
+                if (filter.WriterGroupId != null) {
+                    query = query.Where(x => x.WriterGroupId == filter.WriterGroupId);
+                }
+                if (filter.EndpointId != null) {
+                    query = query.Where(x => x.EndpointId == filter.EndpointId);
+                }
+                if (filter.DataSetName != null) {
+                    query = query.Where(x => x.DataSetName == filter.DataSetName);
+                }
+                if (filter.ExcludeDisabled == true) {
+                    query = query.Where(x => x.IsDisabled == false);
+                }
             }
-            if (filter?.EndpointId != null) {
-                query = query.Where(x => x.EndpointId == filter.EndpointId);
-            }
-            if (filter?.DataSetName != null) {
-                query = query.Where(x => x.DataSetName == filter.DataSetName);
-            }
-            if (filter?.ExcludeDisabled == true) {
-                query = query.Where(x => x.IsDisabled == false);
-            }
-            query = query.Where(x => x.ClassType == DataSetWriterDocument.ClassTypeName);
+            query = query.Where(x => x.ClassType == IdentityType.DataSetWriter);
             return query.GetResults();
         }
 

@@ -19,12 +19,10 @@ namespace Microsoft.Azure.IIoT.Platform.Registry {
         /// </summary>
         /// <param name="applicationId"></param>
         /// <param name="includeDeleted"></param>
-        /// <param name="filterInactiveTwins"></param>
         /// <param name="ct"></param>
         /// <returns></returns>
-        Task<IEnumerable<EndpointInfoModel>> GetApplicationEndpoints(
+        Task<IEnumerable<EndpointInfoModel>> GetApplicationEndpointsAsync(
             string applicationId, bool includeDeleted = false, 
-            bool filterInactiveTwins = false,
             CancellationToken ct = default);
     }
 }

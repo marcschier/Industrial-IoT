@@ -33,12 +33,12 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Service.Controllers.Test {
         }
 
         /// <inheritdoc/>
-        public async Task<BrowseResponseApiModel> NodeBrowseFirstAsync(string endpointId,
+        public async Task<BrowseResponseApiModel> NodeBrowseFirstAsync(string twinId,
             BrowseRequestApiModel content, CancellationToken ct) {
-            if (string.IsNullOrEmpty(endpointId)) {
-                throw new ArgumentNullException(nameof(endpointId));
+            if (string.IsNullOrEmpty(twinId)) {
+                throw new ArgumentNullException(nameof(twinId));
             }
-            var path = new UriBuilder($"{_serviceUri}/v3/browse/{endpointId}");
+            var path = new UriBuilder($"{_serviceUri}/v3/browse/{twinId}");
             if (!string.IsNullOrEmpty(content.NodeId)) {
                 path.Query = $"nodeId={content.NodeId.UrlEncode()}";
             }
@@ -50,10 +50,10 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Service.Controllers.Test {
         }
 
         /// <inheritdoc/>
-        public async Task<BrowseNextResponseApiModel> NodeBrowseNextAsync(string endpointId,
+        public async Task<BrowseNextResponseApiModel> NodeBrowseNextAsync(string twinId,
             BrowseNextRequestApiModel content, CancellationToken ct) {
-            if (string.IsNullOrEmpty(endpointId)) {
-                throw new ArgumentNullException(nameof(endpointId));
+            if (string.IsNullOrEmpty(twinId)) {
+                throw new ArgumentNullException(nameof(twinId));
             }
             if (content == null) {
                 throw new ArgumentNullException(nameof(content));
@@ -61,7 +61,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Service.Controllers.Test {
             if (content.ContinuationToken == null) {
                 throw new ArgumentException("Missing continuation", nameof(content));
             }
-            var path = new UriBuilder($"{_serviceUri}/v3/browse/{endpointId}/next") {
+            var path = new UriBuilder($"{_serviceUri}/v3/browse/{twinId}/next") {
                 Query = $"continuationToken={content.ContinuationToken}"
             };
             var request = _httpClient.NewRequest(path.ToString());
@@ -72,10 +72,10 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Service.Controllers.Test {
         }
 
         /// <inheritdoc/>
-        public async Task<ValueReadResponseApiModel> NodeValueReadAsync(string endpointId,
+        public async Task<ValueReadResponseApiModel> NodeValueReadAsync(string twinId,
             ValueReadRequestApiModel content, CancellationToken ct) {
-            if (string.IsNullOrEmpty(endpointId)) {
-                throw new ArgumentNullException(nameof(endpointId));
+            if (string.IsNullOrEmpty(twinId)) {
+                throw new ArgumentNullException(nameof(twinId));
             }
             if (content == null) {
                 throw new ArgumentNullException(nameof(content));
@@ -83,7 +83,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Service.Controllers.Test {
             if (string.IsNullOrEmpty(content.NodeId)) {
                 throw new ArgumentException("Missing nodeid", nameof(content));
             }
-            var path = new UriBuilder($"{_serviceUri}/v3/read/{endpointId}") {
+            var path = new UriBuilder($"{_serviceUri}/v3/read/{twinId}") {
                 Query = $"nodeId={content.NodeId.UrlEncode()}"
             };
             var request = _httpClient.NewRequest(path.ToString());
@@ -94,69 +94,92 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Service.Controllers.Test {
         }
 
         /// <inheritdoc/>
-        public Task<ReadResponseApiModel> NodeReadAsync(string endpointId,
+        public Task<ReadResponseApiModel> NodeReadAsync(string twinId,
             ReadRequestApiModel content, CancellationToken ct) {
             return Task.FromException<ReadResponseApiModel>(new NotImplementedException());
         }
 
         /// <inheritdoc/>
-        public Task<WriteResponseApiModel> NodeWriteAsync(string endpointId,
+        public Task<WriteResponseApiModel> NodeWriteAsync(string twinId,
             WriteRequestApiModel content, CancellationToken ct) {
             return Task.FromException<WriteResponseApiModel>(new NotImplementedException());
         }
 
         /// <inheritdoc/>
-        public Task<ValueWriteResponseApiModel> NodeValueWriteAsync(string endpointId,
+        public Task<ValueWriteResponseApiModel> NodeValueWriteAsync(string twinId,
             ValueWriteRequestApiModel content, CancellationToken ct) {
             return Task.FromException<ValueWriteResponseApiModel>(new NotImplementedException());
         }
 
         /// <inheritdoc/>
         public Task<MethodMetadataResponseApiModel> NodeMethodGetMetadataAsync(
-            string endpointId, MethodMetadataRequestApiModel content, CancellationToken ct) {
+            string twinId, MethodMetadataRequestApiModel content, CancellationToken ct) {
             return Task.FromException<MethodMetadataResponseApiModel>(new NotImplementedException());
         }
 
         /// <inheritdoc/>
         public Task<MethodCallResponseApiModel> NodeMethodCallAsync(
-            string endpointId, MethodCallRequestApiModel content, CancellationToken ct) {
+            string twinId, MethodCallRequestApiModel content, CancellationToken ct) {
             return Task.FromException<MethodCallResponseApiModel>(new NotImplementedException());
         }
 
         /// <inheritdoc/>
-        public Task<BrowsePathResponseApiModel> NodeBrowsePathAsync(string endpointId,
+        public Task<BrowsePathResponseApiModel> NodeBrowsePathAsync(string twinId,
             BrowsePathRequestApiModel content, CancellationToken ct) {
             return Task.FromException<BrowsePathResponseApiModel>(new NotImplementedException());
         }
 
-        public Task<ModelUploadStartResponseApiModel> ModelUploadStartAsync(string endpointId,
+        public Task<ModelUploadStartResponseApiModel> ModelUploadStartAsync(string twinId,
             ModelUploadStartRequestApiModel content, CancellationToken ct) {
             return Task.FromException<ModelUploadStartResponseApiModel>(new NotImplementedException());
-        }
-
-        public Task<PublishStartResponseApiModel> NodePublishStartAsync(string endpointId,
-            PublishStartRequestApiModel request, CancellationToken ct) {
-            return Task.FromException<PublishStartResponseApiModel>(new NotImplementedException());
-        }
-
-        public Task<PublishStopResponseApiModel> NodePublishStopAsync(string endpointId,
-            PublishStopRequestApiModel request, CancellationToken ct) {
-            return Task.FromException<PublishStopResponseApiModel>(new NotImplementedException());
-        }
-
-        public Task<PublishBulkResponseApiModel> NodePublishBulkAsync(string endpointId,
-            PublishBulkRequestApiModel request, CancellationToken ct) {
-            return Task.FromException<PublishBulkResponseApiModel>(new NotImplementedException());
-        }
-
-        public Task<PublishedItemListResponseApiModel> NodePublishListAsync(string endpointId,
-            PublishedItemListRequestApiModel request, CancellationToken ct) {
-            return Task.FromException<PublishedItemListResponseApiModel>(new NotImplementedException());
         }
 
         /// <inheritdoc/>
         public Task<string> GetServiceStatusAsync(CancellationToken ct) {
             return Task.FromException<string>(new NotImplementedException());
+        }
+
+        public Task<TwinActivationResponseApiModel> ActivateTwinAsync(
+            TwinActivationRequestApiModel request, CancellationToken ct) {
+            return Task.FromException<TwinActivationResponseApiModel>(new NotImplementedException());
+        }
+
+        public Task<TwinInfoListApiModel> ListTwinsAsync(string continuation,
+            int? pageSize, CancellationToken ct) {
+            return Task.FromException<TwinInfoListApiModel>(new NotImplementedException());
+        }
+
+        public Task<TwinInfoListApiModel> QueryTwinsAsync(TwinInfoQueryApiModel query, 
+            int? pageSize, CancellationToken ct) {
+            return Task.FromException<TwinInfoListApiModel>(new NotImplementedException());
+        }
+
+        public Task<TwinApiModel> GetTwinAsync(string twinId, CancellationToken ct) {
+            return Task.FromException<TwinApiModel>(new NotImplementedException());
+        }
+
+        public Task UpdateTwinAsync(string twinId, TwinInfoUpdateApiModel model, 
+            CancellationToken ct) {
+            return Task.FromException(new NotImplementedException());
+        }
+
+        public Task<HistoryReadResponseApiModel<VariantValue>> HistoryReadRawAsync(
+            string twinId, HistoryReadRequestApiModel<VariantValue> request, CancellationToken ct) {
+            return Task.FromException<HistoryReadResponseApiModel<VariantValue>>(new NotImplementedException());
+        }
+
+        public Task<HistoryReadNextResponseApiModel<VariantValue>> HistoryReadRawNextAsync(
+            string twinId, HistoryReadNextRequestApiModel request, CancellationToken ct) {
+            return Task.FromException<HistoryReadNextResponseApiModel<VariantValue>>(new NotImplementedException());
+        }
+
+        public Task<HistoryUpdateResponseApiModel> HistoryUpdateRawAsync(
+            string twinId, HistoryUpdateRequestApiModel<VariantValue> request, CancellationToken ct) {
+            return Task.FromException<HistoryUpdateResponseApiModel>(new NotImplementedException());
+        }
+
+        public Task DectivateTwinAsync(string twinId, string generationId, CancellationToken ct) {
+            return Task.FromException(new NotImplementedException());
         }
 
         private readonly IHttpClient _httpClient;

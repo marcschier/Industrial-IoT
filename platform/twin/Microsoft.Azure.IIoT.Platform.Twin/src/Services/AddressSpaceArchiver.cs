@@ -25,40 +25,38 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
         /// Create archiver
         /// </summary>
         /// <param name="client"></param>
-        /// <param name="endpoint"></param>
-        /// <param name="elevation"></param>
+        /// <param name="connection"></param>
         /// <param name="archive"></param>
         /// <param name="contentType"></param>
         /// <param name="startTime"></param>
         /// <param name="endTime"></param>
         /// <param name="maxValues"></param>
         /// <param name="logger"></param>
-        public AddressSpaceArchiver(IEndpointServices client, EndpointModel endpoint,
-            CredentialModel elevation, IArchive archive, string contentType,
-            DateTime? startTime, DateTime? endTime, int? maxValues, ILogger logger) {
+        public AddressSpaceArchiver(IConnectionServices client, ConnectionModel connection,
+            IArchive archive, string contentType, DateTime? startTime, DateTime? endTime, 
+            int? maxValues, ILogger logger) {
 
             _client = client ?? throw new ArgumentNullException(nameof(client));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            _endpoint = endpoint ?? throw new ArgumentNullException(nameof(endpoint));
-            _archive = archive ?? throw new ArgumentNullException(nameof(endpoint));
+            _connection = connection ?? throw new ArgumentNullException(nameof(connection));
+            _archive = archive ?? throw new ArgumentNullException(nameof(connection));
 
             _contentType = contentType ?? ContentMimeType.UaJson;
             _startTime = startTime ?? DateTime.UtcNow.AddDays(-1);
             _endTime = endTime ?? DateTime.UtcNow;
             _maxValues = maxValues ?? short.MaxValue;
-            _elevation = elevation;
         }
 
         /// <summary>
         /// Create archiver
         /// </summary>
         /// <param name="client"></param>
-        /// <param name="endpoint"></param>
+        /// <param name="connection"></param>
         /// <param name="archive"></param>
         /// <param name="logger"></param>
-        public AddressSpaceArchiver(IEndpointServices client, EndpointModel endpoint,
+        public AddressSpaceArchiver(IConnectionServices client, ConnectionModel connection,
             IArchive archive, ILogger logger) :
-            this(client, endpoint, null, archive, null, null, null, null, logger) {
+            this(client, connection, archive, null, null, null, null, logger) {
         }
 
         /// <inheritdoc/>
@@ -75,8 +73,8 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
             // Write nodes
             IEnumerable<string> historyNodes = null;
             using (var stream = _archive.GetStream("_nodes", FileMode.CreateNew))
-            using (var encoder = new BrowsedNodeStreamEncoder(_client, _endpoint, stream,
-                _contentType, null, _logger, _elevation)) {
+            using (var encoder = new BrowsedNodeStreamEncoder(_client, _connection, stream,
+                _contentType, null, _logger)) {
                 await encoder.EncodeAsync(ct).ConfigureAwait(false);
 
                 historyNodes = encoder.HistoryNodes;
@@ -87,8 +85,8 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
                 foreach (var nodeId in historyNodes) {
                     using (var stream = _archive.GetStream("_history/" + nodeId,
                         FileMode.CreateNew))
-                    using (var encoder = new HistoricValueStreamEncoder(_client, _endpoint,
-                        stream, _contentType, nodeId, _logger, _elevation,
+                    using (var encoder = new HistoricValueStreamEncoder(_client, _connection,
+                        stream, _contentType, nodeId, _logger, 
                         _startTime, _endTime, _maxValues)) {
                         await encoder.EncodeAsync(ct).ConfigureAwait(false);
                         diagnostics.AddRange(encoder.Diagnostics);
@@ -104,14 +102,13 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
             }
         }
 
-        private readonly IEndpointServices _client;
+        private readonly IConnectionServices _client;
         private readonly DateTime _startTime;
         private readonly DateTime _endTime;
         private readonly int _maxValues;
         private readonly IArchive _archive;
         private readonly string _contentType;
-        private readonly EndpointModel _endpoint;
-        private readonly CredentialModel _elevation;
+        private readonly ConnectionModel _connection;
         private readonly ILogger _logger;
     }
 }

@@ -47,7 +47,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                 IEndpointRegistry service = mock.Create<EndpointRegistry>();
 
                 // Run
-                var result = await service.GetEndpointAsync(first.Id);
+                var result = await service.GetEndpointAsync(first.Id).ConfigureAwait(false);
 
                 // Assert
                 Assert.True(result.IsSameAs(endpoints.First()));
@@ -60,7 +60,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                 IEndpointRegistry service = mock.Create<EndpointRegistry>();
 
                 // Run
-                var records = await service.ListEndpointsAsync(null, null);
+                var records = await service.ListEndpointsAsync(null, null).ConfigureAwait(false);
 
                 // Assert
                 Assert.True(endpoints.IsSameAs(records.Items));
@@ -73,7 +73,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                 IEndpointRegistry service = mock.Create<EndpointRegistry>();
 
                 // Run
-                var records = await service.QueryEndpointsAsync(null, null);
+                var records = await service.QueryEndpointsAsync(null, null).ConfigureAwait(false);
 
                 // Assert
                 Assert.True(endpoints.IsSameAs(records.Items));
@@ -89,55 +89,24 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                 // Run
                 var records = await service.QueryEndpointsAsync(new EndpointInfoQueryModel {
                     SecurityMode = SecurityMode.Sign
-                }, null);
+                }, null).ConfigureAwait(false);
 
                 // Assert
                 Assert.Equal(count, records.Items.Count);
             }
         }
 
-        [Fact]
-        public async Task QueryEndpointsByActivationAsync() {
-            using (var mock = CreateMock(out var endpoints)) {
-                var count = endpoints.Count(x => x.IsActivated());
-                IEndpointRegistry service = mock.Create<EndpointRegistry>();
-
-                // Run
-                var records = await service.QueryEndpointsAsync(new EndpointInfoQueryModel {
-                    ActivationState = EntityActivationState.Activated
-                }, null);
-
-                // Assert
-                Assert.Equal(count, records.Items.Count);
-            }
-        }
-
-        [Fact]
-        public async Task QueryEndpointsByDeactivationAsync() {
-            using (var mock = CreateMock(out var endpoints)) {
-                var count = endpoints.Count(x => !x.IsActivated());
-                IEndpointRegistry service = mock.Create<EndpointRegistry>();
-
-                // Run
-                var records = await service.QueryEndpointsAsync(new EndpointInfoQueryModel {
-                    ActivationState = EntityActivationState.Deactivated
-                }, null);
-
-                // Assert
-                Assert.Equal(count, records.Items.Count);
-            }
-        }
-
+#if FALSE
         [Fact]
         public async Task QueryEndpointsByConnectivityAsync() {
             using (var mock = CreateMock(out var endpoints)) {
-                var count = endpoints.Count(x => x.EndpointState == EndpointConnectivityState.Ready);
+                var count = endpoints.Count(x => x.EndpointState == ConnectionStatus.Ready);
                 IEndpointRegistry service = mock.Create<EndpointRegistry>();
 
                 // Run
                 var records = await service.QueryEndpointsAsync(new EndpointInfoQueryModel {
-                    EndpointState = EndpointConnectivityState.Ready
-                }, null);
+                    EndpointState = ConnectionStatus.Ready
+                }, null).ConfigureAwait(false);
 
                 // Assert
                 Assert.Equal(count, records.Items.Count);
@@ -147,18 +116,19 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
         [Fact]
         public async Task QueryEndpointsByDisconnectivityAsync() {
             using (var mock = CreateMock(out var endpoints)) {
-                var count = endpoints.Count(x => x.EndpointState == EndpointConnectivityState.Disconnected);
+                var count = endpoints.Count(x => x.EndpointState == ConnectionStatus.Disconnected);
                 IEndpointRegistry service = mock.Create<EndpointRegistry>();
 
                 // Run
                 var records = await service.QueryEndpointsAsync(new EndpointInfoQueryModel {
-                    EndpointState = EndpointConnectivityState.Disconnected
-                }, null);
+                    EndpointState = ConnectionStatus.Disconnected
+                }, null).ConfigureAwait(false);
 
                 // Assert
                 Assert.Equal(count, records.Items.Count);
             }
         }
+#endif
 
         [Fact]
         public async Task QueryEndpointsBySecurityPolicySameCaseAsync() {
@@ -168,7 +138,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                 // Run
                 var records = await service.QueryEndpointsAsync(new EndpointInfoQueryModel {
                     SecurityPolicy = endpoints.First().Endpoint.SecurityPolicy
-                }, null);
+                }, null).ConfigureAwait(false);
 
                 // Assert
                 Assert.True(records.Items.Count >= 1);
@@ -184,7 +154,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                 // Run
                 var records = await service.QueryEndpointsAsync(new EndpointInfoQueryModel {
                     SecurityPolicy = endpoints.First().Endpoint.SecurityPolicy.ToUpperInvariant()
-                }, null);
+                }, null).ConfigureAwait(false);
 
                 // Assert
                 Assert.True(records.Items.Count == 0);
@@ -199,7 +169,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                 // Run
                 var records = await service.QueryEndpointsAsync(new EndpointInfoQueryModel {
                     Url = endpoints.First().Endpoint.Url.ToUpperInvariant()
-                }, null);
+                }, null).ConfigureAwait(false);
 
                 // Assert
                 Assert.True(records.Items.Count >= 1);
