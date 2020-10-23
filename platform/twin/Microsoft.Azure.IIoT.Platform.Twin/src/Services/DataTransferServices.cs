@@ -12,7 +12,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
     using Microsoft.Azure.IIoT.Tasks;
     using Microsoft.Azure.IIoT.Authentication;
     using Microsoft.Azure.IIoT.Http;
-    using Serilog;
+    using Microsoft.Extensions.Logging;
     using System;
     using System.IO;
     using System.IO.Compression;
@@ -82,7 +82,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
         /// <summary>
         /// A scheduled model upload task
         /// </summary>
-        private class ModelUploadTask {
+        private sealed class ModelUploadTask {
 
             /// <summary>
             /// File name to upload to
@@ -126,12 +126,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
                 Url = request.UploadEndpointUrl;
                 StartTime = DateTime.UtcNow;
                 FileName = $"{id.GetHashCode()}_{StartTime.ToBinary()}{extension}";
-                _logger = logger.ForContext("SourceContext", new {
-                    connection = id.Connection.Endpoint.Url,
-                    url = Url,
-                    fileName = FileName,
-                    mimeType = MimeType
-                });
+                _logger = logger;
                 _job = _outer._scheduler.Run(() =>
                     UploadModelAsync(id, request.Diagnostics, _cts.Token));
             }
@@ -145,6 +140,13 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
             /// <returns></returns>
             private async Task UploadModelAsync(ConnectionIdentifier id, DiagnosticsModel diagnostics,
                 CancellationToken ct) {
+                using var scope = _logger.BeginScope(new {
+                    connection = id.Connection.Endpoint.Url,
+                    url = Url,
+                    fileName = FileName,
+                    mimeType = MimeType
+                });
+
                 var fullPath = Path.Combine(Path.GetTempPath(), FileName);
                 try {
                     _logger.Information("Start model upload.");

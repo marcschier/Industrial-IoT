@@ -3,8 +3,8 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Platform.Subscriber.Cdm.Runtime {
-    using Microsoft.Azure.IIoT.Platform.Subscriber.Cdm;
+namespace Microsoft.Azure.IIoT.Platform.Publisher.Cdm.Runtime {
+    using Microsoft.Azure.IIoT.Platform.Publisher.Cdm;
     using Microsoft.Azure.IIoT.Diagnostics;
     using Microsoft.Extensions.Configuration;
 

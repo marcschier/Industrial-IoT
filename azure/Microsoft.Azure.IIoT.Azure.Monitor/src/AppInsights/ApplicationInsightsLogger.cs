@@ -5,28 +5,28 @@
 
 namespace Microsoft.Azure.IIoT.Azure.AppInsights {
     using Microsoft.Azure.IIoT.Diagnostics;
-    using Serilog;
+    using Microsoft.Extensions.Logging;
 
-    /// <summary>
-    /// Application Insights logger
-    /// </summary>
-    public class ApplicationInsightsLogger : ILoggerProvider {
-
-        /// <inheritdoc/>
-        public ILogger Logger { get; }
-
-        /// <summary>
-        /// Create telemetry client logger
-        /// </summary>
-        /// <param name="config"></param>
-        /// <param name="log"></param>
-        /// <param name="addConsole"></param>
-        public ApplicationInsightsLogger(IAppInsightsConfig config,
-            LoggerConfiguration log = null, bool addConsole = true) {
-            Logger = (log ?? new LoggerConfiguration()).Configure((c, m) => c
-                .WriteTo.ApplicationInsights(config?.InstrumentationKey,
-                    TelemetryConverter.Traces), addConsole)
-                .CreateLogger();
-        }
-    }
+  //  /// <summary>
+  //  /// Application Insights logger
+  //  /// </summary>
+  //  public class ApplicationInsightsLogger : ISerilogLoggerProvider {
+  //
+  //      /// <inheritdoc/>
+  //      public ILogger Logger { get; }
+  //
+  //      /// <summary>
+  //      /// Create telemetry client logger
+  //      /// </summary>
+  //      /// <param name="config"></param>
+  //      /// <param name="log"></param>
+  //      /// <param name="addConsole"></param>
+  //      public ApplicationInsightsLogger(IAppInsightsConfig config,
+  //          LoggerConfiguration log = null, bool addConsole = true) {
+  //          Logger = (log ?? new LoggerConfiguration()).Configure((c, m) => c
+  //              .WriteTo.ApplicationInsights(config?.InstrumentationKey,
+  //                  TelemetryConverter.Traces), addConsole)
+  //              .CreateLogger();
+  //      }
+  //  }
 }

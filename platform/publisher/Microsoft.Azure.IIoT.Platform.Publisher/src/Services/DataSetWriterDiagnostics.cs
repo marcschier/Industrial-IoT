@@ -5,7 +5,7 @@
 
 namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
     using Microsoft.Azure.IIoT.Hub;
-    using Serilog;
+    using Microsoft.Extensions.Logging;
     using Prometheus;
     using System;
     using System.Text;

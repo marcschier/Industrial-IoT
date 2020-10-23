@@ -4,6 +4,7 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Platform.Twin {
+    using Microsoft.Azure.IIoT.Platform.Core.Models;
     using Microsoft.Azure.IIoT.Platform.Twin.Models;
     using System.Threading;
     using System.Threading.Tasks;
@@ -17,10 +18,12 @@ namespace Microsoft.Azure.IIoT.Platform.Twin {
         /// Activate a new twin for communication
         /// </summary>
         /// <param name="request"></param>
+        /// <param name="context"></param>
         /// <param name="ct"></param>
         /// <returns></returns>
         Task<TwinActivationResultModel> ActivateTwinAsync(
-            TwinActivationRequestModel request,
+            TwinActivationRequestModel request, 
+            OperationContextModel context = null,
             CancellationToken ct = default);
 
         /// <summary>
@@ -58,19 +61,23 @@ namespace Microsoft.Azure.IIoT.Platform.Twin {
         /// </summary>
         /// <param name="twinId"></param>
         /// <param name="model"></param>
+        /// <param name="context"></param>
         /// <param name="ct"></param>
         /// <returns></returns>
-        Task UpdateTwinAsync(string twinId,
-            TwinInfoUpdateModel model, CancellationToken ct = default);
+        Task UpdateTwinAsync(string twinId, TwinInfoUpdateModel model,
+            OperationContextModel context = null, 
+            CancellationToken ct = default);
 
         /// <summary>
         /// Deactivate a twin for communication
         /// </summary>
         /// <param name="twinId"></param>
         /// <param name="generationId"></param>
+        /// <param name="context"></param>
         /// <returns></returns>
         /// <param name="ct"></param>
-        Task DectivateTwinAsync(string twinId,
-            string generationId, CancellationToken ct = default);
+        Task DeactivateTwinAsync(string twinId, string generationId,
+            OperationContextModel context = null,
+            CancellationToken ct = default);
     }
 }

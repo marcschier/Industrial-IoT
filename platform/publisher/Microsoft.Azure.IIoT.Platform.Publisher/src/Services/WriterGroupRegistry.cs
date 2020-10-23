@@ -12,7 +12,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
     using Microsoft.Azure.IIoT.Serializers;
     using Microsoft.Azure.IIoT.Exceptions;
     using Microsoft.Azure.IIoT.Utils;
-    using Serilog;
+    using Microsoft.Extensions.Logging;
     using System.Threading.Tasks;
     using System.Threading;
     using System.Collections.Generic;
@@ -63,6 +63,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
         public async Task<DataSetAddVariableBatchResultModel> AddVariablesToDataSetWriterAsync(
             string dataSetWriterId, DataSetAddVariableBatchRequestModel request,
             OperationContextModel context, CancellationToken ct) {
+            context = context.Validate();
             if (request is null) {
                 throw new ArgumentNullException(nameof(request));
             }
@@ -104,7 +105,8 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
 
                 // If successful notify about dataset writer change
                 await _writerEvents.NotifyAllAsync(
-                    l => l.OnDataSetWriterUpdatedAsync(context, dataSetWriterId, writer)).ConfigureAwait(false);
+                    l => l.OnDataSetWriterUpdatedAsync(context, dataSetWriterId, 
+                        writer)).ConfigureAwait(false);
                 return new DataSetAddVariableBatchResultModel {
                     Results = results
                 };
@@ -122,6 +124,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
         public async Task<DataSetAddVariableBatchResultModel> AddVariablesToDefaultDataSetWriterAsync(
             string endpointId, DataSetAddVariableBatchRequestModel request,
             OperationContextModel context, CancellationToken ct) {
+            context = context.Validate();
             if (string.IsNullOrEmpty(endpointId)) {
                 throw new ArgumentNullException(nameof(endpointId));
             }
@@ -185,6 +188,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
         /// <inheritdoc/>
         public async Task ImportWriterGroupAsync(WriterGroupModel writerGroup,
             OperationContextModel context, CancellationToken ct) {
+            context = context.Validate();
             if (writerGroup == null) {
                 throw new ArgumentNullException(nameof(writerGroup));
             }
@@ -301,6 +305,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
         public async Task<DataSetAddEventResultModel> AddEventDataSetAsync(
             string dataSetWriterId, DataSetAddEventRequestModel request,
             OperationContextModel context, CancellationToken ct) {
+            context = context.Validate();
             if (string.IsNullOrEmpty(dataSetWriterId)) {
                 throw new ArgumentNullException(nameof(dataSetWriterId));
             }
@@ -327,6 +332,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
         public async Task<DataSetAddVariableResultModel> AddDataSetVariableAsync(
             string dataSetWriterId, DataSetAddVariableRequestModel request,
             OperationContextModel context, CancellationToken ct) {
+            context = context.Validate();
             if (string.IsNullOrEmpty(dataSetWriterId)) {
                 throw new ArgumentNullException(nameof(dataSetWriterId));
             }
@@ -340,7 +346,8 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
 
             // If successful notify about dataset writer change
             await _itemEvents.NotifyAllAsync(
-                l => l.OnPublishedDataSetVariableAddedAsync(context, dataSetWriterId, result)).ConfigureAwait(false);
+                l => l.OnPublishedDataSetVariableAddedAsync(context, dataSetWriterId, 
+                    result)).ConfigureAwait(false);
             await _writerEvents.NotifyAllAsync(
                 l => l.OnDataSetWriterUpdatedAsync(context, dataSetWriterId)).ConfigureAwait(false);
 
@@ -354,6 +361,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
         public async Task<DataSetWriterAddResultModel> AddDataSetWriterAsync(
             DataSetWriterAddRequestModel request,
             OperationContextModel context, CancellationToken ct) {
+            context = context.Validate();
             if (request == null) {
                 throw new ArgumentNullException(nameof(request));
             }
@@ -406,6 +414,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
         public async Task<WriterGroupAddResultModel> AddWriterGroupAsync(
             WriterGroupAddRequestModel request,
             OperationContextModel context, CancellationToken ct) {
+            context = context.Validate();
             if (request == null) {
                 throw new ArgumentNullException(nameof(request));
             }
@@ -426,12 +435,20 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
         /// <inheritdoc/>
         public Task ActivateWriterGroupAsync(string writerGroupId,
             OperationContextModel context, CancellationToken ct) {
+            context = context.Validate();
+            if (string.IsNullOrEmpty(writerGroupId)) {
+                throw new ArgumentNullException(nameof(writerGroupId));
+            }
             return ActivateDeactivateWriterGroupAsync(writerGroupId, true, context, ct);
         }
 
         /// <inheritdoc/>
         public Task DeactivateWriterGroupAsync(string writerGroupId,
             OperationContextModel context, CancellationToken ct) {
+            context = context.Validate();
+            if (string.IsNullOrEmpty(writerGroupId)) {
+                throw new ArgumentNullException(nameof(writerGroupId));
+            }
             return ActivateDeactivateWriterGroupAsync(writerGroupId, false, context, ct);
         }
 
@@ -454,7 +471,8 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
             if (string.IsNullOrEmpty(dataSetWriterId)) {
                 throw new ArgumentNullException(nameof(dataSetWriterId));
             }
-            var result = await _dataSets.FindEventDataSetAsync(dataSetWriterId, ct).ConfigureAwait(false);
+            var result = await _dataSets.FindEventDataSetAsync(dataSetWriterId,
+                ct).ConfigureAwait(false);
             if (result == null) {
                 throw new ResourceNotFoundException("Event dataset not found");
             }
@@ -533,6 +551,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
         public async Task UpdateEventDataSetAsync(string dataSetWriterId,
             DataSetUpdateEventRequestModel request, OperationContextModel context,
             CancellationToken ct) {
+            context = context.Validate();
             if (string.IsNullOrEmpty(dataSetWriterId)) {
                 throw new ArgumentNullException(nameof(dataSetWriterId));
             }
@@ -590,6 +609,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
         public async Task UpdateDataSetVariableAsync(string dataSetWriterId,
             string variableId, DataSetUpdateVariableRequestModel request,
             OperationContextModel context, CancellationToken ct) {
+            context = context.Validate();
             if (string.IsNullOrEmpty(dataSetWriterId)) {
                 throw new ArgumentNullException(nameof(dataSetWriterId));
             }
@@ -667,9 +687,11 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
             if (updated) {
                 // If updated notify about dataset writer change
                 await _itemEvents.NotifyAllAsync(
-                    l => l.OnPublishedDataSetVariableUpdatedAsync(context, dataSetWriterId, result)).ConfigureAwait(false);
+                    l => l.OnPublishedDataSetVariableUpdatedAsync(context,
+                        dataSetWriterId, result)).ConfigureAwait(false);
                 await _writerEvents.NotifyAllAsync(
-                    l => l.OnDataSetWriterUpdatedAsync(context, dataSetWriterId)).ConfigureAwait(false);
+                    l => l.OnDataSetWriterUpdatedAsync(context, 
+                        dataSetWriterId)).ConfigureAwait(false);
             }
         }
 
@@ -677,6 +699,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
         public async Task UpdateDataSetWriterAsync(string dataSetWriterId,
             DataSetWriterUpdateRequestModel request,
             OperationContextModel context, CancellationToken ct) {
+            context = context.Validate();
             if (string.IsNullOrEmpty(dataSetWriterId)) {
                 throw new ArgumentNullException(nameof(dataSetWriterId));
             }
@@ -790,7 +813,8 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
             if (updated) {
                 // If updated notify about dataset writer change
                 await _writerEvents.NotifyAllAsync(
-                    l => l.OnDataSetWriterUpdatedAsync(context, dataSetWriterId, writer)).ConfigureAwait(false);
+                    l => l.OnDataSetWriterUpdatedAsync(context,
+                        dataSetWriterId, writer)).ConfigureAwait(false);
             }
         }
 
@@ -798,6 +822,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
         public async Task UpdateWriterGroupAsync(string writerGroupId,
             WriterGroupUpdateRequestModel request,
             OperationContextModel context, CancellationToken ct) {
+            context = context.Validate();
             if (string.IsNullOrEmpty(writerGroupId)) {
                 throw new ArgumentNullException(nameof(writerGroupId));
             }
@@ -818,11 +843,6 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                 if (request.Encoding != null) {
                     existing.Encoding = request.Encoding == 0 ?
                         null : request.Encoding;
-                    updated = true;
-                }
-                if (request.Schema != null) {
-                    existing.Schema = request.Schema == 0 ?
-                        null : request.Schema;
                     updated = true;
                 }
                 if (request.BatchSize != null) {
@@ -900,6 +920,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
         public async Task<DataSetRemoveVariableBatchResultModel> RemoveVariablesFromDataSetWriterAsync(
             string dataSetWriterId, DataSetRemoveVariableBatchRequestModel request,
             OperationContextModel context, CancellationToken ct) {
+            context = context.Validate();
             if (string.IsNullOrEmpty(dataSetWriterId)) {
                 throw new ArgumentNullException(nameof(dataSetWriterId));
             }
@@ -951,6 +972,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
         public async Task RemoveDataSetVariableAsync(
             string dataSetWriterId, string variableId, string generationId,
             OperationContextModel context, CancellationToken ct) {
+            context = context.Validate();
             if (string.IsNullOrEmpty(variableId)) {
                 throw new ArgumentNullException(nameof(variableId));
             }
@@ -969,6 +991,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
         public async Task RemoveEventDataSetAsync(string dataSetWriterId,
             string generationId, OperationContextModel context,
             CancellationToken ct) {
+            context = context.Validate();
             if (string.IsNullOrEmpty(dataSetWriterId)) {
                 throw new ArgumentNullException(nameof(dataSetWriterId));
             }
@@ -985,8 +1008,8 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
 
         /// <inheritdoc/>
         public async Task RemoveDataSetWriterAsync(string dataSetWriterId,
-            string generationId, OperationContextModel context,
-            CancellationToken ct) {
+            string generationId, OperationContextModel context, CancellationToken ct) {
+            context = context.Validate();
             if (string.IsNullOrEmpty(dataSetWriterId)) {
                 throw new ArgumentNullException(nameof(dataSetWriterId));
             }
@@ -1009,8 +1032,8 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
 
         /// <inheritdoc/>
         public async Task RemoveWriterGroupAsync(string writerGroupId,
-            string generationId, OperationContextModel context,
-            CancellationToken ct) {
+            string generationId, OperationContextModel context, CancellationToken ct) {
+            context = context.Validate();
             if (string.IsNullOrEmpty(writerGroupId)) {
                 throw new ArgumentNullException(nameof(writerGroupId));
             }
@@ -1036,7 +1059,8 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
         private async Task<DataSetWriterModel> GetDataSetWriterAsync(
             DataSetWriterInfoModel writerInfo, CancellationToken ct) {
             var endpoint = string.IsNullOrEmpty(writerInfo.DataSet.EndpointId) ? null :
-                await _endpoints.GetEndpointAsync(writerInfo.DataSet.EndpointId, ct).ConfigureAwait(false);
+                await _endpoints.GetEndpointAsync(writerInfo.DataSet.EndpointId, 
+                    ct).ConfigureAwait(false);
             var connection = endpoint?.Endpoint == null ? null :
                 new ConnectionModel {
                     Endpoint = endpoint.Endpoint.Clone(),
@@ -1086,8 +1110,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                             WriterGroupId = kDefaultGroupId,
                             Created = context,
                             Updated = context,
-                            Schema = MessageSchema.PubSub,
-                            Encoding = MessageEncoding.Json,
+                            Encoding = NetworkMessageEncoding.Json,
                             State = new WriterGroupStateModel {
                                 LastState = WriterGroupStatus.Disabled,
                                 LastStateChange = DateTime.UtcNow
@@ -1201,11 +1224,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
         /// <returns></returns>
         private async Task ActivateDeactivateWriterGroupAsync(string writerGroupId,
             bool activate, OperationContextModel context, CancellationToken ct) {
-            if (string.IsNullOrEmpty(writerGroupId)) {
-                throw new ArgumentNullException(nameof(writerGroupId));
-            }
             var updated = false;
-            var lastResultChange = context?.Time ?? DateTime.UtcNow;
             var group = await _groups.UpdateAsync(writerGroupId, existing => {
                 var existingState = existing.State?.LastState ?? WriterGroupStatus.Disabled;
                 updated = false;
@@ -1214,14 +1233,14 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                     updated = true;
                     existing.State = new WriterGroupStateModel {
                         LastState = WriterGroupStatus.Pending,
-                        LastStateChange = lastResultChange
+                        LastStateChange = context.Time
                     };
                 }
                 else if (existingState != WriterGroupStatus.Disabled && !activate) {
                     // Deactivate
                     existing.State = new WriterGroupStateModel {
                         LastState = WriterGroupStatus.Disabled,
-                        LastStateChange = lastResultChange
+                        LastStateChange = context.Time
                     };
                     updated = true;
                 }

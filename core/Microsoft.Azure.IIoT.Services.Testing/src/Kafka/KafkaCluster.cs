@@ -8,7 +8,7 @@ namespace Microsoft.Azure.IIoT.Services.Kafka.Server {
     using Microsoft.Azure.IIoT.Exceptions;
     using Microsoft.Azure.IIoT.Utils;
     using Microsoft.Extensions.Diagnostics.HealthChecks;
-    using Serilog;
+    using Microsoft.Extensions.Logging;
     using System;
     using System.Collections.Generic;
     using System.Linq;

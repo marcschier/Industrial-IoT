@@ -12,7 +12,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
     using Opc.Ua;
     using Opc.Ua.Client;
     using Opc.Ua.Client.ComplexTypes;
-    using Serilog;
+    using Microsoft.Extensions.Logging;
     using System;
     using System.Collections.Concurrent;
     using System.Collections.Generic;
@@ -39,11 +39,12 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
             TimeSpan? maxOpTimeout, string sessionName, TimeSpan? timeout,
             TimeSpan? keepAlive) {
             _sessionName = sessionName ?? Guid.NewGuid().ToString();
-            _logger = (logger ?? Log.Logger).ForContext("SourceContext", new {
+            _logger = logger;
+            _scope = logger.BeginScope(new {
                 name = _sessionName,
                 sessionId = Interlocked.Increment(ref _sessionCounter),
                 url = connection.Endpoint.Url
-            }, true);
+            });
             _connection = connection.Clone();
             _config = config;
             _config.CertificateValidator.CertificateValidation += OnValidate;
@@ -117,6 +118,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
             _cts.Dispose();
             _config.CertificateValidator.CertificateValidation -= OnValidate;
             _logger.Information("Session closed.");
+            _scope.Dispose();
         }
 
         /// <inheritdoc/>
@@ -998,6 +1000,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
         private readonly TimeSpan _opTimeout;
         private readonly string _sessionName;
         private readonly ILogger _logger;
+        private readonly IDisposable _scope;
         private readonly TimeSpan _timeout;
         private readonly TimeSpan _keepAlive;
         private readonly ApplicationConfiguration _config;

@@ -12,14 +12,13 @@
     <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="5.0.0-rc.2.20475.5" />
     <PackageReference Include="Microsoft.Extensions.Configuration.CommandLine" Version="5.0.0-rc.2.20475.5" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="5.0.0-rc.2.20475.5" />
-    <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="6.0.0" />
+    <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="7.0.2" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\platform\common\Microsoft.Azure.IIoT.Platform.Edge.Tunnel.Service\src\Microsoft.Azure.IIoT.Platform.Edge.Tunnel.Service.csproj" />
     <ProjectReference Include="..\..\..\..\platform\common\Microsoft.Azure.IIoT.Platform.Edge.Events.Service\src\Microsoft.Azure.IIoT.Platform.Edge.Events.Service.csproj" />
     <ProjectReference Include="..\..\..\..\platform\common\Microsoft.Azure.IIoT.Platform.Api.Events.Service\src\Microsoft.Azure.IIoT.Platform.Api.Events.Service.csproj" />
-    <ProjectReference Include="..\..\..\..\platform\subscriber\Microsoft.Azure.IIoT.Platform.Subscriber.Cdm.Service\src\Microsoft.Azure.IIoT.Platform.Subscriber.Cdm.Service.csproj" />
-    <ProjectReference Include="..\..\..\..\platform\subscriber\Microsoft.Azure.IIoT.Platform.Subscriber.Service\src\Microsoft.Azure.IIoT.Platform.Subscriber.Service.csproj" />
+    <ProjectReference Include="..\..\..\subscriber\Microsoft.Azure.IIoT.Platform.Subscriber.Service\src\Microsoft.Azure.IIoT.Platform.Publisher.Processor.csproj" />
     <ProjectReference Include="..\..\..\..\platform\registry\Microsoft.Azure.IIoT.Platform.Registry.Service\src\Microsoft.Azure.IIoT.Platform.Registry.Service.csproj" />
     <ProjectReference Include="..\..\..\..\platform\publisher\Microsoft.Azure.IIoT.Platform.Publisher.Service\src\Microsoft.Azure.IIoT.Platform.Publisher.Service.csproj" />
     <ProjectReference Include="..\..\..\..\platform\twin\Microsoft.Azure.IIoT.Platform.Twin.Ua.Service\src\Microsoft.Azure.IIoT.Platform.Twin.Ua.Service.csproj" />

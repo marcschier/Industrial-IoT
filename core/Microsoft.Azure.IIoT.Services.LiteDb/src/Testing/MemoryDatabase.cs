@@ -6,7 +6,8 @@
 namespace Microsoft.Azure.IIoT.Storage.Default {
     using Microsoft.Azure.IIoT.Services.LiteDb.Clients;
     using Microsoft.Azure.IIoT.Storage;
-    using Serilog;
+    using Microsoft.Azure.IIoT.Diagnostics;
+    using Microsoft.Extensions.Logging;
     using System.Collections.Concurrent;
     using System.Threading.Tasks;
     using System.IO;
@@ -23,7 +24,7 @@ namespace Microsoft.Azure.IIoT.Storage.Default {
         /// </summary>
         /// <param name="logger"></param>
         public MemoryDatabase(ILogger logger = null) {
-            _logger = logger ?? Log.Logger;
+            _logger = logger ?? ConsoleLogger.CreateLogger();
         }
 
         /// <inheritdoc/>

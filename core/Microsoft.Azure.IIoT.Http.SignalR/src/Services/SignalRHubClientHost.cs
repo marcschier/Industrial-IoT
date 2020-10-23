@@ -10,7 +10,7 @@ namespace Microsoft.Azure.IIoT.Http.SignalR.Services {
     using Microsoft.Azure.IIoT.Rpc;
     using Microsoft.AspNetCore.SignalR.Client;
     using Microsoft.Extensions.DependencyInjection;
-    using Serilog;
+    using Microsoft.Extensions.Logging;
     using System;
     using System.Threading.Tasks;
     using System.Threading;

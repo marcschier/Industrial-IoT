@@ -53,8 +53,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Models {
         /// <param name="context"></param>
         /// <returns></returns>
         public static PublishedDataSetVariableModel AsDataSetVariable(
-            this DataSetAddVariableRequestModel model,
-            OperationContextModel context) {
+            this DataSetAddVariableRequestModel model, OperationContextModel context) {
             if (model == null) {
                 return null;
             }

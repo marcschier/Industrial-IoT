@@ -12,7 +12,7 @@ namespace Microsoft.Azure.IIoT.Azure.ActiveDirectory.Clients {
     using Microsoft.Azure.IIoT.Http.Auth;
     using Microsoft.Azure.IIoT.Storage.Default;
     using Autofac;
-    using Serilog;
+    using Microsoft.Extensions.Logging;
     using System.Collections.Generic;
 
     /// <summary>

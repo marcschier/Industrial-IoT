@@ -6,7 +6,7 @@
 namespace Microsoft.Azure.IIoT.Diagnostics {
     using Microsoft.Azure.IIoT.Utils;
     using Prometheus;
-    using Serilog;
+    using Microsoft.Extensions.Logging;
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;

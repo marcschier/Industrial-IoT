@@ -4,7 +4,6 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Platform.Twin.Clients {
-    using Microsoft.Azure.IIoT.Platform.Twin;
     using Microsoft.Azure.IIoT.Platform.Twin.Models;
     using Microsoft.Azure.IIoT.Platform.Core.Models;
     using System;

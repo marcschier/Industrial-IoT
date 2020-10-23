@@ -5,7 +5,7 @@
 
 namespace Microsoft.Azure.IIoT.Services.CouchDb.Clients {
     using Microsoft.Azure.IIoT.Storage;
-    using Serilog;
+    using Microsoft.Extensions.Logging;
     using System;
     using System.Threading.Tasks;
     using System.Threading;

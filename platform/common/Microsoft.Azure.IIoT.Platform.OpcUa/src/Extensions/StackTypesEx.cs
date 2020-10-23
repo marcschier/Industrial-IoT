@@ -17,7 +17,6 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa {
     using UaDataChangeTrigger = Opc.Ua.DataChangeTrigger;
     using UaPermissionType = Opc.Ua.PermissionType;
     using UaDiagnosticsLevel = Opc.Ua.DiagnosticsMasks;
-    using UaMonitoredItemMessageContentMask = Opc.Ua.MonitoredItemMessageContentMask;
     using JsonDataSetMessageContentMask = Opc.Ua.JsonDataSetMessageContentMask;
     using JsonNetworkMessageContentMask = Opc.Ua.JsonNetworkMessageContentMask;
     using UadpDataSetMessageContentMask = Opc.Ua.UadpDataSetMessageContentMask;
@@ -535,93 +534,19 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa {
         }
 
         /// <summary>
-        /// Get message content mask
-        /// </summary>
-        /// <returns></returns>
-        public static uint ToMonitoredItemMessageMask(this DataSetContentMask? message,
-            DataSetFieldContentMask? field) {
-            UaMonitoredItemMessageContentMask result = 0;
-            if (field == null) {
-                result |=
-                    UaMonitoredItemMessageContentMask.SourceTimestamp |
-                    UaMonitoredItemMessageContentMask.ServerTimestamp |
-                    UaMonitoredItemMessageContentMask.StatusCode |
-                    UaMonitoredItemMessageContentMask.NodeId |
-                    UaMonitoredItemMessageContentMask.EndpointUrl |
-                    UaMonitoredItemMessageContentMask.ApplicationUri |
-                    UaMonitoredItemMessageContentMask.DisplayName |
-                    UaMonitoredItemMessageContentMask.ExtensionFields |
-                    UaMonitoredItemMessageContentMask.SequenceNumber;
-            }
-            else {
-                if (0 != (field & DataSetFieldContentMask.SourceTimestamp)) {
-                    result |= UaMonitoredItemMessageContentMask.SourceTimestamp;
-                }
-                if (0 != (field & DataSetFieldContentMask.SourcePicoSeconds)) {
-                    result |= UaMonitoredItemMessageContentMask.SourcePicoSeconds;
-                }
-                if (0 != (field & DataSetFieldContentMask.ServerTimestamp)) {
-                    result |= UaMonitoredItemMessageContentMask.ServerTimestamp;
-                }
-                if (0 != (field & DataSetFieldContentMask.ServerPicoSeconds)) {
-                    result |= UaMonitoredItemMessageContentMask.ServerPicoSeconds;
-                }
-                if (0 != (field & DataSetFieldContentMask.StatusCode)) {
-                    result |= UaMonitoredItemMessageContentMask.StatusCode;
-                }
-                if (0 != (field & DataSetFieldContentMask.NodeId)) {
-                    result |= UaMonitoredItemMessageContentMask.NodeId;
-                }
-                if (0 != (field & DataSetFieldContentMask.EndpointUrl)) {
-                    result |= UaMonitoredItemMessageContentMask.EndpointUrl;
-                }
-                if (0 != (field & DataSetFieldContentMask.ApplicationUri)) {
-                    result |= UaMonitoredItemMessageContentMask.ApplicationUri;
-                }
-                if (0 != (field & DataSetFieldContentMask.DisplayName)) {
-                    result |= UaMonitoredItemMessageContentMask.DisplayName;
-                }
-                if (0 != (field & DataSetFieldContentMask.ExtensionFields)) {
-                    result |= UaMonitoredItemMessageContentMask.ExtensionFields;
-                }
-            }
-            if (message == null) {
-                result |=
-                    UaMonitoredItemMessageContentMask.Timestamp |
-                    UaMonitoredItemMessageContentMask.Status;
-            }
-            else {
-                if (0 != (message & DataSetContentMask.Timestamp)) {
-                    result |= UaMonitoredItemMessageContentMask.Timestamp;
-                }
-                if (0 != (message & DataSetContentMask.PicoSeconds)) {
-                    result |= UaMonitoredItemMessageContentMask.PicoSeconds;
-                }
-                if (0 != (message & DataSetContentMask.Status)) {
-                    result |= UaMonitoredItemMessageContentMask.Status;
-                }
-                if (0 != (message & DataSetContentMask.SequenceNumber)) {
-                    result |= UaMonitoredItemMessageContentMask.SequenceNumber;
-                }
-
-            }
-            return (uint)result;
-        }
-
-        /// <summary>
         /// Get network message content mask
         /// </summary>
         /// <param name="mask"></param>
         /// <param name="encoding"></param>
         /// <returns></returns>
-        public static uint ToStackType(this NetworkMessageContentMask? mask, MessageEncoding? encoding) {
+        public static uint ToStackType(this NetworkMessageContentMask? mask, NetworkMessageEncoding? encoding) {
             if (mask == null) {
                 mask = NetworkMessageContentMask.Default;
             }
             switch (encoding) {
-                case MessageEncoding.Uadp:
+                case NetworkMessageEncoding.Uadp:
                     return (uint)ToUadpStackType(mask.Value);
-                case MessageEncoding.Json:
+                case NetworkMessageEncoding.Json:
                     return (uint)ToJsonStackType(mask.Value);
             }
             return (uint)ToJsonStackType(mask.Value);
@@ -633,14 +558,14 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa {
         /// <param name="mask"></param>
         /// <param name="encoding"></param>
         /// <returns></returns>
-        public static uint ToStackType(this DataSetContentMask? mask, MessageEncoding? encoding) {
+        public static uint ToStackType(this DataSetContentMask? mask, NetworkMessageEncoding? encoding) {
             if (mask == null) {
                 mask = DataSetContentMask.Default;
             }
             switch (encoding) {
-                case MessageEncoding.Uadp:
+                case NetworkMessageEncoding.Uadp:
                     return (uint)ToUadpStackType(mask.Value);
-                case MessageEncoding.Json:
+                case NetworkMessageEncoding.Json:
                     return (uint)ToJsonStackType(mask.Value);
             }
             return (uint)ToJsonStackType(mask.Value);

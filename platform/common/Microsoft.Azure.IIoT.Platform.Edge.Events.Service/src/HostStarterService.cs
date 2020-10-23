@@ -12,7 +12,7 @@ namespace Microsoft.Azure.IIoT.Platform.Edge.Events.Service {
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
-    using Serilog;
+    using Microsoft.Extensions.Logging;
 
     /// <summary>
     /// Generic host service which manages IHostProcess objects.

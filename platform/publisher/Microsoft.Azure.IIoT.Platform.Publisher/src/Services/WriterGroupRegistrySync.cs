@@ -230,7 +230,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
         }
 
         /// <inheritdoc/>
-        public Task OnEndpointActivatedAsync(OperationContextModel context,
+        public Task OnEndpointFoundAsync(OperationContextModel context,
             EndpointInfoModel endpoint) {
             if (endpoint is null) {
                 throw new ArgumentNullException(nameof(endpoint));
@@ -243,7 +243,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
         }
 
         /// <inheritdoc/>
-        public Task OnEndpointDeactivatedAsync(OperationContextModel context,
+        public Task OnEndpointLostAsync(OperationContextModel context,
             EndpointInfoModel endpoint) {
             if (endpoint is null) {
                 throw new ArgumentNullException(nameof(endpoint));
@@ -257,8 +257,14 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
 
         /// <inheritdoc/>
         public Task OnEndpointDeletedAsync(OperationContextModel context,
-            string endpointId, EndpointInfoModel endpoint) {
-            return EnableWritersWithEndpointAsync(endpointId, false,
+            EndpointInfoModel endpoint) {
+            if (endpoint is null) {
+                throw new ArgumentNullException(nameof(endpoint));
+            }
+
+            // TODO: Delete writer 
+
+            return EnableWritersWithEndpointAsync(endpoint.Id, false,
                 context == null ? null : new OperationContextModel {
                     AuthorityId = context.AuthorityId,
                     Time = context.Time

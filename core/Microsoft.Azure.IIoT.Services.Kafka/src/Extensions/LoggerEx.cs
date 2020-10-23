@@ -4,8 +4,7 @@
 // ------------------------------------------------------------
 
 namespace Confluent.Kafka {
-    using Serilog.Events;
-    using Serilog;
+    using Microsoft.Extensions.Logging;
 
     /// <summary>
     /// Logger extensions
@@ -18,28 +17,28 @@ namespace Confluent.Kafka {
         /// <param name="logger"></param>
         /// <param name="msg"></param>
         internal static void Log(this ILogger logger, LogMessage msg) {
-            LogEventLevel level;
+            LogLevel level;
             switch (msg.Level) {
                 case SyslogLevel.Emergency:
                 case SyslogLevel.Critical:
                 case SyslogLevel.Warning:
                 case SyslogLevel.Alert:
-                    level = LogEventLevel.Warning;
+                    level = LogLevel.Warning;
                     break;
                 case SyslogLevel.Error:
-                    level = LogEventLevel.Error;
+                    level = LogLevel.Error;
                     break;
                 case SyslogLevel.Notice:
                 case SyslogLevel.Info:
-                    level = LogEventLevel.Information;
+                    level = LogLevel.Information;
                     break;
                 case SyslogLevel.Debug:
-                    level = LogEventLevel.Debug;
+                    level = LogLevel.Debug;
                     break;
                 default:
                     return;
             }
-            logger.Write(level, "[{facility}] {name}: {message}",
+            logger.Log(level, "[{facility}] {name}: {message}",
                 msg.Facility, msg.Name, msg.Message);
         }
     }

@@ -31,10 +31,5 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Models {
         /// The operation timeout to create sessions.
         /// </summary>
         public TimeSpan? OperationTimeout { get; set; }
-
-        /// <summary>
-        /// Operation audit context
-        /// </summary>
-        public OperationContextModel Context { get; set; }
     }
 }

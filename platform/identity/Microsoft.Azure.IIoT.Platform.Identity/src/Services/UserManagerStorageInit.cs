@@ -7,7 +7,7 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Services {
     using Microsoft.Azure.IIoT.Platform.Identity.Models;
     using Microsoft.Azure.IIoT.Exceptions;
     using Microsoft.AspNetCore.Identity;
-    using Serilog;
+    using Microsoft.Extensions.Logging;
     using System;
     using System.Threading.Tasks;
 

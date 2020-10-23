@@ -10,13 +10,14 @@ namespace Microsoft.Extensions.Configuration {
     using Microsoft.Azure.IIoT;
     using Microsoft.Azure.KeyVault;
     using Microsoft.Azure.KeyVault.Models;
-    using Serilog;
+    using Microsoft.Extensions.Logging;
     using System;
     using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
     using System.Net.Sockets;
+    using Microsoft.Azure.IIoT.Diagnostics;
 
     /// <summary>
     /// Extension methods
@@ -190,12 +191,13 @@ namespace Microsoft.Extensions.Configuration {
                 IConfigurationRoot configuration, bool allowInteractiveLogon, string keyVaultUrlVarName,
                 bool lazyLoad) {
                 var vaultUri = configuration.GetValue<string>(keyVaultUrlVarName, null);
+                var logger = ConsoleLogger.CreateLogger();
                 if (string.IsNullOrEmpty(vaultUri)) {
-                    Log.Logger.Debug("No keyvault uri found in configuration under {key}. ",
+                    logger.Debug("No keyvault uri found in configuration under {key}. ",
                         keyVaultUrlVarName);
                     vaultUri = Environment.GetEnvironmentVariable(keyVaultUrlVarName);
                     if (string.IsNullOrEmpty(vaultUri)) {
-                        Log.Logger.Debug("No keyvault uri found in environment under {key}. " +
+                        logger.Debug("No keyvault uri found in environment under {key}. " +
                             "Not reading configuration from keyvault without keyvault uri.",
                             keyVaultUrlVarName);
                         return null;
@@ -225,7 +227,7 @@ namespace Microsoft.Extensions.Configuration {
                         catch (TaskCanceledException) {}
                         catch (SocketException) {}
                         await Task.Delay(TimeSpan.FromSeconds(1)).ConfigureAwait(false);
-                        Log.Logger.Information(
+                        logger.Information(
                             "Failed loading secrets due to timeout or network - try again ...");
                     }
                 }

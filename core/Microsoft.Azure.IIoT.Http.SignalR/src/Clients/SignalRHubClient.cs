@@ -9,7 +9,7 @@ namespace Microsoft.Azure.IIoT.Http.SignalR {
     using Microsoft.Azure.IIoT.Rpc;
     using Microsoft.Azure.IIoT.Serializers;
     using Microsoft.Azure.IIoT.Authentication;
-    using Serilog;
+    using Microsoft.Extensions.Logging;
     using System;
     using System.Threading.Tasks;
     using System.Collections.Generic;
@@ -139,8 +139,7 @@ namespace Microsoft.Azure.IIoT.Http.SignalR {
                     throw new ArgumentNullException(nameof(endpointUrl));
                 }
                 var host = new SignalRHubClientHost(endpointUrl,
-                    config.UseMessagePackProtocol,
-                    logger.ForContext<SignalRHubClientHost>(),
+                    config.UseMessagePackProtocol, logger,
                     resourceId, provider, jsonSettings);
 
                 await host.StartAsync().ConfigureAwait(false);

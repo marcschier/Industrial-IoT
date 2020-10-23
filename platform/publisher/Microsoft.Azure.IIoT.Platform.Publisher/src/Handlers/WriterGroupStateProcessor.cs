@@ -7,7 +7,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
     using Microsoft.Azure.IIoT.Platform.Publisher.Models;
     using Microsoft.Azure.IIoT.Platform.Publisher;
     using Microsoft.Azure.IIoT.Platform.Core.Models;
-    using Serilog;
+    using Microsoft.Extensions.Logging;
     using System;
     using System.Threading.Tasks;
 

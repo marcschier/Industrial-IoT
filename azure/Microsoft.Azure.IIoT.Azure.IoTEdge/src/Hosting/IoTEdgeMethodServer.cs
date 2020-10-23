@@ -5,10 +5,11 @@
 
 namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Hosting {
     using Microsoft.Azure.IIoT.Azure.IoTEdge;
-    using Microsoft.Azure.IIoT.Hosting.Services;
+    using Microsoft.Azure.IIoT.Hosting;
     using Microsoft.Azure.IIoT.Exceptions;
+    using Microsoft.Azure.IIoT.Hub;
     using Microsoft.Azure.Devices.Client;
-    using Serilog;
+    using Microsoft.Extensions.Logging;
     using System;
     using System.Threading;
     using System.Threading.Tasks;
@@ -16,7 +17,6 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Hosting {
     using System.Net;
     using System.Collections.Generic;
     using System.Linq;
-    using Microsoft.Azure.IIoT.Hub;
 
     /// <summary>
     /// Method server implementation
@@ -31,7 +31,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Hosting {
         /// <param name="identity"></param>
         /// <param name="routers"></param>
         public IoTEdgeMethodServer(IIoTEdgeClient client, ILogger logger,
-            IIdentity identity, IEnumerable<IMethodRouter> routers) {
+            IIdentity identity, IEnumerable<IMethodHandler> routers) {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _identity = identity ?? throw new ArgumentNullException(nameof(identity));
             _client = client ?? throw new ArgumentNullException(nameof(client));
@@ -108,7 +108,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Hosting {
 
 
         private readonly IIoTEdgeClient _client;
-        private readonly List<IMethodRouter> _routers;
+        private readonly List<IMethodHandler> _routers;
         private readonly ILogger _logger;
         private readonly IIdentity _identity;
         private readonly SemaphoreSlim _lock = new SemaphoreSlim(1, 1);

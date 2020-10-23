@@ -6,7 +6,7 @@
 namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
     using Microsoft.Azure.IIoT.Platform.Publisher.Models;
     using Microsoft.Azure.IIoT.Messaging;
-    using Serilog;
+    using Microsoft.Extensions.Logging;
     using Prometheus;
     using System;
     using System.Linq;
@@ -73,26 +73,13 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
         }
 
         /// <inheritdoc/>
-        public MessageEncoding? Encoding {
-            get => _encoding ?? MessageEncoding.Json;
+        public NetworkMessageEncoding? Encoding {
+            get => _encoding ?? NetworkMessageEncoding.Json;
             set {
-                var prev = _encoding ?? MessageEncoding.Json;
-                var now = value ?? MessageEncoding.Json;
+                var prev = _encoding ?? NetworkMessageEncoding.Json;
+                var now = value ?? NetworkMessageEncoding.Json;
                 if (value == null || _encoders.Keys.Any(s => now.Matches(s))) {
                     _encoding = now;
-                    ResetDataFlowEngine();
-                }
-            }
-        }
-
-        /// <inheritdoc/>
-        public MessageSchema? Schema {
-            get => _schema ?? MessageSchema.PubSub;
-            set {
-                var prev = _schema ?? MessageSchema.PubSub;
-                var now = value ?? MessageSchema.PubSub;
-                if (prev != now && _encoders.Keys.Any(s => now.Matches(s))) {
-                    _schema = now;
                     ResetDataFlowEngine();
                 }
             }
@@ -158,7 +145,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
             if (_encoders.Count == 0) {
                 // Add at least one encoder
                 _encoders.Add(MessageSchemaTypes.NetworkMessageUadp,
-                    new UadpNetworkMessageEncoder());
+                    new NetworkMessageUadpEncoder());
             }
         }
 
@@ -234,11 +221,11 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                 // Snapshot the current configuration
                 _publishingInterval = outer.PublishingInterval ?? TimeSpan.Zero;
                 var messageSchema = MessageSchemaEx.ToMessageSchemaMimeType(
-                     _outer.Schema, _outer.Encoding); // TODO
+                     _outer.Encoding); // TODO
                 if (messageSchema == null || !_outer._encoders.TryGetValue(messageSchema,
                     out _encoder)) {
                     // Should not happen, but set a default
-                    _encoder = new UadpNetworkMessageEncoder();
+                    _encoder = new NetworkMessageUadpEncoder();
                 }
                 _maxNetworkMessageSize = _outer.MaxNetworkMessageSize.Value;
                 var batchSize = _outer.BatchSize ?? 1;
@@ -432,8 +419,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
         private string _headerLayoutUri;
         private NetworkMessageContentMask? _networkMessageContentMask;
         private DataSetOrderingType? _dataSetOrdering;
-        private MessageEncoding? _encoding;
-        private MessageSchema? _schema;
+        private NetworkMessageEncoding? _encoding;
         private static readonly GaugeConfiguration kGaugeConfig = new GaugeConfiguration {
             LabelNames = new[] { "runid", "triggerid" }
         };

@@ -4,10 +4,9 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
+    using Microsoft.Extensions.Logging;
     using Autofac;
     using Opc.Ua;
-    using Serilog;
-    using Serilog.Events;
     using System;
 
     /// <summary>
@@ -65,7 +64,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
         private void Tracing_TraceEventHandler(object sender, TraceEventArgs e) {
             if (!string.IsNullOrEmpty(e.Format) &&
                 ShouldLog(e.TraceMask, out var level, out var traceName)) {
-                Logger.Write(level, e.Exception, $"({traceName}) {e.Format}", e.Arguments);
+                Logger.Log(level, e.Exception, $"({traceName}) {e.Format}", e.Arguments);
             }
         }
 
@@ -76,53 +75,53 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
         /// <param name="level"></param>
         /// <param name="name"></param>
         /// <returns></returns>
-        private static bool ShouldLog(int traceMask, out LogEventLevel level, out string name) {
+        private static bool ShouldLog(int traceMask, out LogLevel level, out string name) {
             switch (traceMask) {
                 case Utils.TraceMasks.Error:
-                    level = LogEventLevel.Error;
+                    level = LogLevel.Error;
                     name = nameof(Utils.TraceMasks.Error);
                     break;
                 case Utils.TraceMasks.Information:
                     // level = LogLevel.Info; // TOO VERBOSE
-                    level = LogEventLevel.Verbose;
+                    level = LogLevel.Trace;
                     name = nameof(Utils.TraceMasks.Information);
                     break;
                 case Utils.TraceMasks.StartStop:
-                    level = LogEventLevel.Information;
+                    level = LogLevel.Information;
                     name = nameof(Utils.TraceMasks.StartStop);
                     break;
                 case Utils.TraceMasks.Operation:
-                    level = LogEventLevel.Debug;
+                    level = LogLevel.Debug;
                     name = nameof(Utils.TraceMasks.Operation);
                     break;
                 case Utils.TraceMasks.ExternalSystem:
-                    level = LogEventLevel.Debug;
+                    level = LogLevel.Debug;
                     name = nameof(Utils.TraceMasks.ExternalSystem);
                     break;
                 case Utils.TraceMasks.StackTrace:
-                    level = LogEventLevel.Verbose;
+                    level = LogLevel.Trace;
                     name = nameof(Utils.TraceMasks.Service);
                     break;
                 case Utils.TraceMasks.Service:
-                    level = LogEventLevel.Verbose;
+                    level = LogLevel.Trace;
                     name = nameof(Utils.TraceMasks.Service);
                     break;
                 case Utils.TraceMasks.Security:
-                    level = LogEventLevel.Verbose;
+                    level = LogLevel.Trace;
                     name = nameof(Utils.TraceMasks.Security);
                     break;
 #if LOG_VERBOSE
                 case Utils.TraceMasks.ServiceDetail:
-                    level = LogEventLevel.Verbose;
+                    level = LogLevel.Trace;
                     name = nameof(Utils.TraceMasks.ServiceDetail);
                     break;
                 case Utils.TraceMasks.OperationDetail:
-                    level = LogEventLevel.Verbose;
+                    level = LogLevel.Trace;
                     name = nameof(Utils.TraceMasks.OperationDetail);
                     break;
 #endif
                 default:
-                    level = LogEventLevel.Verbose;
+                    level = LogLevel.Trace;
                     name = null;
                     return false;
             }

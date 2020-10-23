@@ -23,12 +23,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Models {
         /// <summary>
         /// Return groups only with this encoding
         /// </summary>
-        public MessageEncoding? Encoding { get; set; }
-
-        /// <summary>
-        /// Return groups only with this message schema
-        /// </summary>
-        public MessageSchema? Schema { get; set; }
+        public NetworkMessageEncoding? Encoding { get; set; }
 
         /// <summary>
         /// Return groups in the specified state

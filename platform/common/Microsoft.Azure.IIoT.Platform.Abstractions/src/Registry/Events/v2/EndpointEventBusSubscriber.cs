@@ -38,10 +38,22 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Events.v2 {
                             eventData.Context, eventData.Endpoint)
                         .ContinueWith(t => Task.CompletedTask))).ConfigureAwait(false);
                     break;
+                case EndpointEventType.Lost:
+                    await Task.WhenAll(_listeners
+                        .Select(l => l.OnEndpointLostAsync(
+                            eventData.Context, eventData.Endpoint)
+                        .ContinueWith(t => Task.CompletedTask))).ConfigureAwait(false);
+                    break;
+                case EndpointEventType.Found:
+                    await Task.WhenAll(_listeners
+                        .Select(l => l.OnEndpointFoundAsync(
+                            eventData.Context, eventData.Endpoint)
+                        .ContinueWith(t => Task.CompletedTask))).ConfigureAwait(false);
+                    break;
                 case EndpointEventType.Deleted:
                     await Task.WhenAll(_listeners
                         .Select(l => l.OnEndpointDeletedAsync(
-                            eventData.Context, eventData.Id, eventData.Endpoint)
+                            eventData.Context, eventData.Endpoint)
                         .ContinueWith(t => Task.CompletedTask))).ConfigureAwait(false);
                     break;
             }

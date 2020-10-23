@@ -11,6 +11,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Models {
     using System.Linq;
     using System.Collections.Generic;
     using System.Threading.Tasks;
+    using System.Threading;
 
     /// <summary>
     /// Represents a in memory node for remote reading and writing.
@@ -33,12 +34,14 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Models {
         /// <param name="skipValue"></param>
         /// <param name="operations"></param>
         /// <param name="traceOnly"></param>
+        /// <param name="ct"></param>
         /// <returns></returns>
         public static async Task<RawNodeModel> ReadAsync(Session session,
             RequestHeader requestHeader, NodeId nodeId, bool skipValue,
-            List<OperationResultModel> operations, bool traceOnly) {
+            List<OperationResultModel> operations, bool traceOnly, CancellationToken ct) {
             var node = new RawNodeModel(nodeId, session.NamespaceUris);
-            await node.ReadAsync(session, requestHeader, skipValue, operations, traceOnly).ConfigureAwait(false);
+            await node.ReadAsync(session, requestHeader, skipValue, operations, traceOnly, 
+                ct).ConfigureAwait(false);
             return node;
         }
 
@@ -50,12 +53,13 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Models {
         /// <param name="nodeId"></param>
         /// <param name="operations"></param>
         /// <param name="traceOnly"></param>
+        /// <param name="ct"></param>
         /// <returns></returns>
         public static async Task<Variant?> ReadValueAsync(Session session,
             RequestHeader requestHeader, NodeId nodeId,
-            List<OperationResultModel> operations, bool traceOnly) {
+            List<OperationResultModel> operations, bool traceOnly, CancellationToken ct) {
             var node = new RawNodeModel(nodeId, session.NamespaceUris);
-            await node.ReadValueAsync(session, requestHeader, operations, false, traceOnly).ConfigureAwait(false);
+            await node.ReadValueAsync(session, requestHeader, operations, false, traceOnly, ct).ConfigureAwait(false);
             return node.Value;
         }
 
@@ -68,9 +72,11 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Models {
         /// <param name="skipValue">Skip reading values for variables</param>
         /// <param name="operations"></param>
         /// <param name="traceOnly"></param>
+        /// <param name="ct"></param>
         /// <returns></returns>
         public async Task ReadAsync(Session session, RequestHeader requestHeader,
-            bool skipValue, List<OperationResultModel> operations, bool traceOnly) {
+            bool skipValue, List<OperationResultModel> operations, bool traceOnly, 
+            CancellationToken ct) {
             var readValueCollection = new ReadValueIdCollection(_attributes.Keys
                 .Where(a => !skipValue || a != Attributes.Value)
                 .Select(a => new ReadValueId {
@@ -78,10 +84,11 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Models {
                     AttributeId = a
                 }));
             await ReadAsync(session, requestHeader, readValueCollection, operations,
-                true, traceOnly).ConfigureAwait(false);
+                true, traceOnly, ct).ConfigureAwait(false);
             if (skipValue && NodeClass == NodeClass.VariableType) {
                 // Read default value
-                await ReadValueAsync(session, requestHeader, operations, true, traceOnly).ConfigureAwait(false);
+                await ReadValueAsync(session, requestHeader, operations, true, 
+                    traceOnly, ct).ConfigureAwait(false);
             }
         }
 
@@ -93,10 +100,11 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Models {
         /// <param name="operations"></param>
         /// <param name="skipAttributeIdInvalid"></param>
         /// <param name="traceOnly"></param>
+        /// <param name="ct"></param>
         /// <returns></returns>
         public async Task<DataValue> ReadValueAsync(Session session,
             RequestHeader requestHeader, List<OperationResultModel> operations,
-            bool skipAttributeIdInvalid, bool traceOnly) {
+            bool skipAttributeIdInvalid, bool traceOnly, CancellationToken ct) {
             var readValueCollection = new ReadValueIdCollection {
                 new ReadValueId {
                     NodeId = LocalId,
@@ -111,7 +119,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Models {
             }
             // Update value
             await ReadAsync(session, requestHeader, readValueCollection, operations,
-                skipAttributeIdInvalid, traceOnly).ConfigureAwait(false);
+                skipAttributeIdInvalid, traceOnly, ct).ConfigureAwait(false);
             if (operations == null &&
                 NodeClass != NodeClass.VariableType && NodeClass != NodeClass.Variable) {
                 throw new InvalidOperationException(
@@ -129,13 +137,14 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Models {
         /// <param name="operations"></param>
         /// <param name="skipAttributeIdInvalid"></param>
         /// <param name="traceOnly"></param>
+        /// <param name="ct"></param>
         /// <returns></returns>
         internal async Task ReadAsync(Session session, RequestHeader requestHeader,
             ReadValueIdCollection readValueCollection, List<OperationResultModel> operations,
-            bool skipAttributeIdInvalid, bool traceOnly) {
+            bool skipAttributeIdInvalid, bool traceOnly, CancellationToken ct) {
 
             var readResponse = await session.ReadAsync(requestHeader, 0,
-                TimestampsToReturn.Both, readValueCollection).ConfigureAwait(false);
+                TimestampsToReturn.Both, readValueCollection, ct).ConfigureAwait(false);
 
             OperationResultEx.Validate("Read_" + LocalId, operations,
                 readResponse.Results

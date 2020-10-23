@@ -9,7 +9,7 @@ namespace Microsoft.Azure.IIoT.AspNetCore.Storage {
     using System.Threading;
     using System.Threading.Tasks;
     using System;
-    using Serilog;
+    using Microsoft.Extensions.Logging;
 
     /// <summary>
     /// Uses session cache as <see cref="ICache"/> implementation.

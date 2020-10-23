@@ -529,8 +529,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                             },
                             SamplingOffset = 0.5
                         },
-                        Encoding = MessageEncoding.Uadp,
-                        Schema = MessageSchema.Samples,
+                        Encoding = NetworkMessageEncoding.Uadp,
                         Name = "New name",
                         Priority = 66,
                         PublishingInterval = TimeSpan.FromMilliseconds(566)
@@ -549,8 +548,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                     group.MessageSettings.NetworkMessageContentMask);
                 Assert.All(group.MessageSettings.PublishingOffset, b => Assert.Equal(0.5, b));
                 Assert.Equal(0.5, group.MessageSettings.SamplingOffset);
-                Assert.Equal(MessageEncoding.Uadp, group.Encoding);
-                Assert.Equal(MessageSchema.Samples, group.Schema);
+                Assert.Equal(NetworkMessageEncoding.Uadp, group.Encoding);
                 Assert.Equal("New name", group.Name);
                 Assert.Equal((byte)66, group.Priority);
                 Assert.Equal(TimeSpan.FromMilliseconds(566), group.PublishingInterval);
@@ -715,7 +713,6 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                             SamplingOffset = 0.0
                         },
                         Encoding = 0,
-                        Schema = 0,
                         Name = "",
                         Priority = 0,
                         PublishingInterval = TimeSpan.FromMilliseconds(0)
@@ -734,7 +731,6 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                 Assert.Null(group.MessageSettings.PublishingOffset);
                 Assert.Null(group.MessageSettings.SamplingOffset);
                 Assert.Null(group.Encoding);
-                Assert.Null(group.Schema);
                 Assert.Null(group.Name);
                 Assert.Null(group.Priority);
                 Assert.Null(group.PublishingInterval);
@@ -755,7 +751,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                     MessageSettings = new WriterGroupMessageSettingsModel {
                         DataSetOrdering = DataSetOrderingType.AscendingWriterId
                     },
-                    Encoding = MessageEncoding.Binary,
+                    Encoding = NetworkMessageEncoding.Uadp,
                     BatchSize = 99,
                     DataSetWriters = new List<DataSetWriterModel> {
                         new DataSetWriterModel {
@@ -887,7 +883,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                     MessageSettings = new WriterGroupMessageSettingsModel {
                         DataSetOrdering = DataSetOrderingType.AscendingWriterId
                     },
-                    Encoding = MessageEncoding.Binary,
+                    Encoding = NetworkMessageEncoding.Uadp,
                     BatchSize = 99,
                     DataSetWriters = new List<DataSetWriterModel> {
                         new DataSetWriterModel {
@@ -1024,7 +1020,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                     MessageSettings = new WriterGroupMessageSettingsModel {
                         DataSetOrdering = DataSetOrderingType.AscendingWriterId
                     },
-                    Encoding = MessageEncoding.Binary,
+                    Encoding = NetworkMessageEncoding.Uadp,
                     BatchSize = 99,
                     DataSetWriters = new List<DataSetWriterModel> {
                         new DataSetWriterModel {
@@ -1151,7 +1147,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                     MessageSettings = new WriterGroupMessageSettingsModel {
                         DataSetOrdering = DataSetOrderingType.AscendingWriterId
                     },
-                    Encoding = MessageEncoding.Binary,
+                    Encoding = NetworkMessageEncoding.Uadp,
                     BatchSize = 99,
                     DataSetWriters = new List<DataSetWriterModel> {
                         new DataSetWriterModel {

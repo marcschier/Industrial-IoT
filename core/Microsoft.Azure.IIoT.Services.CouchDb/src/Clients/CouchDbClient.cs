@@ -6,7 +6,7 @@
 namespace Microsoft.Azure.IIoT.Services.CouchDb.Clients {
     using Microsoft.Azure.IIoT.Storage;
     using Microsoft.Extensions.Diagnostics.HealthChecks;
-    using Serilog;
+    using Microsoft.Extensions.Logging;
     using System;
     using System.Threading.Tasks;
     using CouchDB.Driver;

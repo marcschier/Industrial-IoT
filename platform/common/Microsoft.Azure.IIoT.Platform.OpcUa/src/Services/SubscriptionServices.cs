@@ -11,7 +11,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
     using Opc.Ua;
     using Opc.Ua.Client;
     using Opc.Ua.Extensions;
-    using Serilog;
+    using Microsoft.Extensions.Logging;
     using System;
     using System.Collections.Concurrent;
     using System.Collections.Generic;
@@ -95,7 +95,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
                     throw new ArgumentNullException(nameof(outer));
                 _listener = listener ??
                     throw new ArgumentNullException(nameof(listener));
-                _logger = logger?.ForContext<SubscriptionWrapper>() ??
+                _logger = logger ??
                     throw new ArgumentNullException(nameof(logger));
                 _lock = new SemaphoreSlim(1, 1);
             }
@@ -757,7 +757,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
             /// <param name="template"></param>
             /// <param name="logger"></param>
             public MonitoredItemWrapper(MonitoredItemModel template, ILogger logger) {
-                _logger = logger?.ForContext<MonitoredItemWrapper>() ??
+                _logger = logger ??
                     throw new ArgumentNullException(nameof(logger));
                 Template = template.Clone() ??
                     throw new ArgumentNullException(nameof(template));

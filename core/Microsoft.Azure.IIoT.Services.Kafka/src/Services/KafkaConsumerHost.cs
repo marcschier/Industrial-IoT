@@ -8,7 +8,7 @@ namespace Microsoft.Azure.IIoT.Services.Kafka.Services {
     using Microsoft.Azure.IIoT.Messaging;
     using Microsoft.Azure.IIoT.Hosting;
     using Microsoft.Azure.IIoT.Utils;
-    using Serilog;
+    using Microsoft.Extensions.Logging;
     using System;
     using System.Threading;
     using System.Collections.Generic;

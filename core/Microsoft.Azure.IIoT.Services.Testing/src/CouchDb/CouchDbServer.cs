@@ -7,7 +7,7 @@ namespace Microsoft.Azure.IIoT.Services.CouchDb.Server {
     using Microsoft.Azure.IIoT.Services.Docker;
     using Microsoft.Extensions.Diagnostics.HealthChecks;
     using Microsoft.Azure.IIoT.Utils;
-    using Serilog;
+    using Microsoft.Extensions.Logging;
     using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;

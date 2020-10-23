@@ -17,13 +17,13 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
         /// <summary>
         /// Get logical equality comparer
         /// </summary>
-        public static IEqualityComparer<ApplicationInfoModel> LogicalEquality { get; } =
+        public static IEqualityComparer<ApplicationInfoModel> Logical { get; } =
             new LogicalComparer();
 
         /// <summary>
         /// Get structural equality comparer
         /// </summary>
-        public static IEqualityComparer<ApplicationInfoModel> StructuralEquality { get; } =
+        public static IEqualityComparer<ApplicationInfoModel> Structural { get; } =
             new StructuralComparer();
 
         /// <summary>
@@ -67,7 +67,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
-        public static bool IsNotSeen(this ApplicationInfoModel model) {
+        public static bool IsLost(this ApplicationInfoModel model) {
             if (model == null) {
                 return true;
             }
@@ -79,9 +79,9 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
-        public static ApplicationInfoModel SetNotSeen(this ApplicationInfoModel model) {
+        public static ApplicationInfoModel SetAsLost(this ApplicationInfoModel model) {
             if (model != null) {
-                model.Visibility = EntityVisibility.NotSeen;
+                model.Visibility = EntityVisibility.Lost;
                 model.NotSeenSince = DateTime.UtcNow;
             }
             return model;
@@ -159,10 +159,9 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
         /// Convert to registration request
         /// </summary>
         /// <param name="model"></param>
-        /// <param name="context"></param>
         /// <returns></returns>
         public static ApplicationRegistrationRequestModel ToRegistrationRequest(
-            this ApplicationInfoModel model, OperationContextModel context = null) {
+            this ApplicationInfoModel model) {
             if (model is null) {
                 return null;
             }
@@ -177,7 +176,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
                 LocalizedNames = model.LocalizedNames,
                 Locale = model.Locale,
                 ProductUri = model.ProductUri,
-                Context = context
             };
         }
 
@@ -216,60 +214,44 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
         }
 
         /// <summary>
-        /// Convert to Update model
-        /// </summary>
-        /// <param name="model"></param>
-        /// <param name="context"></param>
-        /// <returns></returns>
-        public static ApplicationInfoUpdateModel ToUpdateRequest(
-            this ApplicationInfoModel model, OperationContextModel context = null) {
-            if (model is null) {
-                return null;
-            }
-            return new ApplicationInfoUpdateModel {
-                ApplicationName = model.ApplicationName,
-                Capabilities = model.Capabilities,
-                GenerationId = model.GenerationId,
-                DiscoveryProfileUri = model.DiscoveryProfileUri,
-                DiscoveryUrls = model.DiscoveryUrls,
-                GatewayServerUri = model.GatewayServerUri,
-                LocalizedNames = model.LocalizedNames,
-                ProductUri = model.ProductUri,
-                Locale = model.Locale,
-                Context = context
-            };
-        }
-
-        /// <summary>
         /// Patch application
         /// </summary>
-        /// <param name="application"></param>
-        /// <param name="model"></param>
-        public static ApplicationInfoModel Patch(this ApplicationInfoModel application,
-            ApplicationInfoModel model) {
-            if (model is null) {
-                return application;
+        /// <param name="existing"></param>
+        /// <param name="patch"></param>
+        /// <param name="result"></param>
+        public static bool Patch(this ApplicationInfoModel existing,
+            ApplicationInfoModel patch, out ApplicationInfoModel result) {
+            if (patch == null) {
+                result = existing;
+                return true;
             }
-            if (application is null) {
-                return model;
+            if (existing == null) {
+                result = patch;
+                return false;
             }
-            application.ApplicationId = model.ApplicationId;
-            application.ApplicationName = model.ApplicationName;
-            application.LocalizedNames = model.LocalizedNames;
-            application.ApplicationType = model.ApplicationType;
-            application.ApplicationUri = model.ApplicationUri;
-            application.Capabilities = model.Capabilities;
-            application.DiscoveryProfileUri = model.DiscoveryProfileUri;
-            application.HostAddresses = model.HostAddresses;
-            application.DiscoveryUrls = model.DiscoveryUrls;
-            application.Visibility = model.Visibility;
-            application.NotSeenSince = model.NotSeenSince;
-            application.ProductUri = model.ProductUri;
-            application.DiscovererId = model.DiscovererId;
-            application.GatewayServerUri = model.GatewayServerUri;
-            application.Updated = model.Updated;
-            application.Locale = model.Locale;
-            return application;
+            if (!Structural.Equals(existing, patch)) {
+                result = existing;
+                result.ApplicationId = patch.ApplicationId;
+                result.ApplicationName = patch.ApplicationName;
+                result.LocalizedNames = patch.LocalizedNames;
+                result.ApplicationType = patch.ApplicationType;
+                result.ApplicationUri = patch.ApplicationUri;
+                result.Capabilities = patch.Capabilities;
+                result.DiscoveryProfileUri = patch.DiscoveryProfileUri;
+                result.HostAddresses = patch.HostAddresses;
+                result.DiscoveryUrls = patch.DiscoveryUrls;
+                result.Visibility = patch.Visibility;
+                result.NotSeenSince = patch.NotSeenSince;
+                result.ProductUri = patch.ProductUri;
+                result.DiscovererId = patch.DiscovererId;
+                result.GatewayServerUri = patch.GatewayServerUri;
+                result.Locale = patch.Locale;
+
+                result.Updated = patch.Updated;
+                return true;
+            }
+            result = existing;
+            return false;
         }
 
         /// <summary>
@@ -326,7 +308,14 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
 
             /// <inheritdoc />
             public bool Equals(ApplicationInfoModel x, ApplicationInfoModel y) {
+                if (x == y) {
+                    return true;
+                }
+                if (x == null || y == null) {
+                    return false;
+                }
                 return
+                    x.ApplicationId == y.ApplicationId &&
                     x.DiscovererId == y.DiscovererId &&
                     x.ApplicationType == y.ApplicationType &&
                     x.ApplicationUri.EqualsIgnoreCase(y.ApplicationUri) &&
@@ -335,6 +324,8 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
                     x.ProductUri == y.ProductUri &&
                     x.Locale == y.Locale &&
                     x.HostAddresses.SetEqualsSafe(y.HostAddresses) &&
+                    x.Visibility == y.Visibility &&
+                    x.NotSeenSince == y.NotSeenSince &&
                     x.ApplicationName == y.ApplicationName &&
                     x.LocalizedNames.DictionaryEqualsSafe(y.LocalizedNames) &&
                     x.Capabilities.SetEqualsSafe(y.Capabilities) &&
@@ -344,13 +335,16 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
             /// <inheritdoc />
             public int GetHashCode(ApplicationInfoModel obj) {
                 var hash = new HashCode();
+                hash.Add(obj.ApplicationId);
                 hash.Add(obj.DiscovererId);
                 hash.Add(obj.ApplicationType);
                 hash.Add(obj.ApplicationUri?.ToUpperInvariant());
-                hash.Add(obj.ProductUri);
-                hash.Add(obj.Locale);
                 hash.Add(obj.DiscoveryProfileUri);
                 hash.Add(obj.GatewayServerUri);
+                hash.Add(obj.ProductUri);
+                hash.Add(obj.Locale);
+                hash.Add(obj.Visibility);
+                hash.Add(obj.NotSeenSince);
                 hash.Add(obj.ApplicationName);
                 return hash.ToHashCode();
             }

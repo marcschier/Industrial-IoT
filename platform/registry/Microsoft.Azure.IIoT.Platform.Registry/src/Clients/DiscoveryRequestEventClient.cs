@@ -27,7 +27,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Clients {
 
         /// <inheritdoc/>
         public async Task RegisterAsync(ServerRegistrationRequestModel request,
-            CancellationToken ct) {
+            OperationContextModel context, CancellationToken ct) {
             if (request == null) {
                 throw new ArgumentNullException(nameof(request));
             }
@@ -41,26 +41,27 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Clients {
                 Configuration = new DiscoveryConfigModel {
                     DiscoveryUrls = new List<string> { request.DiscoveryUrl },
                 },
-                Id = request.Id,
-                Context = request.Context.Clone()
-            }, ct).ConfigureAwait(false);
+                Id = request.Id
+            }, context.Clone(), ct).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
         public async Task DiscoverAsync(DiscoveryRequestModel request,
-            CancellationToken ct) {
+            OperationContextModel context, CancellationToken ct) {
             if (request == null) {
                 throw new ArgumentNullException(nameof(request));
             }
+            // TODO: Publish context
             await _events.PublishAsync(request).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
         public async Task CancelAsync(DiscoveryCancelModel request,
-            CancellationToken ct) {
+            OperationContextModel context, CancellationToken ct) {
             if (request == null) {
                 throw new ArgumentNullException(nameof(request));
             }
+            // TODO: Publish context
             await _events.PublishAsync(request).ConfigureAwait(false);
         }
 

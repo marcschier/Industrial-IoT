@@ -26,23 +26,37 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Events.v2 {
 
         /// <inheritdoc/>
         public Task OnApplicationDeletedAsync(OperationContextModel context,
-            string applicationId, ApplicationInfoModel application) {
+            ApplicationInfoModel application) {
             return _bus.PublishAsync(Wrap(ApplicationEventType.Deleted, context,
-                applicationId, application));
+                application));
         }
 
         /// <inheritdoc/>
         public Task OnApplicationNewAsync(
             OperationContextModel context, ApplicationInfoModel application) {
             return _bus.PublishAsync(Wrap(ApplicationEventType.New, context,
-                application.ApplicationId, application));
+                application));
+        }
+
+        /// <inheritdoc/>
+        public Task OnApplicationFoundAsync(
+            OperationContextModel context, ApplicationInfoModel application) {
+            return _bus.PublishAsync(Wrap(ApplicationEventType.Found, context,
+                application));
+        }
+
+        /// <inheritdoc/>
+        public Task OnApplicationLostAsync(
+            OperationContextModel context, ApplicationInfoModel application) {
+            return _bus.PublishAsync(Wrap(ApplicationEventType.Lost, context,
+                application));
         }
 
         /// <inheritdoc/>
         public Task OnApplicationUpdatedAsync(OperationContextModel context,
             ApplicationInfoModel application) {
             return _bus.PublishAsync(Wrap(ApplicationEventType.Updated, context,
-                application.ApplicationId, application));
+                application));
         }
 
         /// <summary>
@@ -50,16 +64,14 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Events.v2 {
         /// </summary>
         /// <param name="type"></param>
         /// <param name="context"></param>
-        /// <param name="applicationId"></param>
         /// <param name="application"></param>
+        /// 
         /// <returns></returns>
         private static ApplicationEventModel Wrap(ApplicationEventType type,
-            OperationContextModel context, string applicationId,
-            ApplicationInfoModel application) {
+            OperationContextModel context, ApplicationInfoModel application) {
             return new ApplicationEventModel {
                 EventType = type,
                 Context = context,
-                Id = applicationId,
                 Application = application
             };
         }

@@ -20,7 +20,7 @@ namespace Microsoft.Azure.IIoT.Platform.Edge.Tunnel.Service {
     using Microsoft.Extensions.Hosting;
     using Autofac;
     using Autofac.Extensions.DependencyInjection;
-    using Serilog;
+    using Microsoft.Extensions.Logging;
     using System;
 
     /// <summary>
@@ -59,8 +59,7 @@ namespace Microsoft.Azure.IIoT.Platform.Edge.Tunnel.Service {
                 })
                 .ConfigureServices((hostBuilderContext, services) => {
                     services.AddHostedService<HostStarterService>();
-                })
-                .UseSerilog();
+                });
         }
 
         /// <summary>

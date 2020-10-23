@@ -146,7 +146,7 @@ Options:
                 Console.WriteLine("Enter connection string:");
                 connectionString = Console.ReadLine();
             }
-            var logger = ConsoleLogger.Create(LogEventLevel.Error);
+            var logger = ConsoleLogger.Create(LogLevel.Error);
             AppDomain.CurrentDomain.UnhandledException += (s, e) => {
                 logger.Fatal(e.ExceptionObject as Exception, "Exception");
                 Console.WriteLine(e);

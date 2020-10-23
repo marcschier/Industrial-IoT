@@ -61,11 +61,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
         /// Gateway server uri
         /// </summary>
         public string GatewayServerUri { get; set; }
-
-        /// <summary>
-        /// Operation audit context
-        /// </summary>
-        public OperationContextModel Context { get; set; }
     }
 }
 

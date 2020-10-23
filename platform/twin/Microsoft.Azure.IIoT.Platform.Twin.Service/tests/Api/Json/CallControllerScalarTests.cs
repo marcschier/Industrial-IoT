@@ -12,7 +12,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Service.Api.Json {
     using Microsoft.Azure.IIoT.Http.Clients;
     using Microsoft.Azure.IIoT.Utils;
     using Opc.Ua;
-    using Serilog;
+    using Microsoft.Extensions.Logging;
     using System.Linq;
     using System.Net;
     using System.Net.Sockets;

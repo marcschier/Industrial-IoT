@@ -7,7 +7,7 @@ namespace Microsoft.Azure.IIoT.Utils {
     using System;
     using System.Threading.Tasks;
     using System.Threading;
-    using Serilog;
+    using Microsoft.Extensions.Logging;
 
     /// <summary>
     /// Worker host

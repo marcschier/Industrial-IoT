@@ -6,7 +6,7 @@
 namespace Microsoft.Azure.IIoT.Crypto.Services {
     using Microsoft.Azure.IIoT.Crypto.Models;
     using Microsoft.Azure.IIoT.Utils;
-    using Serilog;
+    using Microsoft.Extensions.Logging;
     using System;
     using System.Collections.Generic;
     using System.Security.Cryptography.X509Certificates;

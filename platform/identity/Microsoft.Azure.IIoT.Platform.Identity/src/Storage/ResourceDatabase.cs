@@ -9,7 +9,7 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Storage {
     using Microsoft.Azure.IIoT.Exceptions;
     using IdentityServer4.Models;
     using IdentityServer4.Stores;
-    using Serilog;
+    using Microsoft.Extensions.Logging;
     using System;
     using System.Collections.Generic;
     using System.Linq;

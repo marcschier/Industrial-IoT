@@ -4,7 +4,7 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Http.Diagnostics {
-    using Serilog;
+    using Microsoft.Extensions.Logging;
     using System.Net.Http.Headers;
     using System.Threading.Tasks;
     using System.Net;

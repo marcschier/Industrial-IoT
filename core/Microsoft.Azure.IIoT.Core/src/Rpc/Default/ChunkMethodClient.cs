@@ -8,7 +8,7 @@ namespace Microsoft.Azure.IIoT.Rpc.Default {
     using Microsoft.Azure.IIoT.Exceptions;
     using Microsoft.Azure.IIoT.Hub;
     using Microsoft.Azure.IIoT.Serializers;
-    using Serilog;
+    using Microsoft.Extensions.Logging;
     using System;
     using System.Threading.Tasks;
     using System.IO;

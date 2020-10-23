@@ -3,10 +3,10 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Platform.Subscriber.Service {
-    using Microsoft.Azure.IIoT.Platform.Subscriber.Service.Runtime;
-    using Microsoft.Azure.IIoT.Platform.Subscriber.Handlers;
-    using Microsoft.Azure.IIoT.Platform.Subscriber.Processors;
+namespace Microsoft.Azure.IIoT.Platform.Publisher.Processor {
+    using Microsoft.Azure.IIoT.Platform.Publisher.Processor.Runtime;
+    using Microsoft.Azure.IIoT.Platform.Publisher.Handlers;
+    using Microsoft.Azure.IIoT.Platform.Publisher.Processors;
     using Microsoft.Azure.IIoT.Platform.OpcUa.Services;
     using Microsoft.Azure.IIoT.Azure.AppInsights;
     using Microsoft.Azure.IIoT.Azure.EventHub;
@@ -22,7 +22,7 @@ namespace Microsoft.Azure.IIoT.Platform.Subscriber.Service {
     using Microsoft.Extensions.Hosting;
     using Autofac;
     using Autofac.Extensions.DependencyInjection;
-    using Serilog;
+    using Microsoft.Extensions.Logging;
     using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
@@ -64,8 +64,7 @@ namespace Microsoft.Azure.IIoT.Platform.Subscriber.Service {
                 })
                 .ConfigureServices((hostBuilderContext, services) => {
                     services.AddHostedService<HostStarterService>();
-                })
-                .UseSerilog();
+                });
         }
 
 
@@ -98,20 +97,19 @@ namespace Microsoft.Azure.IIoT.Platform.Subscriber.Service {
 
             // --- Logic ---
 
-            // Handle opc-ua pub/sub subscriber messages
+            // Handle messages
             builder.RegisterType<VariantEncoderFactory>()
                 .AsImplementedInterfaces();
-            builder.RegisterType<MonitoredItemSampleBinaryHandler>()
+
+            builder.RegisterType<DataSetWriterMessageHandler>()
                 .AsImplementedInterfaces();
-            builder.RegisterType<MonitoredItemSampleJsonHandler>()
+            builder.RegisterType<NetworkMessageUadpHandler>()
                 .AsImplementedInterfaces();
-            builder.RegisterType<PubSubNetworkMessageBinaryHandler>()
-                .AsImplementedInterfaces();
-            builder.RegisterType<PubSubNetworkMessageJsonHandler>()
+            builder.RegisterType<NetworkMessageJsonHandler>()
                 .AsImplementedInterfaces();
 
             // ... and forward results and unknowns to secondary queue
-            builder.RegisterType<MonitoredItemSampleForwarder>()
+            builder.RegisterType<DataSetWriterMessageForwarder>()
                 .AsImplementedInterfaces();
             builder.RegisterType<UnknownTelemetryForwarder>()
                 .AsImplementedInterfaces();

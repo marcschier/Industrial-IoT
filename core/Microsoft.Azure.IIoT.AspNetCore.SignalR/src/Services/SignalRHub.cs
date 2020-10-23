@@ -9,7 +9,7 @@ namespace Microsoft.Azure.IIoT.Messaging.SignalR.Services {
     using System;
     using System.Threading;
     using System.Threading.Tasks;
-    using Serilog;
+    using Microsoft.Extensions.Logging;
 
     /// <summary>
     /// Signalr hub for hosting inside Asp.net core host.

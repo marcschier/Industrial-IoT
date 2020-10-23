@@ -6,7 +6,7 @@
 namespace Microsoft.Azure.IIoT.Platform.Registry.Clients {
     using Microsoft.Azure.IIoT.Platform.Registry.Models;
     using Microsoft.Azure.IIoT.Hub;
-    using Serilog;
+    using Microsoft.Extensions.Logging;
     using System;
     using System.Collections.Generic;
     using System.Linq;

@@ -5,7 +5,7 @@
 
 namespace Microsoft.Azure.IIoT.Services.Docker {
     using Microsoft.Extensions.Diagnostics.HealthChecks;
-    using Serilog;
+    using Microsoft.Extensions.Logging;
     using System;
     using System.Linq;
     using System.Net;

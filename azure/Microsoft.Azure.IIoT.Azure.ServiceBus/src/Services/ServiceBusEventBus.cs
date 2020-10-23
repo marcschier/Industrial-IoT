@@ -10,7 +10,7 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Services {
     using Microsoft.Azure.IIoT.Utils;
     using Microsoft.Azure.IIoT.Exceptions;
     using Microsoft.Azure.ServiceBus;
-    using Serilog;
+    using Microsoft.Extensions.Logging;
     using System;
     using System.Collections.Generic;
     using System.Linq;

@@ -21,7 +21,6 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Models {
             this TwinEventModel model) {
             return new TwinEventApiModel {
                 EventType = (TwinEventType)model.EventType,
-                Id = model.Id,
                 Twin = model.Twin.ToApiModel()
             };
         }

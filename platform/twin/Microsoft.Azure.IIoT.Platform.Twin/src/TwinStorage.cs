@@ -20,7 +20,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin {
         protected override void Load(ContainerBuilder builder) {
 
             // Services
-            builder.RegisterType<TwinRegistry>()
+            builder.RegisterType<TwinRegistryServices>()
                 .AsImplementedInterfaces().InstancePerLifetimeScope();
 
             builder.RegisterType<TwinDatabase>()

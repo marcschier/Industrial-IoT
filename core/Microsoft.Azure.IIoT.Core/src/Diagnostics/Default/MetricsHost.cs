@@ -5,7 +5,7 @@
 
 namespace Microsoft.Azure.IIoT.Diagnostics.Services {
     using Microsoft.Azure.IIoT.Diagnostics;
-    using Serilog;
+    using Microsoft.Extensions.Logging;
     using Prometheus;
     using System;
     using System.Threading.Tasks;

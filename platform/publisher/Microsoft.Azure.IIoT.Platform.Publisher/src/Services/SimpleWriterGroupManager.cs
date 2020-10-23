@@ -237,7 +237,6 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                 _sink.BatchSize = _group.BatchSize;
                 _sink.PublishingInterval = _group.PublishingInterval;
                 _sink.Encoding = _group.Encoding;
-                _sink.Schema = _group.Schema;
                 _sink.HeaderLayoutUri = _group.HeaderLayoutUri;
                 _sink.DataSetOrdering = _group.MessageSettings?.DataSetOrdering;
                 _sink.MessageContentMask = _group.MessageSettings?.NetworkMessageContentMask;

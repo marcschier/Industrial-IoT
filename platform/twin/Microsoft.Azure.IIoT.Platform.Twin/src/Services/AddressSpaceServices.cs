@@ -11,7 +11,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
     using Microsoft.Azure.IIoT.Platform.OpcUa.Models;
     using Microsoft.Azure.IIoT.Exceptions;
     using Microsoft.Azure.IIoT.Serializers;
-    using Serilog;
+    using Microsoft.Extensions.Logging;
     using Opc.Ua;
     using Opc.Ua.Client;
     using Opc.Ua.Extensions;
@@ -236,7 +236,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
                     var node = nodeReference.NodeId.ToNodeId(session.NamespaceUris);
                     var value = await RawNodeModel.ReadValueAsync(session,
                         (request.Header?.Diagnostics).ToStackModel(), node, diagnostics,
-                            false).ConfigureAwait(false);
+                            false, ct).ConfigureAwait(false);
                     if (value?.Value is not ExtensionObject[] argumentsList) {
                         continue;
                     }
@@ -784,7 +784,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
                 return new NodeModel { NodeId = id, NodeClass = nodeClass?.ToServiceType() };
             }
             var node = await RawNodeModel.ReadAsync(session, header, nodeId, skipValue,
-                diagnostics, traceOnly).ConfigureAwait(false);
+                diagnostics, traceOnly, ct).ConfigureAwait(false);
             var value = node.DataValue;
             return new NodeModel {
                 Children = children,
@@ -865,10 +865,9 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
                     if (!rawMode) {
                         // Check for children
                         try {
-                            var response = await session.BrowseAsync(header, null,
-                                nodeId, 1, Opc.Ua.BrowseDirection.Forward,
-                                ReferenceTypeIds.HierarchicalReferences,
-                                true, 0, BrowseResultMask.All).ConfigureAwait(false);
+                            var response = await session.BrowseAsync(header, null, nodeId, 1, 
+                                Opc.Ua.BrowseDirection.Forward, ReferenceTypeIds.HierarchicalReferences, 
+                                true, 0, BrowseResultMask.All, ct: ct).ConfigureAwait(false);
                             OperationResultEx.Validate("FetchChildren_" + nodeId,
                                 diagnostics, response?.Results?.Select(r => r.StatusCode),
                                 response?.DiagnosticInfos, true);
@@ -878,7 +877,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
                                     await session.BrowseNextAsync(header, true,
                                         new ByteStringCollection {
                                             response.Results[0].ContinuationPoint
-                                        }).ConfigureAwait(false);
+                                        }, ct: ct).ConfigureAwait(false);
                                 }
                             }
                         }
@@ -939,8 +938,8 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
                 foreach (var target in targets) {
                     try {
                         var nodeId = target.TargetId.ToNodeId(session.NamespaceUris);
-                        var model = await ReadNodeModelAsync(session, codec, header, nodeId,
-                            null, !readValues, rawMode, false, diagnostics, true, ct).ConfigureAwait(false);
+                        var model = await ReadNodeModelAsync(session, codec, header, nodeId, null, 
+                            !readValues, rawMode, false, diagnostics, true, ct).ConfigureAwait(false);
                         result.Add(new NodePathTargetModel {
                             BrowsePath = path,
                             Target = model,

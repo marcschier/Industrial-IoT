@@ -8,7 +8,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
     using Microsoft.Azure.IIoT.Platform.Core.Models;
     using Microsoft.Azure.IIoT.Platform.OpcUa;
     using Microsoft.Azure.IIoT.Platform.OpcUa.Models;
-    using Serilog;
+    using Microsoft.Extensions.Logging;
     using System;
     using System.Threading.Tasks;
     using System.Collections.Generic;
@@ -60,7 +60,6 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                 _logger.Information("{writer} successfully disabled", DataSetWriterId);
                 return;
             }
-            _dataSet = dataSet;
 
             _subscription = await _client.CreateSubscriptionAsync(config,
                 this).ConfigureAwait(false);
@@ -140,7 +139,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
             _diagnostics.ReportDataSetWriterSubscriptionNotifications(
                 DataSetWriterId, notification.MonitoredItems.Count);
 
-            _sink.OnDataSetNotification(DataSetWriterId, _dataSet, 
+            _sink.OnDataSetNotification(DataSetWriterId,
                 Interlocked.Increment(ref _sequenceNumber),
                 notification, stringTable, subscription);
         }
@@ -153,7 +152,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
             _diagnostics.ReportDataSetWriterSubscriptionNotifications(
                 DataSetWriterId, notification.Events.Count);
 
-            _sink.OnDataSetNotification(DataSetWriterId, _dataSet, 
+            _sink.OnDataSetNotification(DataSetWriterId,
                 Interlocked.Increment(ref _sequenceNumber),
                 notification, stringTable, subscription);
         }
@@ -190,8 +189,6 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
         }
 
         private ISubscriptionHandle _subscription;
-        private PublishedDataSetModel _dataSet;
-
         private volatile uint _sequenceNumber;
         private readonly IVariantEncoderFactory _codec;
         private readonly ISubscriptionClient _client;

@@ -3,7 +3,7 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Platform.Subscriber.Cdm {
+namespace Microsoft.Azure.IIoT.Platform.Publisher.Cdm {
 
     /// <summary>
     /// configuration for the CDM folder

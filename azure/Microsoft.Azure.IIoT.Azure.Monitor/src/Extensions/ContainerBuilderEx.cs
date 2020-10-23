@@ -10,7 +10,7 @@ namespace Microsoft.Azure.IIoT.Azure.AppInsights {
     using Microsoft.ApplicationInsights.Extensibility;
     using Autofac;
     using Autofac.Core.Registration;
-    using Serilog;
+    using Microsoft.Extensions.Logging;
     using System;
 
     /// <summary>
@@ -23,11 +23,10 @@ namespace Microsoft.Azure.IIoT.Azure.AppInsights {
         /// </summary>
         /// <param name="builder"></param>
         /// <param name="config"></param>
-        /// <param name="log"></param>
         /// <param name="addConsole"></param>
         /// <returns></returns>
-        public static IModuleRegistrar AddAppInsightsLogging(this ContainerBuilder builder,
-            IAppInsightsConfig config, LoggerConfiguration log = null, bool addConsole = true) {
+        public static ContainerBuilder AddAppInsightsLogging(this ContainerBuilder builder,
+            IAppInsightsConfig config, bool addConsole = true) {
             if (builder == null) {
                 throw new ArgumentNullException(nameof(builder));
             }
@@ -36,8 +35,14 @@ namespace Microsoft.Azure.IIoT.Azure.AppInsights {
             }
             builder.RegisterType<HealthCheckRegistrar>()
                 .AsImplementedInterfaces().SingleInstance();
-            return builder.RegisterModule(
-                new LoggerProviderModule(new ApplicationInsightsLogger(config, log, addConsole)));
+
+            // TODO
+
+
+            // return builder.RegisterModule(
+            //     new LoggerProviderModule(new ApplicationInsightsLogger(config, log, addConsole)));
+
+            return builder;
         }
 
         /// <summary>

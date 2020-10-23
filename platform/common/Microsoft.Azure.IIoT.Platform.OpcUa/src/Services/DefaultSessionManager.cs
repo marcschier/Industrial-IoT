@@ -12,7 +12,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
     using Opc.Ua;
     using Opc.Ua.Client;
     using Opc.Ua.Client.ComplexTypes;
-    using Serilog;
+    using Microsoft.Extensions.Logging;
     using System;
     using System.Collections.Generic;
     using System.Collections.Concurrent;

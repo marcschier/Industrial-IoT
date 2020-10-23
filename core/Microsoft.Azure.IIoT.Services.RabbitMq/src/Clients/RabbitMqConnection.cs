@@ -6,7 +6,7 @@
 namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
     using Microsoft.Azure.IIoT.Exceptions;
     using Microsoft.Azure.IIoT.Utils;
-    using Serilog;
+    using Microsoft.Extensions.Logging;
     using System;
     using System.Collections.Concurrent;
     using System.Linq;
@@ -85,7 +85,8 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
             /// <param name="consumer"></param>
             internal RabbitMqChannel(RabbitMqConnection outer, string name,
                 bool pubSub, IRabbitMqConsumer consumer) {
-                _logger = outer._logger.ForContext("SourceContext", new {
+                _logger = outer._logger;
+                _scope = _logger.BeginScope("SourceContext", new {
                     ChannelName = name
                 });
                 _outer = outer;
@@ -148,6 +149,7 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
             public void Dispose() {
                 CloseChannel();
                 _isDisposed = true;
+                _scope.Dispose();
             }
 
             /// <summary>
@@ -287,7 +289,8 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
                 public Channel(IModel model, RabbitMqChannel outer) :
                     base(model) {
                     _outer = outer;
-                    _logger = outer._logger.ForContext("SourceContext", new {
+                    _logger = outer._logger;
+                    _scope = _logger.BeginScope(new {
                         outer.QueueName,
                         outer.ExchangeName,
                         ConsumerTag = _consumerTag
@@ -339,10 +342,12 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
                     }
                     finally {
                         Model.Dispose();
+                        _scope.Dispose();
                     }
                 }
 
                 private readonly ILogger _logger;
+                private readonly IDisposable _scope;
                 private readonly RabbitMqChannel _outer;
                 private readonly string _consumerTag = Guid.NewGuid().ToString();
             }
@@ -352,6 +357,7 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
             private readonly string _name;
             private readonly bool _pubSub;
             private readonly ILogger _logger;
+            private readonly IDisposable _scope;
             private readonly IRabbitMqConsumer _consumer;
             private readonly RabbitMqConnection _outer;
             private readonly ConcurrentDictionary<ulong, Action<Exception>> _completions =

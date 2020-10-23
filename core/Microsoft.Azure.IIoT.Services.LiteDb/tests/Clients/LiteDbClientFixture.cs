@@ -116,7 +116,7 @@ namespace Microsoft.Azure.IIoT.Services.LiteDb.Clients {
         /// <param name="options"></param>
         /// <returns></returns>
         public async Task<IDatabase> GetDatabaseAsync() {
-            var logger = ConsoleLogger.Create();
+            var logger = ConsoleLogger.CreateLogger();
             var server = new MemoryDatabase(logger);
             return await server.OpenAsync(_database, null).ConfigureAwait(false);
         }

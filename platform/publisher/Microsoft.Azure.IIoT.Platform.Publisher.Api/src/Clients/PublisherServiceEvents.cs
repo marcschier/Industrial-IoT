@@ -77,7 +77,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api {
 
         /// <inheritdoc/>
         public async Task<IAsyncDisposable> SubscribeDataSetItemStatusAsync(
-            string dataSetWriterId, Func<MonitoredItemMessageApiModel, Task> callback) {
+            string dataSetWriterId, Func<PublishedDataSetItemMessageApiModel, Task> callback) {
 
             if (callback == null) {
                 throw new ArgumentNullException(nameof(callback));
@@ -100,7 +100,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api {
 
         /// <inheritdoc/>
         public async Task<IAsyncDisposable> SubscribeEventDataSetMessagesAsync(
-            string dataSetWriterId, Func<MonitoredItemMessageApiModel, Task> callback) {
+            string dataSetWriterId, Func<PublishedDataSetItemMessageApiModel, Task> callback) {
 
             if (callback == null) {
                 throw new ArgumentNullException(nameof(callback));
@@ -124,7 +124,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api {
         /// <inheritdoc/>
         public async Task<IAsyncDisposable> SubscribeDataSetVariableMessagesAsync(
             string dataSetWriterId, string variableId, 
-            Func<MonitoredItemMessageApiModel, Task> callback) {
+            Func<PublishedDataSetItemMessageApiModel, Task> callback) {
 
             if (callback == null) {
                 throw new ArgumentNullException(nameof(callback));
@@ -187,7 +187,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api {
                 throw new ArgumentNullException(nameof(connectionId));
             }
             var request = _httpClient.NewRequest(
-                $"{_serviceUri}/v3/writers/{dataSetWriterId}/variable/{variableId}",
+                $"{_serviceUri}/v3/writers/{dataSetWriterId}/variables/{variableId}",
                 Resource.Platform);
             _serializer.SerializeToRequest(request, connectionId);
             var response = await _httpClient.PutAsync(request, ct).ConfigureAwait(false);
@@ -204,7 +204,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api {
                 throw new ArgumentNullException(nameof(connectionId));
             }
             var request = _httpClient.NewRequest(
-                $"{_serviceUri}/v3/writers/{dataSetWriterId}/variable/{variableId}/{connectionId}",
+                $"{_serviceUri}/v3/writers/{dataSetWriterId}/variables/{variableId}/{connectionId}",
                 Resource.Platform);
             var response = await _httpClient.DeleteAsync(request, ct).ConfigureAwait(false);
             response.Validate();

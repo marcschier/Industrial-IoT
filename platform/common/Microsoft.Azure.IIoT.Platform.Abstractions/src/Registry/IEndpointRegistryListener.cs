@@ -32,13 +32,30 @@ namespace Microsoft.Azure.IIoT.Platform.Registry {
             EndpointInfoModel endpoint);
 
         /// <summary>
+        /// Lost endpoint
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="endpoint"></param>
+        /// <returns></returns>
+        Task OnEndpointLostAsync(OperationContextModel context,
+            EndpointInfoModel endpoint);
+
+        /// <summary>
+        /// Lost endpoint
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="endpoint"></param>
+        /// <returns></returns>
+        Task OnEndpointFoundAsync(OperationContextModel context,
+            EndpointInfoModel endpoint);
+
+        /// <summary>
         /// Deleted endpoint
         /// </summary>
         /// <param name="context"></param>
-        /// <param name="endpointId"></param>
         /// <param name="endpoint"></param>
         /// <returns></returns>
         Task OnEndpointDeletedAsync(OperationContextModel context,
-            string endpointId, EndpointInfoModel endpoint);
+            EndpointInfoModel endpoint);
     }
 }

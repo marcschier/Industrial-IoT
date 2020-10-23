@@ -5,7 +5,7 @@
 
 namespace Microsoft.Azure.IIoT.AspNetCore.Cors {
     using Microsoft.Azure.IIoT.AspNetCore.Models;
-    using Serilog;
+    using Microsoft.Extensions.Logging;
     using Microsoft.AspNetCore.Builder;
     using Newtonsoft.Json;
     using System;

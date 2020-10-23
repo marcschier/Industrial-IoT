@@ -5,7 +5,7 @@
 
 namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
     using Microsoft.Azure.IIoT.Platform.OpcUa.Models;
-    using Serilog;
+    using Microsoft.Extensions.Logging;
     using Opc.Ua;
     using Opc.Ua.Server;
     using System;

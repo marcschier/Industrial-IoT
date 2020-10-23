@@ -30,7 +30,10 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Handlers {
 
         /// <inheritdoc/>
         public Task HandleAsync(DiscoveryRequestModel request) {
-            _processor.TrySchedule(() => _discovery.DiscoverAsync(request),
+            if (request is null) {
+                throw new ArgumentNullException(nameof(request));
+            }
+            _processor.TrySchedule(() => _discovery.DiscoverAsync(request, request.Context),
                 () => Task.CompletedTask);
             return Task.CompletedTask;
         }

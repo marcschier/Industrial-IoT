@@ -85,7 +85,11 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
                 .AsImplementedInterfaces();
 
             // ... with client event callbacks
+            builder.RegisterType<DirectoryServiceEvents>()
+                .AsImplementedInterfaces().SingleInstance();
             builder.RegisterType<RegistryServiceEvents>()
+                .AsImplementedInterfaces();
+            builder.RegisterType<TwinServiceEvents>()
                 .AsImplementedInterfaces();
             builder.RegisterType<PublisherServiceEvents>()
                 .AsImplementedInterfaces();
@@ -1378,8 +1382,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
                 PublishingInterval = options.GetValueOrDefault<TimeSpan>("-p", "--publish", null),
                 HeaderLayoutUri = options.GetValueOrDefault<string>("-h", "--header", null),
                 KeepAliveTime = options.GetValueOrDefault<TimeSpan>("-k", "--keepalive", null),
-                Encoding = options.GetValueOrDefault<MessageEncoding?>("-e", "--encoding", null),
-                Schema = options.GetValueOrDefault<MessageSchema?>("-t", "--schema", null),
+                Encoding = options.GetValueOrDefault<NetworkMessageEncoding?>("-e", "--encoding", null),
                 Priority = options.GetValueOrDefault<byte>("-P", "--priority", null),
                 // LocaleIds = ...
                 MessageSettings = BuildWriterGroupMessageSettings(options)
@@ -1415,8 +1418,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
                     PublishingInterval = options.GetValueOrDefault<TimeSpan>("-P", "--publish", null),
                     HeaderLayoutUri = options.GetValueOrDefault<string>("-h", "--header", null),
                     KeepAliveTime = options.GetValueOrDefault<TimeSpan>("-k", "--keepalive", null),
-                    Encoding = options.GetValueOrDefault<MessageEncoding?>("-e", "--encoding", null),
-                    Schema = options.GetValueOrDefault<MessageSchema?>("-t", "--schema", null),
+                    Encoding = options.GetValueOrDefault<NetworkMessageEncoding?>("-e", "--encoding", null),
                     Priority = options.GetValueOrDefault<byte>("-p", "--priority", null),
                     // LocaleIds = ...
                     MessageSettings = BuildWriterGroupMessageSettings(options)
@@ -1429,8 +1431,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
         private async Task QueryWriterGroupsAsync(CliOptions options) {
             var query = new WriterGroupInfoQueryApiModel {
                 GroupVersion = options.GetValueOrDefault<uint>("-v", "--group-version", null),
-                Encoding = options.GetValueOrDefault<MessageEncoding?>("-e", "--encoding", null),
-                Schema = options.GetValueOrDefault<MessageSchema?>("-t", "--schema", null),
+                Encoding = options.GetValueOrDefault<NetworkMessageEncoding?>("-e", "--encoding", null),
                 Name = options.GetValueOrDefault<string>("-n", "--name", null),
                 Priority = options.GetValueOrDefault<byte>("-p", "--priority", null),
             };
@@ -3015,7 +3016,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
         /// <summary>
         /// Print sample
         /// </summary>
-        private Task PrintSample(MonitoredItemMessageApiModel samples) {
+        private Task PrintSample(PublishedDataSetItemMessageApiModel samples) {
             Console.WriteLine(_serializer.SerializeToString(samples));
             return Task.CompletedTask;
         }
@@ -3781,7 +3782,6 @@ Commands and Options
      query       Find writer groups
         with ...
         -n, --name      Name of the group
-        -t, --schema    Message schema
         -e, --encoding  Message encoding
         -P, --priority  Group priority
         -V, --version   Group version
@@ -3797,7 +3797,6 @@ Commands and Options
         -p, --publish   Publishing interval
         -h, --header    Network message header uri
         -k, --keepalive Keep alive interval
-        -t, --schema    Message schema
         -e, --encoding  Message encoding
         -P, --priority  Group priority
         -V, --version   Group version
@@ -3820,7 +3819,6 @@ Commands and Options
         -p, --publish   Publishing interval
         -h, --header    Network message header uri
         -k, --keepalive Keep alive interval
-        -t, --schema    Message schema
         -e, --encoding  Message encoding
         -P, --priority  Group priority
         -V, --version   Group version

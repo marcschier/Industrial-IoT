@@ -60,7 +60,8 @@ namespace Microsoft.Azure.IIoT.Platform.Core.Models {
         /// <param name="model"></param>
         /// <param name="that"></param>
         /// <returns></returns>
-        public static bool HasSameSecurityProperties(this EndpointModel model, EndpointModel that) {
+        public static bool HasSameSecurityProperties(this EndpointModel model, 
+            EndpointModel that) {
             if (model == that) {
                 return true;
             }

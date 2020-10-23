@@ -19,13 +19,6 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Models {
         public TwinEventType EventType { get; set; }
 
         /// <summary>
-        /// Twin id
-        /// </summary>
-        [DataMember(Name = "id", Order = 1,
-            EmitDefaultValue = false)]
-        public string Id { get; set; }
-
-        /// <summary>
         /// Twin info
         /// </summary>
         [DataMember(Name = "twin", Order = 2,

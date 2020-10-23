@@ -9,7 +9,7 @@ namespace Microsoft.Azure.IIoT.Utils {
     using System.Linq;
     using System.Threading.Tasks;
     using Autofac;
-    using Serilog;
+    using Microsoft.Extensions.Logging;
 
     /// <summary>
     /// Host auto starter

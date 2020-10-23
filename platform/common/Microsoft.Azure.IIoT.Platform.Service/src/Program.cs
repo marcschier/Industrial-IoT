@@ -5,9 +5,9 @@
 
 namespace Microsoft.Azure.IIoT.Platform.Service {
     using Microsoft.AspNetCore.Hosting;
+    using Microsoft.Extensions.Logging;
     using Microsoft.Extensions.Hosting;
     using Autofac.Extensions.Hosting;
-    using Serilog;
     using Prometheus;
 
     /// <summary>
@@ -21,10 +21,6 @@ namespace Microsoft.Azure.IIoT.Platform.Service {
         /// <param name="args"></param>
         public static void Main(string[] args) {
             using (var source = DiagnosticSourceAdapter.StartListening()) {
-#if DEBUG
-                Log.Logger = Diagnostics.ConsoleLogger.Create();
-                Diagnostics.LogControl.Level.MinimumLevel = Serilog.Events.LogEventLevel.Debug;
-#endif
                 CreateHostBuilder(args).Build().Run();
             }
         }
@@ -39,7 +35,6 @@ namespace Microsoft.Azure.IIoT.Platform.Service {
                 .UseAutofac()
                 .ConfigureWebHostDefaults(builder => builder
                     .UseUrls("http://*:9080")
-                    .UseSerilog()
                     .UseStartup<Startup>()
                     .UseKestrel(o => o.AddServerHeader = false));
         }

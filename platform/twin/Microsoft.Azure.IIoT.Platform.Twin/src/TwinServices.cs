@@ -23,12 +23,12 @@ namespace Microsoft.Azure.IIoT.Platform.Twin {
             // Core services of the twin
             builder.RegisterType<DataTransferServices>()
                 .AsImplementedInterfaces().InstancePerLifetimeScope()
-                .IfNotRegistered(typeof(ITransferServices<EndpointModel>));
+                .IfNotRegistered(typeof(ITransferServices<ConnectionModel>));
             builder.RegisterType<AddressSpaceServices>()
                 .AsImplementedInterfaces().InstancePerLifetimeScope()
-                .IfNotRegistered(typeof(INodeServices<EndpointModel>))
-                .IfNotRegistered(typeof(IBrowseServices<EndpointModel>))
-                .IfNotRegistered(typeof(IHistoricAccessServices<EndpointModel>));
+                .IfNotRegistered(typeof(INodeServices<ConnectionModel>))
+                .IfNotRegistered(typeof(IBrowseServices<ConnectionModel>))
+                .IfNotRegistered(typeof(IHistoricAccessServices<ConnectionModel>));
 
             // Adapted to endpoint id with endpoint registry as dependency
             builder.RegisterType<TransferServicesAdapter>()
@@ -45,9 +45,9 @@ namespace Microsoft.Azure.IIoT.Platform.Twin {
                 .IfNotRegistered(typeof(IHistoricAccessServices<string>));
 
             // Historian api 
-            builder.RegisterType<HistorianServicesAdapter<EndpointModel>>()
+            builder.RegisterType<HistorianServicesAdapter<ConnectionModel>>()
                 .AsImplementedInterfaces().InstancePerLifetimeScope()
-                .IfNotRegistered(typeof(IHistorianServices<EndpointModel>));
+                .IfNotRegistered(typeof(IHistorianServices<ConnectionModel>));
             builder.RegisterType<HistorianServicesAdapter<string>>()
                 .AsImplementedInterfaces().InstancePerLifetimeScope()
                 .IfNotRegistered(typeof(IHistorianServices<string>));

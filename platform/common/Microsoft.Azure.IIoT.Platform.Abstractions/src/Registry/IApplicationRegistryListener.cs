@@ -32,13 +32,30 @@ namespace Microsoft.Azure.IIoT.Platform.Registry {
             ApplicationInfoModel application);
 
         /// <summary>
+        /// Lost application
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="application"></param>
+        /// <returns></returns>
+        Task OnApplicationLostAsync(OperationContextModel context,
+            ApplicationInfoModel application);
+
+        /// <summary>
+        /// Found application
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="application"></param>
+        /// <returns></returns>
+        Task OnApplicationFoundAsync(OperationContextModel context,
+            ApplicationInfoModel application);
+
+        /// <summary>
         /// Called when application is unregistered
         /// </summary>
         /// <param name="context"></param>
-        /// <param name="applicationId"></param>
         /// <param name="application"></param>
         /// <returns></returns>
         Task OnApplicationDeletedAsync(OperationContextModel context,
-            string applicationId, ApplicationInfoModel application);
+            ApplicationInfoModel application);
     }
 }

@@ -6,7 +6,7 @@
 
 namespace Microsoft.Azure.IIoT.AspNetCore.Tests {
     using Microsoft.Azure.IIoT.Exceptions;
-    using Microsoft.Azure.IIoT.Hosting.Services;
+    using Microsoft.Azure.IIoT.Hosting;
     using Microsoft.Azure.IIoT.Rpc;
     using System;
     using System.Net;
@@ -21,7 +21,7 @@ namespace Microsoft.Azure.IIoT.AspNetCore.Tests {
 
         public int MaxMethodPayloadSizeInBytes => 120 * 1024;
 
-        public JsonMethodClientRouterAdapter(IMethodRouter router) {
+        public JsonMethodClientRouterAdapter(IMethodHandler router) {
             _router = router;
         }
 
@@ -37,7 +37,7 @@ namespace Microsoft.Azure.IIoT.AspNetCore.Tests {
             return Encoding.UTF8.GetString(result);
         }
 
-        private readonly IMethodRouter _router;
+        private readonly IMethodHandler _router;
     }
 
 }

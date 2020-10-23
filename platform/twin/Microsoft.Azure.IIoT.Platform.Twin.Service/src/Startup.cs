@@ -15,7 +15,6 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Service {
     using Microsoft.Azure.IIoT.Serializers;
     using Microsoft.Azure.IIoT.Utils;
     using Microsoft.Azure.IIoT.AspNetCore.Authentication;
-    using Microsoft.Azure.IIoT.AspNetCore.Correlation;
     using Microsoft.Azure.IIoT.AspNetCore.Cors;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
@@ -86,8 +85,6 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Service {
         /// <returns></returns>
         public void ConfigureServices(IServiceCollection services) {
 
-            // services.AddLogging(o => o.AddConsole().AddDebug());
-
             services.AddHeaderForwarding();
             services.AddCors();
             services.AddHealthChecks();
@@ -136,7 +133,6 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Service {
             app.UseAuthorization();
             app.UseHttpsRedirect();
 
-            app.UseCorrelation();
             app.UseSwagger();
 
             app.UseEndpoints(endpoints => {

@@ -20,7 +20,13 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
         /// Logical comparison of endpoint registrations
         /// </summary>
         public static IEqualityComparer<EndpointInfoModel> Logical =>
-            new LogicalEquality();
+            new LogicalComparer();
+
+        /// <summary>
+        /// Logical comparison of endpoint registrations
+        /// </summary>
+        public static IEqualityComparer<EndpointInfoModel> Structural =>
+            new StructuralComparer();
 
         /// <summary>
         /// Create unique endpoint
@@ -99,11 +105,49 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
         }
 
         /// <summary>
+        /// Patch endpoint
+        /// </summary>
+        /// <param name="existing"></param>
+        /// <param name="patch"></param>
+        /// <param name="result"></param>
+        /// <returns></returns>
+        public static bool Patch(this EndpointInfoModel existing,
+            EndpointInfoModel patch, out EndpointInfoModel result) {
+            if (existing == null) {
+                result = patch;
+                return true;
+            }
+            if (patch == null) {
+                result = existing; 
+                return false; // no changes
+            }
+            if (!Structural.Equals(existing, patch)) {
+
+                result = existing;
+                result.ApplicationId = patch.ApplicationId;
+                result.NotSeenSince = patch.NotSeenSince;
+                result.Visibility = patch.Visibility;
+                result.Endpoint = patch.Endpoint.Clone();
+                result.Id = patch.Id;
+                result.AuthenticationMethods = patch.AuthenticationMethods?
+                    .Select(c => c.Clone())
+                    .ToList();
+                result.SecurityLevel = patch.SecurityLevel;
+                result.DiscovererId = patch.DiscovererId;
+
+                result.Updated = patch.Updated;
+                return true;
+            }
+            result = existing;
+            return false;
+        }
+
+        /// <summary>
         /// Is disabled
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
-        public static bool IsNotSeen(this EndpointInfoModel model) {
+        public static bool IsLost(this EndpointInfoModel model) {
             if (model == null) {
                 return true;
             }
@@ -115,9 +159,9 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
-        public static EndpointInfoModel SetNotSeen(this EndpointInfoModel model) {
+        public static EndpointInfoModel SetAsLost(this EndpointInfoModel model) {
             if (model != null) {
-                model.Visibility = EntityVisibility.NotSeen;
+                model.Visibility = EntityVisibility.Lost;
                 model.NotSeenSince = DateTime.UtcNow;
             }
             return model;
@@ -163,36 +207,9 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
         }
 
         /// <summary>
-        /// Patch endpoint
-        /// </summary>
-        /// <param name="endpoint"></param>
-        /// <param name="model"></param>
-        public static EndpointInfoModel Patch(this EndpointInfoModel endpoint,
-            EndpointInfoModel model) {
-            if (endpoint == null) {
-                return model;
-            }
-            if (model == null) {
-                return endpoint;
-            }
-            endpoint.ApplicationId = model.ApplicationId;
-            endpoint.NotSeenSince = model.NotSeenSince;
-            endpoint.Visibility = model.Visibility;
-            endpoint.Endpoint = model.Endpoint.Clone();
-            endpoint.Id = model.Id;
-            endpoint.AuthenticationMethods = model.AuthenticationMethods?
-                .Select(c => c.Clone())
-                .ToList();
-            endpoint.SecurityLevel = model.SecurityLevel;
-            endpoint.DiscovererId = model.DiscovererId;
-            endpoint.Updated = model.Updated;
-            return endpoint;
-        }
-
-        /// <summary>
         /// Compares for logical equality
         /// </summary>
-        private class LogicalEquality : IEqualityComparer<EndpointInfoModel> {
+        private class LogicalComparer : IEqualityComparer<EndpointInfoModel> {
 
             /// <inheritdoc />
             public bool Equals(EndpointInfoModel x, EndpointInfoModel y) {
@@ -226,6 +243,44 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
                 hash.Add(obj?.Endpoint?.Url?.ToUpperInvariant());
                 hash.Add(obj?.Endpoint?.SecurityMode);
                 hash.Add(obj?.Endpoint?.SecurityPolicy);
+                return hash.ToHashCode();
+            }
+        }
+
+        /// <summary>
+        /// Compares for logical equality - applications are logically equivalent if they
+        /// have the same uri, type, and site location or supervisor that registered.
+        /// </summary>
+        private class StructuralComparer : IEqualityComparer<EndpointInfoModel> {
+
+            /// <inheritdoc />
+            public bool Equals(EndpointInfoModel x, EndpointInfoModel y) {
+                if (x == y) {
+                    return true;
+                }
+                if (x == null || y == null) {
+                    return false;
+                }
+                return
+                    x.ApplicationId == y.ApplicationId &&
+                    x.DiscovererId == y.DiscovererId &&
+                    x.Id == y.Id &&
+                    x.SecurityLevel == y.SecurityLevel &&
+                    x.Visibility == y.Visibility &&
+                    x.NotSeenSince == y.NotSeenSince &&
+                    x.Endpoint.IsSameAs(y.Endpoint);
+            }
+
+            /// <inheritdoc />
+            public int GetHashCode(EndpointInfoModel obj) {
+                var hash = new HashCode();
+                hash.Add(obj.ApplicationId);
+                hash.Add(obj.DiscovererId);
+                hash.Add(obj.Id);
+                hash.Add(obj.SecurityLevel);
+                hash.Add(obj.Visibility);
+                hash.Add(obj.NotSeenSince);
+                hash.Add(obj.Endpoint.CreateConsistentHash());
                 return hash.ToHashCode();
             }
         }

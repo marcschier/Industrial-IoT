@@ -15,15 +15,14 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Clients {
     using Microsoft.Azure.Devices.Client.Transport.Mqtt;
     using Microsoft.Azure.Devices.Client.Exceptions;
     using Microsoft.Azure.Devices.Shared;
-    using Serilog;
-    using Serilog.Events;
+    using Microsoft.Extensions.Logging;
+    using Prometheus;
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
     using System.Threading;
     using System.Diagnostics.Tracing;
-    using Prometheus;
     using System.Globalization;
 
     /// <summary>
@@ -404,13 +403,15 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Clients {
             }
 
             /// <inheritdoc />
-            public async Task SendEventAsync(string route, Message message, CancellationToken ct) {
+            public async Task SendEventAsync(string route, Message message,
+                CancellationToken ct) {
                 if (IsClosed) {
                     return;
                 }
                 try {
                     if (route != null) {
-                        await _client.SendEventAsync(route, message, ct).ConfigureAwait(false);
+                        await _client.SendEventAsync(route, message,
+                            ct).ConfigureAwait(false);
                     }
                     else {
                         await _client.SendEventAsync(message, ct).ConfigureAwait(false);
@@ -429,7 +430,8 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Clients {
                 }
                 try {
                     if (route != null) {
-                        await _client.SendEventBatchAsync(route, messages, ct).ConfigureAwait(false);
+                        await _client.SendEventBatchAsync(route, 
+                            messages, ct).ConfigureAwait(false);
                     }
                     else {
                         await _client.SendEventBatchAsync(messages, ct).ConfigureAwait(false);
@@ -444,7 +446,8 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Clients {
             public async Task SetMethodHandlerAsync(string methodName,
                 MethodCallback methodHandler, object userContext) {
                 try {
-                    await _client.SetMethodHandlerAsync(methodName, methodHandler, userContext).ConfigureAwait(false);
+                    await _client.SetMethodHandlerAsync(methodName, 
+                        methodHandler, userContext).ConfigureAwait(false);
                 }
                 catch (Exception ex) {
                     throw ex.Translate();
@@ -455,7 +458,8 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Clients {
             public async Task SetMethodDefaultHandlerAsync(
                 MethodCallback methodHandler, object userContext) {
                 try {
-                    await _client.SetMethodDefaultHandlerAsync(methodHandler, userContext).ConfigureAwait(false);
+                    await _client.SetMethodDefaultHandlerAsync(methodHandler,
+                        userContext).ConfigureAwait(false);
                 }
                 catch (Exception ex) {
                     throw ex.Translate();
@@ -466,7 +470,8 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Clients {
             public async Task SetDesiredPropertyUpdateCallbackAsync(
                 DesiredPropertyUpdateCallback callback, object userContext) {
                 try {
-                    await _client.SetDesiredPropertyUpdateCallbackAsync(callback, userContext).ConfigureAwait(false);
+                    await _client.SetDesiredPropertyUpdateCallbackAsync(
+                        callback, userContext).ConfigureAwait(false);
                 }
                 catch (Exception ex) {
                     throw ex.Translate();
@@ -490,7 +495,8 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Clients {
                     return;
                 }
                 try {
-                    await _client.UpdateReportedPropertiesAsync(reportedProperties, ct).ConfigureAwait(false);
+                    await _client.UpdateReportedPropertiesAsync(
+                        reportedProperties, ct).ConfigureAwait(false);
                 }
                 catch (Exception ex) {
                     throw ex.Translate();
@@ -501,7 +507,8 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Clients {
             public async Task<MethodResponse> InvokeMethodAsync(string deviceId, string moduleId,
                 MethodRequest methodRequest, CancellationToken ct) {
                 try {
-                    return await _client.InvokeMethodAsync(deviceId, moduleId, methodRequest, ct).ConfigureAwait(false);
+                    return await _client.InvokeMethodAsync(deviceId,
+                        moduleId, methodRequest, ct).ConfigureAwait(false);
                 }
                 catch (Exception ex) {
                     throw ex.Translate();
@@ -512,7 +519,8 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Clients {
             public async Task<MethodResponse> InvokeMethodAsync(string deviceId,
                 MethodRequest methodRequest, CancellationToken ct) {
                 try {
-                    return await _client.InvokeMethodAsync(deviceId, methodRequest, ct).ConfigureAwait(false);
+                    return await _client.InvokeMethodAsync(deviceId, 
+                        methodRequest, ct).ConfigureAwait(false);
                 }
                 catch (Exception ex) {
                     throw ex.Translate();
@@ -541,12 +549,14 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Clients {
                 if (status == ConnectionStatus.Connected) {
                     logger.Information("{counter}: Module {deviceId}_{moduleId} reconnected " +
                         "due to {reason}.", _reconnectCounter, deviceId, moduleId, reason);
-                    kReconnectionStatus.WithLabels(moduleId, deviceId, DateTime.UtcNow.ToString(CultureInfo.InvariantCulture))
+                    kReconnectionStatus.WithLabels(moduleId, deviceId, 
+                        DateTime.UtcNow.ToString(CultureInfo.InvariantCulture))
                         .Set(_reconnectCounter);
                     _reconnectCounter++;
                     return;
                 }
-                kDisconnectionStatus.WithLabels(moduleId, deviceId, DateTime.UtcNow.ToString(CultureInfo.InvariantCulture))
+                kDisconnectionStatus.WithLabels(moduleId, deviceId,
+                    DateTime.UtcNow.ToString(CultureInfo.InvariantCulture))
                     .Set(_reconnectCounter);
                 logger.Information("{counter}: Module {deviceId}_{moduleId} disconnected " +
                     "due to {reason} - now {status}...", _reconnectCounter, deviceId, moduleId,
@@ -666,7 +676,8 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Clients {
             }
 
             /// <inheritdoc />
-            public async Task SendEventAsync(string route, Message message, CancellationToken ct) {
+            public async Task SendEventAsync(string route, Message message, 
+                CancellationToken ct) {
                 if (IsClosed) {
                     return;
                 }
@@ -708,7 +719,8 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Clients {
             public async Task SetMethodHandlerAsync(string methodName,
                 MethodCallback methodHandler, object userContext) {
                 try {
-                    await _client.SetMethodHandlerAsync(methodName, methodHandler, userContext).ConfigureAwait(false);
+                    await _client.SetMethodHandlerAsync(methodName, methodHandler,
+                        userContext).ConfigureAwait(false);
                 }
                 catch (Exception ex) {
                     throw ex.Translate();
@@ -719,7 +731,8 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Clients {
             public async Task SetMethodDefaultHandlerAsync(
                 MethodCallback methodHandler, object userContext) {
                 try {
-                    await _client.SetMethodDefaultHandlerAsync(methodHandler, userContext).ConfigureAwait(false);
+                    await _client.SetMethodDefaultHandlerAsync(methodHandler, 
+                        userContext).ConfigureAwait(false);
                 }
                 catch (Exception ex) {
                     throw ex.Translate();
@@ -730,7 +743,8 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Clients {
             public async Task SetDesiredPropertyUpdateCallbackAsync(
                 DesiredPropertyUpdateCallback callback, object userContext) {
                 try {
-                    await _client.SetDesiredPropertyUpdateCallbackAsync(callback, userContext).ConfigureAwait(false);
+                    await _client.SetDesiredPropertyUpdateCallbackAsync(callback,
+                        userContext).ConfigureAwait(false);
                 }
                 catch (Exception ex) {
                     throw ex.Translate();
@@ -796,7 +810,8 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Clients {
                 if (status == ConnectionStatus.Connected) {
                     logger.Information("{counter}: Device {deviceId} reconnected " +
                         "due to {reason}.", _reconnectCounter, deviceId, reason);
-                    kReconnectionStatus.WithLabels(deviceId, DateTime.UtcNow.ToString(CultureInfo.InvariantCulture))
+                    kReconnectionStatus.WithLabels(deviceId, 
+                        DateTime.UtcNow.ToString(CultureInfo.InvariantCulture))
                         .Set(_reconnectCounter);
                     _reconnectCounter++;
                     return;
@@ -804,7 +819,8 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Clients {
                 logger.Information("{counter}: Device {deviceId} disconnected " +
                     "due to {reason} - now {status}...", _reconnectCounter, deviceId,
                         reason, status);
-                kDisconnectionStatus.WithLabels(deviceId, DateTime.UtcNow.ToString(CultureInfo.InvariantCulture))
+                kDisconnectionStatus.WithLabels(deviceId, 
+                    DateTime.UtcNow.ToString(CultureInfo.InvariantCulture))
                     .Set(_reconnectCounter);
                 if (IsClosed) {
                     // Already closed - nothing to do
@@ -858,11 +874,11 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Clients {
         /// <summary>
         /// Sdk logger event source hook
         /// </summary>
-        internal sealed class IoTSdkLogger : EventSourceSerilogSink {
+        internal sealed class IoTSdkLogger : EventSourceSink {
 
             /// <inheritdoc/>
             public IoTSdkLogger(ILogger logger) :
-                base(logger.ForContext("SourceContext", EventSource.Replace('-', '.'))) {
+                base(logger) {
             }
 
             /// <inheritdoc/>
@@ -871,10 +887,10 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Clients {
                     case "Enter":
                     case "Exit":
                     case "Associate":
-                        WriteEvent(LogEventLevel.Verbose, eventData);
+                        WriteEvent(LogLevel.Trace, eventData);
                         break;
                     default:
-                        WriteEvent(LogEventLevel.Debug, eventData);
+                        WriteEvent(LogLevel.Debug, eventData);
                         break;
                 }
             }

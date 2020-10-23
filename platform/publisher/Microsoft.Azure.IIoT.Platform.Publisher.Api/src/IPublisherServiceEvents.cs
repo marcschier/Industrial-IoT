@@ -39,7 +39,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api {
         /// <returns></returns>
         Task<IAsyncDisposable> SubscribeDataSetVariableMessagesAsync(
             string dataSetWriterId, string variableId,
-            Func<MonitoredItemMessageApiModel, Task> callback);
+            Func<PublishedDataSetItemMessageApiModel, Task> callback);
 
         /// <summary>
         /// Subscribe to variable value changes
@@ -49,7 +49,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api {
         /// <returns></returns>
         Task<IAsyncDisposable> SubscribeEventDataSetMessagesAsync(
             string dataSetWriterId, 
-            Func<MonitoredItemMessageApiModel, Task> callback);
+            Func<PublishedDataSetItemMessageApiModel, Task> callback);
 
         /// <summary>
         /// Subscribe to dataset state changes
@@ -59,6 +59,6 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api {
         /// <returns></returns>
         Task<IAsyncDisposable> SubscribeDataSetItemStatusAsync(
             string dataSetWriterId,
-            Func<MonitoredItemMessageApiModel, Task> callback);
+            Func<PublishedDataSetItemMessageApiModel, Task> callback);
     }
 }

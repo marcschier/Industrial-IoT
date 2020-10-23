@@ -3,11 +3,11 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Platform.Subscriber.Cdm.Storage {
+namespace Microsoft.Azure.IIoT.Platform.Publisher.Cdm.Storage {
     using Microsoft.Azure.IIoT.Storage;
     using Microsoft.CommonDataModel.ObjectModel.Storage;
     using Newtonsoft.Json.Linq;
-    using Serilog;
+    using Microsoft.Extensions.Logging;
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -19,7 +19,7 @@ namespace Microsoft.Azure.IIoT.Platform.Subscriber.Cdm.Storage {
     /// <summary>
     /// Writes data tables into files on file storage
     /// </summary>
-    public class CdmFileStorageAdapter : NetworkAdapter, StorageAdapter, IStorageAdapter,
+    public class CdmFileStorageAdapter : NetworkAdapter, StorageAdapter,
         IDisposable {
 
         /// <inheritdoc/>

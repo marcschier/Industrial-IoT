@@ -26,8 +26,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
     using System.Net.Sockets;
     using System.Threading;
     using System.Threading.Tasks;
-    using Serilog;
-    using Prometheus;
+    using Microsoft.Extensions.Logging;
 
     /// <summary>
     /// Provides discovery services
@@ -72,7 +71,8 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
 
         /// <inheritdoc/>
         public async Task RegisterAsync(ServerRegistrationRequestModel request,
-            CancellationToken ct) {
+            OperationContextModel context, CancellationToken ct) {
+            context = context.Validate();
             if (request == null) {
                 throw new ArgumentNullException(nameof(request));
             }
@@ -87,13 +87,14 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                     DiscoveryUrls = new List<string> { request.DiscoveryUrl },
                 },
                 Id = request.Id,
-                Context = request.Context.Clone()
-            }, ct).ConfigureAwait(false);
+                Context = context
+            }, context, ct).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
-        public async Task DiscoverAsync(DiscoveryRequestModel request, CancellationToken ct) {
-            kDiscoverAsync.Inc();
+        public async Task DiscoverAsync(DiscoveryRequestModel request,
+            OperationContextModel context, CancellationToken ct) {
+            context = context.Validate();
             if (request == null) {
                 throw new ArgumentNullException(nameof(request));
             }
@@ -119,8 +120,9 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
         }
 
         /// <inheritdoc/>
-        public async Task CancelAsync(DiscoveryCancelModel request, CancellationToken ct) {
-            kCancelAsync.Inc();
+        public async Task CancelAsync(DiscoveryCancelModel request,
+            OperationContextModel context, CancellationToken ct) {
+            context = context.Validate();
             if (request == null) {
                 throw new ArgumentNullException(nameof(request));
             }
@@ -138,7 +140,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
 
         /// <inheritdoc/>
         public Task ScanAsync() {
-            kScanAsync.Inc();
             // Fire timer now so that new request is scheduled
             _timer.Change(TimeSpan.Zero, Timeout.InfiniteTimeSpan);
             return Task.CompletedTask;
@@ -453,7 +454,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
         private async Task<List<ApplicationRegistrationModel>> DiscoverServersAsync(
             DiscoveryRequest request, IReadOnlyDictionary<IPEndPoint, Uri> discoveryUrls,
             IReadOnlyList<string> locales) {
-            kDiscoverServersAsync.Inc();
             var discovered = new List<ApplicationRegistrationModel>();
             var count = 0;
             _progress.OnServerDiscoveryStarted(request.Request, 1, count, discoveryUrls.Count);
@@ -966,15 +966,5 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
             new BlockingCollection<DiscoveryRequest>();
         private readonly CancellationTokenSource _cts = new CancellationTokenSource();
         private DiscoveryRequest _request = new DiscoveryRequest();
-        private const string kDiscoveryMetricsPrefix = "iiot_edge_discovery_";
-
-        private static readonly Counter kDiscoverAsync = Metrics
-            .CreateCounter(kDiscoveryMetricsPrefix + "discover", "call to discover");
-        private static readonly Counter kCancelAsync = Metrics
-            .CreateCounter(kDiscoveryMetricsPrefix + "cancel", "call to cancel");
-        private static readonly Counter kDiscoverServersAsync = Metrics
-            .CreateCounter(kDiscoveryMetricsPrefix + "discover_servers", "call to discoverServersAsync");
-        private static readonly Counter kScanAsync = Metrics
-            .CreateCounter(kDiscoveryMetricsPrefix + "scan", "call to scanAsync");
     }
 }

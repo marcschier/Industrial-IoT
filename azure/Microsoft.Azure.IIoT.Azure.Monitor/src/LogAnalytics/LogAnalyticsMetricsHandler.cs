@@ -8,7 +8,7 @@ namespace Microsoft.Azure.IIoT.Azure.LogAnalytics {
     using Microsoft.Azure.IIoT.Http;
     using Microsoft.Azure.IIoT.Http.Clients;
     using Microsoft.Azure.IIoT.Serializers;
-    using Serilog;
+    using Microsoft.Extensions.Logging;
     using System;
     using System.Collections.Generic;
     using System.Globalization;

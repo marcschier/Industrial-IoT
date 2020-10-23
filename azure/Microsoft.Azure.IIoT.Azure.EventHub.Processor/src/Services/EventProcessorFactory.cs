@@ -8,7 +8,7 @@ namespace Microsoft.Azure.IIoT.Azure.EventHub.Processor.Services {
     using Microsoft.Azure.IIoT.Utils;
     using Microsoft.Azure.EventHubs;
     using Microsoft.Azure.EventHubs.Processor;
-    using Serilog;
+    using Microsoft.Extensions.Logging;
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -57,15 +57,13 @@ namespace Microsoft.Azure.IIoT.Azure.EventHub.Processor.Services {
             public DefaultProcessor(EventProcessorFactory outer, PartitionContext partitionContext,
                 ILogger logger) {
                 _outer = outer ?? throw new ArgumentNullException(nameof(outer));
-                _partitionContext = partitionContext ?? throw new ArgumentNullException(nameof(partitionContext));
+                _partitionContext = partitionContext ?? 
+                    throw new ArgumentNullException(nameof(partitionContext));
                 _processorId = Guid.NewGuid().ToString();
-                _logger = logger?.ForContext("ProcessorId", _processorId)
-                    ?? throw new ArgumentNullException(nameof(logger));
-
+                _logger = logger ?? throw new ArgumentNullException(nameof(logger));
                 _handler = outer._context.Resolve<IEventProcessingHandler>();
                 _interval = (long?)_outer._config.CheckpointInterval?.TotalMilliseconds
                     ?? long.MaxValue;
-
                 _sw = Stopwatch.StartNew();
                 _logger.Information("EventProcessor {id} for partition {partitionId} created",
                     _processorId, _partitionContext.PartitionId);

@@ -6,7 +6,7 @@
 namespace Microsoft.Azure.IIoT.Platform.Vault.Services {
     using Microsoft.Azure.IIoT.Platform.Vault.Models;
     using Microsoft.Azure.IIoT.Exceptions;
-    using Serilog;
+    using Microsoft.Extensions.Logging;
     using System;
     using System.Threading;
     using System.Threading.Tasks;

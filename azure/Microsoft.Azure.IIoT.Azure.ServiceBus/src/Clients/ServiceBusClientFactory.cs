@@ -7,7 +7,7 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Clients {
     using Microsoft.Azure.IIoT.Utils;
     using Microsoft.Azure.ServiceBus;
     using Microsoft.Azure.ServiceBus.Management;
-    using Serilog;
+    using Microsoft.Extensions.Logging;
     using System;
     using System.Collections.Generic;
     using System.Net;

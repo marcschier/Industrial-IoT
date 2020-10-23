@@ -104,7 +104,7 @@ namespace Microsoft.Azure.IIoT.Azure.CosmosDb.Clients {
         /// <param name="options"></param>
         /// <returns></returns>
         public static async Task<IDatabase> GetDatabaseAsync() {
-            var logger = ConsoleLogger.Create();
+            var logger = ConsoleLogger.CreateLogger();
             var config = new ConfigurationBuilder()
                 .AddFromDotEnvFile()
                 .AddFromKeyVault()

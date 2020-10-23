@@ -4,7 +4,7 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Http.Ssl {
-    using Serilog;
+    using Microsoft.Extensions.Logging;
     using System.Net.Http.Headers;
     using System;
     using System.Net.Security;

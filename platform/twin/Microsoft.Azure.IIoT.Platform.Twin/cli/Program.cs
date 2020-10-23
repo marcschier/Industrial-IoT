@@ -22,17 +22,15 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services.Module.Cli {
     using Microsoft.Azure.IIoT.Storage.Default;
     using Microsoft.Azure.IIoT.Utils;
     using Microsoft.Extensions.Configuration;
+    using Microsoft.Extensions.Logging;
     using Newtonsoft.Json;
     using Opc.Ua;
     using Opc.Ua.Design;
     using Opc.Ua.Design.Resolver;
     using Opc.Ua.Encoders;
-    using Serilog;
-    using Serilog.Events;
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
-    using System.Diagnostics.Tracing;
     using System.IO;
     using System.IO.Compression;
     using System.Linq;
@@ -75,7 +73,6 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services.Module.Cli {
             AppDomain.CurrentDomain.UnhandledException +=
                 (s, e) => Console.WriteLine("unhandled: " + e.ExceptionObject);
             var op = Op.None;
-            var verbose = false;
             string deviceId = null, moduleId = null;
             Console.WriteLine("Twin module command line interface.");
             var configuration = new ConfigurationBuilder()
@@ -99,10 +96,6 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services.Module.Cli {
             try {
                 for (var i = 0; i < args.Length; i++) {
                     switch (args[i]) {
-                        case "-v":
-                        case "--verbose":
-                            verbose = true;
-                            break;
                         case "-C":
                         case "--connection-string":
                             i++;
@@ -321,7 +314,7 @@ Options:
             try {
                 switch (op) {
                     case Op.Host:
-                        HostAsync(config, diagnostics, deviceId, moduleId, verbose).Wait();
+                        HostAsync(config, diagnostics, deviceId, moduleId).Wait();
                         break;
                     case Op.Add:
                         AddAsync(config, diagnostics, deviceId, moduleId).Wait();
@@ -378,25 +371,18 @@ Options:
         /// Host the module giving it its connection string.
         /// </summary>
         private static async Task HostAsync(IIoTHubConfig config,
-            ILogAnalyticsConfig diagnostics, string deviceId, string moduleId, bool verbose = false) {
+            ILogAnalyticsConfig diagnostics, string deviceId, string moduleId) {
             Console.WriteLine("Create or retrieve connection string...");
-            var logger = ConsoleLogger.Create(LogEventLevel.Error);
+            var logger = ConsoleLogger.CreateLogger(LogLevel.Error);
             var cs = await Retry.WithExponentialBackoff(logger,
                 () => AddOrGetAsync(config, diagnostics, deviceId, moduleId)).ConfigureAwait(false);
 
-            // Hook event source
-            using (var broker = new EventSourceBroker()) {
-                LogControl.Level.MinimumLevel = verbose ?
-                    LogEventLevel.Verbose : LogEventLevel.Information;
-
-                Console.WriteLine("Starting twin module...");
-                broker.Subscribe(IoTSdkLogger.EventSource, new IoTSdkLogger(logger));
-                var arguments = new List<string> {
+            Console.WriteLine("Starting twin module...");
+            var arguments = new List<string> {
                     $"EdgeHubConnectionString={cs}"
                 };
-                Service.Program.Main(arguments.ToArray());
-                Console.WriteLine("Twin module exited.");
-            }
+            Service.Program.Main(arguments.ToArray());
+            Console.WriteLine("Twin module exited.");
         }
 
         /// <summary>
@@ -413,7 +399,7 @@ Options:
         /// </summary>
         private static async Task GetAsync(
             IIoTHubConfig config, string deviceId, string moduleId) {
-            var logger = ConsoleLogger.Create(LogEventLevel.Error);
+            var logger = ConsoleLogger.CreateLogger(LogLevel.Error);
             var registry = new IoTHubServiceClient(
                 config, new NewtonSoftJsonSerializer(), logger);
             var cs = await registry.GetConnectionStringAsync(deviceId, moduleId).ConfigureAwait(false);
@@ -425,7 +411,7 @@ Options:
         /// </summary>
         private static async Task ResetAsync(IIoTHubConfig config,
             string deviceId, string moduleId) {
-            var logger = ConsoleLogger.Create(LogEventLevel.Error);
+            var logger = ConsoleLogger.CreateLogger(LogLevel.Error);
             var registry = new IoTHubServiceClient(
                 config, new NewtonSoftJsonSerializer(), logger);
             await ResetAsync(registry, await registry.GetAsync(deviceId, moduleId,
@@ -437,7 +423,7 @@ Options:
         /// </summary>
         private static async Task DeleteAsync(IIoTHubConfig config,
             string deviceId, string moduleId) {
-            var logger = ConsoleLogger.Create(LogEventLevel.Error);
+            var logger = ConsoleLogger.CreateLogger(LogLevel.Error);
             var registry = new IoTHubServiceClient(
                 config, new NewtonSoftJsonSerializer(), logger);
             await registry.DeleteAsync(deviceId, moduleId, null, CancellationToken.None).ConfigureAwait(false);
@@ -447,7 +433,7 @@ Options:
         /// List all twin module identities
         /// </summary>
         private static async Task ListAsync(IIoTHubConfig config) {
-            var logger = ConsoleLogger.Create(LogEventLevel.Error);
+            var logger = ConsoleLogger.CreateLogger(LogLevel.Error);
             var registry = new IoTHubServiceClient(
                 config, new NewtonSoftJsonSerializer(), logger);
 
@@ -463,7 +449,7 @@ Options:
         /// Reset all supervisor tags and properties
         /// </summary>
         private static async Task ResetAllAsync(IIoTHubConfig config) {
-            var logger = ConsoleLogger.Create(LogEventLevel.Error);
+            var logger = ConsoleLogger.CreateLogger(LogLevel.Error);
             var registry = new IoTHubServiceClient(
                 config, new NewtonSoftJsonSerializer(), logger);
 
@@ -481,7 +467,7 @@ Options:
         /// </summary>
         private static async Task CleanupAsync(IIoTHubConfig config,
             bool includeSupervisors) {
-            var logger = ConsoleLogger.Create(LogEventLevel.Error);
+            var logger = ConsoleLogger.CreateLogger(LogLevel.Error);
             var registry = new IoTHubServiceClient(
                 config, new NewtonSoftJsonSerializer(), logger);
             var result = await registry.QueryAllDeviceTwinsAsync(
@@ -547,7 +533,7 @@ Options:
         /// </summary>
         private static async Task<ConnectionString> AddOrGetAsync(IIoTHubConfig config,
             ILogAnalyticsConfig diagnostics, string deviceId, string moduleId) {
-            var logger = ConsoleLogger.Create(LogEventLevel.Error);
+            var logger = ConsoleLogger.CreateLogger(LogLevel.Error);
             var registry = new IoTHubServiceClient(
                 config, new NewtonSoftJsonSerializer(), logger);
             try {
@@ -587,7 +573,7 @@ Options:
         /// Test model browse encoder
         /// </summary>
         private static async Task TestOpcUaModelExportServiceAsync(EndpointModel endpoint) {
-            using (var logger = StackLogger.Create(ConsoleLogger.Create()))
+            using (var logger = StackLogger.Create(ConsoleLogger.CreateLogger()))
             using (var config = new TestClientServicesConfig())
             using (var client = new ClientServices(logger.Logger, config))
             using (var server = new ServerWrapper(endpoint, logger))
@@ -613,7 +599,7 @@ Options:
         /// Test model archiver
         /// </summary>
         private static async Task TestOpcUaModelArchiveAsync(EndpointModel endpoint) {
-            using (var logger = StackLogger.Create(ConsoleLogger.Create())) {
+            using (var logger = StackLogger.Create(ConsoleLogger.CreateLogger())) {
                 var storage = new ZipArchiveStorage();
                 var fileName = "tmp.zip";
                 using (var config = new TestClientServicesConfig())
@@ -639,7 +625,7 @@ Options:
         /// Test model browse encoder to file
         /// </summary>
         private static async Task TestOpcUaModelExportToFileAsync(EndpointModel endpoint) {
-            using (var logger = StackLogger.Create(ConsoleLogger.Create())) {
+            using (var logger = StackLogger.Create(ConsoleLogger.CreateLogger())) {
                 // Run both encodings twice to prime server and get realistic timings the
                 // second time around
                 var runs = new Dictionary<string, string> {
@@ -684,7 +670,7 @@ Options:
         /// Test model export and import
         /// </summary>
         private static async Task TestOpcUaModelWriterAsync(EndpointModel endpoint) {
-            using (var logger = StackLogger.Create(ConsoleLogger.Create())) {
+            using (var logger = StackLogger.Create(ConsoleLogger.CreateLogger())) {
                 var filename = "model.zip";
                 using (var server = new ServerWrapper(endpoint, logger)) {
                     using (var client = new ClientServices(logger.Logger, new TestClientServicesConfig())) {
@@ -739,7 +725,7 @@ Options:
         /// </summary>
         private static async Task TestBrowseServerAsync(EndpointModel endpoint, bool silent = false) {
 
-            using (var logger = StackLogger.Create(ConsoleLogger.Create())) {
+            using (var logger = StackLogger.Create(ConsoleLogger.CreateLogger())) {
 
                 var request = new BrowseRequestModel {
                     TargetNodesOnly = false
@@ -868,31 +854,6 @@ Options:
 
             private readonly CancellationTokenSource _cts;
             private readonly Task _server;
-        }
-
-        /// <summary>
-        /// Sdk logger event source hook
-        /// </summary>
-        private sealed class IoTSdkLogger : EventSourceSerilogSink {
-            public IoTSdkLogger(ILogger logger) :
-                base(logger.ForContext("SourceContext", EventSource.Replace('-', '.'))) {
-            }
-
-            public override void OnEvent(EventWrittenEventArgs eventData) {
-                switch (eventData.EventName) {
-                    case "Enter":
-                    case "Exit":
-                    case "Associate":
-                        WriteEvent(LogEventLevel.Verbose, eventData);
-                        break;
-                    default:
-                        WriteEvent(LogEventLevel.Debug, eventData);
-                        break;
-                }
-            }
-
-            // ddbee999-a79e-5050-ea3c-6d1a8a7bafdd
-            public const string EventSource = "Microsoft-Azure-Devices-Device-Client";
         }
     }
 }

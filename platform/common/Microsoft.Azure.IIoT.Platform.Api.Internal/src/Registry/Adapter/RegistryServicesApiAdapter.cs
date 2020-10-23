@@ -51,21 +51,25 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Clients {
 
         /// <inheritdoc/>
         public async Task<ApplicationRegistrationResultModel> RegisterApplicationAsync(
-            ApplicationRegistrationRequestModel request, CancellationToken ct) {
-            var result = await _client.RegisterAsync(request.ToApiModel(), ct).ConfigureAwait(false);
+            ApplicationRegistrationRequestModel request, OperationContextModel context, 
+            CancellationToken ct) {
+            var result = await _client.RegisterAsync(request.ToApiModel(), 
+                ct).ConfigureAwait(false);
             return result.ToServiceModel();
         }
 
         /// <inheritdoc/>
         public async Task<ApplicationRegistrationModel> GetApplicationAsync(
             string applicationId, CancellationToken ct) {
-            var result = await _client.GetApplicationAsync(applicationId, ct).ConfigureAwait(false);
+            var result = await _client.GetApplicationAsync(applicationId, 
+                ct).ConfigureAwait(false);
             return result.ToServiceModel();
         }
 
         /// <inheritdoc/>
         public Task UpdateApplicationAsync(string applicationId,
-            ApplicationInfoUpdateModel request, CancellationToken ct) {
+            ApplicationInfoUpdateModel request, OperationContextModel context,
+            CancellationToken ct) {
             return _client.UpdateApplicationAsync(applicationId, request.ToApiModel(), ct);
         }
 
@@ -92,25 +96,26 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Clients {
         }
 
         /// <inheritdoc/>
-        public Task PurgeDisabledApplicationsAsync(TimeSpan notSeenFor,
+        public Task PurgeLostApplicationsAsync(TimeSpan notSeenFor,
             OperationContextModel context, CancellationToken ct) {
             return _client.PurgeDisabledApplicationsAsync(notSeenFor, ct);
         }
 
         /// <inheritdoc/>
         public Task DiscoverAsync(DiscoveryRequestModel request,
-            CancellationToken ct) {
+            OperationContextModel context, CancellationToken ct) {
             return _client.DiscoverAsync(request.ToApiModel(), ct);
         }
 
         /// <inheritdoc/>
-        public Task CancelAsync(DiscoveryCancelModel request, CancellationToken ct) {
+        public Task CancelAsync(DiscoveryCancelModel request, 
+            OperationContextModel context, CancellationToken ct) {
             return _client.CancelAsync(request.ToApiModel(), ct);
         }
 
         /// <inheritdoc/>
-        public Task RegisterAsync(ServerRegistrationRequestModel request, 
-            CancellationToken ct) {
+        public Task RegisterAsync(ServerRegistrationRequestModel request,
+            OperationContextModel context, CancellationToken ct) {
             return _client.RegisterAsync(request.ToApiModel(), ct);
         }
 

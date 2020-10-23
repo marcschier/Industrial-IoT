@@ -8,7 +8,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub.Clients {
     using Microsoft.Azure.IIoT.Hub;
     using Microsoft.Azure.IIoT.Exceptions;
     using Microsoft.Azure.IIoT.Rpc;
-    using Serilog;
+    using Microsoft.Extensions.Logging;
     using System;
     using System.Threading;
     using System.Threading.Tasks;

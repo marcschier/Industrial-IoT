@@ -7,6 +7,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
     using Microsoft.Azure.IIoT.Platform.Twin.Api.Models;
     using Microsoft.Azure.IIoT.Platform.Twin;
     using Microsoft.Azure.IIoT.Platform.Twin.Models;
+    using Microsoft.Azure.IIoT.Platform.Core.Models;
     using System;
     using System.Threading.Tasks;
     using System.Threading;
@@ -27,7 +28,8 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
 
         /// <inheritdoc/>
         public async Task<TwinActivationResultModel> ActivateTwinAsync(
-            TwinActivationRequestModel request, CancellationToken ct) {
+            TwinActivationRequestModel request, OperationContextModel context,
+            CancellationToken ct) {
             var result = await _client.ActivateTwinAsync(
                 request.ToApiModel(), ct).ConfigureAwait(false);
             return result.ToServiceModel();
@@ -58,15 +60,15 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
         }
 
         /// <inheritdoc/>
-        public async Task UpdateTwinAsync(string twin, TwinInfoUpdateModel 
-            request, CancellationToken ct) {
+        public async Task UpdateTwinAsync(string twin, TwinInfoUpdateModel request, 
+            OperationContextModel context, CancellationToken ct) {
             await _client.UpdateTwinAsync(twin, request.ToApiModel(),
                 ct).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
-        public async Task DectivateTwinAsync(string twin, string generationId,
-            CancellationToken ct) {
+        public async Task DeactivateTwinAsync(string twin, string generationId,
+            OperationContextModel context, CancellationToken ct) {
             await _client.DectivateTwinAsync(twin, generationId, 
                 ct).ConfigureAwait(false);
         }

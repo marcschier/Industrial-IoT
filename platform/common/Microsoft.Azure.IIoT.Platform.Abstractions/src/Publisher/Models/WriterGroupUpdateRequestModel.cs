@@ -25,12 +25,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Models {
         /// <summary>
         /// Message encoding to generate (publisher extension)
         /// </summary>
-        public MessageEncoding? Encoding { get; set; }
-
-        /// <summary>
-        /// The message schema to use (publisher extension)
-        /// </summary>
-        public MessageSchema? Schema { get; set; }
+        public NetworkMessageEncoding? Encoding { get; set; }
 
         /// <summary>
         /// Updated network message configuration

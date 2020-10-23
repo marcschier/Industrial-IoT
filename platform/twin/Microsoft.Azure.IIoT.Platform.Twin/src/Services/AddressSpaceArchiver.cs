@@ -8,7 +8,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
     using Microsoft.Azure.IIoT.Platform.OpcUa.Models;
     using Microsoft.Azure.IIoT.Platform.Core.Models;
     using Microsoft.Azure.IIoT.Storage;
-    using Serilog;
+    using Microsoft.Extensions.Logging;
     using Opc.Ua.Encoders;
     using System;
     using System.Collections.Generic;

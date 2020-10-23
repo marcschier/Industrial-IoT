@@ -22,7 +22,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Models {
         /// The entity is currently not visible
         /// </summary>
         [EnumMember]
-        NotSeen,
+        Lost,
 
         /// <summary>
         /// The entity was found in the network

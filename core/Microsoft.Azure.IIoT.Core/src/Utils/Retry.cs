@@ -4,8 +4,8 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Utils {
-    using Serilog;
     using Microsoft.Azure.IIoT.Exceptions;
+    using Microsoft.Extensions.Logging;
     using System;
     using System.Threading.Tasks;
     using System.Threading;
@@ -747,7 +747,7 @@ namespace Microsoft.Azure.IIoT.Utils {
         /// <param name="ex"></param>
         private static void Log(ILogger logger, int retry, int delay, Exception ex) {
             if (logger != null) {
-                if (logger.IsEnabled(Serilog.Events.LogEventLevel.Verbose)) {
+                if (logger.IsEnabled(LogLevel.Trace)) {
                     logger.Verbose(ex, "Retry {k} in {delay} ms...", retry, delay);
                 }
                 else {

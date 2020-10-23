@@ -6,8 +6,8 @@
 namespace Microsoft.Azure.IIoT.Platform.Publisher.Handlers {
     using Microsoft.Azure.IIoT.Platform.OpcUa;
     using Microsoft.Azure.IIoT.Platform.OpcUa.Services;
-    using Microsoft.Azure.IIoT.Platform.Twin;
-    using Microsoft.Azure.IIoT.Platform.Twin.Models;
+    using Microsoft.Azure.IIoT.Platform.Publisher.Models;
+    using Microsoft.Extensions.Logging;
     using Opc.Ua;
     using Opc.Ua.Extensions;
     using Opc.Ua.Nodeset;
@@ -27,10 +27,13 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Handlers {
         /// Create handler
         /// </summary>
         /// <param name="processor"></param>
-        /// <param name="publish"></param>
-        public BulkPublishModelHandler(INodeSetProcessor processor, IPublishServices publish) {
+        /// <param name="bulk"></param>
+        /// <param name="logger"></param>
+        public BulkPublishModelHandler(INodeSetProcessor processor, IDataSetBatchOperations bulk, 
+            ILogger logger) {
             _processor = processor ?? throw new ArgumentNullException(nameof(processor));
-            _publish = publish ?? throw new ArgumentNullException(nameof(publish));
+            _bulk = bulk ?? throw new ArgumentNullException(nameof(bulk));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         /// <inheritdoc/>
@@ -88,16 +91,25 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Handlers {
             /// <returns></returns>
             private async Task PublishFromCacheAsync(ISystemContext context) {
                 var ctx = context.ToMessageContext();
-                await _outer._publish.NodePublishBulkAsync(_endpointId, new PublishBulkRequestModel {
-                    NodesToAdd = _cache
-                        .Select(n => new PublishedItemModel {
-                            DisplayName = n.DisplayName.Text,
-                            SamplingInterval = n.MinimumSamplingInterval == null ? (TimeSpan?)null :
-                                TimeSpan.FromMilliseconds(n.MinimumSamplingInterval.Value),
-                            NodeId = n.NodeId.AsString(ctx)
-                        })
-                        .ToList()
-                }).ConfigureAwait(false);
+                try {
+                    // This call will clean up in case of exception and thus have nothing added.
+                    await _outer._bulk.AddVariablesToDefaultDataSetWriterAsync(_endpointId,
+                        new DataSetAddVariableBatchRequestModel {
+                           // User = request.Header?.Elevation,
+                            Variables = _cache
+                                .Select(n => new DataSetAddVariableRequestModel {
+                                    PublishedVariableNodeId = n.NodeId.AsString(ctx),
+                                    PublishedVariableDisplayName = n.DisplayName.Text,
+                                    SamplingInterval = n.MinimumSamplingInterval == null ? (TimeSpan?)null :
+                                        TimeSpan.FromMilliseconds(n.MinimumSamplingInterval.Value),
+                                    QueueSize = 1
+                                })
+                                .ToList()
+                        }).ConfigureAwait(false);
+                }
+                catch (Exception ex) {
+                    _outer._logger.Warning(ex, "Failed to add variables, returning partial results.");
+                };
                 _cache.Clear();
             }
 
@@ -110,7 +122,8 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Handlers {
             private readonly BulkPublishModelHandler _outer;
         }
 
+        private readonly ILogger _logger;
         private readonly INodeSetProcessor _processor;
-        private readonly IPublishServices _publish;
+        private readonly IDataSetBatchOperations _bulk;
     }
 }

@@ -25,7 +25,7 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service.Controllers {
         /// Create controller with service
         /// </summary>
         /// <param name="events"></param>
-        public GroupsController(IGroupRegistrationT<WriterGroupsHub> events) {
+        public GroupsController(IGroupRegistrationT<GroupsHub> events) {
             _events = events;
         }
 
@@ -61,6 +61,6 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service.Controllers {
             await _events.UnsubscribeAsync(dataSetWriterId, connectionId).ConfigureAwait(false);
         }
 
-        private readonly IGroupRegistrationT<WriterGroupsHub> _events;
+        private readonly IGroupRegistrationT<GroupsHub> _events;
     }
 }

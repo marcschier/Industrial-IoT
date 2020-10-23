@@ -8,7 +8,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Handlers {
     using Microsoft.Azure.IIoT.Platform.Registry.Models;
     using Microsoft.Azure.IIoT.Hub;
     using Microsoft.Azure.IIoT.Serializers;
-    using Serilog;
+    using Microsoft.Extensions.Logging;
     using System;
     using System.Collections.Generic;
     using System.Linq;

@@ -8,7 +8,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Clients {
     using Microsoft.Azure.IIoT.Http;
     using Microsoft.Azure.IIoT.Utils;
     using Microsoft.Azure.IIoT.Serializers;
-    using Serilog;
+    using Microsoft.Extensions.Logging;
     using System;
     using System.Threading;
     using System.Linq;

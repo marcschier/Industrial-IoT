@@ -28,7 +28,8 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Service {
 
         /// <inheritdoc/>
         public Task<TwinActivationResultModel> ActivateTwinAsync(
-            TwinActivationRequestModel request, CancellationToken ct) {
+            TwinActivationRequestModel request, OperationContextModel context, 
+            CancellationToken ct) {
             throw new NotImplementedException();
         }
 
@@ -57,12 +58,13 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Service {
 
         /// <inheritdoc/>
         public Task UpdateTwinAsync(string twinId, TwinInfoUpdateModel model, 
-            CancellationToken ct) {
+            OperationContextModel context, CancellationToken ct) {
             throw new NotImplementedException();
         }
 
         /// <inheritdoc/>
-        public Task DectivateTwinAsync(string twinId, string generationId, CancellationToken ct) {
+        public Task DeactivateTwinAsync(string twinId, string generationId,
+            OperationContextModel context, CancellationToken ct) {
             throw new NotImplementedException();
         }
     }

@@ -21,26 +21,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api {
         public const string EndpointEventTarget = "EndpointEvent";
 
         /// <summary>
-        /// Supervisor event type
-        /// </summary>
-        public const string SupervisorEventTarget = "SupervisorEvent";
-
-        /// <summary>
-        /// Gateway event type
-        /// </summary>
-        public const string GatewayEventTarget = "GatewayEvent";
-
-        /// <summary>
-        /// Discoverer event type
-        /// </summary>
-        public const string DiscovererEventTarget = "DiscovererEvent";
-
-        /// <summary>
-        /// Publisher event type
-        /// </summary>
-        public const string PublisherEventTarget = "PublisherEvent";
-
-        /// <summary>
         /// Discovery progress event targets
         /// </summary>
         public const string DiscoveryProgressTarget = "DiscoveryProgress";

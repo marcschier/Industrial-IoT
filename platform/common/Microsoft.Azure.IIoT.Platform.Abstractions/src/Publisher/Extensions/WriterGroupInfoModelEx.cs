@@ -35,7 +35,6 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Models {
                 Name = model.Name,
                 Priority = model.Priority,
                 State = model.State.Clone(),
-                Schema = model.Schema,
                 MessageSettings = model.MessageSettings.Clone(),
                 Updated = model.Updated.Clone(),
                 Created = model.Created.Clone(),
@@ -68,7 +67,6 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Models {
                 LocaleIds = model.LocaleIds?.ToList(),
                 MaxNetworkMessageSize = model.MaxNetworkMessageSize,
                 Encoding = model.Encoding,
-                Schema = model.Schema,
                 Name = model.Name,
                 BatchSize = model.BatchSize,
                 Priority = model.Priority,
@@ -109,7 +107,6 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Models {
                 BatchSize = model.BatchSize,
                 Created = context.Clone(),
                 Updated = context.Clone(),
-                Schema = model.Schema,
                 // TODO:
                 MaxNetworkMessageSize = null,
                 SecurityGroupId = null,

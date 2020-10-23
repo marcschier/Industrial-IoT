@@ -19,10 +19,12 @@ namespace Microsoft.Azure.IIoT.Platform.Registry {
         /// Register application using the specified information.
         /// </summary>
         /// <param name="request"></param>
+        /// <param name="context"></param>
         /// <param name="ct"></param>
         /// <returns></returns>
         Task<ApplicationRegistrationResultModel> RegisterApplicationAsync(
             ApplicationRegistrationRequestModel request,
+            OperationContextModel context = null,
             CancellationToken ct = default);
 
         /// <summary>
@@ -42,10 +44,12 @@ namespace Microsoft.Azure.IIoT.Platform.Registry {
         /// </summary>
         /// <param name="applicationId">The applicationId</param>
         /// <param name="request"></param>
+        /// <param name="context"></param>
         /// <param name="ct"></param>
         /// <returns></returns>
         Task UpdateApplicationAsync(string applicationId,
             ApplicationInfoUpdateModel request,
+            OperationContextModel context = null,
             CancellationToken ct = default);
 
         /// <summary>
@@ -81,8 +85,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry {
         /// <param name="ct"></param>
         /// <returns></returns>
         Task UnregisterApplicationAsync(string applicationId,
-            string generationId,
-            OperationContextModel context = null,
+            string generationId, OperationContextModel context = null,
             CancellationToken ct = default);
 
         /// <summary>
@@ -93,7 +96,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry {
         /// <param name="context"></param>
         /// <param name="ct"></param>
         /// <returns></returns>
-        Task PurgeDisabledApplicationsAsync(TimeSpan notSeenFor,
+        Task PurgeLostApplicationsAsync(TimeSpan notSeenFor,
             OperationContextModel context = null,
             CancellationToken ct = default);
     }

@@ -8,7 +8,7 @@ namespace Microsoft.Azure.IIoT.Azure.EventHub.Processor.Services {
     using Microsoft.Azure.IIoT.Exceptions;
     using Microsoft.Azure.EventHubs;
     using Microsoft.Azure.EventHubs.Processor;
-    using Serilog;
+    using Microsoft.Extensions.Logging;
     using System;
     using System.Threading;
     using System.Threading.Tasks;

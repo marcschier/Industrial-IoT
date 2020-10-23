@@ -41,7 +41,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Events.v2 {
                 case TwinEventType.Deactivated:
                     await Task.WhenAll(_listeners
                         .Select(l => l.OnTwinDeactivatedAsync(
-                            eventData.Context, eventData.Id, eventData.Twin)
+                            eventData.Context, eventData.Twin)
                         .ContinueWith(t => Task.CompletedTask))).ConfigureAwait(false);
                     break;
             }

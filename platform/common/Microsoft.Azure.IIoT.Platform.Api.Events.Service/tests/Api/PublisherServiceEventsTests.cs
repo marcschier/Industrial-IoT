@@ -6,8 +6,8 @@
 namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service.Api {
     using Microsoft.Azure.IIoT.Platform.Publisher.Api;
     using Microsoft.Azure.IIoT.Platform.Publisher.Api.Models;
-    using Microsoft.Azure.IIoT.Platform.Subscriber.Models;
-    using Microsoft.Azure.IIoT.Platform.Subscriber;
+    using Microsoft.Azure.IIoT.Platform.Publisher.Models;
+    using Microsoft.Azure.IIoT.Platform.Publisher;
     using Microsoft.Azure.IIoT.Serializers;
     using System.Threading.Tasks;
     using Xunit;
@@ -29,40 +29,41 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service.Api {
         [MemberData(nameof(GetScalarValues))]
         public async Task TestPublishTelemetryEventAndReceiveAsync(VariantValue v) {
 
-            var bus = _factory.Resolve<ISubscriberMessageProcessor>();
+            var bus = _factory.Resolve<IDataSetWriterMessageProcessor>();
             var client = _factory.Resolve<IPublisherServiceEvents>();
 
             var dataSetWriterId = "testid";
             var variableId = "testvid";
 
-            var result = new TaskCompletionSource<MonitoredItemMessageApiModel>(TaskCreationOptions.RunContinuationsAsynchronously);
+            var result = new TaskCompletionSource<PublishedDataSetItemMessageApiModel>(TaskCreationOptions.RunContinuationsAsynchronously);
             await using (await client.SubscribeDataSetVariableMessagesAsync(dataSetWriterId, variableId, ev => {
                 result.SetResult(ev);
                 return Task.CompletedTask;
             }).ConfigureAwait(false)) {
-                var expected = new MonitoredItemMessageModel {
+                var expected = new PublishedDataSetItemMessageModel {
                     DataSetWriterId = dataSetWriterId,
                     VariableId = variableId,
-                    DisplayName = "holla",
-                    NodeId = "nodeid",
-                    SourceTimestamp = DateTime.UtcNow,
+                    SequenceNumber = 1,
                     Timestamp = DateTime.UtcNow,
-                    Value = v
+                    Value = new Core.Models.DataValueModel {
+                        SourceTimestamp = DateTime.UtcNow,
+                        Value = v
+                    }
                 };
-                await bus.HandleSampleAsync(expected).ConfigureAwait(false);
+                await bus.HandleMessageAsync(expected).ConfigureAwait(false);
                 await Task.WhenAny(result.Task, Task.Delay(5000)).ConfigureAwait(false);
 
                 Assert.True(result.Task.IsCompleted);
                 var received = result.Task.Result;
 
-                Assert.Equal(expected.DisplayName, received.DisplayName);
+                Assert.Equal(expected.VariableId, received.VariableId);
                 Assert.Equal(expected.DataSetWriterId, received.DataSetWriterId);
-                Assert.Equal(expected.NodeId, received.NodeId);
-                Assert.Equal(expected.SourceTimestamp, received.SourceTimestamp);
+                Assert.Equal(expected.SequenceNumber, received.SequenceNumber);
                 Assert.Equal(expected.Timestamp, received.Timestamp);
 
-                Assert.NotNull(received?.Value);
-                Assert.Equal(expected.Value, received.Value);
+                Assert.NotNull(received.Value);
+                Assert.NotNull(received.Value);
+                Assert.Equal(expected.Value.Value, received.Value.Value);
             }
         }
 
@@ -72,19 +73,20 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service.Api {
         [InlineData(262345)]
         public async Task TestPublishPublisherEventAndReceiveMultipleAsync(int total) {
 
-            var bus = _factory.Resolve<ISubscriberMessageProcessor>();
+            var bus = _factory.Resolve<IDataSetWriterMessageProcessor>();
             var client = _factory.Resolve<IPublisherServiceEvents>();
 
             var dataSetWriterId = "testid";
             var variableId = "testvid";
-            var expected = new MonitoredItemMessageModel {
+            var expected = new PublishedDataSetItemMessageModel {
                 DataSetWriterId = dataSetWriterId,
                 VariableId = variableId,
-                DisplayName = "holla",
-                NodeId = "nodeid",
-                SourceTimestamp = DateTime.UtcNow,
+                SequenceNumber = 1,
                 Timestamp = DateTime.UtcNow,
-                Value = 234234
+                Value = new Core.Models.DataValueModel {
+                    SourceTimestamp = DateTime.UtcNow,
+                    Value = 234234
+                }
             };
             var result = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
             var counter = 0;
@@ -97,7 +99,7 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service.Api {
             }).ConfigureAwait(false)) {
 
                 for (var i = 0; i < total; i++) {
-                    await bus.HandleSampleAsync(expected).ConfigureAwait(false);
+                    await bus.HandleMessageAsync(expected).ConfigureAwait(false);
                 }
 
                 await Task.WhenAny(result.Task, Task.Delay(10000)).ConfigureAwait(false);

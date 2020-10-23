@@ -8,7 +8,7 @@ namespace Microsoft.Azure.IIoT.Authentication.Server.Default {
     using Microsoft.IdentityModel.Protocols;
     using Microsoft.IdentityModel.Protocols.OpenIdConnect;
     using Microsoft.IdentityModel.Tokens;
-    using Serilog;
+    using Microsoft.Extensions.Logging;
     using System;
     using System.Collections.Concurrent;
     using System.Collections.Generic;

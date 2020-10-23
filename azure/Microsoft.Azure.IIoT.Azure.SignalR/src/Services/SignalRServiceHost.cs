@@ -13,7 +13,7 @@ namespace Microsoft.Azure.IIoT.Azure.SignalR.Services {
     using System;
     using System.Threading;
     using System.Threading.Tasks;
-    using Serilog;
+    using Microsoft.Extensions.Logging;
 
     /// <summary>
     /// Signalr service host for serverless

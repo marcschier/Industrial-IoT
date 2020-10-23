@@ -9,7 +9,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
     using Microsoft.Azure.IIoT.Platform.Core.Models;
     using Microsoft.Azure.IIoT.Exceptions;
     using Microsoft.Azure.IIoT.Hub.Models;
-    using Serilog;
+    using Microsoft.Extensions.Logging;
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -43,15 +43,15 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
 
         /// <inheritdoc/>
         public async Task<ApplicationRegistrationResultModel> RegisterApplicationAsync(
-            ApplicationRegistrationRequestModel request, CancellationToken ct) {
+            ApplicationRegistrationRequestModel request, OperationContextModel context, 
+            CancellationToken ct) {
+            context = context.Validate();
             if (request == null) {
                 throw new ArgumentNullException(nameof(request));
             }
             if (request.ApplicationUri == null) {
                 throw new ArgumentException("Missing application uri", nameof(request));
             }
-
-            var context = request.Context.Validate();
 
             var application = await _database.AddAsync(
                 request.ToApplicationInfo(context), ct).ConfigureAwait(false);
@@ -68,7 +68,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
         public async Task UnregisterApplicationAsync(string applicationId, string generationId,
             OperationContextModel context, CancellationToken ct) {
             context = context.Validate();
-
             var application = await _database.DeleteAsync(applicationId, application => {
                 if (application.GenerationId != generationId) {
                     return Task.FromException<bool>(
@@ -79,18 +78,21 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
             if (application == null) {
                 return;
             }
+            if (!application.IsLost()) {
+                await _broker.NotifyAllAsync(l => l.OnApplicationLostAsync(context,
+                    application)).ConfigureAwait(false);
+            }
             await _broker.NotifyAllAsync(l => l.OnApplicationDeletedAsync(context,
-                applicationId, application)).ConfigureAwait(false);
+                application)).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
         public async Task UpdateApplicationAsync(string applicationId,
-            ApplicationInfoUpdateModel request, CancellationToken ct) {
+            ApplicationInfoUpdateModel request, OperationContextModel context, CancellationToken ct) {
+            context = context.Validate();
             if (request == null) {
                 throw new ArgumentNullException(nameof(request));
             }
-            var context = request.Context.Validate();
-
             var application = await _database.UpdateAsync(applicationId, existing => {
                 if (existing.GenerationId != request.GenerationId) {
                     throw new ResourceOutOfDateException("Generation id no match");
@@ -144,7 +146,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                 throw new ResourceNotFoundException("Could not find application");
             }
             var endpoints = await _endpoints.GetApplicationEndpointsAsync(applicationId, 
-                application.IsNotSeen(), ct).ConfigureAwait(false);
+                application.IsLost(), ct).ConfigureAwait(false);
             return new ApplicationRegistrationModel {
                 Application = application,
                 Endpoints = endpoints.ToList()
@@ -158,7 +160,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
         }
 
         /// <inheritdoc/>
-        public async Task PurgeDisabledApplicationsAsync(TimeSpan notSeenSince,
+        public async Task PurgeLostApplicationsAsync(TimeSpan notSeenSince,
             OperationContextModel context, CancellationToken ct) {
             context = context.Validate();
             var absolute = DateTime.UtcNow - notSeenSince;
@@ -187,7 +189,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                             continue;
                         }
                         await _broker.NotifyAllAsync(l => l.OnApplicationDeletedAsync(
-                            context, application.ApplicationId, application)).ConfigureAwait(false);
+                            context, application)).ConfigureAwait(false);
                     }
                     catch (Exception ex) {
                         _logger.Error(ex, "Exception purging application {id} - continue",
@@ -217,7 +219,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
             if (events == null) {
                 throw new ArgumentNullException(nameof(events));
             }
-            var context = result.Context.Validate();
+            var operationContext = result.Context.Validate();
 
             // Get all applications.
             var existing = await _database.QueryAllAsync(
@@ -255,13 +257,13 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
             //
             var found = eventList.Select(ev => ev.Application);
             var remove = new HashSet<ApplicationInfoModel>(existing,
-                ApplicationInfoModelEx.LogicalEquality);
+                ApplicationInfoModelEx.Logical);
             var add = new HashSet<ApplicationInfoModel>(found,
-                ApplicationInfoModelEx.LogicalEquality);
+                ApplicationInfoModelEx.Logical);
             var unchange = new HashSet<ApplicationInfoModel>(existing,
-                ApplicationInfoModelEx.LogicalEquality);
+                ApplicationInfoModelEx.Logical);
             var change = new HashSet<ApplicationInfoModel>(found,
-                ApplicationInfoModelEx.LogicalEquality);
+                ApplicationInfoModelEx.Logical);
 
             unchange.IntersectWith(add);
             change.IntersectWith(remove);
@@ -271,33 +273,41 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
             var added = 0;
             var updated = 0;
             var unchanged = 0;
-            var gone = 0;
+            var lost = 0;
 
             if (!(result.RegisterOnly ?? false)) {
                 // Remove applications
-                foreach (var removal in remove) {
+                foreach (var item in remove) {
                     try {
-                        var wasUpdated = false;
+                        var wasLost = false;
+                        var wasPatched = false;
 
                         // Marks as not seen
-                        var application = await _database.UpdateAsync(removal.ApplicationId,
-                            application => {
-                                // Disable application
-                                if (!application.IsNotSeen()) {
-                                    application.SetNotSeen();
-                                    application.Updated = context;
-                                    gone++;
-                                    wasUpdated = true;
-                                    return Task.FromResult(true);
-                                }
-                                unchanged++;
-                                return Task.FromResult(false);
-                            }).ConfigureAwait(false);
+                        var app = await _database.UpdateAsync(item.ApplicationId, existing => {
+                            wasLost = existing.IsLost();
+                            item.Updated = operationContext;
+                            // Disable application
+                            item.SetAsLost();
+                            wasPatched = existing.Patch(item, out existing);
+                            return Task.FromResult(wasPatched);
+                        }).ConfigureAwait(false);
 
-                        if (wasUpdated) {
-                            await _broker.NotifyAllAsync(l => l.OnApplicationUpdatedAsync(
-                                context, application)).ConfigureAwait(false);
+                        if (wasPatched) {
+                            await _broker.NotifyAllAsync(
+                                l => l.OnApplicationUpdatedAsync(operationContext, app)).ConfigureAwait(false);
+                            updated++;
                         }
+                        else {
+                            unchanged++;
+                        }
+                        if (wasLost) {
+                            await _broker.NotifyAllAsync(
+                                l => l.OnApplicationLostAsync(operationContext, app)).ConfigureAwait(false);
+                            lost++;
+                        }
+                    }
+                    catch (ResourceNotFoundException) {
+                        unchanged++; // Can happen if app is already gone
                     }
                     catch (Exception ex) {
                         unchanged++;
@@ -309,38 +319,48 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
             // ... add brand new applications
             foreach (var addition in add) {
                 try {
-                    var application = addition.Clone();
-                    application.Created = context;
-                    application.Updated = context;
-                    application.DiscovererId = discovererId;
-                    application.SetApplicationId();
-                    application.SetAsFound();
-                    var update = false;
-                    application = await _database.AddOrUpdateAsync(application.ApplicationId, 
+                    var app = addition.Clone();
+                    app.Created = operationContext;
+                    app.Updated = operationContext;
+                    app.DiscovererId = discovererId;
+                    app.SetApplicationId();
+                    app.SetAsFound();
+                    var wasAdded = false;
+                    var wasPatched = false;
+                    var wasFound = false;
+                    app = await _database.AddOrUpdateAsync(app.ApplicationId, 
                         existing => {
-                            update = existing != null;
-                            return Task.FromResult(existing.Patch(application));
+                            wasAdded = existing == null;
+                            wasFound = existing?.IsLost() ?? true;
+                            wasPatched = existing.Patch(app, out existing);
+                            return Task.FromResult(existing);
                         }).ConfigureAwait(false);
 
-                    if (update) {
+                    if (wasAdded) {
+                        // Notify addition!
+                        await _broker.NotifyAllAsync(
+                            l => l.OnApplicationNewAsync(operationContext, app)).ConfigureAwait(false);
+                        added++;
+                    }
+                    else if (wasPatched) {
                         // Notify update
-                        await _broker.NotifyAllAsync(l => l.OnApplicationUpdatedAsync(context,
-                            application)).ConfigureAwait(false);
+                        await _broker.NotifyAllAsync(
+                            l => l.OnApplicationUpdatedAsync(operationContext, app)).ConfigureAwait(false);
+                        updated++;
                     }
                     else {
-                        // Notify addition!
-                        await _broker.NotifyAllAsync(l => l.OnApplicationNewAsync(context,
-                            application)).ConfigureAwait(false);
+                        unchanged++;
+                    }
+                    if (wasFound) {
+                        // Notify found
+                        await _broker.NotifyAllAsync(
+                            l => l.OnApplicationFoundAsync(operationContext, app)).ConfigureAwait(false);
                     }
 
                     // Now - add all new endpoints
-                    endpoints.TryGetValue(application.ApplicationId, out var epFound);
+                    endpoints.TryGetValue(app.ApplicationId, out var epFound);
                     await _bulk.ProcessDiscoveryEventsAsync(epFound, result, discovererId,
-                        application.ApplicationId).ConfigureAwait(false);
-                    added++;
-                }
-                catch (ResourceConflictException) {
-                    unchange.Add(addition); // Update the existing one
+                        app.ApplicationId).ConfigureAwait(false);
                 }
                 catch (Exception ex) {
                     unchanged++;
@@ -351,26 +371,38 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
             // Update existing applications and endpoints ...
             foreach (var update in unchange) {
                 try {
-                    var wasUpdated = false;
+                    var wasFound = false;
+                    var wasPatched = false;
 
                     // Disable if not already disabled
-                    var application = await _database.UpdateAsync(update.ApplicationId, application => {
-                        wasUpdated = application.IsNotSeen();
-                        application.Patch(update);
-                        application.SetAsFound();
-                        application.Updated = context;
-                        return Task.FromResult(true);
+                    var app = await _database.UpdateAsync(update.ApplicationId, existing => {
+                        update.SetAsFound();
+                        update.Updated = operationContext;
+
+                        wasFound = existing.IsLost();
+                        wasPatched = existing.Patch(update, out existing);
+                        return Task.FromResult(wasPatched);
                     }).ConfigureAwait(false);
 
-                    endpoints.TryGetValue(application.ApplicationId, out var epFound);
+                    endpoints.TryGetValue(app.ApplicationId, out var epFound);
                     await _bulk.ProcessDiscoveryEventsAsync(epFound, result, discovererId,
                         update.ApplicationId).ConfigureAwait(false);
 
-                    if (wasUpdated) {
+                    if (wasPatched) {
                         updated++;
-                        await _broker.NotifyAllAsync(l => l.OnApplicationUpdatedAsync(context,
-                            application)).ConfigureAwait(false);
+                        await _broker.NotifyAllAsync(
+                            l => l.OnApplicationUpdatedAsync(operationContext, app)).ConfigureAwait(false);
                     }
+                    else {
+                        unchanged++;
+                    }
+                    if (wasFound) {
+                        await _broker.NotifyAllAsync(
+                            l => l.OnApplicationFoundAsync(operationContext, app)).ConfigureAwait(false);
+                    }
+                }
+                catch (ResourceNotFoundException) {
+                    unchanged++; // Can happen if app is already gone
                 }
                 catch (Exception ex) {
                     unchanged++;
@@ -378,8 +410,8 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                 }
             }
             _logger.Information("... processed discovery results from {discovererId}: " +
-                "{added} applications added, {updated} updated, {disabled} disabled, and " +
-                "{unchanged} unchanged.", discovererId, added, updated, gone, unchanged);
+                "{added} applications added, {updated} updated, {lost} lost, and " +
+                "{unchanged} unchanged.", discovererId, added, updated, lost, unchanged);
         }
 
         private readonly IApplicationRepository _database;

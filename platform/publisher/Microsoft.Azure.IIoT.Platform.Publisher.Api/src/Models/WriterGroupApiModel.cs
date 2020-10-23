@@ -54,14 +54,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api.Models {
         /// </summary>
         [DataMember(Name = "encoding", Order = 6,
             EmitDefaultValue = false)]
-        public MessageEncoding? Encoding { get; set; }
-
-        /// <summary>
-        /// The message schema to use (publisher extension)
-        /// </summary>
-        [DataMember(Name = "schema", Order = 7,
-            EmitDefaultValue = false)]
-        public MessageSchema? Schema { get; set; }
+        public NetworkMessageEncoding? Encoding { get; set; }
 
         /// <summary>
         /// Header layout uri

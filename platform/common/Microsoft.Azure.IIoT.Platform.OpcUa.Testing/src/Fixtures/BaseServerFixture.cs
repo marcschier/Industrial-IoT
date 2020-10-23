@@ -10,9 +10,8 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Fixtures {
     using Microsoft.Azure.IIoT.Platform.OpcUa;
     using Microsoft.Azure.IIoT.Diagnostics;
     using Microsoft.Azure.IIoT.Utils;
+    using Microsoft.Extensions.Logging;
     using Opc.Ua.Server;
-    using Serilog;
-    using Serilog.Events;
     using System;
     using System.IO;
     using System.Collections.Generic;
@@ -64,7 +63,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Fixtures {
             if (nodes == null) {
                 throw new ArgumentNullException(nameof(nodes));
             }
-            Logger = ConsoleOutLogger.Create(LogEventLevel.Debug);
+            Logger = ConsoleLogger.CreateLogger(LogLevel.Debug);
             _config = new TestClientServicesConfig();
             _client = new Lazy<ClientServices>(() => {
                 return new ClientServices(Logger, _config);

@@ -13,7 +13,7 @@ namespace Microsoft.Azure.IIoT.AspNetCore.Authentication.Clients {
     using Microsoft.Extensions.Options;
     using global::IdentityModel.Client;
     using global::IdentityModel;
-    using Serilog;
+    using Microsoft.Extensions.Logging;
     using System;
     using System.Collections.Concurrent;
     using System.Collections.Generic;
@@ -40,17 +40,18 @@ namespace Microsoft.Azure.IIoT.AspNetCore.Authentication.Clients {
         /// <param name="oidc"></param>
         /// <param name="schemes"></param>
         /// <param name="ctx"></param>
+        /// <param name="http"></param>
         /// <param name="logger"></param>
         public OpenIdUserTokenClient(IClientAuthConfig config, IHttpContextAccessor ctx,
             IOptionsMonitor<OpenIdConnectOptions> oidc, IAuthenticationSchemeProvider schemes,
-            ISystemClock clock, ILogger logger) {
+            ISystemClock clock, ILogger logger, IHttpClientFactory http = null) {
             _clock = clock ?? throw new ArgumentNullException(nameof(clock));
             _oidc = oidc ?? throw new ArgumentNullException(nameof(oidc));
             _schemes = schemes ?? throw new ArgumentNullException(nameof(schemes));
             _ctx = ctx ?? throw new ArgumentNullException(nameof(ctx));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _config = config ?? throw new ArgumentNullException(nameof(config));
-            Http = new HttpClientFactory(logger.ForContext<HttpClientFactory>());
+            Http = http ?? new HttpClientFactory(logger);
         }
 
         /// <inheritdoc/>

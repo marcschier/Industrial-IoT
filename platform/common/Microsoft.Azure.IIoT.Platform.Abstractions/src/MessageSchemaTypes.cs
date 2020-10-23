@@ -11,22 +11,10 @@ namespace Microsoft.Azure.IIoT.Platform {
     public static class MessageSchemaTypes {
 
         /// <summary>
-        /// Monitored item message
+        /// Binary encoded sample message
         /// </summary>
-        public const string MonitoredItemMessageJson =
-            "application/x-monitored-item-json-v1";
-
-        /// <summary>
-        /// Monitored item message binary encoded
-        /// </summary>
-        public const string MonitoredItemMessageBinary =
-            "application/x-monitored-item-uabinary-v1";
-
-        /// <summary>
-        /// Moniored Item Message Model using json encoding
-        /// </summary>
-        public const string MonitoredItemMessageModelJson =
-            "application/x-monitored-itemsample-model-json-v1";
+        public const string DataSetWriterMessage =
+            "application/x-sample-binary-v2";
 
         /// <summary>
         /// Json network message
@@ -41,12 +29,6 @@ namespace Microsoft.Azure.IIoT.Platform {
             "application/x-network-message-uadp-v1";
 
         /// <summary>
-        /// Network Message Model using json encoding
-        /// </summary>
-        public const string NetworkMessageModelJson =
-            "application/x-network-message-model-json-v1";
-
-        /// <summary>
         /// Message contains writer group events
         /// </summary>
         public const string WriterGroupEvents =
@@ -59,10 +41,10 @@ namespace Microsoft.Azure.IIoT.Platform {
             "application/x-datasetwriter-event-v2-json";
 
         /// <summary>
-        /// Message contains endpoint state events
+        /// Message contains twin state events
         /// </summary>
-        public const string EndpointEvents =
-            "application/x-endpoint-event-v2-json";
+        public const string TwinEvents =
+            "application/x-twin-event-v2-json";
 
         /// <summary>
         /// Content is a nodeset

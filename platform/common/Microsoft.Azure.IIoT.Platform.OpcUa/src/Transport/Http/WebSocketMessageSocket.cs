@@ -7,7 +7,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Transport {
     using Microsoft.Azure.IIoT.Utils;
     using Opc.Ua;
     using Opc.Ua.Bindings;
-    using Serilog;
+    using Microsoft.Extensions.Logging;
     using System;
     using System.Net.WebSockets;
     using System.Threading;

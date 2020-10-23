@@ -23,11 +23,6 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Events.v2.Models {
         public OperationContextModel Context { get; set; }
 
         /// <summary>
-        /// Twin id
-        /// </summary>
-        public string Id { get; set; }
-
-        /// <summary>
         /// Twin info
         /// </summary>
         public TwinInfoModel Twin { get; set; }

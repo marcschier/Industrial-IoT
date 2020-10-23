@@ -4,10 +4,9 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Platform.Publisher.Api.Models {
+    using Microsoft.Azure.IIoT.Platform.Publisher.Models;
     using Microsoft.Azure.IIoT.Platform.Core.Api.Models;
     using Microsoft.Azure.IIoT.Platform.Core.Models;
-    using Microsoft.Azure.IIoT.Platform.Subscriber.Models;
-    using Microsoft.Azure.IIoT.Platform.Publisher.Models;
     using System.Linq;
 
     /// <summary>
@@ -20,23 +19,37 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api.Models {
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
-        public static MonitoredItemMessageApiModel ToApiModel(
-            this MonitoredItemMessageModel model) {
+        public static PublishedDataSetItemMessageApiModel ToApiModel(
+            this PublishedDataSetItemMessageModel model) {
             if (model == null) {
                 return null;
             }
-            return new MonitoredItemMessageApiModel {
-                PublisherId = model.PublisherId,
+            return new PublishedDataSetItemMessageApiModel {
                 DataSetWriterId = model.DataSetWriterId,
                 VariableId = model.VariableId,
-                NodeId = model.NodeId,
-                DisplayName = model.DisplayName,
+                Extensions = model.Extensions?
+                    .ToDictionary(k => k.Key, v => v.Value),
+                Timestamp = model.Timestamp,
+                Value = model.Value.ToApiModel(),
+                SequenceNumber = model.SequenceNumber
+            };
+        }
+
+        /// <summary>
+        /// Convert to api model
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public static DataValueApiModel ToApiModel(
+            this DataValueModel model) {
+            if (model == null) {
+                return null;
+            }
+            return new DataValueApiModel {
                 ServerTimestamp = model.ServerTimestamp,
                 ServerPicoseconds = model.ServerPicoseconds,
-                SequenceNumber = model.SequenceNumber,
                 SourceTimestamp = model.SourceTimestamp,
                 SourcePicoseconds = model.SourcePicoseconds,
-                Timestamp = model.Timestamp,
                 Value = model.Value?.Copy(),
                 DataType = model.DataType,
                 Status = model.Status
@@ -1123,8 +1136,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api.Models {
                 State = model.State.ToApiModel(),
                 MaxNetworkMessageSize = model.MaxNetworkMessageSize,
                 MessageSettings = model.MessageSettings.ToApiModel(),
-                Encoding = (MessageEncoding?)model.Encoding,
-                Schema = (MessageSchema?)model.Schema,
+                Encoding = (NetworkMessageEncoding?)model.Encoding,
                 Name = model.Name,
                 Priority = model.Priority,
                 SecurityGroupId = model.SecurityGroupId,
@@ -1157,8 +1169,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api.Models {
                 State = model.State.ToServiceModel(),
                 MaxNetworkMessageSize = model.MaxNetworkMessageSize,
                 MessageSettings = model.MessageSettings.ToServiceModel(),
-                Encoding = (Publisher.Models.MessageEncoding?)model.Encoding,
-                Schema = (Publisher.Models.MessageSchema?)model.Schema,
+                Encoding = (Publisher.Models.NetworkMessageEncoding?)model.Encoding,
                 Name = model.Name,
                 Priority = model.Priority,
                 SecurityGroupId = model.SecurityGroupId,
@@ -1190,8 +1201,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api.Models {
                 LocaleIds = model.LocaleIds?.ToList(),
                 MaxNetworkMessageSize = model.MaxNetworkMessageSize,
                 MessageSettings = model.MessageSettings.ToApiModel(),
-                Encoding = (MessageEncoding?)model.Encoding,
-                Schema = (MessageSchema?)model.Schema,
+                Encoding = (NetworkMessageEncoding?)model.Encoding,
                 Name = model.Name,
                 Priority = model.Priority,
                 SecurityGroupId = model.SecurityGroupId,
@@ -1223,8 +1233,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api.Models {
                 LocaleIds = model.LocaleIds?.ToList(),
                 MaxNetworkMessageSize = model.MaxNetworkMessageSize,
                 MessageSettings = model.MessageSettings.ToServiceModel(),
-                Encoding = (Publisher.Models.MessageEncoding?)model.Encoding,
-                Schema = (Publisher.Models.MessageSchema?)model.Schema,
+                Encoding = (Publisher.Models.NetworkMessageEncoding?)model.Encoding,
                 Name = model.Name,
                 Priority = model.Priority,
                 SecurityGroupId = model.SecurityGroupId,
@@ -2112,8 +2121,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api.Models {
                 KeepAliveTime = model.KeepAliveTime,
                 LocaleIds = model.LocaleIds?.ToList(),
                 MessageSettings = model.MessageSettings.ToApiModel(),
-                Encoding = (MessageEncoding?)model.Encoding,
-                Schema = (MessageSchema?)model.Schema,
+                Encoding = (NetworkMessageEncoding?)model.Encoding,
                 Name = model.Name,
                 Priority = model.Priority,
                 PublishingInterval = model.PublishingInterval
@@ -2135,8 +2143,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api.Models {
                 KeepAliveTime = model.KeepAliveTime,
                 LocaleIds = model.LocaleIds?.ToList(),
                 MessageSettings = model.MessageSettings.ToServiceModel(),
-                Encoding = (Publisher.Models.MessageEncoding?)model.Encoding,
-                Schema = (Publisher.Models.MessageSchema?)model.Schema,
+                Encoding = (Publisher.Models.NetworkMessageEncoding?)model.Encoding,
                 Name = model.Name,
                 Priority = model.Priority,
                 PublishingInterval = model.PublishingInterval
@@ -2248,8 +2255,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api.Models {
             return new WriterGroupInfoQueryApiModel {
                 Priority = model.Priority,
                 Name = model.Name,
-                Encoding = (MessageEncoding?)model.Encoding,
-                Schema = (MessageSchema?)model.Schema,
+                Encoding = (NetworkMessageEncoding?)model.Encoding,
                 State = (WriterGroupStatus?)model.State,
                 GroupVersion = model.GroupVersion,
             };
@@ -2267,8 +2273,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api.Models {
             return new WriterGroupInfoQueryModel {
                 Priority = model.Priority,
                 Name = model.Name,
-                Encoding = (Publisher.Models.MessageEncoding?)model.Encoding,
-                Schema = (Publisher.Models.MessageSchema?)model.Schema,
+                Encoding = (Publisher.Models.NetworkMessageEncoding?)model.Encoding,
                 State = (Publisher.Models.WriterGroupStatus?)model.State,
                 GroupVersion = model.GroupVersion,
             };
@@ -2290,8 +2295,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api.Models {
                 KeepAliveTime = model.KeepAliveTime,
                 LocaleIds = model.LocaleIds?.ToList(),
                 MessageSettings = model.MessageSettings.ToApiModel(),
-                Encoding = (MessageEncoding?)model.Encoding,
-                Schema = (MessageSchema?)model.Schema,
+                Encoding = (NetworkMessageEncoding?)model.Encoding,
                 Name = model.Name,
                 Priority = model.Priority,
                 PublishingInterval = model.PublishingInterval
@@ -2314,8 +2318,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api.Models {
                 KeepAliveTime = model.KeepAliveTime,
                 LocaleIds = model.LocaleIds?.ToList(),
                 MessageSettings = model.MessageSettings.ToServiceModel(),
-                Encoding = (Publisher.Models.MessageEncoding?)model.Encoding,
-                Schema = (Publisher.Models.MessageSchema?)model.Schema,
+                Encoding = (Publisher.Models.NetworkMessageEncoding?)model.Encoding,
                 Name = model.Name,
                 Priority = model.Priority,
                 PublishingInterval = model.PublishingInterval

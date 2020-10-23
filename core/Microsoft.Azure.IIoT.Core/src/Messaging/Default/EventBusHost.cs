@@ -6,7 +6,7 @@
 namespace Microsoft.Azure.IIoT.Messaging.Default {
     using Microsoft.Azure.IIoT.Messaging;
     using Microsoft.Azure.IIoT.Exceptions;
-    using Serilog;
+    using Microsoft.Extensions.Logging;
     using System;
     using System.Threading.Tasks;
     using System.Threading;

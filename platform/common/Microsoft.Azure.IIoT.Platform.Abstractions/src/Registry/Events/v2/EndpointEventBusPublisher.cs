@@ -25,38 +25,38 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Events.v2 {
         }
 
         /// <inheritdoc/>
-        public Task OnEndpointActivatedAsync(
-            OperationContextModel context, EndpointInfoModel endpoint) {
-            return _bus.PublishAsync(Wrap(EndpointEventType.Activated, context,
-                endpoint.Id, endpoint));
-        }
-
-        /// <inheritdoc/>
-        public Task OnEndpointDeactivatedAsync(
-            OperationContextModel context, EndpointInfoModel endpoint) {
-            return _bus.PublishAsync(Wrap(EndpointEventType.Deactivated, context,
-                endpoint.Id, endpoint));
-        }
-
-        /// <inheritdoc/>
         public Task OnEndpointDeletedAsync(
-            OperationContextModel context, string endpointId, EndpointInfoModel endpoint) {
+            OperationContextModel context, EndpointInfoModel endpoint) {
             return _bus.PublishAsync(Wrap(EndpointEventType.Deleted, context,
-                endpointId, endpoint));
+                endpoint));
         }
 
         /// <inheritdoc/>
         public Task OnEndpointNewAsync(
             OperationContextModel context, EndpointInfoModel endpoint) {
             return _bus.PublishAsync(Wrap(EndpointEventType.New, context,
-                endpoint.Id, endpoint));
+                endpoint));
+        }
+
+        /// <inheritdoc/>
+        public Task OnEndpointFoundAsync(
+            OperationContextModel context, EndpointInfoModel endpoint) {
+            return _bus.PublishAsync(Wrap(EndpointEventType.Found, context,
+                endpoint));
+        }
+
+        /// <inheritdoc/>
+        public Task OnEndpointLostAsync(
+            OperationContextModel context, EndpointInfoModel endpoint) {
+            return _bus.PublishAsync(Wrap(EndpointEventType.Lost, context,
+                endpoint));
         }
 
         /// <inheritdoc/>
         public Task OnEndpointUpdatedAsync(
             OperationContextModel context, EndpointInfoModel endpoint) {
             return _bus.PublishAsync(Wrap(EndpointEventType.Updated, context,
-                endpoint.Id, endpoint));
+                endpoint));
         }
 
         /// <summary>
@@ -64,16 +64,13 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Events.v2 {
         /// </summary>
         /// <param name="type"></param>
         /// <param name="context"></param>
-        /// <param name="endpointId"></param>
         /// <param name="endpoint"></param>
         /// <returns></returns>
         private static EndpointEventModel Wrap(EndpointEventType type,
-            OperationContextModel context, string endpointId,
-            EndpointInfoModel endpoint) {
+            OperationContextModel context, EndpointInfoModel endpoint) {
             return new EndpointEventModel {
                 EventType = type,
                 Context = context,
-                Id = endpointId,
                 Endpoint = endpoint
             };
         }

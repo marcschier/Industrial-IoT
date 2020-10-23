@@ -13,7 +13,7 @@ namespace Microsoft.Azure.IIoT.AspNetCore.Authentication.Clients {
     using Microsoft.Azure.IIoT.Storage.Default;
     using Microsoft.Azure.IIoT.Storage;
     using Autofac;
-    using Serilog;
+    using Microsoft.Extensions.Logging;
     using System.Collections.Generic;
 
     /// <summary>

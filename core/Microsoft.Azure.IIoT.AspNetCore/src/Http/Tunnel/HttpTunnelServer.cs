@@ -7,7 +7,6 @@ namespace Microsoft.Azure.IIoT.AspNetCore.Http.Tunnel {
     using Microsoft.Azure.IIoT.AspNetCore;
     using Microsoft.Azure.IIoT.Exceptions;
     using Microsoft.Azure.IIoT.Hosting;
-    using Microsoft.Azure.IIoT.Hosting.Services;
     using Microsoft.Azure.IIoT.Http.Tunnel.Models;
     using Microsoft.Azure.IIoT.Rpc.Default;
     using Microsoft.Azure.IIoT.Serializers;
@@ -16,7 +15,7 @@ namespace Microsoft.Azure.IIoT.AspNetCore.Http.Tunnel {
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Primitives;
     using Microsoft.Net.Http.Headers;
-    using Serilog;
+    using Microsoft.Extensions.Logging;
     using System;
     using System.Collections.Generic;
     using System.IO;
@@ -37,7 +36,7 @@ namespace Microsoft.Azure.IIoT.AspNetCore.Http.Tunnel {
     /// Not to be confused with the cloud side HttpTunnelServer
     /// that unpacks http tunnel requests from edge.
     /// </remarks>
-    public sealed class HttpTunnelServer : IAppServer, IMethodRouter {
+    public sealed class HttpTunnelServer : IAppServer, IMethodHandler {
 
         /// <inheritdoc/>
         public HttpTunnelServer(IJsonSerializer serializer, ILogger logger) {

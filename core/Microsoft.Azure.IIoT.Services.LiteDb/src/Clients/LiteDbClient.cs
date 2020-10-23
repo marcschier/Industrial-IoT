@@ -5,7 +5,7 @@
 
 namespace Microsoft.Azure.IIoT.Services.LiteDb.Clients {
     using Microsoft.Azure.IIoT.Storage;
-    using Serilog;
+    using Microsoft.Extensions.Logging;
     using LiteDB;
     using System;
     using System.Threading.Tasks;

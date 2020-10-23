@@ -110,13 +110,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Storage {
         /// Encoding to generate
         /// </summary>
         [DataMember]
-        public MessageEncoding? MessageEncoding { get; set; }
-
-        /// <summary>
-        /// The messaging mode for outgoing messages.
-        /// </summary>
-        [DataMember]
-        public MessageSchema? Schema { get; set; }
+        public NetworkMessageEncoding? MessageEncoding { get; set; }
 
         /// <summary>
         /// Batch buffer size

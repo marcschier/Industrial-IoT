@@ -9,7 +9,7 @@ namespace Microsoft.Azure.IIoT.Crypto.Storage {
     using Microsoft.Azure.IIoT.Exceptions;
     using Microsoft.Azure.IIoT.Storage;
     using Microsoft.Azure.IIoT.Utils;
-    using Serilog;
+    using Microsoft.Extensions.Logging;
     using System;
     using System.Collections.Generic;
     using System.Linq;

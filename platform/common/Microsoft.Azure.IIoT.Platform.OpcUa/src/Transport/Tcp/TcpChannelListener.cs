@@ -12,7 +12,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Transport {
     using System.Net.Sockets;
     using System.Security.Cryptography.X509Certificates;
     using System.Threading;
-    using Serilog;
+    using Microsoft.Extensions.Logging;
     using Autofac;
 
     /// <summary>

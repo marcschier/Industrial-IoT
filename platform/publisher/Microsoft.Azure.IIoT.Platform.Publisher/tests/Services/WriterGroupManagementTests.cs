@@ -290,7 +290,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                 Assert.Single(found);
 
                 // Act
-                await service.OnEndpointDeletedAsync(null, endpoint.Id, null).ConfigureAwait(false);
+                await service.OnEndpointDeletedAsync(null, endpoint).ConfigureAwait(false);
                 // Assert
                 found = await writers.QueryAllDataSetWritersAsync(new DataSetWriterInfoQueryModel {
                     ExcludeDisabled = true
@@ -298,7 +298,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                 Assert.Empty(found);
 
                 // Act
-                await service.OnEndpointDeletedAsync(null, endpoint.Id, null).ConfigureAwait(false);
+                await service.OnEndpointDeletedAsync(null, endpoint).ConfigureAwait(false);
                 // Assert
                 found = await writers.QueryAllDataSetWritersAsync(new DataSetWriterInfoQueryModel {
                     ExcludeDisabled = true
@@ -314,7 +314,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                 Assert.Single(found);
 
                 // Act
-                await service.OnEndpointDeletedAsync(null, endpoint.Id, null).ConfigureAwait(false);
+                await service.OnEndpointDeletedAsync(null, endpoint).ConfigureAwait(false);
                 // Assert
                 found = await writers.QueryAllDataSetWritersAsync(new DataSetWriterInfoQueryModel {
                     ExcludeDisabled = true

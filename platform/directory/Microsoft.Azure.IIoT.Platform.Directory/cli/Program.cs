@@ -137,7 +137,7 @@ Operations (Mutually exclusive):
         /// Create supervisor module identity in device registry
         /// </summary>
         private static async Task MakeSupervisorAsync(string deviceId, string moduleId) {
-            var logger = ConsoleOutLogger.Create();
+            var logger = ConsoleLogger.CreateLogger();
             var config = new IoTHubConfig(null);
             var registry = new IoTHubServiceClient(
                 config, new NewtonSoftJsonSerializer(), logger);
@@ -161,7 +161,7 @@ Operations (Mutually exclusive):
         /// Clear registry
         /// </summary>
         private static async Task ClearSupervisorsAsync() {
-            var logger = ConsoleOutLogger.Create();
+            var logger = ConsoleLogger.CreateLogger();
             var config = new IoTHubConfig(null);
             var registry = new IoTHubServiceClient(
                 config, new NewtonSoftJsonSerializer(), logger);
@@ -203,7 +203,7 @@ Operations (Mutually exclusive):
         /// Clear registry
         /// </summary>
         private static async Task ClearRegistryAsync() {
-            var logger = ConsoleOutLogger.Create();
+            var logger = ConsoleLogger.CreateLogger();
             var config = new IoTHubConfig(null);
             var registry = new IoTHubServiceClient(
                 config, new NewtonSoftJsonSerializer(), logger);

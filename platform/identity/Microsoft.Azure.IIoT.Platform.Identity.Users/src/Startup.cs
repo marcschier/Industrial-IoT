@@ -10,7 +10,6 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Users {
     using Microsoft.Azure.IIoT.Platform.Identity.Models;
     using Microsoft.Azure.IIoT.Platform.Identity.Services;
     using Microsoft.Azure.IIoT.AspNetCore.Cors;
-    using Microsoft.Azure.IIoT.AspNetCore.Correlation;
     using Microsoft.Azure.IIoT.AspNetCore.Authentication;
     using Microsoft.Azure.IIoT.AspNetCore.Authentication.Clients;
     using Microsoft.Azure.IIoT.Http.Clients;
@@ -147,7 +146,6 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Users {
             app.UseAuthorization();
             app.UseHttpsRedirect();
 
-            app.UseCorrelation();
             app.UseSwagger();
 
             app.UseEndpoints(endpoints => {

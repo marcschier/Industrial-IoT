@@ -11,7 +11,7 @@ namespace Microsoft.Azure.IIoT.Authentication.Clients {
     using System.Threading.Tasks;
     using System.Linq;
     using System;
-    using Serilog;
+    using Microsoft.Extensions.Logging;
 
     /// <summary>
     /// Token client aggregator token source - combines token clients into a

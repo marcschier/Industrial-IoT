@@ -21,7 +21,7 @@ namespace Microsoft.Azure.IIoT.Hosting {
         /// <param name="contentType"></param>
         /// <exception cref="MethodCallStatusException"/>
         /// <returns></returns>
-        Task<byte[]> InvokeAsync(string target, string method, byte[] payload,
-            string contentType);
+        Task<byte[]> InvokeAsync(string target, string method, 
+            byte[] payload, string contentType);
     }
 }

@@ -5,7 +5,7 @@
 
 namespace Microsoft.Azure.IIoT.Net.Scanner {
     using Microsoft.Azure.IIoT.Net.Models;
-    using Serilog;
+    using Microsoft.Extensions.Logging;
     using System;
     using System.Collections.Generic;
     using System.Net;

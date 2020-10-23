@@ -8,7 +8,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
     using Opc.Ua.Encoders;
     using Opc.Ua.Extensions;
     using Opc.Ua.Nodeset;
-    using Serilog;
+    using Microsoft.Extensions.Logging;
     using System;
     using System.IO;
     using System.IO.Compression;

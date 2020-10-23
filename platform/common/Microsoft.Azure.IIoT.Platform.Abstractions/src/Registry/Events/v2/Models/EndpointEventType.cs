@@ -16,14 +16,14 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Events.v2.Models {
         New,
 
         /// <summary>
-        /// Deactivated
+        /// Lost
         /// </summary>
-        Deactivated,
+        Lost,
 
         /// <summary>
-        /// Activated
+        /// Found
         /// </summary>
-        Activated,
+        Found,
 
         /// <summary>
         /// Updated

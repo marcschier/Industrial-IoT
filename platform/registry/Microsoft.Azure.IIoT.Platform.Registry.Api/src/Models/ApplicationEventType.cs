@@ -19,6 +19,18 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Models {
         New,
 
         /// <summary>
+        /// Lost
+        /// </summary>
+        [EnumMember]
+        Lost,
+
+        /// <summary>
+        /// Found
+        /// </summary>
+        [EnumMember]
+        Found,
+
+        /// <summary>
         /// Updated
         /// </summary>
         [EnumMember]

@@ -7,7 +7,6 @@ namespace Microsoft.Azure.IIoT.AspNetCore.Tests {
     using Microsoft.Azure.IIoT.Http.Clients;
     using Microsoft.Azure.IIoT.Serializers;
     using Microsoft.Azure.IIoT.Utils;
-    using Microsoft.Azure.IIoT.AspNetCore.Correlation;
     using Microsoft.Azure.IIoT.AspNetCore.Cors;
     using Microsoft.Azure.IIoT.AspNetCore.Http.Tunnel;
     using Microsoft.AspNetCore.Builder;
@@ -87,7 +86,6 @@ namespace Microsoft.Azure.IIoT.AspNetCore.Tests {
             // app.EnableCors();
 
             app.UseHttpsRedirect();
-            app.UseCorrelation();
 
             app.UseEndpoints(endpoints => {
                 endpoints.MapMetrics();

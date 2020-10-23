@@ -15,7 +15,7 @@ namespace Microsoft.Azure.IIoT.AspNetCore.Authentication.Clients {
     using Microsoft.Azure.IIoT.Http.Auth;
     using Microsoft.Azure.IIoT.Storage;
     using Microsoft.Azure.IIoT.Storage.Default;
-    using Serilog;
+    using Microsoft.Extensions.Logging;
     using System.Collections.Generic;
     using Autofac;
 

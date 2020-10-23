@@ -18,7 +18,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
         /// <summary>
         /// The entity is currently not visible
         /// </summary>
-        NotSeen, 
+        Lost, 
 
         /// <summary>
         /// The entity was found in the network

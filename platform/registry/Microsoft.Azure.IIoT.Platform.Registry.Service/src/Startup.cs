@@ -14,7 +14,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service {
     using Microsoft.Azure.IIoT.Serializers;
     using Microsoft.Azure.IIoT.AspNetCore.Authentication;
     using Microsoft.Azure.IIoT.AspNetCore.Authentication.Clients;
-    using Microsoft.Azure.IIoT.AspNetCore.Correlation;
     using Microsoft.Azure.IIoT.AspNetCore.Cors;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
@@ -138,7 +137,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service {
             app.UseAuthorization();
             app.UseHttpsRedirect();
 
-            app.UseCorrelation();
             app.UseSwagger();
 
             app.UseEndpoints(endpoints => {

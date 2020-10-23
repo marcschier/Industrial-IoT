@@ -3,11 +3,11 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Platform.Twin.Services.Service {
+namespace Microsoft.Azure.IIoT.Platform.Twin.Ua.Service {
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.Extensions.Hosting;
     using Autofac.Extensions.Hosting;
-    using Serilog;
+    using Microsoft.Extensions.Logging;
 
     /// <summary>
     /// Main entry point
@@ -32,7 +32,6 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services.Service {
                 .UseAutofac()
                 .ConfigureWebHostDefaults(builder => builder
                     .UseUrls("http://*:9040")
-                    .UseSerilog()
                     .UseStartup<Startup>()
                     .UseKestrel(o => o.AddServerHeader = false));
         }

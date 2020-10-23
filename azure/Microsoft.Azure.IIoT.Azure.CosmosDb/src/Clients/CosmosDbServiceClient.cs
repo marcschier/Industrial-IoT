@@ -8,7 +8,7 @@ namespace Microsoft.Azure.IIoT.Azure.CosmosDb.Clients {
     using Microsoft.Azure.IIoT.Utils;
     using Microsoft.Azure.IIoT.Serializers;
     using Microsoft.Azure.Cosmos;
-    using Serilog;
+    using Microsoft.Extensions.Logging;
     using System;
     using System.Threading.Tasks;
 

@@ -8,7 +8,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
     using Microsoft.Azure.IIoT.Platform.Registry;
     using Microsoft.Azure.IIoT.Platform.Core.Models;
     using Microsoft.Azure.IIoT.Exceptions;
-    using Serilog;
+    using Microsoft.Extensions.Logging;
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -85,16 +85,33 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
         }
 
         /// <inheritdoc/>
+        public Task OnApplicationLostAsync(OperationContextModel context,
+            ApplicationInfoModel application) {
+            // TODO: Loose all endpoints
+            return Task.CompletedTask;
+        }
+
+        /// <inheritdoc/>
+        public Task OnApplicationFoundAsync(OperationContextModel context,
+            ApplicationInfoModel application) {
+            return Task.CompletedTask;
+        }
+
+        /// <inheritdoc/>
         public async Task OnApplicationDeletedAsync(OperationContextModel context,
-            string applicationId, ApplicationInfoModel application) {
+            ApplicationInfoModel application) {
             // Get all endpoint registrations and for each one, call delete, if failure,
             // stop half way and throw and do not complete.
-            var endpoints = await GetEndpointsAsync(applicationId).ConfigureAwait(false);
+            var endpoints = await GetEndpointsAsync(application.ApplicationId).ConfigureAwait(false);
             foreach (var endpoint in endpoints) {
                 await _database.DeleteAsync(endpoint.Id, 
                     ep => Task.FromResult(true)).ConfigureAwait(false);
+                if (!endpoint.IsLost()) {
+                    await _broker.NotifyAllAsync(l => l.OnEndpointLostAsync(context,
+                        endpoint)).ConfigureAwait(false);
+                }
                 await _broker.NotifyAllAsync(l => l.OnEndpointDeletedAsync(context,
-                    endpoint.Id, endpoint)).ConfigureAwait(false);
+                    endpoint)).ConfigureAwait(false);
             }
         }
 
@@ -148,29 +165,38 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
             var added = 0;
             var updated = 0;
             var unchanged = 0;
-            var disabled = 0;
+            var lost = 0;
 
             if (!(context.RegisterOnly ?? false)) {
                 // Remove or disable an endpoint
                 foreach (var item in remove) {
                     try {
-                        var wasDisabled = false;
+                        var wasLost = false;
+                        var wasPatched = false;
                         var endpoint = await _database.UpdateAsync(item.Id, existing => {
-                            wasDisabled = existing.IsNotSeen();
-                            existing.Patch(item);
-                            existing.Updated = operationContext;
-                            existing.SetNotSeen();
-                            return Task.FromResult(true);
+                            wasLost = existing.IsLost();
+                            item.Updated = operationContext;
+                            item.SetAsLost();
+                            wasPatched = existing.Patch(item, out existing);
+                            return Task.FromResult(wasPatched);
                         }).ConfigureAwait(false);
 
-                        if (wasDisabled) {
+                        if (wasPatched) {
                             await _broker.NotifyAllAsync(
                                 l => l.OnEndpointUpdatedAsync(operationContext, endpoint)).ConfigureAwait(false);
-                            disabled++;
+                            updated++;
                         }
                         else {
                             unchanged++;
                         }
+                        if (wasLost) {
+                            await _broker.NotifyAllAsync(
+                                l => l.OnEndpointLostAsync(operationContext, endpoint)).ConfigureAwait(false);
+                            lost++;
+                        }
+                    }
+                    catch (ResourceNotFoundException) {
+                        unchanged++; // Can happen if endpoint is already gone
                     }
                     catch (Exception ex) {
                         unchanged++;
@@ -179,29 +205,36 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                 }
             }
 
-            // Update endpoints that were disabled
+            // Update endpoints that were found or changed
             foreach (var exists in unchange) {
                 try {
-                    var wasUpdated = false;
+                    var wasFound = false;
+                    var wasPatched = false;
                     // Get the new one we will patch over the existing one...
                     var patch = change.First(x =>
                         EndpointInfoModelEx.Logical.Equals(x, exists));
                     var endpoint = await _database.UpdateAsync(exists.Id, existing => {
-                        wasUpdated = existing.IsNotSeen();
-                        existing.Patch(patch);
-                        existing.SetAsFound();
-                        existing.Updated = operationContext;
-                        return Task.FromResult(true);
+                        patch.SetAsFound();
+                        patch.Updated = operationContext;
+                        wasFound = existing.IsLost();
+                        wasPatched = existing.Patch(patch, out existing);
+                        return Task.FromResult(wasPatched);
                     }).ConfigureAwait(false);
-                    if (wasUpdated) {
+                    if (wasPatched) {
                         await _broker.NotifyAllAsync(
-                            l => l.OnEndpointUpdatedAsync(operationContext,
-                                endpoint)).ConfigureAwait(false);
+                            l => l.OnEndpointUpdatedAsync(operationContext, endpoint)).ConfigureAwait(false);
                         updated++;
                     }
                     else {
                         unchanged++;
                     }
+                    if (wasFound) {
+                        await _broker.NotifyAllAsync(
+                            l => l.OnEndpointFoundAsync(operationContext, endpoint)).ConfigureAwait(false);
+                    }
+                }
+                catch (ResourceNotFoundException) {
+                    unchanged++; // Can happen if endpoint is gone
                 }
                 catch (Exception ex) {
                     unchanged++;
@@ -212,26 +245,34 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
             // Add endpoint
             foreach (var item in add) {
                 try {
-                    var update = false;
+                    var wasFound = false;
+                    var wasPatched = false;
+                    var wasAdded = false;
                     var endpoint = await _database.AddOrUpdateAsync(item.Id, existing => {
-                        update = existing != null;
-                        var addOrUpdated = existing.Patch(item);
-                        addOrUpdated.SetAsFound();
-                        addOrUpdated.Updated = operationContext;
-                        if (!update) {
+                        item.SetAsFound();
+                        item.Updated = operationContext;
+
+                        wasAdded = existing == null;
+                        wasFound = existing?.IsLost() ?? true;
+                        wasPatched = existing.Patch(item, out var addOrUpdated);
+                        if (wasAdded) {
                             addOrUpdated.Created = operationContext;
                         }
                         return Task.FromResult(addOrUpdated);
                     }).ConfigureAwait(false);
-                    if (update) {
-                        await _broker.NotifyAllAsync(l => l.OnEndpointUpdatedAsync(
-                            operationContext, endpoint)).ConfigureAwait(false);
+                    if (wasAdded) {
+                        await _broker.NotifyAllAsync(
+                            l => l.OnEndpointNewAsync(operationContext, endpoint)).ConfigureAwait(false);
+                        added++;
+                    }
+                    else if (wasPatched) {
+                        await _broker.NotifyAllAsync(
+                            l => l.OnEndpointUpdatedAsync(operationContext, endpoint)).ConfigureAwait(false);
                         updated++;
                     }
-                    else {
-                        await _broker.NotifyAllAsync(l => l.OnEndpointNewAsync(
-                            operationContext, endpoint)).ConfigureAwait(false);
-                        added++;
+                    if (wasFound) {
+                        await _broker.NotifyAllAsync(
+                            l => l.OnEndpointFoundAsync(operationContext, endpoint)).ConfigureAwait(false);
                     }
                 }
                 catch (Exception ex) {
@@ -240,10 +281,10 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                 }
             }
 
-            if (added != 0 || disabled != 0) {
+            if (added != 0 || lost != 0) {
                 _logger.Information("processed endpoint results: {added} endpoints added, {updated} " +
                     "updated, {removed} removed or disabled, and {unchanged} unchanged.",
-                    added, updated, disabled, unchanged);
+                    added, updated, lost, unchanged);
             }
         }
 

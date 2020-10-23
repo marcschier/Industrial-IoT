@@ -7,7 +7,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
     using Microsoft.Azure.IIoT.Platform.OpcUa;
     using Microsoft.Azure.IIoT.Platform.OpcUa.Models;
     using Microsoft.Azure.IIoT.Platform.Core.Models;
-    using Serilog;
+    using Microsoft.Extensions.Logging;
     using Opc.Ua;
     using Opc.Ua.Encoders;
     using Opc.Ua.Extensions;
@@ -200,7 +200,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
                 return await _client.ExecuteServiceAsync(_endpoint, _priority, async session => {
                         _encoder.Context.UpdateFromSession(session);
                         var node = await RawNodeModel.ReadAsync(session, _diagnostics.ToStackModel(),
-                            nodeId, false, Diagnostics, false).ConfigureAwait(false);
+                            nodeId, false, Diagnostics, false, ct).ConfigureAwait(false);
                         // Determine whether to read events or historic data later
                         if (node.IsHistorizedNode) {
                             _history.Add(node.LocalId, node.NodeId.AsString(

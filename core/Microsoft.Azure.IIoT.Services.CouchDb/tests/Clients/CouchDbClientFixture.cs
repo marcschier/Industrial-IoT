@@ -102,7 +102,7 @@ namespace Microsoft.Azure.IIoT.Services.CouchDb.Clients {
         /// <param name="options"></param>
         /// <returns></returns>
         public static async Task<IDatabase> GetDatabaseAsync() {
-            var logger = ConsoleLogger.Create();
+            var logger = ConsoleLogger.CreateLogger();
             var server = new CouchDbClient(new CouchDbConfig(null), logger);
             return await server.OpenAsync("test", null).ConfigureAwait(false);
         }

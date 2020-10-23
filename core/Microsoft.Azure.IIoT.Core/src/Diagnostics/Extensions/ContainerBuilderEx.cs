@@ -4,13 +4,13 @@
 // ------------------------------------------------------------
 
 namespace Autofac {
-    using Autofac.Core.Registration;
     using Microsoft.Azure.IIoT.Diagnostics;
-    using Serilog;
+    using Microsoft.Extensions.Logging.Console;
+    using Microsoft.Extensions.Logging.Debug;
     using System;
 
     /// <summary>
-    /// Register trace logger
+    /// Register debug logger
     /// </summary>
     public static class DebugContainerBuilderEx {
 
@@ -19,12 +19,11 @@ namespace Autofac {
         /// </summary>
         /// <param name="builder"></param>
         /// <param name="config"></param>
-        /// <param name="log"></param>
         /// <param name="addConsole"></param>
         /// <returns></returns>
 #pragma warning disable IDE0060 // Remove unused parameter
-        public static IModuleRegistrar AddDebugDiagnostics(this ContainerBuilder builder,
-            IDiagnosticsConfig config = null, LoggerConfiguration log = null, bool addConsole = true) {
+        public static ContainerBuilder AddDebugDiagnostics(this ContainerBuilder builder,
+            IDiagnosticsConfig config = null, bool addConsole = true) {
 #pragma warning restore IDE0060 // Remove unused parameter
             if (builder == null) {
                 throw new ArgumentNullException(nameof(builder));
@@ -32,9 +31,12 @@ namespace Autofac {
 
             builder.RegisterType<HealthCheckRegistrar>()
                 .AsImplementedInterfaces().SingleInstance();
+            builder.RegisterType<DebugLoggerProvider>()
+                .AsImplementedInterfaces();
+            builder.RegisterType<ConsoleLoggerProvider>()
+                .AsImplementedInterfaces();
 
-            return builder.RegisterModule(
-                new LoggerProviderModule(new TraceLogger(log, addConsole)));
+            return builder;
         }
     }
 }

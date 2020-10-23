@@ -5,7 +5,7 @@
 
 namespace Microsoft.Azure.IIoT.Platform.Publisher.Clients {
     using Microsoft.Azure.IIoT.Platform.Publisher.Models;
-    using Serilog;
+    using Microsoft.Extensions.Logging;
     using System;
 
     /// <summary>

@@ -17,6 +17,7 @@ namespace Microsoft.Azure.IIoT.Serializers.MessagePack {
     using System.Numerics;
     using System.Text;
     using MsgPack = global::MessagePack.MessagePackSerializer;
+    using Autofac.Core;
 
     /// <summary>
     /// Message pack serializer
@@ -498,7 +499,7 @@ namespace Microsoft.Azure.IIoT.Serializers.MessagePack {
             /// <inheritdoc/>
             public IMessagePackFormatter<T> GetFormatter<T>() {
                 if (typeof(Exception).IsAssignableFrom(typeof(T))) {
-                    return (IMessagePackFormatter<T>)GetVariantFormatter(typeof(T));
+                    return (IMessagePackFormatter<T>)GetExceptionFormatter(typeof(T));
                 }
                 return null;
             }
@@ -508,7 +509,7 @@ namespace Microsoft.Azure.IIoT.Serializers.MessagePack {
             /// </summary>
             /// <param name="type"></param>
             /// <returns></returns>
-            internal IMessagePackFormatter GetVariantFormatter(Type type) {
+            internal IMessagePackFormatter GetExceptionFormatter(Type type) {
                 return _cache.GetOrAdd(type,
                     (IMessagePackFormatter)Activator.CreateInstance(
                         typeof(ExceptionFormatter<>).MakeGenericType(type)));
@@ -518,16 +519,33 @@ namespace Microsoft.Azure.IIoT.Serializers.MessagePack {
             /// Variant formatter
             /// </summary>
             private sealed class ExceptionFormatter<T> : IMessagePackFormatter<T>
-                where T : Exception, new() {
+                where T : Exception {
 
                 /// <inheritdoc/>
                 public void Serialize(ref MessagePackWriter writer, T value,
                     MessagePackSerializerOptions options) {
+                    writer.Write(value.Message);
                 }
 
                 /// <inheritdoc/>
-                public T Deserialize(ref MessagePackReader reader, MessagePackSerializerOptions options) {
-                    return new T();
+                public T Deserialize(ref MessagePackReader reader, 
+                    MessagePackSerializerOptions options) {
+                    var constructors = typeof(T).GetConstructors();
+                    var message = reader.ReadString();
+
+                    // Find string input constructor
+                    var sarg = constructors.FirstOrDefault(f => f.GetParameters()
+                        .SingleOrDefault()?.ParameterType == typeof(string));
+                    if (sarg != null) {
+                        return (T)sarg.Invoke(new object[] { message });
+                    }
+
+                    // Use default constructor
+                    var narg = constructors.FirstOrDefault(f => f.GetParameters().Length == 0);
+                    if (narg != null) {
+                        return (T)narg.Invoke(Array.Empty<object>());
+                    }
+                    return default;
                 }
             }
 

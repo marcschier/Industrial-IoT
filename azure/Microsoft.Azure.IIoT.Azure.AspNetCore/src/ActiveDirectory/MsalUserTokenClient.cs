@@ -12,7 +12,7 @@ namespace Microsoft.Azure.IIoT.AspNetCore.Authentication.Clients {
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Authentication;
     using Microsoft.Identity.Client;
-    using Serilog;
+    using Microsoft.Extensions.Logging;
     using System;
     using System.Collections.Generic;
     using System.Linq;

@@ -4,7 +4,7 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Http.Clients {
-    using Serilog;
+    using Microsoft.Extensions.Logging;
     using System;
     using System.Linq;
     using System.Collections.Generic;

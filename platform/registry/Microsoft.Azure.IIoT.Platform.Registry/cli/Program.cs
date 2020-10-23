@@ -27,7 +27,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Cli {
     using Microsoft.Azure.IIoT.Serializers.NewtonSoft;
     using Microsoft.Extensions.Configuration;
     using Opc.Ua;
-    using Serilog;
+    using Microsoft.Extensions.Logging;
     using Serilog.Events;
     using System;
     using System.Collections.Generic;
@@ -37,6 +37,8 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Cli {
     using System.Threading;
     using System.Threading.Tasks;
     using System.Diagnostics.Tracing;
+    using Microsoft.Azure.IIoT.Platform.Twin;
+    using Microsoft.Azure.IIoT.Platform.Twin.Models;
 
     /// <summary>
     /// Test client for opc ua services
@@ -64,7 +66,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Cli {
             AppDomain.CurrentDomain.UnhandledException +=
                 (s, e) => Console.WriteLine("unhandled: " + e.ExceptionObject);
             var op = Op.None;
-            var verbose = false;
             string deviceId = null, moduleId = null;
             string addressRanges = null;
             var stress = false;
@@ -73,10 +74,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Cli {
             try {
                 for (var i = 0; i < args.Length; i++) {
                     switch (args[i]) {
-                        case "-v":
-                        case "--verbose":
-                            verbose = true;
-                            break;
                         case "-C":
                         case "--connection-string":
                             i++;
@@ -206,7 +203,7 @@ Operations (Mutually exclusive):
                         TestOpcUaDiscoveryServiceAsync(addressRanges, stress).Wait();
                         break;
                     default:
-                        HostAsync(cs, deviceId, moduleId, verbose).Wait();
+                        HostAsync(cs, deviceId, moduleId).Wait();
                         break;
                 }
             }
@@ -222,8 +219,7 @@ Operations (Mutually exclusive):
         /// <summary>
         /// Host the module giving it its connection string.
         /// </summary>
-        private static async Task HostAsync(string iotHubCs, string deviceId, string moduleId, 
-            bool verbose = false) {
+        private static async Task HostAsync(string iotHubCs, string deviceId, string moduleId) {
             var configuration = new ConfigurationBuilder()
                 .AddFromDotEnvFile()
                 .AddEnvironmentVariables()
@@ -255,23 +251,16 @@ Operations (Mutually exclusive):
             }
             var diagnostics = new LogAnalyticsConfig(configuration);
             Console.WriteLine("Create or retrieve connection string...");
-            var logger = ConsoleLogger.Create(LogEventLevel.Error);
+            var logger = ConsoleLogger.CreateLogger(LogLevel.Error);
             var cs = await Retry.WithExponentialBackoff(logger,
                 () => AddOrGetAsync(config, diagnostics, deviceId, moduleId)).ConfigureAwait(false);
 
-            // Hook event source
-            using (var broker = new EventSourceBroker()) {
-                LogControl.Level.MinimumLevel = verbose ?
-                    LogEventLevel.Verbose : LogEventLevel.Information;
-
-                Console.WriteLine("Starting discovery module...");
-                broker.Subscribe(IoTSdkLogger.EventSource, new IoTSdkLogger(logger));
-                var arguments = new List<string> {
-                    $"EdgeHubConnectionString={cs}"
-                };
-                Service.Program.Main(arguments.ToArray());
-            	Console.WriteLine("Discovery module exited.");
-            }
+            Console.WriteLine("Starting discovery module...");
+            var arguments = new List<string> {
+                $"EdgeHubConnectionString={cs}"
+            };
+            Service.Program.Main(arguments.ToArray());
+            Console.WriteLine("Discovery module exited.");
         }
 
         /// <summary>
@@ -279,7 +268,7 @@ Operations (Mutually exclusive):
         /// </summary>
         private static async Task<ConnectionString> AddOrGetAsync(IIoTHubConfig config,
             ILogAnalyticsConfig diagnostics, string deviceId, string moduleId) {
-            var logger = ConsoleLogger.Create(LogEventLevel.Error);
+            var logger = ConsoleLogger.CreateLogger(LogLevel.Error);
             var registry = new IoTHubServiceClient(
                 config, new NewtonSoftJsonSerializer(), logger);
             try {
@@ -319,7 +308,7 @@ Operations (Mutually exclusive):
         /// Test port scanning
         /// </summary>
         private static async Task TestPortScannerAsync(string host, bool opc) {
-            var logger = ConsoleOutLogger.Create();
+            var logger = ConsoleLogger.CreateLogger();
             var addresses = await Dns.GetHostAddressesAsync(host).ConfigureAwait(false);
             using (var cts = new CancellationTokenSource(TimeSpan.FromMinutes(10))) {
                 var watch = Stopwatch.StartNew();
@@ -338,7 +327,7 @@ Operations (Mutually exclusive):
         /// Test network scanning
         /// </summary>
         private static async Task TestNetworkScannerAsync() {
-            var logger = ConsoleOutLogger.Create();
+            var logger = ConsoleLogger.CreateLogger();
             using (var cts = new CancellationTokenSource(TimeSpan.FromMinutes(10))) {
                 var watch = Stopwatch.StartNew();
                 var scanning = new ScanServices(logger);
@@ -355,7 +344,7 @@ Operations (Mutually exclusive):
         /// </summary>
         private static async Task TestOpcUaDiscoveryServiceAsync(string addressRanges,
             bool stress) {
-            using (var logger = StackLogger.Create(ConsoleLogger.Create()))
+            using (var logger = StackLogger.Create(ConsoleLogger.CreateLogger()))
             using (var config = new TestClientServicesConfig())
             using (var client = new ClientServices(logger.Logger, config))
             using (var scanner = new DiscoveryServices(client,
@@ -381,31 +370,8 @@ Operations (Mutually exclusive):
         }
 
         /// <inheritdoc/>
-        sealed class IoTSdkLogger : EventSourceSerilogSink {
-            public IoTSdkLogger(ILogger logger) :
-                base(logger.ForContext("SourceContext", EventSource.Replace('-', '.'))) {
-            }
-
-            public override void OnEvent(EventWrittenEventArgs eventData) {
-                switch (eventData.EventName) {
-                    case "Enter":
-                    case "Exit":
-                    case "Associate":
-                        WriteEvent(LogEventLevel.Verbose, eventData);
-                        break;
-                    default:
-                        WriteEvent(LogEventLevel.Debug, eventData);
-                        break;
-                }
-            }
-
-            // ddbee999-a79e-5050-ea3c-6d1a8a7bafdd
-            public const string EventSource = "Microsoft-Azure-Devices-Device-Client";
-        }
-
-        /// <inheritdoc/>
         private class ConsoleListener : IApplicationRegistryListener,
-            IEndpointRegistryListener, IDiscoveryResultHandler {
+            IEndpointRegistryListener, IDiscoveryResultHandler, ITwinRegistryListener {
 
             /// <inheritdoc/>
             public Task ReportResultsAsync(IEnumerable<DiscoveryResultModel> results,
@@ -416,8 +382,8 @@ Operations (Mutually exclusive):
 
             /// <inheritdoc/>
             public Task OnApplicationDeletedAsync(OperationContextModel context,
-                string applicationId, ApplicationInfoModel application) {
-                Console.WriteLine($"Deleted {applicationId}");
+                ApplicationInfoModel application) {
+                Console.WriteLine($"Deleted {application.ApplicationId}");
                 return Task.CompletedTask;
             }
 
@@ -429,6 +395,20 @@ Operations (Mutually exclusive):
             }
 
             /// <inheritdoc/>
+            public Task OnApplicationLostAsync(OperationContextModel context,
+                ApplicationInfoModel application) {
+                Console.WriteLine($"Lost {application.ApplicationId}");
+                return Task.CompletedTask;
+            }
+
+            /// <inheritdoc/>
+            public Task OnApplicationFoundAsync(OperationContextModel context,
+                ApplicationInfoModel application) {
+                Console.WriteLine($"Found {application.ApplicationId}");
+                return Task.CompletedTask;
+            }
+
+            /// <inheritdoc/>
             public Task OnApplicationUpdatedAsync(OperationContextModel context,
                 ApplicationInfoModel application) {
                 Console.WriteLine($"Updated {application.ApplicationId}");
@@ -436,23 +416,9 @@ Operations (Mutually exclusive):
             }
 
             /// <inheritdoc/>
-            public Task OnEndpointActivatedAsync(OperationContextModel context,
-                EndpointInfoModel endpoint) {
-                Console.WriteLine($"Activated {endpoint.Id}");
-                return Task.CompletedTask;
-            }
-
-            /// <inheritdoc/>
-            public Task OnEndpointDeactivatedAsync(OperationContextModel context,
-                EndpointInfoModel endpoint) {
-                Console.WriteLine($"Deactivated {endpoint.Id}");
-                return Task.CompletedTask;
-            }
-
-            /// <inheritdoc/>
             public Task OnEndpointDeletedAsync(OperationContextModel context,
-                string endpointId, EndpointInfoModel endpoint) {
-                Console.WriteLine($"Deleted {endpointId}");
+                EndpointInfoModel endpoint) {
+                Console.WriteLine($"Deleted {endpoint.Id}");
                 return Task.CompletedTask;
             }
 
@@ -464,9 +430,41 @@ Operations (Mutually exclusive):
             }
 
             /// <inheritdoc/>
+            public Task OnEndpointLostAsync(OperationContextModel context,
+                EndpointInfoModel endpoint) {
+                Console.WriteLine($"Lost {endpoint.Id}");
+                return Task.CompletedTask;
+            }
+
+            /// <inheritdoc/>
+            public Task OnEndpointFoundAsync(OperationContextModel context,
+                EndpointInfoModel endpoint) {
+                Console.WriteLine($"Found {endpoint.Id}");
+                return Task.CompletedTask;
+            }
+
+            /// <inheritdoc/>
             public Task OnEndpointUpdatedAsync(OperationContextModel context,
                 EndpointInfoModel endpoint) {
                 Console.WriteLine($"Updated {endpoint.Id}");
+                return Task.CompletedTask;
+            }
+
+            public Task OnTwinActivatedAsync(OperationContextModel context, 
+                TwinInfoModel twin) {
+                Console.WriteLine($"Activated {twin.Id}");
+                return Task.CompletedTask;
+            }
+
+            public Task OnTwinUpdatedAsync(OperationContextModel context,
+                TwinInfoModel twin) {
+                Console.WriteLine($"Updated {twin.Id}");
+                return Task.CompletedTask;
+            }
+
+            public Task OnTwinDeactivatedAsync(OperationContextModel context, 
+                TwinInfoModel twin) {
+                Console.WriteLine($"Deactivated {twin.Id}");
                 return Task.CompletedTask;
             }
 

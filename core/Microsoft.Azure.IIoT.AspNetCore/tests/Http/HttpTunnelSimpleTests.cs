@@ -7,7 +7,7 @@ namespace Microsoft.Azure.IIoT.AspNetCore.Http.Tunnel {
     using Microsoft.Azure.IIoT.AspNetCore.Tests.Models;
     using Microsoft.Azure.IIoT.AspNetCore.Tests;
     using Microsoft.Azure.IIoT.Exceptions;
-    using Microsoft.Azure.IIoT.Hosting.Services;
+    using Microsoft.Azure.IIoT.Hosting;
     using Microsoft.Azure.IIoT.Serializers;
     using System.Threading.Tasks;
     using Xunit;
@@ -21,7 +21,7 @@ namespace Microsoft.Azure.IIoT.AspNetCore.Http.Tunnel {
 
         [Fact]
         public async Task TestInvokeSimple1Async() {
-            var router = _fixture.Resolve<IMethodRouter>();
+            var router = _fixture.Resolve<IMethodHandler>();
             var serializer = _fixture.Resolve<IJsonSerializer>();
 
             var expected = new TestRequestModel {
@@ -39,7 +39,7 @@ namespace Microsoft.Azure.IIoT.AspNetCore.Http.Tunnel {
 
         [Fact]
         public async Task TestInvokeSimple2Async() {
-            var router = _fixture.Resolve<IMethodRouter>();
+            var router = _fixture.Resolve<IMethodHandler>();
             var serializer = _fixture.Resolve<IJsonSerializer>();
 
             var expected = new TestRequestModel {
@@ -57,7 +57,7 @@ namespace Microsoft.Azure.IIoT.AspNetCore.Http.Tunnel {
 
         [Fact]
         public async Task TestInvokeSimpleWithBadArgThrowsAsync() {
-            var router = _fixture.Resolve<IMethodRouter>();
+            var router = _fixture.Resolve<IMethodHandler>();
             var serializer = _fixture.Resolve<IJsonSerializer>();
             var expected = new TestRequestModel {
                 Input = "test"

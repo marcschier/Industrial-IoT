@@ -18,6 +18,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
     using Microsoft.Azure.IIoT.Serializers.NewtonSoft;
     using Microsoft.Azure.IIoT.Storage;
     using Microsoft.Azure.IIoT.Storage.Default;
+    using Microsoft.Azure.IIoT.Diagnostics;
     using Microsoft.Azure.IIoT.Utils;
     using Microsoft.Extensions.Configuration;
     using Autofac;
@@ -30,7 +31,6 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
     using System.Linq;
     using System.Net.Sockets;
     using Xunit;
-    using Serilog;
     using Opc.Ua;
 
     [Collection(PublishCollection.Name)]
@@ -434,7 +434,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
         private AutoMock Setup() {
             var mock = AutoMock.GetLoose(builder => {
                 builder.RegisterInstance(new ConfigurationBuilder().Build()).AsImplementedInterfaces();
-                builder.RegisterInstance(Log.Logger).AsImplementedInterfaces();
+                builder.RegisterInstance(ConsoleLogger.CreateLogger()).AsImplementedInterfaces();
                 builder.RegisterType<ClientServicesConfig>().AsImplementedInterfaces();
                 builder.RegisterType<NewtonSoftJsonConverters>().As<IJsonSerializerConverterProvider>();
                 builder.RegisterType<NewtonSoftJsonSerializer>().As<IJsonSerializer>();
@@ -466,10 +466,8 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                     .AutoActivate(); // Create and register with broker
                 builder.RegisterType<SimpleNetworkMessageSink>().AsImplementedInterfaces().SingleInstance();
                 builder.RegisterType<SimpleWriterGroupDataSource>().AsImplementedInterfaces();
-                builder.RegisterType<UadpNetworkMessageEncoder>().AsImplementedInterfaces();
-                builder.RegisterType<JsonNetworkMessageEncoder>().AsImplementedInterfaces();
-                builder.RegisterType<BinarySampleMessageEncoder>().AsImplementedInterfaces();
-                builder.RegisterType<JsonSampleMessageEncoder>().AsImplementedInterfaces();
+                builder.RegisterType<NetworkMessageUadpEncoder>().AsImplementedInterfaces();
+                builder.RegisterType<NetworkMessageJsonEncoder>().AsImplementedInterfaces();
                 builder.RegisterType<VariantEncoderFactory>().AsImplementedInterfaces();
                 builder.RegisterType<DefaultSessionManager>().AsImplementedInterfaces().SingleInstance();
                 builder.RegisterType<SubscriptionServices>().AsImplementedInterfaces().SingleInstance();

@@ -35,10 +35,9 @@ namespace Microsoft.Azure.IIoT.Platform.Twin {
         /// Deactivated twin
         /// </summary>
         /// <param name="context"></param>
-        /// <param name="twinId"></param>
         /// <param name="twin"></param>
         /// <returns></returns>
         Task OnTwinDeactivatedAsync(OperationContextModel context,
-            string twinId, TwinInfoModel twin);
+            TwinInfoModel twin);
     }
 }

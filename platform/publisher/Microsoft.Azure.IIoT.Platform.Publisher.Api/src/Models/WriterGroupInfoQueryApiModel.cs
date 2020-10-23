@@ -31,14 +31,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api.Models {
         /// </summary>
         [DataMember(Name = "encoding", Order = 3,
             EmitDefaultValue = false)]
-        public MessageEncoding? Encoding { get; set; }
-
-        /// <summary>
-        /// Return groups only with this message schema
-        /// </summary>
-        [DataMember(Name = "schema", Order = 4,
-            EmitDefaultValue = false)]
-        public MessageSchema? Schema { get; set; }
+        public NetworkMessageEncoding? Encoding { get; set; }
 
         /// <summary>
         /// Return groups only in the specified state

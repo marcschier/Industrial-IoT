@@ -6,7 +6,7 @@
 namespace Microsoft.Azure.IIoT.Azure.ActiveDirectory.Clients {
     using Microsoft.Azure.IIoT.Authentication;
     using Microsoft.Azure.Services.AppAuthentication;
-    using Serilog;
+    using Microsoft.Extensions.Logging;
     using System.Collections.Generic;
     using System.Linq;
 

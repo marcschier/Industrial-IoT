@@ -12,7 +12,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub.Clients {
     using Microsoft.Azure.Devices;
     using Microsoft.Azure.Devices.Common.Exceptions;
     using Microsoft.Azure.Devices.Shared;
-    using Serilog;
+    using Microsoft.Extensions.Logging;
     using System;
     using System.Collections.Generic;
     using System.Linq;

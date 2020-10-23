@@ -21,12 +21,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher {
         /// <summary>
         /// Network message encoding to generate
         /// </summary>
-        MessageEncoding? Encoding { get; set; }
-
-        /// <summary>
-        /// The message schema to use
-        /// </summary>
-        MessageSchema? Schema { get; set; }
+        NetworkMessageEncoding? Encoding { get; set; }
 
         /// <summary>
         /// Network message content

@@ -4,7 +4,7 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Platform.OpcUa.Transport {
-    using Serilog;
+    using Microsoft.Extensions.Logging;
     using Microsoft.AspNetCore.Http;
     using System;
     using System.Threading.Tasks;

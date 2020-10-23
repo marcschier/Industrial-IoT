@@ -3,11 +3,10 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-// #define USE_TASK_RUN
-
 namespace Opc.Ua.Client {
     using System.Collections.Generic;
     using System.Linq;
+    using System.Threading;
     using System.Threading.Tasks;
 
     /// <summary>
@@ -28,20 +27,21 @@ namespace Opc.Ua.Client {
         /// <param name="clientCertificate"></param>
         /// <param name="requestedSessionTimeout"></param>
         /// <param name="maxResponseMessageSize"></param>
+        /// <param name="ct"></param>
         /// <returns></returns>
         public static Task<CreateSessionResponse> CreateSessionAsync(
             this SessionClient client, RequestHeader requestHeader,
             ApplicationDescription clientDescription, string serverUri,
             string endpointUrl, string sessionName, byte[] clientNonce,
             byte[] clientCertificate, double requestedSessionTimeout,
-            uint maxResponseMessageSize) {
-#if !USE_TASK_RUN
+            uint maxResponseMessageSize, CancellationToken ct = default) {
             return Task.Factory.FromAsync(
                 (callback, state) => client.BeginCreateSession(requestHeader,
                     clientDescription, serverUri, endpointUrl, sessionName, clientNonce,
                     clientCertificate, requestedSessionTimeout, maxResponseMessageSize,
                     callback, state),
                 result => {
+                    ct.ThrowIfCancellationRequested();
                     var response = client.EndCreateSession(result,
                     out var sessionId, out var authenticationToken,
                     out var revisedSessionTimeout, out var serverNonce,
@@ -52,21 +52,6 @@ namespace Opc.Ua.Client {
                         revisedSessionTimeout, serverNonce, serverCertificate, serverEndpoints,
                         serverSoftwareCertificates, serverSignature, maxRequestMessageSize);
                 }, TaskCreationOptions.DenyChildAttach);
-#else
-            return Task.Run(() => {
-                var response = client.CreateSession(requestHeader, clientDescription,
-                    serverUri, endpointUrl, sessionName, clientNonce, clientCertificate,
-                    requestedSessionTimeout, maxResponseMessageSize,
-                    out var sessionId, out var authenticationToken,
-                    out var revisedSessionTimeout, out var serverNonce,
-                    out var serverCertificate, out var serverEndpoints,
-                    out var serverSoftwareCertificates, out var serverSignature,
-                    out var maxRequestMessageSize);
-                return NewCreateSessionResponse(response, sessionId, authenticationToken,
-                    revisedSessionTimeout, serverNonce, serverCertificate, serverEndpoints,
-                    serverSoftwareCertificates, serverSignature, maxRequestMessageSize);
-            });
-#endif
         }
 
         /// <summary>
@@ -79,32 +64,24 @@ namespace Opc.Ua.Client {
         /// <param name="localeIds"></param>
         /// <param name="userIdentityToken"></param>
         /// <param name="userTokenSignature"></param>
+        /// <param name="ct"></param>
         /// <returns></returns>
         public static Task<ActivateSessionResponse> ActivateSessionAsync(
             this SessionClient client, RequestHeader requestHeader, SignatureData clientSignature,
             SignedSoftwareCertificateCollection clientSoftwareCertificates,
             StringCollection localeIds, ExtensionObject userIdentityToken,
-            SignatureData userTokenSignature) {
-#if !USE_TASK_RUN
+            SignatureData userTokenSignature, CancellationToken ct = default) {
             return Task.Factory.FromAsync(
                 (callback, state) => client.BeginActivateSession(requestHeader,
                     clientSignature, clientSoftwareCertificates, localeIds, userIdentityToken,
                     userTokenSignature, callback, state),
                 result => {
+                    ct.ThrowIfCancellationRequested();
                     var response = client.EndActivateSession(result,
                         out var serverNonce, out var results, out var diagnosticInfos);
                     return NewActivateSessionResponse(response, serverNonce, results,
                         diagnosticInfos);
                 }, TaskCreationOptions.DenyChildAttach);
-#else
-            return Task.Run(() => {
-                var response = client.ActivateSession(requestHeader, clientSignature,
-                    clientSoftwareCertificates, localeIds, userIdentityToken, userTokenSignature,
-                    out var serverNonce, out var results, out var diagnosticInfos);
-                return NewActivateSessionResponse(response, serverNonce, results,
-                    diagnosticInfos);
-            });
-#endif
         }
 
         /// <summary>
@@ -113,19 +90,17 @@ namespace Opc.Ua.Client {
         /// <param name="client"></param>
         /// <param name="requestHeader"></param>
         /// <param name="deleteSubscriptions"></param>
+        /// <param name="ct"></param>
         /// <returns></returns>
-        public static Task<ResponseHeader> CloseSessionAsync(
-            this SessionClient client, RequestHeader requestHeader, bool deleteSubscriptions) {
-#if !USE_TASK_RUN
+        public static Task<ResponseHeader> CloseSessionAsync(this SessionClient client, 
+            RequestHeader requestHeader, bool deleteSubscriptions, CancellationToken ct = default) {
             return Task.Factory.FromAsync(
                 (callback, state) => client.BeginCloseSession(requestHeader,
                     deleteSubscriptions, callback, state),
-                client.EndCloseSession, TaskCreationOptions.DenyChildAttach);
-#else
-            return Task.Run(() => {
-                return client.CloseSession(requestHeader, deleteSubscriptions);
-            });
-#endif
+                result => {
+                    ct.ThrowIfCancellationRequested();
+                    return client.EndCloseSession(result);
+                }, TaskCreationOptions.DenyChildAttach);
         }
 
         /// <summary>
@@ -141,13 +116,14 @@ namespace Opc.Ua.Client {
         /// <param name="includeSubtypes"></param>
         /// <param name="nodeClassMask"></param>
         /// <param name="resultMask"></param>
+        /// <param name="ct"></param>
         /// <returns></returns>
         public static Task<BrowseResponse> BrowseAsync(this SessionClient client,
             RequestHeader requestHeader, ViewDescription view, NodeId nodeToBrowse,
             uint maxResultsToReturn, BrowseDirection browseDirection,
             NodeId referenceTypeId, bool includeSubtypes, uint nodeClassMask,
-            BrowseResultMask resultMask = BrowseResultMask.All) {
-            return client.BrowseAsync(requestHeader, view, maxResultsToReturn,
+            BrowseResultMask resultMask = BrowseResultMask.All, CancellationToken ct = default) {
+            return client.BrowseAsync(requestHeader, view, maxResultsToReturn, 
                 new BrowseDescriptionCollection {
                     new BrowseDescription {
                         BrowseDirection = browseDirection,
@@ -157,7 +133,7 @@ namespace Opc.Ua.Client {
                         ReferenceTypeId = referenceTypeId,
                         ResultMask = (uint)resultMask
                     }
-                });
+                }, ct: ct);
         }
 
         /// <summary>
@@ -168,26 +144,20 @@ namespace Opc.Ua.Client {
         /// <param name="view"></param>
         /// <param name="maxResultsToReturn"></param>
         /// <param name="description"></param>
+        /// <param name="ct"></param>
         /// <returns></returns>
         public static Task<BrowseResponse> BrowseAsync(this SessionClient client,
             RequestHeader requestHeader, ViewDescription view, uint maxResultsToReturn,
-            BrowseDescriptionCollection description) {
-#if !USE_TASK_RUN
+            BrowseDescriptionCollection description, CancellationToken ct = default) {
             return Task.Factory.FromAsync(
                 (callback, state) => client.BeginBrowse(requestHeader, view, maxResultsToReturn,
                     description, callback, state),
                 result => {
+                    ct.ThrowIfCancellationRequested();
                     var response = client.EndBrowse(result,
                         out var results, out var diagnosticInfos);
                     return NewBrowseResponse(response, results, diagnosticInfos);
                 }, TaskCreationOptions.DenyChildAttach);
-#else
-            return Task.Run(() => {
-                var response = client.Browse(requestHeader, view, maxResultsToReturn, description,
-                    out var results, out var diagnosticInfos);
-                return NewBrowseResponse(response, results, diagnosticInfos);
-            });
-#endif
         }
 
         /// <summary>
@@ -197,26 +167,20 @@ namespace Opc.Ua.Client {
         /// <param name="requestHeader"></param>
         /// <param name="releaseContinuationPoints"></param>
         /// <param name="continuationPoints"></param>
+        /// <param name="ct"></param>
         /// <returns></returns>
         public static Task<BrowseResponse> BrowseNextAsync(this SessionClient client,
             RequestHeader requestHeader, bool releaseContinuationPoints,
-            ByteStringCollection continuationPoints) {
-#if !USE_TASK_RUN
+            ByteStringCollection continuationPoints, CancellationToken ct = default) {
             return Task.Factory.FromAsync(
                 (callback, state) => client.BeginBrowseNext(requestHeader, releaseContinuationPoints,
                     continuationPoints, callback, state),
                 result => {
+                    ct.ThrowIfCancellationRequested();
                     var response = client.EndBrowseNext(result,
                         out var results, out var diagnosticInfos);
                     return NewBrowseResponse(response, results, diagnosticInfos);
                 }, TaskCreationOptions.DenyChildAttach);
-#else
-            return Task.Run(() => {
-                var response = client.BrowseNext(requestHeader, releaseContinuationPoints,
-                    continuationPoints, out var results, out var diagnosticInfos);
-                return NewBrowseResponse(response, results, diagnosticInfos);
-            });
-#endif
         }
 
         /// <summary>
@@ -225,25 +189,20 @@ namespace Opc.Ua.Client {
         /// <param name="client"></param>
         /// <param name="requestHeader"></param>
         /// <param name="browsePaths"></param>
+        /// <param name="ct"></param>
         /// <returns></returns>
         public static Task<TranslateBrowsePathsToNodeIdsResponse> TranslateBrowsePathsToNodeIdsAsync(
-            this SessionClient client, RequestHeader requestHeader, BrowsePathCollection browsePaths) {
-#if !USE_TASK_RUN
+            this SessionClient client, RequestHeader requestHeader, BrowsePathCollection browsePaths, 
+            CancellationToken ct = default) {
             return Task.Factory.FromAsync(
                 (callback, state) => client.BeginTranslateBrowsePathsToNodeIds(requestHeader,
                     browsePaths, callback, state),
                 result => {
+                    ct.ThrowIfCancellationRequested();
                     var response = client.EndTranslateBrowsePathsToNodeIds(result,
                         out var results, out var diagnosticInfos);
                     return NewTranslateBrowsePathsToNodeIdsResponse(response, results, diagnosticInfos);
                 }, TaskCreationOptions.DenyChildAttach);
-#else
-            return Task.Run(() => {
-                var response = client.TranslateBrowsePathsToNodeIds(requestHeader, browsePaths,
-                    out var results, out var diagnosticInfos);
-                return NewTranslateBrowsePathsToNodeIdsResponse(response, results, diagnosticInfos);
-            });
-#endif
         }
 
         /// <summary>
@@ -254,26 +213,20 @@ namespace Opc.Ua.Client {
         /// <param name="maxAge"></param>
         /// <param name="timestampsToReturn"></param>
         /// <param name="nodesToRead"></param>
+        /// <param name="ct"></param>
         /// <returns></returns>
         public static Task<ReadResponse> ReadAsync(this SessionClient client,
             RequestHeader requestHeader, double maxAge, TimestampsToReturn timestampsToReturn,
-            ReadValueIdCollection nodesToRead) {
-#if !USE_TASK_RUN
+            ReadValueIdCollection nodesToRead, CancellationToken ct = default) {
             return Task.Factory.FromAsync(
                 (callback, state) => client.BeginRead(requestHeader, maxAge, timestampsToReturn,
                     nodesToRead, callback, state),
                 result => {
+                    ct.ThrowIfCancellationRequested();
                     var response = client.EndRead(result,
                         out var results, out var diagnosticInfos);
                     return NewReadResponse(response, results, diagnosticInfos);
                 }, TaskCreationOptions.DenyChildAttach);
-#else
-            return Task.Run(() => {
-                var response = client.Read(requestHeader, maxAge, timestampsToReturn, nodesToRead,
-                    out var results, out var diagnosticInfos);
-                return NewReadResponse(response, results, diagnosticInfos);
-            });
-#endif
         }
 
         /// <summary>
@@ -282,25 +235,20 @@ namespace Opc.Ua.Client {
         /// <param name="client"></param>
         /// <param name="requestHeader"></param>
         /// <param name="nodesToWrite"></param>
+        /// <param name="ct"></param>
         /// <returns></returns>
         public static Task<WriteResponse> WriteAsync(this SessionClient client,
-            RequestHeader requestHeader, WriteValueCollection nodesToWrite) {
-#if !USE_TASK_RUN
+            RequestHeader requestHeader, WriteValueCollection nodesToWrite,
+            CancellationToken ct = default) {
             return Task.Factory.FromAsync(
                 (callback, state) => client.BeginWrite(requestHeader,
                     nodesToWrite, callback, state),
                 result => {
+                    ct.ThrowIfCancellationRequested();
                     var response = client.EndWrite(result,
                         out var results, out var diagnosticInfos);
                     return NewWriteResponse(response, results, diagnosticInfos);
                 }, TaskCreationOptions.DenyChildAttach);
-#else
-            return Task.Run(() => {
-                var response = client.Write(requestHeader, nodesToWrite,
-                    out var results, out var diagnosticInfos);
-                return NewWriteResponse(response, results, diagnosticInfos);
-            });
-#endif
         }
 
         /// <summary>
@@ -309,25 +257,20 @@ namespace Opc.Ua.Client {
         /// <param name="client"></param>
         /// <param name="requestHeader"></param>
         /// <param name="methodsToCall"></param>
+        /// <param name="ct"></param>
         /// <returns></returns>
         public static Task<CallResponse> CallAsync(this SessionClient client,
-            RequestHeader requestHeader, CallMethodRequestCollection methodsToCall) {
-#if !USE_TASK_RUN
+            RequestHeader requestHeader, CallMethodRequestCollection methodsToCall, 
+            CancellationToken ct = default) {
             return Task.Factory.FromAsync(
                 (callback, state) => client.BeginCall(requestHeader,
                     methodsToCall, callback, state),
                 result => {
+                    ct.ThrowIfCancellationRequested();
                     var response = client.EndCall(result,
                         out var results, out var diagnosticInfos);
                     return NewCallResponse(response, results, diagnosticInfos);
                 }, TaskCreationOptions.DenyChildAttach);
-#else
-            return Task.Run(() => {
-                var response = client.Call(requestHeader, methodsToCall,
-                    out var results, out var diagnosticInfos);
-                return NewCallResponse(response, results, diagnosticInfos);
-            });
-#endif
         }
 
         /// <summary>
@@ -336,24 +279,18 @@ namespace Opc.Ua.Client {
         /// <param name="client"></param>
         /// <param name="requestHeader"></param>
         /// <param name="requestHandle"></param>
+        /// <param name="ct"></param>
         /// <returns></returns>
         public static Task<CancelResponse> CancelAsync(this SessionClient client,
-            RequestHeader requestHeader, uint requestHandle) {
-#if !USE_TASK_RUN
+            RequestHeader requestHeader, uint requestHandle, CancellationToken ct = default) {
             return Task.Factory.FromAsync(
                 (callback, state) => client.BeginCancel(requestHeader,
                     requestHandle, callback, state),
                 result => {
+                    ct.ThrowIfCancellationRequested();
                     var response = client.EndCancel(result, out var cancelCount);
                     return NewCancelResponse(response, cancelCount);
                 }, TaskCreationOptions.DenyChildAttach);
-#else
-            return Task.Run(() => {
-                var response = client.Cancel(requestHeader, requestHandle,
-                    out var cancelCount);
-                return NewCancelResponse(response, cancelCount);
-            });
-#endif
         }
 
         /// <summary>
@@ -365,29 +302,22 @@ namespace Opc.Ua.Client {
         /// <param name="timestampsToReturn"></param>
         /// <param name="releaseContinuationPoints"></param>
         /// <param name="nodesToRead"></param>
+        /// <param name="ct"></param>
         /// <returns></returns>
         public static Task<HistoryReadResponse> HistoryReadAsync(this SessionClient client,
             RequestHeader requestHeader, ExtensionObject historyReadDetails,
             TimestampsToReturn timestampsToReturn, bool releaseContinuationPoints,
-            HistoryReadValueIdCollection nodesToRead) {
-#if !USE_TASK_RUN
+            HistoryReadValueIdCollection nodesToRead, CancellationToken ct = default) {
             return Task.Factory.FromAsync(
                 (callback, state) => client.BeginHistoryRead(requestHeader,
                     historyReadDetails, timestampsToReturn, releaseContinuationPoints,
                     nodesToRead, callback, state),
                 result => {
+                    ct.ThrowIfCancellationRequested();
                     var response = client.EndHistoryRead(result, out var results,
                         out var diagnosticInfos);
                     return NewHistoryReadResponse(response, results, diagnosticInfos);
                 }, TaskCreationOptions.DenyChildAttach);
-#else
-            return Task.Run(() => {
-                var response = client.HistoryRead(requestHeader, historyReadDetails,
-                    timestampsToReturn, releaseContinuationPoints, nodesToRead,
-                    out var results, out var diagnosticInfos);
-                return NewHistoryReadResponse(response, results, diagnosticInfos);
-            });
-#endif
         }
 
         /// <summary>
@@ -396,25 +326,20 @@ namespace Opc.Ua.Client {
         /// <param name="client"></param>
         /// <param name="requestHeader"></param>
         /// <param name="historyUpdateDetails"></param>
+        /// <param name="ct"></param>
         /// <returns></returns>
         public static Task<HistoryUpdateResponse> HistoryUpdateAsync(this SessionClient client,
-            RequestHeader requestHeader, ExtensionObjectCollection historyUpdateDetails) {
-#if !USE_TASK_RUN
+            RequestHeader requestHeader, ExtensionObjectCollection historyUpdateDetails, 
+            CancellationToken ct = default) {
             return Task.Factory.FromAsync(
                 (callback, state) => client.BeginHistoryUpdate(requestHeader,
                     historyUpdateDetails, callback, state),
                 result => {
+                    ct.ThrowIfCancellationRequested();
                     var response = client.EndHistoryUpdate(result, out var results,
                         out var diagnosticInfos);
                     return NewHistoryUpdateResponse(response, results, diagnosticInfos);
                 }, TaskCreationOptions.DenyChildAttach);
-#else
-            return Task.Run(() => {
-                var response = client.HistoryUpdate(requestHeader, historyUpdateDetails,
-                    out var results, out var diagnosticInfos);
-                return NewHistoryUpdateResponse(response, results, diagnosticInfos);
-            });
-#endif
         }
 
         /// <summary>
@@ -425,27 +350,21 @@ namespace Opc.Ua.Client {
         /// <param name="subscriptionId"></param>
         /// <param name="timestampsToReturn"></param>
         /// <param name="itemsToCreate"></param>
+        /// <param name="ct"></param>
         /// <returns></returns>
         public static Task<CreateMonitoredItemsResponse> CreateMonitoredItemsAsync(
             this SessionClient client, RequestHeader requestHeader, uint subscriptionId,
             TimestampsToReturn timestampsToReturn,
-            MonitoredItemCreateRequestCollection itemsToCreate) {
-#if !USE_TASK_RUN
+            MonitoredItemCreateRequestCollection itemsToCreate, CancellationToken ct = default) {
             return Task.Factory.FromAsync(
                 (callback, state) => client.BeginCreateMonitoredItems(requestHeader,
                     subscriptionId, timestampsToReturn, itemsToCreate, callback, state),
                 result => {
+                    ct.ThrowIfCancellationRequested();
                     var response = client.EndCreateMonitoredItems(result, out var results,
                         out var diagnosticInfos);
                     return NewCreateMonitoredItemsResponse(response, results, diagnosticInfos);
                 }, TaskCreationOptions.DenyChildAttach);
-#else
-            return Task.Run(() => {
-                var response = client.CreateMonitoredItems(requestHeader, subscriptionId,
-                    timestampsToReturn, itemsToCreate, out var results, out var diagnosticInfos);
-                return NewCreateMonitoredItemsResponse(response, results, diagnosticInfos);
-            });
-#endif
         }
 
         /// <summary>
@@ -456,27 +375,21 @@ namespace Opc.Ua.Client {
         /// <param name="subscriptionId"></param>
         /// <param name="timestampsToReturn"></param>
         /// <param name="itemsToModify"></param>
+        /// <param name="ct"></param>
         /// <returns></returns>
         public static Task<ModifyMonitoredItemsResponse> ModifyMonitoredItemsAsync(
             this SessionClient client, RequestHeader requestHeader, uint subscriptionId,
             TimestampsToReturn timestampsToReturn,
-            MonitoredItemModifyRequestCollection itemsToModify) {
-#if !USE_TASK_RUN
+            MonitoredItemModifyRequestCollection itemsToModify, CancellationToken ct = default) {
             return Task.Factory.FromAsync(
                 (callback, state) => client.BeginModifyMonitoredItems(requestHeader,
                     subscriptionId, timestampsToReturn, itemsToModify, callback, state),
                 result => {
+                    ct.ThrowIfCancellationRequested();
                     var response = client.EndModifyMonitoredItems(result, out var results,
                         out var diagnosticInfos);
                     return NewModifyMonitoredItemsResponse(response, results, diagnosticInfos);
                 }, TaskCreationOptions.DenyChildAttach);
-#else
-            return Task.Run(() => {
-                var response = client.ModifyMonitoredItems(requestHeader, subscriptionId,
-                    timestampsToReturn, itemsToModify, out var results, out var diagnosticInfos);
-                return NewModifyMonitoredItemsResponse(response, results, diagnosticInfos);
-            });
-#endif
         }
 
         /// <summary>
@@ -488,32 +401,23 @@ namespace Opc.Ua.Client {
         /// <param name="triggeringItemId"></param>
         /// <param name="linksToAdd"></param>
         /// <param name="linksToRemove"></param>
+        /// <param name="ct"></param>
         /// <returns></returns>
         public static Task<SetTriggeringResponse> SetTriggeringAsync(
             this SessionClient client, RequestHeader requestHeader, uint subscriptionId,
             uint triggeringItemId, UInt32Collection linksToAdd,
-            UInt32Collection linksToRemove) {
-#if !USE_TASK_RUN
+            UInt32Collection linksToRemove, CancellationToken ct = default) {
             return Task.Factory.FromAsync(
                 (callback, state) => client.BeginSetTriggering(requestHeader, subscriptionId,
                     triggeringItemId, linksToAdd, linksToRemove, callback, state),
                 result => {
+                    ct.ThrowIfCancellationRequested();
                     var response = client.EndSetTriggering(result, out var addResults,
                         out var addDiagnosticInfos, out var removeResults,
                         out var removeDiagnosticInfos);
                     return NewSetTriggeringResponse(response, addResults, addDiagnosticInfos,
                         removeResults, removeDiagnosticInfos);
                 }, TaskCreationOptions.DenyChildAttach);
-#else
-            return Task.Run(() => {
-                var response = client.SetTriggering(requestHeader, subscriptionId,
-                    triggeringItemId, linksToAdd, linksToRemove,
-                    out var addResults, out var addDiagnosticInfos,
-                    out var removeResults, out var removeDiagnosticInfos);
-                return NewSetTriggeringResponse(response, addResults, addDiagnosticInfos,
-                    removeResults, removeDiagnosticInfos);
-            });
-#endif
         }
 
         /// <summary>
@@ -524,26 +428,21 @@ namespace Opc.Ua.Client {
         /// <param name="subscriptionId"></param>
         /// <param name="monitoringMode"></param>
         /// <param name="monitoredItemIds"></param>
+        /// <param name="ct"></param>
         /// <returns></returns>
         public static Task<SetMonitoringModeResponse> SetMonitoringModeAsync(
             this SessionClient client, RequestHeader requestHeader, uint subscriptionId,
-            MonitoringMode monitoringMode, UInt32Collection monitoredItemIds) {
-#if !USE_TASK_RUN
+            MonitoringMode monitoringMode, UInt32Collection monitoredItemIds, 
+            CancellationToken ct = default) {
             return Task.Factory.FromAsync(
                 (callback, state) => client.BeginSetMonitoringMode(requestHeader,
                     subscriptionId, monitoringMode, monitoredItemIds, callback, state),
                 result => {
+                    ct.ThrowIfCancellationRequested();
                     var response = client.EndSetMonitoringMode(result, out var results,
                         out var diagnosticInfos);
                     return NewSetMonitoringModeResponse(response, results, diagnosticInfos);
                 }, TaskCreationOptions.DenyChildAttach);
-#else
-            return Task.Run(() => {
-                var response = client.SetMonitoringMode(requestHeader, subscriptionId,
-                    monitoringMode, monitoredItemIds, out var results, out var diagnosticInfos);
-                    return NewSetMonitoringModeResponse(response, results, diagnosticInfos);
-            });
-#endif
         }
 
         /// <summary>
@@ -553,26 +452,20 @@ namespace Opc.Ua.Client {
         /// <param name="requestHeader"></param>
         /// <param name="subscriptionId"></param>
         /// <param name="monitoredItemIds"></param>
+        /// <param name="ct"></param>
         /// <returns></returns>
         public static Task<DeleteMonitoredItemsResponse> DeleteMonitoredItemsAsync(
             this SessionClient client, RequestHeader requestHeader, uint subscriptionId,
-            UInt32Collection monitoredItemIds) {
-#if !USE_TASK_RUN
+            UInt32Collection monitoredItemIds, CancellationToken ct = default) {
             return Task.Factory.FromAsync(
                 (callback, state) => client.BeginDeleteMonitoredItems(requestHeader,
                     subscriptionId, monitoredItemIds, callback, state),
                 result => {
+                    ct.ThrowIfCancellationRequested();
                     var response = client.EndDeleteMonitoredItems(result, out var results,
                         out var diagnosticInfos);
                     return NewDeleteMonitoredItemsResponse(response, results, diagnosticInfos);
                 }, TaskCreationOptions.DenyChildAttach);
-#else
-            return Task.Run(() => {
-                var response = client.DeleteMonitoredItems(requestHeader, subscriptionId,
-                    monitoredItemIds, out var results, out var diagnosticInfos);
-                    return NewDeleteMonitoredItemsResponse(response, results, diagnosticInfos);
-            });
-#endif
         }
 
         /// <summary>
@@ -586,35 +479,25 @@ namespace Opc.Ua.Client {
         /// <param name="maxNotificationsPerPublish"></param>
         /// <param name="publishingEnabled"></param>
         /// <param name="priority"></param>
+        /// <param name="ct"></param>
         /// <returns></returns>
         public static Task<CreateSubscriptionResponse> CreateSubscriptionAsync(
             this SessionClient client, RequestHeader requestHeader,
             double requestedPublishingInterval, uint requestedLifetimeCount,
             uint requestedMaxKeepAliveCount, uint maxNotificationsPerPublish,
-            bool publishingEnabled, byte priority) {
-#if !USE_TASK_RUN
+            bool publishingEnabled, byte priority, CancellationToken ct = default) {
             return Task.Factory.FromAsync(
                 (callback, state) => client.BeginCreateSubscription(requestHeader,
                     requestedPublishingInterval, requestedLifetimeCount, requestedMaxKeepAliveCount,
                     maxNotificationsPerPublish, publishingEnabled, priority, callback, state),
                 result => {
+                    ct.ThrowIfCancellationRequested();
                     var response = client.EndCreateSubscription(result, out var subsciptionId,
                         out var revisedPublishingInterval, out var revisedLifetimeCount,
                         out var revisedMaxKeepAliveCount);
                     return NewCreateSubscriptionResponse(response, subsciptionId,
                         revisedPublishingInterval, revisedLifetimeCount, revisedMaxKeepAliveCount);
                 }, TaskCreationOptions.DenyChildAttach);
-#else
-            return Task.Run(() => {
-                var response = client.CreateSubscription(requestHeader,
-                    requestedPublishingInterval, requestedLifetimeCount, requestedMaxKeepAliveCount,
-                    maxNotificationsPerPublish, publishingEnabled, priority,
-                    out var subsciptionId, out var revisedPublishingInterval,
-                    out var revisedLifetimeCount, out var revisedMaxKeepAliveCount);
-                return NewCreateSubscriptionResponse(response, subsciptionId,
-                    revisedPublishingInterval, revisedLifetimeCount, revisedMaxKeepAliveCount);
-            });
-#endif
         }
 
         /// <summary>
@@ -628,34 +511,25 @@ namespace Opc.Ua.Client {
         /// <param name="requestedMaxKeepAliveCount"></param>
         /// <param name="maxNotificationsPerPublish"></param>
         /// <param name="priority"></param>
+        /// <param name="ct"></param>
         /// <returns></returns>
         public static Task<ModifySubscriptionResponse> ModifySubscriptionAsync(
             this SessionClient client, RequestHeader requestHeader, uint subscriptionId,
             double requestedPublishingInterval, uint requestedLifetimeCount,
-            uint requestedMaxKeepAliveCount, uint maxNotificationsPerPublish, byte priority) {
-#if !USE_TASK_RUN
+            uint requestedMaxKeepAliveCount, uint maxNotificationsPerPublish, byte priority, 
+            CancellationToken ct = default) {
             return Task.Factory.FromAsync(
                 (callback, state) => client.BeginModifySubscription(requestHeader, subscriptionId,
                     requestedPublishingInterval, requestedLifetimeCount, requestedMaxKeepAliveCount,
                     maxNotificationsPerPublish, priority, callback, state),
                 result => {
+                    ct.ThrowIfCancellationRequested();
                     var response = client.EndModifySubscription(result,
                         out var revisedPublishingInterval, out var revisedLifetimeCount,
                         out var revisedMaxKeepAliveCount);
                     return NewModifySubscriptionResponse(response,
                         revisedPublishingInterval, revisedLifetimeCount, revisedMaxKeepAliveCount);
                 }, TaskCreationOptions.DenyChildAttach);
-#else
-            return Task.Run(() => {
-                var response = client.ModifySubscription(requestHeader, subscriptionId,
-                    requestedPublishingInterval, requestedLifetimeCount, requestedMaxKeepAliveCount,
-                    maxNotificationsPerPublish, priority,
-                    out var revisedPublishingInterval,
-                    out var revisedLifetimeCount, out var revisedMaxKeepAliveCount);
-                return NewModifySubscriptionResponse(response,
-                    revisedPublishingInterval, revisedLifetimeCount, revisedMaxKeepAliveCount);
-            });
-#endif
         }
 
         /// <summary>
@@ -665,26 +539,20 @@ namespace Opc.Ua.Client {
         /// <param name="requestHeader"></param>
         /// <param name="publishingEnabled"></param>
         /// <param name="subscriptionIds"></param>
+        /// <param name="ct"></param>
         /// <returns></returns>
         public static Task<SetPublishingModeResponse> SetPublishingModeAsync(
             this SessionClient client, RequestHeader requestHeader, bool publishingEnabled,
-            UInt32Collection subscriptionIds) {
-#if !USE_TASK_RUN
+            UInt32Collection subscriptionIds, CancellationToken ct = default) {
             return Task.Factory.FromAsync(
                 (callback, state) => client.BeginSetPublishingMode(requestHeader,
                     publishingEnabled, subscriptionIds, callback, state),
                 result => {
+                    ct.ThrowIfCancellationRequested();
                     var response = client.EndSetPublishingMode(result,
                         out var results, out var diagnosticInfos);
                     return NewSetPublishingModeResponse(response, results, diagnosticInfos);
                 }, TaskCreationOptions.DenyChildAttach);
-#else
-            return Task.Run(() => {
-                var response = client.SetPublishingMode(requestHeader, publishingEnabled,
-                    subscriptionIds, out var results, out var diagnosticInfos);
-                    return NewSetPublishingModeResponse(response, results, diagnosticInfos);
-            });
-#endif
         }
 
         /// <summary>
@@ -693,32 +561,25 @@ namespace Opc.Ua.Client {
         /// <param name="client"></param>
         /// <param name="requestHeader"></param>
         /// <param name="subscriptionAcknowledgements"></param>
+        /// <param name="ct"></param>
         /// <returns></returns>
         public static Task<PublishResponse> PublishAsync(
             this SessionClient client, RequestHeader requestHeader,
-            SubscriptionAcknowledgementCollection subscriptionAcknowledgements) {
-#if !USE_TASK_RUN
+            SubscriptionAcknowledgementCollection subscriptionAcknowledgements,
+            CancellationToken ct = default) {
             return Task.Factory.FromAsync(
                 (callback, state) => client.BeginPublish(requestHeader, subscriptionAcknowledgements,
                     callback, state),
                 result => {
+                    ct.ThrowIfCancellationRequested();
                     var response = client.EndPublish(result, out var subscriptionId,
                         out var availableSequenceNumbers, out var moreNotifications,
                         out var notificationMessage, out var results, out var diagnosticInfos);
                     return NewPublishResponse(response, subscriptionId, availableSequenceNumbers,
                         moreNotifications, notificationMessage, results, diagnosticInfos);
                 }, TaskCreationOptions.DenyChildAttach);
-#else
-            return Task.Run(() => {
-                var response = client.Publish(requestHeader, subscriptionAcknowledgements,
-                    out var subscriptionId, out var availableSequenceNumbers,
-                    out var moreNotifications, out var notificationMessage,
-                    out var results, out var diagnosticInfos);
-                return NewPublishResponse(response, subscriptionId, availableSequenceNumbers,
-                    moreNotifications, notificationMessage, results, diagnosticInfos);
-            });
-#endif
         }
+
         /// <summary>
         /// Async republish service
         /// </summary>
@@ -726,24 +587,19 @@ namespace Opc.Ua.Client {
         /// <param name="requestHeader"></param>
         /// <param name="subscriptionId"></param>
         /// <param name="retransmitSequenceNumber"></param>
+        /// <param name="ct"></param>
         /// <returns></returns>
         public static Task<RepublishResponse> RepublishAsync(this SessionClient client,
-            RequestHeader requestHeader, uint subscriptionId, uint retransmitSequenceNumber) {
-#if !USE_TASK_RUN
+            RequestHeader requestHeader, uint subscriptionId, uint retransmitSequenceNumber,
+            CancellationToken ct = default) {
             return Task.Factory.FromAsync(
                 (callback, state) => client.BeginRepublish(requestHeader, subscriptionId,
                     retransmitSequenceNumber, callback, state),
                 result => {
+                    ct.ThrowIfCancellationRequested();
                     var response = client.EndRepublish(result, out var notificationMessage);
                     return NewRepublishResponse(response, notificationMessage);
                 }, TaskCreationOptions.DenyChildAttach);
-#else
-            return Task.Run(() => {
-                var response = client.Republish(requestHeader, subscriptionId,
-                    retransmitSequenceNumber, out var notificationMessage);
-                return NewRepublishResponse(response, notificationMessage);
-            });
-#endif
         }
 
         /// <summary>
@@ -753,26 +609,20 @@ namespace Opc.Ua.Client {
         /// <param name="requestHeader"></param>
         /// <param name="subscriptionIds"></param>
         /// <param name="sendInitialValues"></param>
+        /// <param name="ct"></param>
         /// <returns></returns>
         public static Task<TransferSubscriptionsResponse> TransferSubscriptionsAsync(
             this SessionClient client, RequestHeader requestHeader, UInt32Collection subscriptionIds,
-            bool sendInitialValues) {
-#if !USE_TASK_RUN
+            bool sendInitialValues, CancellationToken ct = default) {
             return Task.Factory.FromAsync(
                 (callback, state) => client.BeginTransferSubscriptions(requestHeader, subscriptionIds,
                     sendInitialValues, callback, state),
                 result => {
+                    ct.ThrowIfCancellationRequested();
                     var response = client.EndTransferSubscriptions(result, out var results,
                         out var diagnosticInfos);
                     return NewTransferSubscriptionsResponse(response, results, diagnosticInfos);
                 }, TaskCreationOptions.DenyChildAttach);
-#else
-            return Task.Run(() => {
-                var response = client.TransferSubscriptions(requestHeader, subscriptionIds,
-                    sendInitialValues, out var results, out var diagnosticInfos);
-                    return NewTransferSubscriptionsResponse(response, results, diagnosticInfos);
-            });
-#endif
         }
 
         /// <summary>
@@ -781,25 +631,20 @@ namespace Opc.Ua.Client {
         /// <param name="client"></param>
         /// <param name="requestHeader"></param>
         /// <param name="subscriptionIds"></param>
+        /// <param name="ct"></param>
         /// <returns></returns>
         public static Task<DeleteSubscriptionsResponse> DeleteSubscriptionsAsync(
-            this SessionClient client, RequestHeader requestHeader, UInt32Collection subscriptionIds) {
-#if !USE_TASK_RUN
+            this SessionClient client, RequestHeader requestHeader, UInt32Collection subscriptionIds,
+            CancellationToken ct = default) {
             return Task.Factory.FromAsync(
                 (callback, state) => client.BeginDeleteSubscriptions(requestHeader, subscriptionIds,
                     callback, state),
                 result => {
+                    ct.ThrowIfCancellationRequested();
                     var response = client.EndDeleteSubscriptions(result,
                         out var results, out var diagnosticInfos);
                     return NewDeleteSubscriptionsResponse(response, results, diagnosticInfos);
                 }, TaskCreationOptions.DenyChildAttach);
-#else
-            return Task.Run(() => {
-                var response = client.DeleteSubscriptions(requestHeader, subscriptionIds,
-                    out var results, out var diagnosticInfos);
-                return NewDeleteSubscriptionsResponse(response, results, diagnosticInfos);
-            });
-#endif
         }
 
         /// <summary>

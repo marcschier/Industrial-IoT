@@ -5,7 +5,6 @@
 
 namespace Microsoft.Azure.IIoT.Azure.IoTHub.Mock {
     using Microsoft.Azure.IIoT.Azure.IoTEdge.Hosting;
-    using Microsoft.Azure.IIoT.Hosting.Services;
     using Microsoft.Azure.IIoT.Tasks;
     using Microsoft.Azure.IIoT.Tasks.Default;
     using Microsoft.Azure.IIoT.Serializers;
@@ -30,22 +29,8 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub.Mock {
                 .AsImplementedInterfaces().InstancePerLifetimeScope();
             builder.RegisterType<IoTEdgeMethodClient>()
                 .AsImplementedInterfaces().InstancePerLifetimeScope();
-            builder.RegisterType<IoTEdgeModuleHost>()
-                .AsImplementedInterfaces().InstancePerLifetimeScope();
             builder.RegisterType<IoTEdgeMethodServer>()
                 .AsImplementedInterfaces().InstancePerLifetimeScope();
-            builder.RegisterType<IoTEdgeHostManager>()
-                .AsImplementedInterfaces().InstancePerLifetimeScope();
-
-            // Auto wire property for circular dependency resolution
-            builder.RegisterType<MethodRouter>()
-                .AsImplementedInterfaces().InstancePerLifetimeScope()
-                .PropertiesAutowired(
-                    PropertyWiringOptions.AllowCircularDependencies);
-            builder.RegisterType<SettingsRouter>()
-                .AsImplementedInterfaces().InstancePerLifetimeScope()
-                .PropertiesAutowired(
-                    PropertyWiringOptions.AllowCircularDependencies);
 
             // If not already registered, register a task scheduler
             builder.RegisterType<DefaultScheduler>()

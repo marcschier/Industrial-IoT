@@ -7,7 +7,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
     using Microsoft.Azure.IIoT.Platform.OpcUa;
     using Microsoft.Azure.IIoT.Platform.OpcUa.Models;
     using Microsoft.Azure.IIoT.Platform.Core.Models;
-    using Serilog;
+    using Microsoft.Extensions.Logging;
     using Opc.Ua;
     using Opc.Ua.Encoders;
     using Opc.Ua.Client;
@@ -114,7 +114,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
                         _encoder.Context.UpdateFromSession(session);
                         var nodeId = _nodeId.ToNodeId(session.MessageContext);
                         return await RawNodeModel.ReadAsync(session, null,
-                            nodeId, true, _diagnostics, false).ConfigureAwait(false);
+                            nodeId, true, _diagnostics, false, ct).ConfigureAwait(false);
                     }, ct).ConfigureAwait(false);
 
                 if (node.EventNotifier.HasValue &&
@@ -319,7 +319,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
                 }
                 var read = await RawNodeModel.ReadValueAsync(session, null,
                     (NodeId)filterNode.Results[0].Targets[0].TargetId, _diagnostics, 
-                        false).ConfigureAwait(false);
+                        false, ct).ConfigureAwait(false);
                 if (ExtensionObject.ToEncodeable(read.Value.Value as ExtensionObject)
                     is EventFilter eventFilter) {
                     return eventFilter;

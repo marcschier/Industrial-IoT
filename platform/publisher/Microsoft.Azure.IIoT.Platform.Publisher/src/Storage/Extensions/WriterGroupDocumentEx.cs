@@ -35,7 +35,6 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Storage {
                 LocaleIds = model.LocaleIds?.ToList(),
                 MaxNetworkMessageSize = model.MaxNetworkMessageSize,
                 MessageEncoding = model.Encoding,
-                Schema = model.Schema,
                 Name = model.Name,
                 NetworkMessageContentMask = model.MessageSettings?.NetworkMessageContentMask,
                 Priority = model.Priority,
@@ -69,7 +68,6 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Storage {
                 LocaleIds = document.LocaleIds?.ToList(),
                 MaxNetworkMessageSize = document.MaxNetworkMessageSize,
                 Encoding = document.MessageEncoding,
-                Schema = document.Schema,
                 Name = document.Name,
                 Priority = document.Priority,
                 MessageSettings = new WriterGroupMessageSettingsModel {

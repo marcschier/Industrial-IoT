@@ -28,21 +28,21 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Events.v2 {
         public Task OnTwinActivatedAsync(
             OperationContextModel context, TwinInfoModel twin) {
             return _bus.PublishAsync(Wrap(TwinEventType.Activated, context,
-                twin.Id, twin));
+                twin));
         }
 
         /// <inheritdoc/>
         public Task OnTwinUpdatedAsync(
             OperationContextModel context, TwinInfoModel twin) {
             return _bus.PublishAsync(Wrap(TwinEventType.Updated, context,
-                twin.Id, twin));
+                twin));
         }
 
         /// <inheritdoc/>
         public Task OnTwinDeactivatedAsync(
-            OperationContextModel context, string twinId, TwinInfoModel twin) {
+            OperationContextModel context, TwinInfoModel twin) {
             return _bus.PublishAsync(Wrap(TwinEventType.Deactivated, context,
-                twinId, twin));
+                twin));
         }
 
         /// <summary>
@@ -50,16 +50,13 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Events.v2 {
         /// </summary>
         /// <param name="type"></param>
         /// <param name="context"></param>
-        /// <param name="twinId"></param>
         /// <param name="twin"></param>
         /// <returns></returns>
         private static TwinEventModel Wrap(TwinEventType type,
-            OperationContextModel context, string twinId,
-            TwinInfoModel twin) {
+            OperationContextModel context, TwinInfoModel twin) {
             return new TwinEventModel {
                 EventType = type,
                 Context = context,
-                Id = twinId,
                 Twin = twin
             };
         }

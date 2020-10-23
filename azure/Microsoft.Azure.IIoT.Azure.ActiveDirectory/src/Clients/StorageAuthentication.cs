@@ -11,7 +11,7 @@ namespace Microsoft.Azure.IIoT.Azure.ActiveDirectory.Clients {
     using Microsoft.Azure.IIoT.Storage.Default;
     using System.Collections.Generic;
     using Autofac;
-    using Serilog;
+    using Microsoft.Extensions.Logging;
 
     /// <summary>
     /// Storage authentication support using managed service identity,

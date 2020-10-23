@@ -7,7 +7,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub.Handlers {
     using Microsoft.Azure.IIoT.Hub;
     using Microsoft.Azure.IIoT.Hub.Models;
     using Microsoft.Azure.IIoT.Serializers;
-    using Serilog;
+    using Microsoft.Extensions.Logging;
     using System.Collections.Generic;
 
     /// <summary>

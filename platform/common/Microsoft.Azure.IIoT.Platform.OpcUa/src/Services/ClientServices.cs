@@ -14,7 +14,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
     using Opc.Ua;
     using Opc.Ua.Client;
     using Opc.Ua.Extensions;
-    using Serilog;
+    using Microsoft.Extensions.Logging;
     using System;
     using System.Collections.Concurrent;
     using System.Collections.Generic;

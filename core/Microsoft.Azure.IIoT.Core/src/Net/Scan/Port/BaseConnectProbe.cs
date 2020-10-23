@@ -4,7 +4,7 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Net.Scanner {
-    using Serilog;
+    using Microsoft.Extensions.Logging;
     using System;
     using System.Net;
     using System.Net.Sockets;

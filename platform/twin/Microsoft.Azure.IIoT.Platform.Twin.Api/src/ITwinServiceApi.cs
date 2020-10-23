@@ -213,4 +213,5 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api {
         Task DectivateTwinAsync(string twinId, string generationId, 
             CancellationToken ct = default);
     }
+
 }

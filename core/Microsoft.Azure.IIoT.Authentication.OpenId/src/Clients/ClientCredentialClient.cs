@@ -7,7 +7,7 @@ namespace Microsoft.Azure.IIoT.Authentication.Clients.Default {
     using Microsoft.Azure.IIoT.Authentication.Models;
     using Microsoft.Azure.IIoT.Http.Clients;
     using global::IdentityModel.Client;
-    using Serilog;
+    using Microsoft.Extensions.Logging;
     using System;
     using System.Collections.Generic;
     using System.Net.Http;
@@ -28,11 +28,13 @@ namespace Microsoft.Azure.IIoT.Authentication.Clients.Default {
         /// Create console output device code based token provider
         /// </summary>
         /// <param name="config"></param>
+        /// <param name="http"></param>
         /// <param name="logger"></param>
-        public ClientCredentialClient(IClientAuthConfig config, ILogger logger) {
+        public ClientCredentialClient(IClientAuthConfig config, ILogger logger,
+            IHttpClientFactory http = null) {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _config = config ?? throw new ArgumentNullException(nameof(config));
-            Http = new HttpClientFactory(logger.ForContext<HttpClientFactory>());
+            Http = http ?? new HttpClientFactory(logger);
         }
 
         /// <inheritdoc/>

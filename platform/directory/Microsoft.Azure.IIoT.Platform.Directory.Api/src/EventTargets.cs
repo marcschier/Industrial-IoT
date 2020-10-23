@@ -11,16 +11,6 @@ namespace Microsoft.Azure.IIoT.Platform.Directory.Api {
     public static class EventTargets {
 
         /// <summary>
-        /// Application event type
-        /// </summary>
-        public const string ApplicationEventTarget = "ApplicationEvent";
-
-        /// <summary>
-        /// Endpoint event type
-        /// </summary>
-        public const string EndpointEventTarget = "EndpointEvent";
-
-        /// <summary>
         /// Supervisor event type
         /// </summary>
         public const string SupervisorEventTarget = "SupervisorEvent";
@@ -39,10 +29,5 @@ namespace Microsoft.Azure.IIoT.Platform.Directory.Api {
         /// Publisher event type
         /// </summary>
         public const string PublisherEventTarget = "PublisherEvent";
-
-        /// <summary>
-        /// Discovery progress event targets
-        /// </summary>
-        public const string DiscoveryProgressTarget = "DiscoveryProgress";
     }
 }

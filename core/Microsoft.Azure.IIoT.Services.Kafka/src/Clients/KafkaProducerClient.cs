@@ -9,7 +9,7 @@ namespace Microsoft.Azure.IIoT.Services.Kafka.Clients {
     using Microsoft.Azure.IIoT.Hub;
     using Microsoft.Azure.IIoT.Hosting;
     using Microsoft.Azure.IIoT.Exceptions;
-    using Serilog;
+    using Microsoft.Extensions.Logging;
     using System;
     using System.Collections.Generic;
     using System.Collections.Concurrent;

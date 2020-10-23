@@ -9,7 +9,7 @@ namespace Microsoft.Azure.IIoT.Azure.Datalake.Clients {
     using Microsoft.Azure.IIoT.Storage;
     using Microsoft.Azure.IIoT.Utils;
     using Microsoft.Azure.IIoT.Http;
-    using Serilog;
+    using Microsoft.Extensions.Logging;
     using System;
     using System.IO;
     using System.Threading;
@@ -93,7 +93,7 @@ namespace Microsoft.Azure.IIoT.Azure.Datalake.Clients {
             /// <param name="logger"></param>
             public FileSystemDrive(DataLakeFileSystemClient filesystem, ILogger logger) {
                 _filesystem = filesystem;
-                _logger = logger.ForContext<FileSystemDrive>();
+                _logger = logger;
             }
 
             /// <inheritdoc/>
@@ -198,7 +198,7 @@ namespace Microsoft.Azure.IIoT.Azure.Datalake.Clients {
             private FileSystemFile(DataLakeFileClient file, string leaseId,
                 ILogger logger) {
                 _file = file;
-                _logger = logger.ForContext<FileSystemFile>();
+                _logger = logger;
                 _conditions = leaseId == null ? null :
                     new DataLakeRequestConditions { LeaseId = leaseId };
             }
@@ -322,7 +322,7 @@ namespace Microsoft.Azure.IIoT.Azure.Datalake.Clients {
             /// <param name="lease"></param>
             internal LeasedFileSystemFile(ILogger logger,
                 FileSystemFile file, DataLakeLeaseClient lease) {
-                _logger = logger.ForContext<LeasedFileSystemFile>();
+                _logger = logger;
                 File = file;
                 _lease = lease;
             }
@@ -337,7 +337,6 @@ namespace Microsoft.Azure.IIoT.Azure.Datalake.Clients {
             internal static async Task<IFileLock> CreateOrOpenAsync(ILogger logger,
                 DataLakeFileClient file, TimeSpan lockDuration, CancellationToken ct) {
                 // Try acquire lock
-                logger = logger.ForContext<LeasedFileSystemFile>();
                 var leaseId = Guid.NewGuid().ToString();
                 var fileSystemFile = await FileSystemFile.CreateOrOpenAsync(
                     logger, file, leaseId, ct).ConfigureAwait(false);
@@ -418,7 +417,7 @@ namespace Microsoft.Azure.IIoT.Azure.Datalake.Clients {
                 _filesystem = filesystem;
                 _parentPath = parentPath;
                 _folder = folder;
-                _logger = logger.ForContext<FileSystemFolder>();
+                _logger = logger;
             }
 
             /// <inheritdoc/>

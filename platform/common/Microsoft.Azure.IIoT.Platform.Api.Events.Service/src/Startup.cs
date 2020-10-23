@@ -6,10 +6,11 @@
 namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service {
     using Microsoft.Azure.IIoT.Platform.Api.Events.Service.Auth;
     using Microsoft.Azure.IIoT.Platform.Api.Events.Service.Runtime;
+    using Microsoft.Azure.IIoT.Platform.Publisher.Handlers;
     using Microsoft.Azure.IIoT.Platform.Publisher.Api.Clients;
     using Microsoft.Azure.IIoT.Platform.Registry.Api.Clients;
     using Microsoft.Azure.IIoT.Platform.Directory.Api.Clients;
-    using Microsoft.Azure.IIoT.Platform.Subscriber.Handlers;
+    using Microsoft.Azure.IIoT.Platform.Twin.Api.Clients;
     using Microsoft.Azure.IIoT.Azure.AppInsights;
     using Microsoft.Azure.IIoT.Azure.ServiceBus;
     using Microsoft.Azure.IIoT.Azure.EventHub.Processor;
@@ -21,7 +22,6 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service {
     using Microsoft.Azure.IIoT.Utils;
     using Microsoft.Azure.IIoT.AspNetCore.Authentication;
     using Microsoft.Azure.IIoT.AspNetCore.Authentication.Clients;
-    using Microsoft.Azure.IIoT.AspNetCore.Correlation;
     using Microsoft.Azure.IIoT.AspNetCore.Cors;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
@@ -142,7 +142,6 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service {
             app.UseAuthorization();
             app.UseHttpsRedirect();
 
-            app.UseCorrelation();
             app.UseSwagger();
 
             app.UseEndpoints(endpoints => {
@@ -197,38 +196,45 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service {
                 GatewayEventForwarder<GatewaysHub>>()
                 .AsImplementedInterfaces().SingleInstance();
 
-            // Twin supervisor event hub
+            // Supervisor event hub
             builder.RegisterType<SignalRHub<SupervisorsHub>>()
                 .AsImplementedInterfaces().SingleInstance();
             builder.RegisterType<
                 SupervisorEventForwarder<SupervisorsHub>>()
                 .AsImplementedInterfaces().SingleInstance();
 
-            // Endpoint twins event hub
+            // Endpoints event hub
             builder.RegisterType<SignalRHub<EndpointsHub>>()
                 .AsImplementedInterfaces().SingleInstance();
             builder.RegisterType<
                 EndpointEventForwarder<EndpointsHub>>()
                 .AsImplementedInterfaces().SingleInstance();
 
+            // Twins event hub
+            builder.RegisterType<SignalRHub<TwinsHub>>()
+                .AsImplementedInterfaces().SingleInstance();
+            builder.RegisterType<
+                TwinEventForwarder<TwinsHub>>()
+                .AsImplementedInterfaces().SingleInstance();
+
             // DataSet Writers event hub
-            builder.RegisterType<SignalRHub<DataSetWritersHub>>()
+            builder.RegisterType<SignalRHub<WritersHub>>()
                 .AsImplementedInterfaces().SingleInstance();
             builder.RegisterType<
-                PublishedDataSetEventForwarder<DataSetWritersHub>>()
+                PublishedDataSetEventForwarder<WritersHub>>()
                 .AsImplementedInterfaces().SingleInstance();
             builder.RegisterType<
-                DataSetWriterEventForwarder<DataSetWritersHub>>()
+                DataSetWriterEventForwarder<WritersHub>>()
+                .AsImplementedInterfaces().SingleInstance();
+            builder.RegisterType<
+                DataSetWriterMessageForwarder<WritersHub>>()
                 .AsImplementedInterfaces().SingleInstance();
 
             // Writer groups event hub
-            builder.RegisterType<SignalRHub<WriterGroupsHub>>()
+            builder.RegisterType<SignalRHub<GroupsHub>>()
                 .AsImplementedInterfaces().SingleInstance();
             builder.RegisterType<
-                DataSetWriterMessagePublisher<WriterGroupsHub>>()
-                .AsImplementedInterfaces().SingleInstance();
-            builder.RegisterType<
-                WriterGroupEventForwarder<WriterGroupsHub>>()
+                WriterGroupEventForwarder<GroupsHub>>()
                 .AsImplementedInterfaces().SingleInstance();
 
             // Publishers event hub
@@ -236,9 +242,6 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service {
                 .AsImplementedInterfaces().SingleInstance();
             builder.RegisterType<
                 PublisherEventForwarder<PublishersHub>>()
-                .AsImplementedInterfaces().SingleInstance();
-            builder.RegisterType<
-                MonitoredItemMessagePublisher<PublishersHub>>()
                 .AsImplementedInterfaces().SingleInstance();
 
             // Discovery event hub
@@ -252,9 +255,7 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service {
                 .AsImplementedInterfaces().SingleInstance();
 
             // Handle opc-ua pubsub telemetry subscriptions ...
-            builder.RegisterType<MonitoredItemSampleModelHandler>()
-                .AsImplementedInterfaces();
-            builder.RegisterType<NetworkMessageModelHandler>()
+            builder.RegisterType<DataSetWriterMessageHandler>()
                 .AsImplementedInterfaces();
 
             // ... and auto start

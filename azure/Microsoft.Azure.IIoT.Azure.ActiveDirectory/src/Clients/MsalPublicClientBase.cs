@@ -9,7 +9,7 @@ namespace Microsoft.Azure.IIoT.Azure.ActiveDirectory.Clients {
     using Microsoft.Azure.IIoT.Authentication.Models;
     using Microsoft.Azure.IIoT.Storage.Default;
     using Microsoft.Identity.Client;
-    using Serilog;
+    using Microsoft.Extensions.Logging;
     using System;
     using System.Collections.Generic;
     using System.Linq;

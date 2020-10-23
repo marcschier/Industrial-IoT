@@ -7,7 +7,7 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
     using Microsoft.Azure.IIoT.Messaging;
     using Microsoft.Azure.IIoT.Serializers;
     using Microsoft.Azure.IIoT.Exceptions;
-    using Serilog;
+    using Microsoft.Extensions.Logging;
     using System;
     using System.Linq;
     using System.Threading.Tasks;

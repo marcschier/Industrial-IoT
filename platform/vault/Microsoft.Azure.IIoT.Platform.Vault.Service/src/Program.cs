@@ -7,7 +7,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Service {
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.Extensions.Hosting;
     using Autofac.Extensions.Hosting;
-    using Serilog;
+    using Microsoft.Extensions.Logging;
 
     /// <summary>
     /// Main entry point
@@ -32,7 +32,6 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Service {
                 .UseAutofac()
                 .ConfigureWebHostDefaults(builder => builder
                     .UseUrls("http://*:9044")
-                    .UseSerilog()
                     .UseStartup<Startup>()
                     .UseKestrel(o => o.AddServerHeader = false));
         }

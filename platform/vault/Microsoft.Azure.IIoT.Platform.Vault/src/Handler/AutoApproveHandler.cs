@@ -5,7 +5,7 @@
 
 namespace Microsoft.Azure.IIoT.Platform.Vault.Handler {
     using Microsoft.Azure.IIoT.Platform.Vault.Models;
-    using Serilog;
+    using Microsoft.Extensions.Logging;
     using System;
     using System.Threading.Tasks;
 

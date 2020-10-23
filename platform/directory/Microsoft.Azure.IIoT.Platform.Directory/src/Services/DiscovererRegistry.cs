@@ -10,7 +10,7 @@ namespace Microsoft.Azure.IIoT.Platform.Directory.Services {
     using Microsoft.Azure.IIoT.Serializers;
     using Microsoft.Azure.IIoT.Exceptions;
     using Microsoft.Azure.IIoT.Hub;
-    using Serilog;
+    using Microsoft.Extensions.Logging;
     using System;
     using System.Linq;
     using System.Threading.Tasks;

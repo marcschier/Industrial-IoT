@@ -56,7 +56,10 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service.Controllers {
             if (request == null) {
                 throw new ArgumentNullException(nameof(request));
             }
-            await _discovery.RegisterAsync(request.ToServiceModel()).ConfigureAwait(false);
+            var context = (OperationContextModel)null;
+            // TODO: var context.AuthorityId = User.Identity.Name;
+            await _discovery.RegisterAsync(request.ToServiceModel(), 
+                context).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -75,7 +78,10 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service.Controllers {
             if (request == null) {
                 throw new ArgumentNullException(nameof(request));
             }
-            await _discovery.DiscoverAsync(request.ToServiceModel()).ConfigureAwait(false);
+            var context = (OperationContextModel)null;
+            // TODO: var context.AuthorityId = User.Identity.Name;
+            await _discovery.DiscoverAsync(request.ToServiceModel(),
+                context).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -92,10 +98,10 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service.Controllers {
             if (string.IsNullOrEmpty(requestId)) {
                 throw new ArgumentNullException(nameof(requestId));
             }
+            var context = (OperationContextModel)null;
             await _discovery.CancelAsync(new DiscoveryCancelModel {
                 Id = requestId
-                // TODO: AuthorityId = User.Identity.Name;
-            }).ConfigureAwait(false);
+            }, context).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -117,8 +123,10 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service.Controllers {
                 throw new ArgumentNullException(nameof(request));
             }
             var model = request.ToServiceModel();
-            // TODO: model.Context.AuthorityId = User.Identity.Name;
-            var result = await _applications.RegisterApplicationAsync(model).ConfigureAwait(false);
+            var context = (OperationContextModel)null;
+            // TODO: var context.AuthorityId = User.Identity.Name;
+            var result = await _applications.RegisterApplicationAsync(
+                model, context).ConfigureAwait(false);
             return result.ToApiModel();
         }
 
@@ -158,8 +166,10 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service.Controllers {
                 throw new ArgumentNullException(nameof(request));
             }
             var model = request.ToServiceModel();
-            // TODO: model.Context.AuthorityId = User.Identity.Name;
-            await _applications.UpdateApplicationAsync(applicationId, model).ConfigureAwait(false);
+            var context = (OperationContextModel)null;
+            // TODO: var context.AuthorityId = User.Identity.Name;
+            await _applications.UpdateApplicationAsync(applicationId, model, 
+                context).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -181,7 +191,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service.Controllers {
                 throw new ArgumentNullException(nameof(generationId));
             }
             var context = (OperationContextModel)null;
-            // TODO: context.AuthorityId = User.Identity.Name;
+            // TODO: var context.AuthorityId = User.Identity.Name;
             await _applications.UnregisterApplicationAsync(applicationId, generationId,
                 context).ConfigureAwait(false);
         }
@@ -200,7 +210,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service.Controllers {
             [FromQuery] TimeSpan? notSeenFor) {
             var context = (OperationContextModel)null;
             // TODO: context.AuthorityId = User.Identity.Name;
-            await _applications.PurgeDisabledApplicationsAsync(
+            await _applications.PurgeLostApplicationsAsync(
                 notSeenFor ?? TimeSpan.FromTicks(0), context).ConfigureAwait(false);
         }
 

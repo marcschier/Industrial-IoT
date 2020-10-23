@@ -6,7 +6,7 @@
 namespace Microsoft.Azure.IIoT.Platform.OpcUa.Sample {
     using Microsoft.Azure.IIoT.Utils;
     using Microsoft.Azure.IIoT.Platform.OpcUa;
-    using Serilog;
+    using Microsoft.Extensions.Logging;
     using Opc.Ua;
     using Opc.Ua.Server;
     using System;

@@ -39,9 +39,24 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Handler {
         }
 
         /// <inheritdoc/>
+        public Task OnApplicationLostAsync(OperationContextModel context,
+            ApplicationInfoModel application) {
+            return Task.CompletedTask;
+        }
+
+        /// <inheritdoc/>
+        public Task OnApplicationFoundAsync(OperationContextModel context,
+            ApplicationInfoModel application) {
+            return Task.CompletedTask;
+        }
+
+        /// <inheritdoc/>
         public Task OnApplicationDeletedAsync(OperationContextModel context,
-            string applicationId, ApplicationInfoModel application) {
-            return RemoveAllRequestsForEntityAsync(applicationId, context);
+            ApplicationInfoModel application) {
+            if (application is null) {
+                throw new ArgumentNullException(nameof(application));
+            }
+            return RemoveAllRequestsForEntityAsync(application.ApplicationId, context);
         }
 
         /// <inheritdoc/>
@@ -51,13 +66,13 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Handler {
         }
 
         /// <inheritdoc/>
-        public Task OnEndpointActivatedAsync(OperationContextModel context,
+        public Task OnEndpointLostAsync(OperationContextModel context,
             EndpointInfoModel endpoint) {
             return Task.CompletedTask;
         }
 
         /// <inheritdoc/>
-        public Task OnEndpointDeactivatedAsync(OperationContextModel context,
+        public Task OnEndpointFoundAsync(OperationContextModel context,
             EndpointInfoModel endpoint) {
             return Task.CompletedTask;
         }
@@ -70,8 +85,11 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Handler {
 
         /// <inheritdoc/>
         public Task OnEndpointDeletedAsync(OperationContextModel context,
-            string endpointId, EndpointInfoModel endpoint) {
-            return RemoveAllRequestsForEntityAsync(endpointId, context);
+            EndpointInfoModel endpoint) {
+            if (endpoint is null) {
+                throw new ArgumentNullException(nameof(endpoint));
+            }
+            return RemoveAllRequestsForEntityAsync(endpoint.Id, context);
         }
 
         /// <summary>
@@ -101,7 +119,8 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Handler {
                 if (result.NextPageLink == null) {
                     break;
                 }
-                result = await _requests.ListRequestsAsync(result.NextPageLink).ConfigureAwait(false);
+                result = await _requests.ListRequestsAsync(
+                    result.NextPageLink).ConfigureAwait(false);
             }
         }
 

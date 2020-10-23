@@ -20,6 +20,7 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service {
     using Autofac;
     using System.Collections.Generic;
     using System.Threading.Tasks;
+    using Microsoft.Azure.IIoT.Platform.Twin.Api;
 
     /// <summary>
     /// Startup class for tests
@@ -60,6 +61,8 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service {
                 .AsImplementedInterfaces().SingleInstance();
             builder.RegisterType<RegistryServiceEvents>()
                 .AsImplementedInterfaces().SingleInstance();
+            builder.RegisterType<TwinServiceEvents>()
+                .AsImplementedInterfaces();
             builder.RegisterType<PublisherServiceEvents>()
                 .AsImplementedInterfaces().SingleInstance();
 

@@ -52,6 +52,30 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Models {
         }
 
         /// <summary>
+        /// Get model from request
+        /// </summary>
+        /// <param name="model"></param>
+        /// <param name="context"></param>
+        /// <returns></returns>
+        public static TwinInfoModel AsTwinInfo(
+            this TwinActivationRequestModel model, OperationContextModel context) {
+            if (model == null) {
+                return null;
+            }
+            return new TwinInfoModel {
+                GenerationId = null,
+                ConnectionState = null,
+                Id = model.Id,
+                EndpointId = model.EndpointId,
+                User = model.User.Clone(),
+                Diagnostics = model.Diagnostics.Clone(),
+                OperationTimeout = model.OperationTimeout,
+                Created = context.Clone(),
+                Updated = context.Clone()
+            };
+        }
+
+        /// <summary>
         /// Deep clone
         /// </summary>
         /// <param name="model"></param>

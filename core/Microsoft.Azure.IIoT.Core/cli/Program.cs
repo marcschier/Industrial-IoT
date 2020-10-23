@@ -122,7 +122,7 @@ Operations (Mutually exclusive):
         /// <param name="host"></param>
         /// <returns></returns>
         private static async Task TestPortScannerAsync(string host) {
-            var logger = ConsoleOutLogger.Create();
+            var logger = ConsoleLogger.CreateLogger();
             var addresses = await Dns.GetHostAddressesAsync(host).ConfigureAwait(false);
             using (var cts = new CancellationTokenSource(TimeSpan.FromMinutes(10))) {
                 var watch = Stopwatch.StartNew();
@@ -144,7 +144,7 @@ Operations (Mutually exclusive):
         /// </summary>
         /// <returns></returns>
         private static async Task TestNetworkScannerAsync() {
-            var logger = ConsoleOutLogger.Create();
+            var logger = ConsoleLogger.CreateLogger();
             using (var cts = new CancellationTokenSource(TimeSpan.FromMinutes(10))) {
                 var watch = Stopwatch.StartNew();
                 var scanning = new ScanServices(logger);

@@ -4,7 +4,7 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
-    using Serilog;
+    using Microsoft.Extensions.Logging;
 
     /// <summary>
     /// Logger extensions

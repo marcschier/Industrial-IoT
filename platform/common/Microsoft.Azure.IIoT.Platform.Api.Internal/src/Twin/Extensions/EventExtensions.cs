@@ -47,7 +47,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Models {
             this ApplicationEventModel model) {
             return new ApplicationEventApiModel {
                 EventType = (ApplicationEventType)model.EventType,
-                Id = model.Id,
                 Application = model.Application.ToApiModel()
             };
         }
@@ -61,7 +60,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Models {
             this EndpointEventModel model) {
             return new EndpointEventApiModel {
                 EventType = (EndpointEventType)model.EventType,
-                Id = model.Id,
                 Endpoint = model.Endpoint.ToApiModel()
             };
         }

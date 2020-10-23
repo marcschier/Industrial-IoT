@@ -23,11 +23,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Events.v2.Models {
         public OperationContextModel Context { get; set; }
 
         /// <summary>
-        /// Endpoint id
-        /// </summary>
-        public string Id { get; set; }
-
-        /// <summary>
         /// Endpoint info
         /// </summary>
         public EndpointInfoModel Endpoint { get; set; }

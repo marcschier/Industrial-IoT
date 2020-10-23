@@ -10,7 +10,7 @@ namespace Microsoft.Azure.IIoT.Services.Generic.Services {
     using System.Threading.Tasks;
     using System.Threading;
     using System.Diagnostics;
-    using Serilog;
+    using Microsoft.Extensions.Logging;
 
     /// <summary>
     /// Simple event processor host

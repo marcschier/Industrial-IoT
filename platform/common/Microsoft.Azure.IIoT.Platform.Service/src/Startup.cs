@@ -112,7 +112,7 @@ namespace Microsoft.Azure.IIoT.Platform.Service {
 
             if (!Config.IsMinimumDeployment) {
                 app.AddStartupBranch<Vault.Service.Startup>("/vault");
-                app.AddStartupBranch<Twin.Services.Service.Startup>("/ua");
+                app.AddStartupBranch<Twin.Ua.Service.Startup>("/ua");
             }
 
             app.UseHealthChecks("/healthz");
@@ -151,11 +151,6 @@ namespace Microsoft.Azure.IIoT.Platform.Service {
         private sealed class ProcessorHost : IHostProcess, IDisposable, IHealthCheck {
 
             /// <inheritdoc/>
-            public ProcessorHost(Config config) {
-                _config = config;
-            }
-
-            /// <inheritdoc/>
             public void Start() {
                 _cts = new CancellationTokenSource();
 
@@ -163,15 +158,10 @@ namespace Microsoft.Azure.IIoT.Platform.Service {
 
                 // Minimal processes
                 var processes = new List<Task> {
-                    Task.Run(() => Subscriber.Service.Program.Main(args), _cts.Token),
+                    Task.Run(() => Publisher.Processor.Program.Main(args), _cts.Token),
                     Task.Run(() => Edge.Events.Service.Program.Main(args), _cts.Token),
                     Task.Run(() => Edge.Tunnel.Service.Program.Main(args), _cts.Token),
                 };
-
-                if (!_config.IsMinimumDeployment) {
-                    processes.Add(Task.Run(() => Subscriber.Cdm.Service.Program.Main(args),
-                        _cts.Token));
-                }
                 _runner = Task.WhenAll(processes.ToArray());
             }
 
@@ -212,7 +202,6 @@ namespace Microsoft.Azure.IIoT.Platform.Service {
 
             private Task _runner;
             private CancellationTokenSource _cts;
-            private readonly Config _config;
         }
     }
 }

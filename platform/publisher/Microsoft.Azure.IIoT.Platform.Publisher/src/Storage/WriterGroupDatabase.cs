@@ -220,9 +220,6 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Storage {
                 if (filter.Encoding != null) {
                     query = query.Where(x => x.MessageEncoding == filter.Encoding.Value);
                 }
-                if (filter.Schema != null) {
-                    query = query.Where(x => x.Schema == filter.Schema.Value);
-                }
                 if (filter.Priority != null) {
                     query = query.Where(x => x.Priority == filter.Priority.Value);
                 }

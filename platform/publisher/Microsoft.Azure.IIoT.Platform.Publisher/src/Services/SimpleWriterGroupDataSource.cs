@@ -7,7 +7,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
     using Microsoft.Azure.IIoT.Platform.Publisher.Models;
     using Microsoft.Azure.IIoT.Platform.OpcUa.Models;
     using Microsoft.Azure.IIoT.Platform.OpcUa;
-    using Serilog;
+    using Microsoft.Extensions.Logging;
     using System;
     using System.Linq;
     using System.Threading.Tasks;
@@ -167,9 +167,8 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
         }
 
         /// <inheritdoc/>
-        public void OnDataSetNotification(string dataSetWriterId, PublishedDataSetModel dataSet, 
-            uint sequenceNumber, NotificationData notification, IList<string> stringTable,
-            Subscription subscription) {
+        public void OnDataSetNotification(string dataSetWriterId, uint sequenceNumber,
+            NotificationData notification, IList<string> stringTable, Subscription subscription) {
             if (notification is not DataChangeNotification values) {
                 throw new NotSupportedException(); // TODO
             }

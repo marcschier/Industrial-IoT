@@ -5,7 +5,7 @@
 
 namespace Microsoft.Azure.IIoT.Storage.Default {
     using Autofac;
-    using Serilog;
+    using Microsoft.Extensions.Logging;
     using System;
     using System.Linq;
     using System.Collections.Generic;

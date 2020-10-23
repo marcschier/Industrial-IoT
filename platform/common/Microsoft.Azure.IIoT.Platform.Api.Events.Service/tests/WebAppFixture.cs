@@ -7,7 +7,7 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service {
     using Microsoft.Extensions.Hosting;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.Extensions.Configuration;
-    using Serilog;
+    using Microsoft.Extensions.Logging;
     using Autofac.Extensions.Hosting;
     using System;
     using System.Collections.Generic;
@@ -50,7 +50,6 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service {
                         }
                     )
                     .UseStartup<TestStartup>()
-                    .UseSerilog()
                     .UseKestrel(o => o.AddServerHeader = false))
                 .Build();
             _server.Start();

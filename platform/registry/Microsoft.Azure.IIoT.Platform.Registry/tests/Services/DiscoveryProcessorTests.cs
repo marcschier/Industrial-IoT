@@ -55,8 +55,8 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                 Assert.Single(inreg);
                 Assert.All(inreg, a => Assert.Equal(discoverer, a.Application.DiscovererId));
                 Assert.All(inreg, a => Assert.All(a.Endpoints, e => Assert.Equal(discoverer, e.DiscovererId)));
-                Assert.All(inreg, a => Assert.False(a.Application.IsNotSeen()));
-                Assert.All(inreg, a => Assert.All(a.Endpoints, e => Assert.False(a.Application.IsNotSeen())));
+                Assert.All(inreg, a => Assert.False(a.Application.IsLost()));
+                Assert.All(inreg, a => Assert.All(a.Endpoints, e => Assert.False(a.Application.IsLost())));
             }
         }
 
@@ -73,8 +73,8 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                 Assert.True(inreg.IsSameAs(expected));
                 Assert.All(inreg, a => Assert.Equal(discoverer, a.Application.DiscovererId));
                 Assert.All(inreg, a => Assert.All(a.Endpoints, e => Assert.Equal(discoverer, e.DiscovererId)));
-                Assert.All(inreg, a => Assert.False(a.Application.IsNotSeen()));
-                Assert.All(inreg, a => Assert.All(a.Endpoints, e => Assert.False(a.Application.IsNotSeen())));
+                Assert.All(inreg, a => Assert.False(a.Application.IsLost()));
+                Assert.All(inreg, a => Assert.All(a.Endpoints, e => Assert.False(a.Application.IsLost())));
             }
         }
 
@@ -91,8 +91,8 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                 Assert.True(inreg.IsSameAs(expected));
                 Assert.All(inreg, a => Assert.Equal(discoverer, a.Application.DiscovererId));
                 Assert.All(inreg, a => Assert.All(a.Endpoints, e => Assert.Equal(discoverer, e.DiscovererId)));
-                Assert.All(inreg, a => Assert.False(a.Application.IsNotSeen()));
-                Assert.All(inreg, a => Assert.All(a.Endpoints, e => Assert.False(a.Application.IsNotSeen())));
+                Assert.All(inreg, a => Assert.False(a.Application.IsLost()));
+                Assert.All(inreg, a => Assert.All(a.Endpoints, e => Assert.False(a.Application.IsLost())));
             }
         }
 
@@ -109,8 +109,8 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                 Assert.True(inreg.IsSameAs(expected));
                 Assert.All(inreg, a => Assert.Equal(discoverer, a.Application.DiscovererId));
                 Assert.All(inreg, a => Assert.All(a.Endpoints, e => Assert.Equal(discoverer, e.DiscovererId)));
-                Assert.All(inreg, a => Assert.False(a.Application.IsNotSeen()));
-                Assert.All(inreg, a => Assert.All(a.Endpoints, e => Assert.False(a.Application.IsNotSeen())));
+                Assert.All(inreg, a => Assert.False(a.Application.IsLost()));
+                Assert.All(inreg, a => Assert.All(a.Endpoints, e => Assert.False(a.Application.IsLost())));
             }
         }
 
@@ -137,8 +137,8 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                 // Assert that 5 new items was added and 5 old ones are in the database
                 var inreg = await ListApplicationsAsync(mock).ConfigureAwait(false);
                 Assert.Equal(10, inreg.Count);
-                Assert.All(inreg, a => Assert.False(a.Application.IsNotSeen()));
-                Assert.All(inreg, a => Assert.All(a.Endpoints, e => Assert.False(a.Application.IsNotSeen())));
+                Assert.All(inreg, a => Assert.False(a.Application.IsLost()));
+                Assert.All(inreg, a => Assert.All(a.Endpoints, e => Assert.False(a.Application.IsLost())));
 
                 var oldItems = await ListApplicationsAsync(mock, discovererId: oldDiscovererId).ConfigureAwait(false);
                 Assert.Equal(5, oldItems.Count);
@@ -175,8 +175,8 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                 // Assert that one new item was added and 5 old ones are in the database
                 var inreg = await ListApplicationsAsync(mock).ConfigureAwait(false);
                 Assert.Equal(6, inreg.Count);
-                Assert.All(inreg, a => Assert.False(a.Application.IsNotSeen()));
-                Assert.All(inreg, a => Assert.All(a.Endpoints, e => Assert.False(a.Application.IsNotSeen())));
+                Assert.All(inreg, a => Assert.False(a.Application.IsLost()));
+                Assert.All(inreg, a => Assert.All(a.Endpoints, e => Assert.False(a.Application.IsLost())));
 
                 var oldItems = await ListApplicationsAsync(mock, discovererId: oldDiscovererId).ConfigureAwait(false);
                 Assert.Equal(5, oldItems.Count);
@@ -196,8 +196,8 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
 
             using (var mock = Setup(out var discoverer, out var expected, out var discoveryResults,
                 fixupDatabase: x => {
-                    x.Application.SetNotSeen();
-                    x.Endpoints.ForEach(e => e.SetNotSeen());
+                    x.Application.SetAsLost();
+                    x.Endpoints.ForEach(e => e.SetAsLost());
                     return x;
                 })) {
                 var service = mock.Create<IApplicationBulkProcessor>();
@@ -209,9 +209,9 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                 var inreg = await ListApplicationsAsync(mock).ConfigureAwait(false);
                 Assert.True(inreg.IsSameAs(expected));
                 Assert.All(inreg, a => Assert.Equal(discoverer, a.Application.DiscovererId));
-                Assert.All(inreg, a => Assert.False(a.Application.IsNotSeen()));
+                Assert.All(inreg, a => Assert.False(a.Application.IsLost()));
                 Assert.All(inreg, a => Assert.All(a.Endpoints, e => Assert.Equal(discoverer, e.DiscovererId)));
-                Assert.All(inreg, a => Assert.All(a.Endpoints, e => Assert.False(a.Application.IsNotSeen())));
+                Assert.All(inreg, a => Assert.All(a.Endpoints, e => Assert.False(a.Application.IsLost())));
             }
         }
 
@@ -222,8 +222,8 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
 
             using (var mock = Setup(out var discoverer, out var expected, out var discoveryResults,
                 fixupDatabase: x => {
-                    x.Application.SetNotSeen();
-                    x.Endpoints.ForEach(e => e.SetNotSeen());
+                    x.Application.SetAsLost();
+                    x.Endpoints.ForEach(e => e.SetAsLost());
                     return x;
                 })) {
                 var service = mock.Create<IApplicationBulkProcessor>();
@@ -237,14 +237,14 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                 Assert.All(inreg, a => Assert.Equal(discoverer, a.Application.DiscovererId));
                 Assert.All(inreg, a => Assert.All(a.Endpoints, e => Assert.Equal(discoverer, e.DiscovererId)));
 
-                var notSeen = await ListApplicationsAsync(mock, visibilty: EntityVisibility.NotSeen).ConfigureAwait(false);
+                var notSeen = await ListApplicationsAsync(mock, visibilty: EntityVisibility.Lost).ConfigureAwait(false);
                 Assert.Equal(4, notSeen.Count);
-                Assert.All(notSeen, a => Assert.True(a.Application.IsNotSeen()));
-                Assert.All(notSeen, a => Assert.All(a.Endpoints, e => Assert.True(a.Application.IsNotSeen())));
+                Assert.All(notSeen, a => Assert.True(a.Application.IsLost()));
+                Assert.All(notSeen, a => Assert.All(a.Endpoints, e => Assert.True(a.Application.IsLost())));
                 var found = await ListApplicationsAsync(mock, visibilty: EntityVisibility.Found).ConfigureAwait(false);
                 Assert.Single(found);
-                Assert.All(found, a => Assert.False(a.Application.IsNotSeen()));
-                Assert.All(found, a => Assert.All(a.Endpoints, e => Assert.False(a.Application.IsNotSeen())));
+                Assert.All(found, a => Assert.False(a.Application.IsLost()));
+                Assert.All(found, a => Assert.All(a.Endpoints, e => Assert.False(a.Application.IsLost())));
             }
         }
 
@@ -268,8 +268,8 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                 Assert.Equal(5, inreg.Count);
                 Assert.All(inreg, a => Assert.Equal(discoverer, a.Application.DiscovererId));
                 Assert.All(inreg, a => Assert.All(a.Endpoints, e => Assert.Equal(discoverer, e.DiscovererId)));
-                Assert.All(inreg, a => Assert.True(a.Application.IsNotSeen()));
-                Assert.All(inreg, a => Assert.All(a.Endpoints, e => Assert.True(a.Application.IsNotSeen())));
+                Assert.All(inreg, a => Assert.True(a.Application.IsLost()));
+                Assert.All(inreg, a => Assert.All(a.Endpoints, e => Assert.True(a.Application.IsLost())));
                 Assert.False(inreg.IsSameAs(expected));
             }
         }
@@ -295,9 +295,9 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                 Assert.True(inreg.Select(a => a.Application).IsSameAs(expected.Select(b => b.Application)));
                 Assert.All(inreg, a => Assert.Equal(discoverer, a.Application.DiscovererId));
                 Assert.All(inreg, a => Assert.All(a.Endpoints, e => Assert.Equal(discoverer, e.DiscovererId)));
-                Assert.All(inreg, a => Assert.False(a.Application.IsNotSeen()));
+                Assert.All(inreg, a => Assert.False(a.Application.IsLost()));
                 Assert.All(inreg, a => Assert.Single(a.Endpoints));
-                Assert.All(inreg, a => Assert.All(a.Endpoints, e => Assert.False(a.Application.IsNotSeen())));
+                Assert.All(inreg, a => Assert.All(a.Endpoints, e => Assert.False(a.Application.IsLost())));
             }
         }
 

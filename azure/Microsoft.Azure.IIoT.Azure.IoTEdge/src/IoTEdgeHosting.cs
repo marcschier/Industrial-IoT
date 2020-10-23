@@ -41,11 +41,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge {
                 .AsImplementedInterfaces().InstancePerLifetimeScope();
             builder.RegisterType<IoTEdgeMethodClient>()
                 .AsImplementedInterfaces().InstancePerLifetimeScope();
-            builder.RegisterType<IoTEdgeModuleHost>()
-                .AsImplementedInterfaces().InstancePerLifetimeScope();
             builder.RegisterType<IoTEdgeMethodServer>()
-                .AsImplementedInterfaces().InstancePerLifetimeScope();
-            builder.RegisterType<IoTEdgeHostManager>()
                 .AsImplementedInterfaces().InstancePerLifetimeScope();
 
             base.Load(builder);

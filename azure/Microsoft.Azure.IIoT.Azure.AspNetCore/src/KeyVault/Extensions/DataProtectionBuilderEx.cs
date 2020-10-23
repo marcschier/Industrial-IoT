@@ -4,14 +4,15 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Extensions.DependencyInjection {
+    using Microsoft.Azure.IIoT.Diagnostics;
+    using Microsoft.Azure.IIoT.Utils;
+    using Microsoft.Azure.IIoT.Exceptions;
+    using Microsoft.Azure.IIoT;
     using Microsoft.Azure.IIoT.Azure.AspNetCore.KeyVault;
     using Microsoft.Azure.IIoT.Azure.AspNetCore.KeyVault.Runtime;
     using Microsoft.Azure.IIoT.Azure.KeyVault;
     using Microsoft.Azure.IIoT.Azure.KeyVault.Runtime;
     using Microsoft.Azure.IIoT.Azure.ActiveDirectory.Utils;
-    using Microsoft.Azure.IIoT.Utils;
-    using Microsoft.Azure.IIoT.Exceptions;
-    using Microsoft.Azure.IIoT;
     using Microsoft.Azure.KeyVault;
     using Microsoft.Azure.KeyVault.Models;
     using Microsoft.Azure.KeyVault.WebKey;
@@ -19,7 +20,7 @@ namespace Microsoft.Extensions.DependencyInjection {
     using Microsoft.Azure.Storage.Blob;
     using Microsoft.Extensions.Configuration;
     using Microsoft.AspNetCore.DataProtection;
-    using Serilog;
+    using Microsoft.Extensions.Logging;
     using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
@@ -101,6 +102,7 @@ namespace Microsoft.Extensions.DependencyInjection {
         /// <returns></returns>
         private static async Task<bool> TryInititalizeKeyAsync(
             KeyVaultClient keyVaultClient, string vaultUri, string keyName) {
+            var logger = ConsoleLogger.CreateLogger();
             try {
                 try {
                     var key = await keyVaultClient.GetKeyAsync(vaultUri, keyName).ConfigureAwait(false);
@@ -119,8 +121,7 @@ namespace Microsoft.Extensions.DependencyInjection {
                 return true;
             }
             catch (Exception ex) {
-                Log.Logger.Debug(ex, "Failed to authenticate to keyvault {url}.",
-                    vaultUri);
+                logger.Error(ex, "Failed to authenticate to keyvault {url}.", vaultUri);
                 return false;
             }
         }

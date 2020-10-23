@@ -11,7 +11,7 @@ namespace Microsoft.Azure.IIoT.Platform.Cli {
     using Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Runtime;
     using Microsoft.Azure.IIoT.Diagnostics;
     using Opc.Ua;
-    using Serilog;
+    using Microsoft.Extensions.Logging;
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
@@ -142,7 +142,7 @@ Operations (Mutually exclusive):
         /// Run server until exit
         /// </summary>
         private static async Task RunServerAsync(IEnumerable<int> ports) {
-            using (var logger = StackLogger.Create(ConsoleLogger.Create())) {
+            using (var logger = StackLogger.Create(ConsoleLogger.CreateLogger())) {
                 var tcs = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
                 AssemblyLoadContext.Default.Unloading += _ => tcs.TrySetResult(true);
                 using (var server = new ServerConsoleHost(new ServerFactory(logger.Logger),
@@ -169,7 +169,7 @@ Operations (Mutually exclusive):
         /// Test client
         /// </summary>
         private static async Task TestOpcUaServerClientAsync(EndpointModel endpoint) {
-            using (var logger = StackLogger.Create(ConsoleLogger.Create()))
+            using (var logger = StackLogger.Create(ConsoleLogger.CreateLogger()))
             using (var config = new TestClientServicesConfig())
             using (var client = new ClientServices(logger.Logger, config))
             using (var server = new ServerWrapper(endpoint, logger)) {

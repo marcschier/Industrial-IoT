@@ -7,7 +7,7 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Server {
     using Microsoft.Azure.IIoT.Services.Docker;
     using Microsoft.Azure.IIoT.Utils;
     using Microsoft.Extensions.Diagnostics.HealthChecks;
-    using Serilog;
+    using Microsoft.Extensions.Logging;
     using System;
     using System.Collections.Generic;
     using System.Linq;

@@ -3,8 +3,8 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Platform.Subscriber.Service {
-    using Microsoft.Azure.IIoT.Platform.Subscriber.Service.Runtime;
+namespace Microsoft.Azure.IIoT.Platform.Publisher.Processor {
+    using Microsoft.Azure.IIoT.Platform.Publisher.Processor.Runtime;
     using Microsoft.Azure.IIoT.Hosting;
     using Microsoft.Extensions.Hosting;
     using System;
@@ -12,7 +12,7 @@ namespace Microsoft.Azure.IIoT.Platform.Subscriber.Service {
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
-    using Serilog;
+    using Microsoft.Extensions.Logging;
 
     /// <summary>
     /// Generic host service which manages IHostProcess objects.
