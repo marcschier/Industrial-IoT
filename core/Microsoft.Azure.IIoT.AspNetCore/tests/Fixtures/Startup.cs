@@ -9,17 +9,17 @@ namespace Microsoft.Azure.IIoT.AspNetCore.Tests {
     using Microsoft.Azure.IIoT.Utils;
     using Microsoft.Azure.IIoT.AspNetCore.Cors;
     using Microsoft.Azure.IIoT.AspNetCore.Http.Tunnel;
+    using Microsoft.Azure.IIoT.Http.Tunnel;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.Extensions.Configuration;
+    using Microsoft.Extensions.Logging;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
     using Microsoft.OpenApi.Models;
     using Autofac;
     using Autofac.Extensions.DependencyInjection;
     using Prometheus;
-    using ILogger = Serilog.ILogger;
-    using Microsoft.Azure.IIoT.Http.Tunnel;
 
     /// <summary>
     /// Webservice startup

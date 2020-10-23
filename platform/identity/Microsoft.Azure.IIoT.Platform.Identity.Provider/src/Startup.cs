@@ -29,7 +29,6 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Provider {
     using Microsoft.Extensions.Hosting;
     using Microsoft.Extensions.Logging;
     using System;
-    using ILogger = Serilog.ILogger;
 
     /// <summary>
     /// Webservice Startup
@@ -173,7 +172,7 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Provider {
             appLifetime.ApplicationStopped.Register(applicationContainer.Dispose);
 
             // Print some useful information at bootstrap time
-            log.Information("{service} web service started with id {id}",
+            log.LogInformation("{service} web service started with id {id}",
                 ServiceInfo.Name, Uptime.ProcessId);
         }
 

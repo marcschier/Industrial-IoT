@@ -6,6 +6,8 @@
 namespace Microsoft.Azure.IIoT.Azure.AppInsights {
     using Microsoft.Azure.IIoT.Diagnostics;
     using Microsoft.Azure.IIoT.Hosting;
+    using Microsoft.Extensions.Logging.Debug;
+    using Microsoft.Extensions.Logging.Console;
     using Microsoft.ApplicationInsights.DependencyCollector;
     using Microsoft.ApplicationInsights.Extensibility;
     using Autofac;
@@ -30,14 +32,20 @@ namespace Microsoft.Azure.IIoT.Azure.AppInsights {
             if (config == null) {
                 throw new ArgumentNullException(nameof(config));
             }
+
             builder.RegisterType<HealthCheckRegistrar>()
                 .AsImplementedInterfaces().SingleInstance();
+            builder.RegisterType<DebugLoggerProvider>()
+                .AsImplementedInterfaces();
+            builder.RegisterType<ConsoleLoggerProvider>()
+                .AsImplementedInterfaces();
 
             // TODO
 
 
             // return builder.RegisterModule(
             //     new LoggerProviderModule(new ApplicationInsightsLogger(config, log, addConsole)));
+            builder.RegisterModule<LoggingModule>();
 
             return builder;
         }

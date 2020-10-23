@@ -9,6 +9,8 @@ namespace Microsoft.Azure.IIoT.Platform.Directory.Service {
     using Microsoft.Azure.IIoT.Platform.Directory;
     using Microsoft.Azure.IIoT.Azure.AppInsights;
     using Microsoft.Azure.IIoT.Azure.IoTHub;
+    using Microsoft.Azure.IIoT.Azure.IoTHub.Clients;
+    using Microsoft.Azure.IIoT.Azure.IoTHub.Deploy;
     using Microsoft.Azure.IIoT.Azure.ServiceBus;
     using Microsoft.Azure.IIoT.Authentication;
     using Microsoft.Azure.IIoT.Utils;
@@ -28,9 +30,6 @@ namespace Microsoft.Azure.IIoT.Platform.Directory.Service {
     using Autofac.Extensions.DependencyInjection;
     using Prometheus;
     using System;
-    using ILogger = Serilog.ILogger;
-    using Microsoft.Azure.IIoT.Azure.IoTHub.Clients;
-    using Microsoft.Azure.IIoT.Azure.IoTHub.Deploy;
 
     /// <summary>
     /// Webservice startup
@@ -150,7 +149,7 @@ namespace Microsoft.Azure.IIoT.Platform.Directory.Service {
             appLifetime.ApplicationStopped.Register(applicationContainer.Dispose);
 
             // Print some useful information at bootstrap time
-            log.Information("{service} web service started with id {id}",
+            log.LogInformation("{service} web service started with id {id}",
                 ServiceInfo.Name, ServiceInfo.Id);
         }
 

@@ -25,8 +25,9 @@ namespace Microsoft.Azure.IIoT.Diagnostics {
             // Ignore components that provide loggers (and thus avoid a circular dependency below)
             if (registration.Services
                 .OfType<TypedService>()
-                .Any(ts => typeof(ILogger).IsAssignableFrom(ts.ServiceType) ||
-                           ts.ServiceType == typeof(ILoggerFactory))) {
+                .Any(ts => typeof(ILogger<>).IsAssignableFrom(ts.ServiceType) ||
+                           ts.ServiceType == typeof(ILoggerFactory) ||
+                           ts.ServiceType == typeof(ILoggerProvider))) {
                 return;
             }
             if (registration.Activator is ReflectionActivator ra) {
@@ -43,10 +44,18 @@ namespace Microsoft.Azure.IIoT.Diagnostics {
                 catch (NoConstructorsFoundException) {
                     return; // No need
                 }
+
+                registration.PipelineBuilding += (sender, pipeline) => {
+                    pipeline.Use(new LoggerUpdater(ra.LimitType));
+                };
             }
-            registration.PipelineBuilding += (sender, pipeline) => {
-                pipeline.Use(new LoggerUpdater(registration.Activator.LimitType));
-            };
+        }
+
+        /// <inheritdoc/>
+        protected override void Load(ContainerBuilder builder) {
+            builder.RegisterGeneric(typeof(Logger<>)).As(typeof(ILogger<>));
+            builder.RegisterType<LoggerFactory>().AsImplementedInterfaces();
+            base.Load(builder);
         }
 
         private class LoggerUpdater : IResolveMiddleware {
@@ -62,8 +71,8 @@ namespace Microsoft.Azure.IIoT.Diagnostics {
             public void Execute(ResolveRequestContext context, Action<ResolveRequestContext> next) {
                 // Add our parameters.
                 var type = typeof(ILogger<>).MakeGenericType(_limitType);
-                var loggerToInject = (ILogger)context.Resolve(type);
-                context.ChangeParameters(new[] { TypedParameter.From(loggerToInject) }
+                var logger = context.Resolve<ILoggerFactory>().CreateLogger(type);
+                context.ChangeParameters(new[] { TypedParameter.From(logger) }
                     .Concat(context.Parameters));
                 // Continue the resolve.
                 next(context);

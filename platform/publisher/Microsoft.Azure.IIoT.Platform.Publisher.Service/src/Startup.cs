@@ -9,7 +9,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Service {
     using Microsoft.Azure.IIoT.Platform.Publisher;
     using Microsoft.Azure.IIoT.Platform.Registry.Api.Clients;
     using Microsoft.Azure.IIoT.Platform.Twin.Api.Clients;
-    using Microsoft.Azure.IIoT.Platform.OpcUa.Services;
+    using Microsoft.Azure.IIoT.Platform.OpcUa;
     using Microsoft.Azure.IIoT.Http.Clients;
     using Microsoft.Azure.IIoT.Authentication;
     using Microsoft.Azure.IIoT.Serializers;
@@ -32,8 +32,6 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Service {
     using Autofac.Extensions.DependencyInjection;
     using Prometheus;
     using System;
-    using ILogger = Serilog.ILogger;
-    using Microsoft.Azure.IIoT.Platform.OpcUa;
 
     /// <summary>
     /// Webservice startup
@@ -151,7 +149,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Service {
             appLifetime.ApplicationStopped.Register(applicationContainer.Dispose);
 
             // Print some useful information at bootstrap time
-            log.Information("{service} web service started with id {id}",
+            log.LogInformation("{service} web service started with id {id}",
                 ServiceInfo.Name, ServiceInfo.Id);
         }
 

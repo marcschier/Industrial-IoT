@@ -30,7 +30,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service {
     using Autofac.Extensions.DependencyInjection;
     using Prometheus;
     using System;
-    using ILogger = Serilog.ILogger;
 
     /// <summary>
     /// Webservice startup
@@ -150,7 +149,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service {
             appLifetime.ApplicationStopped.Register(applicationContainer.Dispose);
 
             // Print some useful information at bootstrap time
-            log.Information("{service} web service started with id {id}",
+            log.LogInformation("{service} web service started with id {id}",
                 ServiceInfo.Name, ServiceInfo.Id);
         }
 

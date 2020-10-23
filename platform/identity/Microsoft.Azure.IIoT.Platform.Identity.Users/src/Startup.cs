@@ -29,7 +29,6 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Users {
     using Autofac;
     using Autofac.Extensions.DependencyInjection;
     using System;
-    using ILogger = Serilog.ILogger;
     using Prometheus;
 
     /// <summary>
@@ -159,7 +158,7 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Users {
             appLifetime.ApplicationStopped.Register(applicationContainer.Dispose);
 
             // Print some useful information at bootstrap time
-            log.Information("{service} web service started with id {id}", ServiceInfo.Name,
+            log.LogInformation("{service} web service started with id {id}", ServiceInfo.Name,
                 Uptime.ProcessId);
         }
 
