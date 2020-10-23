@@ -150,7 +150,7 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Clients {
                         await Task.Delay(2000).ConfigureAwait(false);
                         continue;
                     }
-                    _logger.Error(ex, "Failed to create subscription client.");
+                    _logger.LogError(ex, "Failed to create subscription client.");
                     throw;
                 }
             }
@@ -181,7 +181,7 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Clients {
                         await Task.Delay(2000).ConfigureAwait(false);
                         continue; // 429
                     }
-                    _logger.Error(ex, "Failed to create queue client.");
+                    _logger.LogError(ex, "Failed to create queue client.");
                     throw;
                 }
             }
@@ -211,7 +211,7 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Clients {
                         await Task.Delay(2000).ConfigureAwait(false);
                         continue; // 429
                     }
-                    _logger.Error(ex, "Failed to create topic client.");
+                    _logger.LogError(ex, "Failed to create topic client.");
                     throw;
                 }
             }

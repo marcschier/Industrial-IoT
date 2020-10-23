@@ -47,7 +47,7 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Server {
                     return;
                 }
 
-                _logger.Information("Starting RabbitMq server...");
+                _logger.LogInformation("Starting RabbitMq server...");
                 var param = GetContainerParameters(_ports);
                 var name = $"rabbitmq_{string.Join("_", _ports)}";
                 (_containerId, _owner) = await CreateAndStartContainerAsync(
@@ -56,7 +56,7 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Server {
                 try {
                     // Check running
                     await WaitForContainerStartedAsync(_ports.First()).ConfigureAwait(false);
-                    _logger.Information("RabbitMq server running.");
+                    _logger.LogInformation("RabbitMq server running.");
                 }
                 catch {
                     // Stop and retry
@@ -76,7 +76,7 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Server {
             try {
                 if (_containerId != null && _owner) {
                     await StopAndRemoveContainerAsync(_containerId).ConfigureAwait(false);
-                    _logger.Information("Stopped RabbitMq server...");
+                    _logger.LogInformation("Stopped RabbitMq server...");
                 }
             }
             finally {

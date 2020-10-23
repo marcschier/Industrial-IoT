@@ -39,14 +39,14 @@ namespace Microsoft.Azure.IIoT.Diagnostics {
             try {
                 if (DiagnosticsLevel.NoMetrics !=
                         (_config.DiagnosticsLevel & DiagnosticsLevel.NoMetrics)) {
-                    _logger.Information("Starting metrics collector...");
+                    _logger.LogInformation("Starting metrics collector...");
                     _handlers.ForEach(h => h.OnStarting());
 
                     // Kick off the actual processing to a new thread and return
                     // a Task for the processing thread.
                     return Task.Run(() => RunAsync(ct), ct);
                 }
-                _logger.Information("Metrics collection is disabled.");
+                _logger.LogInformation("Metrics collection is disabled.");
                 return Task.CompletedTask;
             }
             catch (Exception ex) {
@@ -76,7 +76,7 @@ namespace Microsoft.Azure.IIoT.Diagnostics {
                 }
                 catch (OperationCanceledException) { }
                 catch (Exception ex) {
-                    _logger.Debug(ex, "Failed to collect metrics.");
+                    _logger.LogDebug(ex, "Failed to collect metrics.");
                 }
 
                 var elapsed = duration.Elapsed;
@@ -99,7 +99,7 @@ namespace Microsoft.Azure.IIoT.Diagnostics {
                 }
             }
             _handlers.ForEach(h => h.OnStopped());
-            _logger.Information("Metrics publishing stopped.");
+            _logger.LogInformation("Metrics publishing stopped.");
         }
 
         private static readonly TimeSpan kDefaultInterval =

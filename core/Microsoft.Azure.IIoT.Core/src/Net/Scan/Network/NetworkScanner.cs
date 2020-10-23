@@ -109,7 +109,7 @@ namespace Microsoft.Azure.IIoT.Net.Scanner {
             _pings = CreatePings(local ? _addresses.Count + 1 :
                 maxProbeCount ?? kDefaultMaxProbeCount);
             // Start initial pings
-            _logger.Information("Start scanning {addresses}...",
+            _logger.LogInformation("Start scanning {addresses}...",
                 _addresses.Select(a => a.ToString()));
             foreach (var ping in _pings.ToList()) {
                 OnNextPing(ping);

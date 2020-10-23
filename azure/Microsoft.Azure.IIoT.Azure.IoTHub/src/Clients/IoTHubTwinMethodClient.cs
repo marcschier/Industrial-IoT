@@ -35,7 +35,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub.Clients {
         public async Task<string> CallMethodAsync(string target,
             string method, string payload, TimeSpan? timeout, CancellationToken ct) {
             var deviceId = HubResource.Parse(target, out _, out var moduleId);
-            _logger.Verbose("Call {method} on {device} ({module}) with {payload}... ",
+            _logger.LogTrace("Call {method} on {device} ({module}) with {payload}... ",
                 method, deviceId, moduleId, payload);
             var result = await _twin.CallMethodAsync(deviceId, moduleId,
                 new MethodParameterModel {
@@ -44,7 +44,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub.Clients {
                     JsonPayload = payload
                 }, ct).ConfigureAwait(false);
             if (result.Status != 200) {
-                _logger.Debug("Call {method} on {device} ({module}) with {payload} " +
+                _logger.LogDebug("Call {method} on {device} ({module}) with {payload} " +
                     "returned with error {status}: {result}",
                     method, deviceId, moduleId, payload, result.Status, result.JsonPayload);
                 throw new MethodCallStatusException(result.JsonPayload, result.Status);

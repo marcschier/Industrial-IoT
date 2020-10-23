@@ -94,7 +94,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
             if (_visited.Count > 0) {
                 throw new InvalidOperationException("Encoding already performed.");
             }
-            _logger.Debug("Encoding all nodes in address space ...");
+            _logger.LogDebug("Encoding all nodes in address space ...");
             var sw = System.Diagnostics.Stopwatch.StartNew();
             while (_browseStack.Count > 0) {
                 ct.ThrowIfCancellationRequested();
@@ -111,7 +111,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
                 _encoder.WriteEncodeable(null, new EncodeableNodeModel(node));
                 _nodes++;
             }
-            _logger.Debug("Encoded {nodes} nodes and {references} references " +
+            _logger.LogDebug("Encoded {nodes} nodes and {references} references " +
                 "in address space in {elapsed}...", _nodes, _references, sw.Elapsed);
         }
 
@@ -183,7 +183,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
                 }
             }
             catch (Exception ex) {
-                _logger.Error(ex, "Failed browsing node object for node {nodeId}.",
+                _logger.LogError(ex, "Failed browsing node object for node {nodeId}.",
                     nodeModel.NodeId);
             }
         }
@@ -218,7 +218,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
                     }, ct).ConfigureAwait(false);
             }
             catch (Exception ex) {
-                _logger.Error(ex, "Failed reading node object for node {nodeId}.", nodeId);
+                _logger.LogError(ex, "Failed reading node object for node {nodeId}.", nodeId);
                 _visited.Add(nodeId);
                 return null;
             }

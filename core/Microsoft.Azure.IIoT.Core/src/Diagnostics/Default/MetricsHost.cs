@@ -36,12 +36,12 @@ namespace Microsoft.Azure.IIoT.Diagnostics.Services {
             if (_server == null) {
                 SetServer();
                 if (_server == null) {
-                    _logger.Information("Metrics collection is disabled.");
+                    _logger.LogInformation("Metrics collection is disabled.");
                 }
                 else {
                     try {
                         _server.Start();
-                        _logger.Information("Metric server started.");
+                        _logger.LogInformation("Metric server started.");
                     }
                     catch (Exception ex) {
                         SetServer(false);
@@ -55,7 +55,7 @@ namespace Microsoft.Azure.IIoT.Diagnostics.Services {
                                 _server = null;
                             }
                         }
-                        _logger.Error(ex, "Failed to start metrics server.");
+                        _logger.LogError(ex, "Failed to start metrics server.");
                         throw;
                     }
                 }
@@ -69,7 +69,7 @@ namespace Microsoft.Azure.IIoT.Diagnostics.Services {
                 await _server.StopAsync().ConfigureAwait(false);
                 _server.Dispose();
                 _server = null;
-                _logger.Information("Metric server stopped.");
+                _logger.LogInformation("Metric server stopped.");
             }
         }
 

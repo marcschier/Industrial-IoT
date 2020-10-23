@@ -51,11 +51,11 @@ namespace Microsoft.Azure.IIoT.Services.Generic.Services {
                 catch (OperationCanceledException) { }
                 catch (Exception error) {
                     // Exception - report and continue
-                    _logger.Warning(error, "Consumer encountered error...");
+                    _logger.LogWarning(error, "Consumer encountered error...");
                     continue;
                 }
             }
-            _logger.Information("Exiting consumer...");
+            _logger.LogInformation("Exiting consumer...");
         }
 
         private readonly ILogger _logger;

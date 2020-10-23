@@ -45,7 +45,7 @@ namespace Microsoft.Azure.IIoT.Services.Kafka.Server {
 
                 await _zookeeper.StartAsync().ConfigureAwait(false);
 
-                _logger.Information("Starting Kafka cluster...");
+                _logger.LogInformation("Starting Kafka cluster...");
                 for (var i = _nodes.Count; i < _kafkaNodes; i++) {
                     var node = new KafkaNode(_logger,
                         $"{_zookeeper.ContainerName}:2181", 9092 + i, _networkName);
@@ -53,7 +53,7 @@ namespace Microsoft.Azure.IIoT.Services.Kafka.Server {
                 }
                 await Task.WhenAll(_nodes.Select(n => n.StartAsync())).ConfigureAwait(false);
                 await WaitForClusterHealthAsync().ConfigureAwait(false);
-                _logger.Information("Kafka cluster running.");
+                _logger.LogInformation("Kafka cluster running.");
             }
             catch {
                 await _zookeeper.StopAsync().ConfigureAwait(false);

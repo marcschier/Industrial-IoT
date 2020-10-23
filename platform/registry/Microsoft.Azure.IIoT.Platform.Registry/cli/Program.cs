@@ -283,7 +283,7 @@ Operations (Mutually exclusive):
                 }, false, CancellationToken.None).ConfigureAwait(false);
             }
             catch (ResourceConflictException) {
-                logger.Information("Gateway {deviceId} exists.", deviceId);
+                logger.LogInformation("Gateway {deviceId} exists.", deviceId);
             }
             try {
                 await registry.CreateOrUpdateAsync(new DeviceTwinModel {
@@ -298,7 +298,7 @@ Operations (Mutually exclusive):
                 }, true, CancellationToken.None).ConfigureAwait(false);
             }
             catch (ResourceConflictException) {
-                logger.Information("Module {moduleId} exists...", moduleId);
+                logger.LogInformation("Module {moduleId} exists...", moduleId);
             }
             var cs = await registry.GetConnectionStringAsync(deviceId, moduleId).ConfigureAwait(false);
             return cs;
@@ -359,7 +359,7 @@ Operations (Mutually exclusive):
                     await scanner.ScanAsync().ConfigureAwait(false);
                     await Task.Delay(!stress ? TimeSpan.FromMinutes(10) :
                         TimeSpan.FromMilliseconds(rand.Next(0, 120000))).ConfigureAwait(false);
-                    logger.Logger.Information("Stopping discovery!");
+                    logger.Logger.LogInformation("Stopping discovery!");
                     await scanner.ConfigureAsync(DiscoveryMode.Off, null).ConfigureAwait(false);
                     await scanner.ScanAsync().ConfigureAwait(false);
                     if (!stress) {

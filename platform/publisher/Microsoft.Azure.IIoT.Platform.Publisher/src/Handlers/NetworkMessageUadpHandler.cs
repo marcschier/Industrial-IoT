@@ -88,7 +88,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Handlers {
                 }
             }
             catch (Exception ex) {
-                _logger.Error(ex, "Subscriber binary network message handling failed - skip");
+                _logger.LogError(ex, "Subscriber binary network message handling failed - skip");
             }
         }
 

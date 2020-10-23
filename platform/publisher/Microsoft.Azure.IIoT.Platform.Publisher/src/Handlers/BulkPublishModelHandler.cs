@@ -108,7 +108,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Handlers {
                         }).ConfigureAwait(false);
                 }
                 catch (Exception ex) {
-                    _outer._logger.Warning(ex, "Failed to add variables, returning partial results.");
+                    _outer._logger.LogWarning(ex, "Failed to add variables, returning partial results.");
                 };
                 _cache.Clear();
             }

@@ -121,7 +121,7 @@ namespace Microsoft.Extensions.DependencyInjection {
                 return true;
             }
             catch (Exception ex) {
-                logger.Error(ex, "Failed to authenticate to keyvault {url}.", vaultUri);
+                logger.LogError(ex, "Failed to authenticate to keyvault {url}.", vaultUri);
                 return false;
             }
         }

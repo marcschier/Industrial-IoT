@@ -46,7 +46,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Handlers {
                 change = _serializer.Deserialize<WriterGroupStateEventModel>(payload);
             }
             catch (Exception ex) {
-                _logger.Error(ex, "Failed to convert writer group state change event message {json}.",
+                _logger.LogError(ex, "Failed to convert writer group state change event message {json}.",
                     Encoding.UTF8.GetString(payload));
                 return;
             }
@@ -55,7 +55,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Handlers {
                     change))).ConfigureAwait(false);
             }
             catch (Exception ex) {
-                _logger.Error(ex, "Handling writer group state event failed with exception - skip");
+                _logger.LogError(ex, "Handling writer group state event failed with exception - skip");
             }
         }
 

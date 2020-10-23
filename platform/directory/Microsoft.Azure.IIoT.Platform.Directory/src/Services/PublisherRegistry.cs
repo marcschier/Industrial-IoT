@@ -100,7 +100,7 @@ namespace Microsoft.Azure.IIoT.Platform.Directory.Services {
                     return;
                 }
                 catch (ResourceOutOfDateException ex) {
-                    _logger.Debug(ex, "Retrying updating publisher...");
+                    _logger.LogDebug(ex, "Retrying updating publisher...");
                     continue;
                 }
             }

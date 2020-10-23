@@ -86,7 +86,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Hosting {
                     var result = await router.InvokeAsync(_identity.AsHubResource(),
                         request.Name, request.Data, ContentMimeType.Json).ConfigureAwait(false);
                     if (result.Length > kMaxMessageSize) {
-                        _logger.Error("Result (Payload too large => {Length}", result.Length);
+                        _logger.LogError("Result (Payload too large => {Length}", result.Length);
                         return new MethodResponse((int)HttpStatusCode.RequestEntityTooLarge);
                     }
                     return new MethodResponse(result, 200);

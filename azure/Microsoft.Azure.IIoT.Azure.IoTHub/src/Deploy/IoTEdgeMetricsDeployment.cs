@@ -37,7 +37,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub.Deploy {
         public async Task StartAsync() {
             if (string.IsNullOrEmpty(_config.LogWorkspaceId) ||
                 string.IsNullOrEmpty(_config.LogWorkspaceKey)) {
-                _logger.Warning("Azure Log Analytics Workspace configuration is not set." +
+                _logger.LogWarning("Azure Log Analytics Workspace configuration is not set." +
                     " Cannot proceed with metricscollector deployment.");
                 return;
             }
@@ -91,7 +91,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub.Deploy {
             }
             createOptions = createOptions.Replace("\"", "\\\"", StringComparison.Ordinal);
             var image = $"azureiotedge/azureiotedge-metrics-collector-sample:0.1";
-            _logger.Information("Updating metrics collector module deployment for {os}", isLinux ? "Linux" : "Windows");
+            _logger.LogInformation("Updating metrics collector module deployment for {os}", isLinux ? "Linux" : "Windows");
 
             // Return deployment modules object
             var content = @"

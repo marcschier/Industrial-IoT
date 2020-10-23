@@ -162,7 +162,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                 _engine.Enqueue(message);
             }
             catch (Exception ex) {
-                _logger.Debug(ex, "Failed to produce message");
+                _logger.LogDebug(ex, "Failed to produce message");
             }
         }
 
@@ -189,7 +189,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                 kMessagesSent.WithLabels(_iotHubMessageSinkGuid, _iotHubMessageSinkStartTime).Inc();
             }
             catch (Exception ex) {
-                _logger.Error(ex, "Error while sending messages to IoT Hub.");
+                _logger.LogError(ex, "Error while sending messages to IoT Hub.");
                 // we do not set the block into a faulted state.
             }
         }

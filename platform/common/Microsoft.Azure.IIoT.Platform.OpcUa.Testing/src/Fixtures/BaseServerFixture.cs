@@ -80,7 +80,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Fixtures {
                         PkiRootPath = PkiRootPath,
                         AutoAccept = true
                     };
-                    Logger.Information("Starting server host on {port}...",
+                    Logger.LogInformation("Starting server host on {port}...",
                         port);
                     _serverHost.StartAsync(new int[] { port }).Wait();
                     Port = port;
@@ -88,7 +88,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Fixtures {
                 }
                 catch (Exception ex) {
                     port = Interlocked.Increment(ref _nextPort);
-                    Logger.Error(ex, "Failed to start server host, retrying {port}...",
+                    Logger.LogError(ex, "Failed to start server host, retrying {port}...",
                         port);
                 }
             }
@@ -108,20 +108,20 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Fixtures {
         protected virtual void Dispose(bool disposing) {
             if (!_disposedValue) {
                 if (disposing) {
-                    Logger.Information("Disposing server and client fixture...");
+                    Logger.LogInformation("Disposing server and client fixture...");
                     _serverHost.Dispose();
                     // Clean up all created certificates
                     if (Directory.Exists(PkiRootPath)) {
-                        Logger.Information("Server disposed - cleaning up server certificates...");
+                        Logger.LogInformation("Server disposed - cleaning up server certificates...");
                         Try.Op(() => Directory.Delete(PkiRootPath, true));
                     }
                     if (_client.IsValueCreated) {
-                        Logger.Information("Disposing client...");
+                        Logger.LogInformation("Disposing client...");
                         Task.Run(() => _client.Value.Dispose()).Wait();
                     }
-                    Logger.Information("Client disposed - cleaning up client certificates...");
+                    Logger.LogInformation("Client disposed - cleaning up client certificates...");
                     _config?.Dispose();
-                    Logger.Information("Server and client fixture disposed.");
+                    Logger.LogInformation("Server and client fixture disposed.");
                 }
 
                 // TODO: free unmanaged resources (unmanaged objects) and override finalizer

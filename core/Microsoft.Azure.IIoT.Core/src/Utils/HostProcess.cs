@@ -35,15 +35,15 @@ namespace Microsoft.Azure.IIoT.Utils {
             await _lock.WaitAsync().ConfigureAwait(false);
             try {
                 if (_host != null) {
-                    _logger.Debug("{host} host already running.", Name);
+                    _logger.LogDebug("{host} host already running.", Name);
                     return;
                 }
-                _logger.Debug("Starting {host} host...", Name);
+                _logger.LogDebug("Starting {host} host...", Name);
                 _host = new Worker(ct => RunAsync(ct));
-                _logger.Information("{host} host started.", Name);
+                _logger.LogInformation("{host} host started.", Name);
             }
             catch (Exception ex) {
-                _logger.Error(ex, "Error starting {host} host.", Name);
+                _logger.LogError(ex, "Error starting {host} host.", Name);
                 _host = null;
                 throw;
             }
@@ -60,16 +60,16 @@ namespace Microsoft.Azure.IIoT.Utils {
                     return;
                 }
                 try {
-                    _logger.Debug("Stopping {host} host...", Name);
+                    _logger.LogDebug("Stopping {host} host...", Name);
                     await _host.DisposeAsync().ConfigureAwait(false);
-                    _logger.Information("{host} host stopped.", Name);
+                    _logger.LogInformation("{host} host stopped.", Name);
                 }
                 finally {
                     _host = null;
                 }
             }
             catch (Exception ex) {
-                _logger.Warning(ex, "Error stopping {host} host", Name);
+                _logger.LogWarning(ex, "Error stopping {host} host", Name);
             }
             finally {
                 _lock.Release();

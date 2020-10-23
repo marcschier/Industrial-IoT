@@ -131,7 +131,7 @@ namespace Microsoft.Azure.IIoT.Net.Scanner {
                         continue;
                     }
                     catch (Exception ex) {
-                        _logger.Error(ex, "Error getting endpoint for probe {index}",
+                        _logger.LogError(ex, "Error getting endpoint for probe {index}",
                             _index);
                         exit = true;
                         break;
@@ -139,7 +139,7 @@ namespace Microsoft.Azure.IIoT.Net.Scanner {
 
                     if (_arg != null && _arg.IsRunning) {
                         // Reset args since it is in running state and cannot be used...
-                        _logger.Verbose("Disposing args in running state.");
+                        _logger.LogTrace("Disposing args in running state.");
                         DisposeArgsNoLock();
                     }
 
@@ -171,13 +171,13 @@ namespace Microsoft.Azure.IIoT.Net.Scanner {
                                 // Otherwise retry...
                             }
                             else {
-                                _logger.Error(sex, "{code} in connect of probe {index}...",
+                                _logger.LogError(sex, "{code} in connect of probe {index}...",
                                     sex.SocketErrorCode, _index);
                             }
                         }
                         catch (Exception ex) {
                             // Unexpected - shut probe down
-                            _logger.Error(ex,
+                            _logger.LogError(ex,
                                 "Probe {index} has unexpected exception during connect.",
                                 _index);
                             exit = true;
@@ -334,7 +334,7 @@ namespace Microsoft.Azure.IIoT.Net.Scanner {
                     _timer.Change(Timeout.Infinite, Timeout.Infinite);
                 }
                 catch (Exception ex) {
-                    _outer._logger.Debug(ex, "Error during completion of probe {index}",
+                    _outer._logger.LogDebug(ex, "Error during completion of probe {index}",
                         _outer._index);
                 }
                 finally {
@@ -434,7 +434,7 @@ namespace Microsoft.Azure.IIoT.Net.Scanner {
                             _arg.SocketError = SocketError.TimedOut;
                             return;
                         case State.Probe:
-                            _outer._logger.Debug("Probe {index} {remoteEp} timed out...",
+                            _outer._logger.LogDebug("Probe {index} {remoteEp} timed out...",
                                 _outer._index, _arg.RemoteEndPoint);
                             _arg.SocketError = SocketError.TimedOut;
                             _state = State.Timeout;
@@ -447,7 +447,7 @@ namespace Microsoft.Azure.IIoT.Net.Scanner {
                             // Since connect socket is connected, go to begin state
                             // This will close the socket and reconnect a new one.
                             //
-                            _outer._logger.Information(
+                            _outer._logger.LogInformation(
                                 "Probe {index} not cancelled - try restart...",
                                 _outer._index);
                             _state = State.Begin;
@@ -456,7 +456,7 @@ namespace Microsoft.Azure.IIoT.Net.Scanner {
                     }
                 }
                 catch (Exception ex) {
-                    _outer._logger.Debug(ex,
+                    _outer._logger.LogDebug(ex,
                         "Error during timeout of probe {index}", _outer._index);
                 }
                 finally {

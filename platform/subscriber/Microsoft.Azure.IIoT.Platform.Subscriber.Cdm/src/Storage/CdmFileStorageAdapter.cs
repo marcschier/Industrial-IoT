@@ -73,7 +73,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Cdm.Storage {
                 }
             }
             catch (Exception ex) {
-                _logger.Error(ex, "Failed to read data from {corpus}", corpusPath);
+                _logger.LogError(ex, "Failed to read data from {corpus}", corpusPath);
                 throw;
             }
         }
@@ -92,7 +92,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Cdm.Storage {
                 }
             }
             catch (Exception ex) {
-                _logger.Error(ex, "Failed to write data to {corpus}", corpusPath);
+                _logger.LogError(ex, "Failed to write data to {corpus}", corpusPath);
                 throw;
             }
         }
@@ -114,7 +114,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Cdm.Storage {
                 await file.AppendAsync(content, content.Length).ConfigureAwait(false);
             }
             catch (Exception ex) {
-                _logger.Error(ex, "Failed to write data to {corpus}", corpusPath);
+                _logger.LogError(ex, "Failed to write data to {corpus}", corpusPath);
                 throw;
             }
         }
@@ -127,7 +127,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Cdm.Storage {
                 return result.ToList();
             }
             catch (Exception ex) {
-                _logger.Error(ex, "Failed to get files in {corpus}", folderCorpusPath);
+                _logger.LogError(ex, "Failed to get files in {corpus}", folderCorpusPath);
                 throw;
             }
         }
@@ -157,7 +157,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Cdm.Storage {
                 return await file.GetLastModifiedAsync().ConfigureAwait(false);
             }
             catch (Exception ex) {
-                _logger.Error(ex, "Failed to get modified time from file.");
+                _logger.LogError(ex, "Failed to get modified time from file.");
                 return null;
             }
         }

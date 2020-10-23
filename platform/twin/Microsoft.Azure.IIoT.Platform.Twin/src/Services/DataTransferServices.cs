@@ -149,7 +149,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
 
                 var fullPath = Path.Combine(Path.GetTempPath(), FileName);
                 try {
-                    _logger.Information("Start model upload.");
+                    _logger.LogInformation("Start model upload.");
                     using (var file = new FileStream(fullPath, FileMode.Create)) {
                         using (var stream = new GZipStream(file, CompressionMode.Compress)) {
                             // TODO: Try read nodeset from namespace metadata!
@@ -177,15 +177,15 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
                         }
                         request.SetStreamContent(file, MimeType);
                         await _outer._http.PutAsync(request, ct).ConfigureAwait(false);
-                        _logger.Information("Model uploaded");
+                        _logger.LogInformation("Model uploaded");
                     }
                 }
                 catch (OperationCanceledException) {
-                    _logger.Information("Cancelled model upload of {fileName} for {url}",
+                    _logger.LogInformation("Cancelled model upload of {fileName} for {url}",
                         FileName, id.Connection.Endpoint.Url);
                 }
                 catch (Exception ex) {
-                    _logger.Error(ex, "Error during export to {fileName} for {url}.",
+                    _logger.LogError(ex, "Error during export to {fileName} for {url}.",
                         FileName, id.Connection.Endpoint.Url);
                 }
                 finally {

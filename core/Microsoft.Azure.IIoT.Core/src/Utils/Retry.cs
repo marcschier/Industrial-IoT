@@ -721,7 +721,7 @@ namespace Microsoft.Azure.IIoT.Utils {
             Func<int, Exception, int> policy, int maxRetry, int k, Exception ex,
             CancellationToken ct) {
             if ((k > maxRetry || !cont(ex)) && !(ex is ITransientException)) {
-                logger?.Verbose(ex, "Give up after {k}", k);
+                logger?.LogTrace(ex, "Give up after {k}", k);
                 throw ex;
             }
             if (ex is TemporarilyBusyException tbx && tbx.RetryAfter != null) {
@@ -748,10 +748,10 @@ namespace Microsoft.Azure.IIoT.Utils {
         private static void Log(ILogger logger, int retry, int delay, Exception ex) {
             if (logger != null) {
                 if (logger.IsEnabled(LogLevel.Trace)) {
-                    logger.Verbose(ex, "Retry {k} in {delay} ms...", retry, delay);
+                    logger.LogTrace(ex, "Retry {k} in {delay} ms...", retry, delay);
                 }
                 else {
-                    logger.Debug("  ... Retry {k} in {delay} ms...", retry, delay);
+                    logger.LogDebug("  ... Retry {k} in {delay} ms...", retry, delay);
                 }
             }
         }

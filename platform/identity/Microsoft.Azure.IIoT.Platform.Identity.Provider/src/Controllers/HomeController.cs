@@ -35,7 +35,7 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Provider.Controllers {
                 return View();
             }
 
-            _logger.LogInformation("Homepage is disabled in production. Returning 404.");
+            LoggerExtensions.LogInformation(_logger, "Homepage is disabled in production. Returning 404.");
             return NotFound();
         }
 

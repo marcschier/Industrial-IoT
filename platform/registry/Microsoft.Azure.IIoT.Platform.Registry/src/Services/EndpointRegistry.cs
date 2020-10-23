@@ -200,7 +200,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                     }
                     catch (Exception ex) {
                         unchanged++;
-                        _logger.Error(ex, "Exception while disabling endpoint.");
+                        _logger.LogError(ex, "Exception while disabling endpoint.");
                     }
                 }
             }
@@ -238,7 +238,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                 }
                 catch (Exception ex) {
                     unchanged++;
-                    _logger.Error(ex, "Exception during update of endpoint during discovery.");
+                    _logger.LogError(ex, "Exception during update of endpoint during discovery.");
                 }
             }
 
@@ -277,12 +277,12 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                 }
                 catch (Exception ex) {
                     unchanged++;
-                    _logger.Error(ex, "Exception adding endpoint from discovery.");
+                    _logger.LogError(ex, "Exception adding endpoint from discovery.");
                 }
             }
 
             if (added != 0 || lost != 0) {
-                _logger.Information("processed endpoint results: {added} endpoints added, {updated} " +
+                _logger.LogInformation("processed endpoint results: {added} endpoints added, {updated} " +
                     "updated, {removed} removed or disabled, and {unchanged} unchanged.",
                     added, updated, lost, unchanged);
             }

@@ -73,19 +73,19 @@ namespace Microsoft.Azure.IIoT.Azure.SignalR.Services {
         public async Task StartAsync() {
             try {
                 if (_hub != null) {
-                    _logger.Debug("SignalR service host already running.");
+                    _logger.LogDebug("SignalR service host already running.");
                 }
                 else {
-                    _logger.Debug("Starting SignalR service host...");
+                    _logger.LogDebug("Starting SignalR service host...");
                     _hub = await _serviceManager.CreateHubContextAsync(Resource).ConfigureAwait(false);
-                    _logger.Information("SignalR service host started.");
+                    _logger.LogInformation("SignalR service host started.");
                 }
                 // (re)start the timer no matter what
                 Try.Op(() => _renewHubTimer.Change(
                     _renewHubInterval, Timeout.InfiniteTimeSpan));
             }
             catch (Exception ex) {
-                _logger.Error(ex, "Failed to start SignalR service host.");
+                _logger.LogError(ex, "Failed to start SignalR service host.");
                 throw;
             }
         }
@@ -96,13 +96,13 @@ namespace Microsoft.Azure.IIoT.Azure.SignalR.Services {
                 _renewHubTimer.Change(
                     Timeout.InfiniteTimeSpan, Timeout.InfiniteTimeSpan);
                 if (_hub != null) {
-                    _logger.Debug("Stopping SignalR service host...");
+                    _logger.LogDebug("Stopping SignalR service host...");
                     await _hub.DisposeAsync().ConfigureAwait(false);
-                    _logger.Information("SignalR service host stopped.");
+                    _logger.LogInformation("SignalR service host stopped.");
                 }
             }
             catch (Exception ex) {
-                _logger.Warning(ex, "Failed to stop SignalR service host.");
+                _logger.LogWarning(ex, "Failed to stop SignalR service host.");
             }
             finally {
                 _hub = null;
@@ -120,11 +120,11 @@ namespace Microsoft.Azure.IIoT.Azure.SignalR.Services {
                     arguments ?? Array.Empty<object>(), ct).ConfigureAwait(false);
             }
             catch (AzureSignalRNotConnectedException e) {
-                _logger.Verbose(e,
+                _logger.LogTrace(e,
                     "Failed to send broadcast message because hub is not connected");
             }
             catch (Exception ex) {
-                _logger.Error(ex, "Failed to send broadcast message");
+                _logger.LogError(ex, "Failed to send broadcast message");
             }
         }
 
@@ -142,11 +142,11 @@ namespace Microsoft.Azure.IIoT.Azure.SignalR.Services {
                     arguments ?? Array.Empty<object>(), ct).ConfigureAwait(false);
             }
             catch (AzureSignalRNotConnectedException e) {
-                _logger.Verbose(e,
+                _logger.LogTrace(e,
                     "Failed to send unicast message because hub is not connected");
             }
             catch (Exception ex) {
-                _logger.Error(ex, "Failed to send unicast message");
+                _logger.LogError(ex, "Failed to send unicast message");
             }
         }
 
@@ -164,11 +164,11 @@ namespace Microsoft.Azure.IIoT.Azure.SignalR.Services {
                     arguments ?? Array.Empty<object>(), ct).ConfigureAwait(false);
             }
             catch (AzureSignalRNotConnectedException e) {
-                _logger.Verbose(e,
+                _logger.LogTrace(e,
                     "Failed to send multicast message because hub is not connected");
             }
             catch (Exception ex) {
-                _logger.Error(ex, "Failed to send multicast message");
+                _logger.LogError(ex, "Failed to send multicast message");
             }
         }
 

@@ -55,7 +55,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                         break;
                     }
 
-                    _logger.Warning("Subscription event without dataset writer id");
+                    _logger.LogWarning("Subscription event without dataset writer id");
                     break;
 
                 case DataSetWriterStateEventType.PublishedItem:
@@ -79,11 +79,11 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                         break;
                     }
 
-                    _logger.Warning("Monitored item event without dataset writer id");
+                    _logger.LogWarning("Monitored item event without dataset writer id");
                     break;
 
                 default:
-                    _logger.Error("Unknown event {eventId}", message.EventType);
+                    _logger.LogError("Unknown event {eventId}", message.EventType);
                     break;
             }
         }

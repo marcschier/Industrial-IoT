@@ -53,7 +53,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub.Handlers {
 
             if (timestamp + TimeSpan.FromSeconds(10) < DateTime.UtcNow) {
                 // Drop twin events that are too far in our past.
-                _logger.Debug("Skipping {event} from {deviceId}({moduleId}) from {ts}.",
+                _logger.LogDebug("Skipping {event} from {deviceId}({moduleId}) from {ts}.",
                     opType, deviceId, moduleId, timestamp);
                 return;
             }

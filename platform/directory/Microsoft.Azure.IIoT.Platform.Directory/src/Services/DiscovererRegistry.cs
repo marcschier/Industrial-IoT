@@ -102,7 +102,7 @@ namespace Microsoft.Azure.IIoT.Platform.Directory.Services {
                     return;
                 }
                 catch (ResourceOutOfDateException ex) {
-                    _logger.Debug(ex, "Retrying updating discoverer...");
+                    _logger.LogDebug(ex, "Retrying updating discoverer...");
                     continue;
                 }
             }

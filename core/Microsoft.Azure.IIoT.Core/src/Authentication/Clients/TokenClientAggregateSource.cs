@@ -64,12 +64,12 @@ namespace Microsoft.Azure.IIoT.Authentication.Clients {
             IEnumerable<string> scopes = null) {
             var exceptions = new List<Exception>();
             foreach (var client in _clients) {
-                _logger.Debug("Try acquiring token for {resource} using {client}.",
+                _logger.LogDebug("Try acquiring token for {resource} using {client}.",
                     Resource, client.GetType());
                 try {
                     var token = await client.GetTokenForAsync(Resource, scopes).ConfigureAwait(false);
                     if (token != null) {
-                        _logger.Debug("Successfully acquired token for {resource} using {client}.",
+                        _logger.LogDebug("Successfully acquired token for {resource} using {client}.",
                             Resource, client.GetType());
                         return token;
                     }
@@ -80,7 +80,7 @@ namespace Microsoft.Azure.IIoT.Authentication.Clients {
             }
             if (exceptions.Count != 0) {
                 var aex = new AggregateException(exceptions).Flatten();
-                _logger.Error(aex, "Failed to acquire a token for {resource}.", Resource);
+                _logger.LogError(aex, "Failed to acquire a token for {resource}.", Resource);
             }
             return null;
         }

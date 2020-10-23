@@ -193,11 +193,11 @@ namespace Microsoft.Extensions.Configuration {
                 var vaultUri = configuration.GetValue<string>(keyVaultUrlVarName, null);
                 var logger = ConsoleLogger.CreateLogger();
                 if (string.IsNullOrEmpty(vaultUri)) {
-                    logger.Debug("No keyvault uri found in configuration under {key}. ",
+                    logger.LogWarning("No keyvault uri found in configuration under {key}. ",
                         keyVaultUrlVarName);
                     vaultUri = Environment.GetEnvironmentVariable(keyVaultUrlVarName);
                     if (string.IsNullOrEmpty(vaultUri)) {
-                        logger.Debug("No keyvault uri found in environment under {key}. " +
+                        logger.LogWarning("No keyvault uri found in environment under {key}. " +
                             "Not reading configuration from keyvault without keyvault uri.",
                             keyVaultUrlVarName);
                         return null;
@@ -227,8 +227,7 @@ namespace Microsoft.Extensions.Configuration {
                         catch (TaskCanceledException) {}
                         catch (SocketException) {}
                         await Task.Delay(TimeSpan.FromSeconds(1)).ConfigureAwait(false);
-                        logger.Information(
-                            "Failed loading secrets due to timeout or network - try again ...");
+                        logger.LogDebug("Failed loading secrets due to timeout or network - try again ...");
                     }
                 }
                 return provider;

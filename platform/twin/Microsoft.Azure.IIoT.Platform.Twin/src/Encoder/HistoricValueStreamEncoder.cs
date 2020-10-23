@@ -128,16 +128,16 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
                     eventSource = false;
                 }
                 else {
-                    _logger.Error("{nodeId} has no history.", _nodeId);
+                    _logger.LogError("{nodeId} has no history.", _nodeId);
                     return;
                 }
             }
             catch (Exception ex) {
-                _logger.Error(ex, "Failed to retrieve node info for {nodeId}", _nodeId);
+                _logger.LogError(ex, "Failed to retrieve node info for {nodeId}", _nodeId);
                 return;
             }
 
-            _logger.Verbose("Writing history for {nodeId}...", _nodeId);
+            _logger.LogTrace("Writing history for {nodeId}...", _nodeId);
             var sw = System.Diagnostics.Stopwatch.StartNew();
             if (eventSource) {
                 await EncodeHistoricEventsAsync(ct).ConfigureAwait(false);
@@ -145,7 +145,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
             else {
                 await EncodeHistoricValuesAsync(ct).ConfigureAwait(false);
             }
-            _logger.Debug("Wrote {count} items for {nodeId} in {elapsed}.",
+            _logger.LogDebug("Wrote {count} items for {nodeId} in {elapsed}.",
                 _count, _nodeId, sw.Elapsed);
         }
 
@@ -176,7 +176,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
                 try {
                     var result = await ReadHistoryAsync<HistoryData>(details, ct).ConfigureAwait(false);
                     if (result.history?.DataValues != null) {
-                        _logger.Verbose("  {count} values...",
+                        _logger.LogTrace("  {count} values...",
                             result.history.DataValues.Count);
                         foreach (var data in result.history.DataValues) {
                             _encoder.WriteDataValue(null, data);
@@ -193,7 +193,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
                     else {
                         details.NumValuesPerNode /= 2;
                     }
-                    _logger.Information("Reduced number of values to read to {count}.",
+                    _logger.LogInformation("Reduced number of values to read to {count}.",
                         details.NumValuesPerNode);
                 }
             }
@@ -204,7 +204,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
                 var result = await ReadHistoryAsync<HistoryData>(details, ct,
                     continuationToken).ConfigureAwait(false);
                 if (result.history?.DataValues != null) {
-                    _logger.Verbose("+ {count} values...",
+                    _logger.LogTrace("+ {count} values...",
                         result.history.DataValues.Count);
                     foreach (var data in result.history.DataValues) {
                         _encoder.WriteDataValue(null, data);
@@ -226,7 +226,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
                 filter = await ReadEventFilterAsync(ct).ConfigureAwait(false);
             }
             catch (Exception ex) {
-                _logger.Error(ex, "Failed to retrieve event filter for {nodeId}", _nodeId);
+                _logger.LogError(ex, "Failed to retrieve event filter for {nodeId}", _nodeId);
             }
 
             if (filter == null) {
@@ -254,7 +254,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
                     var result = await ReadHistoryAsync<HistoryEvent>(details, 
                         ct).ConfigureAwait(false);
                     if (result.history?.Events != null) {
-                        _logger.Verbose("  {count} events...",
+                        _logger.LogTrace("  {count} events...",
                             result.history.Events.Count);
                         foreach (var data in result.history.Events) {
                             _encoder.WriteEncodeable(null, data, data.GetType());
@@ -280,7 +280,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
                 var result = await ReadHistoryAsync<HistoryEvent>(details, ct,
                     continuationToken).ConfigureAwait(false);
                 if (result.history?.Events != null) {
-                    _logger.Verbose("+ {count} events...",
+                    _logger.LogTrace("+ {count} events...",
                         result.history.Events.Count);
                     foreach (var data in result.history.Events) {
                         _encoder.WriteEncodeable(null, data, data.GetType());

@@ -104,7 +104,7 @@ namespace Microsoft.Azure.IIoT.Http.Clients {
                 }
 
                 var sw = Stopwatch.StartNew();
-                _logger.Verbose("Sending {method} request to {uri}...", httpMethod,
+                _logger.LogTrace("Sending {method} request to {uri}...", httpMethod,
                     httpRequest.Uri);
                 try {
                     wrapper.Request.Method = httpMethod;
@@ -117,12 +117,12 @@ namespace Microsoft.Azure.IIoT.Http.Clients {
                             Content = await response.Content.ReadAsByteArrayAsync(ct).ConfigureAwait(false)
                         };
                         if (result.IsError()) {
-                            _logger.Warning("{method} to {uri} returned {code} (took {elapsed}).",
+                            _logger.LogWarning("{method} to {uri} returned {code} (took {elapsed}).",
                                 httpMethod, httpRequest.Uri, response.StatusCode, sw.Elapsed,
                                  result.GetContentAsString(Encoding.UTF8));
                         }
                         else {
-                            _logger.Verbose("{method} to {uri} returned {code} (took {elapsed}).",
+                            _logger.LogTrace("{method} to {uri} returned {code} (took {elapsed}).",
                                 httpMethod, httpRequest.Uri, response.StatusCode, sw.Elapsed);
                         }
                         return result;
@@ -133,9 +133,9 @@ namespace Microsoft.Azure.IIoT.Http.Clients {
                     if (e.InnerException != null) {
                         errorMessage += " - " + e.InnerException.Message;
                     }
-                    _logger.Warning("{method} to {uri} failed (after {elapsed}) : {message}!",
+                    _logger.LogWarning("{method} to {uri} failed (after {elapsed}) : {message}!",
                         httpMethod, httpRequest.Uri, sw.Elapsed, errorMessage);
-                    _logger.Verbose(e, "{method} to {uri} failed (after {elapsed}) : {message}!",
+                    _logger.LogTrace(e, "{method} to {uri} failed (after {elapsed}) : {message}!",
                         httpMethod, httpRequest.Uri, sw.Elapsed, errorMessage);
                     throw new HttpRequestException(errorMessage, e);
                 }

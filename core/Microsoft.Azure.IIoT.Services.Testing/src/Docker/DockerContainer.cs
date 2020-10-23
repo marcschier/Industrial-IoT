@@ -87,10 +87,10 @@ namespace Microsoft.Azure.IIoT.Services.Docker {
                         imagesCreateParameters, new AuthConfig(),
                             new Progress<JSONMessage>(m => {
                                 if (m.Error != null) {
-                                    _logger.Error("{@message}", m);
+                                    _logger.LogError("{@message}", m);
                                 }
                                 else {
-                                    _logger.Information("{@message}", m);
+                                    _logger.LogInformation("{@message}", m);
                                 }
                             }), ct).ConfigureAwait(false);
                 }

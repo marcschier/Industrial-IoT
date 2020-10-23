@@ -47,7 +47,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Handlers {
                 change = _serializer.Deserialize<TwinStateEventModel>(payload);
             }
             catch (Exception ex) {
-                _logger.Error(ex, "Failed to convert twin state change event message {json}.",
+                _logger.LogError(ex, "Failed to convert twin state change event message {json}.",
                     Encoding.UTF8.GetString(payload));
                 return;
             }
@@ -56,7 +56,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Handlers {
                     .Select(h => h.OnTwinStateChangeAsync(change))).ConfigureAwait(false);
             }
             catch (Exception ex) {
-                _logger.Error(ex, "Handling twin state event failed with exception - skip");
+                _logger.LogError(ex, "Handling twin state event failed with exception - skip");
             }
         }
 

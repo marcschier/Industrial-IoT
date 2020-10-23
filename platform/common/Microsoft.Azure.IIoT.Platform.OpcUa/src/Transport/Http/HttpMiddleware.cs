@@ -59,11 +59,11 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Transport {
             var message = _encoder.Decode(context.Request.ContentType,
                 context.Request.Body);
             if (message is not IServiceRequest request) {
-                _logger.Debug("Bad UA service request.");
+                _logger.LogDebug("Bad UA service request.");
                 return false;
             }
             try {
-                _logger.Verbose("Processing UA request...");
+                _logger.LogTrace("Processing UA request...");
                 var response = await _listener.ProcessAsync(context, request).ConfigureAwait(false);
                 // Encode content as per encoding requested
                 context.Response.ContentType = context.Request.ContentType;
@@ -73,7 +73,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Transport {
                     _encoder.Encode(context.Request.ContentType,
                         context.Response.Body, response);
                 }
-                _logger.Verbose("Processed UA request.");
+                _logger.LogTrace("Processed UA request.");
             }
             catch {
                 context.Response.ContentType = context.Request.ContentType;

@@ -44,7 +44,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub.Clients {
                     configuration.ToContent(), ct).ConfigureAwait(false);
             }
             catch (Exception e) {
-                _logger.Verbose(e, "Apply configuration failed ");
+                _logger.LogTrace(e, "Apply configuration failed ");
                 throw e.Translate();
             }
         }
@@ -80,7 +80,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub.Clients {
                 return result.ToModel();
             }
             catch (Exception e) {
-                _logger.Verbose(e,
+                _logger.LogTrace(e,
                     "Update configuration failed in CreateOrUpdate");
                 throw e.Translate();
             }
@@ -95,7 +95,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub.Clients {
                 return configuration.ToModel();
             }
             catch (Exception e) {
-                _logger.Verbose(e, "Get configuration failed");
+                _logger.LogTrace(e, "Get configuration failed");
                 throw e.Translate();
             }
         }
@@ -109,7 +109,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub.Clients {
                 return configurations.Select(c => c.ToModel());
             }
             catch (Exception e) {
-                _logger.Verbose(e, "List configurations failed");
+                _logger.LogTrace(e, "List configurations failed");
                 throw e.Translate();
             }
         }
@@ -127,7 +127,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub.Clients {
                 }
             }
             catch (Exception e) {
-                _logger.Verbose(e, "Delete configuration failed");
+                _logger.LogTrace(e, "Delete configuration failed");
                 throw e.Translate();
             }
         }

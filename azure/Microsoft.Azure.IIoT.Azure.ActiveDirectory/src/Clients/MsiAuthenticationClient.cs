@@ -23,7 +23,7 @@ namespace Microsoft.Azure.IIoT.Azure.ActiveDirectory.Clients {
                 .Select(c => CreateProvider(c, logger))
                 .ToList();
             if (!_config.Any()) {
-                logger.Information("No managed service identity configured for this service.");
+                logger.LogInformation("No managed service identity configured for this service.");
             }
         }
 
@@ -43,7 +43,7 @@ namespace Microsoft.Azure.IIoT.Azure.ActiveDirectory.Clients {
                 cs += $";TenantId={config.TenantId}";
             }
             var provider = new AzureServiceTokenProvider(cs, config.GetAuthority(true));
-            logger.Information("Managed service identity {clientId} in {tenant} registered.",
+            logger.LogInformation("Managed service identity {clientId} in {tenant} registered.",
                 config.ClientId, config.TenantId);
             return KeyValuePair.Create(config.Resource ?? Http.Resource.Platform, (config, provider));
         }

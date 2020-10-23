@@ -166,7 +166,7 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Provider.Controllers {
                 return CreateConsentViewModel(model, returnUrl, request);
             }
             else {
-                _logger.LogError("No consent request matching request: {0}", returnUrl);
+                LoggerExtensions.LogError(_logger, "No consent request matching request: {0}", returnUrl);
             }
 
             return null;

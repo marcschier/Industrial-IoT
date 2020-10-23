@@ -69,17 +69,17 @@ namespace Microsoft.Azure.IIoT.Http.SignalR.Services {
             await _lock.WaitAsync().ConfigureAwait(false);
             try {
                 if (_started) {
-                    _logger.Debug("SignalR client host already running.");
+                    _logger.LogDebug("SignalR client host already running.");
                     return;
                 }
-                _logger.Debug("Starting SignalR client host...");
+                _logger.LogDebug("Starting SignalR client host...");
                 _started = true;
                 _connection = await OpenAsync().ConfigureAwait(false);
-                _logger.Information("SignalR client host started.");
+                _logger.LogInformation("SignalR client host started.");
             }
             catch (Exception ex) {
                 _started = false;
-                _logger.Error(ex, "Error starting SignalR client host.");
+                _logger.LogError(ex, "Error starting SignalR client host.");
                 throw;
             }
             finally {
@@ -95,13 +95,13 @@ namespace Microsoft.Azure.IIoT.Http.SignalR.Services {
                     return;
                 }
                 _started = false;
-                _logger.Debug("Stopping SignalR client host...");
+                _logger.LogDebug("Stopping SignalR client host...");
                 await DisposeAsync(_connection).ConfigureAwait(false);
                 _connection = null;
-                _logger.Information("SignalR client host stopped.");
+                _logger.LogInformation("SignalR client host stopped.");
             }
             catch (Exception ex) {
-                _logger.Warning(ex, "Error stopping SignalR client host.");
+                _logger.LogWarning(ex, "Error stopping SignalR client host.");
             }
             finally {
                 _lock.Release();
@@ -113,7 +113,7 @@ namespace Microsoft.Azure.IIoT.Http.SignalR.Services {
             _lock.Wait();
             try {
                 if (_connection != null) {
-                    _logger.Verbose("SignalR client was not stopped before disposing.");
+                    _logger.LogTrace("SignalR client was not stopped before disposing.");
                     Try.Op(() => DisposeAsync(_connection).Wait());
                     _connection = null;
                 }
@@ -151,7 +151,7 @@ namespace Microsoft.Azure.IIoT.Http.SignalR.Services {
                         options.AccessTokenProvider = async () => {
                             var token = await _provider.GetTokenForAsync(_resourceId).ConfigureAwait(false);
                             if (token?.RawToken == null) {
-                                _logger.Error("Failed to aquire token for hub calling " +
+                                _logger.LogError("Failed to aquire token for hub calling " +
                                     "({resource}) - calling without...",
                                     _resourceId);
                             }
@@ -184,12 +184,12 @@ namespace Microsoft.Azure.IIoT.Http.SignalR.Services {
         /// <param name="ex"></param>
         /// <returns></returns>
         private async Task OnClosedAsync(HubConnection connection, Exception ex) {
-            _logger.Error(ex, "SignalR client host Disconnected!");
+            _logger.LogError(ex, "SignalR client host Disconnected!");
             await DisposeAsync(connection).ConfigureAwait(false);
             if (_started) {
                 // Reconnect
                 _connection = await OpenAsync().ConfigureAwait(false);
-                _logger.Information("SignalR client host reconnecting...");
+                _logger.LogInformation("SignalR client host reconnecting...");
             }
         }
 

@@ -50,7 +50,7 @@ namespace Microsoft.Azure.IIoT.Platform.Directory.Handlers {
                         TwinProperty.Type, null);
                 }
                 catch (Exception ex) {
-                    _logger.Verbose(ex, "Failed to materialize twin");
+                    _logger.LogTrace(ex, "Failed to materialize twin");
                 }
             }
             if (IdentityType.Publisher.EqualsIgnoreCase(type)) {

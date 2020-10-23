@@ -162,7 +162,7 @@ namespace Microsoft.Azure.IIoT.Rpc.Default {
                     catch (Exception ex) {
                         // Unexpected
                         status = (int)HttpStatusCode.InternalServerError;
-                        _outer._logger.Error(ex,
+                        _outer._logger.LogError(ex,
                             "Processing message resulted in unexpected error");
                     }
                     _sent = 0;

@@ -139,7 +139,7 @@ namespace Microsoft.Azure.IIoT.Platform.Directory.Services {
                     return;
                 }
                 catch (ResourceOutOfDateException ex) {
-                    _logger.Debug(ex, "Retrying updating gateway...");
+                    _logger.LogDebug(ex, "Retrying updating gateway...");
                     continue;
                 }
             }

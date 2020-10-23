@@ -296,7 +296,7 @@ namespace Microsoft.Azure.IIoT.Services.CouchDb.Clients {
             catch (JsonException) {
                 throw new FormatException("Mango query is not Json");
             }
-            _logger.Debug("Sending query {mango}", mango);
+            _logger.LogDebug("Sending query {mango}", mango);
             var results = await _db.NewRequest()
                 .AppendPathSegments("_find")
                 .WithHeader("Content-Type", ContentMimeType.Json)

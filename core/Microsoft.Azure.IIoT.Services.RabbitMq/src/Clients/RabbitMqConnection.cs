@@ -163,7 +163,7 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
                         return CreateChannelInternal();
                     }
                     catch (OperationInterruptedException ex) {
-                        _logger.Error(ex, "Failed to open channel {attempt}", attempt);
+                        _logger.LogError(ex, "Failed to open channel {attempt}", attempt);
                         if (++attempt > 10) { 
                             throw;
                         }
@@ -313,7 +313,7 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
                 /// <inheritdoc/>
                 public override Task HandleModelShutdown(object model,
                     ShutdownEventArgs reason) {
-                    _logger.Information("Channel shutdown by {initiator}.",
+                    _logger.LogInformation("Channel shutdown by {initiator}.",
                         reason.Initiator);
                     if (reason.Initiator == ShutdownInitiator.Peer) {
                         // TODO - restart
@@ -324,7 +324,7 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
                 /// <inheritdoc/>
                 public override Task HandleBasicConsumeOk(string consumerTag) {
                     // Consuming
-                    _logger.Information("Starting to consume");
+                    _logger.LogInformation("Starting to consume");
                     return base.HandleBasicConsumeOk(consumerTag);
                 }
 

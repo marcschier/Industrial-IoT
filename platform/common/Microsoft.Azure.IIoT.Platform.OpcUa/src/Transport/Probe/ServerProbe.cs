@@ -84,7 +84,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Transport.Probe {
                 ok = false;
                 timeout = _timeout;
                 if (arg.SocketError != SocketError.Success) {
-                    _logger.Debug("Probe {index} : {remoteEp} found no opc server. {error}",
+                    _logger.LogDebug("Probe {index} : {remoteEp} found no opc server. {error}",
                         index, _socket?.RemoteEndPoint, arg.SocketError);
                     _state = State.BeginProbe;
                     return true;
@@ -93,7 +93,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Transport.Probe {
                     switch (_state) {
                         case State.BeginProbe:
                             if (arg.ConnectSocket == null) {
-                                _logger.Error("Probe {index} : Called without connected socket!",
+                                _logger.LogError("Probe {index} : Called without connected socket!",
                                     index);
                                 return true;
                             }
@@ -118,7 +118,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Transport.Probe {
                             _buffer[7] = (byte)((_size & 0xFF000000) >> 24);
                             arg.SetBuffer(_buffer, 0, _size);
                             _len = 0;
-                            _logger.Debug("Probe {index} : {ep} ({remoteEp})...", index, "opc.tcp://" + ep,
+                            _logger.LogDebug("Probe {index} : {ep} ({remoteEp})...", index, "opc.tcp://" + ep,
                                 _socket.RemoteEndPoint);
                             _state = State.SendHello;
                             if (!_socket.SendAsync(arg)) {
@@ -150,12 +150,12 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Transport.Probe {
                                 var type = BitConverter.ToUInt32(_buffer, 0);
                                 if (type != TcpMessageType.Acknowledge) {
                                     if (TcpMessageType.IsValid(type)) {
-                                        _logger.Debug("Probe {index} : {remoteEp} " +
+                                        _logger.LogDebug("Probe {index} : {remoteEp} " +
                                             "returned message type {type} != Ack.",
                                             index, _socket.RemoteEndPoint, type);
                                     }
                                     else {
-                                        _logger.Verbose("Probe {index} : {remoteEp} " +
+                                        _logger.LogTrace("Probe {index} : {remoteEp} " +
                                             "returned invalid message type {type}.",
                                             index, _socket.RemoteEndPoint, type);
                                     }
@@ -164,7 +164,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Transport.Probe {
                                 }
                                 _size = (int)BitConverter.ToUInt32(_buffer, 4);
                                 if (_size > _buffer.Length) {
-                                    _logger.Debug("Probe {index} : {remoteEp} " +
+                                    _logger.LogDebug("Probe {index} : {remoteEp} " +
                                         "returned invalid message length {size}.",
                                         index, _socket.RemoteEndPoint, _size);
                                     _state = State.BeginProbe;
@@ -194,13 +194,13 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Transport.Probe {
                                     var maxMessageSize = (int)decoder.ReadUInt32(null);
                                     var maxChunkCount = (int)decoder.ReadUInt32(null);
 
-                                    _logger.Information("Probe {index} : found OPC UA " +
+                                    _logger.LogInformation("Probe {index} : found OPC UA " +
                                         "server at {remoteEp} (protocol:{protocolVersion}) ...",
                                         index, _socket.RemoteEndPoint, protocolVersion);
 
                                     if (sendBufferSize < TcpMessageLimits.MinBufferSize ||
                                         receiveBufferSize < TcpMessageLimits.MinBufferSize) {
-                                        _logger.Warning("Probe {index} : Bad size value read " +
+                                        _logger.LogWarning("Probe {index} : Bad size value read " +
                                             "{sendBufferSize} or {receiveBufferSize} from opc " +
                                             "server at {_socket.RemoteEndPoint}.", index,
                                         sendBufferSize, receiveBufferSize, _socket.RemoteEndPoint);

@@ -66,7 +66,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Clients {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
             if (IsPresent) {
-                _logger.Information("Hsm present at {uri}", WorkloadUri);
+                _logger.LogInformation("Hsm present at {uri}", WorkloadUri);
             }
         }
 

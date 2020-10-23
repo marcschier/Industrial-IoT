@@ -104,7 +104,7 @@ namespace Microsoft.Azure.IIoT.Rpc.Default {
                 payload = received.ToArray().Unzip();
                 if (status != 200) {
                     var result = AsString(payload);
-                    _logger.Debug("Chunked call on {method} on {target} with {payload} " +
+                    _logger.LogDebug("Chunked call on {method} on {target} with {payload} " +
                          "returned with error {status}: {result}",
                          method, target, payload, status, result);
                     throw new MethodCallStatusException(result, status);

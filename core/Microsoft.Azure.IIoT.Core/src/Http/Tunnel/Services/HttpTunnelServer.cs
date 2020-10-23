@@ -75,7 +75,7 @@ namespace Microsoft.Azure.IIoT.Http.Tunnel.Services {
 
             if (!properties.TryGetValue("content-type", out var type) &&
                 !properties.TryGetValue("iothub-content-type", out type)) {
-                _logger.Error("Missing content type in tunnel event from {source}.",
+                _logger.LogError("Missing content type in tunnel event from {source}.",
                      source);
                 return true;
             }
@@ -84,7 +84,7 @@ namespace Microsoft.Azure.IIoT.Http.Tunnel.Services {
             var typeParsed = type.Split("_", StringSplitOptions.RemoveEmptyEntries);
             if (typeParsed.Length != 2 ||
                 !int.TryParse(typeParsed[1], out var messageId)) {
-                _logger.Error("Bad content type {contentType} in tunnel event" +
+                _logger.LogError("Bad content type {contentType} in tunnel event" +
                     " from {source}.", type, source);
                 return true;
             }
@@ -106,7 +106,7 @@ namespace Microsoft.Azure.IIoT.Http.Tunnel.Services {
                     }
                 }
                 catch (Exception ex) {
-                    _logger.Error(ex, "Failed to parse tunnel request from {source} " +
+                    _logger.LogError(ex, "Failed to parse tunnel request from {source} " +
                         "with id {requestId} - giving up.", source, requestId);
                     return true;
                 }
@@ -122,7 +122,7 @@ namespace Microsoft.Azure.IIoT.Http.Tunnel.Services {
             }
             else {
                 // Timed out or expired
-                _logger.Debug(
+                _logger.LogDebug(
                     "Request from {source} with id {requestId} timed out - give up.",
                     source, requestId);
                 return true;
@@ -133,7 +133,7 @@ namespace Microsoft.Azure.IIoT.Http.Tunnel.Services {
                 await processor.CompleteAsync().ConfigureAwait(false);
             }
             catch (Exception ex) {
-                _logger.Error(ex, "Failed to complete request from {source} " +
+                _logger.LogError(ex, "Failed to complete request from {source} " +
                     "with id {requestId} - giving up.", source, requestId);
             }
             return true;

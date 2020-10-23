@@ -54,13 +54,13 @@ namespace Microsoft.Azure.IIoT.Azure.ActiveDirectory.Clients {
                     if (result.ExpiresOn < DateTime.UtcNow) {
                         return null;
                     }
-                    _logger.Information(
+                    _logger.LogInformation(
                         "Successfully acquired token for {resource} with {config}.",
                         resource, config.GetName());
                     return result;
                 }
                 catch (Exception ex) {
-                    _logger.Debug(ex,
+                    _logger.LogDebug(ex,
                         "Failed to retrieve token for {resource} using {config}",
                         resource, config.GetName());
                     exceptions.Add(ex);

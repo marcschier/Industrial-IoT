@@ -245,7 +245,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Sample {
             /// <inheritdoc/>
             protected override MasterNodeManager CreateMasterNodeManager(
                 IServerInternal server, ApplicationConfiguration configuration) {
-                _logger.Information("Creating the Node Managers.");
+                _logger.LogInformation("Creating the Node Managers.");
                 var nodeManagers = _nodes
                     .Select(n => n.CreateNodeManager(server, configuration));
                 return new MasterNodeManager(server, configuration, null,
@@ -254,7 +254,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Sample {
 
             /// <inheritdoc/>
             protected override void OnServerStopping() {
-                _logger.Debug("The server is stopping.");
+                _logger.LogDebug("The server is stopping.");
                 base.OnServerStopping();
                 _cts.Cancel();
                 _statusLogger?.Wait();
@@ -279,14 +279,14 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Sample {
 
             /// <inheritdoc/>
             protected override void OnServerStarting(ApplicationConfiguration configuration) {
-                _logger.Debug("The server is starting.");
+                _logger.LogDebug("The server is starting.");
                 CreateUserIdentityValidators(configuration);
                 base.OnServerStarting(configuration);
             }
 
             /// <inheritdoc/>
             protected override void OnNodeManagerStarted(IServerInternal server) {
-                _logger.Information("The NodeManagers have started.");
+                _logger.LogInformation("The NodeManagers have started.");
                 base.OnNodeManagerStarted(server);
             }
 
@@ -342,7 +342,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Sample {
                         }
                         item += string.Format(":{0}", session.Id);
                     }
-                    _logger.Information(item);
+                    _logger.LogInformation(item);
                 }
             }
             /// <summary>

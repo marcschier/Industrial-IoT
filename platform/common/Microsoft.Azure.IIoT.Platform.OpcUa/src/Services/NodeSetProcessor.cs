@@ -86,7 +86,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
                 await handler.CompleteAsync(context).ConfigureAwait(false);
             }
             catch (Exception ex) {
-                _logger.Error(ex, "Failed to parse model, aborting processing.");
+                _logger.LogError(ex, "Failed to parse model, aborting processing.");
                 // Abort
                 await handler.CompleteAsync(context, true).ConfigureAwait(false);
             }

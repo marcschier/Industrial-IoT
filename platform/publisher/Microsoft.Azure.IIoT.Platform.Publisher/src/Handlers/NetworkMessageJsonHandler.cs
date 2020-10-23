@@ -89,7 +89,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Handlers {
                 }
             }
             catch (Exception ex) {
-                _logger.Error(ex, "Subscriber json network message handling failed - skip");
+                _logger.LogError(ex, "Subscriber json network message handling failed - skip");
             }
         }
 

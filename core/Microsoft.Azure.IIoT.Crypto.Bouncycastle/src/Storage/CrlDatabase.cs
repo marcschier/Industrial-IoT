@@ -87,15 +87,15 @@ namespace Microsoft.Azure.IIoT.Crypto.Storage {
             await _lock.WaitAsync().ConfigureAwait(false);
             try {
                 if (_cacheManager != null) {
-                    _logger.Debug("Cache manager host already running.");
+                    _logger.LogDebug("Cache manager host already running.");
                 }
-                _logger.Debug("Starting cache manager host...");
+                _logger.LogDebug("Starting cache manager host...");
                 _cts = new CancellationTokenSource();
                 _cacheManager = Task.Run(() => ManageCacheAsync(_cts.Token));
-                _logger.Information("Cache manager host started.");
+                _logger.LogInformation("Cache manager host started.");
             }
             catch (Exception ex) {
-                _logger.Error(ex, "Failed to start cache manager host.");
+                _logger.LogError(ex, "Failed to start cache manager host.");
                 throw;
             }
             finally {
@@ -109,13 +109,13 @@ namespace Microsoft.Azure.IIoT.Crypto.Storage {
             try {
                 _cts?.Cancel();
                 if (_cacheManager != null) {
-                    _logger.Debug("Stopping cache manager host...");
+                    _logger.LogDebug("Stopping cache manager host...");
                     await Try.Async(() => _cacheManager).ConfigureAwait(false);
-                    _logger.Information("Cache manager host stopped.");
+                    _logger.LogInformation("Cache manager host stopped.");
                 }
             }
             catch (Exception ex) {
-                _logger.Warning(ex, "Failed to stop cache manager host.");
+                _logger.LogWarning(ex, "Failed to stop cache manager host.");
             }
             finally {
                 _cacheManager = null;
@@ -220,7 +220,7 @@ namespace Microsoft.Azure.IIoT.Crypto.Storage {
                     }
                 }
                 catch (Exception ex) {
-                    _logger.Error(ex, "Exception occurred during crl cache management");
+                    _logger.LogError(ex, "Exception occurred during crl cache management");
                 }
                 await Task.Delay(TimeSpan.FromMinutes(2), ct).ConfigureAwait(false);
             }

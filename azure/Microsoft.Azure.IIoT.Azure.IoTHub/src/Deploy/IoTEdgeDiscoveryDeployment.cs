@@ -120,7 +120,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub.Deploy {
             var version = _config.ImagesTag ?? "latest";
             var image = $"{server}/{ns}iotedge/discovery:{version}";
 
-            _logger.Information("Updating discovery module deployment with image {image} for {os}",
+            _logger.LogInformation("Updating discovery module deployment with image {image} for {os}",
                 image, isLinux ? "Linux" : "Windows");
 
             // Return deployment modules object

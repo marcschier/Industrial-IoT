@@ -32,7 +32,7 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Services {
         /// <inheritdoc/>
         public async Task StartAsync() {
             if (string.IsNullOrEmpty(_config.UserName)) {
-                _logger.Debug("Skipping root user configuration.");
+                _logger.LogDebug("Skipping root user configuration.");
                 return;
             }
             var rootUser = new UserModel {
@@ -50,11 +50,11 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Services {
                 else {
                     await _manager.CreateAsync(rootUser, _config.Password).ConfigureAwait(false);
                 }
-                _logger.Information("Root user {user} added", _config.UserName);
+                _logger.LogInformation("Root user {user} added", _config.UserName);
             }
             catch (ResourceConflictException) { }
             catch (Exception ex) {
-                _logger.Error(ex, "Failed to add root user");
+                _logger.LogError(ex, "Failed to add root user");
             }
         }
 

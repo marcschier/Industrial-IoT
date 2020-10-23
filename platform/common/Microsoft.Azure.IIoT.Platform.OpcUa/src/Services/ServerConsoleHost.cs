@@ -41,20 +41,20 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
                 await _lock.WaitAsync().ConfigureAwait(false);
                 try {
                     if (_server != null) {
-                        _logger.Information("Stopping server.");
+                        _logger.LogInformation("Stopping server.");
                         try {
                             _server.Stop();
                         }
                         catch (OperationCanceledException) { }
                         catch (Exception se) {
-                            _logger.Error(se, "Server not cleanly stopped.");
+                            _logger.LogError(se, "Server not cleanly stopped.");
                         }
                         _server.Dispose();
                     }
-                    _logger.Information("Server stopped.");
+                    _logger.LogInformation("Server stopped.");
                 }
                 catch (Exception ce) {
-                    _logger.Error(ce, "Stopping server caused exception.");
+                    _logger.LogError(ce, "Stopping server caused exception.");
                 }
                 finally {
                     _server = null;
@@ -75,7 +75,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
                     }
                 }
                 catch (Exception ex) {
-                    _logger.Error(ex, "Starting server caused exception.");
+                    _logger.LogError(ex, "Starting server caused exception.");
                     _server?.Dispose();
                     _server = null;
                     throw;
@@ -103,15 +103,15 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
             ApplicationInstance.MessageDlg = new DummyDialog();
 
             var config = _factory.CreateServer(ports, pkiRootPath, out _server);
-            _logger.Information("Server created...");
+            _logger.LogInformation("Server created...");
 
             config.SecurityConfiguration.AutoAcceptUntrustedCertificates = AutoAccept;
             config = ApplicationInstance.FixupAppConfig(config);
 
-            _logger.Information("Validate configuration...");
+            _logger.LogInformation("Validate configuration...");
             await config.Validate(config.ApplicationType).ConfigureAwait(false);
 
-            _logger.Information("Initialize certificate validation...");
+            _logger.LogInformation("Initialize certificate validation...");
             var application = new ApplicationInstance(config);
 
             // check the application certificate.
@@ -119,14 +119,14 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
                 await application.CheckApplicationInstanceCertificate(true,
                     CertificateFactory.defaultKeySize).ConfigureAwait(false);
             if (!hasAppCertificate) {
-                _logger.Error("Failed validating own certificate!");
+                _logger.LogError("Failed validating own certificate!");
                 throw new Exception("Application instance certificate invalid!");
             }
 
             config.CertificateValidator.CertificateValidation += (v, e) => {
                 if (e.Error.StatusCode == StatusCodes.BadCertificateUntrusted) {
                     e.Accept = AutoAccept;
-                    _logger.Information((e.Accept ? "Accepted" : "Rejected") +
+                    _logger.LogInformation((e.Accept ? "Accepted" : "Rejected") +
                         " Certificate {subject}", e.Certificate.Subject);
                 }
             };
@@ -142,14 +142,14 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
                 Certificate = config.SecurityConfiguration.ApplicationCertificate.Certificate;
             }
 
-            _logger.Information("Starting server ...");
+            _logger.LogInformation("Starting server ...");
             // start the server.
             await application.Start(_server).ConfigureAwait(false);
 
             foreach (var ep in config.ServerConfiguration.BaseAddresses) {
-                _logger.Information("Listening on {ep}", ep);
+                _logger.LogInformation("Listening on {ep}", ep);
             }
-            _logger.Information("Server started.");
+            _logger.LogInformation("Server started.");
         }
 
         /// <inheritdoc/>

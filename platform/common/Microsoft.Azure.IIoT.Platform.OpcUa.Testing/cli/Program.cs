@@ -159,7 +159,7 @@ Operations (Mutually exclusive):
                     }
 #endif
                     await tcs.Task.ConfigureAwait(false);
-                    logger.Logger.Information("Exiting.");
+                    logger.Logger.LogInformation("Exiting.");
                 }
             }
         }

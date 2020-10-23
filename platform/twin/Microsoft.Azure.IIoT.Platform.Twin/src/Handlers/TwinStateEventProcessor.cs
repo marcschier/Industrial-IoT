@@ -46,13 +46,13 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
                            message.TwinId, message.ConnectionState, context).ConfigureAwait(false);
                         break;
                     }
-                    _logger.Warning("Connection event without twin id");
+                    _logger.LogWarning("Connection event without twin id");
                     break;
 
                 // ...
 
                 default:
-                    _logger.Error("Unknown event {eventId}", message.EventType);
+                    _logger.LogError("Unknown event {eventId}", message.EventType);
                     break;
             }
         }

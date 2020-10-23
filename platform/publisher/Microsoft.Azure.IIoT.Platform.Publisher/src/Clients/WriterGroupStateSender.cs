@@ -34,7 +34,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Clients {
 
         /// <inheritdoc/>
         public void OnWriterGroupStateChange(string writerGroupId, WriterGroupStatus? state) {
-            _logger.Information("{writerGroup} changed state to {state}", writerGroupId, state);
+            _logger.LogInformation("{writerGroup} changed state to {state}", writerGroupId, state);
             var ev = new WriterGroupStateEventModel {
                 WriterGroupId = writerGroupId,
                 State = new WriterGroupStateModel {

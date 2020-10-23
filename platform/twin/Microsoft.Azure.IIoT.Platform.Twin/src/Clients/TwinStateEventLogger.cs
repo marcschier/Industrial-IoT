@@ -23,7 +23,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Clients {
 
         /// <inheritdoc/>
         public void OnConnectionStateChange(string twinId, ConnectionStateModel state) {
-            _logger.Debug("Twin writer {twinId} connection state changed to {@state}",
+            _logger.LogDebug("Twin writer {twinId} connection state changed to {@state}",
                 twinId, state);
         }
 

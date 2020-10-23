@@ -116,9 +116,9 @@ namespace Microsoft.Azure.IIoT.Utils {
             private async void OnTimerFiredAsync(object sender) {
                 try {
                     _cts.Token.ThrowIfCancellationRequested();
-                    _outer._logger.Information("Running {taskName}.", _outer._taskName);
+                    _outer._logger.LogInformation("Running {taskName}.", _outer._taskName);
                     await _outer.RunAsync(_cts.Token).ConfigureAwait(false);
-                    _outer._logger.Information("{taskName} finished.", _outer._taskName);
+                    _outer._logger.LogInformation("{taskName} finished.", _outer._taskName);
                 }
                 catch (OperationCanceledException) {
                     // Cancel was called - dispose task
@@ -127,7 +127,7 @@ namespace Microsoft.Azure.IIoT.Utils {
                     return;  // Completed
                 }
                 catch (Exception ex) {
-                    _outer._logger.Error(ex, "Failed to run {taskName}.", _outer._taskName);
+                    _outer._logger.LogError(ex, "Failed to run {taskName}.", _outer._taskName);
                 }
                 _timer.Change(_outer._interval, Timeout.InfiniteTimeSpan);
             }

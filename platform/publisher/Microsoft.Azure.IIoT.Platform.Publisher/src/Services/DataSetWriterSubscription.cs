@@ -50,14 +50,14 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
         /// <inheritdoc/>
         public async Task ConfigureAsync(PublishedDataSetModel dataSet) {
             if (_subscription != null) {
-                _logger.Information("Stopping {writer} subscription...", DataSetWriterId);
+                _logger.LogInformation("Stopping {writer} subscription...", DataSetWriterId);
                 await _subscription.CloseAsync().ConfigureAwait(false);
                 _subscription = null;
             }
 
             var config = ToSubscriptionModel(dataSet);
             if (config == null) { // if dataset is null or empty
-                _logger.Information("{writer} successfully disabled", DataSetWriterId);
+                _logger.LogInformation("{writer} successfully disabled", DataSetWriterId);
                 return;
             }
 
@@ -65,7 +65,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                 this).ConfigureAwait(false);
             await _subscription.ApplyAsync(config.MonitoredItems, 
                 config.Configuration).ConfigureAwait(false);
-            _logger.Information("Started {writer} subscription...", DataSetWriterId);
+            _logger.LogInformation("Started {writer} subscription...", DataSetWriterId);
 
             //
             // only try to activate if already enabled. Otherwise the activation
@@ -73,10 +73,10 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
             //
             if (_subscription.Enabled) {
                 await _subscription.ActivateAsync(null).ConfigureAwait(false);
-                _logger.Information("Activated {writer} subscription...", DataSetWriterId);
+                _logger.LogInformation("Activated {writer} subscription...", DataSetWriterId);
             }
 
-            _logger.Information("{writer} successfully reconfigured.", DataSetWriterId);
+            _logger.LogInformation("{writer} successfully reconfigured.", DataSetWriterId);
         }
 
         /// <inheritdoc/>

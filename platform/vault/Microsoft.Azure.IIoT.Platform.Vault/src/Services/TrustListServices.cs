@@ -59,10 +59,10 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Services {
                     TrustingId = entity.Id,
                     TrustingType = entity.Type
                 }, ct).ConfigureAwait(false);
-                _logger.Information("{@Entity} now trusting {@Trusted}", entity, trusted);
+                _logger.LogInformation("{@Entity} now trusting {@Trusted}", entity, trusted);
             }
             catch (ResourceConflictException) {
-                _logger.Debug("{@Entity} already trusting {@Trusted}", entity, trusted);
+                _logger.LogDebug("{@Entity} already trusting {@Trusted}", entity, trusted);
             }
         }
 
@@ -102,7 +102,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Services {
                 throw new ArgumentNullException(nameof(untrustedId));
             }
             await _repo.DeleteAsync(entityId, TrustDirectionType.Trusting, untrustedId, ct).ConfigureAwait(false);
-            _logger.Information("{entityId} trust to {untrustedId} removed.", entityId,
+            _logger.LogInformation("{entityId} trust to {untrustedId} removed.", entityId,
                 untrustedId);
         }
 

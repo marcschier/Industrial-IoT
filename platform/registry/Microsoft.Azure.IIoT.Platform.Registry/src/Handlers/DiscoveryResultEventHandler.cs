@@ -45,7 +45,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Handlers {
                 discovery = _serializer.Deserialize<DiscoveryResultModel>(payload);
             }
             catch (Exception ex) {
-                _logger.Error(ex, "Failed to convert discovery result {json}",
+                _logger.LogError(ex, "Failed to convert discovery result {json}",
                     Encoding.UTF8.GetString(payload));
                 return;
             }
@@ -54,7 +54,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Handlers {
                     discovery, checkpoint).ConfigureAwait(false);
             }
             catch (Exception ex) {
-                _logger.Error(ex, "Handling discovery event failed with exception - skip");
+                _logger.LogError(ex, "Handling discovery event failed with exception - skip");
             }
         }
 
@@ -124,7 +124,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Handlers {
                             queue.Result, queue.Events).ConfigureAwait(false);
                     }
                     catch (Exception ex) {
-                        _logger.Error(ex,
+                        _logger.LogError(ex,
                             "Failure during discovery processing in registry. Skip.");
                     }
 

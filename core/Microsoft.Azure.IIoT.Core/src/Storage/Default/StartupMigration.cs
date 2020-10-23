@@ -30,10 +30,10 @@ namespace Microsoft.Azure.IIoT.Storage.Default {
         public void Start() {
             try {
                 Task.WaitAll(_migrations.Select(m => m.MigrateAsync()).ToArray());
-                _logger.Information("Startup migration completed.");
+                _logger.LogInformation("Startup migration completed.");
             }
             catch (Exception ex) {
-                _logger.Error(ex, "Failed to migrate");
+                _logger.LogError(ex, "Failed to migrate");
             }
         }
 

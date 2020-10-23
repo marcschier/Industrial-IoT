@@ -200,7 +200,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
             if (endpoint is null) {
                 throw new ArgumentNullException(nameof(endpoint));
             }
-            _logger.Information("Activating twin because endpoint was found");
+            _logger.LogInformation("Activating twin because endpoint was found");
             return Task.CompletedTask;
             //  return EnableWritersWithEndpointAsync(endpoint.Id, true,
             //      context == null ? null : new OperationContextModel {
@@ -215,7 +215,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
             if (endpoint is null) {
                 throw new ArgumentNullException(nameof(endpoint));
             }
-            _logger.Information("Deactivating twin because endpoint was lost");
+            _logger.LogInformation("Deactivating twin because endpoint was lost");
             return Task.CompletedTask;
             //  return EnableWritersWithEndpointAsync(endpoint.Id, false,
             //      context == null ? null : new OperationContextModel {

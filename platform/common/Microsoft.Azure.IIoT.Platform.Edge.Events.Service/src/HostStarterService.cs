@@ -73,16 +73,16 @@ namespace Microsoft.Azure.IIoT.Platform.Edge.Events.Service {
         /// <inheritdoc/>
         public async Task StartAsync(CancellationToken cancellationToken) {
             try {
-                _logger.Debug("Starting all hosts...");
+                _logger.LogDebug("Starting all hosts...");
                 await Task.WhenAll(_hostProcesses.Select(h => h.StartAsync())).ConfigureAwait(false);
-                _logger.Information("All hosts started.");
+                _logger.LogInformation("All hosts started.");
 
                 // Print some useful information at bootstrap time
-                _logger.Information("{service} service started with id {id}",
+                _logger.LogInformation("{service} service started with id {id}",
                     ServiceInfo.Name, ServiceInfo.Id);
             }
             catch (Exception ex) {
-                _logger.Error(ex, "Failed to start some hosts.");
+                _logger.LogError(ex, "Failed to start some hosts.");
                 throw;
             }
         }
@@ -90,12 +90,12 @@ namespace Microsoft.Azure.IIoT.Platform.Edge.Events.Service {
         /// <inheritdoc/>
         public async Task StopAsync(CancellationToken cancellationToken) {
             try {
-                _logger.Debug("Stopping all hosts...");
+                _logger.LogDebug("Stopping all hosts...");
                 await Task.WhenAll(_hostProcesses.Select(h => h.StopAsync())).ConfigureAwait(false);
-                _logger.Information("All hosts stopped.");
+                _logger.LogInformation("All hosts stopped.");
             }
             catch (Exception ex) {
-                _logger.Warning(ex, "Failed to stop all hosts.");
+                _logger.LogWarning(ex, "Failed to stop all hosts.");
                 throw;
             }
         }

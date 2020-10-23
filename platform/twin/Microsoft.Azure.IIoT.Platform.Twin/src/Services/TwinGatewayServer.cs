@@ -239,13 +239,13 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
                 else {
                     serverSignature = null;
                 }
-                _logger.Information("Session {sessionId} created.", sessionId);
+                _logger.LogInformation("Session {sessionId} created.", sessionId);
 
                 maxRequestMessageSize = (uint)MessageContext.MaxMessageSize;
                 return CreateResponse(requestHeader, StatusCodes.Good);
             }
             catch (ServiceResultException e) {
-                _logger.Error(e, "Creating session failed.");
+                _logger.LogError(e, "Creating session failed.");
                 lock (_lock) {
                     ServerDiagnostics.RejectedSessionCount++;
                     ServerDiagnostics.RejectedRequestsCount++;
@@ -287,16 +287,16 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
                     requestHeader.AuthenticationToken, clientSignature, clientCertificates,
                     userIdentityToken, userTokenSignature, localeIds, out serverNonce);
                 if (identityChanged) {
-                    _logger.Information("Session {SessionId} activated - identity changed.",
+                    _logger.LogInformation("Session {SessionId} activated - identity changed.",
                         context.Session.Id);
                 }
                 else {
-                    _logger.Debug("Session {SessionId} activated.", context.Session.Id);
+                    _logger.LogDebug("Session {SessionId} activated.", context.Session.Id);
                 }
                 return CreateResponse(requestHeader, StatusCodes.Good);
             }
             catch (ServiceResultException e) {
-                _logger.Error(e, "Failed activating session.");
+                _logger.LogError(e, "Failed activating session.");
                 lock (_lock) {
                     ServerDiagnostics.RejectedRequestsCount++;
                     if (StatusCodeEx.IsSecurityError(e.StatusCode)) {
@@ -319,11 +319,11 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
                     throw new ServiceResultException(StatusCodes.BadSessionIdInvalid);
                 }
                 Sessions.CloseSession(context.Session.Id);
-                _logger.Information("Session {SessionId} closed.", context.Session.Id);
+                _logger.LogInformation("Session {SessionId} closed.", context.Session.Id);
                 return CreateResponse(requestHeader, context.StringTable);
             }
             catch (ServiceResultException e) {
-                _logger.Error(e, "Closing session failed.");
+                _logger.LogError(e, "Closing session failed.");
                 lock (_lock) {
                     ServerDiagnostics.RejectedRequestsCount++;
                     if (StatusCodeEx.IsSecurityError(e.StatusCode)) {
@@ -346,7 +346,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
                 return CreateResponse(requestHeader, context.StringTable);
             }
             catch (ServiceResultException e) {
-                _logger.Error(e, "Cancelling request failed.");
+                _logger.LogError(e, "Cancelling request failed.");
                 lock (_lock) {
                     ServerDiagnostics.RejectedRequestsCount++;
                     if (StatusCodeEx.IsSecurityError(e.StatusCode)) {
@@ -385,7 +385,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
                 return CreateResponse(requestHeader, context.StringTable);
             }
             catch (ServiceResultException e) {
-                _logger.Error(e, "Browse failed.");
+                _logger.LogError(e, "Browse failed.");
                 lock (_lock) {
                     ServerDiagnostics.RejectedRequestsCount++;
                     if (StatusCodeEx.IsSecurityError(e.StatusCode)) {
@@ -423,7 +423,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
                 return CreateResponse(requestHeader, context.StringTable);
             }
             catch (ServiceResultException e) {
-                _logger.Error(e, "Browse Next failed.");
+                _logger.LogError(e, "Browse Next failed.");
                 lock (_lock) {
                     ServerDiagnostics.RejectedRequestsCount++;
                     if (StatusCodeEx.IsSecurityError(e.StatusCode)) {
@@ -466,7 +466,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
                 return CreateResponse(requestHeader, context.StringTable);
             }
             catch (ServiceResultException e) {
-                _logger.Error(e, "Translate Browse Paths failed.");
+                _logger.LogError(e, "Translate Browse Paths failed.");
                 lock (_lock) {
                     ServerDiagnostics.RejectedRequestsCount++;
                     if (StatusCodeEx.IsSecurityError(e.StatusCode)) {
@@ -505,7 +505,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
                 return CreateResponse(requestHeader, context.StringTable);
             }
             catch (ServiceResultException e) {
-                _logger.Error(e, "Read failed.");
+                _logger.LogError(e, "Read failed.");
                 lock (_lock) {
                     ServerDiagnostics.RejectedRequestsCount++;
                     if (StatusCodeEx.IsSecurityError(e.StatusCode)) {
@@ -544,7 +544,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
                 return CreateResponse(requestHeader, context.StringTable);
             }
             catch (ServiceResultException e) {
-                _logger.Error(e, "Write failed.");
+                _logger.LogError(e, "Write failed.");
                 lock (_lock) {
                     ServerDiagnostics.RejectedRequestsCount++;
                     if (StatusCodeEx.IsSecurityError(e.StatusCode)) {
@@ -583,7 +583,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
                 return CreateResponse(requestHeader, context.StringTable);
             }
             catch (ServiceResultException e) {
-                _logger.Error(e, "Call failed.");
+                _logger.LogError(e, "Call failed.");
                 lock (_lock) {
                     ServerDiagnostics.RejectedRequestsCount++;
                     if (StatusCodeEx.IsSecurityError(e.StatusCode)) {
@@ -622,7 +622,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
                 return CreateResponse(requestHeader, context.StringTable);
             }
             catch (ServiceResultException e) {
-                _logger.Error(e, "History Read failed.");
+                _logger.LogError(e, "History Read failed.");
                 lock (_lock) {
                     ServerDiagnostics.RejectedRequestsCount++;
                     if (StatusCodeEx.IsSecurityError(e.StatusCode)) {
@@ -660,7 +660,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
                 return CreateResponse(requestHeader, context.StringTable);
             }
             catch (ServiceResultException e) {
-                _logger.Error(e, "History update failed.");
+                _logger.LogError(e, "History update failed.");
                 lock (_lock) {
                     ServerDiagnostics.RejectedRequestsCount++;
                     if (StatusCodeEx.IsSecurityError(e.StatusCode)) {
@@ -1131,7 +1131,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
                         };
                     }
                     catch (Exception ex) {
-                        _logger.Error(ex, "Node value read failed.");
+                        _logger.LogError(ex, "Node value read failed.");
 
                         // nodesToRead[i].Processed = false;
 
@@ -1183,7 +1183,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
                     }
                 }
                 catch (Exception ex) {
-                    _logger.Error(ex, "Node read as batch failed.");
+                    _logger.LogError(ex, "Node read as batch failed.");
                     for (var i = 0; i < nodesToRead.Count; i++) {
                         if (results[i] != null) {
                             // Only fill in what wasnt yet given a value.
@@ -1243,7 +1243,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
                         results[i] = statusCode;
                     }
                     catch (Exception ex) {
-                        _logger.Error(ex, "Node value write failed.");
+                        _logger.LogError(ex, "Node value write failed.");
 
                         // nodesToWrite[i].Processed = false;
 
@@ -1293,7 +1293,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
                     }
                 }
                 catch (Exception ex) {
-                    _logger.Error(ex, "Node write as batch failed.");
+                    _logger.LogError(ex, "Node write as batch failed.");
                     for (var i = 0; i < nodesToWrite.Count; i++) {
                         if (nodesToWrite[i].Processed) {
                             continue;
@@ -1611,7 +1611,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
 
             // Get operation context from session manager
             var context = Sessions.GetContext(requestHeader, requestType);
-            _logger.Debug("{type} {id} validated.", context.RequestType, context.RequestId);
+            _logger.LogDebug("{type} {id} validated.", context.RequestType, context.RequestId);
 
             // Pass to request manager
             lock (_lock) {
@@ -1715,7 +1715,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
                 }
             };
 
-            _logger.Information("Starting server...");
+            _logger.LogInformation("Starting server...");
             ApplicationInstance.MessageDlg = new DummyDialog();
 
             config = ApplicationInstance.FixupAppConfig(config);
@@ -1735,7 +1735,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
                 if (e.Error.StatusCode ==
                     StatusCodes.BadCertificateUntrusted) {
                     e.Accept = true; // TODO
-                    _logger.Information((e.Accept ? "Accepted" : "Rejected") +
+                    _logger.LogInformation((e.Accept ? "Accepted" : "Rejected") +
                         " Certificate {Subject}", e.Certificate.Subject);
                 }
             };

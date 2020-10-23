@@ -104,7 +104,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Services {
 
             await _broker.NotifyAllAsync(
                 l => l.OnCertificateRequestSubmittedAsync(result)).ConfigureAwait(false);
-            _logger.Information("New signing request submitted.");
+            _logger.LogInformation("New signing request submitted.");
             return new StartSigningRequestResultModel {
                 RequestId = result.Record.RequestId
             };
@@ -140,7 +140,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Services {
                     // Accept
                     await _broker.NotifyAllAsync(
                         l => l.OnCertificateRequestAcceptedAsync(request)).ConfigureAwait(false);
-                    _logger.Information("Signing response accepted and finished.");
+                    _logger.LogInformation("Signing response accepted and finished.");
                 }
             }
         }

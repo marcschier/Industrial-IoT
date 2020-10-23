@@ -34,7 +34,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Handler {
             }
             await _management.ApproveRequestAsync(request.Record.RequestId,
                 request.Record.Submitted).ConfigureAwait(false);
-            _logger.Information("Request {@request} for {@entity} was auto-approved.",
+            _logger.LogInformation("Request {@request} for {@entity} was auto-approved.",
                 request.Record, request.Entity);
         }
 

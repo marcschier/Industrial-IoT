@@ -60,7 +60,7 @@ namespace Microsoft.Azure.IIoT.Azure.ActiveDirectory.Clients {
                         // Expected if not in cache - continue down
                     }
                     catch (Exception ex) {
-                        _logger.Debug(ex, "Failed to get token for {resource} from cache...",
+                        _logger.LogDebug(ex, "Failed to get token for {resource} from cache...",
                             resource);
                         exceptions.Add(ex);
                         continue;
@@ -69,20 +69,19 @@ namespace Microsoft.Azure.IIoT.Azure.ActiveDirectory.Clients {
                 try {
                     var token = await GetTokenAsync(decorator.Client, resource, scopes).ConfigureAwait(false);
                     if (token != null) {
-                        _logger.Information(
-                           "Successfully acquired token for {resource} with {config}.",
+                        _logger.LogInformation("Successfully acquired token for {resource} with {config}.",
                            resource, config.GetName());
                         return token;
                     }
                 }
                 catch (MsalException ex) {
-                    _logger.Debug(ex, "Failed to get token for {resource} with {config} " +
+                    _logger.LogDebug(ex, "Failed to get token for {resource} with {config} " +
                         "- error: {error}",
                         resource, config.GetName(), ex.ErrorCode);
                     exceptions.Add(ex);
                 }
                 catch (Exception e) {
-                    _logger.Debug(e, "Failed to get token for {resource} with {config}.",
+                    _logger.LogDebug(e, "Failed to get token for {resource} with {config}.",
                         resource, config.GetName());
                     exceptions.Add(e);
                 }

@@ -233,7 +233,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                 // Find the specified endpoint in the connection model - continue if not exist
                 var ep = dataSetWriter.DataSet?.DataSetSource?.Connection?.Endpoint;
                 if (ep == null) {
-                    _logger.Error(
+                    _logger.LogError(
                         "Tried to add dataset source without endpoint - skip writer {writer} " +
                         "in group {group}.", dataSetWriter.DataSetWriterId, group.WriterGroupId);
                     continue;
@@ -248,7 +248,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
                 if (endpoints.Items == null ||
                     endpoints.Items.Count == 0 ||
                     string.IsNullOrEmpty(endpoints.Items[0].Id)) {
-                    _logger.Error(
+                    _logger.LogError(
                         "Dataset source endpoint not in registry - skip writer {writer} " +
                         "in group {group}.", dataSetWriter.DataSetWriterId, group.WriterGroupId);
                     continue;
@@ -1200,7 +1200,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
             var group = await EnsureDefaultWriterGroupExistsAsync(context, ct).ConfigureAwait(false);
             if (writer != null) {
                 if (added) {
-                    _logger.Information("Added default group for {endpointId}", endpointId);
+                    _logger.LogInformation("Added default group for {endpointId}", endpointId);
                     // Writer added
                     await _writerEvents.NotifyAllAsync(
                         l => l.OnDataSetWriterAddedAsync(context, writer)).ConfigureAwait(false);

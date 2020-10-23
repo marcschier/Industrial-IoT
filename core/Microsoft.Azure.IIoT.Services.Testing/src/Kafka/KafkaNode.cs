@@ -45,7 +45,7 @@ namespace Microsoft.Azure.IIoT.Services.Kafka.Server {
                     return;
                 }
 
-                _logger.Information("Starting Kafka node at {port}...", _port);
+                _logger.LogInformation("Starting Kafka node at {port}...", _port);
                 var param = GetContainerParameters(_port);
                 var name = $"kafka_{_port}";
                 (_containerId, _owner) = await CreateAndStartContainerAsync(
@@ -54,7 +54,7 @@ namespace Microsoft.Azure.IIoT.Services.Kafka.Server {
                 try {
                     // Check running
                     await WaitForContainerStartedAsync(_port).ConfigureAwait(false);
-                    _logger.Information("Kafka node running at {port}.", _port);
+                    _logger.LogInformation("Kafka node running at {port}.", _port);
                 }
                 catch {
                     // Stop and retry
@@ -74,7 +74,7 @@ namespace Microsoft.Azure.IIoT.Services.Kafka.Server {
             try {
                 if (_containerId != null && _owner) {
                     await StopAndRemoveContainerAsync(_containerId).ConfigureAwait(false);
-                    _logger.Information("Stopped Kafka node at {port}.", _port);
+                    _logger.LogInformation("Stopped Kafka node at {port}.", _port);
                 }
             }
             finally {

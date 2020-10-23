@@ -30,7 +30,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Clients {
 
         /// <inheritdoc/>
         public void OnWriterGroupStateChange(string writerGroupId, WriterGroupStatus? state) {
-            _logger.Information("{writerGroup} changed state to {state}", 
+            _logger.LogInformation("{writerGroup} changed state to {state}",
                 writerGroupId, state);
             _processor.TrySchedule(() => _registry.UpdateWriterGroupStateAsync(
                 writerGroupId, state));

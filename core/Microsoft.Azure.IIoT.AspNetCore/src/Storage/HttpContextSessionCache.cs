@@ -64,7 +64,7 @@ namespace Microsoft.Azure.IIoT.AspNetCore.Storage {
             kSessionLock.EnterReadLock();
             try {
                 if (!_ctx.HttpContext.Session.TryGetValue(key, out var blob)) {
-                    _logger.Information("CacheId {key} not found in session {sessionId}",
+                    _logger.LogInformation("CacheId {key} not found in session {sessionId}",
                         key, _ctx.HttpContext.Session.Id);
                 }
                 return blob;

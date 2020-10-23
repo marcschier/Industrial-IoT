@@ -99,7 +99,7 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Provider.Controllers {
 
             if (_logger.IsEnabled(LogLevel.Debug)) {
                 var externalClaims = result.Principal.Claims.Select(c => $"{c.Type}: {c.Value}");
-                _logger.LogDebug("External claims: {@claims}", externalClaims);
+                LoggerExtensions.LogDebug(_logger, "External claims: {@claims}", externalClaims);
             }
 
             // lookup our user and external provider info

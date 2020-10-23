@@ -67,10 +67,10 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Services {
                     Label = moniker,
                 }).ConfigureAwait(false);
 
-                _logger.Verbose("----->  {@message} sent...", message);
+                _logger.LogTrace("----->  {@message} sent...", message);
             }
             catch (Exception ex) {
-                _logger.Error(ex, "Failed to publish message {@message}", message);
+                _logger.LogError(ex, "Failed to publish message {@message}", message);
                 throw;
             }
         }
@@ -85,7 +85,7 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Services {
                         await _subscriptionClient.RemoveRuleAsync(eventName).ConfigureAwait(false);
                     }
                     catch (MessagingEntityNotFoundException) {
-                        _logger.Warning("The messaging entity {eventName} could not be found.",
+                        _logger.LogWarning("The messaging entity {eventName} could not be found.",
                             eventName);
                     }
                 }
@@ -123,7 +123,7 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Services {
                     }
                     catch (ServiceBusException ex) {
                         if (ex.Message.Contains("already exists")) {
-                            _logger.Debug("The messaging entity {eventName} already exists.",
+                            _logger.LogDebug("The messaging entity {eventName} already exists.",
                                 eventName);
                         }
                         else {
@@ -176,7 +176,7 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Services {
                     await _subscriptionClient.RemoveRuleAsync(eventName).ConfigureAwait(false);
                 }
                 catch (ServiceBusException) {
-                    _logger.Warning("The messaging entity {eventName} does not exist.",
+                    _logger.LogWarning("The messaging entity {eventName} does not exist.",
                         eventName);
                     // TODO: throw?
                 }
@@ -195,7 +195,7 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Services {
         private Task ExceptionReceivedHandler(ExceptionReceivedEventArgs eventArg) {
             var ex = eventArg.Exception;
             var context = eventArg.ExceptionReceivedContext;
-            _logger.Error(ex, "{ExceptionMessage} - Context: {@ExceptionContext}",
+            _logger.LogError(ex, "{ExceptionMessage} - Context: {@ExceptionContext}",
                 ex.Message, context);
             return Task.CompletedTask;
         }
@@ -222,7 +222,7 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Services {
                 // Do for now every time to pass brand new objects
                 var evt = _serializer.Deserialize(message.Body, handler.Type);
                 await handler.HandleAsync(evt).ConfigureAwait(false);
-                _logger.Verbose("<-----  {@message} received and handled! ", evt);
+                _logger.LogTrace("<-----  {@message} received and handled! ", evt);
             }
             // Complete the message so that it is not received again.
             await _subscriptionClient.CompleteAsync(message.SystemProperties.LockToken).ConfigureAwait(false);

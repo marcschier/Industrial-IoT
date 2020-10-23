@@ -548,7 +548,7 @@ Options:
                 }, false, CancellationToken.None).ConfigureAwait(false);
             }
             catch (ResourceConflictException) {
-                logger.Information("Gateway {deviceId} exists.", deviceId);
+                logger.LogInformation("Gateway {deviceId} exists.", deviceId);
             }
             try {
                 await registry.CreateOrUpdateAsync(new DeviceTwinModel {
@@ -563,7 +563,7 @@ Options:
                 }, true, CancellationToken.None).ConfigureAwait(false);
             }
             catch (ResourceConflictException) {
-                logger.Information("Module {moduleId} exists...", moduleId);
+                logger.LogInformation("Module {moduleId} exists...", moduleId);
             }
             var cs = await registry.GetConnectionStringAsync(deviceId, moduleId).ConfigureAwait(false);
             return cs;

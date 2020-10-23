@@ -53,7 +53,7 @@ namespace Microsoft.Azure.IIoT.Http.Auth {
                         "Bearer", result.RawToken);
                 }
                 else {
-                    _logger.Error("Failed to aquire token calling " +
+                    _logger.LogError("Failed to aquire token calling " +
                         "{request} ({resource}) - calling without...",
                         requestUri, resourceId);
                 }

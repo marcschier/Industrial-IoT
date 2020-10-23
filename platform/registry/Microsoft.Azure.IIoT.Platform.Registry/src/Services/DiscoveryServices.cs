@@ -102,7 +102,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
             var scheduled = _queue.TryAdd(task);
             if (!scheduled) {
                 task.Dispose();
-                _logger.Error("Discovey request not scheduled, internal server error!");
+                _logger.LogError("Discovey request not scheduled, internal server error!");
                 var ex = new ResourceExhaustionException("Failed to schedule task");
                 _progress.OnDiscoveryError(request, ex);
                 throw ex;
@@ -209,7 +209,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
             }
             catch (OperationCanceledException) { }
             catch (Exception ex) {
-                _logger.Error(ex, "Unexpected exception stopping processor thread.");
+                _logger.LogError(ex, "Unexpected exception stopping processor thread.");
             }
         }
 
@@ -219,7 +219,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
         /// <param name="ct"></param>
         /// <returns></returns>
         private async Task ProcessDiscoveryRequestsAsync(CancellationToken ct) {
-            _logger.Information("Starting discovery processor...");
+            _logger.LogInformation("Starting discovery processor...");
             // Process all discovery requests
             while (!ct.IsCancellationRequested) {
                 try {
@@ -242,12 +242,12 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                 }
                 catch (OperationCanceledException) { }
                 catch (Exception ex) {
-                    _logger.Error(ex, "Discovery processor error occurred - continue...");
+                    _logger.LogError(ex, "Discovery processor error occurred - continue...");
                 }
             }
             // Send cancellation for all pending items
             await CancelPendingRequestsAsync().ConfigureAwait(false);
-            _logger.Information("Stopped discovery processor.");
+            _logger.LogInformation("Stopped discovery processor.");
         }
 
         /// <summary>
@@ -255,7 +255,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
         /// </summary>
         /// <param name="request"></param>
         private async Task ProcessDiscoveryRequestAsync(DiscoveryRequest request) {
-            _logger.Debug("Processing discovery request...");
+            _logger.LogDebug("Processing discovery request...");
             _progress.OnDiscoveryStarted(request.Request);
             object diagnostics = null;
 
@@ -306,7 +306,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
         internal async Task SendDiscoveryResultsAsync(DiscoveryRequest request,
             List<ApplicationRegistrationModel> discovered, DateTime timestamp,
             object diagnostics, CancellationToken ct) {
-            _logger.Information("Uploading {count} results...", discovered.Count);
+            _logger.LogInformation("Uploading {count} results...", discovered.Count);
             var messages = discovered
                 .SelectMany(server => server.Endpoints
                     .Select(endpoint => new DiscoveryResultModel {
@@ -331,7 +331,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                     return discovery;
                 });
             await _publish.ReportResultsAsync(messages, ct).ConfigureAwait(false);
-            _logger.Information("{count} results uploaded.", discovered.Count);
+            _logger.LogInformation("{count} results uploaded.", discovered.Count);
         }
 
         /// <summary>
@@ -343,14 +343,14 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
             DiscoveryRequest request) {
             var discoveryUrls = await GetDiscoveryUrlsAsync(request.DiscoveryUrls).ConfigureAwait(false);
 
-            _logger.Information("Start {mode} discovery run...", request.Mode);
+            _logger.LogInformation("Start {mode} discovery run...", request.Mode);
             var watch = Stopwatch.StartNew();
 
             if (request.Mode == DiscoveryMode.Url) {
                 var discoveredUrl = await DiscoverServersAsync(request, discoveryUrls,
                     request.Configuration.Locales).ConfigureAwait(false);
 
-                _logger.Information("Discovery took {elapsed} and found {count} servers.",
+                _logger.LogInformation("Discovery took {elapsed} and found {count} servers.",
                 watch.Elapsed, discoveredUrl.Count);
                 return discoveredUrl;
             }
@@ -439,7 +439,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
             var discovered = await DiscoverServersAsync(request, discoveryUrls,
                 request.Configuration.Locales).ConfigureAwait(false);
 
-            _logger.Information("Discovery took {elapsed} and found {count} servers.",
+            _logger.LogInformation("Discovery took {elapsed} and found {count} servers.",
                 watch.Elapsed, discovered.Count);
             return discovered;
         }
@@ -560,7 +560,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                         break;
                     }
                     catch (Exception e) {
-                        _logger.Warning(e, "Failed to resolve the host for {discoveryUrl}", discoveryUrl);
+                        _logger.LogWarning(e, "Failed to resolve the host for {discoveryUrl}", discoveryUrl);
                         return list;
                     }
                 }
@@ -582,7 +582,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                     foreach (var address in entry.AddressList
                                 .Where(a => a.AddressFamily == AddressFamily.InterNetwork)
                                 .Where(a => !addresses.Any(b => a.Equals(b)))) {
-                        _logger.Information("Including host address {address}", address);
+                        _logger.LogInformation("Including host address {address}", address);
                         addresses.Add(address);
                     }
                 }
@@ -592,7 +592,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                 }
             }
             catch (Exception e) {
-                _logger.Warning(e, "Failed to add local host address.");
+                _logger.LogWarning(e, "Failed to add local host address.");
             }
         }
 
@@ -601,7 +601,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
         /// </summary>
         /// <returns></returns>
         private async Task CancelPendingRequestsAsync() {
-            _logger.Information("Cancelling all pending requests...");
+            _logger.LogInformation("Cancelling all pending requests...");
             await _lock.WaitAsync().ConfigureAwait(false);
             try {
                 foreach (var request in _pending) {
@@ -613,7 +613,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
             finally {
                 _lock.Release();
             }
-            _logger.Information("Pending requests cancelled...");
+            _logger.LogInformation("Pending requests cancelled...");
         }
 
         /// <summary>
@@ -632,7 +632,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                 }
             }
             catch (Exception ex) {
-                _logger.Warning(ex, "Failed to send pending event");
+                _logger.LogWarning(ex, "Failed to send pending event");
             }
             finally {
                 _lock.Release();
@@ -645,7 +645,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
         /// <param name="log"></param>
         private void ProgressTimer(Action log) {
             if ((_counter % 3) == 0) {
-                _logger.Information("GC Mem: {gcmem} kb, Working set / Private Mem: " +
+                _logger.LogInformation("GC Mem: {gcmem} kb, Working set / Private Mem: " +
                     "{privmem} kb / {privmemsize} kb, Handles: {handles}",
                     GC.GetTotalMemory(false) / 1024,
                     Process.GetCurrentProcess().WorkingSet64 / 1024,

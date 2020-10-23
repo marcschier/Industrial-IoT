@@ -52,7 +52,7 @@ namespace Microsoft.Azure.IIoT.Azure.LogAnalytics {
         /// <inheritdoc/>
         public override void OnStarting() {
             if (_config == null) {
-                _logger.Information("Inject Log analytics configuration to enable publishing.");
+                _logger.LogInformation("Inject Log analytics configuration to enable publishing.");
                 return;
             }
             // Create client if not configured before...

@@ -96,7 +96,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Transport {
             }
             channel.Reconnect(socket, requestId, sequenceNumber, clientCertificate,
                 token, request);
-            _logger.Information("Channel {channelId} reconnected", channelId);
+            _logger.LogInformation("Channel {channelId} reconnected", channelId);
             return true;
         }
 
@@ -104,7 +104,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Transport {
         public void ChannelClosed(uint channelId) {
             if (_channels.TryRemove(channelId, out var channel)) {
                 Utils.SilentDispose(channel);
-                _logger.Information("Channel {channelId} closed", channelId);
+                _logger.LogInformation("Channel {channelId} closed", channelId);
             }
         }
 
@@ -133,11 +133,11 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Transport {
                         throw new InvalidProgramException("Failed to add channel");
                     }
                     channel = null;
-                    _logger.Debug("Started channel {channelId} on {socket.Handle}...",
+                    _logger.LogDebug("Started channel {channelId} on {socket.Handle}...",
                         channelId, socket.Handle);
                 }
                 catch (Exception ex) {
-                    _logger.Error(ex, "Unexpected error accepting a new connection.");
+                    _logger.LogError(ex, "Unexpected error accepting a new connection.");
                 }
                 finally {
                     channel?.Dispose();
@@ -161,7 +161,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Transport {
                     });
             }
             catch (Exception ex) {
-                _logger.Error(ex, "Unexpected error processing request.");
+                _logger.LogError(ex, "Unexpected error processing request.");
             }
         }
 
@@ -177,7 +177,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Transport {
                 channel.SendResponse((uint)args[1], response);
             }
             catch (Exception ex) {
-                _logger.Error(ex, "Unexpected error sending result.");
+                _logger.LogError(ex, "Unexpected error sending result.");
             }
         }
 

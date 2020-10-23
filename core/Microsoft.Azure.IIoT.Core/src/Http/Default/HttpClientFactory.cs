@@ -201,7 +201,7 @@ namespace Microsoft.Azure.IIoT.Http.Clients {
                                 entry.Dispose();
                             }
                             catch (Exception ex) {
-                                _logger.Error(ex, "Failed to cleanup handler {name}",
+                                _logger.LogError(ex, "Failed to cleanup handler {name}",
                                     entry.Name);
                             }
                         }

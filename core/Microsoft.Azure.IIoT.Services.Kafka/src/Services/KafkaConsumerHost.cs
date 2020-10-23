@@ -67,7 +67,7 @@ namespace Microsoft.Azure.IIoT.Services.Kafka.Services {
                         .SetStatisticsHandler(OnMetrics)
                         .SetLogHandler((_, m) => _logger.Log(m))
                         .Build()) {
-                        _logger.Information("Starting consumer {consumerId} on {topic}...",
+                        _logger.LogInformation("Starting consumer {consumerId} on {topic}...",
                             _consumerId, topic);
                         consumer.Subscribe(topic);
                         while (!ct.IsCancellationRequested) {
@@ -93,12 +93,12 @@ namespace Microsoft.Azure.IIoT.Services.Kafka.Services {
                 catch (OperationCanceledException) { }
                 catch (Exception error) {
                     // Exception - report and continue
-                    _logger.Warning(error, "Consumer {consumerId} encountered error...",
+                    _logger.LogWarning(error, "Consumer {consumerId} encountered error...",
                         _consumerId);
                     continue;
                 }
             }
-            _logger.Information("Exiting consumer {consumerId} on {topic}...",
+            _logger.LogInformation("Exiting consumer {consumerId} on {topic}...",
                 _consumerId, topic);
         }
 
@@ -111,12 +111,12 @@ namespace Microsoft.Azure.IIoT.Services.Kafka.Services {
         private Task CommitAsync(IConsumer<string, byte[]> consumer,
             ConsumeResult<string, byte[]> result) {
             try {
-                _logger.Debug("Commit consumer {id} {memberId}...", _consumerId,
+                _logger.LogDebug("Commit consumer {id} {memberId}...", _consumerId,
                     consumer.MemberId);
                 consumer.Commit(result);
             }
             catch (Exception ex) {
-                _logger.Warning(ex, "Failed to commit consumer {id} {memberId}...",
+                _logger.LogWarning(ex, "Failed to commit consumer {id} {memberId}...",
                     _consumerId, consumer.MemberId);
             }
             return Task.CompletedTask;

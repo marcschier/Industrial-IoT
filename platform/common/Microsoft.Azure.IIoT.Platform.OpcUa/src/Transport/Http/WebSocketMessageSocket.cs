@@ -143,7 +143,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Transport {
                     StatusCodes.BadTcpInternalError, ex.Message);
             }
             if (ServiceResult.IsBad(error)) {
-                _logger.Error("Bad service result {error} received", error);
+                _logger.LogError("Bad service result {error} received", error);
                 if (_receiveBuffer != null) {
                     _bufferManager.ReturnBuffer(_receiveBuffer,
                         nameof(EndReceive));

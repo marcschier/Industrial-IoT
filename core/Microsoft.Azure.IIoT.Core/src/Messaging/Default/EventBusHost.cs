@@ -47,22 +47,22 @@ namespace Microsoft.Azure.IIoT.Messaging.Default {
                                 continue;
                             }
                             var method = register.MakeGenericMethod(eventType);
-                            _logger.Debug("Starting Event bus bridge for {type}...",
+                            _logger.LogDebug("Starting Event bus bridge for {type}...",
                                 type.Name);
                             var token = await ((Task<string>)method.Invoke(
                                 _client, new object[] { handler })).ConfigureAwait(false);
                             _handlers[handler] = token; // Store token to unregister
-                            _logger.Information("Event bus bridge for {type} started.",
+                            _logger.LogInformation("Event bus bridge for {type} started.",
                                 type.Name);
                         }
                         catch (Exception ex) {
-                            _logger.Error(ex, "Failed to start Event bus host for {type}.",
+                            _logger.LogError(ex, "Failed to start Event bus host for {type}.",
                                 type.Name);
                             throw;
                         }
                     }
                 }
-                _logger.Information("Event bus host running.");
+                _logger.LogInformation("Event bus host running.");
             }
             finally {
                 _lock.Release();
@@ -80,12 +80,12 @@ namespace Microsoft.Azure.IIoT.Messaging.Default {
                         _handlers[token.Key] = null;
                     }
                     catch (Exception ex) {
-                        _logger.Error(ex, "Failed to stop Event bus host using token {token}.",
+                        _logger.LogError(ex, "Failed to stop Event bus host using token {token}.",
                             token);
                         throw;
                     }
                 }
-                _logger.Information("Event bus host stopped.");
+                _logger.LogInformation("Event bus host stopped.");
             }
             finally {
                 _lock.Release();

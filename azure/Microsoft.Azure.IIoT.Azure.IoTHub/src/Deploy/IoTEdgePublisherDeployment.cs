@@ -81,7 +81,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub.Deploy {
             var version = _config.ImagesTag ?? "latest";
             var image = $"{server}/{ns}iotedge/opc-publisher:{version}";
 
-            _logger.Information("Updating opc publisher module deployment with image {image}", image);
+            _logger.LogInformation("Updating opc publisher module deployment with image {image}", image);
 
             // Return deployment modules object
             var content = @"

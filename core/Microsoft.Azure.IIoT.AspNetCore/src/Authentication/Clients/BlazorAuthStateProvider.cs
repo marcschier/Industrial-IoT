@@ -52,7 +52,7 @@ namespace Microsoft.Azure.IIoT.AspNetCore.Authentication.Clients {
                 _cts.Cancel();
                 _cts.Dispose();
             }
-            _logger.Debug("Token revalidation loop exit.");
+            _logger.LogDebug("Token revalidation loop exit.");
         }
 
         /// <inheritdoc/>
@@ -119,14 +119,14 @@ namespace Microsoft.Azure.IIoT.AspNetCore.Authentication.Clients {
             CancellationToken ct) {
             try {
                 var authenticationState = await authenticationStateTask.ConfigureAwait(false);
-                _logger.Debug("Starting token revalidation loop");
+                _logger.LogDebug("Starting token revalidation loop");
                 if (authenticationState.User.Identity.IsAuthenticated) {
                     while (!ct.IsCancellationRequested) {
                         bool isValid;
                         try {
                             await Task.Delay(_config?.RevalidateInterval ?? TimeSpan.FromSeconds(10),
                                 ct).ConfigureAwait(false);
-                            _logger.Debug("Testing token still valid...");
+                            _logger.LogDebug("Testing token still valid...");
                             isValid = await ValidateAuthenticationStateAsync(authenticationState).ConfigureAwait(false);
                         }
                         catch (TaskCanceledException tce) {
@@ -138,7 +138,7 @@ namespace Microsoft.Azure.IIoT.AspNetCore.Authentication.Clients {
                             throw;
                         }
                         if (!isValid) {
-                            _logger.Information("Token invalid - signing out...");
+                            _logger.LogInformation("Token invalid - signing out...");
                             ForceSignOut();
                             break;
                         }

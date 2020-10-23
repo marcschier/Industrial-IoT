@@ -42,7 +42,7 @@ namespace Microsoft.Azure.IIoT.Messaging.SignalR.Services {
                     arguments ?? Array.Empty<object>(), ct).ConfigureAwait(false);
             }
             catch (Exception ex) {
-                _logger.Verbose(ex, "Failed to send broadcast message");
+                _logger.LogTrace(ex, "Failed to send broadcast message");
             }
         }
 
@@ -60,7 +60,7 @@ namespace Microsoft.Azure.IIoT.Messaging.SignalR.Services {
                     arguments ?? Array.Empty<object>(), ct).ConfigureAwait(false);
             }
             catch (Exception ex) {
-                _logger.Debug(ex, "Failed to send unicast message");
+                _logger.LogDebug(ex, "Failed to send unicast message");
             }
          }
 
@@ -78,7 +78,7 @@ namespace Microsoft.Azure.IIoT.Messaging.SignalR.Services {
                     arguments ?? Array.Empty<object>(), ct).ConfigureAwait(false);
             }
             catch (Exception ex) {
-                _logger.Verbose(ex, "Failed to send multicast message");
+                _logger.LogTrace(ex, "Failed to send multicast message");
             }
         }
 

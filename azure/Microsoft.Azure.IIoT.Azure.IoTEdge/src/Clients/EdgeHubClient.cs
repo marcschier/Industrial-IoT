@@ -87,7 +87,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Clients {
                 }
             }
             catch (Exception e) {
-                _logger.Error(e,
+                _logger.LogError(e,
                     "Bad configuration value in EdgeHubConnectionString config.");
             }
 
@@ -102,7 +102,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Clients {
         "host configuration is incomplete and missing the EdgeHubConnectionString setting." +
         "You can run the module using the command line interface or in IoT Edge context, or " +
         "manually set the 'EdgeHubConnectionString' environment variable.");
-                _logger.Error(ex, "The Twin module was not configured correctly.");
+                _logger.LogError(ex, "The Twin module was not configured correctly.");
                 throw ex;
             }
 
@@ -127,8 +127,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Clients {
                 else {
                     transportToUse = TransportOption.AmqpOverTcp;
                 }
-                _logger.Information(
-                    "Connecting all clients to {edgeHub} using {transport}.",
+                _logger.LogInformation("Connecting all clients to {edgeHub} using {transport}.",
                         Gateway, transportToUse);
             }
             else {
@@ -137,7 +136,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Clients {
             }
 
             if (bypassCertValidation) {
-                _logger.Warning("Bypassing certificate validation for client.");
+                _logger.LogWarning("Bypassing certificate validation for client.");
             }
             var transportSettings = GetTransportSettings(bypassCertValidation,
                 transportToUse);
@@ -363,10 +362,10 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Clients {
                 TimeSpan timeout, Action onConnectionLost, ILogger logger) {
 
                 if (cs == null) {
-                    logger.Information("Running in iotedge context.");
+                    logger.LogInformation("Running in iotedge context.");
                 }
                 else {
-                    logger.Information("Running outside iotedge context.");
+                    logger.LogInformation("Running outside iotedge context.");
                 }
 
                 var client = await CreateAsync(cs, transportSetting).ConfigureAwait(false);
@@ -547,7 +546,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Clients {
                 ConnectionStatusChangeReason reason) {
 
                 if (status == ConnectionStatus.Connected) {
-                    logger.Information("{counter}: Module {deviceId}_{moduleId} reconnected " +
+                    logger.LogInformation("{counter}: Module {deviceId}_{moduleId} reconnected " +
                         "due to {reason}.", _reconnectCounter, deviceId, moduleId, reason);
                     kReconnectionStatus.WithLabels(moduleId, deviceId, 
                         DateTime.UtcNow.ToString(CultureInfo.InvariantCulture))
@@ -558,7 +557,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Clients {
                 kDisconnectionStatus.WithLabels(moduleId, deviceId,
                     DateTime.UtcNow.ToString(CultureInfo.InvariantCulture))
                     .Set(_reconnectCounter);
-                logger.Information("{counter}: Module {deviceId}_{moduleId} disconnected " +
+                logger.LogInformation("{counter}: Module {deviceId}_{moduleId} disconnected " +
                     "due to {reason} - now {status}...", _reconnectCounter, deviceId, moduleId,
                         reason, status);
                 if (IsClosed) {
@@ -808,7 +807,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Clients {
                 ConnectionStatusChangeReason reason) {
 
                 if (status == ConnectionStatus.Connected) {
-                    logger.Information("{counter}: Device {deviceId} reconnected " +
+                    logger.LogInformation("{counter}: Device {deviceId} reconnected " +
                         "due to {reason}.", _reconnectCounter, deviceId, reason);
                     kReconnectionStatus.WithLabels(deviceId, 
                         DateTime.UtcNow.ToString(CultureInfo.InvariantCulture))
@@ -816,7 +815,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Clients {
                     _reconnectCounter++;
                     return;
                 }
-                logger.Information("{counter}: Device {deviceId} disconnected " +
+                logger.LogInformation("{counter}: Device {deviceId} disconnected " +
                     "due to {reason} - now {status}...", _reconnectCounter, deviceId,
                         reason, status);
                 kDisconnectionStatus.WithLabels(deviceId, 

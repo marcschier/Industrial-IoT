@@ -95,7 +95,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Transport {
             }
             channel.Reconnect(socket, requestId, sequenceNumber, clientCertificate,
                 token, request);
-            _logger.Information("Channel {channelId} reconnected", channelId);
+            _logger.LogInformation("Channel {channelId} reconnected", channelId);
             return true;
         }
 
@@ -108,7 +108,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Transport {
         public void ChannelClosed(uint channelId) {
             if (_channels.TryRemove(channelId, out var channel)) {
                 Utils.SilentDispose(channel);
-                _logger.Information("Channel {channelId} closed", channelId);
+                _logger.LogInformation("Channel {channelId} closed", channelId);
             }
         }
 
@@ -134,7 +134,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Transport {
                 return socket;
             }
             catch (Exception ex) {
-                _logger.Warning(ex, "failed to create listening socket.");
+                _logger.LogWarning(ex, "failed to create listening socket.");
                 return null;
             }
         }
@@ -167,11 +167,11 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Transport {
                         channel.Attach(channelId, socket);
 
                         _channels.TryAdd(channelId, channel);
-                        _logger.Debug("Started channel {channelId} on {socket}...",
+                        _logger.LogDebug("Started channel {channelId} on {socket}...",
                             channelId, socket.Handle);
                     }
                     catch (Exception ex) {
-                        _logger.Error(ex, "Unexpected error accepting a new connection.");
+                        _logger.LogError(ex, "Unexpected error accepting a new connection.");
                     }
                 }
 
@@ -187,7 +187,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Transport {
                         }
                     }
                     catch (Exception ex) {
-                        _logger.Error(ex, "Unexpected error listening for a connections.");
+                        _logger.LogError(ex, "Unexpected error listening for a connections.");
                         // Stop listening
                     }
                 }
@@ -211,7 +211,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Transport {
                     });
             }
             catch (Exception ex) {
-                _logger.Error(ex, "Unexpected error processing request.");
+                _logger.LogError(ex, "Unexpected error processing request.");
             }
         }
 
@@ -227,7 +227,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Transport {
                 channel.SendResponse((uint)args[1], response);
             }
             catch (Exception ex) {
-                _logger.Error(ex, "Unexpected error sending result.");
+                _logger.LogError(ex, "Unexpected error sending result.");
             }
         }
 

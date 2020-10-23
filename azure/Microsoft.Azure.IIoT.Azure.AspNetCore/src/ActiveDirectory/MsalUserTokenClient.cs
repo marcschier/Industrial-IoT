@@ -70,8 +70,7 @@ namespace Microsoft.Azure.IIoT.AspNetCore.Authentication.Clients {
                     var result = await AcquireTokenSilentAsync(decorator.Client,
                         _ctx.HttpContext.User, GetScopes(config, scopes), config.TenantId).ConfigureAwait(false);
                     if (result != null) {
-                        _logger.Debug(
-                            "Successfully acquired token {resource} with {config}.",
+                        _logger.LogDebug("Successfully acquired token {resource} with {config}.",
                             resource, config.GetName());
                         return result.ToTokenResult();
                     }
@@ -80,7 +79,7 @@ namespace Microsoft.Azure.IIoT.AspNetCore.Authentication.Clients {
                     // Expected if not in cache - continue down
                 }
                 catch (Exception e) {
-                    _logger.Debug(e, "Failed to get token silently for {resource} with {config}.",
+                    _logger.LogDebug(e, "Failed to get token silently for {resource} with {config}.",
                         resource, config.GetName());
                     exceptions.Add(e);
                     continue;
@@ -96,8 +95,7 @@ namespace Microsoft.Azure.IIoT.AspNetCore.Authentication.Clients {
                     try {
                         var result = await decorator.Client.AcquireTokenOnBehalfOf(
                             GetScopes(config, scopes), new UserAssertion(accessToken)).ExecuteAsync().ConfigureAwait(false);
-                        _logger.Information(
-                            "Successfully acquired on behalf token for {resource} with {config}.",
+                        _logger.LogInformation("Successfully acquired on behalf token for {resource} with {config}.",
                                 resource, config.GetName());
                         return result.ToTokenResult();
                     }
@@ -107,7 +105,7 @@ namespace Microsoft.Azure.IIoT.AspNetCore.Authentication.Clients {
                     }
                 }
                 else {
-                    _logger.Debug("Could not find token for {resource} with {config} in http context.",
+                    _logger.LogDebug("Could not find token for {resource} with {config} in http context.",
                         resource, config.GetName());
                 }
             }
@@ -138,7 +136,7 @@ namespace Microsoft.Azure.IIoT.AspNetCore.Authentication.Clients {
                     }
                 }
                 catch (Exception e) {
-                    _logger.Error(e, "Failed to get token for code with {config}.",
+                    _logger.LogError(e, "Failed to get token for code with {config}.",
                          config.GetName());
                 }
             }

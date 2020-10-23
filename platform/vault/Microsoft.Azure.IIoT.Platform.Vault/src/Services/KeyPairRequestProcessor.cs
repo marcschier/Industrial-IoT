@@ -99,7 +99,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Services {
             await _broker.NotifyAllAsync(
                 l => l.OnCertificateRequestSubmittedAsync(result)).ConfigureAwait(false);
 
-            _logger.Information("New Key pair request submitted.");
+            _logger.LogInformation("New Key pair request submitted.");
             return new StartNewKeyPairRequestResultModel {
                 RequestId = result.Record.RequestId
             };
@@ -146,7 +146,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Services {
                     // Accept
                     await _broker.NotifyAllAsync(
                         l => l.OnCertificateRequestAcceptedAsync(request)).ConfigureAwait(false);
-                    _logger.Information("Key pair response accepted and finished.");
+                    _logger.LogInformation("Key pair response accepted and finished.");
                 }
             }
         }

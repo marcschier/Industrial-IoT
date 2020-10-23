@@ -192,7 +192,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                             context, application)).ConfigureAwait(false);
                     }
                     catch (Exception ex) {
-                        _logger.Error(ex, "Exception purging application {id} - continue",
+                        _logger.LogError(ex, "Exception purging application {id} - continue",
                             found.ApplicationId);
                         continue;
                     }
@@ -311,7 +311,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                     }
                     catch (Exception ex) {
                         unchanged++;
-                        _logger.Error(ex, "Exception during application disabling.");
+                        _logger.LogError(ex, "Exception during application disabling.");
                     }
                 }
             }
@@ -364,7 +364,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                 }
                 catch (Exception ex) {
                     unchanged++;
-                    _logger.Error(ex, "Exception adding application from discovery.");
+                    _logger.LogError(ex, "Exception adding application from discovery.");
                 }
             }
 
@@ -406,10 +406,10 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                 }
                 catch (Exception ex) {
                     unchanged++;
-                    _logger.Error(ex, "Exception during update.");
+                    _logger.LogError(ex, "Exception during update.");
                 }
             }
-            _logger.Information("... processed discovery results from {discovererId}: " +
+            _logger.LogInformation("... processed discovery results from {discovererId}: " +
                 "{added} applications added, {updated} updated, {lost} lost, and " +
                 "{unchanged} unchanged.", discovererId, added, updated, lost, unchanged);
         }

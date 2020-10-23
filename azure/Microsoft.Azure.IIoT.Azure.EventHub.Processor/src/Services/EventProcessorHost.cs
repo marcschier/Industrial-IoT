@@ -57,16 +57,16 @@ namespace Microsoft.Azure.IIoT.Azure.EventHub.Processor.Services {
             await _lock.WaitAsync().ConfigureAwait(false);
             try {
                 if (_host != null) {
-                    _logger.Debug("Event processor host already running.");
+                    _logger.LogDebug("Event processor host already running.");
                     return;
                 }
 
-                _logger.Debug("Starting event processor host...");
+                _logger.LogDebug("Starting event processor host...");
                 var consumerGroup = _hub.ConsumerGroup;
                 if (string.IsNullOrEmpty(consumerGroup)) {
                     consumerGroup = "$default";
                 }
-                _logger.Information("Using Consumer Group: \"{consumerGroup}\"", consumerGroup);
+                _logger.LogInformation("Using Consumer Group: \"{consumerGroup}\"", consumerGroup);
                 if (_lease != null && _checkpoint != null) {
                     _host = new EventHubs.Processor.EventProcessorHost(
                         $"host-{Guid.NewGuid()}", _hub.EventHubPath, consumerGroup,
@@ -97,10 +97,10 @@ namespace Microsoft.Azure.IIoT.Azure.EventHub.Processor.Services {
                         ReceiveTimeout = _config.ReceiveTimeout,
                         InvokeProcessorAfterReceiveTimeout = true
                     }).ConfigureAwait(false);
-                _logger.Information("Event processor host started.");
+                _logger.LogInformation("Event processor host started.");
             }
             catch (Exception ex) {
-                _logger.Error(ex, "Error starting event processor host.");
+                _logger.LogError(ex, "Error starting event processor host.");
                 _host = null;
                 throw;
             }
@@ -114,14 +114,14 @@ namespace Microsoft.Azure.IIoT.Azure.EventHub.Processor.Services {
             await _lock.WaitAsync().ConfigureAwait(false);
             try {
                 if (_host != null) {
-                    _logger.Debug("Stopping event processor host...");
+                    _logger.LogDebug("Stopping event processor host...");
                     await _host.UnregisterEventProcessorAsync().ConfigureAwait(false);
                     _host = null;
-                    _logger.Information("Event processor host stopped.");
+                    _logger.LogInformation("Event processor host stopped.");
                 }
             }
             catch (Exception ex) {
-                _logger.Warning(ex, "Error stopping event processor host");
+                _logger.LogWarning(ex, "Error stopping event processor host");
                 _host = null;
             }
             finally {

@@ -79,7 +79,7 @@ namespace Microsoft.Azure.IIoT.Crypto.Services {
                 }
             }
             catch (Exception ex) {
-                _logger.Verbose(ex, "Failed to add certificate, delete key");
+                _logger.LogTrace(ex, "Failed to add certificate, delete key");
                 await Try.Async(() => _keys.DeleteKeyAsync(keyHandle, ct)).ConfigureAwait(false);
                 throw;
             }
@@ -121,7 +121,7 @@ namespace Microsoft.Azure.IIoT.Crypto.Services {
                 }
             }
             catch (Exception ex) {
-                _logger.Verbose(ex, "Failed to add certificate, delete key");
+                _logger.LogTrace(ex, "Failed to add certificate, delete key");
                 await Try.Async(() => _keys.DeleteKeyAsync(keyHandle, ct)).ConfigureAwait(false);
                 throw;
             }
@@ -199,7 +199,7 @@ namespace Microsoft.Azure.IIoT.Crypto.Services {
                 }
             }
             catch (Exception ex) {
-                _logger.Verbose(ex, "Failed to add certificate, delete key");
+                _logger.LogTrace(ex, "Failed to add certificate, delete key");
                 await Try.Async(() => _keys.DeleteKeyAsync(keyHandle, ct)).ConfigureAwait(false);
                 throw;
             }
@@ -230,7 +230,7 @@ namespace Microsoft.Azure.IIoT.Crypto.Services {
             }
             catch (Exception ex) {
                 if (certificate.KeyHandle != null) {
-                    _logger.Error(ex, "Failed to add certificate, delete key");
+                    _logger.LogError(ex, "Failed to add certificate, delete key");
                     await Try.Async(() => _keys.DeleteKeyAsync(certificate.KeyHandle, ct)).ConfigureAwait(false);
                 }
                 throw;
@@ -249,7 +249,7 @@ namespace Microsoft.Azure.IIoT.Crypto.Services {
                 await _keys.DisableKeyAsync(cert.KeyHandle, ct).ConfigureAwait(false);
             }
             catch (Exception ex) {
-                _logger.Error(ex, "Failed to disable key - but continue...");
+                _logger.LogError(ex, "Failed to disable key - but continue...");
             }
         }
 

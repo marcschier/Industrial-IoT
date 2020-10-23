@@ -351,7 +351,7 @@ namespace Microsoft.Azure.IIoT.Azure.Datalake.Clients {
             public async ValueTask DisposeAsync() {
                 try {
                     await _lease.ReleaseAsync().ConfigureAwait(false);
-                    _logger.Information("Lease {lease} on {file} released.",
+                    _logger.LogInformation("Lease {lease} on {file} released.",
                         _lease.LeaseId, File.Name);
                 }
                 catch (RequestFailedException ex) {
@@ -376,7 +376,7 @@ namespace Microsoft.Azure.IIoT.Azure.Datalake.Clients {
                     lockDuration = TimeSpan.FromMinutes(1);
                 }
                 // Aquire lease
-                _logger.Information("Acquiring lease {lease} on {file} for {duration}...",
+                _logger.LogInformation("Acquiring lease {lease} on {file} for {duration}...",
                     _lease.LeaseId, File.Name, lockDuration);
                 try {
                     await Retry.WithLinearBackoff(_logger, ct,
@@ -385,7 +385,7 @@ namespace Microsoft.Azure.IIoT.Azure.Datalake.Clients {
                             re.Status == (int)HttpStatusCode.Conflict,
                         int.MaxValue).ConfigureAwait(false);
 
-                    _logger.Information("Lease {lease} on {file} acquired for {duration}.",
+                    _logger.LogInformation("Lease {lease} on {file} acquired for {duration}.",
                         _lease.LeaseId, File.Name, lockDuration);
                 }
                 catch (RequestFailedException ex) {

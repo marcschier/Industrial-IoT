@@ -40,7 +40,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Clients {
                     results.Where(r => r.Application != null)).ConfigureAwait(false);
             }
             catch (Exception ex) {
-                _logger.Error(ex, "Failed to process discovery result");
+                _logger.LogError(ex, "Failed to process discovery result");
             }
         }
 

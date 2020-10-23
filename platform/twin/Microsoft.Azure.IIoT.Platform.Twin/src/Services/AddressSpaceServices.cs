@@ -882,7 +882,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
                             }
                         }
                         catch (Exception ex) {
-                            _logger.Information(ex, "Failed to obtain child information");
+                            _logger.LogInformation(ex, "Failed to obtain child information");
                         }
                     }
                     var model = await ReadNodeModelAsync(session, codec, header, nodeId,

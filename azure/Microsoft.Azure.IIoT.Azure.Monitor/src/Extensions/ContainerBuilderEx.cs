@@ -9,8 +9,6 @@ namespace Microsoft.Azure.IIoT.Azure.AppInsights {
     using Microsoft.ApplicationInsights.DependencyCollector;
     using Microsoft.ApplicationInsights.Extensibility;
     using Autofac;
-    using Autofac.Core.Registration;
-    using Microsoft.Extensions.Logging;
     using System;
 
     /// <summary>
@@ -23,10 +21,9 @@ namespace Microsoft.Azure.IIoT.Azure.AppInsights {
         /// </summary>
         /// <param name="builder"></param>
         /// <param name="config"></param>
-        /// <param name="addConsole"></param>
         /// <returns></returns>
         public static ContainerBuilder AddAppInsightsLogging(this ContainerBuilder builder,
-            IAppInsightsConfig config, bool addConsole = true) {
+            IAppInsightsConfig config) {
             if (builder == null) {
                 throw new ArgumentNullException(nameof(builder));
             }

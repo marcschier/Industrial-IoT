@@ -55,14 +55,14 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
                         t.SetException(ex);
                     }
                     else {
-                        _logger.Verbose("----->  {@message} sent...", message);
+                        _logger.LogTrace("----->  {@message} sent...", message);
                         t.SetResult(true);
                     }
                 });
                 return tcs.Task;
             }
             catch (Exception ex) {
-                _logger.Error(ex, "Failed to publish message {@message}",
+                _logger.LogError(ex, "Failed to publish message {@message}",
                     message);
                 throw;
             }
@@ -194,7 +194,7 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
                 }
                 foreach (var handler in handlers) {
                     await handler.HandleAsync(evt).ConfigureAwait(false);
-                    _outer._logger.Verbose(
+                    _outer._logger.LogTrace(
                         "<-----  {@message} received and handled! ", evt);
                 }
             }

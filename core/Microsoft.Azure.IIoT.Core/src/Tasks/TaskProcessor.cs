@@ -125,10 +125,10 @@ namespace Microsoft.Azure.IIoT.Tasks.Default {
                     catch (Exception ex) {
                         if (item.Retries == 0) {
                             // Give up.
-                            _processor._logger.Error(ex, "Exception thrown, give up on task!");
+                            _processor._logger.LogError(ex, "Exception thrown, give up on task!");
                             return;
                         }
-                        _processor._logger.Error(ex, "Processing task failed with exception.");
+                        _processor._logger.LogError(ex, "Processing task failed with exception.");
                         item.Retries--;
                         _processor.TrySchedule(item);
                     }

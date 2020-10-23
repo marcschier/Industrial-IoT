@@ -105,7 +105,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Transport {
                 policy = header;
                 ep = GetEndpoints().FirstOrDefault(e => e.SecurityPolicyUri == policy);
                 if (ep == null) {
-                    _logger.Debug("Policy {policy} not supported", policy);
+                    _logger.LogDebug("Policy {policy} not supported", policy);
                     // Policy not supported.
                     return null;
                 }

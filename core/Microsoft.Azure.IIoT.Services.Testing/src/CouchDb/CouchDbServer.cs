@@ -43,7 +43,7 @@ namespace Microsoft.Azure.IIoT.Services.CouchDb.Server {
                     return;
                 }
 
-                _logger.Information("Starting CouchDB server at {port}...", _port);
+                _logger.LogInformation("Starting CouchDB server at {port}...", _port);
                 var param = GetContainerParameters(_port);
                 var name = $"couchdb_{_port}";
                 (_containerId, _owner) = await CreateAndStartContainerAsync(
@@ -52,7 +52,7 @@ namespace Microsoft.Azure.IIoT.Services.CouchDb.Server {
                 try {
                     // Check running
                     await WaitForContainerStartedAsync(_port).ConfigureAwait(false);
-                    _logger.Information("CouchDB server running at {port}.", _port);
+                    _logger.LogInformation("CouchDB server running at {port}.", _port);
                 }
                 catch {
                     // Stop and retry
@@ -72,7 +72,7 @@ namespace Microsoft.Azure.IIoT.Services.CouchDb.Server {
             try {
                 if (_containerId != null && _owner) {
                     await StopAndRemoveContainerAsync(_containerId).ConfigureAwait(false);
-                    _logger.Information("Stopped CouchDB server at {port}.", _port);
+                    _logger.LogInformation("Stopped CouchDB server at {port}.", _port);
                 }
             }
             finally {

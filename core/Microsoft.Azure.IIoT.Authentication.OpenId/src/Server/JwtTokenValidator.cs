@@ -99,7 +99,7 @@ namespace Microsoft.Azure.IIoT.Authentication.Server.Default {
                     return null;
                 }
                 catch (SecurityTokenValidationException ex) {
-                    _logger.Debug(ex, "Token validation exception");
+                    _logger.LogDebug(ex, "Token validation exception");
                     return null;
                 }
             }

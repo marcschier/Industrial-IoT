@@ -48,7 +48,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Handlers {
                 await Task.WhenAll(_handlers.Select(h => h.HandleMessageAsync(sample))).ConfigureAwait(false);
             }
             catch (Exception ex) {
-                _logger.Error(ex, "Exception handling message from {source}", source);
+                _logger.LogError(ex, "Exception handling message from {source}", source);
             }
         }
 

@@ -38,7 +38,7 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Services {
                 }
             }
             catch (Exception ex) {
-                _logger.Error(ex, "Failed to add root user");
+                _logger.LogError(ex, "Failed to add root user");
             }
             try {
                 if (_config.Ids != null) {
@@ -48,7 +48,7 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Services {
                 }
             }
             catch (Exception ex) {
-                _logger.Error(ex, "Failed to add identity resources");
+                _logger.LogError(ex, "Failed to add identity resources");
             }
             try {
                 if (_config.Apis != null) {
@@ -58,7 +58,7 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Services {
                 }
             }
             catch (Exception ex) {
-                _logger.Error(ex, "Failed to add root user");
+                _logger.LogError(ex, "Failed to add root user");
             }
         }
 

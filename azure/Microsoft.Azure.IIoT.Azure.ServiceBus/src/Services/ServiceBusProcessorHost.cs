@@ -47,10 +47,10 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Services {
                 try {
                     _client = await _factory.CreateOrGetGetQueueClientAsync(_config.Queue).ConfigureAwait(false);
                     _client.RegisterMessageHandler(OnMessageAsync, OnExceptionAsync);
-                    _logger.Information("Queue {queue} processor started.", _client.QueueName);
+                    _logger.LogInformation("Queue {queue} processor started.", _client.QueueName);
                 }
                 catch (Exception ex) {
-                    _logger.Error(ex, "Failure starting queue processor.");
+                    _logger.LogError(ex, "Failure starting queue processor.");
                     throw;
                 }
             }
@@ -67,10 +67,10 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Services {
                     return;
                 }
                 await _client.CloseAsync().ConfigureAwait(false);
-                _logger.Information("Queue {queue} processor stopped.", _client.QueueName);
+                _logger.LogInformation("Queue {queue} processor stopped.", _client.QueueName);
             }
             catch (Exception ex) {
-                _logger.Error(ex, "Failure stopping queue processor.");
+                _logger.LogError(ex, "Failure stopping queue processor.");
                 throw;
             }
             finally {
@@ -91,16 +91,16 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Services {
         /// <param name="arg"></param>
         /// <returns></returns>
         private async Task OnExceptionAsync(ExceptionReceivedEventArgs arg) {
-            _logger.Error(arg.Exception, "Exception in queue {queue} processor : {@context}.",
+            _logger.LogError(arg.Exception, "Exception in queue {queue} processor : {@context}.",
                  _client.QueueName, arg.ExceptionReceivedContext);
 
             await _lock.WaitAsync().ConfigureAwait(false);
             try {
-                _logger.Information("Resetting queue {queue} processor...", _client.QueueName);
+                _logger.LogInformation("Resetting queue {queue} processor...", _client.QueueName);
                 await _client.CloseAsync().ConfigureAwait(false);
                 _client = await _factory.CreateOrGetGetQueueClientAsync(_config.Queue).ConfigureAwait(false);
                 _client.RegisterMessageHandler(OnMessageAsync, OnExceptionAsync);
-                _logger.Information("Queue {queue} processor reset.", _client.QueueName);
+                _logger.LogInformation("Queue {queue} processor reset.", _client.QueueName);
             }
             finally {
                 _lock.Release();

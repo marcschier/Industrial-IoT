@@ -64,7 +64,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub.Clients {
                 // continue
             }
             catch (Exception e) {
-                _logger.Verbose(e, "Create device failed in CreateOrUpdate");
+                _logger.LogTrace(e, "Create device failed in CreateOrUpdate");
                 throw e.Translate();
             }
 
@@ -79,7 +79,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub.Clients {
                     // Expected for update
                 }
                 catch (Exception e) {
-                    _logger.Verbose(e, "Create module failed in CreateOrUpdate");
+                    _logger.LogTrace(e, "Create module failed in CreateOrUpdate");
                     throw e.Translate();
                 }
             }
@@ -105,7 +105,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub.Clients {
                 return _serializer.DeserializeTwin(update, HostName);
             }
             catch (Exception e) {
-                _logger.Verbose(e, "Create or update failed ");
+                _logger.LogTrace(e, "Create or update failed ");
                 throw e.Translate();
             }
         }
@@ -125,7 +125,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub.Clients {
                 };
             }
             catch (Exception e) {
-                _logger.Verbose(e, "Call method failed ");
+                _logger.LogTrace(e, "Call method failed ");
                 throw e.Translate();
             }
         }
@@ -139,7 +139,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub.Clients {
                     _registry.UpdateTwinAsync(deviceId, moduleId, properties.ToTwin(), etag, ct)).ConfigureAwait(false);
             }
             catch (Exception e) {
-                _logger.Verbose(e, "Update properties failed ");
+                _logger.LogTrace(e, "Update properties failed ");
                 throw e.Translate();
             }
         }
@@ -158,7 +158,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub.Clients {
                 return _serializer.DeserializeTwin(twin, HostName);
             }
             catch (Exception e) {
-                _logger.Verbose(e, "Get twin failed ");
+                _logger.LogTrace(e, "Get twin failed ");
                 throw e.Translate();
             }
         }
@@ -175,7 +175,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub.Clients {
                 return module.ToModel(HostName);
             }
             catch (Exception e) {
-                _logger.Verbose(e, "Get registration failed ");
+                _logger.LogTrace(e, "Get registration failed ");
                 throw e.Translate();
             }
         }
@@ -198,7 +198,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub.Clients {
                 };
             }
             catch (Exception e) {
-                _logger.Verbose(e, "Query failed ");
+                _logger.LogTrace(e, "Query failed ");
                 throw e.Translate();
             }
         }
@@ -216,7 +216,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub.Clients {
                     }, ct)).ConfigureAwait(false);
             }
             catch (Exception e) {
-                _logger.Verbose(e, "Delete failed ");
+                _logger.LogTrace(e, "Delete failed ");
                 throw e.Translate();
             }
         }

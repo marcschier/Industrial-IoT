@@ -60,18 +60,18 @@ namespace Microsoft.Azure.IIoT.Authentication.Clients.Default {
                     var response = await client.RequestClientCredentialsTokenAsync(
                         request).ConfigureAwait(false);
                     if (response.IsError) {
-                        _logger.Error("Error {error} aquiring token for {resource} with {config}",
+                        _logger.LogError("Error {error} aquiring token for {resource} with {config}",
                             response.Error, resource, config.GetName());
                         return null;
                     }
                     var result = JwtSecurityTokenEx.Parse(response.AccessToken);
-                    _logger.Information(
+                    _logger.LogInformation(
                         "Successfully acquired token for {resource} with {config}.",
                         resource, config.GetName());
                     return result;
                 }
                 catch (Exception exc) {
-                    _logger.Debug(exc, "Failed to get token for {resource} using {config}",
+                    _logger.LogDebug(exc, "Failed to get token for {resource} using {config}",
                         resource, config.GetName());
                     exceptions.Add(exc);
                 }

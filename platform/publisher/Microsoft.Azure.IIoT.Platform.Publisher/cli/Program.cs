@@ -132,7 +132,7 @@ Options:
 
             var logger = ConsoleLogger.CreateLogger(LogLevel.Error);
             AppDomain.CurrentDomain.UnhandledException += (s, e) => {
-                logger.Fatal(e.ExceptionObject as Exception, "Exception");
+                logger.LogCritical(e.ExceptionObject as Exception, "Exception");
                 Console.WriteLine(e);
             };
 
@@ -191,7 +191,7 @@ Options:
                     Console.WriteLine("Press key to cancel...");
                     Console.ReadKey();
 
-                    logger.Information("Server exiting - tear down publisher...");
+                    logger.LogInformation("Server exiting - tear down publisher...");
                     cts.Cancel();
 
                     await host.ConfigureAwait(false);
@@ -223,7 +223,7 @@ Options:
                 }, false, CancellationToken.None).ConfigureAwait(false);
             }
             catch (ResourceConflictException) {
-                logger.Information("Gateway {deviceId} exists.", deviceId);
+                logger.LogInformation("Gateway {deviceId} exists.", deviceId);
             }
             try {
                 await registry.CreateOrUpdateAsync(new DeviceTwinModel {
@@ -238,7 +238,7 @@ Options:
                 }, true, CancellationToken.None).ConfigureAwait(false);
             }
             catch (ResourceConflictException) {
-                logger.Information("Module {moduleId} exists...", moduleId);
+                logger.LogInformation("Module {moduleId} exists...", moduleId);
             }
             var cs = await registry.GetConnectionStringAsync(deviceId, moduleId).ConfigureAwait(false);
             return cs;
@@ -279,11 +279,11 @@ Options:
                 }, logger) {
                     AutoAccept = true
                 }) {
-                    logger.Information("Starting server.");
+                    logger.LogInformation("Starting server.");
                     await server.StartAsync(new List<int> { 51210 }).ConfigureAwait(false);
-                    logger.Information("Server started.");
+                    logger.LogInformation("Server started.");
                     await tcs.Task.ConfigureAwait(false);
-                    logger.Information("Server exited.");
+                    logger.LogInformation("Server exited.");
                 }
             }
 

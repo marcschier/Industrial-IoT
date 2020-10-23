@@ -40,7 +40,7 @@ namespace Microsoft.Azure.IIoT.Services.Zookeeper.Server {
                     return;
                 }
 
-                _logger.Information("Starting Zookeeper node...");
+                _logger.LogInformation("Starting Zookeeper node...");
                 var param = GetContainerParameters(_port);
                 var name = $"zookeeper_{_port}";
                 (_containerId, _owner) = await CreateAndStartContainerAsync(
@@ -49,7 +49,7 @@ namespace Microsoft.Azure.IIoT.Services.Zookeeper.Server {
                 try {
                     // Check running
                     await WaitForContainerStartedAsync(_port).ConfigureAwait(false);
-                    _logger.Information("Zookeeper node running.");
+                    _logger.LogInformation("Zookeeper node running.");
                 }
                 catch {
                     // Stop and retry
@@ -69,7 +69,7 @@ namespace Microsoft.Azure.IIoT.Services.Zookeeper.Server {
             try {
                 if (_containerId != null && _owner) {
                     await StopAndRemoveContainerAsync(_containerId).ConfigureAwait(false);
-                    _logger.Information("Stopped Zookeeper node...");
+                    _logger.LogInformation("Stopped Zookeeper node...");
                 }
             }
             finally {

@@ -46,11 +46,11 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Services {
                 try {
                     var queue = _config.Queue.Split('/')[0];
                     _channel = _connection.GetChannel(_config.Queue, this);
-                    _logger.Information("Queue {queue} processor started.",
+                    _logger.LogInformation("Queue {queue} processor started.",
                         _channel.QueueName);
                 }
                 catch (Exception ex) {
-                    _logger.Error(ex, "Failure starting queue processor.");
+                    _logger.LogError(ex, "Failure starting queue processor.");
                     throw;
                 }
             }
@@ -67,11 +67,11 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Services {
                     return;
                 }
                 _channel.Dispose();
-                _logger.Information("Queue {queue} processor stopped.",
+                _logger.LogInformation("Queue {queue} processor stopped.",
                     _channel.QueueName);
             }
             catch (Exception ex) {
-                _logger.Error(ex, "Failure stopping queue processor.");
+                _logger.LogError(ex, "Failure stopping queue processor.");
                 throw;
             }
             finally {

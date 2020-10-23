@@ -193,7 +193,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
             diagInfo.AppendLine("  # Outgress IoT message count         : {messageSinkSentMessagesCount,14:n0} {sentMessagesPerSecFormatted}");
             diagInfo.AppendLine("  # Connection retries                 : {connectionRetries,14:0}");
 
-            _logger.Information(diagInfo.ToString(),
+            _logger.LogInformation(diagInfo.ToString(),
                 DeviceId, ModuleId,
                 TimeSpan.FromSeconds(totalDuration),
                 _dataChangesCount, dataChangesPerSecFormatted,

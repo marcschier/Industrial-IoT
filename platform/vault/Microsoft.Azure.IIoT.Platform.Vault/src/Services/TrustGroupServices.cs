@@ -54,7 +54,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Services {
 
             _ = await RenewGroupCertificateAsync(group,
                 parent, ct).ConfigureAwait(false);
-            _logger.Information("Group {groupId} certificate renewed.", groupId);
+            _logger.LogInformation("Group {groupId} certificate renewed.", groupId);
         }
 
         /// <inheritdoc/>
@@ -80,7 +80,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Services {
                 // Issue new certificate from parent
                 var certificate = await RenewGroupCertificateAsync(result,
                     parent, ct).ConfigureAwait(false);
-                _logger.Information("Group {name} {groupId} created.",
+                _logger.LogInformation("Group {name} {groupId} created.",
                     request.Name, result.Id);
                 return new TrustGroupRegistrationResultModel {
                     Id = result.Id
@@ -103,7 +103,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Services {
             try {
                 // Issues new root certificate
                 var certificate = await RenewGroupCertificateAsync(result, null, ct).ConfigureAwait(false);
-                _logger.Information("Root {name} {groupId} created.",
+                _logger.LogInformation("Root {name} {groupId} created.",
                     request.Name, result.Id);
                 return new TrustGroupRegistrationResultModel {
                     Id = result.Id
@@ -139,7 +139,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Services {
                 group.Group.Patch(request);
                 return true;
             }, ct).ConfigureAwait(false);
-            _logger.Information("Group {groupId} updated.", groupId);
+            _logger.LogInformation("Group {groupId} updated.", groupId);
         }
 
         /// <inheritdoc/>

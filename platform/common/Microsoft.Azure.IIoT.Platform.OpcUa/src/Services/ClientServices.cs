@@ -73,7 +73,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
             }
             var certificate = chain.First();
             try {
-                _logger.Information("Adding Certificate {Thumbprint}, " +
+                _logger.LogInformation("Adding Certificate {Thumbprint}, " +
                     "{Subject} to trust list...", certificate.Thumbprint,
                     certificate.Subject);
                 _appConfig.SecurityConfiguration.TrustedPeerCertificates
@@ -86,7 +86,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
                 return Task.CompletedTask;
             }
             catch (Exception ex) {
-                _logger.Error(ex, "Failed to add Certificate {Thumbprint}, " +
+                _logger.LogError(ex, "Failed to add Certificate {Thumbprint}, " +
                     "{Subject} to trust list.", certificate.Thumbprint,
                     certificate.Subject);
                 return Task.FromException(ex);
@@ -109,7 +109,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
             }
             var certificate = chain.First();
             try {
-                _logger.Information("Removing Certificate {Thumbprint}, " +
+                _logger.LogInformation("Removing Certificate {Thumbprint}, " +
                     "{Subject} from trust list...", certificate.Thumbprint,
                     certificate.Subject);
                 _appConfig.SecurityConfiguration.TrustedPeerCertificates
@@ -119,7 +119,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
                 return Task.CompletedTask;
             }
             catch (Exception ex) {
-                _logger.Error(ex, "Failed to remove Certificate {Thumbprint}, " +
+                _logger.LogError(ex, "Failed to remove Certificate {Thumbprint}, " +
                     "{Subject} from trust list.", certificate.Thumbprint,
                     certificate.Subject);
                 return Task.FromException(ex);
@@ -146,7 +146,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
                     var tuple = ClientSession.CreateWithHandle(_appConfig,
                         id.Connection, _logger, NotifyStateChangeAsync, _maxOpTimeout);
                     _clients.Add(id, tuple.Item1);
-                    _logger.Debug("Opened session for endpoint {id} ({endpoint}).",
+                    _logger.LogDebug("Opened session for endpoint {id} ({endpoint}).",
                         id, connection.Endpoint.Url);
                     return tuple.Item2;
                 }
@@ -204,7 +204,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
                 var nextServer = queue.Dequeue();
                 discoveryUrl = nextServer.Item1;
                 var sw = Stopwatch.StartNew();
-                _logger.Debug("Try finding endpoints at {discoveryUrl}...", discoveryUrl);
+                _logger.LogDebug("Try finding endpoints at {discoveryUrl}...", discoveryUrl);
                 try {
                     await Retry.Do(_logger, ct, () => DiscoverAsync(discoveryUrl,
                             localeIds, nextServer.Item2, 20000, visitedUris,
@@ -213,15 +213,15 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
                         kMaxDiscoveryAttempts - 1).ConfigureAwait(false);
                 }
                 catch (Exception ex) {
-                    _logger.Debug(ex, "Exception occurred duringing FindEndpoints at {discoveryUrl}.",
+                    _logger.LogDebug(ex, "Exception occurred duringing FindEndpoints at {discoveryUrl}.",
                         discoveryUrl);
-                    _logger.Error("Could not find endpoints at {discoveryUrl} " +
+                    _logger.LogError("Could not find endpoints at {discoveryUrl} " +
                         "due to {error} (after {elapsed}).",
                         discoveryUrl, ex.Message, sw.Elapsed);
                     return new HashSet<DiscoveredEndpointModel>();
                 }
                 ct.ThrowIfCancellationRequested();
-                _logger.Debug("Finding endpoints at {discoveryUrl} completed in {elapsed}.",
+                _logger.LogDebug("Finding endpoints at {discoveryUrl} completed in {elapsed}.",
                     discoveryUrl, sw.Elapsed);
             }
             return results;
@@ -248,10 +248,10 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
                 // Match to provided endpoint info
                 var ep = endpoints.Endpoints?.FirstOrDefault(e => e.IsSameAs(endpoint));
                 if (ep == null) {
-                    _logger.Debug("No endpoints at {discoveryUrl}...", discoveryUrl);
+                    _logger.LogDebug("No endpoints at {discoveryUrl}...", discoveryUrl);
                     throw new ResourceNotFoundException("Endpoint not found");
                 }
-                _logger.Debug("Found endpoint at {discoveryUrl}...", discoveryUrl);
+                _logger.LogDebug("Found endpoint at {discoveryUrl}...", discoveryUrl);
                 return ep.ServerCertificate.ToCertificateChain();
             }
         }
@@ -307,10 +307,10 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
                 var endpoints = await client.GetEndpointsAsync(null,
                     client.Endpoint.EndpointUrl, localeIds, null).ConfigureAwait(false);
                 if (!(endpoints?.Endpoints?.Any() ?? false)) {
-                    _logger.Debug("No endpoints at {discoveryUrl}...", discoveryUrl);
+                    _logger.LogDebug("No endpoints at {discoveryUrl}...", discoveryUrl);
                     return;
                 }
-                _logger.Debug("Found endpoints at {discoveryUrl}...", discoveryUrl);
+                _logger.LogDebug("Found endpoints at {discoveryUrl}...", discoveryUrl);
 
                 foreach (var ep in endpoints.Endpoints.Where(ep =>
                     ep.Server.ApplicationType != Opc.Ua.ApplicationType.DiscoveryServer)) {
@@ -341,8 +341,8 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
                     }
                 }
                 catch {
-                              // Old lds, just continue...
-                    _logger.Debug("{discoveryUrl} does not support ME extension...",
+                    // Old lds, just continue...
+                    _logger.LogDebug("{discoveryUrl} does not support ME extension...",
                         discoveryUrl);
                 }
 
@@ -378,7 +378,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
                         _appConfig, id.Connection, _logger,
                         NotifyStateChangeAsync, _maxOpTimeout);
                     _clients.Add(id, session);
-                    _logger.Debug("Add new session to session cache.");
+                    _logger.LogDebug("Add new session to session cache.");
                 }
                 return session;
             }
@@ -404,7 +404,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
                 }
             }
             catch (Exception ex) {
-                _logger.Error(ex, "Error managing session clients...");
+                _logger.LogError(ex, "Error managing session clients...");
             }
             if (_cts.IsCancellationRequested) {
                 return;
@@ -429,7 +429,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
                 if (_clients.TryGetValue(id, out var item)) {
                     if (item.Inactive && _clients.Remove(id)) {
                         item.Dispose();
-                        _logger.Debug("Evicted inactive session from session cache.");
+                        _logger.LogDebug("Evicted inactive session from session cache.");
                     }
                 }
             }
@@ -452,13 +452,13 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
                 e.Accept = _appConfig.SecurityConfiguration
                     .AutoAcceptUntrustedCertificates;
                 if (e.Accept) {
-                    _logger.Warning("Trusting peer certificate {Thumbprint}, {Subject} " +
+                    _logger.LogWarning("Trusting peer certificate {Thumbprint}, {Subject} " +
                         "due to AutoAccept(UntrustedCertificates) set!",
                         e.Certificate.Thumbprint, e.Certificate.Subject);
                     return;
                 }
             }
-            _logger.Information("Rejecting peer certificate {Thumbprint}, {Subject} " +
+            _logger.LogInformation("Rejecting peer certificate {Thumbprint}, {Subject} " +
                 "because of {Status}.", e.Certificate.Thumbprint,
                 e.Certificate.Subject, e.Error.StatusCode);
         }
