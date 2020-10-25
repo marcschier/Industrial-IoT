@@ -119,7 +119,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Service {
         /// <param name="appLifetime"></param>
         public void Configure(IApplicationBuilder app, IHostApplicationLifetime appLifetime) {
             var applicationContainer = app.ApplicationServices.GetAutofacRoot();
-            var log = applicationContainer.Resolve<ILogger>();
+            var log = applicationContainer.Resolve<ILogger<Startup>>();
 
             app.UsePathBase();
             app.UseHeaderForwarding();

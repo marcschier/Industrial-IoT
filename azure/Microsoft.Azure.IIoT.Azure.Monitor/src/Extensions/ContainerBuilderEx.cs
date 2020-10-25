@@ -45,7 +45,7 @@ namespace Microsoft.Azure.IIoT.Azure.AppInsights {
 
             // return builder.RegisterModule(
             //     new LoggerProviderModule(new ApplicationInsightsLogger(config, log, addConsole)));
-            builder.RegisterModule<LoggingModule>();
+            builder.RegisterModule<Log>();
 
             return builder;
         }

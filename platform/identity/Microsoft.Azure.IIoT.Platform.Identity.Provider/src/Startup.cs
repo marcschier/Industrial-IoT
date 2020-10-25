@@ -146,7 +146,7 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Provider {
         /// <param name="appLifetime"></param>
         public void Configure(IApplicationBuilder app, IHostApplicationLifetime appLifetime) {
             var applicationContainer = app.ApplicationServices.GetAutofacRoot();
-            var log = applicationContainer.Resolve<ILogger>();
+            var log = applicationContainer.Resolve<ILogger<Startup>>();
 
             if (Environment.IsDevelopment()) {
                 app.UseDeveloperExceptionPage();

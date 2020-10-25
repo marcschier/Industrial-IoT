@@ -91,11 +91,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Service {
         /// <param name="services"></param>
         /// <returns></returns>
         public void ConfigureServices(IServiceCollection services) {
-            if (services is null) {
-                throw new ArgumentNullException(nameof(services));
-            }
-
-            // services.AddLogging(o => o.AddConsole().AddDebug());
+            services.AddLogging(o => o.AddConsole().AddDebug());
 
             services.AddHeaderForwarding();
             services.AddCors();
@@ -130,15 +126,8 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Service {
         /// <param name="app"></param>
         /// <param name="appLifetime"></param>
         public void Configure(IApplicationBuilder app, IHostApplicationLifetime appLifetime) {
-            if (app is null) {
-                throw new ArgumentNullException(nameof(app));
-            }
-            if (appLifetime is null) {
-                throw new ArgumentNullException(nameof(appLifetime));
-            }
-
             var applicationContainer = app.ApplicationServices.GetAutofacRoot();
-            var log = applicationContainer.Resolve<ILogger>();
+            var log = applicationContainer.Resolve<ILogger<Startup>>();
 
             app.UsePathBase();
             app.UseHeaderForwarding();

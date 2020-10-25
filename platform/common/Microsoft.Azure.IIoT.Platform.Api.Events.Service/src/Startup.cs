@@ -90,8 +90,7 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service {
         /// <param name="services"></param>
         /// <returns></returns>
         public void ConfigureServices(IServiceCollection services) {
-
-            // services.AddLogging(o => o.AddConsole().AddDebug());
+            services.AddLogging(o => o.AddConsole().AddDebug());
 
             services.AddHeaderForwarding();
             services.AddCors();

@@ -35,7 +35,7 @@ namespace Autofac {
                 .AsImplementedInterfaces();
             builder.RegisterType<ConsoleLoggerProvider>()
                 .AsImplementedInterfaces();
-            builder.RegisterModule<LoggingModule>();
+            builder.RegisterModule<Log>();
 
             return builder;
         }

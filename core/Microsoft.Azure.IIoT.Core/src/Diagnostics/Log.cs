@@ -5,80 +5,83 @@
 
 namespace Microsoft.Azure.IIoT.Diagnostics {
     using Microsoft.Extensions.Logging;
+    using Microsoft.Extensions.Logging.Debug;
     using Autofac;
     using Autofac.Core;
-    using Autofac.Core.Activators.Reflection;
     using Autofac.Core.Registration;
+    using Autofac.Core.Activators.Reflection;
     using Autofac.Core.Resolving.Pipeline;
     using Module = Autofac.Module;
     using System;
     using System.Linq;
 
     /// <summary>
-    /// Logger provider module
+    /// Log module
     /// </summary>
-    public class LoggingModule : Module {
+    public class Log : Module {
+
+        /// <inheritdoc/>
+        protected override void Load(ContainerBuilder builder) {
+            builder.RegisterGeneric(typeof(Logger<>))
+                .SingleInstance()
+                .As(typeof(ILogger<>));
+            builder.RegisterType(typeof(Logger<Log>)) // Root logger
+                .SingleInstance()
+                .As(typeof(ILogger));
+            builder.RegisterType<LoggerFactory>()
+                .As<ILoggerFactory>()
+                .SingleInstance()
+                .IfNotRegistered(typeof(ILoggerFactory));
+            builder.RegisterType<DebugLoggerProvider>()
+                .As<ILoggerProvider>()
+                .SingleInstance();
+            base.Load(builder);
+        }
 
         /// <inheritdoc/>
         protected override void AttachToComponentRegistration(IComponentRegistryBuilder registry,
             IComponentRegistration registration) {
-            // Ignore components that provide loggers (and thus avoid a circular dependency below)
-            if (registration.Services
-                .OfType<TypedService>()
-                .Any(ts => typeof(ILogger<>).IsAssignableFrom(ts.ServiceType) ||
-                           ts.ServiceType == typeof(ILoggerFactory) ||
-                           ts.ServiceType == typeof(ILoggerProvider))) {
-                return;
-            }
+
             if (registration.Activator is ReflectionActivator ra) {
                 try {
                     var ctors = ra.ConstructorFinder.FindConstructors(ra.LimitType);
+                    // Only inject logger in components with a ILogger dependency
                     var usesLogger = ctors
                         .SelectMany(ctor => ctor.GetParameters())
-                        .Any(pi => pi.ParameterType == typeof(ILogger)); // non-generic only
-                    // Ignore components known to be without logger dependencies
-                    if (!usesLogger) {
-                        return;
+                        .Any(pi => pi.ParameterType == typeof(ILogger));
+                    if (usesLogger) {
+                        // Attach updater
+                        registration.PipelineBuilding += (sender, pipeline) => {
+                            pipeline.Use(new LoggerInjector(registration.Activator.LimitType));
+                        };
                     }
                 }
                 catch (NoConstructorsFoundException) {
-                    return; // No need
+                    return;
                 }
-
-                registration.PipelineBuilding += (sender, pipeline) => {
-                    pipeline.Use(new LoggerUpdater(ra.LimitType));
-                };
             }
         }
 
-        /// <inheritdoc/>
-        protected override void Load(ContainerBuilder builder) {
-            builder.RegisterGeneric(typeof(Logger<>)).As(typeof(ILogger<>));
-            builder.RegisterType<LoggerFactory>().AsImplementedInterfaces();
-            base.Load(builder);
-        }
-
-        private class LoggerUpdater : IResolveMiddleware {
+        private class LoggerInjector : IResolveMiddleware {
 
             /// <inheritdoc/>
             public PipelinePhase Phase => PipelinePhase.ParameterSelection;
 
-            public LoggerUpdater(Type limitType) {
-                _limitType = limitType;
+            public LoggerInjector(Type type) {
+                _type = type;
             }
 
             /// <inheritdoc/>
             public void Execute(ResolveRequestContext context, Action<ResolveRequestContext> next) {
-                // Add our parameters.
-                var type = typeof(ILogger<>).MakeGenericType(_limitType);
-                var logger = context.Resolve<ILoggerFactory>().CreateLogger(type);
+                var type = typeof(ILogger<>).MakeGenericType(_type);
+                var logger = (ILogger)context.Resolve(type);
                 context.ChangeParameters(new[] { TypedParameter.From(logger) }
                     .Concat(context.Parameters));
                 // Continue the resolve.
                 next(context);
             }
 
-            private readonly Type _limitType;
+            private readonly Type _type;
         }
     }
 }

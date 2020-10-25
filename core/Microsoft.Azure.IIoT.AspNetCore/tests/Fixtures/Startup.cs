@@ -50,8 +50,7 @@ namespace Microsoft.Azure.IIoT.AspNetCore.Tests {
         /// <param name="services"></param>
         /// <returns></returns>
         public void ConfigureServices(IServiceCollection services) {
-
-            // services.AddLogging(o => o.AddConsole().AddDebug());
+            services.AddLogging(o => o.AddConsole().AddDebug());
 
             services.AddHeaderForwarding();
             services.AddCors();
@@ -76,7 +75,7 @@ namespace Microsoft.Azure.IIoT.AspNetCore.Tests {
         /// <param name="appLifetime"></param>
         public void Configure(IApplicationBuilder app, IHostApplicationLifetime appLifetime) {
             var applicationContainer = app.ApplicationServices.GetAutofacRoot();
-            var log = applicationContainer.Resolve<ILogger>();
+            var log = applicationContainer.Resolve<ILogger<Startup>>();
 
             app.UsePathBase();
             app.UseHeaderForwarding();

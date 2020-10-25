@@ -10,7 +10,7 @@ namespace Microsoft.Azure.IIoT.Azure.AppInsights {
     using Microsoft.Extensions.Options;
 
     /// <summary>
-    /// Configure OpenApi
+    /// Configure appinsights
     /// </summary>
     public static class ServiceCollectionEx {
 
