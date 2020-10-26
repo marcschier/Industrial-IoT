@@ -3,9 +3,9 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Platform.Directory.Handlers {
-    using Microsoft.Azure.IIoT.Platform.Directory.Models;
-    using Microsoft.Azure.IIoT.Platform.Directory;
+namespace Microsoft.Azure.IIoT.Platform.Registry.Handlers {
+    using Microsoft.Azure.IIoT.Platform.Registry.Models;
+    using Microsoft.Azure.IIoT.Platform.Registry;
     using Microsoft.Azure.IIoT.Platform.Core.Models;
     using Microsoft.Azure.IIoT.Hub;
     using Microsoft.Azure.IIoT.Hub.Models;
@@ -26,7 +26,7 @@ namespace Microsoft.Azure.IIoT.Platform.Directory.Handlers {
         /// <param name="broker"></param>
         /// <param name="logger"></param>
         public DiscovererTwinEventHandler(IDeviceTwinServices iothub,
-            IDirectoryEventBroker<IDiscovererRegistryListener> broker, ILogger logger) {
+            IRegistryEventBroker<IDiscovererRegistryListener> broker, ILogger logger) {
             _iothub = iothub ?? throw new ArgumentNullException(nameof(iothub));
             _broker = broker ?? throw new ArgumentNullException(nameof(broker));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -55,7 +55,7 @@ namespace Microsoft.Azure.IIoT.Platform.Directory.Handlers {
                 }
             }
             if (IdentityType.Discoverer.EqualsIgnoreCase(type)) {
-                var ctx = new DirectoryOperationContextModel {
+                var ctx = new OperationContextModel {
                     AuthorityId = ev.AuthorityId,
                     Time = ev.Timestamp
                 };
@@ -80,7 +80,7 @@ namespace Microsoft.Azure.IIoT.Platform.Directory.Handlers {
         }
 
         private readonly IDeviceTwinServices _iothub;
-        private readonly IDirectoryEventBroker<IDiscovererRegistryListener> _broker;
+        private readonly IRegistryEventBroker<IDiscovererRegistryListener> _broker;
         private readonly ILogger _logger;
     }
 }

@@ -3,7 +3,7 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Platform.Directory.Cli {
+namespace Microsoft.Azure.IIoT.Platform.Registry.Cli {
     using Microsoft.Azure.IIoT.Diagnostics;
     using Microsoft.Azure.IIoT.Hub;
     using Microsoft.Azure.IIoT.Azure.IoTHub.Runtime;
@@ -21,7 +21,7 @@ namespace Microsoft.Azure.IIoT.Platform.Directory.Cli {
     using System.Threading.Tasks;
 
     /// <summary>
-    /// Test client for opc ua services
+    /// Test client for registry services
     /// </summary>
     public static class Program {
         private enum Op {

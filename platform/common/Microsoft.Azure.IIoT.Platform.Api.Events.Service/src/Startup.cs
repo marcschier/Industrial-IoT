@@ -9,7 +9,7 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service {
     using Microsoft.Azure.IIoT.Platform.Publisher.Handlers;
     using Microsoft.Azure.IIoT.Platform.Publisher.Api.Clients;
     using Microsoft.Azure.IIoT.Platform.Discovery.Api.Clients;
-    using Microsoft.Azure.IIoT.Platform.Directory.Api.Clients;
+    using Microsoft.Azure.IIoT.Platform.Registry.Api.Clients;
     using Microsoft.Azure.IIoT.Platform.Twin.Api.Clients;
     using Microsoft.Azure.IIoT.Azure.AppInsights;
     using Microsoft.Azure.IIoT.Azure.ServiceBus;

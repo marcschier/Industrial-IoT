@@ -179,7 +179,7 @@ namespace Microsoft.Azure.IIoT.Platform.Discovery.Service {
             // --- Logic ---
 
             // Discovery service and repositories
-            builder.RegisterModule<DiscoveryServices>();
+            builder.RegisterModule<DiscoveryRegistry>();
             builder.RegisterModule<ClientStack>();
 
             // ... and auto start

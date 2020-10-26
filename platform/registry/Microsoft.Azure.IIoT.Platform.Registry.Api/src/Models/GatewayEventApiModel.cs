@@ -3,7 +3,7 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Platform.Directory.Api.Models {
+namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Models {
     using System.Runtime.Serialization;
 
     /// <summary>

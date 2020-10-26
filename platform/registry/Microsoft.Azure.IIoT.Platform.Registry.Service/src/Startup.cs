@@ -3,10 +3,10 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Platform.Directory.Service {
-    using Microsoft.Azure.IIoT.Platform.Directory.Service.Runtime;
-    using Microsoft.Azure.IIoT.Platform.Directory.Service.Auth;
-    using Microsoft.Azure.IIoT.Platform.Directory;
+namespace Microsoft.Azure.IIoT.Platform.Registry.Service {
+    using Microsoft.Azure.IIoT.Platform.Registry.Service.Runtime;
+    using Microsoft.Azure.IIoT.Platform.Registry.Service.Auth;
+    using Microsoft.Azure.IIoT.Platform.Registry;
     using Microsoft.Azure.IIoT.Azure.AppInsights;
     using Microsoft.Azure.IIoT.Azure.IoTHub;
     using Microsoft.Azure.IIoT.Azure.IoTHub.Clients;
@@ -179,7 +179,7 @@ namespace Microsoft.Azure.IIoT.Platform.Directory.Service {
             // --- Logic ---
 
             // Registries and repositories
-            builder.RegisterModule<DirectoryServices>();
+            builder.RegisterModule<RegistryServices>();
 
             // Deployments
             builder.RegisterType<IoTHubConfigurationClient>()

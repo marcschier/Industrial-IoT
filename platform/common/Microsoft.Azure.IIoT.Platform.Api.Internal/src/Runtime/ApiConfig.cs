@@ -22,8 +22,7 @@ namespace Microsoft.Azure.IIoT.Api.Runtime {
     /// Complete api configuration
     /// </summary>
     public class ApiConfig : DiagnosticsConfig, ITwinConfig, IDiscoveryConfig,
-        IVaultConfig, IPublisherConfig, IEventsConfig,
-        ISignalRClientConfig {
+        IVaultConfig, IPublisherConfig, IEventsConfig, ISignalRClientConfig {
 
         /// <inheritdoc/>
         public string OpcUaTwinServiceUrl => _twin.OpcUaTwinServiceUrl;

@@ -3,11 +3,11 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Platform.Directory.Service.Controllers {
-    using Microsoft.Azure.IIoT.Platform.Directory.Service.Auth;
-    using Microsoft.Azure.IIoT.Platform.Directory.Service.Filters;
-    using Microsoft.Azure.IIoT.Platform.Directory.Api.Models;
-    using Microsoft.Azure.IIoT.Platform.Directory;
+namespace Microsoft.Azure.IIoT.Platform.Registry.Service.Controllers {
+    using Microsoft.Azure.IIoT.Platform.Registry.Service.Auth;
+    using Microsoft.Azure.IIoT.Platform.Registry.Service.Filters;
+    using Microsoft.Azure.IIoT.Platform.Registry.Api.Models;
+    using Microsoft.Azure.IIoT.Platform.Registry;
     using Microsoft.Azure.IIoT.AspNetCore.OpenApi;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Authorization;
