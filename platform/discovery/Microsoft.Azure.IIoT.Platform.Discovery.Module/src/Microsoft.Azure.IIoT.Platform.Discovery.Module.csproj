@@ -20,9 +20,6 @@
     <ProjectReference Include="..\..\..\..\azure\Microsoft.Azure.IIoT.Azure.ServiceBus\src\Microsoft.Azure.IIoT.Azure.ServiceBus.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\core\Microsoft.Azure.IIoT.AspNetCore.OpenApi\src\Microsoft.Azure.IIoT.AspNetCore.OpenApi.csproj" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\..\Microsoft.Azure.IIoT.Platform.Discovery\src\Microsoft.Azure.IIoT.Platform.Discovery.csproj" />
   </ItemGroup>
   <ItemGroup>

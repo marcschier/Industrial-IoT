@@ -17,9 +17,6 @@
     <ProjectReference Include="..\..\..\..\azure\Microsoft.Azure.IIoT.Azure.IoTHub\src\Microsoft.Azure.IIoT.Azure.IoTHub.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\core\Microsoft.Azure.IIoT.AspNetCore.OpenApi\src\Microsoft.Azure.IIoT.AspNetCore.OpenApi.csproj" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\..\Microsoft.Azure.IIoT.Platform.Twin\src\Microsoft.Azure.IIoT.Platform.Twin.csproj" />
   </ItemGroup>
   <ItemGroup>

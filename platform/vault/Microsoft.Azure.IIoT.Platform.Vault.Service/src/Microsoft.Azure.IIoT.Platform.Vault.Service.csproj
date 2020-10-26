@@ -19,9 +19,6 @@
     <ProjectReference Include="..\..\..\..\azure\Microsoft.Azure.IIoT.Azure.KeyVault\src\Microsoft.Azure.IIoT.Azure.KeyVault.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\core\Microsoft.Azure.IIoT.AspNetCore.OpenApi\src\Microsoft.Azure.IIoT.AspNetCore.OpenApi.csproj" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\..\Microsoft.Azure.IIoT.Platform.Vault\src\Microsoft.Azure.IIoT.Platform.Vault.csproj" />
   </ItemGroup>
   <ItemGroup>

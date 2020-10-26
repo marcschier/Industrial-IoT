@@ -18,9 +18,6 @@
     <ProjectReference Include="..\..\..\..\azure\Microsoft.Azure.IIoT.Azure.CosmosDb\src\Microsoft.Azure.IIoT.Azure.CosmosDb.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\core\Microsoft.Azure.IIoT.AspNetCore.OpenApi\src\Microsoft.Azure.IIoT.AspNetCore.OpenApi.csproj" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\..\..\common\Microsoft.Azure.IIoT.Platform.Api.Internal\src\Microsoft.Azure.IIoT.Platform.Api.Internal.csproj" />
     <ProjectReference Include="..\..\..\common\Microsoft.Azure.IIoT.Platform.Api\src\Microsoft.Azure.IIoT.Platform.Api.csproj" />
   </ItemGroup>

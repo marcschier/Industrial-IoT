@@ -10,7 +10,6 @@
     <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="7.0.2" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\core\Microsoft.Azure.IIoT.AspNetCore.OpenApi\src\Microsoft.Azure.IIoT.AspNetCore.OpenApi.csproj" />
     <ProjectReference Include="..\..\..\..\core\Microsoft.Azure.IIoT.AspNetCore.SignalR\src\Microsoft.Azure.IIoT.AspNetCore.SignalR.csproj" />
   </ItemGroup>
   <ItemGroup>
