@@ -10,8 +10,8 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
     using Microsoft.Azure.IIoT.Platform.Publisher;
     using Microsoft.Azure.IIoT.Platform.Publisher.Default;
     using Microsoft.Azure.IIoT.Platform.OpcUa.Services;
-    using Microsoft.Azure.IIoT.Platform.Registry;
-    using Microsoft.Azure.IIoT.Platform.Registry.Models;
+    using Microsoft.Azure.IIoT.Platform.Discovery;
+    using Microsoft.Azure.IIoT.Platform.Discovery.Models;
     using Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Fixtures;
     using Microsoft.Azure.IIoT.Platform.OpcUa.Runtime;
     using Microsoft.Azure.IIoT.Serializers;

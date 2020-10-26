@@ -3,7 +3,7 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Platform.Registry.Service.Runtime {
+namespace Microsoft.Azure.IIoT.Platform.Directory.Service.Runtime {
     using Microsoft.Azure.IIoT.AspNetCore.OpenApi;
     using Microsoft.Azure.IIoT.AspNetCore.OpenApi.Runtime;
     using Microsoft.Azure.IIoT.AspNetCore.Authentication;
@@ -14,6 +14,8 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service.Runtime {
     using Microsoft.Azure.IIoT.Diagnostics;
     using Microsoft.Azure.IIoT.Azure.AppInsights;
     using Microsoft.Azure.IIoT.Azure.AppInsights.Runtime;
+    using Microsoft.Azure.IIoT.Azure.IoTHub.Runtime;
+    using Microsoft.Azure.IIoT.Azure.IoTHub;
     using Microsoft.Azure.IIoT.Azure.ServiceBus;
     using Microsoft.Azure.IIoT.Azure.ServiceBus.Runtime;
     using Microsoft.Azure.IIoT.Hosting;
@@ -24,7 +26,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service.Runtime {
     /// <summary>
     /// Common web service configuration aggregation
     /// </summary>
-    public class Config : DiagnosticsConfig, IWebHostConfig, 
+    public class Config : DiagnosticsConfig, IWebHostConfig, IIoTHubConfig,
         ICorsConfig, IOpenApiConfig, IServiceBusConfig,
         IHeadersConfig, IContainerRegistryConfig,
         IRoleConfig, IAppInsightsConfig {
@@ -34,6 +36,9 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service.Runtime {
 
         /// <inheritdoc/>
         public bool UseRoles => GetBoolOrDefault(PcsVariable.PCS_AUTH_ROLES);
+
+        /// <inheritdoc/>
+        public string IoTHubConnString => _hub.IoTHubConnString;
 
         /// <inheritdoc/>
         public string CorsWhitelist => _cors.CorsWhitelist;
@@ -92,6 +97,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service.Runtime {
 
             _openApi = new OpenApiConfig(configuration);
             _host = new WebHostConfig(configuration);
+            _hub = new IoTHubConfig(configuration);
             _cors = new CorsConfig(configuration);
             _sb = new ServiceBusConfig(configuration);
             _fh = new HeadersConfig(configuration);
@@ -105,6 +111,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service.Runtime {
         private readonly WebHostConfig _host;
         private readonly CorsConfig _cors;
         private readonly ServiceBusConfig _sb;
+        private readonly IoTHubConfig _hub;
         private readonly HeadersConfig _fh;
     }
 }

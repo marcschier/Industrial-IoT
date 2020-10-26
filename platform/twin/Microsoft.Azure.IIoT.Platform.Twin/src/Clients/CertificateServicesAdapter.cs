@@ -6,7 +6,7 @@
 namespace Microsoft.Azure.IIoT.Platform.Twin.Clients {
     using Microsoft.Azure.IIoT.Platform.Twin;
     using Microsoft.Azure.IIoT.Platform.Core.Models;
-    using Microsoft.Azure.IIoT.Platform.Registry;
+    using Microsoft.Azure.IIoT.Platform.Discovery;
     using System;
     using System.Threading.Tasks;
     using System.Threading;

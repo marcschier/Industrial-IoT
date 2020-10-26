@@ -8,8 +8,8 @@ namespace Microsoft.Azure.IIoT.Api.Runtime {
     using Microsoft.Azure.IIoT.Platform.Publisher.Api.Runtime;
     using Microsoft.Azure.IIoT.Platform.Twin.Api;
     using Microsoft.Azure.IIoT.Platform.Twin.Api.Runtime;
-    using Microsoft.Azure.IIoT.Platform.Registry.Api;
-    using Microsoft.Azure.IIoT.Platform.Registry.Api.Runtime;
+    using Microsoft.Azure.IIoT.Platform.Discovery.Api;
+    using Microsoft.Azure.IIoT.Platform.Discovery.Api.Runtime;
     using Microsoft.Azure.IIoT.Platform.Vault.Api;
     using Microsoft.Azure.IIoT.Platform.Vault.Api.Runtime;
     using Microsoft.Azure.IIoT.Platform.Events.Api.Runtime;
@@ -21,7 +21,7 @@ namespace Microsoft.Azure.IIoT.Api.Runtime {
     /// <summary>
     /// Complete api configuration
     /// </summary>
-    public class ApiConfig : DiagnosticsConfig, ITwinConfig, IRegistryConfig,
+    public class ApiConfig : DiagnosticsConfig, ITwinConfig, IDiscoveryConfig,
         IVaultConfig, IPublisherConfig, IEventsConfig,
         ISignalRClientConfig {
 
@@ -47,14 +47,14 @@ namespace Microsoft.Azure.IIoT.Api.Runtime {
         public ApiConfig(IConfiguration configuration) :
             base(configuration) {
             _twin = new TwinConfig(configuration);
-            _registry = new RegistryConfig(configuration);
+            _registry = new DiscoveryConfig(configuration);
             _vault = new VaultConfig(configuration);
             _publisher = new PublisherConfig(configuration);
             _events = new EventsConfig(configuration);
         }
 
         private readonly TwinConfig _twin;
-        private readonly RegistryConfig _registry;
+        private readonly DiscoveryConfig _registry;
         private readonly VaultConfig _vault;
         private readonly PublisherConfig _publisher;
         private readonly EventsConfig _events;

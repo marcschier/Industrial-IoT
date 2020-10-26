@@ -7,8 +7,8 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Ua.Service.Runtime {
     using Microsoft.Azure.IIoT.Platform.OpcUa;
     using Microsoft.Azure.IIoT.Platform.OpcUa.Runtime;
     using Microsoft.Azure.IIoT.Platform.OpcUa.Transport;
-    using Microsoft.Azure.IIoT.Platform.Registry.Api;
-    using Microsoft.Azure.IIoT.Platform.Registry.Api.Runtime;
+    using Microsoft.Azure.IIoT.Platform.Discovery.Api;
+    using Microsoft.Azure.IIoT.Platform.Discovery.Api.Runtime;
     using Microsoft.Azure.IIoT.AspNetCore.Cors;
     using Microsoft.Azure.IIoT.AspNetCore.Cors.Runtime;
     using Microsoft.Azure.IIoT.AspNetCore.Hosting;
@@ -29,7 +29,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Ua.Service.Runtime {
     /// </summary>
     public class Config : DiagnosticsConfig, IWebHostConfig, IIoTHubConfig,
         ICorsConfig, ITcpListenerConfig, IWebListenerConfig,
-        ISessionServicesConfig, IRegistryConfig, IHeadersConfig,
+        ISessionServicesConfig, IDiscoveryConfig, IHeadersConfig,
         IAppInsightsConfig {
 
         /// <inheritdoc/>
@@ -94,7 +94,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Ua.Service.Runtime {
             _hub = new IoTHubConfig(configuration);
             _cors = new CorsConfig(configuration);
             _sessions = new SessionServicesConfig(configuration);
-            _api = new RegistryConfig(configuration);
+            _api = new DiscoveryConfig(configuration);
             _fh = new HeadersConfig(configuration);
             _ai = new AppInsightsConfig(configuration);
         }
@@ -104,7 +104,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Ua.Service.Runtime {
         private readonly CorsConfig _cors;
         private readonly IoTHubConfig _hub;
         private readonly SessionServicesConfig _sessions;
-        private readonly RegistryConfig _api;
+        private readonly DiscoveryConfig _api;
         private readonly HeadersConfig _fh;
     }
 }

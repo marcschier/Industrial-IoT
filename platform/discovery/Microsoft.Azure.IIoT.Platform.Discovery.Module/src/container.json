@@ -1,0 +1,5 @@
+{
+    "name": "iotedge/opc-discovery",
+    "buildAlways": true,
+    "exposes": [ 9042 ]
+}

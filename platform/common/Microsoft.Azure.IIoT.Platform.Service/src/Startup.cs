@@ -105,7 +105,7 @@ namespace Microsoft.Azure.IIoT.Platform.Service {
             app.UseWelcomePage("/");
 
             // Minimal API surface
-            app.AddStartupBranch<Registry.Service.Startup>("/registry");
+            app.AddStartupBranch<Discovery.Service.Startup>("/registry");
             app.AddStartupBranch<Twin.Service.Startup>("/twin");
             app.AddStartupBranch<Publisher.Service.Startup>("/publisher");
             app.AddStartupBranch<Api.Events.Service.Startup>("/events");

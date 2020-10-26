@@ -4,8 +4,8 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Platform.Vault.Service.Runtime {
-    using Microsoft.Azure.IIoT.Platform.Registry.Api;
-    using Microsoft.Azure.IIoT.Platform.Registry.Api.Runtime;
+    using Microsoft.Azure.IIoT.Platform.Discovery.Api;
+    using Microsoft.Azure.IIoT.Platform.Discovery.Api.Runtime;
     using Microsoft.Azure.IIoT.Platform.Vault;
     using Microsoft.Azure.IIoT.Platform.Vault.Runtime;
     using Microsoft.Azure.IIoT.AspNetCore.Cors;
@@ -33,7 +33,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Service.Runtime {
     /// </summary>
     public class Config : DiagnosticsConfig, IWebHostConfig,
         ICorsConfig, IOpenApiConfig, IVaultConfig, ICosmosDbConfig, IRoleConfig,
-        IItemContainerConfig, IKeyVaultConfig, IServiceBusConfig, IRegistryConfig,
+        IItemContainerConfig, IKeyVaultConfig, IServiceBusConfig, IDiscoveryConfig,
         IHeadersConfig, IAppInsightsConfig {
 
         /// <inheritdoc/>
@@ -112,7 +112,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Service.Runtime {
             _host = new WebHostConfig(configuration);
             _cors = new CorsConfig(configuration);
             _sb = new ServiceBusConfig(configuration);
-            _registry = new RegistryConfig(configuration);
+            _registry = new DiscoveryConfig(configuration);
             _fh = new HeadersConfig(configuration);
             _ai = new AppInsightsConfig(configuration);
         }
@@ -125,7 +125,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Service.Runtime {
         private readonly WebHostConfig _host;
         private readonly CorsConfig _cors;
         private readonly ServiceBusConfig _sb;
-        private readonly RegistryConfig _registry;
+        private readonly DiscoveryConfig _registry;
         private readonly HeadersConfig _fh;
     }
 }

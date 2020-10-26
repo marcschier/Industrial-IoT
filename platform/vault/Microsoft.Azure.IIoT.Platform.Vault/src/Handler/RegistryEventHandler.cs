@@ -5,8 +5,8 @@
 
 namespace Microsoft.Azure.IIoT.Platform.Vault.Handler {
     using Microsoft.Azure.IIoT.Platform.Vault.Models;
-    using Microsoft.Azure.IIoT.Platform.Registry;
-    using Microsoft.Azure.IIoT.Platform.Registry.Models;
+    using Microsoft.Azure.IIoT.Platform.Discovery;
+    using Microsoft.Azure.IIoT.Platform.Discovery.Models;
     using Microsoft.Azure.IIoT.Platform.Core.Models;
     using Microsoft.Azure.IIoT.Utils;
     using System;

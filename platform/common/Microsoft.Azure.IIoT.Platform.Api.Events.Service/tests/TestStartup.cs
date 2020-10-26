@@ -6,7 +6,8 @@
 namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service {
     using Microsoft.Azure.IIoT.Platform.Api.Events.Service.Runtime;
     using Microsoft.Azure.IIoT.Platform.Publisher.Api;
-    using Microsoft.Azure.IIoT.Platform.Registry.Api;
+    using Microsoft.Azure.IIoT.Platform.Discovery.Api;
+    using Microsoft.Azure.IIoT.Platform.Twin.Api;
     using Microsoft.Azure.IIoT.Platform.Directory.Api;
     using Microsoft.Azure.IIoT.Platform.Events.Api.Runtime;
     using Microsoft.Azure.IIoT.Services.Generic.Services;
@@ -20,7 +21,6 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service {
     using Autofac;
     using System.Collections.Generic;
     using System.Threading.Tasks;
-    using Microsoft.Azure.IIoT.Platform.Twin.Api;
 
     /// <summary>
     /// Startup class for tests
@@ -59,7 +59,7 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service {
             // Register client events
             builder.RegisterType<DirectoryServiceEvents>()
                 .AsImplementedInterfaces().SingleInstance();
-            builder.RegisterType<RegistryServiceEvents>()
+            builder.RegisterType<DiscoveryServiceEvents>()
                 .AsImplementedInterfaces().SingleInstance();
             builder.RegisterType<TwinServiceEvents>()
                 .AsImplementedInterfaces();

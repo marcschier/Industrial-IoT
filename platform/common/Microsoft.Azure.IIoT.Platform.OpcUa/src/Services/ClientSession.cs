@@ -5,7 +5,7 @@
 
 namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
     using Microsoft.Azure.IIoT.Platform.Exceptions;
-    using Microsoft.Azure.IIoT.Platform.Registry.Models;
+    using Microsoft.Azure.IIoT.Platform.Discovery.Models;
     using Microsoft.Azure.IIoT.Platform.Core.Models;
     using Microsoft.Azure.IIoT.Exceptions;
     using Microsoft.Azure.IIoT.Utils;

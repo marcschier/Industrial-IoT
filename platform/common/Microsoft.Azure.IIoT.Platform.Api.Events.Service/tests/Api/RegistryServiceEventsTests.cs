@@ -4,10 +4,10 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service.Api {
-    using Microsoft.Azure.IIoT.Platform.Registry.Api;
-    using Microsoft.Azure.IIoT.Platform.Registry.Api.Models;
-    using Microsoft.Azure.IIoT.Platform.Registry.Events.v2.Models;
-    using Microsoft.Azure.IIoT.Platform.Registry.Models;
+    using Microsoft.Azure.IIoT.Platform.Discovery.Api;
+    using Microsoft.Azure.IIoT.Platform.Discovery.Api.Models;
+    using Microsoft.Azure.IIoT.Platform.Discovery.Events.v2.Models;
+    using Microsoft.Azure.IIoT.Platform.Discovery.Models;
     using Microsoft.Azure.IIoT.Messaging;
     using System.Threading.Tasks;
     using Xunit;
@@ -27,7 +27,7 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service.Api {
         public async Task TestPublishApplicationEventAndReceiveAsync() {
 
             var bus = _factory.Resolve<IEventBus>();
-            var client = _factory.Resolve<IRegistryServiceEvents>();
+            var client = _factory.Resolve<IDiscoveryServiceEvents>();
 
             var expected = new ApplicationEventModel {
                 Application = new ApplicationInfoModel {
@@ -62,7 +62,7 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service.Api {
         public async Task TestPublishApplicationEventAndReceiveMultipleAsync(int total) {
 
             var bus = _factory.Resolve<IEventBus>();
-            var client = _factory.Resolve<IRegistryServiceEvents>();
+            var client = _factory.Resolve<IDiscoveryServiceEvents>();
 
             var expected = new ApplicationEventModel {
                 Application = new ApplicationInfoModel {
@@ -93,7 +93,7 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service.Api {
         public async Task TestPublishEndpointEventAndReceiveAsync() {
 
             var bus = _factory.Resolve<IEventBus>();
-            var client = _factory.Resolve<IRegistryServiceEvents>();
+            var client = _factory.Resolve<IDiscoveryServiceEvents>();
 
             var expected = new EndpointEventModel {
                 Endpoint = new EndpointInfoModel {
@@ -124,7 +124,7 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service.Api {
         public async Task TestPublishEndpointEventAndReceiveMultipleAsync(int total) {
 
             var bus = _factory.Resolve<IEventBus>();
-            var client = _factory.Resolve<IRegistryServiceEvents>();
+            var client = _factory.Resolve<IDiscoveryServiceEvents>();
 
             var expected = new EndpointEventModel {
                 Endpoint = new EndpointInfoModel {
@@ -154,14 +154,14 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service.Api {
         public async Task TestPublishDiscoveryProgressWithDiscovererIdAndReceiveAsync() {
 
             var bus = _factory.Resolve<IEventBus>();
-            var client = _factory.Resolve<IRegistryServiceEvents>();
+            var client = _factory.Resolve<IDiscoveryServiceEvents>();
 
             var discovererId = "TestDiscoverer1";
             var expected = new DiscoveryProgressModel {
                 DiscovererId = discovererId,
                 Discovered = 55,
                 ResultDetails = new Dictionary<string, string> { ["test"] = "test" },
-                EventType = IIoT.Platform.Registry.Models.DiscoveryProgressType.NetworkScanFinished,
+                EventType = IIoT.Platform.Discovery.Models.DiscoveryProgressType.NetworkScanFinished,
                 TimeStamp = DateTime.UtcNow
             };
             var result = new TaskCompletionSource<DiscoveryProgressApiModel>(TaskCreationOptions.RunContinuationsAsynchronously);
@@ -181,7 +181,7 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service.Api {
                 Assert.Equal(expected.TimeStamp, received.TimeStamp);
                 Assert.Equal(expected.Discovered, received.Discovered);
                 Assert.Equal(expected.EventType,
-                    (IIoT.Platform.Registry.Models.DiscoveryProgressType)received.EventType);
+                    (IIoT.Platform.Discovery.Models.DiscoveryProgressType)received.EventType);
                 Assert.Equal(expected.ResultDetails, received.ResultDetails);
             }
         }
@@ -190,7 +190,7 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service.Api {
         public async Task TestPublishDiscoveryProgressWithRequestIdAndReceiveAsync() {
 
             var bus = _factory.Resolve<IEventBus>();
-            var client = _factory.Resolve<IRegistryServiceEvents>();
+            var client = _factory.Resolve<IDiscoveryServiceEvents>();
 
             var requestId = "TestDiscoverer1";
             var expected = new DiscoveryProgressModel {
@@ -203,7 +203,7 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service.Api {
                 DiscovererId = "testetests",
                 Discovered = 55,
                 ResultDetails = new Dictionary<string, string> { ["test"] = "test" },
-                EventType = IIoT.Platform.Registry.Models.DiscoveryProgressType.NetworkScanFinished,
+                EventType = IIoT.Platform.Discovery.Models.DiscoveryProgressType.NetworkScanFinished,
                 TimeStamp = DateTime.UtcNow
             };
             var result = new TaskCompletionSource<DiscoveryProgressApiModel>(TaskCreationOptions.RunContinuationsAsynchronously);
@@ -223,7 +223,7 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service.Api {
                 Assert.Equal(expected.TimeStamp, received.TimeStamp);
                 Assert.Equal(expected.Discovered, received.Discovered);
                 Assert.Equal(expected.EventType,
-                    (IIoT.Platform.Registry.Models.DiscoveryProgressType)received.EventType);
+                    (IIoT.Platform.Discovery.Models.DiscoveryProgressType)received.EventType);
                 Assert.Equal(expected.ResultDetails, received.ResultDetails);
             }
         }
@@ -235,13 +235,13 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service.Api {
         public async Task TestPublishDiscoveryProgressAndReceiveMultipleAsync(int total) {
 
             var bus = _factory.Resolve<IEventBus>();
-            var client = _factory.Resolve<IRegistryServiceEvents>();
+            var client = _factory.Resolve<IDiscoveryServiceEvents>();
 
             var discovererId = "TestDiscoverer1";
             var expected = new DiscoveryProgressModel {
                 DiscovererId = discovererId,
                 Discovered = 55,
-                EventType = IIoT.Platform.Registry.Models.DiscoveryProgressType.NetworkScanFinished,
+                EventType = IIoT.Platform.Discovery.Models.DiscoveryProgressType.NetworkScanFinished,
                 TimeStamp = DateTime.UtcNow
             };
             var result = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);

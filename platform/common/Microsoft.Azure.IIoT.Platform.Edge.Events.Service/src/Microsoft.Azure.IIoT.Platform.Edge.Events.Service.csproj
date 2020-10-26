@@ -19,6 +19,6 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\platform\common\Microsoft.Azure.IIoT.Platform.Api.Internal\src\Microsoft.Azure.IIoT.Platform.Api.Internal.csproj" />
     <ProjectReference Include="..\..\..\..\platform\publisher\Microsoft.Azure.IIoT.Platform.Publisher\src\Microsoft.Azure.IIoT.Platform.Publisher.csproj" />
-    <ProjectReference Include="..\..\..\..\platform\registry\Microsoft.Azure.IIoT.Platform.Registry\src\Microsoft.Azure.IIoT.Platform.Registry.csproj" />
+    <ProjectReference Include="..\..\..\..\platform\discovery\Microsoft.Azure.IIoT.Platform.Discovery\src\Microsoft.Azure.IIoT.Platform.Discovery.csproj" />
   </ItemGroup>
 </Project>

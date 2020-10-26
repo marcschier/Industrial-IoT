@@ -10,9 +10,9 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
     using Microsoft.Azure.IIoT.Platform.Publisher.Api;
     using Microsoft.Azure.IIoT.Platform.Publisher.Api.Clients;
     using Microsoft.Azure.IIoT.Platform.Publisher.Api.Models;
-    using Microsoft.Azure.IIoT.Platform.Registry.Api;
-    using Microsoft.Azure.IIoT.Platform.Registry.Api.Clients;
-    using Microsoft.Azure.IIoT.Platform.Registry.Api.Models;
+    using Microsoft.Azure.IIoT.Platform.Discovery.Api;
+    using Microsoft.Azure.IIoT.Platform.Discovery.Api.Clients;
+    using Microsoft.Azure.IIoT.Platform.Discovery.Api.Models;
     using Microsoft.Azure.IIoT.Platform.Directory.Api;
     using Microsoft.Azure.IIoT.Platform.Directory.Api.Models;
     using Microsoft.Azure.IIoT.Platform.Twin.Api;
@@ -77,7 +77,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
             // Register twin, vault, and registry services clients
             builder.RegisterType<TwinServiceClient>()
                 .AsImplementedInterfaces();
-            builder.RegisterType<RegistryServiceClient>()
+            builder.RegisterType<DiscoveryServiceClient>()
                 .AsImplementedInterfaces();
             builder.RegisterType<VaultServiceClient>()
                 .AsImplementedInterfaces();
@@ -87,7 +87,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
             // ... with client event callbacks
             builder.RegisterType<DirectoryServiceEvents>()
                 .AsImplementedInterfaces().SingleInstance();
-            builder.RegisterType<RegistryServiceEvents>()
+            builder.RegisterType<DiscoveryServiceEvents>()
                 .AsImplementedInterfaces();
             builder.RegisterType<TwinServiceEvents>()
                 .AsImplementedInterfaces();
@@ -129,7 +129,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
             _scope = container.BeginLifetimeScope();
             _twin = _scope.Resolve<ITwinServiceApi>();
             _directory = _scope.Resolve<IDirectoryServiceApi>();
-            _registry = _scope.Resolve<IRegistryServiceApi>();
+            _registry = _scope.Resolve<IDiscoveryServiceApi>();
             _history = _scope.Resolve<IHistoryServiceApi>();
             _publisher = _scope.Resolve<IPublisherServiceApi>();
             _vault = _scope.Resolve<IVaultServiceApi>();
@@ -1932,7 +1932,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
         /// Monitor discoverers
         /// </summary>
         private async Task MonitorDiscoverersAsync(CliOptions options) {
-            var revents = _scope.Resolve<IRegistryServiceEvents>();
+            var revents = _scope.Resolve<IDiscoveryServiceEvents>();
             var devents = _scope.Resolve<IDirectoryServiceEvents>();
             Console.WriteLine("Press any key to stop.");
             IAsyncDisposable complete;
@@ -1971,7 +1971,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
         /// </summary>
         private async Task DiscovererScanAsync(CliOptions options) {
             var discovererId = GetDiscovererId(options);
-            var events = _scope.Resolve<IRegistryServiceEvents>();
+            var events = _scope.Resolve<IDiscoveryServiceEvents>();
             Console.WriteLine("Press any key to stop.");
             var discovery = await events.SubscribeDiscoveryProgressByDiscovererIdAsync(
                 discovererId, PrintProgress).ConfigureAwait(false);
@@ -2068,10 +2068,10 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
         /// Registers server
         /// </summary>
         private async Task RegisterServerAsync(CliOptions options) {
-            IRegistryServiceEvents events = null;
+            IDiscoveryServiceEvents events = null;
             var id = options.GetValueOrDefault("-i", "--id", Guid.NewGuid().ToString());
             if (options.IsSet("-m", "--monitor")) {
-                events = _scope.Resolve<IRegistryServiceEvents>();
+                events = _scope.Resolve<IDiscoveryServiceEvents>();
                 var tcs = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
 
                 var discovery = await events.SubscribeDiscoveryProgressByRequestIdAsync(
@@ -2114,10 +2114,10 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
         /// Discover servers
         /// </summary>
         private async Task DiscoverServersAsync(CliOptions options) {
-            IRegistryServiceEvents events = null;
+            IDiscoveryServiceEvents events = null;
             var id = options.GetValueOrDefault("-i", "--id", Guid.NewGuid().ToString());
             if (options.IsSet("-m", "--monitor")) {
-                events = _scope.Resolve<IRegistryServiceEvents>();
+                events = _scope.Resolve<IDiscoveryServiceEvents>();
                 var tcs = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
                 var discovery = await events.SubscribeDiscoveryProgressByRequestIdAsync(
                     id, async ev => {
@@ -2280,7 +2280,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
         /// Monitor applications
         /// </summary>
         private async Task MonitorApplicationsAsync() {
-            var events = _scope.Resolve<IRegistryServiceEvents>();
+            var events = _scope.Resolve<IDiscoveryServiceEvents>();
             Console.WriteLine("Press any key to stop.");
             var complete = await events.SubscribeApplicationEventsAsync(PrintEvent).ConfigureAwait(false);
             try {
@@ -2295,7 +2295,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
         /// Monitor all
         /// </summary>
         private async Task MonitorAllAsync() {
-            var revents = _scope.Resolve<IRegistryServiceEvents>();
+            var revents = _scope.Resolve<IDiscoveryServiceEvents>();
             var devents = _scope.Resolve<IDirectoryServiceEvents>();
             Console.WriteLine("Press any key to stop.");
             var apps = await revents.SubscribeApplicationEventsAsync(PrintEvent).ConfigureAwait(false);
@@ -2509,7 +2509,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
         /// Monitor endpoints
         /// </summary>
         private async Task MonitorEndpointsAsync() {
-            var events = _scope.Resolve<IRegistryServiceEvents>();
+            var events = _scope.Resolve<IDiscoveryServiceEvents>();
             Console.WriteLine("Press any key to stop.");
             var complete = await events.SubscribeEndpointEventsAsync(PrintEvent).ConfigureAwait(false);
             try {
@@ -4235,7 +4235,7 @@ Commands and Options
         private readonly ILifetimeScope _scope;
         private readonly ITwinServiceApi _twin;
         private readonly IDirectoryServiceApi _directory;
-        private readonly IRegistryServiceApi _registry;
+        private readonly IDiscoveryServiceApi _registry;
         private readonly IPublisherServiceApi _publisher;
         private readonly IHistoryServiceApi _history;
         private readonly IVaultServiceApi _vault;

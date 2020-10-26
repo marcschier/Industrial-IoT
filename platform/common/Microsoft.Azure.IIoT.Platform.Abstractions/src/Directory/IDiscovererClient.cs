@@ -3,8 +3,8 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Platform.Registry {
-    using Microsoft.Azure.IIoT.Platform.Registry.Models;
+namespace Microsoft.Azure.IIoT.Platform.Discovery {
+    using Microsoft.Azure.IIoT.Platform.Discovery.Models;
     using System.Threading;
     using System.Threading.Tasks;
 

@@ -5,6 +5,11 @@
     <Description>Azure Industrial IoT Platform Registry core</Description>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Remove="Storage\**" />
+    <EmbeddedResource Remove="Storage\**" />
+    <None Remove="Storage\**" />
+  </ItemGroup>
+  <ItemGroup>
       <ProjectReference Include="..\..\..\..\platform\common\Microsoft.Azure.IIoT.Platform.Abstractions\src\Microsoft.Azure.IIoT.Platform.Abstractions.csproj" />
       <ProjectReference Include="..\..\..\..\platform\common\Microsoft.Azure.IIoT.Platform.OpcUa\src\Microsoft.Azure.IIoT.Platform.OpcUa.csproj" />
   </ItemGroup>

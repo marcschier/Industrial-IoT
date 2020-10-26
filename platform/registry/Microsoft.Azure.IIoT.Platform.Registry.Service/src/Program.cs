@@ -3,7 +3,7 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Platform.Registry.Service {
+namespace Microsoft.Azure.IIoT.Platform.Directory.Service {
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.Extensions.Hosting;
     using Autofac.Extensions.Hosting;
@@ -31,7 +31,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service {
             return Host.CreateDefaultBuilder(args)
                 .UseAutofac()
                 .ConfigureWebHostDefaults(builder => builder
-                    .UseUrls("http://*:9042")
+                    .UseUrls("http://*:9043")
                     .UseStartup<Startup>()
                     .UseKestrel(o => o.AddServerHeader = false));
         }

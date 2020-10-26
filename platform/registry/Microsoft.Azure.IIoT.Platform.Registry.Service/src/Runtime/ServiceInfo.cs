@@ -3,7 +3,7 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Platform.Registry.Service {
+namespace Microsoft.Azure.IIoT.Platform.Directory.Service {
     using Microsoft.Azure.IIoT.Hosting;
 
     /// <summary>
@@ -14,7 +14,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service {
         /// <summary>
         /// ID
         /// </summary>
-        public string ServiceId => "OPC_REGISTRY";
+        public string ServiceId => "DIRECTORY";
 
         /// <summary>
         /// Process id
@@ -24,11 +24,11 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service {
         /// <summary>
         /// Name of service
         /// </summary>
-        public string Name => "Opc-Registry-Service";
+        public string Name => "Directory-Service";
 
         /// <summary>
         /// Description of service
         /// </summary>
-        public string Description => "Azure Industrial IoT OPC UA Registry Service";
+        public string Description => "Azure Industrial IoT Workload Directory Service";
     }
 }

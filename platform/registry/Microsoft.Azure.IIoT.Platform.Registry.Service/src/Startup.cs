@@ -3,11 +3,15 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Platform.Registry.Service {
-    using Microsoft.Azure.IIoT.Platform.Registry.Service.Runtime;
-    using Microsoft.Azure.IIoT.Platform.Registry.Service.Auth;
-    using Microsoft.Azure.IIoT.Platform.Registry;
-    using Microsoft.Azure.IIoT.Platform.OpcUa;
+namespace Microsoft.Azure.IIoT.Platform.Directory.Service {
+    using Microsoft.Azure.IIoT.Platform.Directory.Service.Runtime;
+    using Microsoft.Azure.IIoT.Platform.Directory.Service.Auth;
+    using Microsoft.Azure.IIoT.Platform.Directory;
+    using Microsoft.Azure.IIoT.Azure.AppInsights;
+    using Microsoft.Azure.IIoT.Azure.IoTHub;
+    using Microsoft.Azure.IIoT.Azure.IoTHub.Clients;
+    using Microsoft.Azure.IIoT.Azure.IoTHub.Deploy;
+    using Microsoft.Azure.IIoT.Azure.ServiceBus;
     using Microsoft.Azure.IIoT.Authentication;
     using Microsoft.Azure.IIoT.Utils;
     using Microsoft.Azure.IIoT.Http.Clients;
@@ -21,10 +25,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service {
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
     using Microsoft.Extensions.Logging;
-    using Microsoft.Azure.IIoT.Azure.LogAnalytics.Runtime;
-    using Microsoft.Azure.IIoT.Azure.AppInsights;
-    using Microsoft.Azure.IIoT.Azure.ServiceBus;
-    using Microsoft.Azure.IIoT.Azure.CosmosDb;
     using Microsoft.OpenApi.Models;
     using Autofac;
     using Autofac.Extensions.DependencyInjection;
@@ -57,7 +57,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service {
         /// <param name="env"></param>
         /// <param name="configuration"></param>
         public Startup(IWebHostEnvironment env, IConfiguration configuration) :
-            this(env, new Config(new ConfigurationBuilder()
+            this (env, new Config(new ConfigurationBuilder()
                 .AddConfiguration(configuration)
                 .AddFromDotEnvFile()
                 .AddEnvironmentVariables()
@@ -148,7 +148,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service {
             appLifetime.ApplicationStopped.Register(applicationContainer.Dispose);
 
             // Print some useful information at bootstrap time
-            log.LogInformation("{service} web service started with id {id}",
+            log.LogInformation("{service} started with id {id}",
                 ServiceInfo.Name, ServiceInfo.Id);
         }
 
@@ -178,9 +178,21 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service {
 
             // --- Logic ---
 
-            // Registries, discovery service and repositories
-            builder.RegisterModule<RegistryServices>();
-            builder.RegisterModule<ClientStack>();
+            // Registries and repositories
+            builder.RegisterModule<DirectoryServices>();
+
+            // Deployments
+            builder.RegisterType<IoTHubConfigurationClient>()
+                .AsImplementedInterfaces();
+            builder.RegisterType<IoTEdgeBaseDeployment>()
+                .AsImplementedInterfaces().SingleInstance();
+            builder.RegisterType<IoTEdgeDiscoveryDeployment>()
+                .AsImplementedInterfaces().SingleInstance();
+            builder.RegisterType<IoTEdgeTwinDeployment>()
+                .AsImplementedInterfaces().SingleInstance();
+            builder.RegisterType<IoTEdgePublisherDeployment>()
+                .AsImplementedInterfaces().SingleInstance();
+
 
             // ... and auto start
             builder.RegisterType<HostAutoStart>()
@@ -189,16 +201,14 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service {
 
             // --- Dependencies ---
 
+            // Add App Insights logging
+            builder.AddAppInsightsLogging(Config);
             // Add service to service authentication
             builder.RegisterModule<WebApiAuthentication>();
-            builder.RegisterType<LogAnalyticsConfig>()
-                .AsImplementedInterfaces().SingleInstance();
-            // Add diagnostics
-            builder.AddAppInsightsLogging(Config);
+            // Iot hub services
+            builder.RegisterModule<IoTHubSupportModule>();
             // Register event bus for integration events
             builder.RegisterModule<ServiceBusEventBusSupport>();
-            // Register Cosmos db for publisher storage
-            builder.RegisterModule<CosmosDbModule>();
         }
     }
 }

@@ -7,7 +7,7 @@ namespace Microsoft.Azure.IIoT.Api {
     using Microsoft.Azure.IIoT.Platform.Core.Api.Models;
     using Microsoft.Azure.IIoT.Platform.Twin.Api.Clients;
     using Microsoft.Azure.IIoT.Platform.Publisher.Api.Clients;
-    using Microsoft.Azure.IIoT.Platform.Registry.Api.Clients;
+    using Microsoft.Azure.IIoT.Platform.Discovery.Api.Clients;
     using Microsoft.Azure.IIoT.Platform.Vault.Api.Clients;
     using System;
     using System.Collections.Generic;
@@ -25,7 +25,7 @@ namespace Microsoft.Azure.IIoT.Api {
                 .Concat(GetAllApiModelTypes<UsersServiceClient>())
                 .Concat(GetAllApiModelTypes<VaultServiceClient>())
                 .Concat(GetAllApiModelTypes<TwinServiceClient>())
-                .Concat(GetAllApiModelTypes<RegistryServiceClient>())
+                .Concat(GetAllApiModelTypes<DiscoveryServiceClient>())
                 .Concat(GetAllApiModelTypes<PublisherServiceClient>())
                 .Distinct()
                 .Select(t => new object[] { t });

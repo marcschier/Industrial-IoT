@@ -10,8 +10,8 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Service {
     using Microsoft.Azure.IIoT.Platform.Vault.Storage;
     using Microsoft.Azure.IIoT.Platform.Vault.Service.Auth;
     using Microsoft.Azure.IIoT.Platform.Vault.Service.Runtime;
-    using Microsoft.Azure.IIoT.Platform.Registry.Api.Clients;
-    using Microsoft.Azure.IIoT.Platform.Registry.Events.v2;
+    using Microsoft.Azure.IIoT.Platform.Discovery.Api.Clients;
+    using Microsoft.Azure.IIoT.Platform.Discovery.Events.v2;
     using Microsoft.Azure.IIoT.Azure.ServiceBus;
     using Microsoft.Azure.IIoT.Azure.CosmosDb;
     using Microsoft.Azure.IIoT.Azure.AppInsights;
@@ -153,7 +153,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Service {
             appLifetime.ApplicationStopped.Register(applicationContainer.Dispose);
 
             // Print some useful information at bootstrap time
-            log.LogInformation("{service} web service started with id {id}",
+            log.LogInformation("{service} started with id {id}",
                 ServiceInfo.Name, ServiceInfo.Id);
         }
 
@@ -201,9 +201,9 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Service {
                 .AsImplementedInterfaces().SingleInstance();
 
             // Register registry micro services adapters
-            builder.RegisterType<RegistryServiceClient>()
+            builder.RegisterType<DiscoveryServiceClient>()
                 .AsImplementedInterfaces();
-            builder.RegisterType<RegistryServicesApiAdapter>()
+            builder.RegisterType<DiscoveryServicesApiAdapter>()
                 .AsImplementedInterfaces();
 
             // Vault services

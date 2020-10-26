@@ -6,8 +6,8 @@
 namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
     using Microsoft.Azure.IIoT.Platform.Twin.Models;
     using Microsoft.Azure.IIoT.Platform.Twin;
-    using Microsoft.Azure.IIoT.Platform.Registry;
-    using Microsoft.Azure.IIoT.Platform.Registry.Models;
+    using Microsoft.Azure.IIoT.Platform.Discovery;
+    using Microsoft.Azure.IIoT.Platform.Discovery.Models;
     using Microsoft.Azure.IIoT.Platform.Core.Models;
     using Microsoft.Azure.IIoT.Exceptions;
     using Microsoft.Azure.IIoT.Utils;
@@ -32,7 +32,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
         /// <param name="events"></param>
         public TwinRegistryServices(ITwinRepository database, IEndpointRegistry endpoints,
             ILogger logger, ITwinEventBroker<ITwinRegistryListener> broker,
-            IRegistryEvents<IEndpointRegistryListener> events = null) {
+            IDiscoveryEvents<IEndpointRegistryListener> events = null) {
 
             _database = database ?? throw new ArgumentNullException(nameof(database));
             _endpoints = endpoints ?? throw new ArgumentNullException(nameof(endpoints));

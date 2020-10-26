@@ -5,9 +5,9 @@
 
 namespace Microsoft.Azure.IIoT.Platform.Edge.Events.Service {
     using Microsoft.Azure.IIoT.Platform.Edge.Events.Service.Runtime;
-    using Microsoft.Azure.IIoT.Platform.Registry;
-    using Microsoft.Azure.IIoT.Platform.Registry.Handlers;
-    using Microsoft.Azure.IIoT.Platform.Registry.Events.v2;
+    using Microsoft.Azure.IIoT.Platform.Discovery;
+    using Microsoft.Azure.IIoT.Platform.Discovery.Handlers;
+    using Microsoft.Azure.IIoT.Platform.Discovery.Events.v2;
     using Microsoft.Azure.IIoT.Platform.Publisher;
     using Microsoft.Azure.IIoT.Platform.Publisher.Handlers;
     using Microsoft.Azure.IIoT.Azure.AppInsights;
@@ -106,8 +106,8 @@ namespace Microsoft.Azure.IIoT.Platform.Edge.Events.Service {
                 .AsImplementedInterfaces();
 
             // 2.) Registry storage for data plane control events
-            builder.RegisterModule<RegistryStorage>();
-          //  builder.RegisterType<ConnectionEventHandler>()
+            builder.RegisterModule<DiscoveryStorage>();
+          //  builder.RegisterType<TwinEventHandler>()
           //      .AsImplementedInterfaces();
 
             // 3.) Publisher storage for edge events

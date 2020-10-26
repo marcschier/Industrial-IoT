@@ -5,7 +5,7 @@
 
 namespace Microsoft.Azure.IIoT.Platform.Publisher.Models {
     using Microsoft.Azure.IIoT.Platform.Core.Models;
-    using Microsoft.Azure.IIoT.Platform.Registry.Models;
+    using Microsoft.Azure.IIoT.Platform.Discovery.Models;
     using System.Linq;
 
     /// <summary>

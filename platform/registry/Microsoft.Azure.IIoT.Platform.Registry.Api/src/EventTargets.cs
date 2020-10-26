@@ -3,7 +3,7 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Platform.Registry.Api {
+namespace Microsoft.Azure.IIoT.Platform.Directory.Api {
 
     /// <summary>
     /// Event target constants
@@ -11,18 +11,23 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api {
     public static class EventTargets {
 
         /// <summary>
-        /// Application event type
+        /// Supervisor event type
         /// </summary>
-        public const string ApplicationEventTarget = "ApplicationEvent";
+        public const string SupervisorEventTarget = "SupervisorEvent";
 
         /// <summary>
-        /// Endpoint event type
+        /// Gateway event type
         /// </summary>
-        public const string EndpointEventTarget = "EndpointEvent";
+        public const string GatewayEventTarget = "GatewayEvent";
 
         /// <summary>
-        /// Discovery progress event targets
+        /// Discoverer event type
         /// </summary>
-        public const string DiscoveryProgressTarget = "DiscoveryProgress";
+        public const string DiscovererEventTarget = "DiscovererEvent";
+
+        /// <summary>
+        /// Publisher event type
+        /// </summary>
+        public const string PublisherEventTarget = "PublisherEvent";
     }
 }
