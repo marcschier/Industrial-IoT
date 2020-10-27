@@ -54,7 +54,7 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
                 clientBuilder.RegisterModule<RabbitMqEventQueueModule>();
                 clientBuilder.RegisterType<RabbitMqConfig>()
                     .AsImplementedInterfaces().SingleInstance();
-                clientBuilder.AddDebugDiagnostics();
+                clientBuilder.AddDiagnostics();
                 _client = clientBuilder.Build();
 
                 var consumerBuilder = new ContainerBuilder();
@@ -79,7 +79,7 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
                     .AutoActivate()
                     .AsImplementedInterfaces().SingleInstance();
 
-                consumerBuilder.AddDebugDiagnostics();
+                consumerBuilder.AddDiagnostics();
                 _consumer = consumerBuilder.Build();
             }
             catch {

@@ -24,7 +24,6 @@ namespace Microsoft.Azure.IIoT.Platform.Edge.Events.Service {
     using Microsoft.Extensions.Hosting;
     using Autofac;
     using Autofac.Extensions.DependencyInjection;
-    using Microsoft.Extensions.Logging;
     using System;
 
     /// <summary>

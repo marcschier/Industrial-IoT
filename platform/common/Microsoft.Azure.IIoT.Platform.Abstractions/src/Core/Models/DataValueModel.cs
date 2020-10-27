@@ -6,7 +6,6 @@
 namespace Microsoft.Azure.IIoT.Platform.Core.Models {
     using Microsoft.Azure.IIoT.Serializers;
     using System;
-    using System.Runtime.Serialization;
 
     /// <summary>
     /// Data value model

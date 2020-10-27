@@ -30,7 +30,6 @@ namespace Microsoft.Azure.IIoT.Platform.Discovery.Cli {
     using Microsoft.Extensions.Configuration;
     using Opc.Ua;
     using Microsoft.Extensions.Logging;
-    using Serilog.Events;
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
@@ -38,7 +37,6 @@ namespace Microsoft.Azure.IIoT.Platform.Discovery.Cli {
     using System.Net;
     using System.Threading;
     using System.Threading.Tasks;
-    using System.Diagnostics.Tracing;
 
     /// <summary>
     /// Test client for opc ua services

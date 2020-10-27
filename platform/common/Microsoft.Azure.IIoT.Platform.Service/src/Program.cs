@@ -5,7 +5,6 @@
 
 namespace Microsoft.Azure.IIoT.Platform.Service {
     using Microsoft.AspNetCore.Hosting;
-    using Microsoft.Extensions.Logging;
     using Microsoft.Extensions.Hosting;
     using Autofac.Extensions.Hosting;
     using Prometheus;

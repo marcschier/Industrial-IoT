@@ -7,7 +7,6 @@
     <PackageReference Include="Microsoft.Extensions.Configuration.CommandLine" Version="5.0.0-rc.2.20475.5" />
     <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="5.0.0-rc.2.20475.5" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="5.0.0-rc.2.20475.5" />
-    <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="7.0.2" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\platform\common\Microsoft.Azure.IIoT.Platform.Api.Internal\src\Microsoft.Azure.IIoT.Platform.Api.Internal.csproj" />
@@ -16,8 +15,8 @@
     <ProjectReference Include="..\..\..\..\azure\Microsoft.Azure.IIoT.Azure.AspNetCore\src\Microsoft.Azure.IIoT.Azure.AspNetCore.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\azure\Microsoft.Azure.IIoT.Azure.CosmosDb\src\Microsoft.Azure.IIoT.Azure.CosmosDb.csproj" />
-    <ProjectReference Include="..\..\..\..\azure\Microsoft.Azure.IIoT.Azure.ServiceBus\src\Microsoft.Azure.IIoT.Azure.ServiceBus.csproj" />
+    <ProjectReference Include="..\..\..\..\core\Microsoft.Azure.IIoT.Services.Generic\src\Microsoft.Azure.IIoT.Services.Orleans.csproj" />
+    <ProjectReference Include="..\..\..\..\core\Microsoft.Azure.IIoT.Services.LiteDb\src\Microsoft.Azure.IIoT.Services.LiteDb.csproj" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Microsoft.Azure.IIoT.Platform.Discovery\src\Microsoft.Azure.IIoT.Platform.Discovery.csproj" />

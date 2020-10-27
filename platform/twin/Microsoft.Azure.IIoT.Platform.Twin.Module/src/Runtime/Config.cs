@@ -15,10 +15,6 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Service.Runtime {
     using Microsoft.Azure.IIoT.Diagnostics;
     using Microsoft.Azure.IIoT.Azure.AppInsights;
     using Microsoft.Azure.IIoT.Azure.AppInsights.Runtime;
-    using Microsoft.Azure.IIoT.Azure.IoTHub.Runtime;
-    using Microsoft.Azure.IIoT.Azure.IoTHub;
-    using Microsoft.Azure.IIoT.Deploy;
-    using Microsoft.Azure.IIoT.Deploy.Runtime;
     using Microsoft.Azure.IIoT.Hosting;
     using Microsoft.Azure.IIoT.Api.Runtime;
     using Microsoft.Extensions.Configuration;
@@ -26,15 +22,13 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Service.Runtime {
     /// <summary>
     /// Common web service configuration aggregation
     /// </summary>
-    public class Config : DiagnosticsConfig, IWebHostConfig, IIoTHubConfig,
+    public class Config : DiagnosticsConfig, IWebHostConfig, 
         ICorsConfig, IOpenApiConfig, IHeadersConfig, IRoleConfig,
-        IContainerRegistryConfig, IPublisherConfig, IAppInsightsConfig {
+        IPublisherConfig, IAppInsightsConfig {
 
         /// <inheritdoc/>
         public string InstrumentationKey => _ai.InstrumentationKey;
 
-        /// <inheritdoc/>
-        public string IoTHubConnString => _hub.IoTHubConnString;
         /// <inheritdoc/>
         public string CorsWhitelist => _cors.CorsWhitelist;
         /// <inheritdoc/>
@@ -63,17 +57,6 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Service.Runtime {
         public string OpenApiServerHost => _openApi.OpenApiServerHost;
 
         /// <inheritdoc/>
-        public string DockerServer => _cr.DockerServer;
-        /// <inheritdoc/>
-        public string DockerUser => _cr.DockerUser;
-        /// <inheritdoc/>
-        public string DockerPassword => _cr.DockerPassword;
-        /// <inheritdoc/>
-        public string ImagesNamespace => _cr.ImagesNamespace;
-        /// <inheritdoc/>
-        public string ImagesTag => _cr.ImagesTag;
-
-        /// <inheritdoc/>
         public string OpcUaPublisherServiceUrl => _api.OpcUaPublisherServiceUrl;
         /// <inheritdoc/>
         public bool UseRoles => GetBoolOrDefault(PcsVariable.PCS_AUTH_ROLES);
@@ -94,21 +77,17 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Service.Runtime {
 
             _openApi = new OpenApiConfig(configuration);
             _host = new WebHostConfig(configuration);
-            _hub = new IoTHubConfig(configuration);
             _api = new ApiConfig(configuration);
             _cors = new CorsConfig(configuration);
             _fh = new HeadersConfig(configuration);
-            _cr = new ContainerRegistryConfig(configuration);
             _ai = new AppInsightsConfig(configuration);
         }
 
         private readonly AppInsightsConfig _ai;
-        private readonly ContainerRegistryConfig _cr;
         private readonly OpenApiConfig _openApi;
         private readonly WebHostConfig _host;
         private readonly CorsConfig _cors;
         private readonly ApiConfig _api;
-        private readonly IoTHubConfig _hub;
         private readonly HeadersConfig _fh;
     }
 }

@@ -10,6 +10,8 @@ namespace Microsoft.Azure.IIoT.Azure.AppInsights {
     using Microsoft.Extensions.Logging.Console;
     using Microsoft.ApplicationInsights.DependencyCollector;
     using Microsoft.ApplicationInsights.Extensibility;
+    using Microsoft.Extensions.DependencyInjection;
+    using Autofac.Extensions.DependencyInjection;
     using Autofac;
     using System;
 
@@ -41,10 +43,13 @@ namespace Microsoft.Azure.IIoT.Azure.AppInsights {
                 .AsImplementedInterfaces();
 
             // TODO
+            var services = new ServiceCollection();
+            services.AddApplicationInsightsTelemetry();
+            builder.Populate(services);
 
+          //  return builder.RegisterModule(
+          //      new Log(new ApplicationInsightsLogger(config, log, addConsole)));
 
-            // return builder.RegisterModule(
-            //     new LoggerProviderModule(new ApplicationInsightsLogger(config, log, addConsole)));
             builder.RegisterModule<Log>();
 
             return builder;

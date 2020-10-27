@@ -5,7 +5,6 @@
 
 namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
     using Microsoft.Azure.IIoT.Platform.Publisher.Models;
-    using Microsoft.Azure.IIoT.Platform.Core;
     using Microsoft.Azure.IIoT.Platform.OpcUa;
     using Microsoft.Azure.IIoT.Platform.OpcUa.Models;
     using Opc.Ua;

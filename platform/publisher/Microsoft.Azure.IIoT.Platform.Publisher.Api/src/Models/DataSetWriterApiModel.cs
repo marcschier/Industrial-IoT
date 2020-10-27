@@ -5,7 +5,6 @@
 
 namespace Microsoft.Azure.IIoT.Platform.Publisher.Api.Models {
     using System.Runtime.Serialization;
-    using System;
 
     /// <summary>
     /// Pub/sub writer

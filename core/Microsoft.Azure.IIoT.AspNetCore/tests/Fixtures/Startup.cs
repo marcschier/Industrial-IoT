@@ -112,7 +112,7 @@ namespace Microsoft.Azure.IIoT.AspNetCore.Tests {
             builder.RegisterModule<MessagePackModule>();
             builder.RegisterModule<NewtonSoftJsonModule>();
 
-            builder.AddDebugDiagnostics();
+            builder.AddDiagnostics();
 
             // CORS setup
             builder.RegisterType<CorsSetup>()

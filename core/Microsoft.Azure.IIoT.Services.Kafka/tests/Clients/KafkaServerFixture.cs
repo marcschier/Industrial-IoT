@@ -39,7 +39,7 @@ namespace Microsoft.Azure.IIoT.Services.Kafka.Clients {
                         .AutoActivate()
                         .AsImplementedInterfaces().SingleInstance();
 
-                    builder.AddDebugDiagnostics();
+                    builder.AddDiagnostics();
                     _container = builder.Build();
                 }
                 catch {

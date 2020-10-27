@@ -4,7 +4,6 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Platform.Discovery {
-    using Microsoft.Azure.IIoT.Platform.Discovery.Services;
     using Microsoft.Azure.IIoT.Platform.Discovery.Clients;
     using Autofac;
 

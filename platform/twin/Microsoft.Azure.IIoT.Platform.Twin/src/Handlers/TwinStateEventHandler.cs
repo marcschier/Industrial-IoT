@@ -5,7 +5,6 @@
 
 namespace Microsoft.Azure.IIoT.Platform.Twin.Handlers {
     using Microsoft.Azure.IIoT.Platform.Twin.Models;
-    using Microsoft.Azure.IIoT.Platform.Core.Models;
     using Microsoft.Azure.IIoT.Hub;
     using Microsoft.Azure.IIoT.Serializers;
     using Microsoft.Extensions.Logging;

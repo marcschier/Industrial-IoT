@@ -6,8 +6,6 @@
 namespace Microsoft.Azure.IIoT.Diagnostics {
     using Autofac;
     using Xunit;
-    using System.Text;
-    using Xunit.Sdk;
     using Microsoft.Extensions.Logging;
 
     public class LoggingTests {

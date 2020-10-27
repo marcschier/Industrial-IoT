@@ -35,6 +35,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
     using System.Linq;
     using System.Threading.Tasks;
     using Prometheus;
+    using Microsoft.Extensions.Logging;
 
     /// <summary>
     /// Api command line interface
@@ -59,7 +60,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
                 .AsImplementedInterfaces();
 
             // Register logger
-            builder.AddDebugDiagnostics(addConsole: false);
+            builder.AddDiagnostics(builder => builder.AddDebug());
             builder.RegisterModule<NewtonSoftJsonModule>();
             if (useMsgPack) {
                 builder.RegisterModule<MessagePackModule>();

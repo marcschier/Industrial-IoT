@@ -34,8 +34,8 @@ namespace Microsoft.Azure.IIoT.Platform.Discovery.Service {
             builder.RegisterInstance(Config.Configuration)
                 .AsImplementedInterfaces();
 
-            // Add diagnostics and auth providers
-            builder.AddDebugDiagnostics(Config);
+            // Add diagnostics
+            builder.AddDiagnostics();
         }
     }
 

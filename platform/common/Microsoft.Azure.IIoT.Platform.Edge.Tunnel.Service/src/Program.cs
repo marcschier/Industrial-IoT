@@ -20,7 +20,6 @@ namespace Microsoft.Azure.IIoT.Platform.Edge.Tunnel.Service {
     using Microsoft.Extensions.Hosting;
     using Autofac;
     using Autofac.Extensions.DependencyInjection;
-    using Microsoft.Extensions.Logging;
     using System;
 
     /// <summary>

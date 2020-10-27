@@ -10,17 +10,17 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Service {
     using Microsoft.Azure.IIoT.Platform.Discovery.Api.Clients;
     using Microsoft.Azure.IIoT.Platform.Twin.Api.Clients;
     using Microsoft.Azure.IIoT.Platform.OpcUa;
+    using Microsoft.Azure.IIoT.Services.LiteDb;
+    using Microsoft.Azure.IIoT.Services.Orleans;
     using Microsoft.Azure.IIoT.Http.Clients;
     using Microsoft.Azure.IIoT.Authentication;
     using Microsoft.Azure.IIoT.Serializers;
     using Microsoft.Azure.IIoT.Utils;
-    using Microsoft.Azure.IIoT.Azure.CosmosDb;
-    using Microsoft.Azure.IIoT.Azure.ServiceBus;
-    using Microsoft.Azure.IIoT.Azure.AppInsights;
-    using Microsoft.Azure.IIoT.Azure.LogAnalytics.Runtime;
     using Microsoft.Azure.IIoT.AspNetCore.Authentication;
     using Microsoft.Azure.IIoT.AspNetCore.Authentication.Clients;
     using Microsoft.Azure.IIoT.AspNetCore.Cors;
+    using Microsoft.Azure.IIoT.Azure.AppInsights;
+    using Microsoft.Azure.IIoT.Azure.LogAnalytics.Runtime;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
@@ -207,9 +207,9 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Service {
             // Add diagnostics
             builder.AddAppInsightsLogging(Config);
             // Register event bus for integration events
-            builder.RegisterModule<ServiceBusEventBusSupport>();
-            // Register Cosmos db for publisher storage
-            builder.RegisterModule<CosmosDbModule>();
+            builder.RegisterModule<OrleansEventBusModule>();
+            // Register database for publisher storage
+            builder.RegisterModule<LiteDbModule>();
         }
     }
 }

@@ -4,7 +4,6 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Platform.Discovery.Models {
-    using Microsoft.Azure.IIoT.Platform.Core.Models;
     using System.Collections.Generic;
 
     /// <summary>

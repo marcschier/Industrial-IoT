@@ -5,12 +5,10 @@
 
 namespace Microsoft.Azure.IIoT.Platform.Discovery {
     using Microsoft.Azure.IIoT.Platform.Discovery.Models;
-    using Microsoft.Azure.IIoT.Platform.Core.Models;
     using Microsoft.Azure.IIoT.Exceptions;
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
-    using System;
 
     /// <summary>
     /// Endpoint registry extensions

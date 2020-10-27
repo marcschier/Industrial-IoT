@@ -6,14 +6,16 @@
 namespace Microsoft.Azure.IIoT.Diagnostics {
     using Microsoft.Extensions.Logging;
     using Microsoft.Extensions.Logging.Debug;
+    using Microsoft.Extensions.DependencyInjection;
     using Autofac;
     using Autofac.Core;
     using Autofac.Core.Registration;
     using Autofac.Core.Activators.Reflection;
     using Autofac.Core.Resolving.Pipeline;
-    using Module = Autofac.Module;
+    using Autofac.Extensions.DependencyInjection;
     using System;
     using System.Linq;
+
 
     /// <summary>
     /// Log module
@@ -32,6 +34,7 @@ namespace Microsoft.Azure.IIoT.Diagnostics {
                 .As<ILoggerFactory>()
                 .SingleInstance()
                 .IfNotRegistered(typeof(ILoggerFactory));
+
             builder.RegisterType<DebugLoggerProvider>()
                 .As<ILoggerProvider>()
                 .SingleInstance();

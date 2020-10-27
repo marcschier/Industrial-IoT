@@ -70,6 +70,28 @@ namespace Microsoft.Azure.IIoT.Utils {
         /// </summary>
         /// <param name="action"></param>
         /// <returns></returns>
+        public static Task<bool> Async(Func<ValueTask> action) {
+            return action.Invoke().AsTask()
+                .ContinueWith(t => t.IsCompletedSuccessfully);
+        }
+
+        /// <summary>
+        /// Try operation
+        /// </summary>
+        /// <param name="action"></param>
+        /// <param name="ct"></param>
+        /// <returns></returns>
+        public static Task<bool> Async(Func<CancellationToken, ValueTask> action,
+            CancellationToken ct) {
+            return action.Invoke(ct).AsTask()
+                .ContinueWith(t => t.IsCompletedSuccessfully);
+        }
+
+        /// <summary>
+        /// Try operation
+        /// </summary>
+        /// <param name="action"></param>
+        /// <returns></returns>
         public static Task<T> Async<T>(Func<Task<T>> action) {
             return action.Invoke()
                 .ContinueWith(t => t.IsCompletedSuccessfully ? t.Result : default);

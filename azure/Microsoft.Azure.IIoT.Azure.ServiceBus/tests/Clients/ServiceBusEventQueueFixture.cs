@@ -91,7 +91,7 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Clients {
                     .AutoActivate()
                     .AsImplementedInterfaces().SingleInstance();
 
-                builder.AddDebugDiagnostics();
+                builder.AddDiagnostics();
                 _container = builder.Build();
                 _queue = queue;
             }

@@ -7,7 +7,6 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Provider {
     using Autofac.Extensions.Hosting;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.Extensions.Hosting;
-    using Microsoft.Extensions.Logging;
 
     /// <summary>
     /// Main entry point

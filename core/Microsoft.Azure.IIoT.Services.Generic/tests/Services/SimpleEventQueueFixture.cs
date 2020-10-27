@@ -3,7 +3,7 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Services.Generic.Services {
+namespace Microsoft.Azure.IIoT.Services.Orleans.Services {
     using Microsoft.Azure.IIoT.Messaging.Handlers;
     using Microsoft.Azure.IIoT.Messaging;
     using Microsoft.Azure.IIoT.Hub;
@@ -67,7 +67,7 @@ namespace Microsoft.Azure.IIoT.Services.Generic.Services {
                     .AutoActivate()
                     .AsImplementedInterfaces().SingleInstance();
 
-                builder.AddDebugDiagnostics();
+                builder.AddDiagnostics();
                 _container = builder.Build();
             }
             catch {

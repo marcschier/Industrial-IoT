@@ -4,12 +4,12 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Utils {
+    using Microsoft.Extensions.Logging;
+    using Autofac;
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
-    using Autofac;
-    using Microsoft.Extensions.Logging;
 
     /// <summary>
     /// Host auto starter
@@ -22,15 +22,47 @@ namespace Microsoft.Azure.IIoT.Utils {
         /// <param name="hosts"></param>
         /// <param name="logger"></param>
         public HostAutoStart(IEnumerable<IHostProcess> hosts, ILogger logger) {
-            _host = hosts?.ToList() ?? throw new ArgumentNullException(nameof(hosts));
+            _hosts = hosts?.ToList() ?? throw new ArgumentNullException(nameof(hosts));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         /// <inheritdoc/>
         public void Start() {
+            StartAsync().Wait();
+        }
+
+        /// <inheritdoc/>
+        public void Dispose() {
+            StopAsync().Wait();
+        }
+
+        /// <summary>
+        /// Stop
+        /// </summary>
+        /// <returns></returns>
+        private async Task StopAsync() {
+            try {
+                _logger.LogDebug("Stopping all hosts...");
+                foreach (var host in _hosts.Select(h => h).Reverse()) {
+                    await host.StopAsync().ConfigureAwait(false);
+                }
+                _logger.LogInformation("All hosts stopped.");
+            }
+            catch (Exception ex) {
+                _logger.LogWarning(ex, "Failed to stop all hosts.");
+            }
+        }
+
+        /// <summary>
+        /// Start
+        /// </summary>
+        /// <returns></returns>
+        private async Task StartAsync() {
             try {
                 _logger.LogDebug("Starting all hosts...");
-                Task.WhenAll(_host.Select(h => h.StartAsync())).Wait();
+                foreach (var host in _hosts) {
+                    await host.StartAsync().ConfigureAwait(false);
+                }
                 _logger.LogInformation("All hosts started.");
             }
             catch (Exception ex) {
@@ -39,19 +71,7 @@ namespace Microsoft.Azure.IIoT.Utils {
             }
         }
 
-        /// <inheritdoc/>
-        public void Dispose() {
-            try {
-                _logger.LogDebug("Stopping all hosts...");
-                Task.WhenAll(_host.Select(h => h.StopAsync())).Wait();
-                _logger.LogInformation("All hosts stopped.");
-            }
-            catch (Exception ex) {
-                _logger.LogWarning(ex, "Failed to stop all hosts.");
-            }
-        }
-
-        private readonly List<IHostProcess> _host;
+        private readonly List<IHostProcess> _hosts;
         private readonly ILogger _logger;
     }
 }

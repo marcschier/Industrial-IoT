@@ -6,7 +6,6 @@
 namespace Microsoft.Azure.IIoT.Platform.Publisher.Api.Models {
     using Microsoft.Azure.IIoT.Platform.Core.Api.Models;
     using System.Runtime.Serialization;
-    using System;
     using System.Collections.Generic;
 
     /// <summary>

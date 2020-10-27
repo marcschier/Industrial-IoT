@@ -5,24 +5,13 @@
 
 namespace System {
     using Xunit;
-    using System.Linq;
 
     public class AssemblyExTests {
 
         [Fact]
-        public void GetVersionInfoObjectTests() {
-            var o = GetType().Assembly.GetVersionInfoObject();
-            Assert.NotNull(o);
-            _ = o.ToString();
-            Assert.True(o.Properties().Any());
-        }
-
-        [Fact]
         public void GetFileVersion() {
-            var o = GetType().Assembly.GetVersionInfoObject();
-            Assert.NotNull(o);
             var v = GetType().Assembly.GetReleaseVersion().ToString();
-            Assert.Equal(v, (string)o.GetValue("AssemblyFileVersion"));
+            Assert.False(string.IsNullOrEmpty(v));
         }
     }
 }

@@ -66,7 +66,7 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
                     .AutoActivate()
                     .AsImplementedInterfaces().SingleInstance();
 
-                builder.AddDebugDiagnostics();
+                builder.AddDiagnostics();
                 configure?.Invoke(builder);
                 _container = builder.Build();
             }

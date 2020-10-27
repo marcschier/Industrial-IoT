@@ -31,7 +31,7 @@ namespace Microsoft.Azure.IIoT.Services.CouchDb.Clients {
                 builder.RegisterModule<CouchDbModule>();
                 builder.RegisterType<CouchDbConfig>()
                     .AsImplementedInterfaces();
-                builder.AddDebugDiagnostics();
+                builder.AddDiagnostics();
                 _container = builder.Build();
                 var healthCheck = _container.Resolve<IHealthCheck>();
                 _server = new CouchDbServer(ConsoleLogger.CreateLogger(),

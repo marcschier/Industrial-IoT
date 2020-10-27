@@ -83,7 +83,7 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Clients {
                     .AutoActivate()
                     .AsImplementedInterfaces().SingleInstance();
 
-                builder.AddDebugDiagnostics();
+                builder.AddDiagnostics();
                 configure?.Invoke(builder);
                 _container = builder.Build();
                 _topic = bus;

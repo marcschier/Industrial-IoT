@@ -4,7 +4,10 @@
 // ------------------------------------------------------------
 
 namespace Autofac {
+    using Autofac.Extensions.DependencyInjection;
     using Microsoft.Azure.IIoT.Diagnostics;
+    using Microsoft.Extensions.DependencyInjection;
+    using Microsoft.Extensions.Logging;
     using Microsoft.Extensions.Logging.Console;
     using Microsoft.Extensions.Logging.Debug;
     using System;
@@ -12,19 +15,16 @@ namespace Autofac {
     /// <summary>
     /// Register debug logger
     /// </summary>
-    public static class DebugContainerBuilderEx {
+    public static class ContainerBuilderEx {
 
         /// <summary>
         /// Register default diagnostics
         /// </summary>
         /// <param name="builder"></param>
-        /// <param name="config"></param>
-        /// <param name="addConsole"></param>
+        /// <param name="configure"></param>
         /// <returns></returns>
-#pragma warning disable IDE0060 // Remove unused parameter
-        public static ContainerBuilder AddDebugDiagnostics(this ContainerBuilder builder,
-            IDiagnosticsConfig config = null, bool addConsole = true) {
-#pragma warning restore IDE0060 // Remove unused parameter
+        public static ContainerBuilder AddDiagnostics(this ContainerBuilder builder,
+            Action<ILoggingBuilder> configure = null) {
             if (builder == null) {
                 throw new ArgumentNullException(nameof(builder));
             }
@@ -37,7 +37,28 @@ namespace Autofac {
                 .AsImplementedInterfaces();
             builder.RegisterModule<Log>();
 
+            var log = new LogBuilder();
+            if (configure != null) {
+                configure(log);
+            }
+            else {
+                log.AddConsole();
+                log.AddDebug();
+            }
+            log.Services.AddOptions();
+            builder.Populate(log.Services);
             return builder;
         }
+
+        /// <summary>
+        /// Log builder adapter
+        /// </summary>
+        private class LogBuilder : ILoggingBuilder {
+
+            /// <inheritdoc/>
+            public IServiceCollection Services { get; } 
+                = new ServiceCollection();
+        }
+
     }
 }

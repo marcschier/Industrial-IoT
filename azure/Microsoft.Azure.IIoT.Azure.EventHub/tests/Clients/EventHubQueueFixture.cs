@@ -204,7 +204,7 @@ namespace Microsoft.Azure.IIoT.Azure.EventHub.Clients {
                     .AutoActivate()
                     .AsImplementedInterfaces().SingleInstance();
 
-                builder.AddDebugDiagnostics();
+                builder.AddDiagnostics();
                 _container = builder.Build();
                 _dispose = dispose;
             }

@@ -6,7 +6,6 @@
 namespace Microsoft.Azure.IIoT.Platform.Publisher.Api {
     using Microsoft.Azure.IIoT.Platform.Publisher.Api.Models;
     using System;
-    using System.Threading;
     using System.Threading.Tasks;
 
     /// <summary>

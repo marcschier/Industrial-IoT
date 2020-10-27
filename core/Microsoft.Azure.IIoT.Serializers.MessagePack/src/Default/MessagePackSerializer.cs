@@ -17,7 +17,6 @@ namespace Microsoft.Azure.IIoT.Serializers.MessagePack {
     using System.Numerics;
     using System.Text;
     using MsgPack = global::MessagePack.MessagePackSerializer;
-    using Autofac.Core;
 
     /// <summary>
     /// Message pack serializer

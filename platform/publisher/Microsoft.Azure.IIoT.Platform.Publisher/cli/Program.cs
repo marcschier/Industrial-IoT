@@ -22,7 +22,6 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Module.Cli {
     using Microsoft.Extensions.Logging;
     using System;
     using System.Collections.Generic;
-    using System.Diagnostics.Tracing;
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;

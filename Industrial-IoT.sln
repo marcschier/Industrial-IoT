@@ -234,9 +234,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Azure.IIoT.Servic
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Azure.IIoT.Services.Testing", "core\Microsoft.Azure.IIoT.Services.Testing\src\Microsoft.Azure.IIoT.Services.Testing.csproj", "{26689678-190D-4741-96D8-FDC39F7E90AA}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Azure.IIoT.Services.Generic", "core\Microsoft.Azure.IIoT.Services.Generic\src\Microsoft.Azure.IIoT.Services.Generic.csproj", "{F451F01F-6FF9-4E4D-BC59-BC873D644578}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Azure.IIoT.Services.Orleans", "core\Microsoft.Azure.IIoT.Services.Generic\src\Microsoft.Azure.IIoT.Services.Orleans.csproj", "{F451F01F-6FF9-4E4D-BC59-BC873D644578}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Azure.IIoT.Services.Generic.Tests", "core\Microsoft.Azure.IIoT.Services.Generic\tests\Microsoft.Azure.IIoT.Services.Generic.Tests.csproj", "{221879E8-BE7C-4FA2-89AE-51DEE96E2F51}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Azure.IIoT.Services.Orleans.Tests", "core\Microsoft.Azure.IIoT.Services.Generic\tests\Microsoft.Azure.IIoT.Services.Orleans.Tests.csproj", "{221879E8-BE7C-4FA2-89AE-51DEE96E2F51}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Azure.IIoT.Azure.ServiceBus.Tests", "azure\Microsoft.Azure.IIoT.Azure.ServiceBus\tests\Microsoft.Azure.IIoT.Azure.ServiceBus.Tests.csproj", "{4D60A62E-6B5D-4301-A6E0-E712FA887A0E}"
 EndProject

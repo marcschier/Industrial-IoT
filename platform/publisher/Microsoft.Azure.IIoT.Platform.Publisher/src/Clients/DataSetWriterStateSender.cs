@@ -7,7 +7,6 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Clients {
     using Microsoft.Azure.IIoT.Platform.Publisher.Models;
     using Microsoft.Azure.IIoT.Serializers;
     using Microsoft.Azure.IIoT.Tasks;
-    using Microsoft.Azure.IIoT.Hub;
     using Microsoft.Azure.IIoT.Messaging;
     using Microsoft.Extensions.Logging;
     using System;

@@ -4,7 +4,6 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Platform.Publisher {
-    using Microsoft.Azure.IIoT.Platform.Publisher.Models;
     using Opc.Ua;
     using Opc.Ua.Client;
     using System.Collections.Generic;

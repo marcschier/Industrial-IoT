@@ -33,7 +33,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Service {
                 .AsImplementedInterfaces();
 
             // Add diagnostics based on configuration
-            builder.AddDebugDiagnostics(Config);
+            builder.AddDiagnostics();
         }
     }
 

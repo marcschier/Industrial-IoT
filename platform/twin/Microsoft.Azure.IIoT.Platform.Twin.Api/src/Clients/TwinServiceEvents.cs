@@ -6,14 +6,11 @@
 namespace Microsoft.Azure.IIoT.Platform.Twin.Api {
     using Microsoft.Azure.IIoT.Platform.Twin.Api.Models;
     using Microsoft.Azure.IIoT.Platform.Events.Api;
-    using Microsoft.Azure.IIoT.Serializers;
-    using Microsoft.Azure.IIoT.Serializers.NewtonSoft;
     using Microsoft.Azure.IIoT.Rpc;
     using Microsoft.Azure.IIoT.Http;
     using Microsoft.Azure.IIoT.Utils;
     using System;
     using System.Threading.Tasks;
-    using System.Threading;
 
     /// <summary>
     /// Twin service event client

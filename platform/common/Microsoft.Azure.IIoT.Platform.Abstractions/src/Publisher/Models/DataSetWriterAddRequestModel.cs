@@ -5,7 +5,6 @@
 
 namespace Microsoft.Azure.IIoT.Platform.Publisher.Models {
     using Microsoft.Azure.IIoT.Platform.Core.Models;
-    using System;
     using System.Collections.Generic;
 
     /// <summary>

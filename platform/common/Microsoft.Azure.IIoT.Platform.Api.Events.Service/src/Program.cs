@@ -7,7 +7,6 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service {
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.Extensions.Hosting;
     using Autofac.Extensions.Hosting;
-    using Microsoft.Extensions.Logging;
 
     /// <summary>
     /// Main entry point

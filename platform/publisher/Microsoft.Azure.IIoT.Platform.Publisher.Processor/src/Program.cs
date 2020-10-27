@@ -22,7 +22,6 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Processor {
     using Microsoft.Extensions.Hosting;
     using Autofac;
     using Autofac.Extensions.DependencyInjection;
-    using Microsoft.Extensions.Logging;
     using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
