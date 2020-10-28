@@ -253,12 +253,12 @@ Operations (Mutually exclusive):
             var cs = await Retry.WithExponentialBackoff(logger,
                 () => AddOrGetAsync(config, diagnostics, deviceId, moduleId)).ConfigureAwait(false);
 
-            Console.WriteLine("Starting discovery module...");
+            Console.WriteLine("Starting discovery service...");
             var arguments = new List<string> {
                 $"EdgeHubConnectionString={cs}"
             };
             Service.Program.Main(arguments.ToArray());
-            Console.WriteLine("Discovery module exited.");
+            Console.WriteLine("Discovery service exited.");
         }
 
         /// <summary>

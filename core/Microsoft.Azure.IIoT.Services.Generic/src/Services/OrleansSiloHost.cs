@@ -33,11 +33,12 @@ namespace Microsoft.Azure.IIoT.Services.Orleans.Grains {
         /// <param name="config"></param>
         /// <param name="injector"></param>
         /// <param name="identity"></param>
-        public OrleansSiloHost(ILogger logger, ILifetimeScope scope, IOrleansConfig config,
-            IInjector injector = null, IProcessIdentity identity = null) {
+        public OrleansSiloHost(ILogger logger, ILifetimeScope scope,
+            IInjector injector = null, IOrleansConfig config = null, 
+            IProcessIdentity identity = null) {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _scope = scope ?? throw new ArgumentNullException(nameof(scope));
-            _config = config ?? throw new ArgumentNullException(nameof(config));
+            _config = config;
             _identity = identity;
             _injector = injector;
         }
@@ -96,8 +97,8 @@ namespace Microsoft.Azure.IIoT.Services.Orleans.Grains {
         protected ISiloHostBuilder ConfigureBuilder(ISiloHostBuilder builder) {
             return builder
                 .Configure<ClusterOptions>(options => {
-                    options.ClusterId = _config.ClusterId;
-                    options.ServiceId = _config.ServiceId ?? _identity?.ServiceId;
+                    options.ClusterId = _config?.ClusterId;
+                    options.ServiceId = _config?.ServiceId ?? _identity?.ServiceId;
                 })
                 .UseLocalhostClustering()
                 .Configure<EndpointOptions>(options =>

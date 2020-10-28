@@ -3,28 +3,31 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Platform.Twin.Service {
-    using Microsoft.Azure.IIoT.Platform.Twin.Service.Runtime;
-    using Microsoft.Azure.IIoT.Platform.Twin.Service.Auth;
+namespace Microsoft.Azure.IIoT.Platform.Publisher.Service {
+    using Microsoft.Azure.IIoT.Platform.Publisher.Service.Auth;
+    using Microsoft.Azure.IIoT.Platform.Publisher.Service.Runtime;
+    using Microsoft.Azure.IIoT.Platform.Publisher;
     using Microsoft.Azure.IIoT.Platform.Discovery.Api.Clients;
+    using Microsoft.Azure.IIoT.Platform.Twin.Api.Clients;
     using Microsoft.Azure.IIoT.Platform.OpcUa;
     using Microsoft.Azure.IIoT.Services.LiteDb;
     using Microsoft.Azure.IIoT.Services.Orleans;
-    using Microsoft.Azure.IIoT.Authentication;
     using Microsoft.Azure.IIoT.Http.Clients;
+    using Microsoft.Azure.IIoT.Authentication;
     using Microsoft.Azure.IIoT.Serializers;
     using Microsoft.Azure.IIoT.Utils;
     using Microsoft.Azure.IIoT.AspNetCore.Authentication;
     using Microsoft.Azure.IIoT.AspNetCore.Authentication.Clients;
+    using Microsoft.Azure.IIoT.AspNetCore.Http.Tunnel;
     using Microsoft.Azure.IIoT.AspNetCore.Cors;
-    using Microsoft.Azure.IIoT.Azure.LogAnalytics.Runtime;
     using Microsoft.Azure.IIoT.Azure.AppInsights;
-    using Microsoft.AspNetCore.Builder;
-    using Microsoft.AspNetCore.Hosting;
+    using Microsoft.Azure.IIoT.Azure.LogAnalytics.Runtime;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
     using Microsoft.Extensions.Logging;
+    using Microsoft.AspNetCore.Builder;
+    using Microsoft.AspNetCore.Hosting;
     using Microsoft.OpenApi.Models;
     using Autofac;
     using Autofac.Extensions.DependencyInjection;
@@ -79,13 +82,12 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Service {
         }
 
         /// <summary>
-        /// This is where you register dependencies, add services to the
-        /// container. This method is called by the runtime, before the
-        /// Configure method below.
+        /// Configure services
         /// </summary>
         /// <param name="services"></param>
         /// <returns></returns>
         public void ConfigureServices(IServiceCollection services) {
+            services.AddLogging(o => o.AddConsole().AddDebug());
 
             services.AddHeaderForwarding();
             services.AddCors();
@@ -98,9 +100,9 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Service {
                 .AddJwtBearerProvider(AuthProvider.AuthService);
             services.AddAuthorizationPolicies(
                 Policies.RoleMapping,
-                Policies.CanBrowse,
-                Policies.CanControl,
-                Policies.CanUpload);
+                Policies.CanRead,
+                Policies.CanWrite,
+                Policies.CanPublish);
 
             // TODO: Remove http client factory and use
             // services.AddHttpClient();
@@ -112,7 +114,6 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Service {
             // Enable Application Insights telemetry collection.
             services.AddAppInsightsTelemetry();
         }
-
 
         /// <summary>
         /// This method is called by the runtime, after the ConfigureServices
@@ -142,6 +143,9 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Service {
                 endpoints.MapControllers();
                 endpoints.MapHealthChecks("/healthz");
             });
+
+            // Connect application servers
+            app.RunAppServers();
 
             // If you want to dispose of resources that have been resolved in the
             // application container, register for the "ApplicationStopped" event.
@@ -175,11 +179,14 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Service {
             // CORS setup
             builder.RegisterType<CorsSetup>()
                 .AsImplementedInterfaces();
+            // Http tunnel
+            builder.RegisterType<HttpTunnelServer>()
+                .AsImplementedInterfaces().SingleInstance();
 
             // --- Logic ---
 
-            // Register Twin services
-            builder.RegisterModule<TwinServices>();
+            // ... Publisher services and client stack
+            builder.RegisterModule<PublisherServices>();
             builder.RegisterModule<ClientStack>();
 
             // Registry services are required to lookup endpoints.
@@ -188,6 +195,11 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Service {
             builder.RegisterType<DiscoveryServiceClient>()
                 .AsImplementedInterfaces();
 
+            // Registry services are required to lookup endpoints.
+            builder.RegisterType<TwinServicesApiAdapter>()
+                .AsImplementedInterfaces();
+            builder.RegisterType<TwinServiceClient>()
+                .AsImplementedInterfaces();
             // ... and auto start
             builder.RegisterType<HostAutoStart>()
                 .AutoActivate()
@@ -195,15 +207,15 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Service {
 
             // --- Dependencies ---
 
-            // Add diagnostics
+            // Add service to service authentication
             builder.RegisterModule<WebApiAuthentication>();
             builder.RegisterType<LogAnalyticsConfig>()
                 .AsImplementedInterfaces().SingleInstance();
             // Add diagnostics
             builder.AddAppInsightsLogging(Config);
             // Register event bus for integration events
-            builder.RegisterModule<OrleansEventBusClientModule>();
-            // Register database for publisher storage
+            builder.RegisterModule<OrleansEventBusModule>();
+            // Register database for storage
             builder.RegisterModule<LiteDbModule>();
         }
     }

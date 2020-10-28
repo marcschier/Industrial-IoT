@@ -2,7 +2,7 @@
   "profiles": {
     "WebService": {
       "commandName": "Project",
-      "applicationUrl": "http://localhost:9041"
+      "applicationUrl": "http://localhost:9045"
     }
   }
 }

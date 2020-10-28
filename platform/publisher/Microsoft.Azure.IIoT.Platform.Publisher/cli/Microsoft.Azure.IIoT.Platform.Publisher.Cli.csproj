@@ -17,6 +17,6 @@
     <ProjectReference Include="..\..\..\..\platform\common\Microsoft.Azure.IIoT.Platform.OpcUa.Testing\src\Microsoft.Azure.IIoT.Platform.OpcUa.Testing.csproj" />
   </ItemGroup>
   <ItemGroup>
-      <ProjectReference Include="..\..\Microsoft.Azure.IIoT.Platform.Publisher.Module\src\Microsoft.Azure.IIoT.Platform.Publisher.Module.csproj" />
+      <ProjectReference Include="..\..\Microsoft.Azure.IIoT.Platform.Publisher.Service\src\Microsoft.Azure.IIoT.Platform.Publisher.Service.csproj" />
   </ItemGroup>
 </Project>

@@ -28,6 +28,6 @@
     <ProjectReference Include="..\..\..\..\platform\common\Microsoft.Azure.IIoT.Platform.OpcUa.Testing\src\Microsoft.Azure.IIoT.Platform.OpcUa.Testing.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\src\Microsoft.Azure.IIoT.Platform.Twin.Module.csproj" />
+    <ProjectReference Include="..\src\Microsoft.Azure.IIoT.Platform.Twin.Service.csproj" />
   </ItemGroup>
 </Project>

@@ -3,30 +3,29 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Platform.Publisher.Service {
-    using Microsoft.Azure.IIoT.Platform.Publisher.Service.Auth;
-    using Microsoft.Azure.IIoT.Platform.Publisher.Service.Runtime;
-    using Microsoft.Azure.IIoT.Platform.Publisher;
-    using Microsoft.Azure.IIoT.Platform.Discovery.Api.Clients;
-    using Microsoft.Azure.IIoT.Platform.Twin.Api.Clients;
+namespace Microsoft.Azure.IIoT.Platform.Discovery.Service {
+    using Microsoft.Azure.IIoT.Platform.Discovery.Service.Runtime;
+    using Microsoft.Azure.IIoT.Platform.Discovery.Service.Auth;
+    using Microsoft.Azure.IIoT.Platform.Discovery;
     using Microsoft.Azure.IIoT.Platform.OpcUa;
+    using Microsoft.Azure.IIoT.Authentication;
+    using Microsoft.Azure.IIoT.Utils;
+    using Microsoft.Azure.IIoT.Http.Clients;
+    using Microsoft.Azure.IIoT.Serializers;
     using Microsoft.Azure.IIoT.Services.LiteDb;
     using Microsoft.Azure.IIoT.Services.Orleans;
-    using Microsoft.Azure.IIoT.Http.Clients;
-    using Microsoft.Azure.IIoT.Authentication;
-    using Microsoft.Azure.IIoT.Serializers;
-    using Microsoft.Azure.IIoT.Utils;
     using Microsoft.Azure.IIoT.AspNetCore.Authentication;
     using Microsoft.Azure.IIoT.AspNetCore.Authentication.Clients;
+    using Microsoft.Azure.IIoT.AspNetCore.Http.Tunnel;
     using Microsoft.Azure.IIoT.AspNetCore.Cors;
-    using Microsoft.Azure.IIoT.Azure.AppInsights;
-    using Microsoft.Azure.IIoT.Azure.LogAnalytics.Runtime;
+    using Microsoft.AspNetCore.Builder;
+    using Microsoft.AspNetCore.Hosting;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
     using Microsoft.Extensions.Logging;
-    using Microsoft.AspNetCore.Builder;
-    using Microsoft.AspNetCore.Hosting;
+    using Microsoft.Azure.IIoT.Azure.LogAnalytics.Runtime;
+    using Microsoft.Azure.IIoT.Azure.AppInsights;
     using Microsoft.OpenApi.Models;
     using Autofac;
     using Autofac.Extensions.DependencyInjection;
@@ -81,7 +80,9 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Service {
         }
 
         /// <summary>
-        /// Configure services
+        /// This is where you register dependencies, add services to the
+        /// container. This method is called by the runtime, before the
+        /// Configure method below.
         /// </summary>
         /// <param name="services"></param>
         /// <returns></returns>
@@ -99,9 +100,9 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Service {
                 .AddJwtBearerProvider(AuthProvider.AuthService);
             services.AddAuthorizationPolicies(
                 Policies.RoleMapping,
-                Policies.CanRead,
-                Policies.CanWrite,
-                Policies.CanPublish);
+                Policies.CanQuery,
+                Policies.CanManage,
+                Policies.CanChange);
 
             // TODO: Remove http client factory and use
             // services.AddHttpClient();
@@ -143,6 +144,9 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Service {
                 endpoints.MapHealthChecks("/healthz");
             });
 
+            // Connect application servers
+            app.RunAppServers();
+
             // If you want to dispose of resources that have been resolved in the
             // application container, register for the "ApplicationStopped" event.
             appLifetime.ApplicationStopped.Register(applicationContainer.Dispose);
@@ -175,24 +179,16 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Service {
             // CORS setup
             builder.RegisterType<CorsSetup>()
                 .AsImplementedInterfaces();
+            // Http tunnel
+            builder.RegisterType<HttpTunnelServer>()
+                .AsImplementedInterfaces().SingleInstance();
 
             // --- Logic ---
 
-            // ... Publisher services and client stack
-            builder.RegisterModule<PublisherServices>();
+            // Discovery service and repositories
+            builder.RegisterModule<DiscoveryRegistry>();
             builder.RegisterModule<ClientStack>();
 
-            // Registry services are required to lookup endpoints.
-            builder.RegisterType<DiscoveryServicesApiAdapter>()
-                .AsImplementedInterfaces();
-            builder.RegisterType<DiscoveryServiceClient>()
-                .AsImplementedInterfaces();
-
-            // Registry services are required to lookup endpoints.
-            builder.RegisterType<TwinServicesApiAdapter>()
-                .AsImplementedInterfaces();
-            builder.RegisterType<TwinServiceClient>()
-                .AsImplementedInterfaces();
             // ... and auto start
             builder.RegisterType<HostAutoStart>()
                 .AutoActivate()
@@ -200,14 +196,15 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Service {
 
             // --- Dependencies ---
 
-            // Add service to service authentication
+
+            // Add diagnostics
             builder.RegisterModule<WebApiAuthentication>();
             builder.RegisterType<LogAnalyticsConfig>()
                 .AsImplementedInterfaces().SingleInstance();
             // Add diagnostics
             builder.AddAppInsightsLogging(Config);
             // Register event bus for integration events
-            builder.RegisterModule<OrleansEventBusClientModule>();
+            builder.RegisterModule<OrleansEventBusModule>();
             // Register database for publisher storage
             builder.RegisterModule<LiteDbModule>();
         }

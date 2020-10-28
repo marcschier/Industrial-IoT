@@ -3,28 +3,29 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Platform.Discovery.Service {
-    using Microsoft.Azure.IIoT.Platform.Discovery.Service.Runtime;
-    using Microsoft.Azure.IIoT.Platform.Discovery.Service.Auth;
-    using Microsoft.Azure.IIoT.Platform.Discovery;
+namespace Microsoft.Azure.IIoT.Platform.Twin.Service {
+    using Microsoft.Azure.IIoT.Platform.Twin.Service.Runtime;
+    using Microsoft.Azure.IIoT.Platform.Twin.Service.Auth;
+    using Microsoft.Azure.IIoT.Platform.Discovery.Api.Clients;
     using Microsoft.Azure.IIoT.Platform.OpcUa;
-    using Microsoft.Azure.IIoT.Authentication;
-    using Microsoft.Azure.IIoT.Utils;
-    using Microsoft.Azure.IIoT.Http.Clients;
-    using Microsoft.Azure.IIoT.Serializers;
     using Microsoft.Azure.IIoT.Services.LiteDb;
     using Microsoft.Azure.IIoT.Services.Orleans;
+    using Microsoft.Azure.IIoT.Authentication;
+    using Microsoft.Azure.IIoT.Http.Clients;
+    using Microsoft.Azure.IIoT.Serializers;
+    using Microsoft.Azure.IIoT.Utils;
     using Microsoft.Azure.IIoT.AspNetCore.Authentication;
     using Microsoft.Azure.IIoT.AspNetCore.Authentication.Clients;
+    using Microsoft.Azure.IIoT.AspNetCore.Http.Tunnel;
     using Microsoft.Azure.IIoT.AspNetCore.Cors;
+    using Microsoft.Azure.IIoT.Azure.LogAnalytics.Runtime;
+    using Microsoft.Azure.IIoT.Azure.AppInsights;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
     using Microsoft.Extensions.Logging;
-    using Microsoft.Azure.IIoT.Azure.LogAnalytics.Runtime;
-    using Microsoft.Azure.IIoT.Azure.AppInsights;
     using Microsoft.OpenApi.Models;
     using Autofac;
     using Autofac.Extensions.DependencyInjection;
@@ -86,7 +87,6 @@ namespace Microsoft.Azure.IIoT.Platform.Discovery.Service {
         /// <param name="services"></param>
         /// <returns></returns>
         public void ConfigureServices(IServiceCollection services) {
-            services.AddLogging(o => o.AddConsole().AddDebug());
 
             services.AddHeaderForwarding();
             services.AddCors();
@@ -99,9 +99,9 @@ namespace Microsoft.Azure.IIoT.Platform.Discovery.Service {
                 .AddJwtBearerProvider(AuthProvider.AuthService);
             services.AddAuthorizationPolicies(
                 Policies.RoleMapping,
-                Policies.CanQuery,
-                Policies.CanManage,
-                Policies.CanChange);
+                Policies.CanBrowse,
+                Policies.CanControl,
+                Policies.CanUpload);
 
             // TODO: Remove http client factory and use
             // services.AddHttpClient();
@@ -113,6 +113,7 @@ namespace Microsoft.Azure.IIoT.Platform.Discovery.Service {
             // Enable Application Insights telemetry collection.
             services.AddAppInsightsTelemetry();
         }
+
 
         /// <summary>
         /// This method is called by the runtime, after the ConfigureServices
@@ -142,6 +143,9 @@ namespace Microsoft.Azure.IIoT.Platform.Discovery.Service {
                 endpoints.MapControllers();
                 endpoints.MapHealthChecks("/healthz");
             });
+
+            // Connect application servers
+            app.RunAppServers();
 
             // If you want to dispose of resources that have been resolved in the
             // application container, register for the "ApplicationStopped" event.
@@ -175,12 +179,21 @@ namespace Microsoft.Azure.IIoT.Platform.Discovery.Service {
             // CORS setup
             builder.RegisterType<CorsSetup>()
                 .AsImplementedInterfaces();
+            // Http tunnel
+            builder.RegisterType<HttpTunnelServer>()
+                .AsImplementedInterfaces().SingleInstance();
 
             // --- Logic ---
 
-            // Discovery service and repositories
-            builder.RegisterModule<DiscoveryRegistry>();
+            // Register Twin services
+            builder.RegisterModule<TwinServices>();
             builder.RegisterModule<ClientStack>();
+
+            // Registry services are required to lookup endpoints.
+            builder.RegisterType<DiscoveryServicesApiAdapter>()
+                .AsImplementedInterfaces();
+            builder.RegisterType<DiscoveryServiceClient>()
+                .AsImplementedInterfaces();
 
             // ... and auto start
             builder.RegisterType<HostAutoStart>()
@@ -189,7 +202,6 @@ namespace Microsoft.Azure.IIoT.Platform.Discovery.Service {
 
             // --- Dependencies ---
 
-
             // Add diagnostics
             builder.RegisterModule<WebApiAuthentication>();
             builder.RegisterType<LogAnalyticsConfig>()
@@ -197,7 +209,7 @@ namespace Microsoft.Azure.IIoT.Platform.Discovery.Service {
             // Add diagnostics
             builder.AddAppInsightsLogging(Config);
             // Register event bus for integration events
-            builder.RegisterModule<OrleansEventBusClientModule>();
+            builder.RegisterModule<OrleansEventBusModule>();
             // Register database for publisher storage
             builder.RegisterModule<LiteDbModule>();
         }

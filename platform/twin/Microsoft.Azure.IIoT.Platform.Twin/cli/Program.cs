@@ -377,12 +377,12 @@ Options:
             var cs = await Retry.WithExponentialBackoff(logger,
                 () => AddOrGetAsync(config, diagnostics, deviceId, moduleId)).ConfigureAwait(false);
 
-            Console.WriteLine("Starting twin module...");
+            Console.WriteLine("Starting twin service...");
             var arguments = new List<string> {
                     $"EdgeHubConnectionString={cs}"
                 };
             Service.Program.Main(arguments.ToArray());
-            Console.WriteLine("Twin module exited.");
+            Console.WriteLine("Twin service exited.");
         }
 
         /// <summary>

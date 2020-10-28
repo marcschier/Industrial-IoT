@@ -27,6 +27,6 @@
     <ProjectReference Include="..\..\..\..\azure\Microsoft.Azure.IIoT.Azure.IoTHub.Mock\src\Microsoft.Azure.IIoT.Azure.IoTHub.Mock.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\src\Microsoft.Azure.IIoT.Platform.Discovery.Module.csproj" />
+    <ProjectReference Include="..\src\Microsoft.Azure.IIoT.Platform.Discovery.Service.csproj" />
   </ItemGroup>
 </Project>

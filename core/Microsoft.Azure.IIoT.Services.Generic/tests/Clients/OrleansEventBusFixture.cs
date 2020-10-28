@@ -58,7 +58,7 @@ namespace Microsoft.Azure.IIoT.Services.Orleans.Clients {
                     .As<IOrleansConfig>();
                 builder.RegisterInstance(new OrleansBusConfig(bus))
                     .AsImplementedInterfaces();
-                builder.RegisterModule<OrleansEventBusClientModule>();
+                builder.RegisterModule<OrleansEventBusModule>();
                 builder.RegisterType<HostAutoStart>()
                     .AutoActivate()
                     .AsImplementedInterfaces().SingleInstance();

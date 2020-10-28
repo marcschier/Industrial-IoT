@@ -75,7 +75,7 @@ namespace Microsoft.Azure.IIoT.AspNetCore.Tests {
         /// <param name="appLifetime"></param>
         public void Configure(IApplicationBuilder app, IHostApplicationLifetime appLifetime) {
             var applicationContainer = app.ApplicationServices.GetAutofacRoot();
-            var log = applicationContainer.Resolve<ILogger<Startup>>();
+            var log = applicationContainer.Resolve<ILogger>();
 
             app.UsePathBase();
             app.UseHeaderForwarding();

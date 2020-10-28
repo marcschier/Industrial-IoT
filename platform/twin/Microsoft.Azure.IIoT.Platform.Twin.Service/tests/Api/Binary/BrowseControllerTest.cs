@@ -138,9 +138,8 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Service.Api.Binary {
             await GetTests().NodeBrowseStaticArrayVariablesWithValuesTestAsync().ConfigureAwait(false);
         }
 
-        [SkippableFact]
+        [Fact]
         public async Task NodeBrowseStaticArrayVariablesRawModeTestAsync() {
-            Skip.If(true, "No API impl.");
             await GetTests().NodeBrowseStaticArrayVariablesRawModeTestAsync().ConfigureAwait(false);
         }
 

@@ -3,7 +3,7 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Platform.Publisher.Module.Cli {
+namespace Microsoft.Azure.IIoT.Platform.Publisher.Service.Cli {
     using Microsoft.Azure.IIoT.Platform.OpcUa.Sample;
     using Microsoft.Azure.IIoT.Platform.OpcUa.Services;
     using Microsoft.Azure.IIoT.Diagnostics;
@@ -160,7 +160,7 @@ Options:
             var cs = await Retry.WithExponentialBackoff(logger,
                 () => AddOrGetAsync(config, diagnostics, deviceId, moduleId)).ConfigureAwait(false);
 
-            Console.WriteLine("Starting publisher module...");
+            Console.WriteLine("Starting publisher service...");
             var arguments = args.ToList();
             arguments.Add($"--ec={cs}");
             arguments.Add($"--di=10");
@@ -168,7 +168,7 @@ Options:
                 arguments.Add("--aa");
             }
             Service.Program.Main(arguments.ToArray());
-            Console.WriteLine("Publisher module exited.");
+            Console.WriteLine("Publisher service exited.");
         }
 
         /// <summary>
