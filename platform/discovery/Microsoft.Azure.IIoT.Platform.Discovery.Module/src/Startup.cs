@@ -197,7 +197,7 @@ namespace Microsoft.Azure.IIoT.Platform.Discovery.Service {
             // Add diagnostics
             builder.AddAppInsightsLogging(Config);
             // Register event bus for integration events
-            builder.RegisterModule<OrleansEventBusModule>();
+            builder.RegisterModule<OrleansEventBusClientModule>();
             // Register database for publisher storage
             builder.RegisterModule<LiteDbModule>();
         }

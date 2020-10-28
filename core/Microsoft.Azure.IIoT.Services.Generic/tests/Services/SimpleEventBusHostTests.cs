@@ -148,10 +148,7 @@ namespace Microsoft.Azure.IIoT.Services.Orleans.Services {
 
                 await host.StopAsync().ConfigureAwait(false);
                 await host.StartAsync().ConfigureAwait(false);
-                await host.StartAsync().ConfigureAwait(false);
                 await host.StopAsync().ConfigureAwait(false);
-                await host.StopAsync().ConfigureAwait(false);
-                await host.StartAsync().ConfigureAwait(false);
                 await host.StartAsync().ConfigureAwait(false);
 
                 host.Dispose();

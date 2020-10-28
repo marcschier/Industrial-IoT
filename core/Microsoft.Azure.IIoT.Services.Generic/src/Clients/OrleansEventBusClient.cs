@@ -12,7 +12,6 @@ namespace Microsoft.Azure.IIoT.Services.Orleans.Clients {
     using System.Threading.Tasks;
     using System.Collections.Concurrent;
     using System;
-    using global::Orleans;
 
     /// <summary>
     /// Orleans event bus client
@@ -25,12 +24,13 @@ namespace Microsoft.Azure.IIoT.Services.Orleans.Clients {
         /// <param name="client"></param>
         /// <param name="serializer"></param>
         /// <param name="logger"></param>
-        /// 
+        /// <param name="config"></param>
         public OrleansEventBusClient(IOrleansGrainClient client, IJsonSerializer serializer,
-            ILogger logger) {
+            ILogger logger, IOrleansBusConfig config = null) {
             _client = client ?? throw new ArgumentNullException(nameof(client));
             _serializer = serializer ?? throw new ArgumentNullException(nameof(serializer));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _config = config;
             _refs = new ConcurrentDictionary<string, Subscription>();
         }
 
@@ -39,7 +39,7 @@ namespace Microsoft.Azure.IIoT.Services.Orleans.Clients {
             if (message is null) {
                 throw new ArgumentNullException(nameof(message));
             }
-            var topicName = typeof(T).GetMoniker();
+            var topicName = (_config?.Prefix ?? "") + typeof(T).GetMoniker();
             var topic = _client.Grains.GetGrain<IOrleansTopic>(topicName);
 
             var buffer = _serializer.SerializeToBytes(message).ToArray();
@@ -54,7 +54,7 @@ namespace Microsoft.Azure.IIoT.Services.Orleans.Clients {
                 throw new ArgumentNullException(nameof(handler));
             }
 
-            var topicName = typeof(T).GetMoniker();
+            var topicName = (_config?.Prefix ?? "") + typeof(T).GetMoniker();
             var topic = _client.Grains.GetGrain<IOrleansTopic>(topicName);
 
             var subscription = new Subscription(topic, topicName, buffer => 
@@ -152,5 +152,6 @@ namespace Microsoft.Azure.IIoT.Services.Orleans.Clients {
         private readonly IOrleansGrainClient _client;
         private readonly IJsonSerializer _serializer;
         private readonly ILogger _logger;
+        private readonly IOrleansBusConfig _config;
     }
 }

@@ -34,12 +34,14 @@ namespace Microsoft.Azure.IIoT.Services.Orleans.Grains {
         /// </summary>
         /// <param name="logger"></param>
         /// <param name="scope"></param>
-        /// <param name="identity"></param>
+        /// <param name="config"></param>
         /// <param name="injector"></param>
-        public OrleansClientHost(ILogger logger, ILifetimeScope scope,
-            IProcessIdentity identity = null, IInjector injector = null) {
+        /// <param name="identity"></param>
+        public OrleansClientHost(ILogger logger, ILifetimeScope scope, IOrleansConfig config,
+            IInjector injector = null, IProcessIdentity identity = null) {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _scope = scope ?? throw new ArgumentNullException(nameof(scope));
+            _config = config ?? throw new ArgumentNullException(nameof(config));
             _identity = identity;
             _injector = injector;
         }
@@ -97,8 +99,8 @@ namespace Microsoft.Azure.IIoT.Services.Orleans.Grains {
         protected IClientBuilder ConfigureBuilder(IClientBuilder builder) {
             return builder
                 .Configure<ClusterOptions>(options => {
-                    options.ClusterId = "dev";
-                    options.ServiceId = _identity?.ServiceId;
+                    options.ClusterId = _config.ClusterId;
+                    options.ServiceId = _config.ServiceId ?? _identity?.ServiceId;
                 })
                 .UseLocalhostClustering()
                 .Configure<EndpointOptions>(options =>
@@ -107,6 +109,7 @@ namespace Microsoft.Azure.IIoT.Services.Orleans.Grains {
 
         private readonly ILogger _logger;
         private readonly ILifetimeScope _scope;
+        private readonly IOrleansConfig _config;
         private readonly IProcessIdentity _identity;
         private readonly IInjector _injector;
     }

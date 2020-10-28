@@ -14,7 +14,7 @@ namespace Microsoft.Azure.IIoT.Services.Orleans {
     /// <summary>
     /// Injected orleans event bus
     /// </summary>
-    public class OrleansEventBusModule : Module {
+    public class OrleansEventBusClientModule : Module {
 
         /// <summary>
         /// Load the module
@@ -24,10 +24,6 @@ namespace Microsoft.Azure.IIoT.Services.Orleans {
 
             builder.RegisterType<OrleansEventBusClient>()
                 .AsImplementedInterfaces().InstancePerDependency();
-
-            builder.RegisterType<OrleansSiloHost>()
-                .AsImplementedInterfaces().InstancePerLifetimeScope()
-                .IfNotRegistered(typeof(IOrleansSiloHost));
             builder.RegisterType<OrleansClientHost>()
                 .AsImplementedInterfaces().InstancePerLifetimeScope()
                 .IfNotRegistered(typeof(IOrleansClientHost));

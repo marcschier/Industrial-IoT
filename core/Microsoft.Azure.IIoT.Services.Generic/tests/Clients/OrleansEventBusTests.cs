@@ -11,6 +11,7 @@ namespace Microsoft.Azure.IIoT.Services.Orleans.Clients {
     using AutoFixture;
     using Xunit;
 
+    [Collection(OrleansCollection.Name)]
     public class OrleansEventBusTests : IClassFixture<OrleansEventBusFixture> {
         private readonly OrleansEventBusFixture _fixture;
 

@@ -11,6 +11,7 @@ namespace Microsoft.Azure.IIoT.Services.Orleans.Clients {
     using System;
     using System.Runtime.Serialization;
     using Autofac;
+    using Microsoft.Azure.IIoT.Services.Orleans.Runtime;
 
     public sealed class OrleansEventBusFixture : IDisposable {
 
@@ -33,6 +34,13 @@ namespace Microsoft.Azure.IIoT.Services.Orleans.Clients {
         }
     }
 
+    public class OrleansBusConfig : IOrleansBusConfig {
+        public OrleansBusConfig(string bus) {
+            Prefix = bus;
+        }
+        public string Prefix { get; }
+    }
+
     public sealed class OrleansEventBusHarness : IDisposable {
 
         /// <summary>
@@ -44,10 +52,13 @@ namespace Microsoft.Azure.IIoT.Services.Orleans.Clients {
             }
             try {
                 var builder = new ContainerBuilder();
-
-                builder.RegisterModule<OrleansEventBusModule>();
                 builder.RegisterModule<NewtonSoftJsonModule>();
 
+                builder.RegisterType<OrleansConfig>()
+                    .As<IOrleansConfig>();
+                builder.RegisterInstance(new OrleansBusConfig(bus))
+                    .AsImplementedInterfaces();
+                builder.RegisterModule<OrleansEventBusClientModule>();
                 builder.RegisterType<HostAutoStart>()
                     .AutoActivate()
                     .AsImplementedInterfaces().SingleInstance();

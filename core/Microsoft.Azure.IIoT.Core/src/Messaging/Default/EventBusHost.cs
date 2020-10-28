@@ -35,7 +35,7 @@ namespace Microsoft.Azure.IIoT.Messaging.Default {
             await _lock.WaitAsync().ConfigureAwait(false);
             try {
                 if (_registration != null) {
-                    return;
+                    throw new ResourceInvalidStateException("Event bus host already running.");
                 }
                 _registration = RegisterAsync();
             }

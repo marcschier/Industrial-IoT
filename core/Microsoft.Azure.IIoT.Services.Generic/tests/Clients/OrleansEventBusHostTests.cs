@@ -15,6 +15,7 @@ namespace Microsoft.Azure.IIoT.Services.Orleans.Clients {
     using System.Collections.Generic;
     using System.Linq;
 
+    [Collection(OrleansCollection.Name)]
     public class OrleansEventBusHostTests : IClassFixture<OrleansEventBusFixture> {
         private readonly OrleansEventBusFixture _fixture;
 
@@ -148,10 +149,7 @@ namespace Microsoft.Azure.IIoT.Services.Orleans.Clients {
 
                 await host.StopAsync().ConfigureAwait(false);
                 await host.StartAsync().ConfigureAwait(false);
-                await host.StartAsync().ConfigureAwait(false);
                 await host.StopAsync().ConfigureAwait(false);
-                await host.StopAsync().ConfigureAwait(false);
-                await host.StartAsync().ConfigureAwait(false);
                 await host.StartAsync().ConfigureAwait(false);
 
                 host.Dispose();
@@ -170,7 +168,7 @@ namespace Microsoft.Azure.IIoT.Services.Orleans.Clients {
             private readonly int _count;
             private readonly TaskCompletionSource<HashSet<Family>> _complete =
                 new TaskCompletionSource<HashSet<Family>>(TaskCreationOptions.RunContinuationsAsynchronously);
-            public Task<HashSet<Family>> Complete => _complete.Task;
+            public Task<HashSet<Family>> Complete => _complete.Task.With2MinuteTimeout();
 
             public FamilyHandler(int count) {
                 _count = count;
@@ -190,7 +188,7 @@ namespace Microsoft.Azure.IIoT.Services.Orleans.Clients {
             private readonly int _count;
             private readonly TaskCompletionSource<HashSet<Child>> _complete =
                 new TaskCompletionSource<HashSet<Child>>(TaskCreationOptions.RunContinuationsAsynchronously);
-            public Task<HashSet<Child>> Complete => _complete.Task;
+            public Task<HashSet<Child>> Complete => _complete.Task.With2MinuteTimeout();
             public ChildHandler(int count) {
                 _count = count;
             }
@@ -209,7 +207,7 @@ namespace Microsoft.Azure.IIoT.Services.Orleans.Clients {
             private readonly int _count;
             private readonly TaskCompletionSource<HashSet<Pet>> _complete =
                 new TaskCompletionSource<HashSet<Pet>>(TaskCreationOptions.RunContinuationsAsynchronously);
-            public Task<HashSet<Pet>> Complete => _complete.Task;
+            public Task<HashSet<Pet>> Complete => _complete.Task.With2MinuteTimeout();
             public PetHandler(int count) {
                 _count = count;
             }

@@ -10,6 +10,7 @@ namespace Microsoft.Azure.IIoT.Utils {
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
+    using Microsoft.Azure.IIoT.Exceptions;
 
     /// <summary>
     /// Host auto starter
@@ -41,16 +42,17 @@ namespace Microsoft.Azure.IIoT.Utils {
         /// </summary>
         /// <returns></returns>
         private async Task StopAsync() {
-            try {
-                _logger.LogDebug("Stopping all hosts...");
-                foreach (var host in _hosts.Select(h => h).Reverse()) {
+            _logger.LogDebug("Stopping all hosts...");
+            foreach (var host in _hosts.Select(h => h).Reverse()) {
+                try {
                     await host.StopAsync().ConfigureAwait(false);
                 }
-                _logger.LogInformation("All hosts stopped.");
+                catch (Exception ex) {
+                    _logger.LogWarning(ex, "Failed to stop a host of type {type}...",
+                        host.GetType().Name);
+                }
             }
-            catch (Exception ex) {
-                _logger.LogWarning(ex, "Failed to stop all hosts.");
-            }
+            _logger.LogInformation("All hosts stopped.");
         }
 
         /// <summary>
@@ -58,16 +60,43 @@ namespace Microsoft.Azure.IIoT.Utils {
         /// </summary>
         /// <returns></returns>
         private async Task StartAsync() {
-            try {
-                _logger.LogDebug("Starting all hosts...");
-                foreach (var host in _hosts) {
-                    await host.StartAsync().ConfigureAwait(false);
+            var exceptions = new List<Exception>();
+            _logger.LogDebug("Starting all hosts...");
+            var hosts = new Queue<IHostProcess>(_hosts);
+            while (true) {
+                var count = hosts.Count;
+                if (count == 0) {
+                    // No more hosts to start
+                    _logger.LogInformation("All hosts started.");
+                    return;
                 }
-                _logger.LogInformation("All hosts started.");
-            }
-            catch (Exception ex) {
-                _logger.LogError(ex, "Failed to start some hosts.");
-                throw;
+                for (var i = 0; i < count; i++) {
+                    var host = hosts.Dequeue();
+                    try {
+                        await host.StartAsync().ConfigureAwait(false);
+                    }
+                    catch (ResourceInvalidStateException rex) {
+                        // Already started.
+                        _logger.LogWarning(rex, 
+                            "Tried to start {type} but was already started.",
+                            host.GetType().Name);
+                    }
+                    catch (Exception ex) {
+                        _logger.LogWarning(ex, "Failed to start a host of type {type}.",
+                            host.GetType().Name);
+                        exceptions.Add(ex);
+                        hosts.Enqueue(host); // start later
+                    }
+                }
+                if (hosts.Count == count) {
+                    // Failed to start remaining - throw
+                    if (exceptions.Count > 1) {
+                        throw new AggregateException(
+                            "Failed to start some hosts", exceptions);
+                    }
+                    // There must be one.
+                    throw exceptions.First();
+                }
             }
         }
 
