@@ -10,7 +10,7 @@
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.8.0" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\core\Microsoft.Azure.IIoT.Authentication.OpenId\src\Microsoft.Azure.IIoT.Authentication.OpenId.csproj" />
+    <ProjectReference Include="..\..\..\extensions\Microsoft.Azure.IIoT.Extensions.OpenId\src\Microsoft.Azure.IIoT.Extensions.OpenId.csproj" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Microsoft.Azure.IIoT.Azure.KeyVault\src\Microsoft.Azure.IIoT.Azure.KeyVault.csproj" />

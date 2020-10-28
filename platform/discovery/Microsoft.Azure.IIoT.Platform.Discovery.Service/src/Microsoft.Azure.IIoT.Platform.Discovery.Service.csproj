@@ -15,8 +15,8 @@
     <ProjectReference Include="..\..\..\..\azure\Microsoft.Azure.IIoT.Azure.AspNetCore\src\Microsoft.Azure.IIoT.Azure.AspNetCore.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\core\Microsoft.Azure.IIoT.Services.Generic\src\Microsoft.Azure.IIoT.Services.Orleans.csproj" />
-    <ProjectReference Include="..\..\..\..\core\Microsoft.Azure.IIoT.Services.LiteDb\src\Microsoft.Azure.IIoT.Services.LiteDb.csproj" />
+    <ProjectReference Include="..\..\..\..\extensions\Microsoft.Azure.IIoT.Extensions.Orleans\src\Microsoft.Azure.IIoT.Extensions.Orleans.csproj" />
+    <ProjectReference Include="..\..\..\..\extensions\Microsoft.Azure.IIoT.Extensions.LiteDb\src\Microsoft.Azure.IIoT.Extensions.LiteDb.csproj" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Microsoft.Azure.IIoT.Platform.Discovery\src\Microsoft.Azure.IIoT.Platform.Discovery.csproj" />

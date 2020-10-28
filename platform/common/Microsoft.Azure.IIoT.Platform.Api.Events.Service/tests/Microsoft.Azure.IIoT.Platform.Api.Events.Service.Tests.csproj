@@ -18,11 +18,11 @@
     <Service Include="{82a7f48d-3b50-4b1e-b82e-3ada8210c358}" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\core\Microsoft.Azure.IIoT.Services.Generic\src\Microsoft.Azure.IIoT.Services.Orleans.csproj" />
+    <ProjectReference Include="..\..\..\..\extensions\Microsoft.Azure.IIoT.Extensions.Orleans\src\Microsoft.Azure.IIoT.Extensions.Orleans.csproj" />
     <ProjectReference Include="..\..\..\..\platform\common\Microsoft.Azure.IIoT.Platform.Api.Internal\src\Microsoft.Azure.IIoT.Platform.Api.Internal.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\core\Microsoft.Azure.IIoT.Http.SignalR\src\Microsoft.Azure.IIoT.Http.SignalR.csproj" />
+    <ProjectReference Include="..\..\..\..\extensions\Microsoft.Azure.IIoT.Extensions.SignalR\src\Microsoft.Azure.IIoT.Extensions.SignalR.csproj" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\src\Microsoft.Azure.IIoT.Platform.Api.Events.Service.csproj" />

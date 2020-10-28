@@ -10,8 +10,8 @@
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="5.0.0-rc.2.20475.5" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\core\Microsoft.Azure.IIoT.AspNetCore\src\Microsoft.Azure.IIoT.AspNetCore.csproj" />
-    <ProjectReference Include="..\..\..\..\core\Microsoft.Azure.IIoT.Serializers.NewtonSoft\src\Microsoft.Azure.IIoT.Serializers.NewtonSoft.csproj" />
+    <ProjectReference Include="..\..\..\..\extensions\Microsoft.Azure.IIoT.Extensions.AspNetCore\src\Microsoft.Azure.IIoT.Extensions.AspNetCore.csproj" />
+    <ProjectReference Include="..\..\..\..\extensions\Microsoft.Azure.IIoT.Extensions.NewtonSoft\src\Microsoft.Azure.IIoT.Extensions.NewtonSoft.csproj" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\azure\Microsoft.Azure.IIoT.Azure.AspNetCore\src\Microsoft.Azure.IIoT.Azure.AspNetCore.csproj" />

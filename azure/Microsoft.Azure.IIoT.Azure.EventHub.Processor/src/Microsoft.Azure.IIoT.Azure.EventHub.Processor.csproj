@@ -8,6 +8,6 @@
     <PackageReference Include="Microsoft.Azure.EventHubs.Processor" Version="4.3.0" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\core\Microsoft.Azure.IIoT.Core\src\Microsoft.Azure.IIoT.Core.csproj" />
+    <ProjectReference Include="..\..\..\extensions\Microsoft.Azure.IIoT.Extensions\src\Microsoft.Azure.IIoT.Extensions.csproj" />
   </ItemGroup>
 </Project>

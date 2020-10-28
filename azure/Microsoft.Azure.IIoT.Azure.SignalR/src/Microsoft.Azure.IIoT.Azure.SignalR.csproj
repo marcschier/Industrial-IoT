@@ -12,7 +12,7 @@
     <PackageReference Include="Microsoft.Azure.SignalR.Management" Version="1.5.1" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\core\Microsoft.Azure.IIoT.Serializers.MessagePack\src\Microsoft.Azure.IIoT.Serializers.MessagePack.csproj" />
-    <ProjectReference Include="..\..\..\core\Microsoft.Azure.IIoT.Serializers.NewtonSoft\src\Microsoft.Azure.IIoT.Serializers.NewtonSoft.csproj" />
+    <ProjectReference Include="..\..\..\extensions\Microsoft.Azure.IIoT.Extensions.MessagePack\src\Microsoft.Azure.IIoT.Extensions.MessagePack.csproj" />
+    <ProjectReference Include="..\..\..\extensions\Microsoft.Azure.IIoT.Extensions.NewtonSoft\src\Microsoft.Azure.IIoT.Extensions.NewtonSoft.csproj" />
   </ItemGroup>
 </Project>

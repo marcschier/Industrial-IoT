@@ -20,7 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\azure\Microsoft.Azure.IIoT.Azure.IoTHub.Mock\src\Microsoft.Azure.IIoT.Azure.IoTHub.Mock.csproj" />
-    <ProjectReference Include="..\..\..\..\core\Microsoft.Azure.IIoT.Services.LiteDb\src\Microsoft.Azure.IIoT.Services.LiteDb.csproj" />
+    <ProjectReference Include="..\..\..\..\extensions\Microsoft.Azure.IIoT.Extensions.LiteDb\src\Microsoft.Azure.IIoT.Extensions.LiteDb.csproj" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\src\Microsoft.Azure.IIoT.Platform.Registry.csproj" />

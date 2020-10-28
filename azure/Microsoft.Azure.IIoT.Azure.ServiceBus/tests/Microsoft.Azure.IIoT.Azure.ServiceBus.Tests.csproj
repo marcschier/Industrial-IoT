@@ -20,7 +20,7 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\core\Microsoft.Azure.IIoT.Serializers.NewtonSoft\src\Microsoft.Azure.IIoT.Serializers.NewtonSoft.csproj" />
+    <ProjectReference Include="..\..\..\extensions\Microsoft.Azure.IIoT.Extensions.NewtonSoft\src\Microsoft.Azure.IIoT.Extensions.NewtonSoft.csproj" />
     <ProjectReference Include="..\src\Microsoft.Azure.IIoT.Azure.ServiceBus.csproj" />
   </ItemGroup>
   <ItemGroup>

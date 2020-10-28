@@ -14,7 +14,7 @@
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\core\Microsoft.Azure.IIoT.AspNetCore\src\Microsoft.Azure.IIoT.AspNetCore.csproj" />
+    <ProjectReference Include="..\..\..\extensions\Microsoft.Azure.IIoT.Extensions.AspNetCore\src\Microsoft.Azure.IIoT.Extensions.AspNetCore.csproj" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Microsoft.Azure.IIoT.Azure.ActiveDirectory\src\Microsoft.Azure.IIoT.Azure.ActiveDirectory.csproj" />

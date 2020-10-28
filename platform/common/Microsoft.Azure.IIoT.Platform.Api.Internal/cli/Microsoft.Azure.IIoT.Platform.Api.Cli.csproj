@@ -12,7 +12,7 @@
     <ProjectReference Include="..\..\..\..\azure\Microsoft.Azure.IIoT.Azure.ActiveDirectory\src\Microsoft.Azure.IIoT.Azure.ActiveDirectory.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\core\Microsoft.Azure.IIoT.Http.SignalR\src\Microsoft.Azure.IIoT.Http.SignalR.csproj" />
+    <ProjectReference Include="..\..\..\..\extensions\Microsoft.Azure.IIoT.Extensions.SignalR\src\Microsoft.Azure.IIoT.Extensions.SignalR.csproj" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\src\Microsoft.Azure.IIoT.Platform.Api.Internal.csproj" />

@@ -23,8 +23,8 @@
     <ProjectReference Include="..\src\Microsoft.Azure.IIoT.Azure.KeyVault.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\core\Microsoft.Azure.IIoT.Serializers.NewtonSoft\src\Microsoft.Azure.IIoT.Serializers.NewtonSoft.csproj" />
-    <ProjectReference Include="..\..\..\core\Microsoft.Azure.IIoT.Services.LiteDb\src\Microsoft.Azure.IIoT.Services.LiteDb.csproj" />
+    <ProjectReference Include="..\..\..\extensions\Microsoft.Azure.IIoT.Extensions.NewtonSoft\src\Microsoft.Azure.IIoT.Extensions.NewtonSoft.csproj" />
+    <ProjectReference Include="..\..\..\extensions\Microsoft.Azure.IIoT.Extensions.LiteDb\src\Microsoft.Azure.IIoT.Extensions.LiteDb.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{82a7f48d-3b50-4b1e-b82e-3ada8210c358}" />

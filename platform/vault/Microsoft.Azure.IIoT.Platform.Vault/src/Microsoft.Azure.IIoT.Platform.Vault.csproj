@@ -10,6 +10,6 @@
     <ProjectReference Include="..\..\..\..\platform\common\Microsoft.Azure.IIoT.Platform.OpcUa\src\Microsoft.Azure.IIoT.Platform.OpcUa.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\core\Microsoft.Azure.IIoT.Crypto.Bouncycastle\src\Microsoft.Azure.IIoT.Crypto.Bouncycastle.csproj" />
+    <ProjectReference Include="..\..\..\..\extensions\Microsoft.Azure.IIoT.Extensions.Bouncycastle\src\Microsoft.Azure.IIoT.Extensions.Bouncycastle.csproj" />
   </ItemGroup>
 </Project>
