@@ -11,7 +11,9 @@ namespace Microsoft.Azure.IIoT.Http {
     using System.Net.Sockets;
     using System.Threading.Tasks;
     using Xunit;
+    using Xunit.Categories;
 
+    [UnitTest]
     public class HttpClientTests {
 
         [Fact]

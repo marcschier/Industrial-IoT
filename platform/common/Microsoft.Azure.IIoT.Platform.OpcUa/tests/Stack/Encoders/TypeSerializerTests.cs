@@ -11,9 +11,11 @@ namespace Opc.Ua.Encoders {
     using System.Globalization;
     using System.Linq;
     using System.Text;
-    using Xunit;
     using Xunit.Abstractions;
+    using Xunit;
+    using Xunit.Categories;
 
+    [UnitTest]
     public class TypeSerializerTests {
 
         public TypeSerializerTests(ITestOutputHelper output) {

@@ -8,7 +8,7 @@ namespace Microsoft.Azure.IIoT.Azure.ActiveDirectory.Clients {
     using Microsoft.Azure.IIoT.Authentication.Runtime;
     using Microsoft.Azure.IIoT.Authentication.Clients;
     using Microsoft.Azure.IIoT.Http.Auth;
-    using Microsoft.Azure.IIoT.Storage.Default;
+    using Microsoft.Azure.IIoT.Storage.Services;
     using Autofac;
     using Microsoft.Extensions.Logging;
     using System.Collections.Generic;

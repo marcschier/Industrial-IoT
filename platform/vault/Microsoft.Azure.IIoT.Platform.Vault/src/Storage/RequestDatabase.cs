@@ -7,9 +7,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Storage {
     using Microsoft.Azure.IIoT.Platform.Vault.Storage.Models;
     using Microsoft.Azure.IIoT.Platform.Vault.Models;
     using Microsoft.Azure.IIoT.Storage;
-    using Microsoft.Azure.IIoT.Storage.Default;
     using Microsoft.Azure.IIoT.Exceptions;
-    using Microsoft.Azure.IIoT.Utils;
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -31,7 +29,6 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Storage {
             }
 
             _requests = db.OpenAsync("requests").Result;
-            _index = new ContainerIndex(db, _requests.Name);
         }
 
         /// <inheritdoc/>
@@ -40,9 +37,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Storage {
             if (request == null) {
                 throw new ArgumentNullException(nameof(request));
             }
-            var recordId = await _index.AllocateAsync(ct).ConfigureAwait(false);
             while (true) {
-                request.Index = recordId;
                 request.Record.State = CertificateRequestState.New;
                 request.Record.RequestId = "req" + Guid.NewGuid();
                 try {
@@ -51,10 +46,6 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Storage {
                 }
                 catch (ResourceConflictException) {
                     continue;
-                }
-                catch {
-                    await Try.Async(() => _index.FreeAsync(recordId)).ConfigureAwait(false);
-                    throw;
                 }
             }
         }
@@ -104,7 +95,6 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Storage {
                 }
                 try {
                     await _requests.DeleteAsync(document, ct: ct).ConfigureAwait(false);
-                    await Try.Async(() => _index.FreeAsync(document.Value.Index)).ConfigureAwait(false);
                 }
                 catch (ResourceOutOfDateException) {
                     continue;
@@ -166,6 +156,5 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Storage {
         }
 
         private readonly IItemContainer _requests;
-        private readonly IContainerIndex _index;
     }
 }

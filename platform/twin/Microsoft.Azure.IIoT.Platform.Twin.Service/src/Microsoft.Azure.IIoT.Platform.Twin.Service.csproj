@@ -15,7 +15,6 @@
     <ProjectReference Include="..\..\..\..\azure\Microsoft.Azure.IIoT.Azure.AspNetCore\src\Microsoft.Azure.IIoT.Azure.AspNetCore.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\extensions\Microsoft.Azure.IIoT.Extensions.Orleans\src\Microsoft.Azure.IIoT.Extensions.Orleans.csproj" />
     <ProjectReference Include="..\..\..\..\extensions\Microsoft.Azure.IIoT.Extensions.LiteDb\src\Microsoft.Azure.IIoT.Extensions.LiteDb.csproj" />
   </ItemGroup>
   <ItemGroup>

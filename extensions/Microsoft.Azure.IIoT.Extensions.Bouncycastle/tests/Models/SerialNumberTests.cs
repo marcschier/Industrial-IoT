@@ -5,12 +5,11 @@
 
 namespace Microsoft.Azure.IIoT.Crypto.Models {
     using System.Numerics;
-    using Xunit;
     using System;
+    using Xunit;
+    using Xunit.Categories;
 
-    /// <summary>
-    /// Serial number tests
-    /// </summary>
+    [UnitTest]
     public class SerialNumberTests {
 
         [Theory]

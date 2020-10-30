@@ -7,6 +7,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Service {
     using Microsoft.Azure.IIoT.Platform.Twin.Service.Runtime;
     using Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Runtime;
     using Microsoft.Azure.IIoT.Authentication;
+    using Microsoft.Azure.IIoT.Messaging;
     using Microsoft.Azure.IIoT.Serializers.NewtonSoft;
     using Microsoft.Azure.IIoT.Serializers.MessagePack;
     using Microsoft.Extensions.Hosting;
@@ -31,13 +32,17 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Service {
 
         /// <inheritdoc/>
         public override void ConfigureContainer(ContainerBuilder builder) {
+
+            builder.RegisterModule<MemoryEventBusModule>();
+            builder.RegisterModule<TwinServices>();
+
             base.ConfigureContainer(builder);
 
             // Add fakes
             builder.RegisterType<TestRegistry>()
                 .AsImplementedInterfaces().SingleInstance();
             builder.RegisterType<TestClientServicesConfig>()
-                .AsImplementedInterfaces().SingleInstance();
+               .AsImplementedInterfaces().SingleInstance();
             builder.RegisterType<TestAuthConfig>()
                 .AsImplementedInterfaces();
         }
@@ -58,7 +63,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Service {
 
         /// <inheritdoc/>
         protected override IHostBuilder CreateHostBuilder() {
-            return Extensions.Hosting.Host.CreateDefaultBuilder();
+            return Microsoft.Extensions.Hosting.Host.CreateDefaultBuilder();
         }
 
         /// <inheritdoc/>

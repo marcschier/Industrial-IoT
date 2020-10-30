@@ -4,7 +4,7 @@
 // ------------------------------------------------------------
 
 
-namespace Microsoft.Azure.IIoT.Services.RabbitMq {
+namespace Microsoft.Azure.IIoT.Extensions.RabbitMq {
     using RabbitMQ.Client;
     using System;
     using System.Collections.Generic;

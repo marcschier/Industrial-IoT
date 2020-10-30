@@ -7,12 +7,13 @@ namespace Microsoft.Azure.IIoT.Platform.Twin {
     using Microsoft.Azure.IIoT.Platform.Twin.Services;
     using Microsoft.Azure.IIoT.Platform.Twin.Clients;
     using Microsoft.Azure.IIoT.Platform.Core.Models;
+    using Microsoft.Azure.IIoT.Platform.Discovery;
     using Autofac;
 
     /// <summary>
     /// Injected twin services
     /// </summary>
-    public sealed class TwinServices : TwinStorage {
+    public class TwinServices : TwinStorage {
 
         /// <summary>
         /// Load the module
@@ -30,27 +31,24 @@ namespace Microsoft.Azure.IIoT.Platform.Twin {
                 .IfNotRegistered(typeof(IBrowseServices<ConnectionModel>))
                 .IfNotRegistered(typeof(IHistoricAccessServices<ConnectionModel>));
 
-            // Adapted to endpoint id with endpoint registry as dependency
-            builder.RegisterType<TransferServicesAdapter>()
+            // Adapted to twin with twin registry as dependency
+            builder.RegisterType<DataTransferAdapter>()
                 .AsImplementedInterfaces().InstancePerLifetimeScope()
                 .IfNotRegistered(typeof(ITransferServices<string>));
-            builder.RegisterType<NodeServicesAdapter>()
+            builder.RegisterType<AddressSpaceAdapter>()
                 .AsImplementedInterfaces().InstancePerLifetimeScope()
-                .IfNotRegistered(typeof(INodeServices<string>));
-            builder.RegisterType<BrowseServicesAdapter>()
-                .AsImplementedInterfaces().InstancePerLifetimeScope()
-                .IfNotRegistered(typeof(IBrowseServices<string>));
-            builder.RegisterType<HistoricAccessServicesAdapter>()
-                .AsImplementedInterfaces().InstancePerLifetimeScope()
+                .IfNotRegistered(typeof(INodeServices<string>))
+                .IfNotRegistered(typeof(IBrowseServices<string>))
                 .IfNotRegistered(typeof(IHistoricAccessServices<string>));
-
-            // Historian api 
             builder.RegisterType<HistorianServicesAdapter<ConnectionModel>>()
                 .AsImplementedInterfaces().InstancePerLifetimeScope()
                 .IfNotRegistered(typeof(IHistorianServices<ConnectionModel>));
             builder.RegisterType<HistorianServicesAdapter<string>>()
                 .AsImplementedInterfaces().InstancePerLifetimeScope()
                 .IfNotRegistered(typeof(IHistorianServices<string>));
+            builder.RegisterType<CertificateServicesAdapter>()
+                .AsImplementedInterfaces().InstancePerLifetimeScope()
+                .IfNotRegistered(typeof(ICertificateServices<string>));
 
             base.Load(builder);
         }

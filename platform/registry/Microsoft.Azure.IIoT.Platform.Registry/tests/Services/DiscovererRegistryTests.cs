@@ -17,9 +17,11 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using Xunit;
     using Autofac;
+    using Xunit;
+    using Xunit.Categories;
 
+    [UnitTest]
     public class DiscovererRegistryTests {
 
         [Fact]

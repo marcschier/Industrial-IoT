@@ -7,7 +7,7 @@ namespace Microsoft.Azure.IIoT.Platform.Discovery.Services {
     using Microsoft.Azure.IIoT.Platform.Discovery.Models;
     using Microsoft.Azure.IIoT.Platform.Discovery.Storage;
     using Microsoft.Azure.IIoT.Platform.Core.Models;
-    using Microsoft.Azure.IIoT.Storage.Default;
+    using Microsoft.Azure.IIoT.Storage.Services;
     using Microsoft.Azure.IIoT.Storage;
     using Microsoft.Azure.IIoT.Exceptions;
     using Microsoft.Azure.IIoT.Hub;
@@ -20,9 +20,11 @@ namespace Microsoft.Azure.IIoT.Platform.Discovery.Services {
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using System.Linq;
-    using Xunit;
     using Autofac;
+    using Xunit;
+    using Xunit.Categories;
 
+    [UnitTest]
     public class ApplicationRegistryTests {
 
         [Fact]

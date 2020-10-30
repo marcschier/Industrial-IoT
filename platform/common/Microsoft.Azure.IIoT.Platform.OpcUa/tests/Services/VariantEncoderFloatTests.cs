@@ -4,11 +4,13 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
-    using Opc.Ua;
-    using Xunit;
     using Microsoft.Azure.IIoT.Serializers;
     using Microsoft.Azure.IIoT.Serializers.NewtonSoft;
+    using Opc.Ua;
+    using Xunit;
+    using Xunit.Categories;
 
+    [UnitTest]
     public class VariantEncoderFloatTests {
 
         [Fact]

@@ -8,9 +8,11 @@ namespace Microsoft.Azure.IIoT.Rpc {
     using Microsoft.Azure.IIoT.Serializers.NewtonSoft;
     using System;
     using System.Text;
-    using Xunit;
     using AutoFixture;
+    using Xunit;
+    using Xunit.Categories;
 
+    [UnitTest]
     public partial class ChunkMethodTests {
 
         [Theory]

@@ -4,7 +4,7 @@
 // ------------------------------------------------------------
 
 
-namespace Microsoft.Azure.IIoT.Services.Orleans {
+namespace Microsoft.Azure.IIoT.Extensions.Orleans {
     using global::Orleans;
 
     /// <summary>

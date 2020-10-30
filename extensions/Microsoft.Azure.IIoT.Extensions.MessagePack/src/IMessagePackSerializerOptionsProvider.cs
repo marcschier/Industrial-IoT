@@ -3,13 +3,9 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-
 namespace Microsoft.Azure.IIoT.Serializers {
-    using global::MessagePack;
     using System.Collections.Generic;
-#if MessagePack1
-    using MessagePackSerializerOptions = global::MessagePack.IFormatterResolver;
-#endif
+    using global::MessagePack;
 
     /// <summary>
     /// Message pack serializer options provider

@@ -11,7 +11,9 @@ namespace Microsoft.Azure.IIoT.Platform.Discovery.Models {
     using System;
     using System.Linq;
     using Xunit;
+    using Xunit.Categories;
 
+    [UnitTest]
     public class EndpointDocumentTests {
 
         [Fact]

@@ -6,13 +6,11 @@
 namespace Microsoft.Azure.IIoT.Diagnostics {
     using Microsoft.Extensions.Logging;
     using Microsoft.Extensions.Logging.Debug;
-    using Microsoft.Extensions.DependencyInjection;
     using Autofac;
     using Autofac.Core;
     using Autofac.Core.Registration;
     using Autofac.Core.Activators.Reflection;
     using Autofac.Core.Resolving.Pipeline;
-    using Autofac.Extensions.DependencyInjection;
     using System;
     using System.Linq;
 

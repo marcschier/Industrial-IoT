@@ -8,7 +8,7 @@ namespace Microsoft.Azure.IIoT.AspNetCore.Http.Tunnel {
     using Microsoft.Azure.IIoT.Exceptions;
     using Microsoft.Azure.IIoT.Hosting;
     using Microsoft.Azure.IIoT.Http.Tunnel.Models;
-    using Microsoft.Azure.IIoT.Rpc.Default;
+    using Microsoft.Azure.IIoT.Rpc.Services;
     using Microsoft.Azure.IIoT.Serializers;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Http.Features;

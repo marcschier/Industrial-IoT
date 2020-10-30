@@ -7,7 +7,9 @@ namespace Microsoft.Azure.IIoT.Net {
     using System;
     using System.Text;
     using Xunit;
+    using Xunit.Categories;
 
+    [UnitTest]
     public class ByteBufferExTests {
 
         [Fact]

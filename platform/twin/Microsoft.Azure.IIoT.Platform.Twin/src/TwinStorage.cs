@@ -21,11 +21,13 @@ namespace Microsoft.Azure.IIoT.Platform.Twin {
 
             // Services
             builder.RegisterType<TwinRegistryServices>()
-                .AsImplementedInterfaces().InstancePerLifetimeScope();
+                .AsImplementedInterfaces().InstancePerLifetimeScope()
+                .IfNotRegistered(typeof(ITwinRegistry));
 
             builder.RegisterType<TwinDatabase>()
                 .AsImplementedInterfaces().InstancePerLifetimeScope()
-                .IfNotRegistered(typeof(ITwinRepository));
+                .IfNotRegistered(typeof(ITwinRepository))
+                .IfNotRegistered(typeof(ITwinRegistry));
 
             base.Load(builder);
         }

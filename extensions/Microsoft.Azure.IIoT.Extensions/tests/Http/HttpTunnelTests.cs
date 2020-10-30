@@ -5,25 +5,27 @@
 
 namespace Microsoft.Azure.IIoT.Http.Tunnel.Services {
     using Microsoft.Azure.IIoT.Rpc;
-    using Microsoft.Azure.IIoT.Rpc.Default;
+    using Microsoft.Azure.IIoT.Rpc.Services;
     using Microsoft.Azure.IIoT.Http;
     using Microsoft.Azure.IIoT.Http.Clients;
     using Microsoft.Azure.IIoT.Serializers;
     using Microsoft.Azure.IIoT.Serializers.NewtonSoft;
     using Microsoft.Azure.IIoT.Hub;
     using Microsoft.Azure.IIoT.Messaging;
+    using Microsoft.Azure.IIoT.Diagnostics;
     using AutoFixture;
+    using AutoFixture.AutoMoq;
     using Moq;
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
-    using Xunit;
     using System.Net.Http;
-    using AutoFixture.AutoMoq;
-    using Microsoft.Azure.IIoT.Diagnostics;
+    using Xunit;
+    using Xunit.Categories;
 
+    [UnitTest]
     public class HttpTunnelTests {
 
         [Fact]

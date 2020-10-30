@@ -3,10 +3,10 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Services.RabbitMq {
-    using Microsoft.Azure.IIoT.Services.RabbitMq.Clients;
-    using Microsoft.Azure.IIoT.Messaging.Default;
-    using Microsoft.Azure.IIoT.Tasks.Default;
+namespace Microsoft.Azure.IIoT.Extensions.RabbitMq {
+    using Microsoft.Azure.IIoT.Extensions.RabbitMq.Clients;
+    using Microsoft.Azure.IIoT.Messaging.Services;
+    using Microsoft.Azure.IIoT.Tasks.Services;
     using Microsoft.Azure.IIoT.Tasks;
     using Autofac;
 

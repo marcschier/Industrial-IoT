@@ -13,11 +13,6 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Models {
     public sealed class CertificateRequestModel {
 
         /// <summary>
-        /// Numeric index
-        /// </summary>
-        public uint? Index { get; set; }
-
-        /// <summary>
         /// Public record
         /// </summary>
         public CertificateRequestRecordModel Record { get; set; }

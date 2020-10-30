@@ -5,7 +5,9 @@
 
 namespace Microsoft.Azure.IIoT.Platform.Discovery.Service.Controllers {
     using Xunit;
+    using Xunit.Categories;
 
+    [IntegrationTest]
     public class StatusControllerTest : IClassFixture<WebAppFixture> {
 
         [Fact]

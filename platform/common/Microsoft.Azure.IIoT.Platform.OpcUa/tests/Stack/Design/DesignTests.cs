@@ -5,7 +5,9 @@
 
 namespace Opc.Ua.Design {
     using Xunit;
+    using Xunit.Categories;
 
+    [UnitTest]
     public class DesignTests {
 
         [Fact]

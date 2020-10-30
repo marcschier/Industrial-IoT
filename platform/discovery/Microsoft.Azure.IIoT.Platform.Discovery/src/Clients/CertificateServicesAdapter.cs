@@ -27,10 +27,10 @@ namespace Microsoft.Azure.IIoT.Platform.Discovery.Clients {
         }
 
         /// <inheritdoc/>
-        public async Task<X509CertificateChainModel> GetEndpointCertificateAsync(string endpoint, 
+        public async Task<X509CertificateChainModel> GetCertificateAsync(string endpoint, 
             CancellationToken ct) {
             var ep = await _registry.GetEndpointAsync(endpoint, ct).ConfigureAwait(false);
-            return await _certificates.GetEndpointCertificateAsync(
+            return await _certificates.GetCertificateAsync(
                 ep.Endpoint, ct).ConfigureAwait(false);
         }
 

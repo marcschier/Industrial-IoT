@@ -3,14 +3,14 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Services.Kafka.Clients {
-    using Microsoft.Azure.IIoT.Services.Kafka.Runtime;
-    using Microsoft.Azure.IIoT.Services.Kafka.Server;
+namespace Microsoft.Azure.IIoT.Extensions.Kafka.Clients {
+    using Microsoft.Azure.IIoT.Extensions.Kafka.Runtime;
+    using Microsoft.Azure.IIoT.Extensions.Kafka.Server;
     using Microsoft.Azure.IIoT.Utils;
-    using System;
     using Autofac;
-    using Xunit;
+    using System;
     using System.Threading;
+    using Xunit;
 
     [CollectionDefinition(Name)]
     public class KafkaCollection : ICollectionFixture<KafkaServerFixture> {

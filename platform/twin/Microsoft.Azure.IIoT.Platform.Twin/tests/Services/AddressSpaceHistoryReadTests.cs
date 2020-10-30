@@ -16,8 +16,9 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
     using System.Net;
     using System.Net.Sockets;
     using Xunit;
+    using Xunit.Categories;
 
-
+    [IntegrationTest]
     [Collection(HistoryReadCollection.Name)]
     public class AddressSpaceHistoryReadTests {
 

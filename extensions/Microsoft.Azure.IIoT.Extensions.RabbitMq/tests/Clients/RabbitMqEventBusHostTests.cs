@@ -3,7 +3,7 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
+namespace Microsoft.Azure.IIoT.Extensions.RabbitMq.Clients {
     using Microsoft.Azure.IIoT.Messaging;
     using Microsoft.Azure.IIoT.Exceptions;
     using Microsoft.Azure.IIoT.Utils;
@@ -14,7 +14,9 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
     using System.Threading.Tasks;
     using System.Collections.Generic;
     using System.Linq;
+    using Xunit.Categories;
 
+    [SystemTest]
     [Collection(RabbitMqCollection.Name)]
     public class RabbitMqEventBusHostTests : IClassFixture<RabbitMqEventBusFixture> {
         private readonly RabbitMqEventBusFixture _fixture;
@@ -168,7 +170,7 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
             private readonly int _count;
             private readonly TaskCompletionSource<HashSet<Family>> _complete =
                 new TaskCompletionSource<HashSet<Family>>(TaskCreationOptions.RunContinuationsAsynchronously);
-            public Task<HashSet<Family>> Complete => _complete.Task.With2MinuteTimeout();
+            public Task<HashSet<Family>> Complete => _complete.Task.ContinueAfter2Minutes(() => Families);
 
             public FamilyHandler(int count) {
                 _count = count;
@@ -188,7 +190,7 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
             private readonly int _count;
             private readonly TaskCompletionSource<HashSet<Child>> _complete =
                 new TaskCompletionSource<HashSet<Child>>(TaskCreationOptions.RunContinuationsAsynchronously);
-            public Task<HashSet<Child>> Complete => _complete.Task.With2MinuteTimeout();
+            public Task<HashSet<Child>> Complete => _complete.Task.ContinueAfter2Minutes(() => Children);
             public ChildHandler(int count) {
                 _count = count;
             }
@@ -207,7 +209,7 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
             private readonly int _count;
             private readonly TaskCompletionSource<HashSet<Pet>> _complete =
                 new TaskCompletionSource<HashSet<Pet>>(TaskCreationOptions.RunContinuationsAsynchronously);
-            public Task<HashSet<Pet>> Complete => _complete.Task.With2MinuteTimeout();
+            public Task<HashSet<Pet>> Complete => _complete.Task.ContinueAfter2Minutes(() => Pets);
             public PetHandler(int count) {
                 _count = count;
             }

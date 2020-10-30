@@ -4,7 +4,7 @@
 // ------------------------------------------------------------
 
 namespace Confluent.Kafka {
-    using Microsoft.Azure.IIoT.Services.Kafka;
+    using Microsoft.Azure.IIoT.Extensions.Kafka;
     using System;
 
     /// <summary>

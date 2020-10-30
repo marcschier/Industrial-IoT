@@ -21,7 +21,9 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Service.Controllers {
     using System.Net.Sockets;
     using System.Threading.Tasks;
     using Xunit;
+    using Xunit.Categories;
 
+    [IntegrationTest]
     [Collection(HistoryReadCollection.Name)]
     public class ReadHistoryTests : IClassFixture<WebAppFixture> {
 

@@ -41,12 +41,6 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Storage.Models {
         public string ClassType { get; set; } = ClassTypeName;
 
         /// <summary>
-        /// Numeric index
-        /// </summary>
-        [DataMember]
-        public uint Index { get; set; }
-
-        /// <summary>
         /// Request state
         /// </summary>
         [DataMember]

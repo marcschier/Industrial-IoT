@@ -5,10 +5,12 @@
 
 namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
     using Opc.Ua;
-    using Xunit;
-    using System.Xml;
     using Opc.Ua.Extensions;
+    using System.Xml;
+    using Xunit;
+    using Xunit.Categories;
 
+    [UnitTest]
     public class VariantEncoderMiscTests {
 
         [Fact]

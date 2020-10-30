@@ -15,7 +15,9 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service.Api {
     using System.Collections.Generic;
     using System.Text;
     using System.Linq;
+    using Xunit.Categories;
 
+    [IntegrationTest]
     [Collection(WebAppCollection.Name)]
     public class PublisherServiceEventsTests {
 

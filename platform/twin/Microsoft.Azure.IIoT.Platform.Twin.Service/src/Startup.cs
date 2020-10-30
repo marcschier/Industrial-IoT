@@ -8,8 +8,8 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Service {
     using Microsoft.Azure.IIoT.Platform.Twin.Service.Auth;
     using Microsoft.Azure.IIoT.Platform.Discovery.Api.Clients;
     using Microsoft.Azure.IIoT.Platform.OpcUa;
-    using Microsoft.Azure.IIoT.Services.LiteDb;
-    using Microsoft.Azure.IIoT.Services.Orleans;
+    using Microsoft.Azure.IIoT.Extensions.LiteDb;
+    using Microsoft.Azure.IIoT.Extensions.Orleans;
     using Microsoft.Azure.IIoT.Authentication;
     using Microsoft.Azure.IIoT.Http.Clients;
     using Microsoft.Azure.IIoT.Serializers;
@@ -186,10 +186,10 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Service {
             // --- Logic ---
 
             // Register Twin services
-            builder.RegisterModule<TwinServices>();
+            builder.RegisterModule<TwinCluster>();
             builder.RegisterModule<ClientStack>();
 
-            // Registry services are required to lookup endpoints.
+            // Discovery services are required to activate twins.
             builder.RegisterType<DiscoveryServicesApiAdapter>()
                 .AsImplementedInterfaces();
             builder.RegisterType<DiscoveryServiceClient>()

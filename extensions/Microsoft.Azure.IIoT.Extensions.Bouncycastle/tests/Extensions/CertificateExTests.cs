@@ -9,7 +9,9 @@ namespace Microsoft.Azure.IIoT.Crypto {
     using System.Runtime.InteropServices;
     using System.Security.Cryptography.X509Certificates;
     using Xunit;
+    using Xunit.Categories;
 
+    [UnitTest]
     public static class CertificateExTests {
 
         [Theory]

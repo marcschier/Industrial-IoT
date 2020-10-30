@@ -5,7 +5,9 @@
 
 namespace System {
     using Xunit;
+    using Xunit.Categories;
 
+    [UnitTest]
     public class AssemblyExTests {
 
         [Fact]

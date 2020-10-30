@@ -20,7 +20,9 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Service.Controllers.Binary {
     using System.Net.Sockets;
     using System.Threading.Tasks;
     using Xunit;
+    using Xunit.Categories;
 
+    [IntegrationTest]
     [Collection(ReadBinaryCollection.Name)]
     public class ReadControllerScalarTests : IClassFixture<WebAppFixture> {
 

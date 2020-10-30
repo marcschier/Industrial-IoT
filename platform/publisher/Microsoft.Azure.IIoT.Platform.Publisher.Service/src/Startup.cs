@@ -10,8 +10,8 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Service {
     using Microsoft.Azure.IIoT.Platform.Discovery.Api.Clients;
     using Microsoft.Azure.IIoT.Platform.Twin.Api.Clients;
     using Microsoft.Azure.IIoT.Platform.OpcUa;
-    using Microsoft.Azure.IIoT.Services.LiteDb;
-    using Microsoft.Azure.IIoT.Services.Orleans;
+    using Microsoft.Azure.IIoT.Extensions.LiteDb;
+    using Microsoft.Azure.IIoT.Extensions.Orleans;
     using Microsoft.Azure.IIoT.Http.Clients;
     using Microsoft.Azure.IIoT.Authentication;
     using Microsoft.Azure.IIoT.Serializers;

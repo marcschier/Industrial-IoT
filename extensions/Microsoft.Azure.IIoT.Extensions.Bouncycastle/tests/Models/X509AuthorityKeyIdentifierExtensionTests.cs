@@ -10,7 +10,9 @@ namespace Microsoft.Azure.IIoT.Crypto.Models {
     using System.Security.Cryptography;
     using System.Security.Cryptography.X509Certificates;
     using Xunit;
+    using Xunit.Categories;
 
+    [UnitTest]
     public class X509AuthorityKeyIdentifierExtensionTests {
 
         [Fact]

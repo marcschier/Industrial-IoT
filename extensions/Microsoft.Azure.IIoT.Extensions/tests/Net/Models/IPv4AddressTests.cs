@@ -4,10 +4,12 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Net.Models {
-    using Xunit;
     using System.Net;
     using System;
+    using Xunit;
+    using Xunit.Categories;
 
+    [UnitTest]
     public class IPv4AddressTests {
 
         [Fact]

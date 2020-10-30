@@ -52,7 +52,7 @@ namespace Microsoft.Azure.IIoT.Platform.Discovery.Service.Controllers {
             if (string.IsNullOrEmpty(endpointId)) {
                 throw new ArgumentNullException(nameof(endpointId));
             }
-            var result = await _certificates.GetEndpointCertificateAsync(
+            var result = await _certificates.GetCertificateAsync(
                 endpointId).ConfigureAwait(false);
             return result.ToApiModel();
         }

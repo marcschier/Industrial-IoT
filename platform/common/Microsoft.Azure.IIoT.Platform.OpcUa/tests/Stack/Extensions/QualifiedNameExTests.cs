@@ -4,10 +4,11 @@
 // ------------------------------------------------------------
 
 namespace Opc.Ua.Extensions {
-    using Xunit;
     using System;
+    using Xunit;
+    using Xunit.Categories;
 
-
+    [UnitTest]
     public class QualifiedNameExTests {
 
         [Fact]

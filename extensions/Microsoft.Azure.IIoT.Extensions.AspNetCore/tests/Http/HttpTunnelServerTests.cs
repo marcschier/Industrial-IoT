@@ -6,15 +6,16 @@
 namespace Microsoft.Azure.IIoT.AspNetCore.Http.Tunnel {
     using Microsoft.Azure.IIoT.AspNetCore.Tests.Models;
     using Microsoft.Azure.IIoT.AspNetCore.Tests;
+    using Microsoft.Azure.IIoT.Http;
+    using Microsoft.Azure.IIoT.Hub;
     using Microsoft.Azure.IIoT.Serializers;
     using System;
     using System.Threading.Tasks;
-    using Xunit;
-    using Microsoft.Azure.IIoT.Http;
-    using Microsoft.Azure.IIoT.Hub;
     using System.Net;
+    using Xunit;
+    using Xunit.Categories;
 
-
+    [UnitTest]
     public class HttpTunnelServerTests : IClassFixture<WebServerFixture> {
         private readonly WebServerFixture _fixture;
 

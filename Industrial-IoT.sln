@@ -122,7 +122,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Azure.IIoT.Platfo
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Azure.IIoT.Platform.Edge.Tunnel.Service", "platform\common\Microsoft.Azure.IIoT.Platform.Edge.Tunnel.Service\src\Microsoft.Azure.IIoT.Platform.Edge.Tunnel.Service.csproj", "{6396D6A7-5A1D-4AFA-B2EF-1C663C769C2F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Azure.IIoT.Core.Cli", "extensions\Microsoft.Azure.IIoT.Extensions\cli\Microsoft.Azure.IIoT.Core.Cli.csproj", "{225F39AA-C351-47DA-8392-817220A9102D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Azure.IIoT.Extensions.Cli", "extensions\Microsoft.Azure.IIoT.Extensions\cli\Microsoft.Azure.IIoT.Extensions.Cli.csproj", "{225F39AA-C351-47DA-8392-817220A9102D}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Azure.IIoT.Platform.Api", "platform\common\Microsoft.Azure.IIoT.Platform.Api\src\Microsoft.Azure.IIoT.Platform.Api.csproj", "{141AE617-037F-43FF-A7C9-B3E01160B9E3}"
 EndProject

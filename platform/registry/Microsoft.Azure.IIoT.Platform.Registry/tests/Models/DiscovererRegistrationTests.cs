@@ -9,7 +9,9 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Models {
     using AutoFixture;
     using System.Linq;
     using Xunit;
+    using Xunit.Categories;
 
+    [UnitTest]
     public class DiscovererRegistrationTests {
 
         [Fact]

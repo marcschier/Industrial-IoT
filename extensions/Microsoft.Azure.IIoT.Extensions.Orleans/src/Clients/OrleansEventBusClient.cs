@@ -3,11 +3,12 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Services.Orleans.Clients {
-    using Microsoft.Azure.IIoT.Services.Orleans;
+namespace Microsoft.Azure.IIoT.Extensions.Orleans.Clients {
+    using Microsoft.Azure.IIoT.Extensions.Orleans;
     using Microsoft.Azure.IIoT.Messaging;
     using Microsoft.Azure.IIoT.Exceptions;
     using Microsoft.Azure.IIoT.Serializers;
+    using Microsoft.Azure.IIoT.Tasks;
     using Microsoft.Extensions.Logging;
     using System.Threading.Tasks;
     using System.Collections.Concurrent;
@@ -23,15 +24,17 @@ namespace Microsoft.Azure.IIoT.Services.Orleans.Clients {
         /// </summary>
         /// <param name="client"></param>
         /// <param name="serializer"></param>
+        /// <param name="processor"></param>
         /// <param name="logger"></param>
         /// <param name="config"></param>
         public OrleansEventBusClient(IOrleansGrainClient client, IJsonSerializer serializer,
-            ILogger logger, IOrleansBusConfig config = null) {
+            ITaskProcessor processor, ILogger logger, IOrleansBusConfig config = null) {
             _client = client ?? throw new ArgumentNullException(nameof(client));
             _serializer = serializer ?? throw new ArgumentNullException(nameof(serializer));
+            _processor = processor ?? throw new ArgumentNullException(nameof(processor));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            _config = config;
             _refs = new ConcurrentDictionary<string, Subscription>();
+            _config = config;
         }
 
         /// <inheritdoc/>
@@ -58,7 +61,7 @@ namespace Microsoft.Azure.IIoT.Services.Orleans.Clients {
             var topic = _client.Grains.GetGrain<IOrleansTopic>(topicName);
 
             var subscription = new Subscription(topic, topicName, buffer => 
-                DeliverAsync(handler, buffer));
+                Deliver(handler, buffer));
             var reference = await _client.Grains.CreateObjectReference<IOrleansSubscription>(
                 subscription).ConfigureAwait(true);
             subscription.Reference = reference;
@@ -97,10 +100,10 @@ namespace Microsoft.Azure.IIoT.Services.Orleans.Clients {
         /// <typeparam name="T"></typeparam>
         /// <param name="handler"></param>
         /// <param name="buffer"></param>
-        private async void DeliverAsync<T>(IEventHandler<T> handler, byte[] buffer) {
+        protected virtual void Deliver<T>(IEventHandler<T> handler, byte[] buffer) {
             try {
                 var message = (T)_serializer.Deserialize(buffer, typeof(T));
-                await handler.HandleAsync(message).ConfigureAwait(false);
+                _processor.TrySchedule(() => handler.HandleAsync(message));
             }
             catch (Exception ex) {
                 _logger.LogError(ex, "Failed to handle message");
@@ -151,6 +154,7 @@ namespace Microsoft.Azure.IIoT.Services.Orleans.Clients {
         private readonly ConcurrentDictionary<string, Subscription> _refs;
         private readonly IOrleansGrainClient _client;
         private readonly IJsonSerializer _serializer;
+        private readonly ITaskProcessor _processor;
         private readonly ILogger _logger;
         private readonly IOrleansBusConfig _config;
     }

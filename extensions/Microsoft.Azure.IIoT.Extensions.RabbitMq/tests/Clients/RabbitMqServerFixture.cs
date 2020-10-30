@@ -3,14 +3,14 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
-    using Microsoft.Azure.IIoT.Services.RabbitMq.Runtime;
-    using Microsoft.Azure.IIoT.Services.RabbitMq.Server;
+namespace Microsoft.Azure.IIoT.Extensions.RabbitMq.Clients {
+    using Microsoft.Azure.IIoT.Extensions.RabbitMq.Runtime;
+    using Microsoft.Azure.IIoT.Extensions.RabbitMq.Server;
     using Microsoft.Azure.IIoT.Utils;
-    using System;
     using Autofac;
-    using Xunit;
+    using System;
     using System.Threading;
+    using Xunit;
 
     [CollectionDefinition(Name)]
     public class RabbitMqCollection : ICollectionFixture<RabbitMqServerFixture> {

@@ -12,9 +12,11 @@ namespace Microsoft.Azure.IIoT.Api.Json {
     using System;
     using System.Collections;
     using System.Linq;
-    using Xunit;
     using System.Collections.Generic;
+    using Xunit;
+    using Xunit.Categories;
 
+    [UnitTest]
     public class JsonSerializerTests {
 
         [Theory]

@@ -7,21 +7,23 @@ namespace Microsoft.Azure.IIoT.Platform.Discovery.Services {
     using Microsoft.Azure.IIoT.Platform.Discovery.Models;
     using Microsoft.Azure.IIoT.Platform.Discovery.Storage;
     using Microsoft.Azure.IIoT.Platform.Core.Models;
-    using Microsoft.Azure.IIoT.Storage.Default;
+    using Microsoft.Azure.IIoT.Storage.Services;
     using Microsoft.Azure.IIoT.Storage;
     using Microsoft.Azure.IIoT.Exceptions;
     using Microsoft.Azure.IIoT.Serializers.NewtonSoft;
     using Microsoft.Azure.IIoT.Serializers;
+    using Autofac;
     using Autofac.Extras.Moq;
     using AutoFixture;
     using AutoFixture.Kernel;
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using Xunit;
-    using Autofac;
     using System.Threading.Tasks;
+    using Xunit;
+    using Xunit.Categories;
 
+    [UnitTest]
     public class EndpointRegistryTests {
 
         [Fact]

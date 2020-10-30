@@ -5,7 +5,7 @@
 
 namespace Microsoft.Azure.IIoT.Azure.CosmosDb {
     using Microsoft.Azure.IIoT.Azure.CosmosDb.Clients;
-    using Microsoft.Azure.IIoT.Storage.Default;
+    using Microsoft.Azure.IIoT.Storage.Services;
     using Autofac;
 
     /// <summary>

@@ -4,13 +4,13 @@
 // ------------------------------------------------------------
 
 
-namespace Microsoft.Azure.IIoT.Services.Orleans {
+namespace Microsoft.Azure.IIoT.Extensions.Orleans {
     using global::Orleans;
 
     /// <summary>
     /// Orleans client host
     /// </summary>
-    public interface IOrleansClientHost : IHostProcess {
+    public interface IOrleansClientHost {
 
         /// <summary>
         /// Client

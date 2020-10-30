@@ -14,7 +14,9 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Clients {
     using System.Threading.Tasks;
     using System.Collections.Generic;
     using System.Linq;
+    using Xunit.Categories;
 
+    [SystemTest]
     public class ServiceBusEventBusHostTests : IClassFixture<ServiceBusEventBusFixture> {
         private readonly ServiceBusEventBusFixture _fixture;
 
@@ -99,7 +101,7 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Clients {
                     await bus.PublishAsync(fix.Create<Pet>()).ConfigureAwait(false);
                 });
 
-                await Task.WhenAll(senders).With2MinuteTimeout().ConfigureAwait(false);
+                await Task.WhenAll(senders).ContinueAfter2Minutes().ConfigureAwait(false);
 
                 var f = await families.Complete.ConfigureAwait(false);
                 var p = await pets.Complete.ConfigureAwait(false);

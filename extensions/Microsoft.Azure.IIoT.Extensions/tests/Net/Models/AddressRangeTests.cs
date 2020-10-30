@@ -4,12 +4,14 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Net.Models {
-    using Xunit;
     using System.Net;
     using System;
     using System.Linq;
     using System.Collections.Generic;
+    using Xunit;
+    using Xunit.Categories;
 
+    [UnitTest]
     public class AddressRangeTests {
 
         [Fact]

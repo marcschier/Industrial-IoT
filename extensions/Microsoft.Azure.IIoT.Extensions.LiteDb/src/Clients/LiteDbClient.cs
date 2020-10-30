@@ -3,7 +3,7 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Services.LiteDb.Clients {
+namespace Microsoft.Azure.IIoT.Extensions.LiteDb.Clients {
     using Microsoft.Azure.IIoT.Storage;
     using Microsoft.Extensions.Logging;
     using LiteDB;

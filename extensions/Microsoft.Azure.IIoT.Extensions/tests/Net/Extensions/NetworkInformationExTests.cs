@@ -6,7 +6,9 @@
 namespace Microsoft.Azure.IIoT.Net {
     using System.Net.NetworkInformation;
     using Xunit;
+    using Xunit.Categories;
 
+    [UnitTest]
     public class NetworkInformationExTests {
 
         [Fact]

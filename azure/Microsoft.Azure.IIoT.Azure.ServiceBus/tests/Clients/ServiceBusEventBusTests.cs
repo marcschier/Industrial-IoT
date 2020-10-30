@@ -10,7 +10,9 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Clients {
     using System.Threading.Tasks;
     using AutoFixture;
     using Xunit;
+    using Xunit.Categories;
 
+    [SystemTest]
     public class ServiceBusEventBusTests : IClassFixture<ServiceBusEventBusFixture> {
         private readonly ServiceBusEventBusFixture _fixture;
 

@@ -28,10 +28,10 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Clients {
         }
 
         /// <inheritdoc/>
-        public async Task<X509CertificateChainModel> GetEndpointCertificateAsync(
+        public async Task<X509CertificateChainModel> GetCertificateAsync(
             string twin, CancellationToken ct) {
             var conn = await _registry.GetConnectionAsync(twin, ct).ConfigureAwait(false);
-            return await _certificates.GetEndpointCertificateAsync(conn, ct).ConfigureAwait(false);
+            return await _certificates.GetCertificateAsync(conn, ct).ConfigureAwait(false);
         }
 
         private readonly ITwinRegistry _registry;

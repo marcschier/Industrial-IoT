@@ -7,7 +7,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub.Mock {
     using Microsoft.Azure.IIoT.Azure.IoTHub.Clients;
     using Microsoft.Azure.IIoT.Azure.IoTHub.Handlers;
     using Microsoft.Azure.IIoT.Serializers;
-    using Microsoft.Azure.IIoT.Rpc.Default;
+    using Microsoft.Azure.IIoT.Rpc.Services;
     using Autofac;
 
     /// <summary>

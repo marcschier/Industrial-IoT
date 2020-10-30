@@ -4,10 +4,12 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Net.Models {
-    using Xunit;
     using System;
     using System.Linq;
+    using Xunit;
+    using Xunit.Categories;
 
+    [UnitTest]
     public class PortRangeTests {
 
         [Fact]

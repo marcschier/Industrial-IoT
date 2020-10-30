@@ -5,7 +5,9 @@
 
 namespace Opc.Ua.Extensions {
     using Xunit;
+    using Xunit.Categories;
 
+    [UnitTest]
     public class RelativePathExTests {
 
         [Fact]

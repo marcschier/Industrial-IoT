@@ -4,6 +4,9 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Platform.OpcUa.Parser {
+    using Xunit.Categories;
+
+    [UnitTest]
     public class FilterExpressionTests {
 #if FALSE
         [Fact]

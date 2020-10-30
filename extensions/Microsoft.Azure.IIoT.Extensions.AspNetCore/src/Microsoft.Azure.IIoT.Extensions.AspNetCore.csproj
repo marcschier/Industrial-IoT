@@ -21,8 +21,8 @@
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Microsoft.Azure.IIoT.Authentication.OpenId\src\Microsoft.Azure.IIoT.Extensions.OpenId.csproj" />
-    <ProjectReference Include="..\..\Microsoft.Azure.IIoT.Serializers.NewtonSoft\src\Microsoft.Azure.IIoT.Extensions.NewtonSoft.csproj" />
-    <ProjectReference Include="..\..\Microsoft.Azure.IIoT.Serializers.MessagePack\src\Microsoft.Azure.IIoT.Extensions.MessagePack.csproj" />
+    <ProjectReference Include="..\..\Microsoft.Azure.IIoT.Extensions.OpenId\src\Microsoft.Azure.IIoT.Extensions.OpenId.csproj" />
+    <ProjectReference Include="..\..\Microsoft.Azure.IIoT.Extensions.NewtonSoft\src\Microsoft.Azure.IIoT.Extensions.NewtonSoft.csproj" />
+    <ProjectReference Include="..\..\Microsoft.Azure.IIoT.Extensions.MessagePack\src\Microsoft.Azure.IIoT.Extensions.MessagePack.csproj" />
   </ItemGroup>
 </Project>

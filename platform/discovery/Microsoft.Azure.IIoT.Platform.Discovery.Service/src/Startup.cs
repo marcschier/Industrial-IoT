@@ -12,8 +12,8 @@ namespace Microsoft.Azure.IIoT.Platform.Discovery.Service {
     using Microsoft.Azure.IIoT.Utils;
     using Microsoft.Azure.IIoT.Http.Clients;
     using Microsoft.Azure.IIoT.Serializers;
-    using Microsoft.Azure.IIoT.Services.LiteDb;
-    using Microsoft.Azure.IIoT.Services.Orleans;
+    using Microsoft.Azure.IIoT.Extensions.LiteDb;
+    using Microsoft.Azure.IIoT.Extensions.Orleans;
     using Microsoft.Azure.IIoT.AspNetCore.Authentication;
     using Microsoft.Azure.IIoT.AspNetCore.Authentication.Clients;
     using Microsoft.Azure.IIoT.AspNetCore.Http.Tunnel;

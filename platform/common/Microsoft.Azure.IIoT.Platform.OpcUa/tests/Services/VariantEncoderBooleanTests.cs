@@ -8,7 +8,9 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
     using Microsoft.Azure.IIoT.Serializers.NewtonSoft;
     using Opc.Ua;
     using Xunit;
+    using Xunit.Categories;
 
+    [UnitTest]
     public class VariantEncoderBooleanTests {
 
         [Fact]

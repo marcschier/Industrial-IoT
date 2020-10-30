@@ -10,7 +10,6 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service {
     using Microsoft.Azure.IIoT.Platform.Twin.Api;
     using Microsoft.Azure.IIoT.Platform.Registry.Api;
     using Microsoft.Azure.IIoT.Platform.Events.Api.Runtime;
-    using Microsoft.Azure.IIoT.Services.Orleans.Services;
     using Microsoft.Azure.IIoT.Authentication.Runtime;
     using Microsoft.Azure.IIoT.Authentication.Models;
     using Microsoft.Azure.IIoT.Authentication;
@@ -41,9 +40,7 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service {
             // Register test event bus
             builder.RegisterType<DummyProcessingHost>()
                 .AsImplementedInterfaces().SingleInstance();
-            builder.RegisterType<SimpleEventBus>()
-                .AsImplementedInterfaces().SingleInstance();
-
+            builder.RegisterModule<MemoryEventBusModule>();
             base.ConfigureContainer(builder);
 
             // Register events api configuration interface

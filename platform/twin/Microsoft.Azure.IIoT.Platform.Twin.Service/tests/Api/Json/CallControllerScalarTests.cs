@@ -18,7 +18,9 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Service.Api.Json {
     using System.Net.Sockets;
     using System.Threading.Tasks;
     using Xunit;
+    using Xunit.Categories;
 
+    [IntegrationTest]
     [Collection(WriteJsonCollection.Name)]
     public class CallControllerScalarTests : IClassFixture<WebAppFixture> {
 

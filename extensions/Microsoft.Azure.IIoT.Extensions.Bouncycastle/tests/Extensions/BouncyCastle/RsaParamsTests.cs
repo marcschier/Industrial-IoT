@@ -7,10 +7,9 @@ namespace Microsoft.Azure.IIoT.Crypto.BouncyCastle {
     using Microsoft.Azure.IIoT.Crypto.Models;
     using System.Security.Cryptography;
     using Xunit;
+    using Xunit.Categories;
 
-    /// <summary>
-    /// Rsa param test
-    /// </summary>
+    [UnitTest]
     public static class RsaParamsTests {
 
         [Fact]

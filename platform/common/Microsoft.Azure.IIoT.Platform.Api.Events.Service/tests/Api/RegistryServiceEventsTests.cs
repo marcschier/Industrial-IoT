@@ -13,7 +13,9 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service.Api {
     using Xunit;
     using System;
     using System.Collections.Generic;
+    using Xunit.Categories;
 
+    [IntegrationTest]
     [Collection(WebAppCollection.Name)]
     public class RegistryServiceEventsTests {
 

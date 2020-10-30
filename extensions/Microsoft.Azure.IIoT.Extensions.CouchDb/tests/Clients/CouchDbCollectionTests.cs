@@ -3,7 +3,7 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Services.CouchDb.Clients {
+namespace Microsoft.Azure.IIoT.Extensions.CouchDb.Clients {
     using Microsoft.Azure.IIoT.Storage;
     using Microsoft.Azure.IIoT.Exceptions;
     using System;
@@ -13,7 +13,9 @@ namespace Microsoft.Azure.IIoT.Services.CouchDb.Clients {
     using System.Threading.Tasks;
     using AutoFixture;
     using Xunit;
+    using Xunit.Categories;
 
+    [SystemTest]
     [Collection(CouchDbServerCollection.Name)]
     public class CouchDbContainerTests  {
 

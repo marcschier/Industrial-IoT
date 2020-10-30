@@ -3,7 +3,7 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
+namespace Microsoft.Azure.IIoT.Extensions.RabbitMq.Clients {
     using Microsoft.Azure.IIoT.Hub;
     using System;
     using System.Threading.Tasks;
@@ -11,7 +11,9 @@ namespace Microsoft.Azure.IIoT.Services.RabbitMq.Clients {
     using System.Linq;
     using AutoFixture;
     using Xunit;
+    using Xunit.Categories;
 
+    [SystemTest]
     [Collection(RabbitMqCollection.Name)]
     public class RabbitMqEventQueueTests : IClassFixture<RabbitMqEventQueueFixture> {
         private readonly RabbitMqEventQueueFixture _fixture;

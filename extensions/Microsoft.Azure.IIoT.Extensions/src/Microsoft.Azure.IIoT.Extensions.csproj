@@ -19,6 +19,6 @@
     <PackageReference Include="System.Runtime.Caching" Version="5.0.0-rc.2.20475.5" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Microsoft.Azure.IIoT.Abstractions\src\Microsoft.Azure.IIoT.Extensions.Abstractions.csproj" />
+    <ProjectReference Include="..\..\Microsoft.Azure.IIoT.Extensions.Abstractions\src\Microsoft.Azure.IIoT.Extensions.Abstractions.csproj" />
   </ItemGroup>
 </Project>

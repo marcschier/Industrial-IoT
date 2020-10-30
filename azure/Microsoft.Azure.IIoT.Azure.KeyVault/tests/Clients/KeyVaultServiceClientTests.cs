@@ -10,12 +10,13 @@ namespace Microsoft.Azure.IIoT.Azure.KeyVault.Clients {
     using Microsoft.Azure.IIoT.Crypto.Storage;
     using Microsoft.Azure.IIoT.Crypto;
     using Microsoft.Azure.IIoT.Storage;
-    using Microsoft.Azure.IIoT.Storage.Default;
+    using Microsoft.Azure.IIoT.Storage.Services;
     using Microsoft.Azure.IIoT.Serializers.NewtonSoft;
     using Microsoft.Azure.IIoT.Serializers;
     using Microsoft.Azure.KeyVault;
     using Microsoft.Azure.KeyVault.Models;
     using Microsoft.Rest.Azure;
+    using Autofac;
     using Autofac.Extras.Moq;
     using Moq;
     using System;
@@ -25,11 +26,9 @@ namespace Microsoft.Azure.IIoT.Azure.KeyVault.Clients {
     using System.Threading;
     using System.Threading.Tasks;
     using Xunit;
-    using Autofac;
+    using Xunit.Categories;
 
-    /// <summary>
-    /// Certificate Issuer tests
-    /// </summary>
+    [UnitTest]
     public class KeyVaultServiceClientTests {
 
         [Fact]

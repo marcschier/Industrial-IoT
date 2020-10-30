@@ -13,7 +13,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
     using Microsoft.Azure.IIoT.Serializers;
     using Microsoft.Azure.IIoT.Serializers.NewtonSoft;
     using Microsoft.Azure.IIoT.Storage;
-    using Microsoft.Azure.IIoT.Storage.Default;
+    using Microsoft.Azure.IIoT.Storage.Services;
     using Autofac;
     using Autofac.Extras.Moq;
     using System;
@@ -21,12 +21,11 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
     using System.Linq;
     using System.Threading.Tasks;
     using System.Threading;
-    using Xunit;
     using Moq;
+    using Xunit;
+    using Xunit.Categories;
 
-    /// <summary>
-    /// Writer group management tests
-    /// </summary>
+    [UnitTest]
     public class WriterGroupManagementTests {
 
         [Fact]

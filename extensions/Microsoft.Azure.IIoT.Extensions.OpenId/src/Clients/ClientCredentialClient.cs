@@ -6,13 +6,13 @@
 namespace Microsoft.Azure.IIoT.Authentication.Clients.Default {
     using Microsoft.Azure.IIoT.Authentication.Models;
     using Microsoft.Azure.IIoT.Http.Clients;
-    using global::IdentityModel.Client;
     using Microsoft.Extensions.Logging;
     using System;
     using System.Collections.Generic;
     using System.Net.Http;
     using System.Threading.Tasks;
     using System.Linq;
+    using global::IdentityModel.Client;
 
     /// <summary>
     /// Authenticate using client credentials

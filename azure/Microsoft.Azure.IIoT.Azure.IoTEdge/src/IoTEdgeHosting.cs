@@ -8,7 +8,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge {
     using Microsoft.Azure.IIoT.Azure.IoTEdge.Clients;
     using Microsoft.Azure.IIoT.Diagnostics;
     using Microsoft.Azure.IIoT.Diagnostics.Services;
-    using Microsoft.Azure.IIoT.Storage.Default;
+    using Microsoft.Azure.IIoT.Storage.Services;
     using Autofac;
 
     /// <summary>

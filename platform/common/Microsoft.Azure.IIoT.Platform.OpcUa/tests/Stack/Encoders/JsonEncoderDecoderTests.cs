@@ -4,12 +4,14 @@
 // ------------------------------------------------------------
 
 namespace Opc.Ua.Encoders {
+    using Opc.Ua.Extensions;
     using System;
-    using Xunit;
     using System.IO;
     using System.Collections.Generic;
-    using Opc.Ua.Extensions;
+    using Xunit;
+    using Xunit.Categories;
 
+    [UnitTest]
     public class JsonEncoderDecoderTests {
 
         [Fact]

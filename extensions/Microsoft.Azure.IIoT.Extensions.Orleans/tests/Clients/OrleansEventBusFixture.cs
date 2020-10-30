@@ -3,15 +3,15 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Services.Orleans.Clients {
-    using Microsoft.Azure.IIoT.Messaging.Default;
+namespace Microsoft.Azure.IIoT.Extensions.Orleans.Clients {
+    using Microsoft.Azure.IIoT.Messaging.Services;
     using Microsoft.Azure.IIoT.Messaging;
     using Microsoft.Azure.IIoT.Serializers;
     using Microsoft.Azure.IIoT.Utils;
     using System;
     using System.Runtime.Serialization;
     using Autofac;
-    using Microsoft.Azure.IIoT.Services.Orleans.Runtime;
+    using Microsoft.Azure.IIoT.Extensions.Orleans.Runtime;
 
     public sealed class OrleansEventBusFixture : IDisposable {
 
@@ -52,19 +52,33 @@ namespace Microsoft.Azure.IIoT.Services.Orleans.Clients {
             }
             try {
                 var builder = new ContainerBuilder();
+                builder.AddDiagnostics();
                 builder.RegisterModule<NewtonSoftJsonModule>();
 
-                builder.RegisterType<OrleansConfig>()
-                    .As<IOrleansConfig>();
+                //
+                // Add test cluster client - orleans bus module will then
+                // not register the generic client, however if run with 
+                // silo host it will.
+                //
+                if (OrleansClusterFixture.Client != null) {
+                    builder.RegisterInstance(OrleansClusterFixture.Client)
+                        .ExternallyOwned();
+                }
+
+                // Configure the bus
                 builder.RegisterInstance(new OrleansBusConfig(bus))
                     .AsImplementedInterfaces();
+
+                // Now add module
                 builder.RegisterModule<OrleansEventBusModule>();
+
+                // Add additional services
+                configure?.Invoke(builder);
+
+                // Start it all
                 builder.RegisterType<HostAutoStart>()
                     .AutoActivate()
                     .AsImplementedInterfaces().SingleInstance();
-
-                builder.AddDiagnostics();
-                configure?.Invoke(builder);
                 _container = builder.Build();
             }
             catch {

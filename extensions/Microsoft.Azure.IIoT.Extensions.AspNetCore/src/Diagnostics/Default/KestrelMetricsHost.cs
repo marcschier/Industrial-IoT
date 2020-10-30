@@ -6,8 +6,8 @@
 namespace Microsoft.Azure.IIoT.AspNetCore.Diagnostics.Default {
     using Microsoft.Azure.IIoT.Diagnostics.Services;
     using Microsoft.Azure.IIoT.Diagnostics;
-    using Prometheus;
     using Microsoft.Extensions.Logging;
+    using Prometheus;
     using System;
     using System.Collections.Generic;
 

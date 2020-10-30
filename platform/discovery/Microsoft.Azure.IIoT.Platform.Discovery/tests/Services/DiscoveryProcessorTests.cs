@@ -12,18 +12,20 @@ namespace Microsoft.Azure.IIoT.Platform.Discovery.Services {
     using Microsoft.Azure.IIoT.Hub.Models;
     using Microsoft.Azure.IIoT.Serializers;
     using Microsoft.Azure.IIoT.Serializers.NewtonSoft;
-    using Microsoft.Azure.IIoT.Storage.Default;
+    using Microsoft.Azure.IIoT.Storage.Services;
     using Microsoft.Azure.IIoT.Storage;
+    using Autofac;
     using Autofac.Extras.Moq;
     using AutoFixture;
     using AutoFixture.Kernel;
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using Xunit;
-    using Autofac;
     using System.Threading.Tasks;
+    using Xunit;
+    using Xunit.Categories;
 
+    [UnitTest]
     public class DiscoveryProcessorTests {
 
         [Fact]

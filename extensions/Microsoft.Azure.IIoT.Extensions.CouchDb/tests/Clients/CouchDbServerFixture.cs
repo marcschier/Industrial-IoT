@@ -3,14 +3,14 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Services.CouchDb.Clients {
-    using Microsoft.Azure.IIoT.Services.CouchDb.Server;
+namespace Microsoft.Azure.IIoT.Extensions.CouchDb.Clients {
+    using Microsoft.Azure.IIoT.Extensions.CouchDb.Server;
     using Microsoft.Extensions.Diagnostics.HealthChecks;
     using Microsoft.Azure.IIoT.Diagnostics;
     using System;
     using Xunit;
     using Autofac;
-    using Microsoft.Azure.IIoT.Services.CouchDb.Runtime;
+    using Microsoft.Azure.IIoT.Extensions.CouchDb.Runtime;
 
     [CollectionDefinition(Name)]
     public class CouchDbServerCollection : ICollectionFixture<CouchDbServerFixture> {

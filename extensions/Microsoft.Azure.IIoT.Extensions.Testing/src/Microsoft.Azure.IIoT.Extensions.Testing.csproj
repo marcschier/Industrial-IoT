@@ -8,6 +8,6 @@
     <PackageReference Include="Docker.DotNet" Version="3.125.4" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Microsoft.Azure.IIoT.Core\src\Microsoft.Azure.IIoT.Extensions.csproj" />
+    <ProjectReference Include="..\..\Microsoft.Azure.IIoT.Extensions\src\Microsoft.Azure.IIoT.Extensions.csproj" />
   </ItemGroup>
 </Project>

@@ -11,7 +11,9 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service.Api {
     using Microsoft.Azure.IIoT.Messaging;
     using System.Threading.Tasks;
     using Xunit;
+    using Xunit.Categories;
 
+    [IntegrationTest]
     [Collection(WebAppCollection.Name)]
     public class TwinServiceEventsTests {
 

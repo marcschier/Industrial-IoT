@@ -3,43 +3,56 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Services.Orleans.Clients {
-    using Microsoft.Azure.IIoT.Services.Orleans.Runtime;
-    using Microsoft.Azure.IIoT.Services.Orleans.Grains;
-    using Microsoft.Azure.IIoT.Utils;
+namespace Microsoft.Azure.IIoT.Extensions.Orleans.Clients {
+    using Microsoft.Azure.IIoT.Extensions.Orleans.Testing;
+    using Microsoft.Extensions.Hosting;
     using System;
     using Autofac;
     using Xunit;
     using System.Threading;
 
     [CollectionDefinition(Name)]
-    public class OrleansCollection : ICollectionFixture<OrleansServerFixture> {
+    public class OrleansClusterCollection : ICollectionFixture<OrleansClusterFixture> {
 
-        public const string Name = "Server";
+        public const string Name = "Cluster";
     }
 
-    public sealed class OrleansServerFixture : IDisposable {
+    public sealed class OrleansClusterStartup : OrleansStartup {
+
+        /// <inheritdoc/>
+        protected override void Configure(ContainerBuilder builder) {
+
+            // Add silo services to container
+            builder.AddDiagnostics();
+
+            base.Configure(builder);
+        }
+    }
+
+    public sealed class OrleansClusterFixture : IDisposable {
+
+        public static IOrleansGrainClient Client => _container?.Resolve<IOrleansGrainClient>();
+
+        public static IOrleansTestCluster Cluster => _container?.Resolve<IOrleansTestCluster>();
 
         public static bool Up => _container != null;
 
         /// <summary>
         /// Create fixture
         /// </summary>
-        public OrleansServerFixture() {
+        public OrleansClusterFixture() {
             if (Interlocked.Increment(ref _refcount) == 1) {
                 try {
                     var builder = new ContainerBuilder();
 
-                    builder.RegisterType<OrleansConfig>()
+                    builder.RegisterType<OrleansTestCluster<OrleansClusterStartup>>()
                         .AsImplementedInterfaces().SingleInstance();
-                    builder.RegisterType<OrleansSiloHost>()
-                        .AsImplementedInterfaces().SingleInstance();
-                    builder.RegisterType<HostAutoStart>()
-                        .AutoActivate()
-                        .AsImplementedInterfaces().SingleInstance();
-
                     builder.AddDiagnostics();
                     _container = builder.Build();
+
+                    // Start cluster
+                    var cluster = _container.Resolve<IHostedService>();
+                    cluster.StartAsync(default).Wait();
                 }
                 catch {
                     Interlocked.Decrement(ref _refcount);

@@ -4,7 +4,7 @@
 // ------------------------------------------------------------
 
 
-namespace Microsoft.Azure.IIoT.Services.Kafka.Clients {
+namespace Microsoft.Azure.IIoT.Extensions.Kafka.Clients {
     using System.Threading.Tasks;
 
     /// <summary>

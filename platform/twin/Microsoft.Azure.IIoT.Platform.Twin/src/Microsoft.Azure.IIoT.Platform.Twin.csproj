@@ -5,6 +5,9 @@
     <Description>Azure Industrial IoT Platform Twin core</Description>
   </PropertyGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\..\extensions\Microsoft.Azure.IIoT.Extensions.Orleans\src\Microsoft.Azure.IIoT.Extensions.Orleans.csproj" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\..\..\..\platform\common\Microsoft.Azure.IIoT.Platform.Abstractions\src\Microsoft.Azure.IIoT.Platform.Abstractions.csproj" />
     <ProjectReference Include="..\..\..\..\platform\common\Microsoft.Azure.IIoT.Platform.OpcUa\src\Microsoft.Azure.IIoT.Platform.OpcUa.csproj" />
   </ItemGroup>

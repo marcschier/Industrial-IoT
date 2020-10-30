@@ -9,18 +9,18 @@ namespace Microsoft.Azure.IIoT.Platform.Discovery {
     using System.Threading.Tasks;
 
     /// <summary>
-    /// Get endpoint certificate
+    /// Certificate services for twin
     /// </summary>
     /// <typeparam name="T"></typeparam>
     public interface ICertificateServices<T> {
 
         /// <summary>
-        /// Activate endpoint
+        /// Get twin certificate
         /// </summary>
-        /// <param name="id"></param>
+        /// <param name="twin"></param>
         /// <param name="ct"></param>
         /// <returns></returns>
-        Task<X509CertificateChainModel> GetEndpointCertificateAsync(T id,
+        Task<X509CertificateChainModel> GetCertificateAsync(T twin,
             CancellationToken ct = default);
     }
 }

@@ -5,6 +5,7 @@
 
 namespace Microsoft.Azure.IIoT.Http.Auth {
     using Microsoft.Azure.IIoT.Authentication;
+    using Microsoft.Extensions.Logging;
     using System.Net.Http.Headers;
     using System.Threading.Tasks;
     using System.Net;
@@ -12,7 +13,6 @@ namespace Microsoft.Azure.IIoT.Http.Auth {
     using System.Linq;
     using System.Net.Http;
     using System.Threading;
-    using Microsoft.Extensions.Logging;
 
     /// <summary>
     /// Bearer authentication handler

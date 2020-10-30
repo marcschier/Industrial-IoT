@@ -228,7 +228,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
         }
 
         /// <inheritdoc/>
-        public async Task<X509CertificateChainModel> GetEndpointCertificateAsync(
+        public async Task<X509CertificateChainModel> GetCertificateAsync(
             EndpointModel endpoint, CancellationToken ct) {
             if (endpoint is null) {
                 throw new ArgumentNullException(nameof(endpoint));

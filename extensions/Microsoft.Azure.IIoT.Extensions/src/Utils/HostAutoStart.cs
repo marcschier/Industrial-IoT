@@ -4,13 +4,13 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Utils {
+    using Microsoft.Azure.IIoT.Exceptions;
     using Microsoft.Extensions.Logging;
     using Autofac;
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
-    using Microsoft.Azure.IIoT.Exceptions;
 
     /// <summary>
     /// Host auto starter

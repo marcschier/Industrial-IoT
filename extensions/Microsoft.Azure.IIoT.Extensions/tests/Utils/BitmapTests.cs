@@ -5,10 +5,9 @@
 
 namespace System.Collections.Generic {
     using Xunit;
+    using Xunit.Categories;
 
-    /// <summary>
-    /// Simple bitmap on top of ulong list
-    /// </summary>
+    [UnitTest]
     public class BitmapTests {
 
         [Fact]

@@ -3,7 +3,7 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Services.LiteDb.Clients {
+namespace Microsoft.Azure.IIoT.Extensions.LiteDb.Clients {
     using Microsoft.Azure.IIoT.Storage;
     using AutoFixture;
     using Autofac;
@@ -12,7 +12,9 @@ namespace Microsoft.Azure.IIoT.Services.LiteDb.Clients {
     using System.Collections.Generic;
     using System.Linq;
     using Xunit;
+    using Xunit.Categories;
 
+    [UnitTest]
     public class LiteDbQueryTests : IClassFixture<LiteDbClientFixture> {
         private readonly LiteDbClientFixture _fixture;
 

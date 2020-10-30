@@ -3,8 +3,8 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Services.Kafka.Clients {
-    using Microsoft.Azure.IIoT.Services.Kafka.Runtime;
+namespace Microsoft.Azure.IIoT.Extensions.Kafka.Clients {
+    using Microsoft.Azure.IIoT.Extensions.Kafka.Runtime;
     using Microsoft.Azure.IIoT.Messaging.Handlers;
     using Microsoft.Azure.IIoT.Messaging;
     using Microsoft.Azure.IIoT.Hub;

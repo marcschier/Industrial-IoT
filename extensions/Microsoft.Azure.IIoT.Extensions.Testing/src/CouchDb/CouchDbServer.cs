@@ -3,8 +3,8 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Services.CouchDb.Server {
-    using Microsoft.Azure.IIoT.Services.Docker;
+namespace Microsoft.Azure.IIoT.Extensions.CouchDb.Server {
+    using Microsoft.Azure.IIoT.Extensions.Docker;
     using Microsoft.Extensions.Diagnostics.HealthChecks;
     using Microsoft.Azure.IIoT.Utils;
     using Microsoft.Extensions.Logging;

@@ -11,7 +11,9 @@ namespace Microsoft.Azure.IIoT.AspNetCore.Http.Tunnel {
     using Microsoft.Azure.IIoT.Serializers;
     using System.Threading.Tasks;
     using Xunit;
+    using Xunit.Categories;
 
+    [UnitTest]
     public class HttpTunnelSimpleTests : IClassFixture<WebServerFixture> {
         private readonly WebServerFixture _fixture;
 

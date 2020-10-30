@@ -7,10 +7,9 @@ namespace Microsoft.Azure.IIoT.Hub {
     using AutoFixture;
     using System;
     using Xunit;
+    using Xunit.Categories;
 
-    /// <summary>
-    /// Simple bitmap on top of ulong list
-    /// </summary>
+    [UnitTest]
     public class HubResourceTests {
 
         [Fact]

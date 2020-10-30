@@ -8,7 +8,9 @@ namespace Microsoft.Azure.IIoT.Crypto {
     using System.Security.Cryptography;
     using System.Security.Cryptography.X509Certificates;
     using Xunit;
+    using Xunit.Categories;
 
+    [UnitTest]
     public static class KeyExTests {
 
         [Fact]

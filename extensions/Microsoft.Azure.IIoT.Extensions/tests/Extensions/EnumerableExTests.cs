@@ -4,8 +4,11 @@
 // ------------------------------------------------------------
 
 namespace System.Collections.Generic {
-    using Xunit;
     using System.Text;
+    using Xunit;
+    using Xunit.Categories;
+
+    [UnitTest]
     public class EnumerableExTests {
 
         [Fact]

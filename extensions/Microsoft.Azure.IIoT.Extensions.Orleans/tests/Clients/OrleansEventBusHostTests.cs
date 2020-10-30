@@ -3,19 +3,21 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Services.Orleans.Clients {
+namespace Microsoft.Azure.IIoT.Extensions.Orleans.Clients {
     using Microsoft.Azure.IIoT.Messaging;
     using Microsoft.Azure.IIoT.Exceptions;
     using Microsoft.Azure.IIoT.Utils;
     using AutoFixture;
     using Autofac;
-    using Xunit;
     using System;
     using System.Threading.Tasks;
     using System.Collections.Generic;
     using System.Linq;
+    using Xunit;
+    using Xunit.Categories;
 
-    [Collection(OrleansCollection.Name)]
+    [IntegrationTest]
+    [Collection(OrleansServerCollection.Name)]
     public class OrleansEventBusHostTests : IClassFixture<OrleansEventBusFixture> {
         private readonly OrleansEventBusFixture _fixture;
 

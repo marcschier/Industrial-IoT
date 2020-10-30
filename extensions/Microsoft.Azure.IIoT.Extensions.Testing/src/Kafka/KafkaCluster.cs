@@ -3,8 +3,8 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Services.Kafka.Server {
-    using Microsoft.Azure.IIoT.Services.Zookeeper.Server;
+namespace Microsoft.Azure.IIoT.Extensions.Kafka.Server {
+    using Microsoft.Azure.IIoT.Extensions.Zookeeper.Server;
     using Microsoft.Azure.IIoT.Exceptions;
     using Microsoft.Azure.IIoT.Utils;
     using Microsoft.Extensions.Diagnostics.HealthChecks;

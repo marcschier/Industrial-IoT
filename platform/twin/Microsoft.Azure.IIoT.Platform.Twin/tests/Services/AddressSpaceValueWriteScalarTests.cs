@@ -16,7 +16,9 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services {
     using System.Net.Sockets;
     using System.Threading.Tasks;
     using Xunit;
+    using Xunit.Categories;
 
+    [IntegrationTest]
     [Collection(WriteCollection.Name)]
     public class AddressSpaceValueWriteScalarTests {
 

@@ -10,7 +10,9 @@ namespace Microsoft.Azure.IIoT.Azure.EventHub.Clients {
     using System.Linq;
     using AutoFixture;
     using Xunit;
+    using Xunit.Categories;
 
+    [SystemTest]
     public class EventHubQueueClientTests : IClassFixture<EventHubQueueFixture> {
         private readonly EventHubQueueFixture _fixture;
 

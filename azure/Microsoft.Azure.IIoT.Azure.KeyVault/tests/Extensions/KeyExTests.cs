@@ -8,7 +8,9 @@ namespace Microsoft.Azure.KeyVault.WebKey {
     using System;
     using System.Security.Cryptography;
     using Xunit;
+    using Xunit.Categories;
 
+    [UnitTest]
     public class KeyExTests {
 
         [Fact]

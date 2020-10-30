@@ -4,13 +4,15 @@
 // ------------------------------------------------------------
 
 namespace Opc.Ua.PubSub.Tests {
+    using Opc.Ua.Encoders;
+    using Opc.Ua.Extensions;
     using System;
     using System.IO;
     using System.Collections.Generic;
-    using Opc.Ua.Encoders;
     using Xunit;
-    using Opc.Ua.Extensions;
+    using Xunit.Categories;
 
+    [UnitTest]
     public class PubSubJsonEncoderDecoder {
 
         private uint _currentSequenceNumber;

@@ -3,8 +3,8 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Services.RabbitMq.Server {
-    using Microsoft.Azure.IIoT.Services.Docker;
+namespace Microsoft.Azure.IIoT.Extensions.RabbitMq.Server {
+    using Microsoft.Azure.IIoT.Extensions.Docker;
     using Microsoft.Azure.IIoT.Utils;
     using Microsoft.Extensions.Diagnostics.HealthChecks;
     using Microsoft.Extensions.Logging;

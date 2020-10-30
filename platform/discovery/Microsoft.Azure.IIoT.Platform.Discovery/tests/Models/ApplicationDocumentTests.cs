@@ -7,7 +7,9 @@ namespace Microsoft.Azure.IIoT.Platform.Discovery.Models {
     using AutoFixture;
     using System.Linq;
     using Xunit;
+    using Xunit.Categories;
 
+    [UnitTest]
     public class ApplicationDocumentTests {
 
         [Fact]

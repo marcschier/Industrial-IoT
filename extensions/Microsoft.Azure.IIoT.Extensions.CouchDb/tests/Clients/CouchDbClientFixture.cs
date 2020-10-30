@@ -3,8 +3,8 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Services.CouchDb.Clients {
-    using Microsoft.Azure.IIoT.Services.CouchDb.Runtime;
+namespace Microsoft.Azure.IIoT.Extensions.CouchDb.Clients {
+    using Microsoft.Azure.IIoT.Extensions.CouchDb.Runtime;
     using Microsoft.Azure.IIoT.Utils;
     using Microsoft.Azure.IIoT.Diagnostics;
     using Microsoft.Azure.IIoT.Storage;

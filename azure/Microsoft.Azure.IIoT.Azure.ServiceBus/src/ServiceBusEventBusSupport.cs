@@ -6,9 +6,9 @@
 namespace Microsoft.Azure.IIoT.Azure.ServiceBus {
     using Microsoft.Azure.IIoT.Azure.ServiceBus.Clients;
     using Microsoft.Azure.IIoT.Azure.ServiceBus.Services;
-    using Microsoft.Azure.IIoT.Messaging.Default;
+    using Microsoft.Azure.IIoT.Messaging.Services;
     using Microsoft.Azure.IIoT.Messaging;
-    using Microsoft.Azure.IIoT.Tasks.Default;
+    using Microsoft.Azure.IIoT.Tasks.Services;
     using Microsoft.Azure.IIoT.Tasks;
     using Autofac;
 

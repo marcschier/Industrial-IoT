@@ -6,14 +6,16 @@ namespace Microsoft.Azure.IIoT.Api.MsgPack {
     using Microsoft.Azure.IIoT.Serializers;
     using Microsoft.Azure.IIoT.Serializers.MessagePack;
     using System;
-    using Xunit;
     using AutoFixture;
     using AutoFixture.Kernel;
     using FluentAssertions;
     using System.Linq;
     using System.Collections;
     using System.Collections.Generic;
+    using Xunit;
+    using Xunit.Categories;
 
+    [UnitTest]
     public class MsgPackSerializerTests {
         [Theory]
         [MemberData(nameof(TypeFixture.GetDataContractTypes), MemberType = typeof(TypeFixture))]

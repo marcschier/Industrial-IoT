@@ -17,7 +17,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
     using Microsoft.Azure.IIoT.Serializers;
     using Microsoft.Azure.IIoT.Serializers.NewtonSoft;
     using Microsoft.Azure.IIoT.Storage;
-    using Microsoft.Azure.IIoT.Storage.Default;
+    using Microsoft.Azure.IIoT.Storage.Services;
     using Microsoft.Azure.IIoT.Diagnostics;
     using Microsoft.Azure.IIoT.Utils;
     using Microsoft.Extensions.Configuration;
@@ -30,9 +30,11 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
     using System.Threading.Tasks;
     using System.Linq;
     using System.Net.Sockets;
-    using Xunit;
     using Opc.Ua;
+    using Xunit;
+    using Xunit.Categories;
 
+    [IntegrationTest]
     [Collection(PublishCollection.Name)]
     public class SimpleWriterGroupTests {
 

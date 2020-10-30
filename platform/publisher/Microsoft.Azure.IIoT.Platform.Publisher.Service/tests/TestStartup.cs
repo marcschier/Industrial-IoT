@@ -7,6 +7,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Service {
     using Microsoft.Azure.IIoT.Platform.Publisher.Service.Runtime;
     using Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Runtime;
     using Microsoft.Azure.IIoT.Authentication;
+    using Microsoft.Azure.IIoT.Messaging;
     using Microsoft.Azure.IIoT.Serializers.NewtonSoft;
     using Microsoft.Azure.IIoT.Serializers.MessagePack;
     using Microsoft.Extensions.Hosting;
@@ -31,6 +32,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Service {
 
         /// <inheritdoc/>
         public override void ConfigureContainer(ContainerBuilder builder) {
+            builder.RegisterModule<MemoryEventBusModule>();
             base.ConfigureContainer(builder);
 
             // Add fakes
@@ -58,7 +60,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Service {
 
         /// <inheritdoc/>
         protected override IHostBuilder CreateHostBuilder() {
-            return Extensions.Hosting.Host.CreateDefaultBuilder();
+            return Microsoft.Extensions.Hosting.Host.CreateDefaultBuilder();
         }
 
         /// <inheritdoc/>

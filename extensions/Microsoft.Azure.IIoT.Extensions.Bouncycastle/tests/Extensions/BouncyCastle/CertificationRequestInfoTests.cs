@@ -7,10 +7,9 @@ namespace Microsoft.Azure.IIoT.Crypto.BouncyCastle {
     using Org.BouncyCastle.Asn1.Pkcs;
     using System;
     using Xunit;
+    using Xunit.Categories;
 
-    /// <summary>
-    /// Certificate request info tests
-    /// </summary>
+    [UnitTest]
     public static class CertificationRequestInfoTests {
 
         [Fact]
