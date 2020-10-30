@@ -11,7 +11,6 @@ namespace Microsoft.Azure.IIoT.Extensions.Orleans.Clients {
     using System;
     using System.Runtime.Serialization;
     using Autofac;
-    using Microsoft.Azure.IIoT.Extensions.Orleans.Runtime;
 
     public sealed class OrleansEventBusFixture : IDisposable {
 
