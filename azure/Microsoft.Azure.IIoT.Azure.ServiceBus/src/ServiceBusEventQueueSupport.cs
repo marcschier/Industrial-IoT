@@ -5,6 +5,7 @@
 
 namespace Microsoft.Azure.IIoT.Azure.ServiceBus {
     using Microsoft.Azure.IIoT.Azure.ServiceBus.Clients;
+    using Microsoft.Azure.IIoT.Azure.ServiceBus.Runtime;
     using Autofac;
 
     /// <summary>
@@ -20,6 +21,8 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus {
 
             // Register event bus for integration events
             builder.RegisterType<ServiceBusClientFactory>()
+                .AsImplementedInterfaces();
+            builder.RegisterType<ServiceBusConfig>()
                 .AsImplementedInterfaces();
             builder.RegisterType<ServiceBusQueueClient>()
                 .AsImplementedInterfaces().SingleInstance();

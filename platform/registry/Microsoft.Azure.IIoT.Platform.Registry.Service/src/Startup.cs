@@ -202,7 +202,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service {
             // --- Dependencies ---
 
             // Add App Insights logging
-            builder.AddAppInsightsLogging(Config);
+            builder.AddAppInsightsLogging();
             // Add service to service authentication
             builder.RegisterModule<WebApiAuthentication>();
             // Iot hub services

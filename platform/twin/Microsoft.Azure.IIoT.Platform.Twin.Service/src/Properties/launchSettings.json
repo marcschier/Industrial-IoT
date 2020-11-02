@@ -3,6 +3,11 @@
     "WebService": {
       "commandName": "Project",
       "applicationUrl": "http://localhost:9041"
+    },
+    "Docker": {
+      "commandName": "Docker",
+      "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}",
+      "publishAllPorts": true
     }
   }
 }

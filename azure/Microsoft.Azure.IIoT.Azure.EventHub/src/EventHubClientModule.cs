@@ -5,6 +5,7 @@
 
 namespace Microsoft.Azure.IIoT.Azure.EventHub {
     using Microsoft.Azure.IIoT.Azure.EventHub.Clients;
+    using Microsoft.Azure.IIoT.Azure.EventHub.Runtime;
     using Autofac;
 
     /// <summary>
@@ -18,8 +19,11 @@ namespace Microsoft.Azure.IIoT.Azure.EventHub {
         /// <param name="builder"></param>
         protected override void Load(ContainerBuilder builder) {
 
-            // Register event processor host for telemetry
+            // Register event queue client
             builder.RegisterType<EventHubQueueClient>()
+                .AsImplementedInterfaces();
+
+            builder.RegisterType<EventHubClientConfig>()
                 .AsImplementedInterfaces();
 
             base.Load(builder);

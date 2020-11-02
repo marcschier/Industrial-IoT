@@ -9,30 +9,19 @@ namespace Microsoft.Azure.IIoT.Azure.LogAnalytics.Runtime {
     using Microsoft.Extensions.Configuration;
 
     /// <summary>
-    /// Azure Log Analytics Workspace configuration
+    /// Log Analytics Workspace configuration
     /// </summary>
-    public class LogAnalyticsConfig : ConfigBase, ILogAnalyticsConfig {
-
-        private const string kWorkspaceId = "LogAnalytics:WorkspaceId";
-        private const string kWorkspaceKey = "LogAnalytics:WorkspaceKey";
-        private const string kLogType = "LogAnalytics:LogType";
+    public class LogAnalyticsConfig : ConfigBase<LogAnalyticsOptions> {
 
         /// <inheritdoc/>
-        public string LogWorkspaceId => GetStringOrDefault(kWorkspaceId,
-            () => GetStringOrDefault(PcsVariable.PCS_WORKSPACE_ID));
-        /// <inheritdoc/>
-        public string LogWorkspaceKey => GetStringOrDefault(kWorkspaceKey,
-            () => GetStringOrDefault(PcsVariable.PCS_WORKSPACE_KEY));
-        /// <inheritdoc/>
-        public string LogType => GetStringOrDefault(kLogType,
-            () => null);
-
-        /// <summary>
-        /// Configuration constructor
-        /// </summary>
-        /// <param name="configuration"></param>
         public LogAnalyticsConfig(IConfiguration configuration) :
             base(configuration) {
+        }
+
+        /// <inheritdoc/>
+        public override void Configure(string name, LogAnalyticsOptions options) {
+            options.LogWorkspaceId = GetStringOrDefault(PcsVariable.PCS_WORKSPACE_ID);
+            options.LogWorkspaceKey = GetStringOrDefault(PcsVariable.PCS_WORKSPACE_KEY);
         }
     }
 }

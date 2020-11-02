@@ -116,11 +116,9 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Processor {
             // --- Dependencies ---
 
             // Add Application Insights logging and dependency tracking.
-            builder.AddDependencyTracking(config, serviceInfo);
-            builder.AddAppInsightsLogging(config);
+            builder.AddDependencyTracking(serviceInfo);
+            builder.AddAppInsightsLogging();
             // Event Hub client
-            builder.RegisterType<EventHubClientConfig>()
-                .AsImplementedInterfaces();
             builder.RegisterModule<EventHubClientModule>();
             // Event processor host
             builder.RegisterModule<EventHubProcessorModule>();

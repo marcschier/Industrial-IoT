@@ -8,29 +8,19 @@ namespace Microsoft.Azure.IIoT.Azure.KeyVault.Runtime {
     using Microsoft.Extensions.Configuration;
 
     /// <inheritdoc/>
-    public class KeyVaultConfig : ConfigBase, IKeyVaultConfig {
-
-        /// <summary>
-        /// Key Vault configuration
-        /// </summary>
-        private const string kOpcVault_KeyVaultBaseUrlKey = "KeyVault:BaseUrl";
-        private const string kOpcVault_KeyVaultIsHsmKey = "KeyVault:IsHsm";
+    public sealed class KeyVaultConfig : ConfigBase<KeyVaultOptions> {
 
         /// <inheritdoc/>
-        public string KeyVaultBaseUrl => GetStringOrDefault(kOpcVault_KeyVaultBaseUrlKey,
-            () => GetStringOrDefault("KEYVAULT__BASEURL",
-                () => GetStringOrDefault(PcsVariable.PCS_KEYVAULT_URL))).Trim();
-        /// <inheritdoc/>
-        public bool KeyVaultIsHsm => GetBoolOrDefault(kOpcVault_KeyVaultIsHsmKey,
-            () => GetBoolOrDefault(PcsVariable.PCS_KEYVAULT_ISHSM,
-                () => true));
-
-        /// <summary>
-        /// Configuration constructor
-        /// </summary>
-        /// <param name="configuration"></param>
         public KeyVaultConfig(IConfiguration configuration) :
             base(configuration) {
+        }
+
+        /// <inheritdoc/>
+        public override void Configure(string name, KeyVaultOptions options) {
+            options.KeyVaultBaseUrl = GetStringOrDefault("KEYVAULT__BASEURL",
+                () => GetStringOrDefault(PcsVariable.PCS_KEYVAULT_URL)).Trim();
+            options.KeyVaultIsHsm = GetBoolOrDefault(PcsVariable.PCS_KEYVAULT_ISHSM,
+                () => true);
         }
     }
 }

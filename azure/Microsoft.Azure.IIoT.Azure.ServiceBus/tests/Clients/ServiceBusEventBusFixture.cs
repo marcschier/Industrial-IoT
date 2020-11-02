@@ -15,6 +15,7 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Clients {
     using System;
     using System.Runtime.Serialization;
     using Autofac;
+    using Microsoft.Extensions.Options;
 
     public sealed class ServiceBusEventBusFixture : IDisposable {
 
@@ -44,13 +45,6 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Clients {
         public string Description { get; } = "the test";
     }
 
-    public class ServiceBusEventBusConfig : IServiceBusEventBusConfig {
-        public ServiceBusEventBusConfig(string topic) {
-            Topic = topic;
-        }
-        public string Topic { get; }
-    }
-
     internal sealed class ServiceBusEventBusHarness : IDisposable {
 
         /// <summary>
@@ -69,7 +63,7 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Clients {
                     .AsImplementedInterfaces();
                 builder.RegisterType<ServiceBusConfig>()
                     .AsImplementedInterfaces().SingleInstance();
-                builder.RegisterInstance(new ServiceBusEventBusConfig(bus))
+                builder.RegisterInstance(new ConfigureOptions<ServiceBusEventBusOptions>(options => options.Topic = bus))
                     .AsImplementedInterfaces();
                 builder.RegisterType<Pid>().SingleInstance()
                     .AsImplementedInterfaces();
@@ -116,9 +110,9 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Clients {
             if (_container == null) {
                 return;
             }
-            var config = _container.Resolve<IServiceBusConfig>();
+            var config = _container.Resolve<IOptions<ServiceBusOptions>>();
             var pid = _container.Resolve<IProcessIdentity>();
-            var managementClient = new ManagementClient(config.ServiceBusConnString);
+            var managementClient = new ManagementClient(config.Value.ServiceBusConnString);
             Try.Op(() => managementClient.DeleteSubscriptionAsync(_topic, pid.ServiceId).Wait());
             managementClient.DeleteTopicAsync(_topic).Wait();
             _container.Dispose();

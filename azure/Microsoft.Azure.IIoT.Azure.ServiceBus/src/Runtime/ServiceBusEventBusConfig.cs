@@ -4,25 +4,22 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Runtime {
+    using Microsoft.Azure.IIoT.Utils;
     using Microsoft.Extensions.Configuration;
 
     /// <summary>
     /// ServiceBus configuration
     /// </summary>
-    public class ServiceBusEventBusConfig : ServiceBusConfig, IServiceBusEventBusConfig {
-
-        private const string kTopicKey = "ServiceBus:Topic";
+    internal sealed class ServiceBusEventBusConfig : ConfigBase<ServiceBusEventBusOptions> {
 
         /// <inheritdoc/>
-        public string Topic => GetStringOrDefault(kTopicKey,
-            () => null);
-
-        /// <summary>
-        /// Configuration constructor
-        /// </summary>
-        /// <param name="configuration"></param>
         public ServiceBusEventBusConfig(IConfiguration configuration = null) :
             base(configuration) {
+        }
+
+        /// <inheritdoc/>
+        public override void Configure(string name, ServiceBusEventBusOptions options) {
+            options.Topic = GetStringOrDefault("PCS_SERVICEBUS_TOPIC", () => null);
         }
     }
 }

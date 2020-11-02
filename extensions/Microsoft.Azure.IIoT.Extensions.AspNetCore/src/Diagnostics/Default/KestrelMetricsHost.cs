@@ -7,6 +7,7 @@ namespace Microsoft.Azure.IIoT.AspNetCore.Diagnostics.Default {
     using Microsoft.Azure.IIoT.Diagnostics.Services;
     using Microsoft.Azure.IIoT.Diagnostics;
     using Microsoft.Extensions.Logging;
+    using Microsoft.Extensions.Options;
     using Prometheus;
     using System;
     using System.Collections.Generic;
@@ -18,15 +19,15 @@ namespace Microsoft.Azure.IIoT.AspNetCore.Diagnostics.Default {
 
         /// <inheritdoc/>
         public KestrelMetricsHost(IEnumerable<IMetricsHandler> handlers, ILogger logger,
-            IMetricServerConfig config = null) : base(handlers, logger, config) {
+            IOptions<MetricsServerOptions> options) : base(handlers, logger, options) {
         }
 
         /// <inheritdoc/>
-        protected override IMetricServer CreateServer(IMetricServerConfig config) {
-            if (config is null) {
-                throw new ArgumentNullException(nameof(config));
+        protected override IMetricServer CreateServer(MetricsServerOptions options) {
+            if (options is null) {
+                throw new ArgumentNullException(nameof(options));
             }
-            return new KestrelMetricServer(config.Port, config.Path ?? "/metrics");
+            return new KestrelMetricServer(options.Port, options.Path ?? "/metrics");
         }
     }
 }

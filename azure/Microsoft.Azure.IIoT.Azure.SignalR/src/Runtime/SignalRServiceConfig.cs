@@ -11,28 +11,22 @@ namespace Microsoft.Azure.IIoT.Azure.SignalR.Runtime {
     /// <summary>
     /// SignalR configuration
     /// </summary>
-    public class SignalRServiceConfig : ConfigBase, ISignalRServiceConfig {
-
-        private const string kSignalRConnectionStringKey = "SignalR:ConnectionString";
-        private const string kSignalRServiceModeKey = "SignalR:ServiceMode";
-        private const string kSignalRServerLessMode = "Serverless";
+    internal sealed class SignalRServiceConfig : ConfigBase<SignalRServiceOptions> {
 
         /// <inheritdoc/>
-        public string SignalRConnString => GetStringOrDefault(kSignalRConnectionStringKey,
-            () => GetStringOrDefault(PcsVariable.PCS_SIGNALR_CONNSTRING));
-        /// <inheritdoc/>
-        public bool SignalRServerLess =>
-            SignalRServiceMode.EqualsIgnoreCase(kSignalRServerLessMode);
-        /// <summary>Mode string</summary>
-        public string SignalRServiceMode => GetStringOrDefault(kSignalRServiceModeKey,
-            () => GetStringOrDefault(PcsVariable.PCS_SIGNALR_MODE, () => kSignalRServerLessMode));
+        public override void Configure(string name, SignalRServiceOptions options) {
+            options.SignalRConnString = GetStringOrDefault(PcsVariable.PCS_SIGNALR_CONNSTRING, 
+                () => null);
+            var signalRServiceMode = GetStringOrDefault(PcsVariable.PCS_SIGNALR_MODE, 
+                () => kSignalRServerLessMode);
+            options.SignalRServerLess = signalRServiceMode.EqualsIgnoreCase(kSignalRServerLessMode);
+        }
 
-        /// <summary>
-        /// Configuration constructor
-        /// </summary>
-        /// <param name="configuration"></param>
+        /// <inheritdoc/>
         public SignalRServiceConfig(IConfiguration configuration) :
             base(configuration) {
         }
+
+        private const string kSignalRServerLessMode = "Serverless";
     }
 }

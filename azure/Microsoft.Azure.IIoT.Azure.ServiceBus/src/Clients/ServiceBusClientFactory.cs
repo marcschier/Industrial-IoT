@@ -8,6 +8,7 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Clients {
     using Microsoft.Azure.ServiceBus;
     using Microsoft.Azure.ServiceBus.Management;
     using Microsoft.Extensions.Logging;
+    using Microsoft.Extensions.Options;
     using System;
     using System.Collections.Generic;
     using System.Net;
@@ -21,12 +22,17 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Clients {
         IDisposable, IAsyncDisposable {
 
         /// <summary>
+        /// Connection string
+        /// </summary>
+        public string ServiceBusConnString => _config.CurrentValue.ServiceBusConnString;
+
+        /// <summary>
         /// Create factory
         /// </summary>
-        /// <param name="config"></param>
+        /// <param name="options"></param>
         /// <param name="logger"></param>
-        public ServiceBusClientFactory(IServiceBusConfig config, ILogger logger) {
-            _config = config ?? throw new ArgumentNullException(nameof(config));
+        public ServiceBusClientFactory(IOptionsMonitor<ServiceBusOptions> options, ILogger logger) {
+            _config = options ?? throw new ArgumentNullException(nameof(options));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -124,7 +130,7 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Clients {
         /// <returns></returns>
         private async Task<ISubscriptionClient> NewSubscriptionClientAsync(
             string topic, string name) {
-            var managementClient = new ManagementClient(_config.ServiceBusConnString);
+            var managementClient = new ManagementClient(ServiceBusConnString);
             while (true) {
                 try {
                     var exists = await managementClient.TopicExistsAsync(topic).ConfigureAwait(false);
@@ -142,7 +148,7 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Clients {
                                 LockDuration = TimeSpan.FromSeconds(10)
                             }).ConfigureAwait(false);
                     }
-                    return new SubscriptionClient(_config.ServiceBusConnString, topic, name,
+                    return new SubscriptionClient(ServiceBusConnString, topic, name,
                         ReceiveMode.PeekLock, RetryPolicy.Default);
                 }
                 catch (ServiceBusException ex) {
@@ -162,7 +168,7 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Clients {
         /// <param name="name"></param>
         /// <returns></returns>
         private async Task<IQueueClient> NewQueueClientAsync(string name) {
-            var managementClient = new ManagementClient(_config.ServiceBusConnString);
+            var managementClient = new ManagementClient(ServiceBusConnString);
             while (true) {
                 try {
                     var exists = await managementClient.QueueExistsAsync(name).ConfigureAwait(false);
@@ -173,7 +179,7 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Clients {
                         }).ConfigureAwait(false);
                     }
                     return new QueueClient(
-                        _config.ServiceBusConnString, GetEntityName(name), ReceiveMode.PeekLock,
+                        ServiceBusConnString, GetEntityName(name), ReceiveMode.PeekLock,
                             RetryPolicy.Default);
                 }
                 catch (ServiceBusException ex) {
@@ -193,7 +199,7 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Clients {
         /// <param name="name"></param>
         /// <returns></returns>
         private async Task<TopicClient> NewTopicClientAsync(string name) {
-            var managementClient = new ManagementClient(_config.ServiceBusConnString);
+            var managementClient = new ManagementClient(ServiceBusConnString);
             while (true) {
                 try {
                     var exists = await managementClient.TopicExistsAsync(name).ConfigureAwait(false);
@@ -203,7 +209,7 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Clients {
                             EnableBatchedOperations = true
                         }).ConfigureAwait(false);
                     }
-                    return new TopicClient(_config.ServiceBusConnString, GetEntityName(name),
+                    return new TopicClient(ServiceBusConnString, GetEntityName(name),
                         RetryPolicy.Default);
                 }
                 catch (ServiceBusException ex) {
@@ -259,7 +265,7 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Clients {
         /// <returns></returns>
         private string GetEntityName(string name) {
             if (string.IsNullOrEmpty(name)) {
-                var cs = new ServiceBusConnectionStringBuilder(_config.ServiceBusConnString);
+                var cs = new ServiceBusConnectionStringBuilder(ServiceBusConnString);
                 name = cs.EntityPath;
             }
             if (string.IsNullOrEmpty(name)) {
@@ -268,7 +274,7 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Clients {
             return name.ToUpperInvariant();
         }
 
-        private readonly IServiceBusConfig _config;
+        private readonly IOptionsMonitor<ServiceBusOptions> _config;
         private readonly ILogger _logger;
         private readonly SemaphoreSlim _topicLock = new SemaphoreSlim(1, 1);
         private readonly Dictionary<string, ITopicClient> _topicClients =

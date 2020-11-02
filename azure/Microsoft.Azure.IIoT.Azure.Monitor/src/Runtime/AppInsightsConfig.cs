@@ -8,27 +8,20 @@ namespace Microsoft.Azure.IIoT.Azure.AppInsights.Runtime {
     using Microsoft.Extensions.Configuration;
 
     /// <summary>
-    /// Diagnostics configuration
+    /// App Insights configuration
     /// </summary>
-    public class AppInsightsConfig : ConfigBase, IAppInsightsConfig {
-
-        /// <summary>
-        /// Configuration keys
-        /// </summary>
-        private const string kInstrumentationKeyKey = "Diagnostics:InstrumentationKey";
+    internal sealed class AppInsightsConfig : ConfigBase<AppInsightsOptions> {
 
         /// <inheritdoc/>
-        public string InstrumentationKey =>
-            GetStringOrDefault(kInstrumentationKeyKey,
-                () => GetStringOrDefault(PcsVariable.PCS_APPINSIGHTS_INSTRUMENTATIONKEY,
-                () => null));
-
-        /// <summary>
-        /// Configuration constructor
-        /// </summary>
-        /// <param name="configuration"></param>
         public AppInsightsConfig(IConfiguration configuration) :
             base(configuration) {
+        }
+
+        /// <inheritdoc/>
+        public override void Configure(string name, AppInsightsOptions options) {
+            options.InstrumentationKey = 
+                GetStringOrDefault(PcsVariable.PCS_APPINSIGHTS_INSTRUMENTATIONKEY,
+                    () => null);
         }
     }
 }

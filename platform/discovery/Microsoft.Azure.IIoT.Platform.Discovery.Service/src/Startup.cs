@@ -199,10 +199,8 @@ namespace Microsoft.Azure.IIoT.Platform.Discovery.Service {
 
             // Add diagnostics
             builder.RegisterModule<WebApiAuthentication>();
-            builder.RegisterType<LogAnalyticsConfig>()
-                .AsImplementedInterfaces().SingleInstance();
             // Add diagnostics
-            builder.AddAppInsightsLogging(Config);
+            builder.AddAppInsightsLogging();
             // Register event bus for integration events
             builder.RegisterModule<OrleansEventBusModule>();
             // Register database for publisher storage

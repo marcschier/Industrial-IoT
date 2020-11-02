@@ -23,9 +23,9 @@ namespace Microsoft.Azure.IIoT.Azure.AppInsights {
 
             services.AddApplicationInsightsTelemetry();
             services.AddTransient<IConfigureOptions<ApplicationInsightsServiceOptions>>(provider => {
-                var config = provider.GetRequiredService<IAppInsightsConfig>();
+                var config = provider.GetRequiredService<IOptions<AppInsightsOptions>>();
                 return new ConfigureNamedOptions<ApplicationInsightsServiceOptions>(Options.DefaultName, options => {
-                    options.InstrumentationKey = config.InstrumentationKey;
+                    options.InstrumentationKey = config.Value.InstrumentationKey;
                 });
             });
             services.AddSingleton<ITelemetryInitializer, ApplicationInsightsTelemetryInitializer>();

@@ -7,6 +7,8 @@ namespace Microsoft.Extensions.DependencyInjection {
     using Microsoft.AspNetCore.SignalR;
     using Microsoft.Azure.IIoT.Azure.SignalR;
     using Microsoft.Azure.SignalR;
+    using Microsoft.Extensions.Options;
+    using System;
     using System.Linq;
     using System.Security.Claims;
 
@@ -19,22 +21,22 @@ namespace Microsoft.Extensions.DependencyInjection {
         /// Add azure signalr if possible
         /// </summary>
         /// <param name="builder"></param>
-        /// <param name="config"></param>
+        /// <param name="options"></param>
         /// <returns></returns>
         public static ISignalRServerBuilder AddAzureSignalRService(this ISignalRServerBuilder builder,
-            ISignalRServiceConfig config = null) {
-            if (config == null) {
-                config = builder.Services.BuildServiceProvider().GetService<ISignalRServiceConfig>();
+            SignalRServiceOptions options = null) {
+            if (options == null) {
+                options = builder.Services.BuildServiceProvider().GetService<IOptions<SignalRServiceOptions>>()?.Value;
             }
-            if (string.IsNullOrEmpty(config?.SignalRConnString) || config.SignalRServerLess) {
+            if (string.IsNullOrEmpty(options?.SignalRConnString) || options.SignalRServerLess) {
                 // not using signalr service because of legacy configuration.
                 return builder;
             }
-            builder.AddAzureSignalR().Services.Configure<ServiceOptions>(options => {
-                options.ConnectionString = config.SignalRConnString;
-                options.ClaimsProvider = context => context.User.Claims
+            builder.AddAzureSignalR().Services.Configure((Action<ServiceOptions>)(serviceOptions => {
+                serviceOptions.ConnectionString = options.SignalRConnString;
+                serviceOptions.ClaimsProvider = context => context.User.Claims
                     .Where(c => c.Type == ClaimTypes.NameIdentifier);
-            });
+            }));
             return builder;
         }
     }

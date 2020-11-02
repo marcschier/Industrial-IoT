@@ -4,6 +4,7 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Azure.CosmosDb {
+    using Microsoft.Azure.IIoT.Azure.CosmosDb.Runtime;
     using Microsoft.Azure.IIoT.Azure.CosmosDb.Clients;
     using Microsoft.Azure.IIoT.Storage.Services;
     using Autofac;
@@ -21,6 +22,8 @@ namespace Microsoft.Azure.IIoT.Azure.CosmosDb {
 
             // Cosmos db collection as storage
             builder.RegisterType<ItemContainerFactory>()
+                .AsImplementedInterfaces();
+            builder.RegisterType<CosmosDbConfig>()
                 .AsImplementedInterfaces();
             builder.RegisterType<CosmosDbServiceClient>()
                 .AsImplementedInterfaces();

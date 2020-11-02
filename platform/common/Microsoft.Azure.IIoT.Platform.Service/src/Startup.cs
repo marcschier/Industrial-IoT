@@ -138,7 +138,7 @@ namespace Microsoft.Azure.IIoT.Platform.Service {
                 .AsImplementedInterfaces();
 
             // Add diagnostics and auth providers
-            builder.AddAppInsightsLogging(Config);
+            builder.AddAppInsightsLogging();
             builder.RegisterModule<DefaultServiceAuthProviders>();
 
             builder.RegisterType<ProcessorHost>()

@@ -9,6 +9,7 @@ namespace Microsoft.Azure.IIoT.Azure.CosmosDb.Clients {
     using Microsoft.Azure.IIoT.Serializers;
     using Microsoft.Azure.Cosmos;
     using Microsoft.Extensions.Logging;
+    using Microsoft.Extensions.Options;
     using System;
     using System.Threading.Tasks;
 
@@ -23,12 +24,12 @@ namespace Microsoft.Azure.IIoT.Azure.CosmosDb.Clients {
         /// <param name="config"></param>
         /// <param name="serializer"></param>
         /// <param name="logger"></param>
-        public CosmosDbServiceClient(ICosmosDbConfig config, IJsonSerializer serializer,
+        public CosmosDbServiceClient(IOptions<CosmosDbOptions> config, IJsonSerializer serializer,
             ILogger logger) {
             _config = config ?? throw new ArgumentNullException(nameof(config));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _serializer = serializer ?? throw new ArgumentNullException(nameof(serializer));
-            if (string.IsNullOrEmpty(_config.DbConnectionString)) {
+            if (string.IsNullOrEmpty(_config.Value.DbConnectionString)) {
                 throw new ArgumentException("Connection string missing", nameof(config));
             }
         }
@@ -38,17 +39,17 @@ namespace Microsoft.Azure.IIoT.Azure.CosmosDb.Clients {
             if (string.IsNullOrEmpty(databaseId)) {
                 databaseId = "default";
             }
-            var cs = ConnectionString.Parse(_config.DbConnectionString);
+            var cs = ConnectionString.Parse(_config.Value.DbConnectionString);
             var client = new CosmosClient(cs.Endpoint, cs.SharedAccessKey,
                 new CosmosClientOptions {
                     ConsistencyLevel = options?.Consistency.ToConsistencyLevel()
                 });
             var response = await client.CreateDatabaseIfNotExistsAsync(databaseId,
-                _config.ThroughputUnits).ConfigureAwait(false);
+                _config.Value.ThroughputUnits).ConfigureAwait(false);
             return new DocumentDatabase(response.Database, _serializer, _logger);
         }
 
-        private readonly ICosmosDbConfig _config;
+        private readonly IOptions<CosmosDbOptions> _config;
         private readonly ILogger _logger;
         private readonly IJsonSerializer _serializer;
     }

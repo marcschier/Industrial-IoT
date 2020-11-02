@@ -11,7 +11,7 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Users.Runtime {
     using Microsoft.Azure.IIoT.AspNetCore.Authentication;
     using Microsoft.Azure.IIoT.AspNetCore.Hosting;
     using Microsoft.Azure.IIoT.AspNetCore.Hosting.Runtime;
-    using Microsoft.Azure.IIoT.Diagnostics;
+    using Microsoft.Azure.IIoT.Utils;
     using Microsoft.Azure.IIoT.Platform.Identity;
     using Microsoft.Azure.IIoT.Platform.Identity.Runtime;
     using Microsoft.Azure.IIoT.Hosting;
@@ -23,8 +23,8 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Users.Runtime {
     /// <summary>
     /// Common web service configuration aggregation
     /// </summary>
-    public class Config : DiagnosticsConfig, IWebHostConfig, ICorsConfig,
-        IOpenApiConfig, IRootUserConfig, IItemContainerConfig, ICosmosDbConfig,
+    public class Config : ConfigBase, IWebHostConfig, ICorsConfig,
+        IOpenApiConfig, IRootUserConfig, IItemContainerConfig, 
         IHeadersConfig, IRoleConfig {
 
         /// <inheritdoc/>
@@ -60,10 +60,6 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Users.Runtime {
         public string OpenApiAuthorizationEndpoint => _openApi.OpenApiAuthorizationEndpoint;
 
         /// <inheritdoc/>
-        public string DbConnectionString => _cosmos.DbConnectionString;
-        /// <inheritdoc/>
-        public int? ThroughputUnits => _cosmos.ThroughputUnits;
-        /// <inheritdoc/>
         public string ContainerName => "iiot_opc";
         /// <inheritdoc/>
         public string DatabaseName => "iiot_opc";
@@ -88,7 +84,6 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Users.Runtime {
             _openApi = new OpenApiConfig(configuration);
             _host = new WebHostConfig(configuration);
             _cors = new CorsConfig(configuration);
-            _cosmos = new CosmosDbConfig(configuration);
             _fh = new HeadersConfig(configuration);
             _user = new RootUserConfig(configuration);
         }
@@ -96,7 +91,6 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Users.Runtime {
         private readonly OpenApiConfig _openApi;
         private readonly WebHostConfig _host;
         private readonly CorsConfig _cors;
-        private readonly CosmosDbConfig _cosmos;
         private readonly HeadersConfig _fh;
         private readonly RootUserConfig _user;
     }

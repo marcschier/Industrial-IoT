@@ -29,8 +29,6 @@ namespace Microsoft.Azure.IIoT.Platform.Twin {
                 .IfNotRegistered(typeof(IOrleansSiloHost))
                 .IfNotRegistered(typeof(ITwinRegistry));
 
-            base.Load(builder);
-
             // Grain clients
             builder.RegisterType<DataTransferGrainClient>()
                 .AsImplementedInterfaces().InstancePerLifetimeScope()
@@ -38,6 +36,8 @@ namespace Microsoft.Azure.IIoT.Platform.Twin {
             builder.RegisterType<AddressSpaceGrainClient>()
                 .AsImplementedInterfaces().InstancePerLifetimeScope()
                 .IfNotRegistered(typeof(ITwinRegistry));
+
+            base.Load(builder);
         }
     }
 }

@@ -10,25 +10,17 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub.Runtime {
     /// <summary>
     /// IoT hub services runtime configuration
     /// </summary>
-    public class IoTHubConfig : ConfigBase, IIoTHubConfig {
+    public sealed class IoTHubConfig : ConfigBase<IoTHubOptions> {
 
-        /// <summary>
-        /// Service configuration
-        /// </summary>
-        private const string kIoTHubConnectionStringKey = "IoTHubConnectionString";
-
-        /// <summary>IoT hub connection string</summary>
-        public string IoTHubConnString => GetStringOrDefault(kIoTHubConnectionStringKey,
-            () => GetStringOrDefault(PcsVariable.PCS_IOTHUB_CONNSTRING,
-                () => GetStringOrDefault("_HUB_CS",
-                    () => null)));
-
-        /// <summary>
-        /// Configuration constructor
-        /// </summary>
-        /// <param name="configuration"></param>
+        /// <inheritdoc/>
         public IoTHubConfig(IConfiguration configuration) :
             base(configuration) {
+        }
+
+        /// <inheritdoc/>
+        public override void Configure(string name, IoTHubOptions options) {
+            options.IoTHubConnString = GetStringOrDefault(PcsVariable.PCS_IOTHUB_CONNSTRING,
+                () => GetStringOrDefault("_HUB_CS", () => null));
         }
     }
 }

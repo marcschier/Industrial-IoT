@@ -7,31 +7,24 @@ namespace Microsoft.Azure.IIoT.Hub {
     using Microsoft.Azure.IIoT.Azure.IoTHub;
     using Microsoft.Azure.IIoT.Exceptions;
     using Microsoft.Azure.IIoT.Utils;
+    using Microsoft.Extensions.Options;
     using System.Threading;
     using System.Threading.Tasks;
 
     /// <summary>
-    /// Twin services extensions
+    /// Device Twin services extensions
     /// </summary>
     public static class DeviceTwinServicesEx {
 
         /// <summary>
-        /// IoTHubOwner connection string to configuration
+        /// IoTHubOwner connection string to options helper
         /// </summary>
         /// <param name="cs"></param>
         /// <returns></returns>
-        public static IIoTHubConfig ToIoTHubConfig(this ConnectionString cs) {
-            return new IoTHubConfig {
+        public static IOptions<IoTHubOptions> ToIoTHubOptions(this ConnectionString cs) {
+            return Options.Create(new IoTHubOptions {
                 IoTHubConnString = cs.ToString()
-            };
-        }
-
-        /// <summary>
-        /// Helper class to wrap connection string
-        /// </summary>
-        private class IoTHubConfig : IIoTHubConfig {
-            /// <inheritdoc/>
-            public string IoTHubConnString { get; set; }
+            });
         }
 
         /// <summary>

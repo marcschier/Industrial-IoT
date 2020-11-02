@@ -10,27 +10,17 @@ namespace Microsoft.Azure.IIoT.Azure.EventHub.Runtime {
     /// <summary>
     /// Event hub configuration - wraps a configuration root
     /// </summary>
-    public class EventHubClientConfig : ConfigBase, IEventHubClientConfig {
+    internal sealed class EventHubClientConfig : ConfigBase<EventHubClientOptions> {
 
-        /// <summary>
-        /// Event hub configuration
-        /// </summary>
-        private const string kEventHubConnStringKey = "EventHubConnectionString";
-        private const string kEventHubNameKey = "EventHubName";
-
-        /// <summary> Event hub connection string </summary>
-        public string EventHubConnString => GetStringOrDefault(kEventHubConnStringKey,
-            () => GetStringOrDefault(PcsVariable.PCS_EVENTHUB_CONNSTRING, () => null));
-        /// <summary> Event hub path </summary>
-        public string EventHubPath => GetStringOrDefault(kEventHubNameKey,
-            () => GetStringOrDefault(PcsVariable.PCS_EVENTHUB_NAME, () => null));
-
-        /// <summary>
-        /// Configuration constructor
-        /// </summary>
-        /// <param name="configuration"></param>
+        /// <inheritdoc/>
         public EventHubClientConfig(IConfiguration configuration) :
             base(configuration) {
+        }
+
+        /// <inheritdoc/>
+        public override void Configure(string name, EventHubClientOptions options) {
+            options.EventHubConnString = GetStringOrDefault(PcsVariable.PCS_EVENTHUB_CONNSTRING, () => null);
+            options.EventHubPath = GetStringOrDefault(PcsVariable.PCS_EVENTHUB_NAME, () => null);
         }
     }
 }

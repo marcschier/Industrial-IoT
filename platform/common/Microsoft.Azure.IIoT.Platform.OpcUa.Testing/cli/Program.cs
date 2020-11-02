@@ -142,7 +142,7 @@ Operations (Mutually exclusive):
         /// Run server until exit
         /// </summary>
         private static async Task RunServerAsync(IEnumerable<int> ports) {
-            using (var logger = StackLogger.Create(ConsoleLogger.CreateLogger())) {
+            using (var logger = StackLogger.Create(Log.Console())) {
                 var tcs = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
                 AssemblyLoadContext.Default.Unloading += _ => tcs.TrySetResult(true);
                 using (var server = new ServerConsoleHost(new ServerFactory(logger.Logger),
@@ -169,7 +169,7 @@ Operations (Mutually exclusive):
         /// Test client
         /// </summary>
         private static async Task TestOpcUaServerClientAsync(EndpointModel endpoint) {
-            using (var logger = StackLogger.Create(ConsoleLogger.CreateLogger()))
+            using (var logger = StackLogger.Create(Log.Console()))
             using (var config = new TestClientServicesConfig())
             using (var client = new ClientServices(logger.Logger, config))
             using (var server = new ServerWrapper(endpoint, logger)) {

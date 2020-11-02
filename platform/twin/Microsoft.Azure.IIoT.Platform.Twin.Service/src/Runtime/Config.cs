@@ -12,7 +12,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Service.Runtime {
     using Microsoft.Azure.IIoT.AspNetCore.Cors.Runtime;
     using Microsoft.Azure.IIoT.AspNetCore.Hosting;
     using Microsoft.Azure.IIoT.AspNetCore.Hosting.Runtime;
-    using Microsoft.Azure.IIoT.Diagnostics;
+    using Microsoft.Azure.IIoT.Utils;
     using Microsoft.Azure.IIoT.Azure.AppInsights;
     using Microsoft.Azure.IIoT.Azure.AppInsights.Runtime;
     using Microsoft.Azure.IIoT.Hosting;
@@ -22,12 +22,9 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Service.Runtime {
     /// <summary>
     /// Common web service configuration aggregation
     /// </summary>
-    public class Config : DiagnosticsConfig, IWebHostConfig, 
+    public class Config : ConfigBase, IWebHostConfig, 
         ICorsConfig, IOpenApiConfig, IHeadersConfig, IRoleConfig,
-        IPublisherConfig, IAppInsightsConfig {
-
-        /// <inheritdoc/>
-        public string InstrumentationKey => _ai.InstrumentationKey;
+        IPublisherConfig {
 
         /// <inheritdoc/>
         public string CorsWhitelist => _cors.CorsWhitelist;
@@ -80,10 +77,8 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Service.Runtime {
             _api = new ApiConfig(configuration);
             _cors = new CorsConfig(configuration);
             _fh = new HeadersConfig(configuration);
-            _ai = new AppInsightsConfig(configuration);
         }
 
-        private readonly AppInsightsConfig _ai;
         private readonly OpenApiConfig _openApi;
         private readonly WebHostConfig _host;
         private readonly CorsConfig _cors;

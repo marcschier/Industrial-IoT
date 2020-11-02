@@ -10,6 +10,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub.Deploy {
     using Microsoft.Azure.IIoT.Hub.Models;
     using Microsoft.Azure.IIoT.Serializers;
     using Microsoft.Extensions.Logging;
+    using Microsoft.Extensions.Options;
     using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
@@ -28,7 +29,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub.Deploy {
         /// <param name="serializer"></param>
         /// <param name="logger"></param>
         public IoTEdgeTwinDeployment(IDeviceDeploymentServices service,
-            IContainerRegistryConfig config, ILogAnalyticsConfig diagnostics,
+            IContainerRegistryConfig config, IOptions<LogAnalyticsOptions> diagnostics,
             IJsonSerializer serializer, ILogger logger) {
             _serializer = serializer ?? throw new ArgumentNullException(nameof(serializer));
             _diagnostics = diagnostics ?? throw new ArgumentNullException(nameof(diagnostics));
@@ -105,8 +106,8 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub.Deploy {
                 },
                 ""twin"": {
                     ""properties.desired"": {
-                        ""LogWorkspaceId"": """ + _diagnostics.LogWorkspaceId + @""",
-                        ""LogWorkspaceKey"": """ + _diagnostics.LogWorkspaceKey + @"""
+                        ""LogWorkspaceId"": """ + _diagnostics.Value.LogWorkspaceId + @""",
+                        ""LogWorkspaceKey"": """ + _diagnostics.Value.LogWorkspaceKey + @"""
                     }
                 }
             }";
@@ -117,7 +118,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub.Deploy {
         private const string kDefaultSchemaVersion = "1.0";
         private readonly IDeviceDeploymentServices _service;
         private readonly IContainerRegistryConfig _config;
-        private readonly ILogAnalyticsConfig _diagnostics;
+        private readonly IOptions<LogAnalyticsOptions> _diagnostics;
         private readonly IJsonSerializer _serializer;
         private readonly ILogger _logger;
     }

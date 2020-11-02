@@ -4,13 +4,13 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Authentication.Runtime {
-    using Microsoft.Azure.IIoT.Diagnostics;
+    using Microsoft.Azure.IIoT.Utils;
     using Microsoft.Extensions.Configuration;
 
     /// <summary>
     /// Auth api web application configuration
     /// </summary>
-    public class AadApiWebConfig : DiagnosticsConfig, IOAuthClientConfig {
+    public class AadApiWebConfig : ConfigBase, IOAuthClientConfig {
 
         /// <summary>
         /// Client configuration

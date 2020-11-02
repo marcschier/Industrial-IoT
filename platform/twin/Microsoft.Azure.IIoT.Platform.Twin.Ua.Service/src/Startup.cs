@@ -206,7 +206,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Ua.Service {
             // Add service to service authentication
             builder.RegisterModule<WebApiAuthentication>();
             // Add diagnostics
-            builder.AddAppInsightsLogging(Config);
+            builder.AddAppInsightsLogging();
         }
     }
 }

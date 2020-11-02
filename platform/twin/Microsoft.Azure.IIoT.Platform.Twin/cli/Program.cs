@@ -23,6 +23,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services.Module.Cli {
     using Microsoft.Azure.IIoT.Utils;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Logging;
+    using Microsoft.Extensions.Options;
     using Newtonsoft.Json;
     using Opc.Ua;
     using Opc.Ua.Design;
@@ -87,8 +88,8 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services.Module.Cli {
             if (string.IsNullOrEmpty(cs)) {
                 cs = configuration.GetValue<string>("_HUB_CS", null);
             }
-            var diagnostics = new LogAnalyticsConfig(configuration);
-            IIoTHubConfig config = null;
+            var diagnostics = new LogAnalyticsConfig(configuration).ToOptions().Value;
+            IOptions<IoTHubOptions> config = null;
             var endpoint = new EndpointModel();
             string fileName = null;
             var host = Utils.GetHostName();
@@ -236,7 +237,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Services.Module.Cli {
                 if (!ConnectionString.TryParse(cs, out var connectionString)) {
                     throw new ArgumentException("Bad connection string.");
                 }
-                config = connectionString.ToIoTHubConfig();
+                config = connectionString.ToIoTHubOptions();
 
                 switch (op) {
                     case Op.Get:
@@ -370,10 +371,10 @@ Options:
         /// <summary>
         /// Host the module giving it its connection string.
         /// </summary>
-        private static async Task HostAsync(IIoTHubConfig config,
-            ILogAnalyticsConfig diagnostics, string deviceId, string moduleId) {
+        private static async Task HostAsync(IOptions<IoTHubOptions> config,
+            LogAnalyticsOptions diagnostics, string deviceId, string moduleId) {
             Console.WriteLine("Create or retrieve connection string...");
-            var logger = ConsoleLogger.CreateLogger(LogLevel.Error);
+            var logger = Log.Console(LogLevel.Error);
             var cs = await Retry.WithExponentialBackoff(logger,
                 () => AddOrGetAsync(config, diagnostics, deviceId, moduleId)).ConfigureAwait(false);
 
@@ -388,7 +389,7 @@ Options:
         /// <summary>
         /// Add supervisor
         /// </summary>
-        private static async Task AddAsync(IIoTHubConfig config, ILogAnalyticsConfig diagnostics,
+        private static async Task AddAsync(IOptions<IoTHubOptions> config, LogAnalyticsOptions diagnostics,
             string deviceId, string moduleId) {
             var cs = await AddOrGetAsync(config, diagnostics, deviceId, moduleId).ConfigureAwait(false);
             Console.WriteLine(cs);
@@ -398,8 +399,8 @@ Options:
         /// Get module connection string
         /// </summary>
         private static async Task GetAsync(
-            IIoTHubConfig config, string deviceId, string moduleId) {
-            var logger = ConsoleLogger.CreateLogger(LogLevel.Error);
+            IOptions<IoTHubOptions> config, string deviceId, string moduleId) {
+            var logger = Log.Console(LogLevel.Error);
             var registry = new IoTHubServiceClient(
                 config, new NewtonSoftJsonSerializer(), logger);
             var cs = await registry.GetConnectionStringAsync(deviceId, moduleId).ConfigureAwait(false);
@@ -409,9 +410,9 @@ Options:
         /// <summary>
         /// Reset supervisor
         /// </summary>
-        private static async Task ResetAsync(IIoTHubConfig config,
+        private static async Task ResetAsync(IOptions<IoTHubOptions> config,
             string deviceId, string moduleId) {
-            var logger = ConsoleLogger.CreateLogger(LogLevel.Error);
+            var logger = Log.Console(LogLevel.Error);
             var registry = new IoTHubServiceClient(
                 config, new NewtonSoftJsonSerializer(), logger);
             await ResetAsync(registry, await registry.GetAsync(deviceId, moduleId,
@@ -421,9 +422,9 @@ Options:
         /// <summary>
         /// Delete supervisor
         /// </summary>
-        private static async Task DeleteAsync(IIoTHubConfig config,
+        private static async Task DeleteAsync(IOptions<IoTHubOptions> config,
             string deviceId, string moduleId) {
-            var logger = ConsoleLogger.CreateLogger(LogLevel.Error);
+            var logger = Log.Console(LogLevel.Error);
             var registry = new IoTHubServiceClient(
                 config, new NewtonSoftJsonSerializer(), logger);
             await registry.DeleteAsync(deviceId, moduleId, null, CancellationToken.None).ConfigureAwait(false);
@@ -432,8 +433,8 @@ Options:
         /// <summary>
         /// List all twin module identities
         /// </summary>
-        private static async Task ListAsync(IIoTHubConfig config) {
-            var logger = ConsoleLogger.CreateLogger(LogLevel.Error);
+        private static async Task ListAsync(IOptions<IoTHubOptions> config) {
+            var logger = Log.Console(LogLevel.Error);
             var registry = new IoTHubServiceClient(
                 config, new NewtonSoftJsonSerializer(), logger);
 
@@ -448,8 +449,8 @@ Options:
         /// <summary>
         /// Reset all supervisor tags and properties
         /// </summary>
-        private static async Task ResetAllAsync(IIoTHubConfig config) {
-            var logger = ConsoleLogger.CreateLogger(LogLevel.Error);
+        private static async Task ResetAllAsync(IOptions<IoTHubOptions> config) {
+            var logger = Log.Console(LogLevel.Error);
             var registry = new IoTHubServiceClient(
                 config, new NewtonSoftJsonSerializer(), logger);
 
@@ -465,9 +466,9 @@ Options:
         /// <summary>
         /// Clear registry
         /// </summary>
-        private static async Task CleanupAsync(IIoTHubConfig config,
+        private static async Task CleanupAsync(IOptions<IoTHubOptions> config,
             bool includeSupervisors) {
-            var logger = ConsoleLogger.CreateLogger(LogLevel.Error);
+            var logger = Log.Console(LogLevel.Error);
             var registry = new IoTHubServiceClient(
                 config, new NewtonSoftJsonSerializer(), logger);
             var result = await registry.QueryAllDeviceTwinsAsync(
@@ -531,9 +532,9 @@ Options:
         /// <summary>
         /// Add or get module identity
         /// </summary>
-        private static async Task<ConnectionString> AddOrGetAsync(IIoTHubConfig config,
-            ILogAnalyticsConfig diagnostics, string deviceId, string moduleId) {
-            var logger = ConsoleLogger.CreateLogger(LogLevel.Error);
+        private static async Task<ConnectionString> AddOrGetAsync(IOptions<IoTHubOptions> config,
+            LogAnalyticsOptions diagnostics, string deviceId, string moduleId) {
+            var logger = Log.Console(LogLevel.Error);
             var registry = new IoTHubServiceClient(
                 config, new NewtonSoftJsonSerializer(), logger);
             try {
@@ -573,7 +574,7 @@ Options:
         /// Test model browse encoder
         /// </summary>
         private static async Task TestOpcUaModelExportServiceAsync(EndpointModel endpoint) {
-            using (var logger = StackLogger.Create(ConsoleLogger.CreateLogger()))
+            using (var logger = StackLogger.Create(Log.Console()))
             using (var config = new TestClientServicesConfig())
             using (var client = new ClientServices(logger.Logger, config))
             using (var server = new ServerWrapper(endpoint, logger))
@@ -599,7 +600,7 @@ Options:
         /// Test model archiver
         /// </summary>
         private static async Task TestOpcUaModelArchiveAsync(EndpointModel endpoint) {
-            using (var logger = StackLogger.Create(ConsoleLogger.CreateLogger())) {
+            using (var logger = StackLogger.Create(Log.Console())) {
                 var storage = new ZipArchiveStorage();
                 var fileName = "tmp.zip";
                 using (var config = new TestClientServicesConfig())
@@ -625,7 +626,7 @@ Options:
         /// Test model browse encoder to file
         /// </summary>
         private static async Task TestOpcUaModelExportToFileAsync(EndpointModel endpoint) {
-            using (var logger = StackLogger.Create(ConsoleLogger.CreateLogger())) {
+            using (var logger = StackLogger.Create(Log.Console())) {
                 // Run both encodings twice to prime server and get realistic timings the
                 // second time around
                 var runs = new Dictionary<string, string> {
@@ -670,7 +671,7 @@ Options:
         /// Test model export and import
         /// </summary>
         private static async Task TestOpcUaModelWriterAsync(EndpointModel endpoint) {
-            using (var logger = StackLogger.Create(ConsoleLogger.CreateLogger())) {
+            using (var logger = StackLogger.Create(Log.Console())) {
                 var filename = "model.zip";
                 using (var server = new ServerWrapper(endpoint, logger)) {
                     using (var client = new ClientServices(logger.Logger, new TestClientServicesConfig())) {
@@ -725,7 +726,7 @@ Options:
         /// </summary>
         private static async Task TestBrowseServerAsync(EndpointModel endpoint, bool silent = false) {
 
-            using (var logger = StackLogger.Create(ConsoleLogger.CreateLogger())) {
+            using (var logger = StackLogger.Create(Log.Console())) {
 
                 var request = new BrowseRequestModel {
                     TargetNodesOnly = false

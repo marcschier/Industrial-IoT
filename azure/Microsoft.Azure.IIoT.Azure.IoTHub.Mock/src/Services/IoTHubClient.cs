@@ -10,6 +10,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub.Mock {
     using Microsoft.Azure.IIoT.Hosting;
     using Microsoft.Azure.Devices.Client;
     using Microsoft.Azure.Devices.Shared;
+    using Microsoft.Extensions.Options;
     using System;
     using System.Collections.Generic;
     using System.Threading;
@@ -49,15 +50,15 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub.Mock {
         /// <param name="hub">Outer hub abstraction</param>
         /// <param name="config">Module framework configuration</param>
         /// <param name="ctrl">Process control</param>
-        public IoTHubClient(IIoTHub hub, IIoTEdgeClientConfig config,
+        public IoTHubClient(IIoTHub hub, IOptions<IoTEdgeOptions> config,
             IProcessControl ctrl = null) {
             _ctrl = ctrl;
             _hub = hub ?? throw new ArgumentNullException(nameof(hub));
-            if (string.IsNullOrEmpty(config.EdgeHubConnectionString)) {
+            if (string.IsNullOrEmpty(config.Value.EdgeHubConnectionString)) {
                 throw new InvalidConfigurationException(
                     "Must have connection string or module id to create clients.");
             }
-            var cs = IotHubConnectionStringBuilder.Create(config.EdgeHubConnectionString);
+            var cs = IotHubConnectionStringBuilder.Create(config.Value.EdgeHubConnectionString);
             if (string.IsNullOrEmpty(cs.DeviceId)) {
                 throw new InvalidConfigurationException(
                     "Connection string is not a device or module connection string.");

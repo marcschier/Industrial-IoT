@@ -119,8 +119,8 @@ namespace Microsoft.Azure.IIoT.Platform.Edge.Events.Service {
             // --- Dependencies ---
 
             // Add Application Insights logging and dependency tracking.
-            builder.AddDependencyTracking(config, serviceInfo);
-            builder.AddAppInsightsLogging(config);
+            builder.AddDependencyTracking(serviceInfo);
+            builder.AddAppInsightsLogging();
             // Add unattended authentication
             builder.RegisterModule<UnattendedAuthentication>();
             // Handle iot hub telemetry events...

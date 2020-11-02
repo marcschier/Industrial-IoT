@@ -15,15 +15,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Service.Runtime {
     using Microsoft.Azure.IIoT.AspNetCore.OpenApi.Runtime;
     using Microsoft.Azure.IIoT.AspNetCore.Hosting;
     using Microsoft.Azure.IIoT.AspNetCore.Hosting.Runtime;
-    using Microsoft.Azure.IIoT.Diagnostics;
-    using Microsoft.Azure.IIoT.Azure.AppInsights;
-    using Microsoft.Azure.IIoT.Azure.AppInsights.Runtime;
-    using Microsoft.Azure.IIoT.Azure.KeyVault;
-    using Microsoft.Azure.IIoT.Azure.KeyVault.Runtime;
-    using Microsoft.Azure.IIoT.Azure.ServiceBus;
-    using Microsoft.Azure.IIoT.Azure.ServiceBus.Runtime;
-    using Microsoft.Azure.IIoT.Azure.CosmosDb;
-    using Microsoft.Azure.IIoT.Azure.CosmosDb.Runtime;
+    using Microsoft.Azure.IIoT.Utils;
     using Microsoft.Azure.IIoT.Storage;
     using Microsoft.Azure.IIoT.Hosting;
     using Microsoft.Extensions.Configuration;
@@ -31,13 +23,10 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Service.Runtime {
     /// <summary>
     /// Web service configuration
     /// </summary>
-    public class Config : DiagnosticsConfig, IWebHostConfig,
-        ICorsConfig, IOpenApiConfig, IVaultConfig, ICosmosDbConfig, IRoleConfig,
-        IItemContainerConfig, IKeyVaultConfig, IServiceBusConfig, IDiscoveryConfig,
-        IHeadersConfig, IAppInsightsConfig {
-
-        /// <inheritdoc/>
-        public string InstrumentationKey => _ai.InstrumentationKey;
+    public class Config : ConfigBase, IWebHostConfig,
+        ICorsConfig, IOpenApiConfig, IVaultConfig, IRoleConfig,
+        IItemContainerConfig, IDiscoveryConfig,
+        IHeadersConfig {
 
         /// <inheritdoc/>
         public bool UseRoles => GetBoolOrDefault(PcsVariable.PCS_AUTH_ROLES);
@@ -73,21 +62,10 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Service.Runtime {
         public bool AutoApprove => _vault.AutoApprove;
 
         /// <inheritdoc/>
-        public string KeyVaultBaseUrl => _keyVault.KeyVaultBaseUrl;
-        /// <inheritdoc/>
-        public bool KeyVaultIsHsm => _keyVault.KeyVaultIsHsm;
-
-        /// <inheritdoc/>
-        public string DbConnectionString => _cosmos.DbConnectionString;
-        /// <inheritdoc/>
-        public int? ThroughputUnits => _cosmos.ThroughputUnits;
-        /// <inheritdoc/>
         public string ContainerName => "iiot_opc";
         /// <inheritdoc/>
         public string DatabaseName => "iiot_opc";
 
-        /// <inheritdoc/>
-        public string ServiceBusConnString => _sb.ServiceBusConnString;
 
         /// <inheritdoc/>
         public string OpcUaRegistryServiceUrl => _registry.OpcUaRegistryServiceUrl;
@@ -106,25 +84,17 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Service.Runtime {
         internal Config(IConfiguration configuration) :
             base(configuration) {
             _vault = new VaultConfig(configuration);
-            _keyVault = new KeyVaultConfig(configuration);
-            _cosmos = new CosmosDbConfig(configuration);
             _openApi = new OpenApiConfig(configuration);
             _host = new WebHostConfig(configuration);
             _cors = new CorsConfig(configuration);
-            _sb = new ServiceBusConfig(configuration);
             _registry = new DiscoveryConfig(configuration);
             _fh = new HeadersConfig(configuration);
-            _ai = new AppInsightsConfig(configuration);
         }
 
-        private readonly AppInsightsConfig _ai;
         private readonly IVaultConfig _vault;
-        private readonly KeyVaultConfig _keyVault;
-        private readonly ICosmosDbConfig _cosmos;
         private readonly OpenApiConfig _openApi;
         private readonly WebHostConfig _host;
         private readonly CorsConfig _cors;
-        private readonly ServiceBusConfig _sb;
         private readonly DiscoveryConfig _registry;
         private readonly HeadersConfig _fh;
     }

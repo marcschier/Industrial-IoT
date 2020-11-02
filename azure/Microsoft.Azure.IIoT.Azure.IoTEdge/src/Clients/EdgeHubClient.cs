@@ -16,6 +16,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Clients {
     using Microsoft.Azure.Devices.Client.Exceptions;
     using Microsoft.Azure.Devices.Shared;
     using Microsoft.Extensions.Logging;
+    using Microsoft.Extensions.Options;
     using Prometheus;
     using System;
     using System.Collections.Generic;
@@ -45,15 +46,15 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Clients {
         /// <summary>
         /// Create sdk factory
         /// </summary>
-        /// <param name="config"></param>
+        /// <param name="options"></param>
         /// <param name="broker"></param>
         /// <param name="ctrl"></param>
         /// <param name="logger"></param>
-        public EdgeHubClient(IIoTEdgeClientConfig config, IEventSourceBroker broker,
+        public EdgeHubClient(IOptions<IoTEdgeOptions> options, IEventSourceBroker broker,
             IProcessControl ctrl, ILogger logger) {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _ctrl = ctrl ?? throw new ArgumentNullException(nameof(ctrl));
-            _config = config ?? throw new ArgumentNullException(nameof(config));
+            _options = options ?? throw new ArgumentNullException(nameof(options));
 
             if (broker != null) {
                 _logHook = broker.Subscribe(IoTSdkLogger.EventSource, new IoTSdkLogger(logger));
@@ -67,8 +68,8 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Clients {
 
             IotHubConnectionStringBuilder cs = null;
             try {
-                if (!string.IsNullOrEmpty(_config.EdgeHubConnectionString)) {
-                    cs = IotHubConnectionStringBuilder.Create(_config.EdgeHubConnectionString);
+                if (!string.IsNullOrEmpty(_options.Value.EdgeHubConnectionString)) {
+                    cs = IotHubConnectionStringBuilder.Create(_options.Value.EdgeHubConnectionString);
 
                     if (string.IsNullOrEmpty(cs.SharedAccessKey)) {
                         throw new InvalidConfigurationException(
@@ -106,7 +107,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Clients {
                 throw ex;
             }
 
-            var bypassCertValidation = _config.BypassCertVerification;
+            var bypassCertValidation = _options.Value.BypassCertVerification;
             if (!bypassCertValidation) {
                 if (!string.IsNullOrEmpty(Gateway)) {
                     bypassCertValidation = true;
@@ -120,7 +121,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Clients {
                 // the configured transport (if provided) will be forced to it's OverTcp
                 // variant as follows: AmqpOverTcp when Amqp, AmqpOverWebsocket or
                 // AmqpOverTcp specified and MqttOverTcp otherwise. Default is MqttOverTcp
-                if ((_config.Transport & TransportOption.Mqtt) != 0) {
+                if ((_options.Value.Transport & TransportOption.Mqtt) != 0) {
                     // prefer Mqtt over Amqp due to performance reasons
                     transportToUse = TransportOption.MqttOverTcp;
                 }
@@ -131,8 +132,8 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Clients {
                         Gateway, transportToUse);
             }
             else {
-                transportToUse = _config.Transport == 0 ?
-                    TransportOption.Any : _config.Transport;
+                transportToUse = _options.Value.Transport == 0 ?
+                    TransportOption.Any : _options.Value.Transport;
             }
 
             if (bypassCertValidation) {
@@ -317,11 +318,11 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Clients {
                     throw new InvalidConfigurationException(
                         "No connection string for device client specified.");
                 }
-                return await DeviceClientAdapter.CreateAsync(_config.Product, cs,
+                return await DeviceClientAdapter.CreateAsync(_options.Value.Product, cs,
                     DeviceId, setting, timeout,
                         () => _ctrl?.Reset(), _logger).ConfigureAwait(false);
             }
-            return await ModuleClientAdapter.CreateAsync(_config.Product, cs,
+            return await ModuleClientAdapter.CreateAsync(_options.Value.Product, cs,
                 DeviceId, ModuleId, setting, timeout,
                     () => _ctrl?.Reset(), _logger).ConfigureAwait(false);
         }
@@ -902,7 +903,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Clients {
         private readonly Task<IIoTEdgeClient> _client;
         private readonly ILogger _logger;
         private readonly IProcessControl _ctrl;
-        private readonly IIoTEdgeClientConfig _config;
+        private readonly IOptions<IoTEdgeOptions> _options;
         private readonly IDisposable _logHook;
     }
 }

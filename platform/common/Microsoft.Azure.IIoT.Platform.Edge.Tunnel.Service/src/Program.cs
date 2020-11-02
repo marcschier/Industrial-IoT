@@ -102,8 +102,8 @@ namespace Microsoft.Azure.IIoT.Platform.Edge.Tunnel.Service {
             // --- Dependencies ---
 
             // Add Application Insights logging and dependency tracking.
-            builder.AddDependencyTracking(config, serviceInfo);
-            builder.AddAppInsightsLogging(config);
+            builder.AddDependencyTracking(serviceInfo);
+            builder.AddAppInsightsLogging();
             // IoT Hub client and telemetry handler
             builder.RegisterModule<IoTHubSupportModule>();
             builder.RegisterType<IoTHubDeviceEventHandler>()

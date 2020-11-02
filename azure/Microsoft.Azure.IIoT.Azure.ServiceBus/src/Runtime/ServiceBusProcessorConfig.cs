@@ -4,26 +4,22 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Runtime {
+    using Microsoft.Azure.IIoT.Utils;
     using Microsoft.Extensions.Configuration;
 
     /// <summary>
     /// ServiceBus configuration
     /// </summary>
-    public class ServiceBusProcessorConfig : ServiceBusConfig, IServiceBusProcessorConfig {
-
-        private const string kQueueKey = "ServiceBus:Queue";
+    internal sealed class ServiceBusProcessorConfig : ConfigBase<ServiceBusProcessorOptions> {
 
         /// <inheritdoc/>
-        public string Queue => GetStringOrDefault(kQueueKey,
-            () => GetStringOrDefault(PcsVariable.PCS_SERVICEBUS_QUEUE,
-                () => null));
-
-        /// <summary>
-        /// Configuration constructor
-        /// </summary>
-        /// <param name="configuration"></param>
         public ServiceBusProcessorConfig(IConfiguration configuration = null) :
             base(configuration) {
+        }
+
+        /// <inheritdoc/>
+        public override void Configure(string name, ServiceBusProcessorOptions options) {
+            options.Queue = GetStringOrDefault(PcsVariable.PCS_SERVICEBUS_QUEUE, () => null);
         }
     }
 }

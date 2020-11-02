@@ -113,7 +113,7 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service {
             services.AddSignalR()
                 .AddJsonSerializer()
                 .AddMessagePackSerializer()
-                .AddAzureSignalRService(Config);
+                .AddAzureSignalRService();
 
             services.AddSwagger(ServiceInfo.Name, ServiceInfo.Description);
 
@@ -265,7 +265,7 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service {
             // --- Dependencies ---
 
             // Add App Insights logging
-            builder.AddAppInsightsLogging(Config);
+            builder.AddAppInsightsLogging();
             // Add service to service authentication
             builder.RegisterModule<WebApiAuthentication>();
             // Register event bus for integration events

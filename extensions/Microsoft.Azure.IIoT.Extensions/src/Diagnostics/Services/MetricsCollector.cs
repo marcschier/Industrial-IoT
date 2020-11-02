@@ -7,6 +7,7 @@ namespace Microsoft.Azure.IIoT.Diagnostics {
     using Microsoft.Azure.IIoT.Utils;
     using Prometheus;
     using Microsoft.Extensions.Logging;
+    using Microsoft.Extensions.Options;
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
@@ -27,7 +28,7 @@ namespace Microsoft.Azure.IIoT.Diagnostics {
         /// <param name="handlers"></param>
         /// <param name="logger"></param>
         public MetricsCollector(IEnumerable<IMetricsHandler> handlers,
-            IDiagnosticsConfig config, ILogger logger) : base(null) {
+            IOptions<MetricsServerOptions> config, ILogger logger) : base(null) {
             _handlers = handlers?.ToList() ??
                 throw new ArgumentNullException(nameof(handlers));
             _config = config ?? throw new ArgumentNullException(nameof(config));
@@ -38,7 +39,7 @@ namespace Microsoft.Azure.IIoT.Diagnostics {
         protected override Task StartServer(CancellationToken ct) {
             try {
                 if (DiagnosticsLevel.NoMetrics !=
-                        (_config.DiagnosticsLevel & DiagnosticsLevel.NoMetrics)) {
+                        (_config.Value.DiagnosticsLevel & DiagnosticsLevel.NoMetrics)) {
                     _logger.LogInformation("Starting metrics collector...");
                     _handlers.ForEach(h => h.OnStarting());
 
@@ -80,7 +81,7 @@ namespace Microsoft.Azure.IIoT.Diagnostics {
                 }
 
                 var elapsed = duration.Elapsed;
-                var interval = _config?.MetricsCollectionInterval ?? kDefaultInterval;
+                var interval = _config?.Value.MetricsCollectionInterval ?? kDefaultInterval;
 
                 // Stop only here so that latest state is flushed on exit.
                 if (ct.IsCancellationRequested) {
@@ -108,7 +109,7 @@ namespace Microsoft.Azure.IIoT.Diagnostics {
 #else
             TimeSpan.FromMinutes(1);
 #endif
-        private readonly IDiagnosticsConfig _config;
+        private readonly IOptions<MetricsServerOptions> _config;
         private readonly List<IMetricsHandler> _handlers;
         private readonly ILogger _logger;
     }

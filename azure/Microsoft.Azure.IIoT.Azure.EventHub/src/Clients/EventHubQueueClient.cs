@@ -10,6 +10,7 @@ namespace Microsoft.Azure.IIoT.Azure.EventHub.Clients {
     using Microsoft.Azure.IIoT.Authentication;
     using Microsoft.Azure.IIoT.Utils;
     using Microsoft.Azure.IIoT.Http;
+    using Microsoft.Extensions.Options;
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -28,22 +29,22 @@ namespace Microsoft.Azure.IIoT.Azure.EventHub.Clients {
         /// <summary>
         /// Create service client
         /// </summary>
-        /// <param name="config"></param>
+        /// <param name="options"></param>
         /// <param name="provider"></param>
-        public EventHubQueueClient(IEventHubClientConfig config,
+        public EventHubQueueClient(IOptions<EventHubClientOptions> options,
             ITokenProvider provider = null) {
-            if (string.IsNullOrEmpty(config?.EventHubConnString)) {
-                throw new ArgumentException("Missing connection string", nameof(config));
+            if (string.IsNullOrEmpty(options.Value.EventHubConnString)) {
+                throw new ArgumentException("Missing connection string", nameof(options));
             }
             if (provider != null && provider.Supports(Resource.EventHub)) {
-                var cs = ConnectionString.Parse(config.EventHubConnString);
+                var cs = ConnectionString.Parse(options.Value.EventHubConnString);
                 var credential = new EventHubTokenProvider(provider);
                 _client = new EventHubProducerClient(cs.Endpoint,
-                    config.EventHubPath, credential);
+                    options.Value.EventHubPath, credential);
             }
             else {
-                _client = new EventHubProducerClient(config.EventHubConnString,
-                    config.EventHubPath); // ok if path is null - then uses cs
+                _client = new EventHubProducerClient(options.Value.EventHubConnString,
+                    options.Value.EventHubPath); // ok if path is null - then uses cs
             }
         }
 

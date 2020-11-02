@@ -10,6 +10,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Hosting {
     using Microsoft.Azure.IIoT.Authentication;
     using Microsoft.Azure.IIoT.Storage;
     using Microsoft.Azure.IIoT.Utils;
+    using Microsoft.Extensions.Options;
     using System;
     using System.Security.Cryptography;
     using System.Text;
@@ -24,18 +25,18 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Hosting {
         /// <summary>
         /// Create a sas token generator
         /// </summary>
-        /// <param name="config"></param>
+        /// <param name="options"></param>
         /// <param name="hsm"></param>
         /// <param name="cache"></param>
         /// <param name="identity"></param>
-        public SasTokenGenerator(IIoTEdgeClientConfig config, IIdentity identity,
+        public SasTokenGenerator(IOptions<IoTEdgeOptions> options, IIdentity identity,
             ISecureElement hsm, ICache cache) {
             _identity = identity ?? throw new ArgumentNullException(nameof(identity));
             _hsm = hsm ?? throw new ArgumentNullException(nameof(hsm));
             _cache = cache ?? throw new ArgumentNullException(nameof(cache));
 
-            if (!hsm.IsPresent && !string.IsNullOrEmpty(config?.EdgeHubConnectionString)) {
-                _cs = ConnectionString.Parse(config.EdgeHubConnectionString);
+            if (!hsm.IsPresent && !string.IsNullOrEmpty(options.Value.EdgeHubConnectionString)) {
+                _cs = ConnectionString.Parse(options.Value.EdgeHubConnectionString);
             }
         }
 
@@ -57,7 +58,9 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Hosting {
             }
             // If not found or not valid, create new token with default lifetime...
             var expiration = DateTime.UtcNow + kDefaultTokenLifetime;
-            var token = await SasToken.CreateAsync(audience, expiration, SignTokenAsync, _identity.DeviceId, _identity.ModuleId, keyId, ct).ConfigureAwait(false);
+            var token = await SasToken.CreateAsync(audience, expiration, 
+                SignTokenAsync, _identity.DeviceId, _identity.ModuleId,
+                keyId, ct).ConfigureAwait(false);
             rawToken = token.ToString();
             await _cache.SetStringAsync(audience + keyId, rawToken,
                 expiration - kTokenCacheRenewal, ct).ConfigureAwait(false);

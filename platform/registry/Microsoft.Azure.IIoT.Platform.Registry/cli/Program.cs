@@ -137,8 +137,8 @@ Operations (Mutually exclusive):
         /// Create supervisor module identity in device registry
         /// </summary>
         private static async Task MakeSupervisorAsync(string deviceId, string moduleId) {
-            var logger = ConsoleLogger.CreateLogger();
-            var config = new IoTHubConfig(null);
+            var logger = Log.Console();
+            var config = new IoTHubConfig(null).ToOptions();
             var registry = new IoTHubServiceClient(
                 config, new NewtonSoftJsonSerializer(), logger);
 
@@ -151,7 +151,7 @@ Operations (Mutually exclusive):
             Console.WriteLine(JsonConvert.SerializeObject(module));
             var twin = await registry.GetAsync(deviceId, moduleId, CancellationToken.None).ConfigureAwait(false);
             Console.WriteLine(JsonConvert.SerializeObject(twin));
-            var cs = ConnectionString.Parse(config.IoTHubConnString);
+            var cs = ConnectionString.Parse(config.Value.IoTHubConnString);
             Console.WriteLine("Connection string:");
             Console.WriteLine($"HostName={cs.HostName};DeviceId={deviceId};" +
                 $"ModuleId={moduleId};SharedAccessKey={module.Authentication.PrimaryKey}");
@@ -161,8 +161,8 @@ Operations (Mutually exclusive):
         /// Clear registry
         /// </summary>
         private static async Task ClearSupervisorsAsync() {
-            var logger = ConsoleLogger.CreateLogger();
-            var config = new IoTHubConfig(null);
+            var logger = Log.Console();
+            var config = new IoTHubConfig(null).ToOptions();
             var registry = new IoTHubServiceClient(
                 config, new NewtonSoftJsonSerializer(), logger);
 
@@ -203,8 +203,8 @@ Operations (Mutually exclusive):
         /// Clear registry
         /// </summary>
         private static async Task ClearRegistryAsync() {
-            var logger = ConsoleLogger.CreateLogger();
-            var config = new IoTHubConfig(null);
+            var logger = Log.Console();
+            var config = new IoTHubConfig(null).ToOptions();
             var registry = new IoTHubServiceClient(
                 config, new NewtonSoftJsonSerializer(), logger);
 

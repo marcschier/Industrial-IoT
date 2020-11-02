@@ -7,6 +7,7 @@ namespace Microsoft.Azure.IIoT.Azure.SignalR.Services {
     using Microsoft.Azure.IIoT.Rpc;
     using Microsoft.Azure.SignalR.Management;
     using Microsoft.AspNetCore.SignalR;
+    using Microsoft.Extensions.Options;
     using System;
     using System.Collections.Generic;
     using System.Security.Claims;
@@ -27,12 +28,13 @@ namespace Microsoft.Azure.IIoT.Azure.SignalR.Services {
         /// <summary>
         /// Create signalR event bus
         /// </summary>
-        /// <param name="config"></param>
-        public SignalRServiceEndpoint(ISignalRServiceConfig config) {
+        /// <param name="options"></param>
+        public SignalRServiceEndpoint(IOptions<SignalRServiceOptions> options) {
             Resource = HubNameAttribute.GetHubName(typeof(THub));
-            if (!string.IsNullOrEmpty(config?.SignalRConnString) && config.SignalRServerLess) {
+            if (!string.IsNullOrEmpty(options.Value?.SignalRConnString) &&
+                options.Value.SignalRServerLess) {
                 _serviceManager = new ServiceManagerBuilder().WithOptions(option => {
-                    option.ConnectionString = config.SignalRConnString;
+                    option.ConnectionString = options.Value.SignalRConnString;
                     option.ServiceTransportType = ServiceTransportType.Persistent;
                 }).Build();
             }

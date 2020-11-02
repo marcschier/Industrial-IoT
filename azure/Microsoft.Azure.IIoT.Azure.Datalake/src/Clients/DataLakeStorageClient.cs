@@ -10,6 +10,7 @@ namespace Microsoft.Azure.IIoT.Azure.Datalake.Clients {
     using Microsoft.Azure.IIoT.Utils;
     using Microsoft.Azure.IIoT.Http;
     using Microsoft.Extensions.Logging;
+    using Microsoft.Extensions.Options;
     using System;
     using System.IO;
     using System.Threading;
@@ -25,7 +26,7 @@ namespace Microsoft.Azure.IIoT.Azure.Datalake.Clients {
     /// <summary>
     /// Datalake storage service
     /// </summary>
-    public class DataLakeStorageClient : IFileStorage {
+    public class DatalakeStorageClient : IFileStorage {
 
         /// <inheritdoc/>
         public Uri Endpoint { get; }
@@ -33,20 +34,20 @@ namespace Microsoft.Azure.IIoT.Azure.Datalake.Clients {
         /// <summary>
         /// Azure Data lake storage service
         /// </summary>
-        /// <param name="config"></param>
+        /// <param name="options"></param>
         /// <param name="logger"></param>
         /// <param name="provider"></param>
-        public DataLakeStorageClient(IDatalakeConfig config, ILogger logger,
+        public DatalakeStorageClient(IOptions<DatalakeOptions> options, ILogger logger,
             ITokenProvider provider = null) {
-            if (config is null) {
-                throw new ArgumentNullException(nameof(config));
+            if (options is null) {
+                throw new ArgumentNullException(nameof(options));
             }
 
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
             // Get token source for storage
-            Endpoint = new Uri($"https://{config.AccountName}.{config.EndpointSuffix}");
-            if (string.IsNullOrEmpty(config.AccountKey)) {
+            Endpoint = new Uri($"https://{options.Value.AccountName}.{options.Value.EndpointSuffix}");
+            if (string.IsNullOrEmpty(options.Value.AccountKey)) {
                 if (provider?.Supports(Resource.Storage) != true) {
                     throw new InvalidConfigurationException(
                         "Missing shared access key or service principal " +
@@ -57,7 +58,7 @@ namespace Microsoft.Azure.IIoT.Azure.Datalake.Clients {
             }
             else {
                 _client = new DataLakeServiceClient(Endpoint,
-                    new StorageSharedKeyCredential(config.AccountName, config.AccountKey));
+                    new StorageSharedKeyCredential(options.Value.AccountName, options.Value.AccountKey));
             }
         }
 

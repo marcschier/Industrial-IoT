@@ -13,7 +13,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Ua.Service.Runtime {
     using Microsoft.Azure.IIoT.AspNetCore.Cors.Runtime;
     using Microsoft.Azure.IIoT.AspNetCore.Hosting;
     using Microsoft.Azure.IIoT.AspNetCore.Hosting.Runtime;
-    using Microsoft.Azure.IIoT.Diagnostics;
+    using Microsoft.Azure.IIoT.Utils;
     using Microsoft.Azure.IIoT.Azure.AppInsights;
     using Microsoft.Azure.IIoT.Azure.AppInsights.Runtime;
     using Microsoft.Azure.IIoT.Azure.IoTHub.Runtime;
@@ -27,16 +27,10 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Ua.Service.Runtime {
     /// <summary>
     /// Common web service configuration aggregation
     /// </summary>
-    public class Config : DiagnosticsConfig, IWebHostConfig, IIoTHubConfig,
+    public class Config : ConfigBase, IWebHostConfig,
         ICorsConfig, ITcpListenerConfig, IWebListenerConfig,
-        ISessionServicesConfig, IDiscoveryConfig, IHeadersConfig,
-        IAppInsightsConfig {
+        ISessionServicesConfig, IDiscoveryConfig, IHeadersConfig {
 
-        /// <inheritdoc/>
-        public string InstrumentationKey => _ai.InstrumentationKey;
-
-        /// <inheritdoc/>
-        public string IoTHubConnString => _hub.IoTHubConnString;
 
         /// <inheritdoc/>
         public string CorsWhitelist => _cors.CorsWhitelist;
@@ -91,18 +85,14 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Ua.Service.Runtime {
             base(configuration) {
 
             _host = new WebHostConfig(configuration);
-            _hub = new IoTHubConfig(configuration);
             _cors = new CorsConfig(configuration);
             _sessions = new SessionServicesConfig(configuration);
             _api = new DiscoveryConfig(configuration);
             _fh = new HeadersConfig(configuration);
-            _ai = new AppInsightsConfig(configuration);
         }
 
-        private readonly AppInsightsConfig _ai;
         private readonly WebHostConfig _host;
         private readonly CorsConfig _cors;
-        private readonly IoTHubConfig _hub;
         private readonly SessionServicesConfig _sessions;
         private readonly DiscoveryConfig _api;
         private readonly HeadersConfig _fh;

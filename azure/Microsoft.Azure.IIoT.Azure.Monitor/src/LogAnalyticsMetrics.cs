@@ -16,7 +16,6 @@ namespace Microsoft.Azure.IIoT.Azure.LogAnalytics {
 
         /// <inheritdoc/>
         protected override void Load(ContainerBuilder builder) {
-
             builder.RegisterType<MetricsCollector>()
                 .AsImplementedInterfaces().InstancePerLifetimeScope()
                 .IfNotRegistered(typeof(IMetricServer));

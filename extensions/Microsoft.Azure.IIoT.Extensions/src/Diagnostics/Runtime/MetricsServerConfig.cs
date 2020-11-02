@@ -4,33 +4,23 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Diagnostics {
+    using Microsoft.Azure.IIoT.Utils;
     using Microsoft.Extensions.Configuration;
 
     /// <summary>
     /// Metrics server configuration
     /// </summary>
-    public class MetricsServerConfig : DiagnosticsConfig, IMetricServerConfig {
-
-        /// <summary>
-        /// Configuration keys
-        /// </summary>
-        private const string kPortKey = "Diagnostics:MetricsServer:Port";
-        private const string kPathKey = "Diagnostics:MetricsServer:Path";
-        private const string kHttpsKey = "Diagnostics:MetricsServer:UseHttps";
+    public class MetricsServerConfig : ConfigBase<MetricsServerOptions> {
 
         /// <inheritdoc/>
-        public int Port => GetIntOrDefault(kPortKey, () => 0);
-        /// <inheritdoc/>
-        public string Path => GetStringOrDefault(kPathKey, () => null);
-        /// <inheritdoc/>
-        public bool UseHttps => GetBoolOrDefault(kHttpsKey, () => false);
-
-        /// <summary>
-        /// Configuration constructor
-        /// </summary>
-        /// <param name="configuration"></param>
         public MetricsServerConfig(IConfiguration configuration) :
             base(configuration) {
+        }
+
+        /// <inheritdoc/>
+        public override void Configure(string name, MetricsServerOptions options) {
+            options.DiagnosticsLevel = (DiagnosticsLevel)GetIntOrDefault(
+                PcsVariable.PCS_DIAGNOSTICS_LEVEL, () => 0);
         }
     }
 }

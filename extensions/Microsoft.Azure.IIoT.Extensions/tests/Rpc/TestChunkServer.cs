@@ -20,11 +20,11 @@ namespace Microsoft.Azure.IIoT.Rpc {
             MaxMethodPayloadSizeInBytes = size;
             _handler = handler;
             _serializer = serializer;
-            _server = new ChunkMethodServer(_serializer, ConsoleLogger.CreateLogger());
+            _server = new ChunkMethodServer(_serializer, Log.Console());
         }
 
         public IMethodClient CreateClient() {
-            return new ChunkMethodClient(this, _serializer, ConsoleLogger.CreateLogger());
+            return new ChunkMethodClient(this, _serializer, Log.Console());
         }
 
         public int MaxMethodPayloadSizeInBytes { get; }

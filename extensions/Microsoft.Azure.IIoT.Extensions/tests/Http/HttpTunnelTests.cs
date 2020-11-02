@@ -33,7 +33,7 @@ namespace Microsoft.Azure.IIoT.Http.Tunnel.Services {
             var fixture = new Fixture().Customize(new AutoMoqCustomization { ConfigureMembers = true });
 
             // Setup
-            var logger = ConsoleLogger.CreateLogger();
+            var logger = Log.Console();
             var eventBridge = new EventBridge();
             using var factory = new HttpTunnelEventClientFactory(eventBridge, _serializer, null,
                 fixture.Create<IIdentity>(), logger);
@@ -75,7 +75,7 @@ namespace Microsoft.Azure.IIoT.Http.Tunnel.Services {
             var fixture = new Fixture().Customize(new AutoMoqCustomization { ConfigureMembers = true });
 
             // Setup
-            var logger = ConsoleLogger.CreateLogger();
+            var logger = Log.Console();
             var eventBridge = new EventBridge();
             using var factory = new HttpTunnelEventClientFactory(eventBridge, _serializer, null,
                 fixture.Create<IIdentity>(), logger);
@@ -133,7 +133,7 @@ namespace Microsoft.Azure.IIoT.Http.Tunnel.Services {
             var fixture = new Fixture().Customize(new AutoMoqCustomization { ConfigureMembers = true });
 
             // Setup
-            var logger = ConsoleLogger.CreateLogger();
+            var logger = Log.Console();
             var eventBridge = new EventBridge();
             using var factory = new HttpTunnelEventClientFactory(eventBridge, _serializer, null,
                 fixture.Create<IIdentity>(), logger);
@@ -199,7 +199,7 @@ namespace Microsoft.Azure.IIoT.Http.Tunnel.Services {
             var fixture = new Fixture().Customize(new AutoMoqCustomization { ConfigureMembers = true });
 
             // Setup
-            var logger = ConsoleLogger.CreateLogger();
+            var logger = Log.Console();
             var eventBridge = new EventBridge();
             using var factory = new HttpTunnelEventClientFactory(eventBridge, _serializer, null,
                 fixture.Create<IIdentity>(), logger);
@@ -254,7 +254,7 @@ namespace Microsoft.Azure.IIoT.Http.Tunnel.Services {
             var fixture = new Fixture().Customize(new AutoMoqCustomization { ConfigureMembers = true });
 
             // Setup
-            var logger = ConsoleLogger.CreateLogger();
+            var logger = Log.Console();
             var eventBridge = new EventBridge();
             using var factory = new HttpTunnelEventClientFactory(eventBridge, _serializer, null,
                 fixture.Create<IIdentity>(), logger);

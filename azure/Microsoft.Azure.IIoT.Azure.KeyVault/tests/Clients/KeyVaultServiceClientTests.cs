@@ -27,6 +27,7 @@ namespace Microsoft.Azure.IIoT.Azure.KeyVault.Clients {
     using System.Threading.Tasks;
     using Xunit;
     using Xunit.Categories;
+    using Microsoft.Extensions.Options;
 
     [UnitTest]
     public class KeyVaultServiceClientTests {
@@ -444,7 +445,7 @@ namespace Microsoft.Azure.IIoT.Azure.KeyVault.Clients {
         /// <param name="provider"></param>
         private static AutoMock Setup(out ICertificateIssuer issuer, out Mock<IKeyVaultClient> client) {
             var keyVault = client = new Mock<IKeyVaultClient>();
-            var config = new Mock<IKeyVaultConfig>();
+            var config = new Mock<KeyVaultOptions>();
             config.SetReturnsDefault(kTestVaultUri);
             config.SetReturnsDefault(true);
 
@@ -456,10 +457,10 @@ namespace Microsoft.Azure.IIoT.Azure.KeyVault.Clients {
                 builder.RegisterType<KeyVaultKeyHandleSerializer>().As<IKeyHandleSerializer>();
                 builder.RegisterType<CertificateDatabase>().As<ICertificateRepository>();
                 builder.RegisterType<CertificateFactory>().As<ICertificateFactory>();
-                builder.RegisterMock(config);
+                builder.RegisterInstance(Options.Create(config.Object)).ExternallyOwned();
                 builder.RegisterMock(keyVault);
                 builder.RegisterType<KeyVaultServiceClient>().UsingConstructor(
-                    typeof(ICertificateRepository), typeof(ICertificateFactory), typeof(IKeyVaultConfig),
+                    typeof(ICertificateRepository), typeof(ICertificateFactory), typeof(IOptions<KeyVaultOptions>),
                     typeof(IJsonSerializer), typeof(IKeyVaultClient))
                     .As<ICertificateIssuer>();
             });

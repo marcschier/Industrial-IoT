@@ -42,7 +42,7 @@ namespace Microsoft.Azure.IIoT.Azure.ActiveDirectory.Utils {
             var builder = new ContainerBuilder();
             builder.RegisterInstance(configuration)
                 .AsImplementedInterfaces();
-            builder.RegisterModule<Log>();
+            builder.RegisterModule<Logging>();
             builder.RegisterModule<KeyVaultAuthentication>();
 
             if (allowInteractiveLogon) {

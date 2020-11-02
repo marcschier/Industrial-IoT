@@ -10,21 +10,17 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Runtime {
     /// <summary>
     /// ServiceBus configuration
     /// </summary>
-    public class ServiceBusConfig : ConfigBase, IServiceBusConfig {
-
-        private const string kServiceBusConnectionString = "ServiceBus:ConnectionString";
+    internal sealed class ServiceBusConfig : ConfigBase<ServiceBusOptions> {
 
         /// <inheritdoc/>
-        public string ServiceBusConnString => GetStringOrDefault(kServiceBusConnectionString,
-            () => GetStringOrDefault(PcsVariable.PCS_SERVICEBUS_CONNSTRING,
-                () => GetStringOrDefault("_SB_CS", () => null)));
-
-        /// <summary>
-        /// Configuration constructor
-        /// </summary>
-        /// <param name="configuration"></param>
         public ServiceBusConfig(IConfiguration configuration = null) :
             base(configuration) {
+        }
+
+        /// <inheritdoc/>
+        public override void Configure(string name, ServiceBusOptions options) {
+            options.ServiceBusConnString = GetStringOrDefault(PcsVariable.PCS_SERVICEBUS_CONNSTRING,
+                () => GetStringOrDefault("_SB_CS", () => null));
         }
     }
 }

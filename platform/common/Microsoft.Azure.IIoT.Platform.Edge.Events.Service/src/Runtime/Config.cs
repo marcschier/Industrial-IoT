@@ -4,105 +4,51 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Platform.Edge.Events.Service.Runtime {
-    using Microsoft.Azure.IIoT.Azure.AppInsights;
-    using Microsoft.Azure.IIoT.Azure.AppInsights.Runtime;
-    using Microsoft.Azure.IIoT.Azure.EventHub.Processor.Runtime;
     using Microsoft.Azure.IIoT.Azure.EventHub.Processor;
-    using Microsoft.Azure.IIoT.Azure.IoTHub.Runtime;
-    using Microsoft.Azure.IIoT.Azure.IoTHub;
-    using Microsoft.Azure.IIoT.Azure.ServiceBus;
-    using Microsoft.Azure.IIoT.Azure.ServiceBus.Runtime;
-    using Microsoft.Azure.IIoT.Azure.CosmosDb;
-    using Microsoft.Azure.IIoT.Azure.CosmosDb.Runtime;
     using Microsoft.Azure.IIoT.Storage;
     using Microsoft.Azure.IIoT.Diagnostics;
+    using Microsoft.Azure.IIoT.Utils;
+    using Microsoft.Extensions.Options;
     using Microsoft.Extensions.Configuration;
     using System;
 
     /// <summary>
     /// Telemetry processor service configuration
     /// </summary>
-    public class Config : DiagnosticsConfig, IEventProcessorHostConfig,
-        IEventHubConsumerConfig, IServiceBusConfig, IIoTHubConfig,
-        IEventProcessorConfig, ICosmosDbConfig, IItemContainerConfig,
-        IMetricServerConfig, IAppInsightsConfig {
+    public class Config : ConfigBase, IConfigureOptions<EventHubConsumerOptions>,
+        IConfigureOptions<EventProcessorHostOptions>, IConfigureOptions<EventProcessorFactoryOptions>,
+        IItemContainerConfig, IConfigureOptions<MetricsServerOptions> {
 
-        /// <inheritdoc/>
-        public string InstrumentationKey => _ai.InstrumentationKey;
-
-        /// <inheritdoc/>
-        public string ConsumerGroup => GetStringOrDefault(
-            PcsVariable.PCS_IOTHUB_EVENTHUB_CONSUMER_GROUP_EVENTS,
-                () => "events");
-
-        /// <inheritdoc/>
-        public string EventHubConnString => _eh.EventHubConnString;
-        /// <inheritdoc/>
-        public string EventHubPath => _eh.EventHubPath;
-        /// <inheritdoc/>
-        public bool UseWebsockets => _eh.UseWebsockets;
-
-        /// <inheritdoc/>
-        public int ReceiveBatchSize => _ep.ReceiveBatchSize;
-        /// <inheritdoc/>
-        public TimeSpan ReceiveTimeout => _ep.ReceiveTimeout;
-        /// <inheritdoc/>
-        public string EndpointSuffix => _ep.EndpointSuffix;
-        /// <inheritdoc/>
-        public string AccountName => _ep.AccountName;
-        /// <inheritdoc/>
-        public string AccountKey => _ep.AccountKey;
-        /// <inheritdoc/>
-        public string LeaseContainerName => _ep.LeaseContainerName;
-        /// <inheritdoc/>
-        public bool InitialReadFromEnd => true;
-        /// <inheritdoc/>
-        public TimeSpan? SkipEventsOlderThan => TimeSpan.FromMinutes(5);
-        /// <inheritdoc/>
-        public TimeSpan? CheckpointInterval => _ep.CheckpointInterval;
-
-        /// <inheritdoc/>
-        public string ServiceBusConnString => _sb.ServiceBusConnString;
-
-        /// <inheritdoc/>
-        public string IoTHubConnString => _hub.IoTHubConnString;
-
-        /// <inheritdoc/>
-        public string DbConnectionString => _cosmos.DbConnectionString;
-        /// <inheritdoc/>
-        public int? ThroughputUnits => _cosmos.ThroughputUnits;
         /// <inheritdoc/>
         public string ContainerName => "iiot_opc";
         /// <inheritdoc/>
         public string DatabaseName => "iiot_opc";
 
-        /// <inheritdoc/>
-        public int Port => 9500;
-        /// <inheritdoc/>
-        public string Path => _ms.Path;
-        /// <inheritdoc/>
-        public bool UseHttps => _ms.UseHttps;
 
-        /// <summary>
-        /// Configuration constructor
-        /// </summary>
-        /// <param name="configuration"></param>
-        public Config(IConfiguration configuration) : base(configuration) {
-            _ep = new EventProcessorConfig(configuration);
-            _eh = new IoTHubConsumerConfig(configuration);
-            _sb = new ServiceBusConfig(configuration);
-            _hub = new IoTHubConfig(configuration);
-            _cosmos = new CosmosDbConfig(configuration);
-            _ai = new AppInsightsConfig(configuration);
-            _ms = new MetricsServerConfig(configuration);
+        /// <inheritdoc/>
+        public Config(IConfiguration configuration) :
+            base(configuration) {
         }
 
-        private readonly MetricsServerConfig _ms;
-        private readonly AppInsightsConfig _ai;
-        private readonly EventProcessorConfig _ep;
-        private readonly IoTHubConsumerConfig _eh;
-        private readonly ServiceBusConfig _sb;
-        private readonly IoTHubConfig _hub;
-        private readonly CosmosDbConfig _cosmos;
+        /// <inheritdoc/>
+        public void Configure(EventHubConsumerOptions options) {
+            options.ConsumerGroup = GetStringOrDefault(
+                PcsVariable.PCS_IOTHUB_EVENTHUB_CONSUMER_GROUP_EVENTS, () => "events");
+        }
+
+        /// <inheritdoc/>
+        public void Configure(MetricsServerOptions options) {
+            options.Port = 9500;
+        }
+
+        /// <inheritdoc/>
+        public void Configure(EventProcessorHostOptions options) {
+            options.InitialReadFromEnd = true;
+        }
+
+        /// <inheritdoc/>
+        public void Configure(EventProcessorFactoryOptions options) {
+            options.SkipEventsOlderThan = TimeSpan.FromMinutes(5);
+        }
     }
 }

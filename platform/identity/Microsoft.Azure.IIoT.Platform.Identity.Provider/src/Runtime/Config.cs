@@ -9,7 +9,7 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Provider.Runtime {
     using Microsoft.Azure.IIoT.AspNetCore.Hosting.Runtime;
     using Microsoft.Azure.IIoT.Azure.CosmosDb;
     using Microsoft.Azure.IIoT.Azure.CosmosDb.Runtime;
-    using Microsoft.Azure.IIoT.Diagnostics;
+    using Microsoft.Azure.IIoT.Utils;
     using Microsoft.Azure.IIoT.Hosting;
     using Microsoft.Azure.IIoT.Storage;
     using Microsoft.Extensions.Configuration;
@@ -17,13 +17,9 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Provider.Runtime {
     /// <summary>
     /// Common web service configuration aggregation
     /// </summary>
-    public class Config : DiagnosticsConfig, IWebHostConfig, IItemContainerConfig,
-        ICosmosDbConfig, IHeadersConfig, IRoleConfig {
+    public class Config : ConfigBase, IWebHostConfig, IItemContainerConfig,
+        IHeadersConfig, IRoleConfig {
 
-        /// <inheritdoc/>
-        public string DbConnectionString => _cosmos.DbConnectionString;
-        /// <inheritdoc/>
-        public int? ThroughputUnits => _cosmos.ThroughputUnits;
         /// <inheritdoc/>
         public string ContainerName => "iiot_opc";
         /// <inheritdoc/>
@@ -53,12 +49,10 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Provider.Runtime {
             base(configuration) {
 
             _host = new WebHostConfig(configuration);
-            _cosmos = new CosmosDbConfig(configuration);
             _fh = new HeadersConfig(configuration);
         }
 
         private readonly WebHostConfig _host;
-        private readonly CosmosDbConfig _cosmos;
         private readonly HeadersConfig _fh;
     }
 }

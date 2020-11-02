@@ -5,13 +5,13 @@
 
 namespace Microsoft.Azure.IIoT.Platform.Publisher.Cdm.Runtime {
     using Microsoft.Azure.IIoT.Platform.Publisher.Cdm;
-    using Microsoft.Azure.IIoT.Diagnostics;
+    using Microsoft.Azure.IIoT.Utils;
     using Microsoft.Extensions.Configuration;
 
     /// <summary>
     /// CDM storage configuration
     /// </summary>
-    public class CdmFolderConfig : DiagnosticsConfig, ICdmFolderConfig {
+    public class CdmFolderConfig : ConfigBase, ICdmFolderConfig {
 
         /// <summary>
         /// Table storage configuration

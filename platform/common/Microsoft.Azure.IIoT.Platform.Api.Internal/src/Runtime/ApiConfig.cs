@@ -15,13 +15,13 @@ namespace Microsoft.Azure.IIoT.Api.Runtime {
     using Microsoft.Azure.IIoT.Platform.Events.Api.Runtime;
     using Microsoft.Azure.IIoT.Platform.Events.Api;
     using Microsoft.Azure.IIoT.Messaging.SignalR;
-    using Microsoft.Azure.IIoT.Diagnostics;
+    using Microsoft.Azure.IIoT.Utils;
     using Microsoft.Extensions.Configuration;
 
     /// <summary>
     /// Complete api configuration
     /// </summary>
-    public class ApiConfig : DiagnosticsConfig, ITwinConfig, IDiscoveryConfig,
+    public class ApiConfig : ConfigBase, ITwinConfig, IDiscoveryConfig,
         IVaultConfig, IPublisherConfig, IEventsConfig, ISignalRClientConfig {
 
         /// <inheritdoc/>

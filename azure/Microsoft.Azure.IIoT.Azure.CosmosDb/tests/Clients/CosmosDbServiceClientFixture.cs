@@ -14,6 +14,7 @@ namespace Microsoft.Azure.IIoT.Azure.CosmosDb.Clients {
     using System.Threading.Tasks;
     using System.Runtime.Serialization;
     using System.Collections.Generic;
+    using Microsoft.Extensions.Options;
 
     public sealed class CosmosDbServiceClientFixture : IDisposable {
 
@@ -104,12 +105,12 @@ namespace Microsoft.Azure.IIoT.Azure.CosmosDb.Clients {
         /// <param name="options"></param>
         /// <returns></returns>
         public static async Task<IDatabase> GetDatabaseAsync() {
-            var logger = ConsoleLogger.CreateLogger();
+            var logger = Log.Console();
             var config = new ConfigurationBuilder()
                 .AddFromDotEnvFile()
                 .AddFromKeyVault()
                 .Build();
-            var configuration = new CosmosDbConfig(config);
+            var configuration = new CosmosDbConfig(config).ToOptions();
             var server = new CosmosDbServiceClient(configuration,
                 new NewtonSoftJsonSerializer(), logger);
             return await server.OpenAsync("test", null).ConfigureAwait(false);

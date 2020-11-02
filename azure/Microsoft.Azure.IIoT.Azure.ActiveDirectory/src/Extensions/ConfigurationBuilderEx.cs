@@ -191,7 +191,7 @@ namespace Microsoft.Extensions.Configuration {
                 IConfigurationRoot configuration, bool allowInteractiveLogon, string keyVaultUrlVarName,
                 bool lazyLoad) {
                 var vaultUri = configuration.GetValue<string>(keyVaultUrlVarName, null);
-                var logger = ConsoleLogger.CreateLogger();
+                var logger = Log.Console();
                 if (string.IsNullOrEmpty(vaultUri)) {
                     logger.LogWarning("No keyvault uri found in configuration under {key}. ",
                         keyVaultUrlVarName);

@@ -11,6 +11,7 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Services {
     using Microsoft.Azure.IIoT.Exceptions;
     using Microsoft.Azure.ServiceBus;
     using Microsoft.Extensions.Logging;
+    using Microsoft.Extensions.Options;
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -31,12 +32,12 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Services {
         /// <param name="config"></param>
         /// <param name="process"></param>
         public ServiceBusEventBus(IServiceBusClientFactory factory, IJsonSerializer serializer,
-            ILogger logger, IProcessIdentity process, IServiceBusEventBusConfig config = null) {
+            ILogger logger, IProcessIdentity process, IOptions<ServiceBusEventBusOptions> config) {
 
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _serializer = serializer ?? throw new ArgumentNullException(nameof(serializer));
             _factory = factory ?? throw new ArgumentNullException(nameof(factory));
-            _config = config;
+            _config = config ?? throw new ArgumentNullException(nameof(config));
 
             if (string.IsNullOrEmpty(process?.ServiceId)) {
                 throw new ArgumentNullException(nameof(process));
@@ -45,7 +46,7 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Services {
             // Create subscription client
             _subscriptionClient = _factory.CreateOrGetSubscriptionClientAsync(
                 ProcessEventAsync, ExceptionReceivedHandler, process.ServiceId,
-                    _config?.Topic).Result;
+                    _config.Value?.Topic).Result;
             Try.Async(() => _subscriptionClient.RemoveRuleAsync(
                 RuleDescription.DefaultRuleName)).Wait();
         }
@@ -57,7 +58,7 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Services {
             }
             var body = _serializer.SerializeToBytes(message).ToArray();
             try {
-                var client = await _factory.CreateOrGetTopicClientAsync(_config?.Topic).ConfigureAwait(false);
+                var client = await _factory.CreateOrGetTopicClientAsync(_config.Value?.Topic).ConfigureAwait(false);
 
                 var moniker = typeof(T).GetMoniker();
                 await client.SendAsync(new Message {
@@ -250,7 +251,7 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Services {
         private readonly ILogger _logger;
         private readonly IJsonSerializer _serializer;
         private readonly IServiceBusClientFactory _factory;
-        private readonly IServiceBusEventBusConfig _config;
+        private readonly IOptions<ServiceBusEventBusOptions> _config;
         private readonly ISubscriptionClient _subscriptionClient;
     }
 }

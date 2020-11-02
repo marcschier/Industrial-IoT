@@ -6,8 +6,42 @@
 namespace Microsoft.Azure.IIoT.Utils {
     using Microsoft.Azure.IIoT.Exceptions;
     using Microsoft.Extensions.Configuration;
+    using Microsoft.Extensions.Options;
     using System;
     using System.Collections.Generic;
+
+    /// <summary>
+    /// Configuration base helper class
+    /// </summary>
+    public abstract class ConfigBase<T> : ConfigBase, 
+        IConfigureOptions<T>, IConfigureNamedOptions<T> where T : class {
+
+        /// <summary>
+        /// Configuration constructor
+        /// </summary>
+        /// <param name="configuration"></param>
+        protected ConfigBase(IConfiguration configuration = null) : 
+            base(configuration) {
+        }
+
+        /// <inheritdoc/>
+        public abstract void Configure(string name, T options);
+
+        /// <inheritdoc/>
+        public void Configure(T options) {
+            Configure(string.Empty, options);
+        }
+
+        /// <summary>
+        /// Helper to get options
+        /// </summary>
+        /// <returns></returns>
+        public IOptions<T> ToOptions() {
+            var t = Configuration.Get<T>();
+            Configure(t);
+            return Options.Create(t);
+        }
+    }
 
     /// <summary>
     /// Configuration base helper class

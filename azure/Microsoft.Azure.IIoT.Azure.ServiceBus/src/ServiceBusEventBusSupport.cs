@@ -6,6 +6,7 @@
 namespace Microsoft.Azure.IIoT.Azure.ServiceBus {
     using Microsoft.Azure.IIoT.Azure.ServiceBus.Clients;
     using Microsoft.Azure.IIoT.Azure.ServiceBus.Services;
+    using Microsoft.Azure.IIoT.Azure.ServiceBus.Runtime;
     using Microsoft.Azure.IIoT.Messaging.Services;
     using Microsoft.Azure.IIoT.Messaging;
     using Microsoft.Azure.IIoT.Tasks.Services;
@@ -26,6 +27,7 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus {
             // Register event bus for integration events
             builder.RegisterType<EventBusHost>().AsSelf()
                 .AsImplementedInterfaces().SingleInstance();
+
             builder.RegisterType<ServiceBusClientFactory>()
                 .AsImplementedInterfaces();
             builder.RegisterType<ServiceBusEventBus>()
@@ -34,6 +36,11 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus {
             builder.RegisterType<TaskProcessor>()
                 .AsImplementedInterfaces().SingleInstance()
                 .IfNotRegistered(typeof(ITaskProcessor));
+
+            builder.RegisterType<ServiceBusConfig>()
+                .AsImplementedInterfaces();
+            builder.RegisterType<ServiceBusEventBusConfig>()
+                .AsImplementedInterfaces();
 
             base.Load(builder);
         }

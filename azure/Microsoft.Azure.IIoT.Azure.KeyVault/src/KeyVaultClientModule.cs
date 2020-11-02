@@ -3,7 +3,9 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Azure.KeyVault.Clients {
+namespace Microsoft.Azure.IIoT.Azure.KeyVault {
+    using Microsoft.Azure.IIoT.Azure.KeyVault.Clients;
+    using Microsoft.Azure.IIoT.Azure.KeyVault.Runtime;
     using Autofac;
 
     /// <summary>
@@ -16,6 +18,8 @@ namespace Microsoft.Azure.IIoT.Azure.KeyVault.Clients {
             builder.RegisterType<KeyVaultKeyHandleSerializer>()
                 .AsImplementedInterfaces();
             builder.RegisterType<KeyVaultServiceClient>()
+                .AsImplementedInterfaces();
+            builder.RegisterType<KeyVaultConfig>()
                 .AsImplementedInterfaces();
             base.Load(builder);
         }

@@ -209,10 +209,8 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Service {
 
             // Add service to service authentication
             builder.RegisterModule<WebApiAuthentication>();
-            builder.RegisterType<LogAnalyticsConfig>()
-                .AsImplementedInterfaces().SingleInstance();
             // Add diagnostics
-            builder.AddAppInsightsLogging(Config);
+            builder.AddAppInsightsLogging();
             // Register event bus for integration events
             builder.RegisterModule<OrleansEventBusModule>();
             // Register database for storage

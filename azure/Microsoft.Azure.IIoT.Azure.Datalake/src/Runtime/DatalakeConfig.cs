@@ -10,51 +10,28 @@ namespace Microsoft.Azure.IIoT.Azure.Datalake.Runtime {
     /// <summary>
     /// Datalake file storage configuration
     /// </summary>
-    public class DatalakeConfig : ConfigBase, IDatalakeConfig  {
+    internal sealed class DatalakeConfig : ConfigBase<DatalakeOptions> {
 
-        /// <summary>
-        /// Configuration keys
-        /// </summary>
-        private const string kDatalakeAccountNameKey = "Datalake:AccountName";
-        private const string kDatalakeEndpointSuffixKey = "Datalake:EndpointSuffix";
-        private const string kDatalakeAccountKeyKey = "Datalake:AccountKey";
-        private const string kDatalakeAccountConnectionStringKey = "Datalake:ConnectionString";
-
-        /// <summary> Name </summary>
-        public string AccountName =>
-            GetConnectonStringTokenOrDefault(kDatalakeAccountConnectionStringKey,
-                cs => cs.Endpoint,
-            () => GetConnectonStringTokenOrDefault(PcsVariable.PCS_ADLSG2_CONNSTRING,
-                cs => cs.Endpoint,
-            () => GetStringOrDefault(kDatalakeAccountNameKey,
-            () => GetStringOrDefault(PcsVariable.PCS_ADLSG2_ACCOUNT,
-            () => null))));
-        /// <summary> Suffix </summary>
-        public string EndpointSuffix =>
-            GetConnectonStringTokenOrDefault(kDatalakeAccountConnectionStringKey,
-                cs => cs.EndpointSuffix,
-            () => GetConnectonStringTokenOrDefault(PcsVariable.PCS_ADLSG2_CONNSTRING,
-                cs => cs.EndpointSuffix,
-            () => GetStringOrDefault(kDatalakeEndpointSuffixKey,
-            () => GetStringOrDefault(PcsVariable.PCS_ADLSG2_ENDPOINTSUFFIX,
-            () => "dfs.core.windows.net"))));
-        /// <summary> Key </summary>
-        public string AccountKey =>
-            GetConnectonStringTokenOrDefault(kDatalakeAccountConnectionStringKey,
-                cs => cs.SharedAccessKey,
-            () => GetConnectonStringTokenOrDefault(PcsVariable.PCS_ADLSG2_CONNSTRING,
-                cs => cs.SharedAccessKey,
-            () => GetStringOrDefault(kDatalakeAccountKeyKey,
-            () => GetStringOrDefault(PcsVariable.PCS_ADLSG2_ACCOUNT_KEY,
-            () => null))));
-
-        /// <summary>
-        /// Configuration constructor
-        /// </summary>
-        /// <param name="configuration"></param>
+        /// <inheritdoc/>
         public DatalakeConfig(IConfiguration configuration) :
             base(configuration) {
         }
 
+        /// <inheritdoc/>
+        public override void Configure(string name, DatalakeOptions options) {
+
+            options.AccountName = GetConnectonStringTokenOrDefault(
+                PcsVariable.PCS_ADLSG2_CONNSTRING, cs => cs.Endpoint,
+                () => GetStringOrDefault(PcsVariable.PCS_ADLSG2_ACCOUNT,
+                () => null));
+            options.EndpointSuffix = GetConnectonStringTokenOrDefault(
+                PcsVariable.PCS_ADLSG2_CONNSTRING, cs => cs.EndpointSuffix,
+                () => GetStringOrDefault(PcsVariable.PCS_ADLSG2_ENDPOINTSUFFIX,
+                () => "dfs.core.windows.net"));
+            options.AccountKey = GetConnectonStringTokenOrDefault(
+                PcsVariable.PCS_ADLSG2_CONNSTRING, cs => cs.SharedAccessKey,
+                () => GetStringOrDefault(PcsVariable.PCS_ADLSG2_ACCOUNT_KEY,
+                () => null));
+        }
     }
 }

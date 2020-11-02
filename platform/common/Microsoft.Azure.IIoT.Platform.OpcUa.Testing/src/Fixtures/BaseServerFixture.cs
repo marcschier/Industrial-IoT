@@ -63,7 +63,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Fixtures {
             if (nodes == null) {
                 throw new ArgumentNullException(nameof(nodes));
             }
-            Logger = ConsoleLogger.CreateLogger(LogLevel.Debug);
+            Logger = Log.Console(LogLevel.Debug);
             _config = new TestClientServicesConfig();
             _client = new Lazy<ClientServices>(() => {
                 return new ClientServices(Logger, _config);

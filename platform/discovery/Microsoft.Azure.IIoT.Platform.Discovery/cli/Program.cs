@@ -28,8 +28,9 @@ namespace Microsoft.Azure.IIoT.Platform.Discovery.Cli {
     using Microsoft.Azure.IIoT.Utils;
     using Microsoft.Azure.IIoT.Serializers.NewtonSoft;
     using Microsoft.Extensions.Configuration;
-    using Opc.Ua;
+    using Microsoft.Extensions.Options;
     using Microsoft.Extensions.Logging;
+    using Opc.Ua;
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
@@ -238,7 +239,7 @@ Operations (Mutually exclusive):
             if (!ConnectionString.TryParse(iotHubCs, out var connectionString)) {
                 throw new ArgumentException("Bad connection string.");
             }
-            var config = connectionString.ToIoTHubConfig();
+            var config = connectionString.ToIoTHubOptions();
             if (deviceId == null) {
                 deviceId = Utils.GetHostName();
                 Console.WriteLine($"Using <deviceId> '{deviceId}'");
@@ -247,9 +248,11 @@ Operations (Mutually exclusive):
                 moduleId = "registry";
                 Console.WriteLine($"Using <moduleId> '{moduleId}'");
             }
-            var diagnostics = new LogAnalyticsConfig(configuration);
+            
+            var diagnostics = new LogAnalyticsConfig(configuration).ToOptions().Value;
+
             Console.WriteLine("Create or retrieve connection string...");
-            var logger = ConsoleLogger.CreateLogger(LogLevel.Error);
+            var logger = Log.Console(LogLevel.Error);
             var cs = await Retry.WithExponentialBackoff(logger,
                 () => AddOrGetAsync(config, diagnostics, deviceId, moduleId)).ConfigureAwait(false);
 
@@ -264,9 +267,9 @@ Operations (Mutually exclusive):
         /// <summary>
         /// Add or get module identity
         /// </summary>
-        private static async Task<ConnectionString> AddOrGetAsync(IIoTHubConfig config,
-            ILogAnalyticsConfig diagnostics, string deviceId, string moduleId) {
-            var logger = ConsoleLogger.CreateLogger(LogLevel.Error);
+        private static async Task<ConnectionString> AddOrGetAsync(IOptions<IoTHubOptions> config,
+            LogAnalyticsOptions diagnostics, string deviceId, string moduleId) {
+            var logger = Log.Console(LogLevel.Error);
             var registry = new IoTHubServiceClient(
                 config, new NewtonSoftJsonSerializer(), logger);
             try {
@@ -306,7 +309,7 @@ Operations (Mutually exclusive):
         /// Test port scanning
         /// </summary>
         private static async Task TestPortScannerAsync(string host, bool opc) {
-            var logger = ConsoleLogger.CreateLogger();
+            var logger = Log.Console();
             var addresses = await Dns.GetHostAddressesAsync(host).ConfigureAwait(false);
             using (var cts = new CancellationTokenSource(TimeSpan.FromMinutes(10))) {
                 var watch = Stopwatch.StartNew();
@@ -325,7 +328,7 @@ Operations (Mutually exclusive):
         /// Test network scanning
         /// </summary>
         private static async Task TestNetworkScannerAsync() {
-            var logger = ConsoleLogger.CreateLogger();
+            var logger = Log.Console();
             using (var cts = new CancellationTokenSource(TimeSpan.FromMinutes(10))) {
                 var watch = Stopwatch.StartNew();
                 var scanning = new ScanServices(logger);
@@ -342,7 +345,7 @@ Operations (Mutually exclusive):
         /// </summary>
         private static async Task TestOpcUaDiscoveryServiceAsync(string addressRanges,
             bool stress) {
-            using (var logger = StackLogger.Create(ConsoleLogger.CreateLogger()))
+            using (var logger = StackLogger.Create(Log.Console()))
             using (var config = new TestClientServicesConfig())
             using (var client = new ClientServices(logger.Logger, config))
             using (var scanner = new DiscoveryServices(client,

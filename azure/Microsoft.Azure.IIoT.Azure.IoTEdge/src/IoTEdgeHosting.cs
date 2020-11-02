@@ -5,6 +5,7 @@
 
 namespace Microsoft.Azure.IIoT.Azure.IoTEdge {
     using Microsoft.Azure.IIoT.Azure.IoTEdge.Hosting;
+    using Microsoft.Azure.IIoT.Azure.IoTEdge.Runtime;
     using Microsoft.Azure.IIoT.Azure.IoTEdge.Clients;
     using Microsoft.Azure.IIoT.Diagnostics;
     using Microsoft.Azure.IIoT.Diagnostics.Services;
@@ -28,6 +29,8 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge {
             builder.RegisterType<EventSourceBroker>()
                 .AsImplementedInterfaces().SingleInstance();
 
+            builder.RegisterType<IoTEdgeConfig>()
+                .AsImplementedInterfaces();
             builder.RegisterType<EdgeHubClient>()
                 .AsImplementedInterfaces().InstancePerLifetimeScope();
             builder.RegisterType<EdgeletClient>()

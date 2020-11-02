@@ -44,7 +44,7 @@ namespace Microsoft.Azure.IIoT.Extensions.Orleans.Services {
                         services.TryAddSingleton<IOrleansSiloHost>(this);
                     })
                     .Build();
-                await host.StartAsync().ConfigureAwait(false);
+                await host.StartAsync(ct).ConfigureAwait(false);
                 _host = host;
             }
             catch (Exception ex) {
@@ -59,7 +59,7 @@ namespace Microsoft.Azure.IIoT.Extensions.Orleans.Services {
                 if (_host == null) {
                     return;
                 }
-                await _host.StopAsync().ConfigureAwait(false);
+                await _host.StopAsync(ct).ConfigureAwait(false);
             }
             catch (Exception ex) {
                 _logger.LogError(ex, "Failed to stop silo host");

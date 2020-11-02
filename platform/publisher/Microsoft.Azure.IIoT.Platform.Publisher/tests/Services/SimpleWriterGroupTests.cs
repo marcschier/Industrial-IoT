@@ -436,7 +436,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
         private AutoMock Setup() {
             var mock = AutoMock.GetLoose(builder => {
                 builder.RegisterInstance(new ConfigurationBuilder().Build()).AsImplementedInterfaces();
-                builder.RegisterInstance(ConsoleLogger.CreateLogger()).AsImplementedInterfaces();
+                builder.RegisterInstance(Log.Console()).AsImplementedInterfaces();
                 builder.RegisterType<ClientServicesConfig>().AsImplementedInterfaces();
                 builder.RegisterType<NewtonSoftJsonConverters>().As<IJsonSerializerConverterProvider>();
                 builder.RegisterType<NewtonSoftJsonSerializer>().As<IJsonSerializer>();

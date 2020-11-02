@@ -248,7 +248,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Service {
             // Add service to service authentication
             builder.RegisterModule<WebApiAuthentication>();
             // Add diagnostics
-            builder.AddAppInsightsLogging(Config);
+            builder.AddAppInsightsLogging();
             // Register event bus for integration events
             builder.RegisterModule<ServiceBusEventBusSupport>();
             // ... with cosmos db collection as storage

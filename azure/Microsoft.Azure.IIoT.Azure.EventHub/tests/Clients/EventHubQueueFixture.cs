@@ -23,6 +23,7 @@ namespace Microsoft.Azure.IIoT.Azure.EventHub.Clients {
     using global::Azure.Identity;
     using global::Azure.ResourceManager.EventHubs;
     using global::Azure.ResourceManager.EventHubs.Models;
+    using Microsoft.Extensions.Options;
 
     public sealed class EventHubQueueFixture : IDisposable {
 
@@ -110,7 +111,8 @@ namespace Microsoft.Azure.IIoT.Azure.EventHub.Clients {
                 throw new ResourceInvalidStateException("Subscription or group not configured");
             }
 
-            var eh = new EventHubClientConfig(_config);
+            var eh = new EventHubClientOptions();
+            new EventHubClientConfig(_config).Configure(eh);
             namespaceName = ConnectionString.Parse(eh.EventHubConnString)?.Endpoint;
             namespaceName = namespaceName?.Replace("sb://", "",
                 StringComparison.InvariantCulture).Split('.')[0];
@@ -137,22 +139,17 @@ namespace Microsoft.Azure.IIoT.Azure.EventHub.Clients {
     }
 
 
-    public class EventHubConfig : IEventHubConsumerConfig, IEventHubClientConfig {
+    public class EventHubConfig : IConfigureOptions<EventHubConsumerOptions> {
 
-        private readonly EventHubConsumerConfig _eh;
-
-        public EventHubConfig(IConfiguration cfg, string cs) {
-            _eh = new EventHubConsumerConfig(cfg);
-            EventHubConnString = cs;
+        public void Configure(EventHubConsumerOptions options) {
+            options.EventHubConnString = _cs;
+            options.EventHubPath = null;
         }
+        private readonly string _cs;
 
-        public string EventHubPath => null;
-
-        public string EventHubConnString { get; }
-
-        public bool UseWebsockets => _eh.UseWebsockets;
-
-        public string ConsumerGroup => _eh.ConsumerGroup;
+        public EventHubConfig(string cs) {
+            _cs = cs;
+        }
     }
 
     internal sealed class EventHubQueueHarness : IDisposable {
@@ -179,9 +176,7 @@ namespace Microsoft.Azure.IIoT.Azure.EventHub.Clients {
                     .Build();
                 builder.RegisterInstance(config)
                     .AsImplementedInterfaces();
-                builder.RegisterType<EventProcessorConfig>()
-                    .AsImplementedInterfaces().SingleInstance();
-                builder.RegisterInstance(new EventHubConfig(config, connectionString))
+                builder.RegisterInstance(new EventHubConfig(connectionString))
                     .AsImplementedInterfaces();
                 builder.RegisterType<Pid>().SingleInstance()
                     .AsImplementedInterfaces();

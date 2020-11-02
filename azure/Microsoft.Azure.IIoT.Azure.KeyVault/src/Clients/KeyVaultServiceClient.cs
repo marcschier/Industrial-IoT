@@ -17,6 +17,7 @@ namespace Microsoft.Azure.IIoT.Azure.KeyVault.Clients {
     using Microsoft.Azure.KeyVault.Models;
     using Microsoft.Azure.KeyVault.WebKey;
     using Microsoft.Extensions.Diagnostics.HealthChecks;
+    using Microsoft.Extensions.Options;
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -40,7 +41,7 @@ namespace Microsoft.Azure.IIoT.Azure.KeyVault.Clients {
         /// <param name="factory"></param>
         /// <param name="provider"></param>
         public KeyVaultServiceClient(ICertificateRepository certificates,
-            ICertificateFactory factory, IKeyVaultConfig config, IJsonSerializer serializer,
+            ICertificateFactory factory, IOptions<KeyVaultOptions> config, IJsonSerializer serializer,
             ITokenProvider provider) : this(certificates, factory, config, serializer,
                 new KeyVaultClient(async (_, resource, scope) => {
                     if (resource != "https://vault.azure.net") {
@@ -65,15 +66,15 @@ namespace Microsoft.Azure.IIoT.Azure.KeyVault.Clients {
         /// <param name="factory"></param>
         /// <param name="client"></param>
         public KeyVaultServiceClient(ICertificateRepository certificates,
-            ICertificateFactory factory, IKeyVaultConfig config, IJsonSerializer serializer,
+            ICertificateFactory factory, IOptions<KeyVaultOptions> config, IJsonSerializer serializer,
             IKeyVaultClient client) {
 
             if (config == null) {
                 throw new ArgumentNullException(nameof(config));
             }
 
-            _vaultBaseUrl = config.KeyVaultBaseUrl;
-            _keyStoreIsHsm = config.KeyVaultIsHsm;
+            _vaultBaseUrl = config.Value.KeyVaultBaseUrl;
+            _keyStoreIsHsm = config.Value.KeyVaultIsHsm;
             _serializer = serializer ?? throw new ArgumentNullException(nameof(serializer));
             _factory = factory ?? throw new ArgumentNullException(nameof(factory));
             _certificates = certificates ?? throw new ArgumentNullException(nameof(certificates));

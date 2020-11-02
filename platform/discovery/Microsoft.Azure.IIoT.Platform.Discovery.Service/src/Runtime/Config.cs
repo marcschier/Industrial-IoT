@@ -11,20 +11,15 @@ namespace Microsoft.Azure.IIoT.Platform.Discovery.Service.Runtime {
     using Microsoft.Azure.IIoT.AspNetCore.Cors.Runtime;
     using Microsoft.Azure.IIoT.AspNetCore.Hosting;
     using Microsoft.Azure.IIoT.AspNetCore.Hosting.Runtime;
-    using Microsoft.Azure.IIoT.Diagnostics;
-    using Microsoft.Azure.IIoT.Azure.AppInsights;
-    using Microsoft.Azure.IIoT.Azure.AppInsights.Runtime;
+    using Microsoft.Azure.IIoT.Utils;
     using Microsoft.Azure.IIoT.Hosting;
     using Microsoft.Extensions.Configuration;
 
     /// <summary>
     /// Common web service configuration aggregation
     /// </summary>
-    public class Config : DiagnosticsConfig, IWebHostConfig, ICorsConfig, 
-        IOpenApiConfig, IHeadersConfig, IRoleConfig, IAppInsightsConfig {
-
-        /// <inheritdoc/>
-        public string InstrumentationKey => _ai.InstrumentationKey;
+    public class Config : ConfigBase, IWebHostConfig, ICorsConfig, 
+        IOpenApiConfig, IHeadersConfig, IRoleConfig {
 
         /// <inheritdoc/>
         public bool UseRoles => GetBoolOrDefault(PcsVariable.PCS_AUTH_ROLES);
@@ -74,10 +69,8 @@ namespace Microsoft.Azure.IIoT.Platform.Discovery.Service.Runtime {
             _host = new WebHostConfig(configuration);
             _cors = new CorsConfig(configuration);
             _fh = new HeadersConfig(configuration);
-            _ai = new AppInsightsConfig(configuration);
         }
 
-        private readonly AppInsightsConfig _ai;
         private readonly OpenApiConfig _openApi;
         private readonly WebHostConfig _host;
         private readonly CorsConfig _cors;

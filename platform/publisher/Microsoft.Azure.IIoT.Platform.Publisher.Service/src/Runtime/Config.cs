@@ -13,9 +13,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Service.Runtime {
     using Microsoft.Azure.IIoT.AspNetCore.Cors.Runtime;
     using Microsoft.Azure.IIoT.AspNetCore.Hosting;
     using Microsoft.Azure.IIoT.AspNetCore.Hosting.Runtime;
-    using Microsoft.Azure.IIoT.Diagnostics;
-    using Microsoft.Azure.IIoT.Azure.AppInsights;
-    using Microsoft.Azure.IIoT.Azure.AppInsights.Runtime;
+    using Microsoft.Azure.IIoT.Utils;
     using Microsoft.Azure.IIoT.Storage;
     using Microsoft.Azure.IIoT.Hosting;
     using Microsoft.Extensions.Configuration;
@@ -23,12 +21,9 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Service.Runtime {
     /// <summary>
     /// Common web service configuration aggregation
     /// </summary>
-    public class Config : DiagnosticsConfig, IWebHostConfig, 
-        ICorsConfig, IOpenApiConfig, IRoleConfig, IItemContainerConfig, 
-        IDiscoveryConfig, IHeadersConfig, IAppInsightsConfig {
-
-        /// <inheritdoc/>
-        public string InstrumentationKey => _ai.InstrumentationKey;
+    public class Config : ConfigBase, IWebHostConfig,
+        ICorsConfig, IOpenApiConfig, IRoleConfig, IItemContainerConfig,
+        IDiscoveryConfig, IHeadersConfig {
 
         /// <inheritdoc/>
         public bool UseRoles => GetBoolOrDefault(PcsVariable.PCS_AUTH_ROLES);
@@ -87,10 +82,8 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Service.Runtime {
             _cors = new CorsConfig(configuration);
             _api = new ApiConfig(configuration);
             _fh = new HeadersConfig(configuration);
-            _ai = new AppInsightsConfig(configuration);
         }
 
-        private readonly AppInsightsConfig _ai;
         private readonly OpenApiConfig _openApi;
         private readonly WebHostConfig _host;
         private readonly CorsConfig _cors;

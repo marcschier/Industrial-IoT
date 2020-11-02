@@ -9,6 +9,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub.Deploy {
     using Microsoft.Azure.IIoT.Hub.Models;
     using Microsoft.Azure.IIoT.Serializers;
     using Microsoft.Extensions.Logging;
+    using Microsoft.Extensions.Options;
     using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
@@ -26,7 +27,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub.Deploy {
         /// <param name="serializer"></param>
         /// <param name="logger"></param>
         public IoTEdgeMetricsDeployment(IDeviceDeploymentServices service,
-            ILogAnalyticsConfig config, IJsonSerializer serializer, ILogger logger) {
+            IOptions<LogAnalyticsOptions> config, IJsonSerializer serializer, ILogger logger) {
             _service = service ?? throw new ArgumentNullException(nameof(service));
             _config = config ?? throw new ArgumentNullException(nameof(service));
             _serializer = serializer ?? throw new ArgumentNullException(nameof(serializer));
@@ -35,8 +36,8 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub.Deploy {
 
         /// <inheritdoc/>
         public async Task StartAsync() {
-            if (string.IsNullOrEmpty(_config.LogWorkspaceId) ||
-                string.IsNullOrEmpty(_config.LogWorkspaceKey)) {
+            if (string.IsNullOrEmpty(_config.Value.LogWorkspaceId) ||
+                string.IsNullOrEmpty(_config.Value.LogWorkspaceKey)) {
                 _logger.LogWarning("Azure Log Analytics Workspace configuration is not set." +
                     " Cannot proceed with metricscollector deployment.");
                 return;
@@ -106,10 +107,10 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub.Deploy {
                         ""version"": ""1.0"",
                         ""env"": {
                             ""LogAnalyticsWorkspaceId"": {
-                                ""value"": """ + _config.LogWorkspaceId + @"""
+                                ""value"": """ + _config.Value.LogWorkspaceId + @"""
                             },
                             ""LogAnalyticsSharedKey"": {
-                                ""value"": """ + _config.LogWorkspaceKey + @"""
+                                ""value"": """ + _config.Value.LogWorkspaceKey + @"""
                             },
                             ""LogAnalyticsLogType"": {
                                 ""value"": ""promMetrics""
@@ -138,7 +139,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub.Deploy {
 
         private const string kDefaultSchemaVersion = "1.0";
         private readonly IDeviceDeploymentServices _service;
-        private readonly ILogAnalyticsConfig _config;
+        private readonly IOptions<LogAnalyticsOptions> _config;
         private readonly IJsonSerializer _serializer;
         private readonly ILogger _logger;
     }

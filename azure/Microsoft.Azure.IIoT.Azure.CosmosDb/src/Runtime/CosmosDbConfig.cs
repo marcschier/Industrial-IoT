@@ -6,33 +6,26 @@
 namespace Microsoft.Azure.IIoT.Azure.CosmosDb.Runtime {
     using Microsoft.Azure.IIoT.Utils;
     using Microsoft.Extensions.Configuration;
+    using Microsoft.Extensions.Options;
 
     /// <summary>
     /// CosmosDb configuration
     /// </summary>
-    public class CosmosDbConfig : ConfigBase, ICosmosDbConfig {
-
-        private const string kCosmosDbConnectionString = "CosmosDb:ConnectionString";
-        private const string kCosmosDbThroughputUnits = "CosmosDb:ThroughputUnits";
+    internal sealed class CosmosDbConfig : ConfigBase<CosmosDbOptions> {
 
         /// <inheritdoc/>
-        public string DbConnectionString => GetStringOrDefault(kCosmosDbConnectionString,
-            () => GetStringOrDefault(PcsVariable.PCS_COSMOSDB_CONNSTRING,
+        public CosmosDbConfig(IConfiguration configuration) :
+            base(configuration) {
+        }
+
+        /// <inheritdoc/>
+        public override void Configure(string name, CosmosDbOptions options) {
+            options.DbConnectionString = GetStringOrDefault(PcsVariable.PCS_COSMOSDB_CONNSTRING,
                 () => GetStringOrDefault("PCS_STORAGEADAPTER_DOCUMENTDB_CONNSTRING",
                 () => GetStringOrDefault("PCS_TELEMETRY_DOCUMENTDB_CONNSTRING",
                     () => GetStringOrDefault("_DB_CS",
-                        () => null)))));
-        /// <inheritdoc/>
-        public int? ThroughputUnits => GetIntOrDefault(kCosmosDbThroughputUnits,
-            () => GetIntOrDefault("PCS_COSMOSDB_THROUGHPUT",
-                () => 400));
-
-        /// <summary>
-        /// Configuration constructor
-        /// </summary>
-        /// <param name="configuration"></param>
-        public CosmosDbConfig(IConfiguration configuration) :
-            base(configuration) {
+                        () => null))));
+            options.ThroughputUnits = GetIntOrDefault("PCS_COSMOSDB_THROUGHPUT", () => 400);
         }
     }
 }

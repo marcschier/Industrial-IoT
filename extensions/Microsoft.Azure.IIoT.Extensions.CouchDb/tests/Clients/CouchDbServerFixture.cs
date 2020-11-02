@@ -34,7 +34,7 @@ namespace Microsoft.Azure.IIoT.Extensions.CouchDb.Clients {
                 builder.AddDiagnostics();
                 _container = builder.Build();
                 var healthCheck = _container.Resolve<IHealthCheck>();
-                _server = new CouchDbServer(ConsoleLogger.CreateLogger(),
+                _server = new CouchDbServer(Log.Console(),
                     check: healthCheck);
                 _server.StartAsync().GetAwaiter().GetResult();
                 Up = true;

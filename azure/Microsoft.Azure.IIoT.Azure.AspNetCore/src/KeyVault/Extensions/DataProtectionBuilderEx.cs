@@ -24,6 +24,7 @@ namespace Microsoft.Extensions.DependencyInjection {
     using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
+    using Microsoft.Extensions.Options;
 
     /// <summary>
     /// Add data protection using azure blob storage and keyvault
@@ -54,17 +55,18 @@ namespace Microsoft.Extensions.DependencyInjection {
         public static IDataProtectionBuilder AddAzureKeyVaultDataProtection(
             this IDataProtectionBuilder builder, IConfiguration configuration) {
             var config = new DataProtectionConfig(configuration);
-            if (string.IsNullOrEmpty(config.KeyVaultBaseUrl)) {
+            if (string.IsNullOrEmpty(config.KeyVault.Value.KeyVaultBaseUrl)) {
                 throw new InvalidConfigurationException(
                     "Keyvault base url is missing in your configuration " +
                     "for dataprotection to be able to store the root key.");
             }
             var keyName = config.KeyVaultKeyDataProtection;
             using var keyVault = new KeyVaultClientBootstrap(configuration);
-            if (!TryInititalizeKeyAsync(keyVault.Client, config.KeyVaultBaseUrl, keyName).Result) {
+            if (!TryInititalizeKeyAsync(keyVault.Client,
+                config.KeyVault.Value.KeyVaultBaseUrl, keyName).Result) {
                 throw new UnauthorizedAccessException("Cannot access keyvault");
             }
-            var identifier = $"{config.KeyVaultBaseUrl.TrimEnd('/')}/keys/{keyName}";
+            var identifier = $"{config.KeyVault.Value.KeyVaultBaseUrl.TrimEnd('/')}/keys/{keyName}";
             return builder.ProtectKeysWithAzureKeyVault(keyVault.Client, identifier);
         }
 
@@ -76,15 +78,15 @@ namespace Microsoft.Extensions.DependencyInjection {
         public static IDataProtectionBuilder AddAzureBlobKeyStorage(
             this IDataProtectionBuilder builder, IConfiguration configuration) {
 
-            var storage = new DataProtectionConfig(configuration);
-            var containerName = storage.BlobStorageContainerDataProtection;
-            var connectionString = storage.GetStorageConnString();
+            var config = new DataProtectionConfig(configuration);
+            var containerName = config.BlobStorageContainerDataProtection;
+            var connectionString = config.Storage.Value.GetStorageConnString();
             if (string.IsNullOrEmpty(connectionString)) {
                throw new InvalidConfigurationException(
                    "Storage configuration is missing in your configuration for " +
                    "dataprotection to store all keys across all instances.");
             }
-            var storageAccount = CloudStorageAccount.Parse(storage.GetStorageConnString());
+            var storageAccount = CloudStorageAccount.Parse(config.Storage.Value.GetStorageConnString());
             var relativePath = $"{containerName}/keys.xml";
             var uriBuilder = new UriBuilder(storageAccount.BlobEndpoint);
             uriBuilder.Path = uriBuilder.Path.TrimEnd('/') + "/" + relativePath.TrimStart('/');
@@ -102,7 +104,7 @@ namespace Microsoft.Extensions.DependencyInjection {
         /// <returns></returns>
         private static async Task<bool> TryInititalizeKeyAsync(
             KeyVaultClient keyVaultClient, string vaultUri, string keyName) {
-            var logger = ConsoleLogger.CreateLogger();
+            var logger = Log.Console();
             try {
                 try {
                     var key = await keyVaultClient.GetKeyAsync(vaultUri, keyName).ConfigureAwait(false);
@@ -129,15 +131,15 @@ namespace Microsoft.Extensions.DependencyInjection {
         /// <summary>
         /// Data protection default configuration
         /// </summary>
-        internal sealed class DataProtectionConfig : ConfigBase, IKeyVaultConfig, IStorageConfig  {
+        internal sealed class DataProtectionConfig : ConfigBase {
 
             private const string kKeyVaultKeyDataProtectionDefault = "dataprotection";
             private const string kBlobStorageContainerDataProtectionDefault = "dataprotection";
 
             /// <inheritdoc/>
-            public string KeyVaultBaseUrl => _kv.KeyVaultBaseUrl;
+            public IOptions<StorageOptions> Storage { get; }
             /// <inheritdoc/>
-            public bool KeyVaultIsHsm => _kv.KeyVaultIsHsm;
+            public IOptions<KeyVaultOptions> KeyVault { get; }
 
             /// <summary>Key (in KeyVault) to be used for encription of keys</summary>
             public string KeyVaultKeyDataProtection =>
@@ -153,25 +155,15 @@ namespace Microsoft.Extensions.DependencyInjection {
                         PcsVariable.PCS_STORAGE_CONTAINER_DATAPROTECTION) ??
                         kBlobStorageContainerDataProtectionDefault).Trim();
 
-            /// <inheritdoc/>
-            public string EndpointSuffix => _stg.EndpointSuffix;
-            /// <inheritdoc/>
-            public string AccountName => _stg.AccountName;
-            /// <inheritdoc/>
-            public string AccountKey => _stg.AccountKey;
-
             /// <summary>
             /// Configuration constructor
             /// </summary>
             /// <param name="configuration"></param>
             public DataProtectionConfig(IConfiguration configuration) :
                 base(configuration) {
-                _stg = new StorageConfig(configuration);
-                _kv = new KeyVaultConfig(configuration);
+                Storage = new StorageConfig(configuration).ToOptions();
+                KeyVault = new KeyVaultConfig(configuration).ToOptions();
             }
-
-            private readonly StorageConfig _stg;
-            private readonly KeyVaultConfig _kv;
         }
     }
 }

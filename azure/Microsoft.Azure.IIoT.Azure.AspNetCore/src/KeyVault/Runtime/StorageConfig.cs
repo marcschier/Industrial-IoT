@@ -8,56 +8,33 @@ namespace Microsoft.Azure.IIoT.Azure.AspNetCore.KeyVault.Runtime {
     using Microsoft.Extensions.Configuration;
 
     /// <summary>
-    /// Blob storage configuration
+    /// Storage configuration
     /// </summary>
-    public class StorageConfig : ConfigBase, IStorageConfig  {
+    internal sealed class StorageConfig : ConfigBase<StorageOptions> {
 
-        /// <summary>
-        /// Configuration keys
-        /// </summary>
-        private const string kStorageAccountNameKey = "Storage:AccountName";
-        private const string kStorageEndpointSuffixKey = "Storage:EndpointSuffix";
-        private const string kStorageAccountKeyKey = "Storage:AccountKey";
-        private const string kStorageConnectionStringKey = "Storage:ConnectionString";
-
-        /// <summary> Name </summary>
-        public string AccountName =>
-            GetConnectonStringTokenOrDefault(kStorageConnectionStringKey,
-                cs => cs.Endpoint,
-            () => GetConnectonStringTokenOrDefault(PcsVariable.PCS_STORAGE_CONNSTRING,
-                cs => cs.Endpoint,
-            () => GetStringOrDefault(kStorageAccountNameKey,
-            () => GetStringOrDefault("PCS_ASA_DATA_AZUREBLOB_ACCOUNT",
-            () => GetStringOrDefault("PCS_IOTHUBREACT_AZUREBLOB_ACCOUNT",
-            () => null)))));
-        /// <summary> Suffix </summary>
-        public string EndpointSuffix =>
-            GetConnectonStringTokenOrDefault(kStorageConnectionStringKey,
-                cs => cs.EndpointSuffix,
-            () => GetConnectonStringTokenOrDefault(PcsVariable.PCS_STORAGE_CONNSTRING,
-                cs => cs.EndpointSuffix,
-            () => GetStringOrDefault(kStorageEndpointSuffixKey,
-            () => GetStringOrDefault("PCS_ASA_DATA_AZUREBLOB_ENDPOINT_SUFFIX",
-            () => GetStringOrDefault("PCS_IOTHUBREACT_AZUREBLOB_ENDPOINT_SUFFIX",
-            () => "core.windows.net")))));
-        /// <summary> Key </summary>
-        public string AccountKey =>
-            GetConnectonStringTokenOrDefault(kStorageConnectionStringKey,
-                cs => cs.SharedAccessKey,
-            () => GetConnectonStringTokenOrDefault(PcsVariable.PCS_STORAGE_CONNSTRING,
-                cs => cs.SharedAccessKey,
-            () => GetStringOrDefault(kStorageAccountKeyKey,
-            () => GetStringOrDefault("PCS_ASA_DATA_AZUREBLOB_KEY",
-            () => GetStringOrDefault("PCS_IOTHUBREACT_AZUREBLOB_KEY",
-            () => null)))));
-
-        /// <summary>
-        /// Configuration constructor
-        /// </summary>
-        /// <param name="configuration"></param>
+        /// <inheritdoc/>
         public StorageConfig(IConfiguration configuration) :
             base(configuration) {
         }
 
+        /// <inheritdoc/>
+        public override void Configure(string name, StorageOptions options) {
+
+            options.AccountName = GetConnectonStringTokenOrDefault(
+                PcsVariable.PCS_STORAGE_CONNSTRING, cs => cs.Endpoint,
+                () => GetStringOrDefault("PCS_ASA_DATA_AZUREBLOB_ACCOUNT",
+                () => GetStringOrDefault("PCS_IOTHUBREACT_AZUREBLOB_ACCOUNT",
+                () => null)));
+            options.EndpointSuffix = GetConnectonStringTokenOrDefault(
+                PcsVariable.PCS_STORAGE_CONNSTRING, cs => cs.EndpointSuffix,
+                () => GetStringOrDefault("PCS_ASA_DATA_AZUREBLOB_ENDPOINT_SUFFIX",
+                () => GetStringOrDefault("PCS_IOTHUBREACT_AZUREBLOB_ENDPOINT_SUFFIX",
+                () => "core.windows.net")));
+            options.AccountKey = GetConnectonStringTokenOrDefault(
+                PcsVariable.PCS_STORAGE_CONNSTRING, cs => cs.SharedAccessKey,
+                () => GetStringOrDefault("PCS_ASA_DATA_AZUREBLOB_KEY",
+                () => GetStringOrDefault("PCS_IOTHUBREACT_AZUREBLOB_KEY",
+                () => null)));
+        }
     }
 }

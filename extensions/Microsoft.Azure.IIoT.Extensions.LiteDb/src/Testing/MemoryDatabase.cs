@@ -24,7 +24,7 @@ namespace Microsoft.Azure.IIoT.Storage.Services {
         /// </summary>
         /// <param name="logger"></param>
         public MemoryDatabase(ILogger logger = null) {
-            _logger = logger ?? ConsoleLogger.CreateLogger();
+            _logger = logger ?? Log.Console();
         }
 
         /// <inheritdoc/>

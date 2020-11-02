@@ -9,6 +9,7 @@ namespace Microsoft.Azure.IIoT.Azure.LogAnalytics {
     using Microsoft.Azure.IIoT.Http.Clients;
     using Microsoft.Azure.IIoT.Serializers;
     using Microsoft.Extensions.Logging;
+    using Microsoft.Extensions.Options;
     using System;
     using System.Collections.Generic;
     using System.Globalization;
@@ -30,20 +31,20 @@ namespace Microsoft.Azure.IIoT.Azure.LogAnalytics {
 
         /// <inheritdoc/>
         public override bool IsEnabled =>
-            !string.IsNullOrEmpty(_config?.LogWorkspaceId) &&
-            !string.IsNullOrEmpty(_config?.LogWorkspaceKey);
+            !string.IsNullOrEmpty(_options.Value.LogWorkspaceId) &&
+            !string.IsNullOrEmpty(_options.Value.LogWorkspaceKey);
 
         /// <summary>
         /// Create publisher
         /// </summary>
         /// <param name="factory"></param>
-        /// <param name="config"></param>
+        /// <param name="options"></param>
         /// <param name="logger"></param>
         /// <param name="serializer"></param>
         public LogAnalyticsMetricsHandler(IJsonSerializer serializer, ILogger logger,
-            IHttpClientFactory factory = null, ILogAnalyticsConfig config = null)
+            IOptions<LogAnalyticsOptions> options, IHttpClientFactory factory = null)
             : base(serializer) {
-            _config = config;
+            _options = options ?? throw new ArgumentNullException(nameof(options));
             _factory = factory ?? new HttpClientFactory(_logger);
             _serializer = serializer ?? throw new ArgumentNullException(nameof(serializer));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -51,7 +52,7 @@ namespace Microsoft.Azure.IIoT.Azure.LogAnalytics {
 
         /// <inheritdoc/>
         public override void OnStarting() {
-            if (_config == null) {
+            if (_options == null) {
                 _logger.LogInformation("Inject Log analytics configuration to enable publishing.");
                 return;
             }
@@ -69,14 +70,14 @@ namespace Microsoft.Azure.IIoT.Azure.LogAnalytics {
         /// <returns></returns>
         protected override async Task ProcessBatchAsync(List<MetricsRecord> batch,
             CancellationToken ct) {
-            var workspaceId = _config.LogWorkspaceId;
-            var workspaceKey = _config.LogWorkspaceKey;
+            var workspaceId = _options.Value.LogWorkspaceId;
+            var workspaceKey = _options.Value.LogWorkspaceKey;
             if (string.IsNullOrEmpty(workspaceId) || string.IsNullOrEmpty(workspaceKey)) {
                 return;  // id or key was updated after collection
             }
             var request = HttpClient.NewRequest($"https://{workspaceId}.ods.opinsights.azure.com" +
                 $"/api/logs?api-version={kApiVersion}");
-            request.AddHeader("Log-Type", _config.LogType ?? "promMetrics");
+            request.AddHeader("Log-Type", _options.Value.LogType ?? "promMetrics");
             // Set authorization
             var dateString = DateTime.UtcNow.ToString("r", CultureInfo.InvariantCulture);
             request.AddHeader("x-ms-date", dateString);
@@ -113,7 +114,7 @@ namespace Microsoft.Azure.IIoT.Azure.LogAnalytics {
 
         private const string kApiVersion = "2016-04-01";
         private readonly IJsonSerializer _serializer;
-        private readonly ILogAnalyticsConfig _config;
+        private readonly IOptions<LogAnalyticsOptions> _options;
         private readonly IHttpClientFactory _factory;
         private readonly ILogger _logger;
     }

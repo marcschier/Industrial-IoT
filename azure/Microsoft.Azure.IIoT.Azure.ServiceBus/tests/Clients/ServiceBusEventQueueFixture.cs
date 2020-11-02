@@ -17,6 +17,7 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Clients {
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using System.Linq;
+    using Microsoft.Extensions.Options;
 
     public sealed class ServiceBusEventQueueFixture : IDisposable {
 
@@ -36,13 +37,6 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Clients {
         /// <inheritdoc/>
         public void Dispose() {
         }
-    }
-
-    public class ServiceBusQueueConfig : IServiceBusProcessorConfig {
-        public ServiceBusQueueConfig(string queue) {
-            Queue = queue;
-        }
-        public string Queue { get; }
     }
 
     internal sealed class ServiceBusEventQueueHarness : IDisposable {
@@ -68,7 +62,7 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Clients {
                     .AsImplementedInterfaces().SingleInstance();
 
                 // Set queue name
-                builder.RegisterInstance(new ServiceBusQueueConfig(queue))
+                builder.RegisterInstance(new ConfigureOptions<ServiceBusProcessorOptions>(q => q.Queue = queue))
                     .AsImplementedInterfaces();
 
                 builder.RegisterModule<ServiceBusEventQueueSupport>();
@@ -123,8 +117,8 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Clients {
             if (_container == null) {
                 return;
             }
-            var config = _container.Resolve<IServiceBusConfig>();
-            var managementClient = new ManagementClient(config.ServiceBusConnString);
+            var config = _container.Resolve<IOptions<ServiceBusOptions>>();
+            var managementClient = new ManagementClient(config.Value.ServiceBusConnString);
           //  managementClient.GetQueuesAsync().Result
           //      .ToList().ForEach(q => managementClient.DeleteQueueAsync(q.Path).Wait());
              managementClient.DeleteQueueAsync(_queue).Wait();

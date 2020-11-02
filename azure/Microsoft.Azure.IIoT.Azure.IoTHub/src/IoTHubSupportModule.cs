@@ -5,6 +5,7 @@
 
 namespace Microsoft.Azure.IIoT.Azure.IoTHub {
     using Microsoft.Azure.IIoT.Azure.IoTHub.Clients;
+    using Microsoft.Azure.IIoT.Azure.IoTHub.Runtime;
     using Autofac;
 
     /// <summary>
@@ -26,6 +27,9 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub {
             builder.RegisterType<IoTHubSasTokenValidator>()
                 .AsImplementedInterfaces();
             builder.RegisterType<IoTHubTwinMethodClient>()
+                .AsImplementedInterfaces();
+
+            builder.RegisterType<IoTHubConfig>()
                 .AsImplementedInterfaces();
 
             base.Load(builder);

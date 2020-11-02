@@ -13,37 +13,24 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Runtime {
     /// <summary>
     /// IoT Edge device or module configuration
     /// </summary>
-    public class IoTEdgeConfig : ConfigBase, IIoTEdgeClientConfig {
+    internal sealed class IoTEdgeConfig : ConfigBase<IoTEdgeOptions> {
 
-        /// <summary>
-        /// Module configuration
-        /// </summary>
-#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
-        public const string EdgeHubConnectionStringKey = "EdgeHubConnectionString";
-        public const string BypassCertVerificationKey = "BypassCertVerification";
-        public const string TransportKey = "Transport";
-        public const string ProductKey = "Product";
-#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
-
-        /// <summary>Hub connection string</summary>
-        public string EdgeHubConnectionString =>
-            GetStringOrDefault(EdgeHubConnectionStringKey);
-        /// <summary>Whether to bypass cert validation</summary>
-        public bool BypassCertVerification =>
-            GetBoolOrDefault(BypassCertVerificationKey, () => false);
-        /// <summary>Transports to use</summary>
-        public TransportOption Transport => (TransportOption)Enum.Parse(typeof(TransportOption),
-            GetStringOrDefault(TransportKey, () => nameof(TransportOption.MqttOverTcp)), true);
-        /// <summary>Product name</summary>
-        public string Product =>
-            GetStringOrDefault(ProductKey, () => "iiot");
-
-        /// <summary>
-        /// Create configuration
-        /// </summary>
-        /// <param name="configuration"></param>
+        /// <inheritdoc/>
         public IoTEdgeConfig(IConfiguration configuration = null) :
             base(configuration) {
+        }
+
+        /// <inheritdoc/>
+        public override void Configure(string name, IoTEdgeOptions options) {
+            options.EdgeHubConnectionString = 
+                GetStringOrDefault(nameof(options.EdgeHubConnectionString));
+            options.BypassCertVerification =
+                GetBoolOrDefault(nameof(options.BypassCertVerification), () => false);
+            options.Transport = (TransportOption)Enum.Parse(typeof(TransportOption),
+                GetStringOrDefault(nameof(options.Transport), 
+                    () => nameof(TransportOption.MqttOverTcp)), true);
+            options.Product = 
+                GetStringOrDefault(nameof(options.Product), () => "iiot");
         }
     }
 }

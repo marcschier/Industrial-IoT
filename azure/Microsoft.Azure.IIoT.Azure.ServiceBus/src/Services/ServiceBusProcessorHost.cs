@@ -9,6 +9,7 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Services {
     using Microsoft.Azure.IIoT.Utils;
     using Microsoft.Azure.ServiceBus;
     using Microsoft.Extensions.Logging;
+    using Microsoft.Extensions.Options;
     using System;
     using System.Threading;
     using System.Collections.Generic;
@@ -28,7 +29,7 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Services {
         /// <param name="config"></param>
         /// <param name="logger"></param>
         public ServiceBusProcessorHost(IServiceBusClientFactory factory,
-            IEventProcessingHandler consumer, IServiceBusProcessorConfig config,
+            IEventProcessingHandler consumer, IOptions<ServiceBusProcessorOptions> config,
             ILogger logger) {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _factory = factory ?? throw new ArgumentNullException(nameof(factory));
@@ -45,7 +46,7 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Services {
                     throw new ResourceInvalidStateException("Already started");
                 }
                 try {
-                    _client = await _factory.CreateOrGetGetQueueClientAsync(_config.Queue).ConfigureAwait(false);
+                    _client = await _factory.CreateOrGetGetQueueClientAsync(_config.Value.Queue).ConfigureAwait(false);
                     _client.RegisterMessageHandler(OnMessageAsync, OnExceptionAsync);
                     _logger.LogInformation("Queue {queue} processor started.", _client.QueueName);
                 }
@@ -98,7 +99,7 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Services {
             try {
                 _logger.LogInformation("Resetting queue {queue} processor...", _client.QueueName);
                 await _client.CloseAsync().ConfigureAwait(false);
-                _client = await _factory.CreateOrGetGetQueueClientAsync(_config.Queue).ConfigureAwait(false);
+                _client = await _factory.CreateOrGetGetQueueClientAsync(_config.Value.Queue).ConfigureAwait(false);
                 _client.RegisterMessageHandler(OnMessageAsync, OnExceptionAsync);
                 _logger.LogInformation("Queue {queue} processor reset.", _client.QueueName);
             }
@@ -123,7 +124,7 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Services {
         private readonly ILogger _logger;
         private readonly IServiceBusClientFactory _factory;
         private readonly IEventProcessingHandler _consumer;
-        private readonly IServiceBusProcessorConfig _config;
+        private readonly IOptions<ServiceBusProcessorOptions> _config;
         private readonly SemaphoreSlim _lock;
         private IQueueClient _client;
     }

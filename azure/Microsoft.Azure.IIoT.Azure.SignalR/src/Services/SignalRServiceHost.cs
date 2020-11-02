@@ -9,11 +9,12 @@ namespace Microsoft.Azure.IIoT.Azure.SignalR.Services {
     using Microsoft.Azure.SignalR.Management;
     using Microsoft.Azure.SignalR.Common;
     using Microsoft.AspNetCore.SignalR;
+    using Microsoft.Extensions.Logging;
+    using Microsoft.Extensions.Options;
     using Microsoft.Extensions.Diagnostics.HealthChecks;
     using System;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.Extensions.Logging;
 
     /// <summary>
     /// Signalr service host for serverless
@@ -25,16 +26,16 @@ namespace Microsoft.Azure.IIoT.Azure.SignalR.Services {
         /// <summary>
         /// Create signalR event bus
         /// </summary>
-        /// <param name="config"></param>
+        /// <param name="options"></param>
         /// <param name="logger"></param>
-        public SignalRServiceHost(ISignalRServiceConfig config, ILogger logger)
-            : base (config) {
+        public SignalRServiceHost(IOptions<SignalRServiceOptions> options, ILogger logger)
+            : base (options) {
 
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            if (string.IsNullOrEmpty(config?.SignalRConnString)) {
-                throw new ArgumentException("Missing connection string", nameof(config));
+            if (string.IsNullOrEmpty(options.Value?.SignalRConnString)) {
+                throw new ArgumentException("Missing connection string", nameof(options));
             }
-            if (!config.SignalRServerLess) {
+            if (!options.Value.SignalRServerLess) {
                 throw new ArgumentException(
                     "SignalR is not configured to be in serverless mode according to " +
                     "the configuration. SignalR service should be configured serverless " +

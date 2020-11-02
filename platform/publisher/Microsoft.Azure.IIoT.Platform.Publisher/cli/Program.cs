@@ -18,8 +18,9 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Service.Cli {
     using Microsoft.Azure.IIoT.Serializers.NewtonSoft;
     using Microsoft.Azure.IIoT.Serializers;
     using Microsoft.Extensions.Configuration;
-    using Opc.Ua;
+    using Microsoft.Extensions.Options;
     using Microsoft.Extensions.Logging;
+    using Opc.Ua;
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -52,8 +53,8 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Service.Cli {
             if (string.IsNullOrEmpty(cs)) {
                 cs = configuration.GetValue<string>("_HUB_CS", null);
             }
-            var diagnostics = new LogAnalyticsConfig(configuration);
-            IIoTHubConfig config = null;
+            var diagnostics = new LogAnalyticsConfig(configuration).ToOptions().Value;
+            IOptions<IoTHubOptions> config = null;
             var unknownArgs = new List<string>();
             try {
                 for (var i = 0; i < args.Length; i++) {
@@ -90,7 +91,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Service.Cli {
                 if (!ConnectionString.TryParse(cs, out var connectionString)) {
                     throw new ArgumentException("Bad connection string.");
                 }
-                config = connectionString.ToIoTHubConfig();
+                config = connectionString.ToIoTHubOptions();
 
                 if (deviceId == null) {
                     deviceId = Utils.GetHostName();
@@ -129,7 +130,7 @@ Options:
                 return;
             }
 
-            var logger = ConsoleLogger.CreateLogger(LogLevel.Error);
+            var logger = Log.Console(LogLevel.Error);
             AppDomain.CurrentDomain.UnhandledException += (s, e) => {
                 logger.LogCritical(e.ExceptionObject as Exception, "Exception");
                 Console.WriteLine(e);
@@ -153,7 +154,7 @@ Options:
         /// <summary>
         /// Host the module giving it its connection string.
         /// </summary>
-        private static async Task HostAsync(IIoTHubConfig config, ILogAnalyticsConfig diagnostics,
+        private static async Task HostAsync(IOptions<IoTHubOptions> config, LogAnalyticsOptions diagnostics,
             ILogger logger, string deviceId, string moduleId, string[] args, bool acceptAll) {
             Console.WriteLine("Create or retrieve connection string...");
 
@@ -174,7 +175,7 @@ Options:
         /// <summary>
         /// Setup publishing from sample server
         /// </summary>
-        private static async Task WithServerAsync(IIoTHubConfig config, ILogAnalyticsConfig diagnostics,
+        private static async Task WithServerAsync(IOptions<IoTHubOptions> config, LogAnalyticsOptions diagnostics,
             ILogger logger, string deviceId, string moduleId, string[] args) {
             var fileName = Path.GetRandomFileName() + ".json";
             try {
@@ -205,9 +206,9 @@ Options:
         /// <summary>
         /// Add or get module identity
         /// </summary>
-        private static async Task<ConnectionString> AddOrGetAsync(IIoTHubConfig config,
-            ILogAnalyticsConfig diagnostics, string deviceId, string moduleId) {
-            var logger = ConsoleLogger.CreateLogger(LogLevel.Error);
+        private static async Task<ConnectionString> AddOrGetAsync(IOptions<IoTHubOptions> config,
+            LogAnalyticsOptions diagnostics, string deviceId, string moduleId) {
+            var logger = Log.Console(LogLevel.Error);
             var registry = new IoTHubServiceClient(
                 config, new NewtonSoftJsonSerializer(), logger);
             try {

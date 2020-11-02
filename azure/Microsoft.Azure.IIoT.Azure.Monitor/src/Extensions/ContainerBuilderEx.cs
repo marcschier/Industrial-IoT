@@ -4,6 +4,7 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Azure.AppInsights {
+    using Microsoft.Azure.IIoT.Azure.AppInsights.Runtime;
     using Microsoft.Azure.IIoT.Diagnostics;
     using Microsoft.Azure.IIoT.Hosting;
     using Microsoft.Extensions.Logging.Debug;
@@ -24,15 +25,10 @@ namespace Microsoft.Azure.IIoT.Azure.AppInsights {
         /// Register telemetry client diagnostics logger
         /// </summary>
         /// <param name="builder"></param>
-        /// <param name="config"></param>
         /// <returns></returns>
-        public static ContainerBuilder AddAppInsightsLogging(this ContainerBuilder builder,
-            IAppInsightsConfig config) {
+        public static ContainerBuilder AddAppInsightsLogging(this ContainerBuilder builder) {
             if (builder == null) {
                 throw new ArgumentNullException(nameof(builder));
-            }
-            if (config == null) {
-                throw new ArgumentNullException(nameof(config));
             }
 
             builder.RegisterType<HealthCheckRegistrar>()
@@ -40,6 +36,8 @@ namespace Microsoft.Azure.IIoT.Azure.AppInsights {
             builder.RegisterType<DebugLoggerProvider>()
                 .AsImplementedInterfaces();
             builder.RegisterType<ConsoleLoggerProvider>()
+                .AsImplementedInterfaces();
+            builder.RegisterType<AppInsightsConfig>()
                 .AsImplementedInterfaces();
 
             // TODO
@@ -50,7 +48,7 @@ namespace Microsoft.Azure.IIoT.Azure.AppInsights {
           //  return builder.RegisterModule(
           //      new Log(new ApplicationInsightsLogger(config, log, addConsole)));
 
-            builder.RegisterModule<Log>();
+            builder.RegisterModule<Logging>();
 
             return builder;
         }
@@ -61,16 +59,12 @@ namespace Microsoft.Azure.IIoT.Azure.AppInsights {
         /// extension method for IServiceCollection.
         /// </summary>
         /// <param name="builder"></param>
-        /// <param name="diagnosticsConfig"></param>
         /// <param name="processIdentity"></param>
         /// <returns></returns>
         public static ContainerBuilder AddDependencyTracking(this ContainerBuilder builder,
-            IAppInsightsConfig diagnosticsConfig, IProcessIdentity processIdentity) {
+            IProcessIdentity processIdentity) {
             if (builder == null) {
                 throw new ArgumentNullException(nameof(builder));
-            }
-            if (diagnosticsConfig == null) {
-                throw new ArgumentNullException(nameof(diagnosticsConfig));
             }
             if (processIdentity == null) {
                 throw new ArgumentNullException(nameof(processIdentity));
@@ -78,7 +72,7 @@ namespace Microsoft.Azure.IIoT.Azure.AppInsights {
 
             var telemetryInitializer = new ApplicationInsightsTelemetryInitializer(processIdentity);
             var telemetryConfig = TelemetryConfiguration.CreateDefault();
-            telemetryConfig.InstrumentationKey = diagnosticsConfig.InstrumentationKey;
+          // TODO:  telemetryConfig.InstrumentationKey = diagnosticsConfig.InstrumentationKey;
             telemetryConfig.TelemetryInitializers.Add(telemetryInitializer);
             var depModule = new DependencyTrackingTelemetryModule();
 

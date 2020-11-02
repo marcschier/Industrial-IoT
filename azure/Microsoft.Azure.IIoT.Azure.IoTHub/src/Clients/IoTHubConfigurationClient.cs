@@ -8,6 +8,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub.Clients {
     using Microsoft.Azure.IIoT.Hub.Models;
     using Microsoft.Azure.Devices;
     using Microsoft.Azure.Devices.Common.Exceptions;
+    using Microsoft.Extensions.Options;
     using Microsoft.Extensions.Logging;
     using System;
     using System.Collections.Generic;
@@ -23,15 +24,15 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub.Clients {
         /// <summary>
         /// Create service client
         /// </summary>
-        /// <param name="config"></param>
+        /// <param name="options"></param>
         /// <param name="logger"></param>
-        public IoTHubConfigurationClient(IIoTHubConfig config, ILogger logger) {
-            if (string.IsNullOrEmpty(config?.IoTHubConnString)) {
-                throw new ArgumentException("Missing connection string", nameof(config));
+        public IoTHubConfigurationClient(IOptions<IoTHubOptions> options, ILogger logger) {
+            if (string.IsNullOrEmpty(options.Value.IoTHubConnString)) {
+                throw new ArgumentException("Missing connection string", nameof(options));
             }
 
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            _registry = RegistryManager.CreateFromConnectionString(config.IoTHubConnString);
+            _registry = RegistryManager.CreateFromConnectionString(options.Value.IoTHubConnString);
             _registry.OpenAsync().Wait();
         }
 
