@@ -24,17 +24,11 @@ namespace Microsoft.Azure.IIoT.Platform.Discovery.Storage {
         /// Create
         /// </summary>
         /// <param name="databaseServer"></param>
-        /// <param name="config"></param>
-        public ApplicationDatabase(IDatabaseServer databaseServer,
-            IItemContainerConfig config) {
+        public ApplicationDatabase(ICollectionFactory databaseServer) {
             if (databaseServer is null) {
                 throw new ArgumentNullException(nameof(databaseServer));
             }
-            if (config is null) {
-                throw new ArgumentNullException(nameof(config));
-            }
-            var dbs = databaseServer.OpenAsync(config.DatabaseName).Result;
-            _documents = dbs.OpenContainerAsync(config.ContainerName ?? "registry").Result;
+            _documents = databaseServer.OpenAsync("applications").Result;
         }
 
         /// <inheritdoc/>
@@ -279,6 +273,6 @@ namespace Microsoft.Azure.IIoT.Platform.Discovery.Storage {
             return query.GetResults();
         }
 
-        private readonly IItemContainer _documents;
+        private readonly IDocumentCollection _documents;
     }
 }

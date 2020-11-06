@@ -15,13 +15,13 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Runtime {
         /// <summary>
         /// Registry configuration
         /// </summary>
-        private const string kDirectoryServiceUrlKey = "DirectoryServiceUrl";
+        private const string kDirectoryServiceUrlKey = "RegistryServiceUrl";
 
         /// <summary>Directory endpoint url</summary>
-        public string DirectoryServiceUrl => GetStringOrDefault(
+        public string RegistryServiceUrl => GetStringOrDefault(
             kDirectoryServiceUrlKey,
-            () => GetStringOrDefault(PcsVariable.PCS_DIRECTORY_SERVICE_URL,
-                () => GetDefaultUrl("9043", "directory")));
+                GetStringOrDefault(PcsVariable.PCS_REGISTRY_SERVICE_URL,
+                GetDefaultUrl("9043", "directory")));
 
         /// <inheritdoc/>
         public RegistryConfig(IConfiguration configuration) :

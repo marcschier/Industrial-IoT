@@ -26,7 +26,6 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Ua.Service {
     using Autofac;
     using Autofac.Extensions.DependencyInjection;
     using Prometheus;
-    using System;
 
     /// <summary>
     /// Webservice startup
@@ -36,7 +35,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Ua.Service {
         /// <summary>
         /// Configuration - Initialized in constructor
         /// </summary>
-        public Config Config { get; }
+        public IConfiguration Configuration { get; }
 
         /// <summary>
         /// Service info - Initialized in constructor
@@ -53,26 +52,9 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Ua.Service {
         /// </summary>
         /// <param name="env"></param>
         /// <param name="configuration"></param>
-        public Startup(IWebHostEnvironment env, IConfiguration configuration) :
-            this(env, new Config(new ConfigurationBuilder()
-                .AddConfiguration(configuration)
-                .AddFromDotEnvFile()
-                .AddEnvironmentVariables()
-                .AddEnvironmentVariables(EnvironmentVariableTarget.User)
-                // Above configuration providers will provide connection
-                // details for KeyVault configuration provider.
-                .AddFromKeyVault(providerPriority: ConfigurationProviderPriority.Lowest)
-                .Build())) {
-        }
-
-        /// <summary>
-        /// Create startup
-        /// </summary>
-        /// <param name="env"></param>
-        /// <param name="configuration"></param>
-        public Startup(IWebHostEnvironment env, Config configuration) {
+        public Startup(IWebHostEnvironment env, IConfiguration configuration) {
             Environment = env;
-            Config = configuration;
+            Configuration = configuration;
         }
 
         /// <summary>
@@ -120,7 +102,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Ua.Service {
 
             app.UseRouting();
             app.UseHttpMetrics();
-            app.EnableCors();
+            app.UseCors();
 
             app.UseJwtBearerAuthentication();
             app.UseAuthorization();
@@ -151,9 +133,8 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Ua.Service {
             // Register service info and configuration interfaces
             builder.RegisterInstance(ServiceInfo)
                 .AsImplementedInterfaces();
-            builder.RegisterInstance(Config)
-                .AsImplementedInterfaces();
-            builder.RegisterInstance(Config.Configuration)
+            builder.AddConfiguration(Configuration);
+            builder.RegisterType<HostingOptions>()
                 .AsImplementedInterfaces();
 
             // Register http client module

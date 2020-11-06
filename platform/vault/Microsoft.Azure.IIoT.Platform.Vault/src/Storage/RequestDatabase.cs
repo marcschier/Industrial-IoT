@@ -23,7 +23,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Storage {
         /// Create certificate request
         /// </summary>
         /// <param name="db"></param>
-        public RequestDatabase(IItemContainerFactory db) {
+        public RequestDatabase(ICollectionFactory db) {
             if (db == null) {
                 throw new ArgumentNullException(nameof(db));
             }
@@ -155,6 +155,6 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Storage {
             return query.GetResults();
         }
 
-        private readonly IItemContainer _requests;
+        private readonly IDocumentCollection _requests;
     }
 }

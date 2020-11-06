@@ -33,7 +33,7 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service.Api {
 
             var expected = new ApplicationEventModel {
                 Application = new ApplicationInfoModel {
-                    ApplicationType = IIoT.Platform.Core.Models.ApplicationType.Client,
+                    ApplicationType = Core.Models.ApplicationType.Client,
                     Capabilities = new HashSet<string>{ "ag", "sadf", "" },
                 }.SetAsLost()
             };
@@ -68,7 +68,7 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service.Api {
 
             var expected = new ApplicationEventModel {
                 Application = new ApplicationInfoModel {
-                    ApplicationType = IIoT.Platform.Core.Models.ApplicationType.Client,
+                    ApplicationType = Core.Models.ApplicationType.Client,
                     Capabilities = new HashSet<string> { "ag", "sadf", "" },
                 }.SetAsLost()
             };
@@ -163,7 +163,7 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service.Api {
                 DiscovererId = discovererId,
                 Discovered = 55,
                 ResultDetails = new Dictionary<string, string> { ["test"] = "test" },
-                EventType = IIoT.Platform.Discovery.Models.DiscoveryProgressType.NetworkScanFinished,
+                EventType = Discovery.Models.DiscoveryProgressType.NetworkScanFinished,
                 TimeStamp = DateTime.UtcNow
             };
             var result = new TaskCompletionSource<DiscoveryProgressApiModel>(TaskCreationOptions.RunContinuationsAsynchronously);
@@ -205,7 +205,7 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service.Api {
                 DiscovererId = "testetests",
                 Discovered = 55,
                 ResultDetails = new Dictionary<string, string> { ["test"] = "test" },
-                EventType = IIoT.Platform.Discovery.Models.DiscoveryProgressType.NetworkScanFinished,
+                EventType = Discovery.Models.DiscoveryProgressType.NetworkScanFinished,
                 TimeStamp = DateTime.UtcNow
             };
             var result = new TaskCompletionSource<DiscoveryProgressApiModel>(TaskCreationOptions.RunContinuationsAsynchronously);
@@ -243,7 +243,7 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service.Api {
             var expected = new DiscoveryProgressModel {
                 DiscovererId = discovererId,
                 Discovered = 55,
-                EventType = IIoT.Platform.Discovery.Models.DiscoveryProgressType.NetworkScanFinished,
+                EventType = Discovery.Models.DiscoveryProgressType.NetworkScanFinished,
                 TimeStamp = DateTime.UtcNow
             };
             var result = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);

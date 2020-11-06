@@ -56,8 +56,7 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Clients {
                     .AddFromDotEnvFile()
                     .AddFromKeyVault()
                     .Build();
-                builder.RegisterInstance(config)
-                    .AsImplementedInterfaces();
+                builder.AddConfiguration(config);
                 builder.RegisterType<ServiceBusConfig>()
                     .AsImplementedInterfaces().SingleInstance();
 

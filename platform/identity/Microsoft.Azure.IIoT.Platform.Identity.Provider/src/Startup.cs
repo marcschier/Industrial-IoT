@@ -28,7 +28,6 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Provider {
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
     using Microsoft.Extensions.Logging;
-    using System;
 
     /// <summary>
     /// Webservice Startup
@@ -38,7 +37,7 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Provider {
         /// <summary>
         /// Configuration - Initialized in constructor
         /// </summary>
-        public Config Config { get; }
+        public IConfiguration Configuration { get; }
 
         /// <summary>
         /// Service info - Initialized in constructor
@@ -55,24 +54,9 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Provider {
         /// </summary>
         /// <param name="env"></param>
         /// <param name="configuration"></param>
-        public Startup(IWebHostEnvironment env, IConfiguration configuration) :
-            this(env, new Config(new ConfigurationBuilder()
-                .AddConfiguration(configuration)
-                .AddEnvironmentVariables()
-                .AddEnvironmentVariables(EnvironmentVariableTarget.User)
-                .AddFromDotEnvFile()
-                .AddFromKeyVault()
-                .Build())) {
-        }
-
-        /// <summary>
-        /// Create startup
-        /// </summary>
-        /// <param name="env"></param>
-        /// <param name="configuration"></param>
-        public Startup(IWebHostEnvironment env, Config configuration) {
+        public Startup(IWebHostEnvironment env, IConfiguration configuration) {
             Environment = env;
-            Config = configuration;
+            Configuration = configuration;
         }
 
         /// <summary>
@@ -120,7 +104,7 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Provider {
             var authentication = services.AddAuthentication();
 
             // Attach aad
-            var aadConfig = new AadSpClientConfig(Config.Configuration);
+            var aadConfig = new AadSpClientConfig(Configuration);
             if (!string.IsNullOrEmpty(aadConfig.ClientId) &&
                 !string.IsNullOrEmpty(aadConfig.ClientSecret)) {
 #pragma warning disable CS0618 // Type or member is obsolete
@@ -184,9 +168,8 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Provider {
             // Register service info and configuration interfaces
             builder.RegisterInstance(ServiceInfo)
                 .AsImplementedInterfaces();
-            builder.RegisterInstance(Config)
-                .AsImplementedInterfaces();
-            builder.RegisterInstance(Config.Configuration)
+            builder.AddConfiguration(Configuration);
+            builder.RegisterType<HostingOptions>()
                 .AsImplementedInterfaces();
 
             // Register http client module
@@ -219,7 +202,7 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Provider {
             // --- Dependencies ---
 
             // Add service to service authentication
-            builder.RegisterModule<DefaultServiceAuthProviders>();
+            builder.RegisterModule<ActiveDirectorySupport>();
             builder.RegisterModule<DefaultPublicClientAuthProviders>();
             // TODO: builder.RegisterModule<DefaultConfidentialClientAuthProviders>();
             // TODO: Add openid auth providers

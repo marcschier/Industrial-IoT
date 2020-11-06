@@ -562,12 +562,12 @@ namespace Microsoft.Azure.IIoT.Extensions.LiteDb.Clients {
         }
 
         private static Task<List<IDocumentInfo<T>>> ListAsync<T>(
-            IItemContainer documents) {
+            IDocumentCollection documents) {
             return ListAsync<T, object>(documents, null);
         }
 
         private static async Task<List<IDocumentInfo<T>>> ListAsync<T, K>(
-            IItemContainer documents, Expression<Func<T, K>> order) {
+            IDocumentCollection documents, Expression<Func<T, K>> order) {
             var query = documents.CreateQuery<T>();
             if (order != null) {
                 query = query.OrderBy(order);

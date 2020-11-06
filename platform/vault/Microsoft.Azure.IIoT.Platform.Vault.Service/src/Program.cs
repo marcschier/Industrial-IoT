@@ -6,6 +6,7 @@
 namespace Microsoft.Azure.IIoT.Platform.Vault.Service {
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.Extensions.Hosting;
+    using Microsoft.Extensions.Configuration;
     using Autofac.Extensions.Hosting;
 
     /// <summary>
@@ -29,6 +30,8 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Service {
         public static IHostBuilder CreateHostBuilder(string[] args) {
             return Host.CreateDefaultBuilder(args)
                 .UseAutofac()
+                .ConfigureHostConfiguration(builder => builder
+                    .AddFromDotEnvFile())
                 .ConfigureWebHostDefaults(builder => builder
                     .UseUrls("http://*:9044")
                     .UseStartup<Startup>()

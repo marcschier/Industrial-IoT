@@ -4,11 +4,11 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Azure.KeyVault.Runtime {
-    using Microsoft.Azure.IIoT.Utils;
+    using Microsoft.Azure.IIoT.Configuration;
     using Microsoft.Extensions.Configuration;
 
     /// <inheritdoc/>
-    public sealed class KeyVaultConfig : ConfigBase<KeyVaultOptions> {
+    public sealed class KeyVaultConfig : PostConfigureOptionBase<KeyVaultOptions> {
 
         /// <inheritdoc/>
         public KeyVaultConfig(IConfiguration configuration) :
@@ -16,11 +16,14 @@ namespace Microsoft.Azure.IIoT.Azure.KeyVault.Runtime {
         }
 
         /// <inheritdoc/>
-        public override void Configure(string name, KeyVaultOptions options) {
-            options.KeyVaultBaseUrl = GetStringOrDefault("KEYVAULT__BASEURL",
-                () => GetStringOrDefault(PcsVariable.PCS_KEYVAULT_URL)).Trim();
-            options.KeyVaultIsHsm = GetBoolOrDefault(PcsVariable.PCS_KEYVAULT_ISHSM,
-                () => true);
+        public override void PostConfigure(string name, KeyVaultOptions options) {
+            if (string.IsNullOrEmpty(options.KeyVaultBaseUrl)) {
+                options.KeyVaultBaseUrl = GetStringOrDefault("KEYVAULT__BASEURL",
+                    GetStringOrDefault(PcsVariable.PCS_KEYVAULT_URL)).Trim();
+            }
+            if (options.KeyVaultIsHsm == null) {
+                options.KeyVaultIsHsm = GetBoolOrDefault(PcsVariable.PCS_KEYVAULT_ISHSM, true);
+            }
         }
     }
 }

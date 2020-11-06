@@ -26,7 +26,7 @@ namespace Microsoft.Azure.IIoT.AspNetCore.Authentication.Clients {
 
         /// <inheritdoc/>
         protected override void Load(ContainerBuilder builder) {
-            builder.RegisterModule<DefaultServiceAuthProviders>();
+            builder.RegisterModule<ActiveDirectorySupport>();
 
             builder.RegisterType<HttpBearerAuthentication>()
                 .AsImplementedInterfaces();

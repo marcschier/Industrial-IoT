@@ -4,13 +4,13 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Azure.AppInsights.Runtime {
-    using Microsoft.Azure.IIoT.Utils;
+    using Microsoft.Azure.IIoT.Configuration;
     using Microsoft.Extensions.Configuration;
 
     /// <summary>
     /// App Insights configuration
     /// </summary>
-    internal sealed class AppInsightsConfig : ConfigBase<AppInsightsOptions> {
+    internal sealed class AppInsightsConfig : PostConfigureOptionBase<AppInsightsOptions> {
 
         /// <inheritdoc/>
         public AppInsightsConfig(IConfiguration configuration) :
@@ -18,10 +18,11 @@ namespace Microsoft.Azure.IIoT.Azure.AppInsights.Runtime {
         }
 
         /// <inheritdoc/>
-        public override void Configure(string name, AppInsightsOptions options) {
-            options.InstrumentationKey = 
-                GetStringOrDefault(PcsVariable.PCS_APPINSIGHTS_INSTRUMENTATIONKEY,
-                    () => null);
+        public override void PostConfigure(string name, AppInsightsOptions options) {
+            if (string.IsNullOrEmpty(options.InstrumentationKey)) {
+                options.InstrumentationKey =
+                    GetStringOrDefault(PcsVariable.PCS_APPINSIGHTS_INSTRUMENTATIONKEY);
+            }
         }
     }
 }

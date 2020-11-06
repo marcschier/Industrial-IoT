@@ -385,7 +385,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
                     foreach (var toAdd in toAddList) {
                         // Create monitored item
                         if (!activate) {
-                            toAdd.Template.MonitoringMode = Platform.Publisher.Models.MonitoringMode.Disabled;
+                            toAdd.Template.MonitoringMode = Publisher.Models.MonitoringMode.Disabled;
                         }
                         try {
                             toAdd.Create(rawSubscription.Session, codec, activate);
@@ -888,13 +888,13 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
                     Item.QueueSize = Template.QueueSize.GetValueOrDefault(1);
                     changes = true;
                 }
-                if (Template.MonitoringMode.GetValueOrDefault(Platform.Publisher.Models.MonitoringMode.Reporting) !=
-                    model.Template.MonitoringMode.GetValueOrDefault(Platform.Publisher.Models.MonitoringMode.Reporting)) {
+                if (Template.MonitoringMode.GetValueOrDefault(Publisher.Models.MonitoringMode.Reporting) !=
+                    model.Template.MonitoringMode.GetValueOrDefault(Publisher.Models.MonitoringMode.Reporting)) {
                     _logger.LogDebug("{item}: Changing monitoring mode from {old} to {new}",
-                        this, Template.MonitoringMode.GetValueOrDefault(Platform.Publisher.Models.MonitoringMode.Reporting),
-                        model.Template.MonitoringMode.GetValueOrDefault(Platform.Publisher.Models.MonitoringMode.Reporting));
+                        this, Template.MonitoringMode.GetValueOrDefault(Publisher.Models.MonitoringMode.Reporting),
+                        model.Template.MonitoringMode.GetValueOrDefault(Publisher.Models.MonitoringMode.Reporting));
                     Template.MonitoringMode = model.Template.MonitoringMode;
-                    _modeChange = Template.MonitoringMode.GetValueOrDefault(Platform.Publisher.Models.MonitoringMode.Reporting);
+                    _modeChange = Template.MonitoringMode.GetValueOrDefault(Publisher.Models.MonitoringMode.Reporting);
                 }
                 if (Template.DisplayName != model.Template.DisplayName) {
                     Template.DisplayName = model.Template.DisplayName;

@@ -27,7 +27,7 @@ namespace Microsoft.Azure.IIoT.AspNetCore.Authentication.Clients {
                 .AsImplementedInterfaces()
                 .IfNotRegistered(typeof(ITokenProvider));
 
-            builder.RegisterModule<DefaultServiceAuthProviders>();
+            builder.RegisterModule<ActiveDirectorySupport>();
 
             // Pass token through is the only provider here
             builder.RegisterType<PassThroughBearerToken>()

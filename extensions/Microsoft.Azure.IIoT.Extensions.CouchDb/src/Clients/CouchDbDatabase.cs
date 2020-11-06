@@ -28,7 +28,7 @@ namespace Microsoft.Azure.IIoT.Extensions.CouchDb.Clients {
         }
 
         /// <inheritdoc/>
-        public async Task<IItemContainer> OpenContainerAsync(string id,
+        public async Task<IDocumentCollection> OpenContainerAsync(string id,
             ContainerOptions options) {
             if (string.IsNullOrEmpty(id)) {
                 id = "default";

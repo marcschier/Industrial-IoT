@@ -25,7 +25,7 @@ namespace Microsoft.Azure.IIoT.Extensions.CouchDb.Clients {
     /// <summary>
     /// Wraps a collection
     /// </summary>
-    internal sealed class CouchDbCollection : IItemContainer {
+    internal sealed class CouchDbCollection : IDocumentCollection {
 
         /// <inheritdoc/>
         public string Name { get; }

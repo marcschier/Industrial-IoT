@@ -5,13 +5,13 @@
 
 namespace Microsoft.Azure.IIoT.Azure.LogAnalytics.Runtime {
     using Microsoft.Azure.IIoT.Azure.LogAnalytics;
-    using Microsoft.Azure.IIoT.Utils;
+    using Microsoft.Azure.IIoT.Configuration;
     using Microsoft.Extensions.Configuration;
 
     /// <summary>
     /// Log Analytics Workspace configuration
     /// </summary>
-    public class LogAnalyticsConfig : ConfigBase<LogAnalyticsOptions> {
+    public class LogAnalyticsConfig : PostConfigureOptionBase<LogAnalyticsOptions> {
 
         /// <inheritdoc/>
         public LogAnalyticsConfig(IConfiguration configuration) :
@@ -19,9 +19,13 @@ namespace Microsoft.Azure.IIoT.Azure.LogAnalytics.Runtime {
         }
 
         /// <inheritdoc/>
-        public override void Configure(string name, LogAnalyticsOptions options) {
-            options.LogWorkspaceId = GetStringOrDefault(PcsVariable.PCS_WORKSPACE_ID);
-            options.LogWorkspaceKey = GetStringOrDefault(PcsVariable.PCS_WORKSPACE_KEY);
+        public override void PostConfigure(string name, LogAnalyticsOptions options) {
+            if (string.IsNullOrEmpty(options.LogWorkspaceId)) {
+                options.LogWorkspaceId = GetStringOrDefault(PcsVariable.PCS_WORKSPACE_ID);
+            }
+            if (string.IsNullOrEmpty(options.LogWorkspaceKey)) {
+                options.LogWorkspaceKey = GetStringOrDefault(PcsVariable.PCS_WORKSPACE_KEY);
+            }
         }
     }
 }

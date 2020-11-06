@@ -15,13 +15,13 @@ namespace Microsoft.Azure.IIoT.Platform.Discovery.Api.Runtime {
         /// <summary>
         /// Registry configuration
         /// </summary>
-        private const string kOpcUaRegistryServiceUrlKey = "OpcRegistryServiceUrl";
+        private const string kDiscoveryServiceUrlKey = "DiscoveryServiceUrl";
 
         /// <summary>OPC registry endpoint url</summary>
-        public string OpcUaRegistryServiceUrl => GetStringOrDefault(
-            kOpcUaRegistryServiceUrlKey,
-            () => GetStringOrDefault(PcsVariable.PCS_TWIN_REGISTRY_URL,
-                () => GetDefaultUrl("9042", "registry")));
+        public string DiscoveryServiceUrl => GetStringOrDefault(
+            kDiscoveryServiceUrlKey,
+            GetStringOrDefault(PcsVariable.PCS_DISCOVERY_SERVICE_URL,
+                GetDefaultUrl("9042", "registry")));
 
         /// <inheritdoc/>
         public DiscoveryConfig(IConfiguration configuration) :

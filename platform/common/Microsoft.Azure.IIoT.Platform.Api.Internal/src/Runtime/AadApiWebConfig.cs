@@ -4,13 +4,13 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Authentication.Runtime {
-    using Microsoft.Azure.IIoT.Utils;
+    using Microsoft.Azure.IIoT.Configuration;
     using Microsoft.Extensions.Configuration;
 
     /// <summary>
     /// Auth api web application configuration
     /// </summary>
-    public class AadApiWebConfig : ConfigBase, IOAuthClientConfig {
+    public class AadApiWebConfig : ConfigureOptionBase, IOAuthClientConfig {
 
         /// <summary>
         /// Client configuration
@@ -29,27 +29,27 @@ namespace Microsoft.Azure.IIoT.Authentication.Runtime {
         public string Resource => Http.Resource.Platform;
         /// <summary>Application id</summary>
         public string ClientId => GetStringOrDefault(kAuth_AppIdKey,
-            () => GetStringOrDefault(PcsVariable.PCS_AAD_CONFIDENTIAL_CLIENT_APPID,
-            () => GetStringOrDefault("PCS_WEBUI_AUTH_AAD_APPID",
-                () => null)))?.Trim();
+            GetStringOrDefault(PcsVariable.PCS_AAD_CONFIDENTIAL_CLIENT_APPID,
+            GetStringOrDefault("PCS_WEBUI_AUTH_AAD_APPID",
+                null)))?.Trim();
         /// <summary>App secret</summary>
         public string ClientSecret => GetStringOrDefault(kAuth_AppSecretKey,
-            () => GetStringOrDefault(PcsVariable.PCS_AAD_CONFIDENTIAL_CLIENT_SECRET,
-            () => GetStringOrDefault("PCS_APPLICATION_SECRET")))?.Trim();
+            GetStringOrDefault(PcsVariable.PCS_AAD_CONFIDENTIAL_CLIENT_SECRET,
+            GetStringOrDefault("PCS_APPLICATION_SECRET")))?.Trim();
         /// <summary>Optional tenant</summary>
         public string TenantId => GetStringOrDefault(kAuth_TenantIdKey,
-            () => GetStringOrDefault(PcsVariable.PCS_AUTH_TENANT,
-            () => GetStringOrDefault("PCS_WEBUI_AUTH_AAD_TENANT",
-                () => "common")))?.Trim();
+            GetStringOrDefault(PcsVariable.PCS_AUTH_TENANT,
+            GetStringOrDefault("PCS_WEBUI_AUTH_AAD_TENANT",
+                "common")))?.Trim();
         /// <summary>Aad instance url</summary>
         public string InstanceUrl => GetStringOrDefault(kAuth_InstanceUrlKey,
-            () => GetStringOrDefault(PcsVariable.PCS_AAD_INSTANCE,
-            () => GetStringOrDefault("PCS_WEBUI_AUTH_AAD_AUTHORITY",
-                () => "https://login.microsoftonline.com")))?.Trim();
+            GetStringOrDefault(PcsVariable.PCS_AAD_INSTANCE,
+            GetStringOrDefault("PCS_WEBUI_AUTH_AAD_AUTHORITY",
+                "https://login.microsoftonline.com")))?.Trim();
         /// <summary>Audience</summary>
         public string Audience => GetStringOrDefault(kAuth_AudienceKey,
-            () => GetStringOrDefault(PcsVariable.PCS_AAD_AUDIENCE,
-                () => null))?.Trim();
+            GetStringOrDefault(PcsVariable.PCS_AAD_AUDIENCE,
+                null))?.Trim();
 
         /// <summary>
         /// Configuration constructor

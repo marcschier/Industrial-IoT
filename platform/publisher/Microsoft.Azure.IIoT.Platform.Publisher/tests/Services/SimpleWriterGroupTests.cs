@@ -40,7 +40,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
 
         public SimpleWriterGroupTests(TestServerFixture server) {
             _server = server;
-            _hostEntry = Try.Op(() => Dns.GetHostEntry(Opc.Ua.Utils.GetHostName()))
+            _hostEntry = Try.Op(() => Dns.GetHostEntry(Utils.GetHostName()))
                 ?? Try.Op(() => Dns.GetHostEntry("localhost"));
         }
 
@@ -435,13 +435,14 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
         /// </summary>
         private AutoMock Setup() {
             var mock = AutoMock.GetLoose(builder => {
+                builder.RegisterGeneric(typeof(OptionsMock<>)).AsImplementedInterfaces();
                 builder.RegisterInstance(new ConfigurationBuilder().Build()).AsImplementedInterfaces();
                 builder.RegisterInstance(Log.Console()).AsImplementedInterfaces();
                 builder.RegisterType<ClientServicesConfig>().AsImplementedInterfaces();
                 builder.RegisterType<NewtonSoftJsonConverters>().As<IJsonSerializerConverterProvider>();
                 builder.RegisterType<NewtonSoftJsonSerializer>().As<IJsonSerializer>();
                 builder.RegisterType<MemoryDatabase>().As<IDatabaseServer>().SingleInstance();
-                builder.RegisterType<ItemContainerFactory>().As<IItemContainerFactory>();
+                builder.RegisterType<CollectionFactory>().As<ICollectionFactory>();
                 builder.RegisterType<DataSetEntityDatabase>().AsImplementedInterfaces();
                 builder.RegisterType<DataSetWriterDatabase>().AsImplementedInterfaces();
                 builder.RegisterType<WriterGroupDatabase>().AsImplementedInterfaces();

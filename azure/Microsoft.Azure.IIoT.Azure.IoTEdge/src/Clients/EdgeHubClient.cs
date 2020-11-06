@@ -847,10 +847,10 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Clients {
                         throw new ArgumentNullException(nameof(cs));
                     }
                     if (transportSetting != null) {
-                        return Devices.Client.DeviceClient.CreateFromConnectionString(cs.ToString(),
+                        return DeviceClient.CreateFromConnectionString(cs.ToString(),
                             new ITransportSettings[] { transportSetting });
                     }
-                    return Devices.Client.DeviceClient.CreateFromConnectionString(cs.ToString());
+                    return DeviceClient.CreateFromConnectionString(cs.ToString());
                 }
                 catch (Exception ex) {
                     throw ex.Translate();

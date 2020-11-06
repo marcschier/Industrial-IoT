@@ -37,7 +37,7 @@ namespace Opc.Ua.Extensions {
             }
             while (!typeof(T).IsInstanceOfType(value)) {
                 try {
-                    return value.As<T>();
+                    return value.ConvertTo<T>();
                 }
                 catch {
                     break;

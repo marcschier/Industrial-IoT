@@ -10,6 +10,7 @@ namespace Microsoft.Azure.IIoT.Extensions.Kafka.Clients {
     using Microsoft.Azure.IIoT.Hosting;
     using Microsoft.Azure.IIoT.Exceptions;
     using Microsoft.Extensions.Logging;
+    using Microsoft.Extensions.Options;
     using System;
     using System.Collections.Generic;
     using System.Collections.Concurrent;
@@ -22,8 +23,7 @@ namespace Microsoft.Azure.IIoT.Extensions.Kafka.Clients {
     /// <summary>
     /// Kafka producer
     /// </summary>
-    public sealed class KafkaProducerClient : IEventQueueClient, IEventClient,
-        IDisposable {
+    public sealed class KafkaProducerClient : IEventQueueClient, IEventClient, IDisposable {
 
         /// <summary>
         /// Create service client
@@ -32,12 +32,12 @@ namespace Microsoft.Azure.IIoT.Extensions.Kafka.Clients {
         /// <param name="logger"></param>
         /// <param name="identity"></param>
         /// <param name="admin"></param>
-        public KafkaProducerClient(IKafkaServerConfig config, IKafkaAdminClient admin,
-            ILogger logger, IProcessIdentity identity = null) {
+        public KafkaProducerClient(IOptionsSnapshot<KafkaServerOptions> config,
+            IKafkaAdminClient admin, ILogger logger, IProcessIdentity identity = null) {
             _admin = admin ?? throw new ArgumentNullException(nameof(admin));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _producer = new ProducerBuilder<string, byte[]>(
-                config.ToClientConfig<ProducerConfig>(
+                config.Value.ToClientConfig<ProducerConfig>(
                     identity?.Id ?? Dns.GetHostName()))
                 .SetErrorHandler(OnError)
                 .SetStatisticsHandler(OnMetrics)
@@ -110,8 +110,8 @@ namespace Microsoft.Azure.IIoT.Extensions.Kafka.Clients {
         }
 
         /// <inheritdoc/>
-        public async Task SendEventAsync(string target, IEnumerable<byte[]> batch, string contentType,
-            string eventSchema, string contentEncoding, CancellationToken ct) {
+        public async Task SendEventAsync(string target, IEnumerable<byte[]> batch,
+            string contentType, string eventSchema, string contentEncoding, CancellationToken ct) {
             if (target == null) {
                 throw new ArgumentNullException(nameof(target));
             }
@@ -205,8 +205,8 @@ namespace Microsoft.Azure.IIoT.Extensions.Kafka.Clients {
         /// <param name="eventSchema"></param>
         /// <param name="contentEncoding"></param>
         /// <returns></returns>
-        private static Headers CreateHeader(string target, string contentType, string eventSchema,
-            string contentEncoding) {
+        private static Headers CreateHeader(string target, string contentType,
+            string eventSchema, string contentEncoding) {
             var header = new Headers {
                 { EventProperties.Target, Encoding.UTF8.GetBytes(target) }
             };

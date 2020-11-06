@@ -49,12 +49,8 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
             IConfiguration configuration, bool useMsgPack) {
             var builder = new ContainerBuilder();
 
-            var config = new ApiConfig(configuration);
-
-            // Register configuration interfaces and logger
-            builder.RegisterInstance(config)
-                .AsImplementedInterfaces();
-            builder.RegisterInstance(config.Configuration)
+            builder.AddConfiguration(configuration);
+            builder.RegisterType<ApiConfig>()
                 .AsImplementedInterfaces();
             builder.RegisterType<AadApiClientConfig>()
                 .AsImplementedInterfaces();
@@ -109,10 +105,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
                 .AddJsonFile("appsettings.json", true)
                 .AddFromDotEnvFile()
                 .AddEnvironmentVariables()
-                .AddEnvironmentVariables(EnvironmentVariableTarget.User)
-                // Above configuration providers will provide connection
-                // details for KeyVault configuration provider.
-                .AddFromKeyVault(ConfigurationProviderPriority.Lowest, true)
+                .AddFromKeyVault(allowInteractiveLogon: true)
                 .Build();
 
             using (var scope = new Program(config,

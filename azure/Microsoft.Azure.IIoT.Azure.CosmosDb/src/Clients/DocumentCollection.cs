@@ -22,7 +22,7 @@ namespace Microsoft.Azure.IIoT.Azure.CosmosDb.Clients {
     /// <summary>
     /// Wraps a cosmos db container
     /// </summary>
-    internal sealed class DocumentCollection : IItemContainer {
+    internal sealed class DocumentCollection : IDocumentCollection {
 
         /// <inheritdoc/>
         public string Name => _container.Id;

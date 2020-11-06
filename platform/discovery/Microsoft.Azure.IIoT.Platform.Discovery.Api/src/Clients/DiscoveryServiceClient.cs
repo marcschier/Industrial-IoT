@@ -26,7 +26,7 @@ namespace Microsoft.Azure.IIoT.Platform.Discovery.Api.Clients {
         /// <param name="serializer"></param>
         public DiscoveryServiceClient(IHttpClient httpClient, IDiscoveryConfig config,
             ISerializer serializer) :
-            this(httpClient, config?.OpcUaRegistryServiceUrl, serializer) {
+            this(httpClient, config?.DiscoveryServiceUrl, serializer) {
         }
 
         /// <summary>

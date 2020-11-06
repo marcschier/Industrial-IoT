@@ -9,6 +9,7 @@ namespace Microsoft.Azure.IIoT.Extensions.Kafka.Services {
     using Microsoft.Azure.IIoT.Hosting;
     using Microsoft.Azure.IIoT.Utils;
     using Microsoft.Extensions.Logging;
+    using Microsoft.Extensions.Options;
     using System;
     using System.Threading;
     using System.Collections.Generic;
@@ -29,34 +30,36 @@ namespace Microsoft.Azure.IIoT.Extensions.Kafka.Services {
         /// </summary>
         /// <param name="admin"></param>
         /// <param name="consumer"></param>
+        /// <param name="server"></param>
         /// <param name="config"></param>
         /// <param name="logger"></param>
         /// <param name="identity"></param>
-        public KafkaConsumerHost(IEventProcessingHandler consumer,
-            IKafkaConsumerConfig config, ILogger logger, IKafkaAdminClient admin,
-            IProcessIdentity identity) : base(logger, "Kafka") {
+        public KafkaConsumerHost(IEventProcessingHandler consumer, IKafkaAdminClient admin,
+            IOptions<KafkaServerOptions> server, IOptions<KafkaConsumerOptions> config, 
+            ILogger logger, IProcessIdentity identity) : base(logger, "Kafka") {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _consumer = consumer ?? throw new ArgumentNullException(nameof(consumer));
             _admin = admin ?? throw new ArgumentNullException(nameof(admin));
             _config = config ?? throw new ArgumentNullException(nameof(config));
+            _server = server ?? throw new ArgumentNullException(nameof(server));
             _consumerId = identity.Id ?? Guid.NewGuid().ToString();
-            _interval = (int?)config.CheckpointInterval?.TotalMilliseconds;
+            _interval = (int?)config.Value.CheckpointInterval?.TotalMilliseconds;
         }
 
         /// <inheritdoc/>
         protected override async Task RunAsync(CancellationToken ct) {
 
             var config = new ConsumerConfig {
-                BootstrapServers = _config.BootstrapServers,
-                GroupId = _config.ConsumerGroup,
-                AutoOffsetReset = _config.InitialReadFromEnd ?
+                BootstrapServers = _server.Value.BootstrapServers,
+                GroupId = _config.Value.ConsumerGroup,
+                AutoOffsetReset = _config.Value.InitialReadFromEnd ?
                     AutoOffsetReset.Latest : AutoOffsetReset.Earliest,
                 EnableAutoCommit = true,
                 EnableAutoOffsetStore = true,
                 AutoCommitIntervalMs = _interval,
                 // ...
             };
-            var topic = _config.ConsumerTopic ?? "^.*";
+            var topic = _config.Value.ConsumerTopic ?? "^.*";
             if (!topic.StartsWith("^")) {
                 await _admin.EnsureTopicExistsAsync(topic).ConfigureAwait(false);
             }
@@ -76,9 +79,9 @@ namespace Microsoft.Azure.IIoT.Extensions.Kafka.Services {
                             if (result.Topic == "__consumer_offsets") {
                                 continue;
                             }
-                            if (_config.SkipEventsOlderThan != null &&
+                            if (_config.Value.SkipEventsOlderThan != null &&
                                 ev.Timestamp.UtcDateTime +
-                                    _config.SkipEventsOlderThan < DateTime.UtcNow) {
+                                    _config.Value.SkipEventsOlderThan < DateTime.UtcNow) {
                                 // Skip this one and catch up
                                 continue;
                             }
@@ -258,9 +261,10 @@ namespace Microsoft.Azure.IIoT.Extensions.Kafka.Services {
         }
 
         private readonly ILogger _logger;
-        private readonly IEventProcessingHandler _consumer;
         private readonly IKafkaAdminClient _admin;
-        private readonly IKafkaConsumerConfig _config;
+        private readonly IEventProcessingHandler _consumer;
+        private readonly IOptions<KafkaConsumerOptions> _config;
+        private readonly IOptions<KafkaServerOptions> _server;
         private readonly string _consumerId;
         private readonly int? _interval;
     }

@@ -12,8 +12,6 @@ namespace System {
     using System.Threading.Tasks;
     using System.Runtime.Serialization;
     using System.Linq.Expressions;
-    using System.Collections.Generic;
-    using System.Linq;
 
     internal static class Extensions {
 
@@ -29,23 +27,6 @@ namespace System {
                 name = "_id"; // Translate from convention to couchdb id property
             }
             return name;
-        }
-
-
-        internal static MethodInfo GetSumOrAverageWithoutSelector<T>(
-            this List<MethodInfo> queryableMethods, string methodName) {
-            return queryableMethods
-                .Single(mi => mi.Name == methodName &&
-                    mi.GetParameters().Length == 1 &&
-                    mi.GetParameters()[0].ParameterType.GetGenericArguments()[0] == typeof(T));
-        }
-
-        internal static MethodInfo GetSumOrAverageWithSelector<T>(
-            this List<MethodInfo> queryableMethods, string methodName) {
-            return queryableMethods
-                .Single(mi => mi.Name == methodName &&
-                mi.GetParameters().Length == 2 &&
-                IsSelector<T>(mi.GetParameters()[1].ParameterType));
         }
 
         internal static bool IsExpressionOfFunc(this Type type, int funcGenericArgs = 2) {

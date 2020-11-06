@@ -65,8 +65,8 @@ namespace System {
         /// <typeparam name="T"></typeparam>
         /// <param name="value"></param>
         /// <returns></returns>
-        public static T As<T>(this object value) {
-            return (T)As(value, typeof(T));
+        public static T ConvertTo<T>(this object value) {
+            return (T)ConvertTo(value, typeof(T));
         }
 
         /// <summary>
@@ -75,7 +75,7 @@ namespace System {
         /// <param name="value"></param>
         /// <param name="type"></param>
         /// <returns></returns>
-        public static object As(this object value, Type type) {
+        public static object ConvertTo(this object value, Type type) {
             if (value == null || value.GetType() == type) {
                 return value;
             }

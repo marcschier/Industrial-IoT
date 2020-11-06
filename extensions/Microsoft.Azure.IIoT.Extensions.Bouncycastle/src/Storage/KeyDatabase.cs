@@ -25,7 +25,7 @@ namespace Microsoft.Azure.IIoT.Crypto.Storage {
         /// </summary>
         /// <param name="container"></param>
         /// <param name="serializer"></param>
-        public KeyDatabase(IItemContainerFactory container, IJsonSerializer serializer) {
+        public KeyDatabase(ICollectionFactory container, IJsonSerializer serializer) {
             _keys = container.OpenAsync("keystore").Result;
             _serializer = serializer ?? throw new ArgumentNullException(nameof(serializer));
         }
@@ -157,7 +157,7 @@ namespace Microsoft.Azure.IIoT.Crypto.Storage {
             }
         }
 
-        private readonly IItemContainer _keys;
+        private readonly IDocumentCollection _keys;
         private readonly IJsonSerializer _serializer;
     }
 }

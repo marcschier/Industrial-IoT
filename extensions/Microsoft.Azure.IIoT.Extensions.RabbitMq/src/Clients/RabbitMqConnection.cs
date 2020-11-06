@@ -7,6 +7,7 @@ namespace Microsoft.Azure.IIoT.Extensions.RabbitMq.Clients {
     using Microsoft.Azure.IIoT.Exceptions;
     using Microsoft.Azure.IIoT.Utils;
     using Microsoft.Extensions.Logging;
+    using Microsoft.Extensions.Options;
     using System;
     using System.Collections.Concurrent;
     using System.Linq;
@@ -23,17 +24,17 @@ namespace Microsoft.Azure.IIoT.Extensions.RabbitMq.Clients {
         /// <summary>
         /// Create connection
         /// </summary>
-        /// <param name="config"></param>
+        /// <param name="options"></param>
         /// <param name="logger"></param>
-        public RabbitMqConnection(IRabbitMqConfig config, ILogger logger) {
+        public RabbitMqConnection(IOptionsSnapshot<RabbitMqOptions> options, ILogger logger) {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            _config = config ?? throw new ArgumentNullException(nameof(config));
+            _options = options ?? throw new ArgumentNullException(nameof(options));
 
             _connection = Retry.WithLinearBackoff(_logger, () =>
                 Task.FromResult(new ConnectionFactory {
-                    HostName = _config.HostName,
-                    Password = _config.Key,
-                    UserName = _config.UserName,
+                    HostName = _options.Value.HostName,
+                    Password = _options.Value.Key,
+                    UserName = _options.Value.UserName,
 
                     AutomaticRecoveryEnabled = true,
                     NetworkRecoveryInterval = TimeSpan.FromMilliseconds(500),
@@ -70,7 +71,7 @@ namespace Microsoft.Azure.IIoT.Extensions.RabbitMq.Clients {
             public string RoutingKey {
                 get {
                     if (_consumer != null || string.IsNullOrEmpty(QueueName)) {
-                        return _outer._config.RoutingKey ?? string.Empty;
+                        return _outer._options.Value.RoutingKey ?? string.Empty;
                     }
                     return QueueName;
                 }
@@ -197,7 +198,7 @@ namespace Microsoft.Azure.IIoT.Extensions.RabbitMq.Clients {
                     else {
                         // Create Queue
                         QueueName = model.QueueDeclare(_name, true, false).QueueName;
-                        ExchangeName = _outer._config.RoutingKey ?? string.Empty;
+                        ExchangeName = _outer._options.Value.RoutingKey ?? string.Empty;
                         if (!string.IsNullOrEmpty(ExchangeName)) {
                             model.ExchangeDeclare(ExchangeName, ExchangeType.Direct, true);
                         }
@@ -226,7 +227,7 @@ namespace Microsoft.Azure.IIoT.Extensions.RabbitMq.Clients {
                     else {
                         // Create Queue
                         QueueName = model.QueueDeclare(_name, true, false).QueueName;
-                        ExchangeName = _outer._config.RoutingKey ?? string.Empty;
+                        ExchangeName = _outer._options.Value.RoutingKey ?? string.Empty;
                         if (!string.IsNullOrEmpty(ExchangeName)) {
                             model.ExchangeDeclare(ExchangeName, ExchangeType.Direct, true);
                         }
@@ -366,6 +367,6 @@ namespace Microsoft.Azure.IIoT.Extensions.RabbitMq.Clients {
 
         private readonly IConnection _connection;
         private readonly ILogger _logger;
-        private readonly IRabbitMqConfig _config;
+        private readonly IOptionsSnapshot<RabbitMqOptions> _options;
     }
 }

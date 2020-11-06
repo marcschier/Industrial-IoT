@@ -33,7 +33,7 @@ namespace Microsoft.Azure.IIoT.Azure.ActiveDirectory.Utils {
             bool allowInteractiveLogon = false) {
             configuration ??= new ConfigurationBuilder()
                 .AddConfiguration(configuration)
-                .AddEnvironmentVariables(EnvironmentVariableTarget.User)
+                .AddEnvironmentVariables()
                 .AddFromDotEnvFile()
                 .Build();
 

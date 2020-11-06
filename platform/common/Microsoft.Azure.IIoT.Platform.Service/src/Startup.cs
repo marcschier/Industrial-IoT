@@ -4,7 +4,6 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Platform.Service {
-    using Microsoft.Azure.IIoT.Platform.Service.Runtime;
     using Microsoft.Azure.IIoT.Azure.ActiveDirectory;
     using Microsoft.Azure.IIoT.Azure.AppInsights;
     using Microsoft.Azure.IIoT.Utils;
@@ -30,7 +29,7 @@ namespace Microsoft.Azure.IIoT.Platform.Service {
         /// <summary>
         /// Configuration - Initialized in constructor
         /// </summary>
-        public Config Config { get; }
+        public IConfiguration Configuration { get; }
 
         /// <summary>
         /// Hosting environment
@@ -42,26 +41,9 @@ namespace Microsoft.Azure.IIoT.Platform.Service {
         /// </summary>
         /// <param name="env"></param>
         /// <param name="configuration"></param>
-        public Startup(IWebHostEnvironment env, IConfiguration configuration) :
-            this(env, new Config(new ConfigurationBuilder()
-                .AddConfiguration(configuration)
-                .AddFromDotEnvFile()
-                .AddEnvironmentVariables()
-                .AddEnvironmentVariables(EnvironmentVariableTarget.User)
-                // Above configuration providers will provide connection
-                // details for KeyVault configuration provider.
-                .AddFromKeyVault(providerPriority: ConfigurationProviderPriority.Lowest)
-                .Build())) {
-        }
-
-        /// <summary>
-        /// Create startup
-        /// </summary>
-        /// <param name="env"></param>
-        /// <param name="configuration"></param>
-        public Startup(IWebHostEnvironment env, Config configuration) {
+        public Startup(IWebHostEnvironment env, IConfiguration configuration) {
             Environment = env;
-            Config = configuration;
+            Configuration = configuration;
         }
 
         /// <summary>
@@ -105,12 +87,13 @@ namespace Microsoft.Azure.IIoT.Platform.Service {
             app.UseWelcomePage("/");
 
             // Minimal API surface
-            app.AddStartupBranch<Discovery.Service.Startup>("/registry");
             app.AddStartupBranch<Twin.Service.Startup>("/twin");
+            app.AddStartupBranch<Discovery.Service.Startup>("/registry");
             app.AddStartupBranch<Publisher.Service.Startup>("/publisher");
             app.AddStartupBranch<Api.Events.Service.Startup>("/events");
 
-            if (!Config.IsMinimumDeployment) {
+            if (!Configuration.GetValue<string>(PcsVariable.PCS_DEPLOYMENT_LEVEL)
+                .EqualsIgnoreCase("minimum")) {
                 app.AddStartupBranch<Vault.Service.Startup>("/vault");
                 app.AddStartupBranch<Twin.Ua.Service.Startup>("/ua");
             }
@@ -132,14 +115,11 @@ namespace Microsoft.Azure.IIoT.Platform.Service {
         public void ConfigureContainer(ContainerBuilder builder) {
 
             // Register service info and configuration interfaces
-            builder.RegisterInstance(Config)
-                .AsImplementedInterfaces().AsSelf();
-            builder.RegisterInstance(Config.Configuration)
-                .AsImplementedInterfaces();
+            builder.AddConfiguration(Configuration);
 
             // Add diagnostics and auth providers
             builder.AddAppInsightsLogging();
-            builder.RegisterModule<DefaultServiceAuthProviders>();
+            builder.RegisterModule<ActiveDirectorySupport>();
 
             builder.RegisterType<ProcessorHost>()
                 .AsImplementedInterfaces().InstancePerLifetimeScope();

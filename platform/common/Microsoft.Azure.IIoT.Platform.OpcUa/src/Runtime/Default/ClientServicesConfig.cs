@@ -5,13 +5,14 @@
 
 namespace Microsoft.Azure.IIoT.Platform.OpcUa.Runtime {
     using Microsoft.Azure.IIoT.Utils;
+    using Microsoft.Azure.IIoT.Configuration;
     using Microsoft.Extensions.Configuration;
     using System;
 
     /// <summary>
     /// Default client configuration
     /// </summary>
-    public class ClientServicesConfig : ConfigBase, IClientServicesConfig, ISecurityConfig, ITransportQuotaConfig {
+    public class ClientServicesConfig : ConfigureOptionBase, IClientServicesConfig, ISecurityConfig, ITransportQuotaConfig {
 
         /// <summary>
         /// Configuration
@@ -28,25 +29,25 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Runtime {
 
         /// <inheritdoc/>
         public string ApplicationName =>
-            GetStringOrDefault(ApplicationNameKey, () => "Microsoft.Azure.IIoT");
+            GetStringOrDefault(ApplicationNameKey, "Microsoft.Azure.IIoT");
         /// <inheritdoc/>
         public string ApplicationUri =>
-            GetStringOrDefault(ApplicationUriKey, () => $"urn:localhost:{ApplicationName}:microsoft:");
+            GetStringOrDefault(ApplicationUriKey, $"urn:localhost:{ApplicationName}:microsoft:");
         /// <inheritdoc/>
         public string ProductUri =>
-            GetStringOrDefault(ProductUriKey, () => "https://www.github.com/Azure/Industrial-IoT");
+            GetStringOrDefault(ProductUriKey, "https://www.github.com/Azure/Industrial-IoT");
         /// <inheritdoc/>
         public uint DefaultSessionTimeout =>
-            (uint)GetDurationOrDefault(DefaultSessionTimeoutKey, () => TimeSpan.Zero).TotalMilliseconds;
+            (uint)GetDurationOrDefault(DefaultSessionTimeoutKey, TimeSpan.Zero).TotalMilliseconds;
         /// <inheritdoc/>
         public int MinSubscriptionLifetime =>
-            (int)GetDurationOrDefault(MinSubscriptionLifetimeKey, () => TimeSpan.Zero).TotalMilliseconds;
+            (int)GetDurationOrDefault(MinSubscriptionLifetimeKey, TimeSpan.Zero).TotalMilliseconds;
         /// <inheritdoc/>
         public int KeepAliveInterval =>
-            (int)GetDurationOrDefault(KeepAliveIntervalKey, () => TimeSpan.FromSeconds(10)).TotalMilliseconds;
+            (int)GetDurationOrDefault(KeepAliveIntervalKey, TimeSpan.FromSeconds(10)).TotalMilliseconds;
         /// <inheritdoc/>
         public uint MaxKeepAliveCount =>
-            (uint)GetIntOrDefault(MaxKeepAliveCountKey, () => 50);
+            (uint)GetIntOrDefault(MaxKeepAliveCountKey, 50);
 
         /// <inheritdoc/>
         public string PkiRootPath => _security.PkiRootPath;

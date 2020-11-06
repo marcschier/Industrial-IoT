@@ -32,7 +32,7 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service.Api {
             var expected = new PublisherEventModel {
                 Publisher = new PublisherModel {
                     Connected = null,
-                    LogLevel = IIoT.Platform.Registry.Models.TraceLogLevel.Verbose
+                    LogLevel = Registry.Models.TraceLogLevel.Verbose
                 }
             };
             var result = new TaskCompletionSource<PublisherEventApiModel>(TaskCreationOptions.RunContinuationsAsynchronously);
@@ -63,7 +63,7 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service.Api {
 
             var expected = new PublisherEventModel {
                 Publisher = new PublisherModel {
-                    LogLevel = IIoT.Platform.Registry.Models.TraceLogLevel.Verbose
+                    LogLevel = Registry.Models.TraceLogLevel.Verbose
                 }
             };
             var result = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
@@ -94,7 +94,7 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service.Api {
             var expected = new DiscovererEventModel {
                 Discoverer = new DiscovererModel {
                     Connected = true,
-                    LogLevel = IIoT.Platform.Registry.Models.TraceLogLevel.Verbose
+                    LogLevel = Registry.Models.TraceLogLevel.Verbose
                 }
             };
             var result = new TaskCompletionSource<DiscovererEventApiModel>(TaskCreationOptions.RunContinuationsAsynchronously);
@@ -123,7 +123,7 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service.Api {
 
             var expected = new DiscovererEventModel {
                 Discoverer = new DiscovererModel {
-                    LogLevel = IIoT.Platform.Registry.Models.TraceLogLevel.Verbose
+                    LogLevel = Registry.Models.TraceLogLevel.Verbose
                 }
             };
             var result = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
@@ -155,7 +155,7 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service.Api {
             var expected = new SupervisorEventModel {
                 Supervisor = new SupervisorModel {
                     Connected = true,
-                    LogLevel = IIoT.Platform.Registry.Models.TraceLogLevel.Verbose
+                    LogLevel = Registry.Models.TraceLogLevel.Verbose
                 }
             };
             var result = new TaskCompletionSource<SupervisorEventApiModel>(TaskCreationOptions.RunContinuationsAsynchronously);
@@ -187,7 +187,7 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service.Api {
 
             var expected = new SupervisorEventModel {
                 Supervisor = new SupervisorModel {
-                    LogLevel = IIoT.Platform.Registry.Models.TraceLogLevel.Verbose
+                    LogLevel = Registry.Models.TraceLogLevel.Verbose
                 }
             };
             var result = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
@@ -217,7 +217,7 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service.Api {
             var client = _factory.Resolve<IRegistryServiceEvents>();
 
             var expected = new GatewayEventModel {
-                EventType = IIoT.Platform.Registry.Events.v2.Models.GatewayEventType.Deleted,
+                EventType = Registry.Events.v2.Models.GatewayEventType.Deleted,
                 Gateway = new GatewayModel {
                     SiteId = "TestSigfsdfg  ff",
                 }
@@ -235,7 +235,7 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service.Api {
                 var received = result.Task.Result;
                 Assert.NotNull(received?.Gateway);
                 Assert.Equal(expected.Gateway.SiteId, received.Gateway.SiteId);
-                Assert.Equal(IIoT.Platform.Registry.Api.Models.GatewayEventType.Deleted,
+                Assert.Equal(Registry.Api.Models.GatewayEventType.Deleted,
                     received.EventType);
             }
         }

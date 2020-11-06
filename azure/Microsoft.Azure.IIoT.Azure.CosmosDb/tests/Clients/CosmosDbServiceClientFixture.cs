@@ -6,6 +6,7 @@
 namespace Microsoft.Azure.IIoT.Azure.CosmosDb.Clients {
     using Microsoft.Azure.IIoT.Azure.CosmosDb.Runtime;
     using Microsoft.Azure.IIoT.Utils;
+    using Microsoft.Azure.IIoT.Configuration;
     using Microsoft.Azure.IIoT.Diagnostics;
     using Microsoft.Azure.IIoT.Serializers.NewtonSoft;
     using Microsoft.Azure.IIoT.Storage;
@@ -14,7 +15,6 @@ namespace Microsoft.Azure.IIoT.Azure.CosmosDb.Clients {
     using System.Threading.Tasks;
     using System.Runtime.Serialization;
     using System.Collections.Generic;
-    using Microsoft.Extensions.Options;
 
     public sealed class CosmosDbServiceClientFixture : IDisposable {
 
@@ -23,7 +23,7 @@ namespace Microsoft.Azure.IIoT.Azure.CosmosDb.Clients {
         /// </summary>
         /// <param name="collection">collection</param>
         /// <returns>None</returns>
-        private static async Task CreateDocumentsAsync(IItemContainer collection) {
+        private static async Task CreateDocumentsAsync(IDocumentCollection collection) {
             var AndersonFamily = new Family {
                 Id = "AndersenFamily",
                 LastName = "Andersen",
@@ -121,7 +121,7 @@ namespace Microsoft.Azure.IIoT.Azure.CosmosDb.Clients {
         /// </summary>
         /// <param name="options"></param>
         /// <returns></returns>
-        public async Task<IItemContainer> GetDocumentsAsync() {
+        public async Task<IDocumentCollection> GetDocumentsAsync() {
             _query = await GetContainerAsync("test").ConfigureAwait(false);
             if (_query == null) {
                 return null;
@@ -162,9 +162,9 @@ namespace Microsoft.Azure.IIoT.Azure.CosmosDb.Clients {
     public sealed class ContainerWrapper : IDisposable {
         private readonly IDatabase _database;
 
-        public IItemContainer Container { get; }
+        public IDocumentCollection Container { get; }
 
-        public ContainerWrapper(IDatabase database, IItemContainer container) {
+        public ContainerWrapper(IDatabase database, IDocumentCollection container) {
             _database = database;
             Container = container;
         }

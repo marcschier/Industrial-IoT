@@ -120,7 +120,6 @@ namespace Microsoft.Azure.IIoT.Extensions.Orleans {
         /// </summary>
         /// <param name="services"></param>
         protected virtual void Configure(IServiceCollection services) {
-
             GetType().GetMethod("ConfigureServices")?
                 .Invoke(this, new object[] { services });
         }

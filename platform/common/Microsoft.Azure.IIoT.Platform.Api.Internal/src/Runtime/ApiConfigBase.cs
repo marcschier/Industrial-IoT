@@ -4,7 +4,7 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Api.Runtime {
-    using Microsoft.Azure.IIoT.Utils;
+    using Microsoft.Azure.IIoT.Configuration;
     using Microsoft.Extensions.Configuration;
     using System.Net;
     using System.Net.Sockets;
@@ -12,7 +12,7 @@ namespace Microsoft.Azure.IIoT.Api.Runtime {
     /// <summary>
     /// Base api configuration
     /// </summary>
-    public abstract class ApiConfigBase : ConfigBase {
+    public abstract class ApiConfigBase : ConfigureOptionBase {
 
         /// <inheritdoc/>
         public ApiConfigBase(IConfiguration configuration) :

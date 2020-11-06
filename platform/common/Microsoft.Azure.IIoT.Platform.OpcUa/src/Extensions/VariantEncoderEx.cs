@@ -108,9 +108,9 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa {
                 return null;
             }
             var root = kDiagnosticsProperty;
-            switch (config?.Level ?? Platform.Core.Models.DiagnosticsLevel.Status) {
-                case Platform.Core.Models.DiagnosticsLevel.Diagnostics:
-                case Platform.Core.Models.DiagnosticsLevel.Verbose:
+            switch (config?.Level ?? Core.Models.DiagnosticsLevel.Status) {
+                case Core.Models.DiagnosticsLevel.Diagnostics:
+                case Core.Models.DiagnosticsLevel.Verbose:
                     using (var text = new StringReader(result.Diagnostics.ToString()))
                     using (var reader = new Newtonsoft.Json.JsonTextReader(text))
                     using (var decoder = new JsonDecoderEx(reader, codec.Context)) {
@@ -120,10 +120,10 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa {
                         }
                         return results;
                     }
-                case Platform.Core.Models.DiagnosticsLevel.Status:
+                case Core.Models.DiagnosticsLevel.Status:
                     // TODO
                     break;
-                case Platform.Core.Models.DiagnosticsLevel.Operations:
+                case Core.Models.DiagnosticsLevel.Operations:
                     // TODO
                     break;
                 default:
@@ -193,8 +193,8 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa {
         /// <returns></returns>
         private static VariantValue Write(this IVariantEncoder codec,
             List<OperationResultModel> results, DiagnosticsModel config) {
-            var level = config?.Level ?? Platform.Core.Models.DiagnosticsLevel.Status;
-            if (level == Platform.Core.Models.DiagnosticsLevel.None) {
+            var level = config?.Level ?? Core.Models.DiagnosticsLevel.Status;
+            if (level == Core.Models.DiagnosticsLevel.None) {
                 return null;
             }
             using (var stream = new MemoryStream()) {
@@ -204,11 +204,11 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa {
                     IgnoreDefaultValues = true
                 }) {
                     switch (level) {
-                        case Platform.Core.Models.DiagnosticsLevel.Diagnostics:
-                        case Platform.Core.Models.DiagnosticsLevel.Verbose:
+                        case Core.Models.DiagnosticsLevel.Diagnostics:
+                        case Core.Models.DiagnosticsLevel.Verbose:
                             encoder.WriteEncodeableArray(root, results);
                             break;
-                        case Platform.Core.Models.DiagnosticsLevel.Operations:
+                        case Core.Models.DiagnosticsLevel.Operations:
                             var codes = results
                                 .GroupBy(d => d.StatusCode.CodeBits);
                             root = null;
@@ -217,7 +217,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa {
                                     code.Select(c => c.Operation).ToArray());
                             }
                             break;
-                        case Platform.Core.Models.DiagnosticsLevel.Status:
+                        case Core.Models.DiagnosticsLevel.Status:
                             var statusCodes = results
                                 .Select(d => StatusCode.LookupSymbolicId(d.StatusCode.CodeBits))
                                 .Where(s => !string.IsNullOrEmpty(s))

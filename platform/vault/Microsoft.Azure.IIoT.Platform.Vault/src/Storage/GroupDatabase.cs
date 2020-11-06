@@ -22,7 +22,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Storage {
         /// Create group database
         /// </summary>
         /// <param name="db"></param>
-        public GroupDatabase(IItemContainerFactory db) {
+        public GroupDatabase(ICollectionFactory db) {
             if (db == null) {
                 throw new ArgumentNullException(nameof(db));
             }
@@ -178,6 +178,6 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Storage {
             return query.GetResults();
         }
 
-        private readonly IItemContainer _groups;
+        private readonly IDocumentCollection _groups;
     }
 }

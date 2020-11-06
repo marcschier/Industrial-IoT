@@ -86,7 +86,7 @@ namespace Microsoft.Azure.IIoT.Utils {
                 return defaultValue;
             }
             try {
-                return value.As<T>();
+                return value.ConvertTo<T>();
             }
             catch {
                 throw new ArgumentException(
@@ -106,7 +106,7 @@ namespace Microsoft.Azure.IIoT.Utils {
                 throw new ArgumentException($"Missing {key1}/{key2} option.");
             }
             try {
-                return value.As<T>();
+                return value.ConvertTo<T>();
             }
             catch {
                 throw new ArgumentException(
@@ -129,7 +129,7 @@ namespace Microsoft.Azure.IIoT.Utils {
                 return true;
             }
             try {
-                return value.As<bool>();
+                return value.ConvertTo<bool>();
             }
             catch {
                 throw new ArgumentException(
@@ -160,7 +160,7 @@ namespace Microsoft.Azure.IIoT.Utils {
                 }
             }
             try {
-                return value.As<T>();
+                return value.ConvertTo<T>();
             }
             catch {
                 throw new ArgumentException(
@@ -183,7 +183,7 @@ namespace Microsoft.Azure.IIoT.Utils {
                 return true;
             }
             try {
-                return value.As<bool>();
+                return value.ConvertTo<bool>();
             }
             catch {
                 throw new ArgumentException(

@@ -4,13 +4,13 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Http.Tunnel.Services {
-    using Microsoft.Azure.IIoT.Hosting;
     using Microsoft.Azure.IIoT.Messaging;
     using Microsoft.Azure.IIoT.Http;
     using Microsoft.Azure.IIoT.Http.Clients;
     using Microsoft.Azure.IIoT.Serializers;
     using Microsoft.Azure.IIoT.Hub;
     using Microsoft.Extensions.Logging;
+    using Microsoft.Extensions.Options;
     using System;
     using System.Net;
     using System.Net.Http;
@@ -19,35 +19,38 @@ namespace Microsoft.Azure.IIoT.Http.Tunnel.Services {
     /// <summary>
     /// Makes the tunnel configurable
     /// </summary>
-    public sealed class HttpTunnelConfigurableFactory : IHttpHandlerFactory, IHttpTunnelConfig {
+    public sealed class HttpTunnelConfigurableFactory : IHttpHandlerFactory {
 
         /// <inheritdoc/>
-        public bool UseTunnel { get; set; }
-
-        /// <inheritdoc/>
-        public HttpTunnelConfigurableFactory(IEventClient client,
-            IJsonSerializer serializer, IEnumerable<IHttpHandler> handlers,
-            IIdentity identity, ILogger logger) {
-            _tunnel = new HttpTunnelEventClientFactory(client, serializer, handlers, identity, logger);
+        public HttpTunnelConfigurableFactory(IEventClient client, 
+            IJsonSerializer serializer, IOptionsMonitor<HttpTunnelOptions> options,
+            IEnumerable<IHttpHandler> handlers, IIdentity identity, ILogger logger) {
+            _tunnel = new HttpTunnelEventClientFactory(client, serializer, 
+                handlers, identity, logger);
             _fallback = new HttpHandlerFactory(handlers, logger);
+            _options = options ?? throw new ArgumentNullException(nameof(options));
         }
 
         /// <inheritdoc/>
-        public HttpTunnelConfigurableFactory(IEventClient client, IWebProxy proxy,
-            IJsonSerializer serializer, IEnumerable<IHttpHandler> handlers,
-            IIdentity identity, ILogger logger) {
-            _tunnel = new HttpTunnelEventClientFactory(client, serializer, handlers, identity, logger);
+        public HttpTunnelConfigurableFactory(IEventClient client, IWebProxy proxy, 
+            IJsonSerializer serializer, IOptionsMonitor<HttpTunnelOptions> options, 
+            IEnumerable<IHttpHandler> handlers, IIdentity identity, ILogger logger) {
+            _tunnel = new HttpTunnelEventClientFactory(client, serializer, 
+                handlers, identity, logger);
             _fallback = new HttpHandlerFactory(handlers, proxy, logger);
+            _options = options ?? throw new ArgumentNullException(nameof(options));
         }
 
         /// <inheritdoc/>
         public TimeSpan Create(string resource, out HttpMessageHandler handler) {
-            return UseTunnel && (resource == null || !resource.StartsWith(Resource.Local)) ?
+            return _options.CurrentValue.UseTunnel && 
+                (resource == null || !resource.StartsWith(Resource.Local)) ?
                 _tunnel.Create(resource, out handler) :
                 _fallback.Create(resource, out handler);
         }
 
         private readonly HttpTunnelEventClientFactory _tunnel;
         private readonly HttpHandlerFactory _fallback;
+        private readonly IOptionsMonitor<HttpTunnelOptions> _options;
     }
 }

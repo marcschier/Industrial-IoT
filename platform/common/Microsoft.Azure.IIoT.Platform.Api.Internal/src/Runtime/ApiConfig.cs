@@ -14,21 +14,20 @@ namespace Microsoft.Azure.IIoT.Api.Runtime {
     using Microsoft.Azure.IIoT.Platform.Vault.Api.Runtime;
     using Microsoft.Azure.IIoT.Platform.Events.Api.Runtime;
     using Microsoft.Azure.IIoT.Platform.Events.Api;
-    using Microsoft.Azure.IIoT.Messaging.SignalR;
-    using Microsoft.Azure.IIoT.Utils;
+    using Microsoft.Azure.IIoT.Configuration;
     using Microsoft.Extensions.Configuration;
 
     /// <summary>
     /// Complete api configuration
     /// </summary>
-    public class ApiConfig : ConfigBase, ITwinConfig, IDiscoveryConfig,
-        IVaultConfig, IPublisherConfig, IEventsConfig, ISignalRClientConfig {
+    public class ApiConfig : ConfigureOptionBase, ITwinConfig, IDiscoveryConfig,
+        IVaultConfig, IPublisherConfig, IEventsConfig {
 
         /// <inheritdoc/>
         public string OpcUaTwinServiceUrl => _twin.OpcUaTwinServiceUrl;
 
         /// <inheritdoc/>
-        public string OpcUaRegistryServiceUrl => _registry.OpcUaRegistryServiceUrl;
+        public string DiscoveryServiceUrl => _registry.DiscoveryServiceUrl;
 
         /// <inheritdoc/>
         public string OpcUaVaultServiceUrl => _vault.OpcUaVaultServiceUrl;
@@ -38,9 +37,6 @@ namespace Microsoft.Azure.IIoT.Api.Runtime {
 
         /// <inheritdoc/>
         public string OpcUaEventsServiceUrl => _events.OpcUaEventsServiceUrl;
-
-        /// <inheritdoc/>
-        public bool UseMessagePackProtocol => _events.UseMessagePackProtocol;
 
         /// <inheritdoc/>
         public ApiConfig(IConfiguration configuration) :

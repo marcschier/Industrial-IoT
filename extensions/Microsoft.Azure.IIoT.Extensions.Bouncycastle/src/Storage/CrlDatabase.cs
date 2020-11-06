@@ -28,7 +28,7 @@ namespace Microsoft.Azure.IIoT.Crypto.Storage {
         /// <param name="factory"></param>
         /// <param name="certificates"></param>
         /// <param name="logger"></param>
-        public CrlDatabase(IItemContainerFactory container, ICertificateStore certificates,
+        public CrlDatabase(ICollectionFactory container, ICertificateStore certificates,
             ICrlFactory factory, ILogger logger) {
             if (container is null) {
                 throw new ArgumentNullException(nameof(container));
@@ -227,7 +227,7 @@ namespace Microsoft.Azure.IIoT.Crypto.Storage {
         }
 
         private readonly ILogger _logger;
-        private readonly IItemContainer _crls;
+        private readonly IDocumentCollection _crls;
         private readonly ICrlFactory _factory;
         private readonly ICertificateStore _certificates;
         private readonly SemaphoreSlim _lock = new SemaphoreSlim(1, 1);

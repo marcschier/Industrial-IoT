@@ -4,22 +4,25 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Azure.SignalR.Runtime {
-    using Microsoft.Azure.IIoT.Utils;
+    using Microsoft.Azure.IIoT.Configuration;
     using Microsoft.Extensions.Configuration;
     using System;
 
     /// <summary>
     /// SignalR configuration
     /// </summary>
-    internal sealed class SignalRServiceConfig : ConfigBase<SignalRServiceOptions> {
+    internal sealed class SignalRServiceConfig : PostConfigureOptionBase<SignalRServiceOptions> {
 
         /// <inheritdoc/>
-        public override void Configure(string name, SignalRServiceOptions options) {
-            options.SignalRConnString = GetStringOrDefault(PcsVariable.PCS_SIGNALR_CONNSTRING, 
-                () => null);
-            var signalRServiceMode = GetStringOrDefault(PcsVariable.PCS_SIGNALR_MODE, 
-                () => kSignalRServerLessMode);
-            options.SignalRServerLess = signalRServiceMode.EqualsIgnoreCase(kSignalRServerLessMode);
+        public override void PostConfigure(string name, SignalRServiceOptions options) {
+            if (string.IsNullOrEmpty(options.SignalRConnString)) {
+                options.SignalRConnString = GetStringOrDefault(PcsVariable.PCS_SIGNALR_CONNSTRING);
+            }
+            var serverless = GetStringOrDefault(PcsVariable.PCS_SIGNALR_MODE)
+                .EqualsIgnoreCase(kSignalRServerLessMode);
+            if (serverless) {
+                options.SignalRServerLess = serverless;
+            }
         }
 
         /// <inheritdoc/>

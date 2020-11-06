@@ -5,6 +5,7 @@
 
 namespace Microsoft.OpenApi.Models {
     using Microsoft.Azure.IIoT.AspNetCore.OpenApi;
+    using Microsoft.Azure.IIoT.AspNetCore.OpenApi.Runtime;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc.Infrastructure;
     using Microsoft.AspNetCore.Mvc;
@@ -39,9 +40,10 @@ namespace Microsoft.OpenApi.Models {
             services.AddSwaggerGen();
             services.AddSwaggerGenNewtonsoftSupport();
 
+            services.AddTransient<IPostConfigureOptions<OpenApiOptions>, OpenApiConfig>();
             services.AddTransient<IConfigureOptions<SwaggerGenOptions>>(provider => {
                 var api = provider.GetRequiredService<IActionDescriptorCollectionProvider>();
-                var config = provider.GetRequiredService<IOpenApiConfig>();
+                var config = provider.GetRequiredService<IOptions<OpenApiOptions>>();
                 var infos = api.GetOpenApiInfos(title, description);
 
                 return new ConfigureNamedOptions<SwaggerGenOptions>(Options.DefaultName, options => {
@@ -73,9 +75,9 @@ namespace Microsoft.OpenApi.Models {
                     }
 
                     // If auth enabled, need to have bearer token to access any api
-                    if (config.WithAuth) {
-                        if (string.IsNullOrEmpty(config.OpenApiAppId) ||
-                            string.IsNullOrEmpty(config.OpenApiAuthorizationEndpoint)) {
+                    if (config.Value.WithAuth) {
+                        if (string.IsNullOrEmpty(config.Value.OpenApiAppId) ||
+                            string.IsNullOrEmpty(config.Value.OpenApiAuthorizationEndpoint)) {
                             options.AddSecurityDefinition("bearer", new OpenApiSecurityScheme {
                                 Description =
                                     "Authorization token in the form of 'bearer <token>'",
@@ -93,7 +95,7 @@ namespace Microsoft.OpenApi.Models {
                                 Flows = new OpenApiOAuthFlows {
                                     Implicit = new OpenApiOAuthFlow {
                                         AuthorizationUrl =
-                                            new Uri(config.OpenApiAuthorizationEndpoint),
+                                            new Uri(config.Value.OpenApiAuthorizationEndpoint),
                                         Scopes = api.GetRequiredScopes(authOptions)
                                             .ToDictionary(k => k, k => $"Access {k} operations")
                                     }

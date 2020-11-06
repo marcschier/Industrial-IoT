@@ -6,6 +6,7 @@
 namespace Microsoft.Extensions.Configuration {
     using Microsoft.Extensions.Primitives;
     using Microsoft.Azure.IIoT.Azure.ActiveDirectory.Utils;
+    using Microsoft.Azure.IIoT.Diagnostics;
     using Microsoft.Azure.IIoT.Exceptions;
     using Microsoft.Azure.IIoT;
     using Microsoft.Azure.KeyVault;
@@ -17,7 +18,7 @@ namespace Microsoft.Extensions.Configuration {
     using System.Linq;
     using System.Threading.Tasks;
     using System.Net.Sockets;
-    using Microsoft.Azure.IIoT.Diagnostics;
+    using Autofac;
 
     /// <summary>
     /// Extension methods
@@ -33,11 +34,10 @@ namespace Microsoft.Extensions.Configuration {
         /// <param name="singleton"></param>
         /// <param name="keyVaultUrlVarName"></param>
         /// <param name="providerPriority"> Determines where in the configuration
-        /// providers chain current provider should be added. Default to lowest
-        /// </param>
+        /// providers chain current provider should be added. </param>
         /// <returns></returns>
         public static IConfigurationBuilder AddFromKeyVault(this IConfigurationBuilder builder,
-            ConfigurationProviderPriority providerPriority = ConfigurationProviderPriority.Lowest,
+            ConfigSourcePriority providerPriority = ConfigSourcePriority.Normal,
             bool allowInteractiveLogon = false, bool singleton = true, string keyVaultUrlVarName = null) {
             if (builder is null) {
                 throw new ArgumentNullException(nameof(builder));
@@ -46,7 +46,8 @@ namespace Microsoft.Extensions.Configuration {
             var configuration = builder.Build();
 
             // Check if configuration should be loaded from KeyVault, default to true.
-            var keyVaultConfigEnabled = configuration.GetValue(PcsVariable.PCS_KEYVAULT_CONFIG_ENABLED, true);
+            var keyVaultConfigEnabled = configuration.GetValue(
+                PcsVariable.PCS_KEYVAULT_CONFIG_ENABLED, true);
             if (!keyVaultConfigEnabled) {
                 return builder;
             }
@@ -55,10 +56,10 @@ namespace Microsoft.Extensions.Configuration {
                 allowInteractiveLogon, singleton, configuration, keyVaultUrlVarName).Result;
             if (provider != null) {
                 switch (providerPriority) {
-                    case ConfigurationProviderPriority.Highest:
+                    case ConfigSourcePriority.Low:
                         builder.Add(provider);
                         break;
-                    case ConfigurationProviderPriority.Lowest:
+                    case ConfigSourcePriority.Normal:
                         builder.Sources.Insert(0, provider);
                         break;
                     default:
@@ -66,6 +67,37 @@ namespace Microsoft.Extensions.Configuration {
                             $"Unknown ConfigurationProviderPriority value: {providerPriority}");
                 }
             }
+            return builder;
+        }
+
+        /// <summary>
+        /// Add keyvault authentication
+        /// </summary>
+        /// <param name="builder"></param>
+        /// <param name="allowInteractiveLogon"></param>
+        /// <param name="singleton"></param>
+        /// <param name="keyVaultUrlVarName"></param>
+        /// <param name="providerPriority"> Determines where in the configuration
+        /// providers chain current provider should be added. </param>
+        /// <returns></returns>
+        public static ContainerBuilder AddKeyVaultConfiguration(this ContainerBuilder builder,
+            ConfigSourcePriority providerPriority = ConfigSourcePriority.Low,
+            bool allowInteractiveLogon = false, bool singleton = true, string keyVaultUrlVarName = null) {
+
+            builder.AddConfigurationSource(configuration => {
+                // Check if configuration should be loaded from KeyVault, default to true.
+                var keyVaultConfigEnabled = configuration.GetValue(
+                    PcsVariable.PCS_KEYVAULT_CONFIG_ENABLED, true);
+                if (!keyVaultConfigEnabled) {
+                    return null;
+                }
+                var provider = KeyVaultConfigurationProvider.CreateInstanceAsync(
+                    allowInteractiveLogon, singleton, configuration, keyVaultUrlVarName).Result;
+                if (provider == null) {
+                    return null;
+                }
+                return provider;
+            }, providerPriority);
             return builder;
         }
 
@@ -209,7 +241,7 @@ namespace Microsoft.Extensions.Configuration {
                     await provider.ValidateReadSecretAsync(keyVaultUrlVarName).ConfigureAwait(false);
                 }
                 catch (Exception ex) {
-                    // https://github.com/Azure/Industrial-IoT/tree/master/deploy/helm/azure-industrial-iot#load-configuration-from-azure-key-vault
+// https://github.com/Azure/Industrial-IoT/tree/master/deploy/helm/azure-industrial-iot#load-configuration-from-azure-key-vault
                     throw new InvalidConfigurationException(
                         "Could not access the provided keyvault URI. " +
                         "If you want to read configuration from the keyvault, make sure " +

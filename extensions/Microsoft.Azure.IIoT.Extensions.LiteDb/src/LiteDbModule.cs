@@ -5,13 +5,14 @@
 
 namespace Microsoft.Azure.IIoT.Extensions.LiteDb {
     using Microsoft.Azure.IIoT.Extensions.LiteDb.Clients;
-    using Microsoft.Azure.IIoT.Storage.Services;
+    using Microsoft.Azure.IIoT.Extensions.LiteDb.Runtime;
+    using Microsoft.Azure.IIoT.Storage;
     using Autofac;
 
     /// <summary>
     /// Injected LiteDb client
     /// </summary>
-    public class LiteDbModule : Module {
+    public class LiteDbModule : DatabaseModule {
 
         /// <summary>
         /// Load the module
@@ -19,10 +20,9 @@ namespace Microsoft.Azure.IIoT.Extensions.LiteDb {
         /// <param name="builder"></param>
         protected override void Load(ContainerBuilder builder) {
 
-            // Cosmos db collection as storage
-            builder.RegisterType<ItemContainerFactory>()
-                .AsImplementedInterfaces();
             builder.RegisterType<LiteDbClient>()
+                .AsImplementedInterfaces();
+            builder.RegisterType<LiteDbConfig>()
                 .AsImplementedInterfaces();
 
             base.Load(builder);

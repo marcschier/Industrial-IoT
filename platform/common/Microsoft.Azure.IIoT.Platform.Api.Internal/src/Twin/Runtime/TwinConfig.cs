@@ -20,8 +20,8 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Runtime {
         /// <summary>OPC twin service endpoint url</summary>
         public string OpcUaTwinServiceUrl => GetStringOrDefault(
             kOpcUaTwinServiceUrlKey,
-            () => GetStringOrDefault(PcsVariable.PCS_TWIN_SERVICE_URL,
-                () => GetDefaultUrl("9041", "twin")));
+            GetStringOrDefault(PcsVariable.PCS_TWIN_SERVICE_URL,
+                GetDefaultUrl("9041", "twin")));
 
         /// <inheritdoc/>
         public TwinConfig(IConfiguration configuration) :

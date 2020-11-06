@@ -74,7 +74,7 @@ namespace Microsoft.Azure.IIoT.Azure.KeyVault.Clients {
             }
 
             _vaultBaseUrl = config.Value.KeyVaultBaseUrl;
-            _keyStoreIsHsm = config.Value.KeyVaultIsHsm;
+            _keyStoreIsHsm = config.Value.KeyVaultIsHsm ?? true;
             _serializer = serializer ?? throw new ArgumentNullException(nameof(serializer));
             _factory = factory ?? throw new ArgumentNullException(nameof(factory));
             _certificates = certificates ?? throw new ArgumentNullException(nameof(certificates));

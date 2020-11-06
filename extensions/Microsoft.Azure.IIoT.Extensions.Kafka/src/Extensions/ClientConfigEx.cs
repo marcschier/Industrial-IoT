@@ -17,14 +17,13 @@ namespace Confluent.Kafka {
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
-        internal static T ToClientConfig<T>(this IKafkaServerConfig config,
-            string clientId = null)
-            where T : ClientConfig, new() {
-            if (string.IsNullOrEmpty(config?.BootstrapServers)) {
-                throw new ArgumentException("Missing bootstrap server", nameof(config));
+        internal static T ToClientConfig<T>(this KafkaServerOptions options,
+            string clientId = null) where T : ClientConfig, new() {
+            if (string.IsNullOrEmpty(options?.BootstrapServers)) {
+                throw new ArgumentException("Missing bootstrap server", nameof(options));
             }
             return new T {
-                BootstrapServers = config.BootstrapServers,
+                BootstrapServers = options.BootstrapServers,
                 ClientId = clientId,
                 // ...
             };

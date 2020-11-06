@@ -4,35 +4,27 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Crypto.Runtime {
-    using Microsoft.Azure.IIoT.Utils;
+    using Microsoft.Azure.IIoT.Configuration;
     using Microsoft.Extensions.Configuration;
 
     /// <summary>
-    /// Certificate factory configuration - wraps a configuration root
+    /// Certificate factory configuration 
     /// </summary>
-    public class CertificateFactoryConfig : ConfigBase, ICertificateFactoryConfig {
+    public class CertificateFactoryConfig : PostConfigureOptionBase<CertificateFactoryOptions> {
 
-        /// <summary>
-        /// Event hub configuration
-        /// </summary>
-        private const string kIssuerCrlRootUrl = "IssuerCrlRootUrl";
-        private const string kAuthorityInfoRootUrl = "AuthorityInfoRootUrl";
-
-        /// <summary> Issuer crl root url </summary>
-        public string AuthorityCrlRootUrl => GetStringOrDefault(kIssuerCrlRootUrl,
-            () => GetStringOrDefault("PCS_AUTHORITY_CRL_ROOT_URL",
-                () => null));
-        /// <summary> Issuer authority information </summary>
-        public string AuthorityInfoRootUrl => GetStringOrDefault(kAuthorityInfoRootUrl,
-            () => GetStringOrDefault("PCS_AUTHORITY_INFO_ROOT_URL",
-                () => null));
-
-        /// <summary>
-        /// Configuration constructor
-        /// </summary>
-        /// <param name="configuration"></param>
+        /// <inheritdoc/>
         public CertificateFactoryConfig(IConfiguration configuration) :
             base(configuration) {
+        }
+
+        /// <inheritdoc/>
+        public override void PostConfigure(string name, CertificateFactoryOptions options) {
+            if (string.IsNullOrEmpty(options.AuthorityCrlRootUrl)) {
+                options.AuthorityCrlRootUrl = GetStringOrDefault("PCS_AUTHORITY_CRL_ROOT_URL");
+            }
+            if (string.IsNullOrEmpty(options.AuthorityInfoRootUrl)) {
+                options.AuthorityInfoRootUrl = GetStringOrDefault("PCS_AUTHORITY_INFO_ROOT_URL");
+            }
         }
     }
 }

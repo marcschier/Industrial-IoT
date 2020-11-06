@@ -4,30 +4,14 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Extensions.CouchDb.Runtime {
-    using Microsoft.Azure.IIoT.Utils;
+    using Microsoft.Azure.IIoT.Configuration;
     using Microsoft.Extensions.Configuration;
 
     /// <summary>
     /// CouchDb configuration
     /// </summary>
-    public class CouchDbConfig : ConfigBase, ICouchDbConfig {
+    internal sealed class CouchDbConfig : PostConfigureOptionBase<CouchDbOptions> {
 
-        private const string kCouchDbHostName = "CouchDb:HostName";
-        private const string kCouchDbUserName = "CouchDb:UserName";
-        private const string kCouchDbKey = "CouchDb:Key";
-
-        /// <inheritdoc/>
-        public string HostName => GetStringOrDefault(kCouchDbHostName,
-            () => GetStringOrDefault(PcsVariable.PCS_COUCHDB_HOSTNAME,
-                () => "localhost"));
-        /// <inheritdoc/>
-        public string UserName => GetStringOrDefault(kCouchDbUserName,
-            () => GetStringOrDefault(PcsVariable.PCS_COUCHDB_USERNAME,
-                () => "admin"));
-        /// <inheritdoc/>
-        public string Key => GetStringOrDefault(kCouchDbKey,
-            () => GetStringOrDefault(PcsVariable.PCS_COUCHDB_KEY,
-                () => "couchdb"));
 
         /// <summary>
         /// Configuration constructor
@@ -35,6 +19,21 @@ namespace Microsoft.Azure.IIoT.Extensions.CouchDb.Runtime {
         /// <param name="configuration"></param>
         public CouchDbConfig(IConfiguration configuration = null) :
             base(configuration) {
+        }
+
+        public override void PostConfigure(string name, CouchDbOptions options) {
+            if (string.IsNullOrEmpty(options.HostName)) {
+                options.HostName = 
+                    GetStringOrDefault(PcsVariable.PCS_COUCHDB_HOSTNAME, "localhost");
+            }
+            if (string.IsNullOrEmpty(options.UserName)) {
+                options.UserName =
+                    GetStringOrDefault(PcsVariable.PCS_COUCHDB_USERNAME, "admin");
+            }
+            if (string.IsNullOrEmpty(options.Key)) {
+                options.Key = 
+                    GetStringOrDefault(PcsVariable.PCS_COUCHDB_KEY, "couchdb");
+            }
         }
     }
 }

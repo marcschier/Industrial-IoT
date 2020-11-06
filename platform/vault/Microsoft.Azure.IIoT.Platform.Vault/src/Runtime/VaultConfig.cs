@@ -4,11 +4,11 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Platform.Vault.Runtime {
-    using Microsoft.Azure.IIoT.Utils;
+    using Microsoft.Azure.IIoT.Configuration;
     using Microsoft.Extensions.Configuration;
 
     /// <inheritdoc/>
-    public class VaultConfig : ConfigBase, IVaultConfig {
+    public class VaultConfig : ConfigureOptionBase, IVaultConfig {
 
         /// <summary>
         /// Vault configuration

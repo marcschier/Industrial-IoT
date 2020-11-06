@@ -6,10 +6,11 @@
 namespace Microsoft.Azure.IIoT.Extensions.CouchDb.Clients {
     using Microsoft.Azure.IIoT.Storage;
     using Microsoft.Extensions.Diagnostics.HealthChecks;
+    using Microsoft.Extensions.Options;
     using Microsoft.Extensions.Logging;
+    using CouchDB.Driver;
     using System;
     using System.Threading.Tasks;
-    using CouchDB.Driver;
     using System.Threading;
 
     /// <summary>
@@ -22,21 +23,21 @@ namespace Microsoft.Azure.IIoT.Extensions.CouchDb.Clients {
         /// </summary>
         /// <param name="config"></param>
         /// <param name="logger"></param>
-        public CouchDbClient(ICouchDbConfig config, ILogger logger) {
-            _config = config ?? throw new ArgumentNullException(nameof(config));
+        public CouchDbClient(IOptions<CouchDbOptions> config, ILogger logger) {
+            _options = config ?? throw new ArgumentNullException(nameof(config));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            if (_config.HostName == null) {
-                throw new ArgumentNullException("Host name missing", nameof(_config));
+            if (_options.Value.HostName == null) {
+                throw new ArgumentNullException("Host name missing", nameof(_options));
             }
         }
 
         /// <inheritdoc/>
         public Task<IDatabase> OpenAsync(string databaseId, DatabaseOptions options) {
-            var client = new CouchClient("http://" + _config.HostName + ":5984",
+            var client = new CouchClient("http://" + _options.Value.HostName + ":5984",
                 builder => {
                     builder
                         .EnsureDatabaseExists()
-                        .UseBasicAuthentication(_config.UserName, _config.Key)
+                        .UseBasicAuthentication(_options.Value.UserName, _options.Value.Key)
                         .IgnoreCertificateValidation()
                         .ConfigureFlurlClient(client => {
                             // client.HttpClientFactory =
@@ -51,10 +52,10 @@ namespace Microsoft.Azure.IIoT.Extensions.CouchDb.Clients {
         /// <inheritdoc/>
         public async Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context,
             CancellationToken ct) {
-            await using (var client = new CouchClient("http://" + _config.HostName + ":5984",
+            await using (var client = new CouchClient("http://" + _options.Value.HostName + ":5984",
                 builder => builder
                     .EnsureDatabaseExists()
-                    .UseBasicAuthentication(_config.UserName, _config.Key)
+                    .UseBasicAuthentication(_options.Value.UserName, _options.Value.Key)
                     .IgnoreCertificateValidation()
             )) {
                 try {
@@ -69,7 +70,7 @@ namespace Microsoft.Azure.IIoT.Extensions.CouchDb.Clients {
             }
         }
 
-        private readonly ICouchDbConfig _config;
+        private readonly IOptions<CouchDbOptions> _options;
         private readonly ILogger _logger;
     }
 }

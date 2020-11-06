@@ -6,6 +6,7 @@
 namespace Microsoft.Azure.IIoT.Extensions.RabbitMq {
     using Microsoft.Azure.IIoT.Extensions.RabbitMq.Services;
     using Microsoft.Azure.IIoT.Extensions.RabbitMq.Clients;
+    using Microsoft.Azure.IIoT.Extensions.RabbitMq.Runtime;
     using Autofac;
 
     /// <summary>
@@ -24,6 +25,10 @@ namespace Microsoft.Azure.IIoT.Extensions.RabbitMq {
                 .AsImplementedInterfaces().SingleInstance();
             builder.RegisterType<RabbitMqHealthCheck>()
                 .AsImplementedInterfaces().SingleInstance();
+            builder.RegisterType<RabbitMqConfig>()
+                .AsImplementedInterfaces();
+            builder.RegisterType<RabbitMqQueueConfig>()
+                .AsImplementedInterfaces();
             base.Load(builder);
         }
     }

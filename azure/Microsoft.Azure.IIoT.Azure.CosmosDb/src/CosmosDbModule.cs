@@ -6,13 +6,13 @@
 namespace Microsoft.Azure.IIoT.Azure.CosmosDb {
     using Microsoft.Azure.IIoT.Azure.CosmosDb.Runtime;
     using Microsoft.Azure.IIoT.Azure.CosmosDb.Clients;
-    using Microsoft.Azure.IIoT.Storage.Services;
+    using Microsoft.Azure.IIoT.Storage;
     using Autofac;
 
     /// <summary>
     /// Injected Cosmos client
     /// </summary>
-    public class CosmosDbModule : Module {
+    public class CosmosDbModule : DatabaseModule {
 
         /// <summary>
         /// Load the module
@@ -20,9 +20,6 @@ namespace Microsoft.Azure.IIoT.Azure.CosmosDb {
         /// <param name="builder"></param>
         protected override void Load(ContainerBuilder builder) {
 
-            // Cosmos db collection as storage
-            builder.RegisterType<ItemContainerFactory>()
-                .AsImplementedInterfaces();
             builder.RegisterType<CosmosDbConfig>()
                 .AsImplementedInterfaces();
             builder.RegisterType<CosmosDbServiceClient>()

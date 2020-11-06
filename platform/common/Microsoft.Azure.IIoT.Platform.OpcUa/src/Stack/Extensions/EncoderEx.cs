@@ -207,7 +207,7 @@ namespace Opc.Ua {
                             var strArray = new string[enumArray.Length];
 
                             for (var index = 0; index < enumArray.Length; ++index) {
-                                var str = enumArray[index].ToString() + "_" + enumArray[index].As<int>().ToString(CultureInfo.InvariantCulture);
+                                var str = enumArray[index].ToString() + "_" + enumArray[index].ConvertTo<int>().ToString(CultureInfo.InvariantCulture);
                                 strArray[index] = str;
                             }
                             encoder.WriteStringArray(null, strArray);

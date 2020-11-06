@@ -4,7 +4,8 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Authentication.Runtime {
-    using Microsoft.Azure.IIoT.Utils;
+    using Microsoft.Azure.IIoT.Hosting;
+    using Microsoft.Azure.IIoT.Configuration;
     using Microsoft.Extensions.Configuration;
     using System;
     using System.Collections.Generic;
@@ -13,7 +14,7 @@ namespace Microsoft.Azure.IIoT.Authentication.Runtime {
     /// <summary>
     /// Service auth configuration
     /// </summary>
-    public class ServiceAuthAggregateConfig : ConfigBase, IServerAuthConfig {
+    public class ServiceAuthAggregateConfig : ConfigureOptionBase, IServerAuthConfig {
 
         /// <summary>
         /// Auth configuration
@@ -22,8 +23,7 @@ namespace Microsoft.Azure.IIoT.Authentication.Runtime {
 
         /// <inheritdoc/>
         public bool AllowAnonymousAccess => !GetBoolOrDefault(kAuth_RequiredKey,
-            () => GetBoolOrDefault(PcsVariable.PCS_AUTH_REQUIRED,
-                () => true));
+            GetBoolOrDefault(PcsVariable.PCS_AUTH_REQUIRED, true));
 
         /// <inheritdoc/>
         public IEnumerable<IOAuthServerConfig> JwtBearerProviders { get; }

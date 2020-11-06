@@ -11,6 +11,7 @@ namespace Microsoft.Azure.IIoT.Tasks.Services {
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
+    using Microsoft.Extensions.Options;
 
     /// <summary>
     /// A task (or job) processor build on top of an in memory
@@ -26,17 +27,9 @@ namespace Microsoft.Azure.IIoT.Tasks.Services {
         /// <summary>
         /// Create processor
         /// </summary>
-        /// <param name="logger"></param>
-        public TaskProcessor(ILogger logger) :
-            this(new DefaultConfig(), logger) {
-        }
-
-        /// <summary>
-        /// Create processor
-        /// </summary>
         /// <param name="config"></param>
         /// <param name="logger"></param>
-        public TaskProcessor(ITaskProcessorConfig config, ILogger logger) :
+        public TaskProcessor(IOptions<TaskProcessorOptions> config, ILogger logger) :
             this(config, new DefaultScheduler(), logger) {
         }
 
@@ -46,13 +39,13 @@ namespace Microsoft.Azure.IIoT.Tasks.Services {
         /// <param name="config"></param>
         /// <param name="scheduler"></param>
         /// <param name="logger"></param>
-        public TaskProcessor(ITaskProcessorConfig config, ITaskScheduler scheduler,
+        public TaskProcessor(IOptions<TaskProcessorOptions> config, ITaskScheduler scheduler,
             ILogger logger) {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _config = config ?? throw new ArgumentNullException(nameof(config));
             Scheduler = scheduler ?? throw new ArgumentNullException(nameof(scheduler));
             _processors = new List<ProcessorWorker>();
-            for (var i = 0; i < Math.Max(1, config.MaxInstances); i++) {
+            for (var i = 0; i < Math.Max(1, config.Value.MaxInstances); i++) {
                 _processors.Add(new ProcessorWorker(this));
             }
         }
@@ -94,7 +87,7 @@ namespace Microsoft.Azure.IIoT.Tasks.Services {
                 _processor = processor ??
                     throw new ArgumentNullException(nameof(processor));
                 Queue = new BlockingCollection<Work>(
-                    Math.Max(1, processor._config.MaxQueueSize));
+                    Math.Max(1, processor._config.Value.MaxQueueSize));
                 _worker = processor.Scheduler.Run(WorkAsync);
             }
 
@@ -158,13 +151,8 @@ namespace Microsoft.Azure.IIoT.Tasks.Services {
             private readonly Task _worker;
         }
 
-        internal sealed class DefaultConfig : ITaskProcessorConfig {
-            public int MaxInstances => 1;
-            public int MaxQueueSize => 1000;
-        }
-
         private readonly ILogger _logger;
-        private readonly ITaskProcessorConfig _config;
+        private readonly IOptions<TaskProcessorOptions> _config;
         private readonly List<ProcessorWorker> _processors;
     }
 }

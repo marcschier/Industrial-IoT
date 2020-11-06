@@ -28,14 +28,14 @@ namespace Microsoft.Azure.IIoT.Extensions.LiteDb.Clients {
         }
 
         /// <inheritdoc/>
-        public Task<IItemContainer> OpenContainerAsync(string id,
+        public Task<IDocumentCollection> OpenContainerAsync(string id,
             ContainerOptions options) {
             if (string.IsNullOrEmpty(id)) {
                 id = "default";
             }
             id = id.Replace('-', '_');
             var container = new DocumentCollection(id, _db, options, _logger);
-            return Task.FromResult<IItemContainer>(container);
+            return Task.FromResult<IDocumentCollection>(container);
         }
 
         /// <inheritdoc/>

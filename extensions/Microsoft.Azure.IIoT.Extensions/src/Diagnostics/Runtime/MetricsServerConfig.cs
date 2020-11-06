@@ -4,13 +4,13 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Diagnostics {
-    using Microsoft.Azure.IIoT.Utils;
+    using Microsoft.Azure.IIoT.Configuration;
     using Microsoft.Extensions.Configuration;
 
     /// <summary>
     /// Metrics server configuration
     /// </summary>
-    public class MetricsServerConfig : ConfigBase<MetricsServerOptions> {
+    public class MetricsServerConfig : PostConfigureOptionBase<MetricsServerOptions> {
 
         /// <inheritdoc/>
         public MetricsServerConfig(IConfiguration configuration) :
@@ -18,9 +18,11 @@ namespace Microsoft.Azure.IIoT.Diagnostics {
         }
 
         /// <inheritdoc/>
-        public override void Configure(string name, MetricsServerOptions options) {
-            options.DiagnosticsLevel = (DiagnosticsLevel)GetIntOrDefault(
-                PcsVariable.PCS_DIAGNOSTICS_LEVEL, () => 0);
+        public override void PostConfigure(string name, MetricsServerOptions options) {
+            if (options.DiagnosticsLevel == 0) {
+                options.DiagnosticsLevel = (DiagnosticsLevel)GetIntOrDefault(
+                    PcsVariable.PCS_DIAGNOSTICS_LEVEL);
+            }
         }
     }
 }

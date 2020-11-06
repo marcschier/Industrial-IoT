@@ -4,14 +4,15 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Extensions.CouchDb {
+    using Microsoft.Azure.IIoT.Extensions.CouchDb.Runtime;
     using Microsoft.Azure.IIoT.Extensions.CouchDb.Clients;
-    using Microsoft.Azure.IIoT.Storage.Services;
+    using Microsoft.Azure.IIoT.Storage;
     using Autofac;
 
     /// <summary>
     /// Injected CouchDb client
     /// </summary>
-    public class CouchDbModule : Module {
+    public class CouchDbModule : DatabaseModule {
 
         /// <summary>
         /// Load the module
@@ -19,10 +20,9 @@ namespace Microsoft.Azure.IIoT.Extensions.CouchDb {
         /// <param name="builder"></param>
         protected override void Load(ContainerBuilder builder) {
 
-            // Cosmos db collection as storage
-            builder.RegisterType<ItemContainerFactory>()
-                .AsImplementedInterfaces();
             builder.RegisterType<CouchDbClient>()
+                .AsImplementedInterfaces();
+            builder.RegisterType<CouchDbConfig>()
                 .AsImplementedInterfaces();
 
             base.Load(builder);

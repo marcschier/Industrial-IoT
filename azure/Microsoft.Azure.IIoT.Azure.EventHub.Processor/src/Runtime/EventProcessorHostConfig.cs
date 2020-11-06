@@ -4,18 +4,22 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Azure.EventHub.Processor.Runtime {
-    using Microsoft.Azure.IIoT.Utils;
+    using Microsoft.Azure.IIoT.Configuration;
     using System;
 
     /// <summary>
     /// Event processor configuration - wraps a configuration root
     /// </summary>
-    internal sealed class EventProcessorHostConfig : ConfigBase<EventProcessorHostOptions> {
+    internal sealed class EventProcessorHostConfig : PostConfigureOptionBase<EventProcessorHostOptions> {
 
         /// <inheritdoc/>
-        public override void Configure(string name, EventProcessorHostOptions options) {
-            options.ReceiveBatchSize = 999;
-            options.ReceiveTimeout = TimeSpan.FromSeconds(5);
+        public override void PostConfigure(string name, EventProcessorHostOptions options) {
+            if (options.ReceiveBatchSize <= 0) {
+                options.ReceiveBatchSize = 50;
+            }
+            if (options.ReceiveTimeout == TimeSpan.Zero) {
+                options.ReceiveTimeout = TimeSpan.FromSeconds(5);
+            }
         }
     }
 }

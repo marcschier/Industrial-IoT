@@ -4,13 +4,13 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Platform.OpcUa.Runtime {
-    using Microsoft.Azure.IIoT.Utils;
+    using Microsoft.Azure.IIoT.Configuration;
     using Microsoft.Extensions.Configuration;
 
     /// <summary>
     /// Transport quota configuration
     /// </summary>
-    public class TransportQuotaConfig : ConfigBase, ITransportQuotaConfig {
+    public class TransportQuotaConfig : ConfigureOptionBase, ITransportQuotaConfig {
 
         /// <summary>
         /// Configuration
@@ -28,28 +28,28 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Runtime {
 
         /// <inheritdoc/>
         public int OperationTimeout =>
-            GetIntOrDefault(OperationTimeoutKey, () => TransportQuotaConfigEx.DefaultOperationTimeout);
+            GetIntOrDefault(OperationTimeoutKey, TransportQuotaConfigEx.DefaultOperationTimeout);
         /// <inheritdoc/>
         public int MaxStringLength =>
-            GetIntOrDefault(MaxStringLengthKey, () => TransportQuotaConfigEx.DefaultMaxStringLength);
+            GetIntOrDefault(MaxStringLengthKey, TransportQuotaConfigEx.DefaultMaxStringLength);
         /// <inheritdoc/>
         public int MaxByteStringLength =>
-            GetIntOrDefault(MaxByteStringLengthKey, () => TransportQuotaConfigEx.DefaultMaxByteStringLength);
+            GetIntOrDefault(MaxByteStringLengthKey, TransportQuotaConfigEx.DefaultMaxByteStringLength);
         /// <inheritdoc/>
         public int MaxArrayLength =>
-            GetIntOrDefault(MaxArrayLengthKey, () => TransportQuotaConfigEx.DefaultMaxArrayLength);
+            GetIntOrDefault(MaxArrayLengthKey, TransportQuotaConfigEx.DefaultMaxArrayLength);
         /// <inheritdoc/>
         public int MaxMessageSize =>
-            GetIntOrDefault(MaxMessageSizeKey, () => TransportQuotaConfigEx.DefaultMaxMessageSize);
+            GetIntOrDefault(MaxMessageSizeKey, TransportQuotaConfigEx.DefaultMaxMessageSize);
         /// <inheritdoc/>
         public int MaxBufferSize =>
-            GetIntOrDefault(MaxBufferSizeKey, () => TransportQuotaConfigEx.DefaultMaxBufferSize);
+            GetIntOrDefault(MaxBufferSizeKey, TransportQuotaConfigEx.DefaultMaxBufferSize);
         /// <inheritdoc/>
         public int ChannelLifetime =>
-            GetIntOrDefault(ChannelLifetimeKey, () => TransportQuotaConfigEx.DefaultChannelLifetime);
+            GetIntOrDefault(ChannelLifetimeKey, TransportQuotaConfigEx.DefaultChannelLifetime);
         /// <inheritdoc/>
         public int SecurityTokenLifetime =>
-            GetIntOrDefault(SecurityTokenLifetimeKey, () => TransportQuotaConfigEx.DefaultSecurityTokenLifetime);
+            GetIntOrDefault(SecurityTokenLifetimeKey, TransportQuotaConfigEx.DefaultSecurityTokenLifetime);
 
         /// <summary>
         /// Create

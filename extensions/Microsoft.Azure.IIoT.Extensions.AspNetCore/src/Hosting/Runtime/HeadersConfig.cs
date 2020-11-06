@@ -4,37 +4,49 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.AspNetCore.Hosting.Runtime {
-    using Microsoft.Azure.IIoT.Utils;
+    using Microsoft.Azure.IIoT.Configuration;
     using Microsoft.Extensions.Configuration;
+    using Microsoft.Extensions.Options;
+    using Microsoft.AspNetCore.Builder;
+    using Microsoft.AspNetCore.HttpOverrides;
 
     /// <summary>
     /// Forwarded headers processing configuration.
     /// </summary>
-    public class HeadersConfig : ConfigBase, IHeadersConfig {
-
-        private const string kAspNetCore_ForwardedHeaders_Enabled = "AspNetCore:ForwardedHeaders:Enabled";
-        private const string kAspNetCore_ForwardedHeaders_ForwardLimit = "AspNetCore:ForwardedHeaders:ForwardLimit";
-        private const bool kAspNetCore_ForwardedHeaders_Enabled_Default = false;
-        private const int kAspNetCore_ForwardedHeaders_ForwardLimit_Default = 0;
+    internal sealed class HeadersConfig : PostConfigureOptionBase<HeadersOptions>,
+        IConfigureOptions<ForwardedHeadersOptions>, 
+        IConfigureNamedOptions<ForwardedHeadersOptions> {
 
         /// <inheritdoc/>
-        public bool AspNetCoreForwardedHeadersEnabled =>
-            GetBoolOrDefault(kAspNetCore_ForwardedHeaders_Enabled,
-                () => GetBoolOrDefault(AspNetCoreVariable.ASPNETCORE_FORWARDEDHEADERS_ENABLED,
-                () => kAspNetCore_ForwardedHeaders_Enabled_Default));
-
-        /// <inheritdoc/>
-        public int AspNetCoreForwardedHeadersForwardLimit =>
-            GetIntOrDefault(kAspNetCore_ForwardedHeaders_ForwardLimit,
-                () => GetIntOrDefault(AspNetCoreVariable.ASPNETCORE_FORWARDEDHEADERS_FORWARDLIMIT,
-                () => kAspNetCore_ForwardedHeaders_ForwardLimit_Default));
-
-        /// <summary>
-        /// Configuration constructor
-        /// </summary>
-        /// <param name="configuration"></param>
         public HeadersConfig(IConfiguration configuration) :
             base(configuration) {
+        }
+
+        /// <inheritdoc/>
+        public override void PostConfigure(string name, HeadersOptions options) {
+            if (!options.ForwardingEnabled) {
+                options.ForwardingEnabled = GetBoolOrDefault(
+                    AspNetCoreVariable.ASPNETCORE_FORWARDEDHEADERS_ENABLED);
+            }
+        }
+
+        /// <inheritdoc/>
+        public void Configure(string name, ForwardedHeadersOptions options) {
+            options.ForwardLimit = GetIntOrNull(
+                AspNetCoreVariable.ASPNETCORE_FORWARDEDHEADERS_FORWARDLIMIT,
+                    options.ForwardLimit);
+            options.ForwardedHeaders = ForwardedHeaders.XForwardedFor |
+                ForwardedHeaders.XForwardedProto;
+            // Only loopback proxies are allowed by default.
+            // Clear that restriction because forwarders are enabled by explicit
+            // configuration.
+            options.KnownNetworks.Clear();
+            options.KnownProxies.Clear();
+        }
+
+        /// <inheritdoc/>
+        public void Configure(ForwardedHeadersOptions options) {
+            Configure(Options.DefaultName, options);
         }
     }
 }

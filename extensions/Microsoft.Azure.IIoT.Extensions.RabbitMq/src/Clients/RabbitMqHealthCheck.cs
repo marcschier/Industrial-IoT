@@ -5,6 +5,7 @@
 
 namespace Microsoft.Azure.IIoT.Extensions.RabbitMq.Clients {
     using Microsoft.Extensions.Diagnostics.HealthChecks;
+    using Microsoft.Extensions.Options;
     using System;
     using System.Threading.Tasks;
     using System.Threading;
@@ -20,7 +21,7 @@ namespace Microsoft.Azure.IIoT.Extensions.RabbitMq.Clients {
         /// Create health check
         /// </summary>
         /// <param name="config"></param>
-        public RabbitMqHealthCheck(IRabbitMqConfig config) {
+        public RabbitMqHealthCheck(IOptionsSnapshot<RabbitMqOptions> config) {
             _config = config ?? throw new ArgumentNullException(nameof(config));
         }
 
@@ -29,9 +30,9 @@ namespace Microsoft.Azure.IIoT.Extensions.RabbitMq.Clients {
             CancellationToken cancellationToken) {
             try {
                 var factory = new ConnectionFactory {
-                    HostName = _config.HostName,
-                    Password = _config.Key,
-                    UserName = _config.UserName
+                    HostName = _config.Value.HostName,
+                    Password = _config.Value.Key,
+                    UserName = _config.Value.UserName
                 };
                 using var connection = factory.CreateConnection();
                 if (connection == null) {
@@ -50,6 +51,6 @@ namespace Microsoft.Azure.IIoT.Extensions.RabbitMq.Clients {
             }
         }
 
-        private readonly IRabbitMqConfig _config;
+        private readonly IOptionsSnapshot<RabbitMqOptions> _config;
     }
 }

@@ -4,13 +4,13 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Authentication.Runtime {
-    using Microsoft.Azure.IIoT.Utils;
+    using Microsoft.Azure.IIoT.Configuration;
     using Microsoft.Extensions.Configuration;
 
     /// <summary>
     /// Auth api client configuration
     /// </summary>
-    public class AadApiClientConfig : ConfigBase, IOAuthClientConfig {
+    public class AadApiClientConfig : ConfigureOptionBase, IOAuthClientConfig {
 
         /// <summary>
         /// Client configuration
@@ -28,22 +28,22 @@ namespace Microsoft.Azure.IIoT.Authentication.Runtime {
         public string Resource => Http.Resource.Platform;
         /// <inheritdoc/>
         public string ClientId => GetStringOrDefault(kAuth_AppIdKey,
-            () => GetStringOrDefault(PcsVariable.PCS_AAD_PUBLIC_CLIENT_APPID,
-                () => null))?.Trim();
+            GetStringOrDefault(PcsVariable.PCS_AAD_PUBLIC_CLIENT_APPID,
+                null))?.Trim();
         /// <inheritdoc/>
         public string ClientSecret => null;
         /// <inheritdoc/>
         public string TenantId => GetStringOrDefault(kAuth_TenantIdKey,
-            () => GetStringOrDefault(PcsVariable.PCS_AUTH_TENANT,
-                () => "common"))?.Trim();
+            GetStringOrDefault(PcsVariable.PCS_AUTH_TENANT,
+                "common"))?.Trim();
         /// <inheritdoc/>
         public string InstanceUrl => GetStringOrDefault(kAuth_InstanceUrlKey,
-            () => GetStringOrDefault(PcsVariable.PCS_AAD_INSTANCE,
-                () => "https://login.microsoftonline.com"))?.Trim();
+            GetStringOrDefault(PcsVariable.PCS_AAD_INSTANCE,
+                "https://login.microsoftonline.com"))?.Trim();
         /// <inheritdoc/>
         public string Audience => GetStringOrDefault(kAuth_AudienceKey,
-            () => GetStringOrDefault(PcsVariable.PCS_AAD_AUDIENCE,
-                () => null))?.Trim();
+            GetStringOrDefault(PcsVariable.PCS_AAD_AUDIENCE,
+                null))?.Trim();
 
         /// <summary>
         /// Configuration constructor

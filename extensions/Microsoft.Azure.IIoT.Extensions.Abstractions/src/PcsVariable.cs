@@ -203,11 +203,11 @@ namespace Microsoft.Azure.IIoT {
         public const string PCS_TWIN_SERVICE_URL =
             "PCS_TWIN_SERVICE_URL";
         /// <summary> OPC registry service endpoint url </summary>
-        public const string PCS_TWIN_REGISTRY_URL =
-            "PCS_TWIN_REGISTRY_URL";
-        /// <summary> OPC registry service endpoint url </summary>
-        public const string PCS_DIRECTORY_SERVICE_URL =
-            "PCS_DIRECTORY_SERVICE_URL";
+        public const string PCS_REGISTRY_SERVICE_URL =
+            "PCS_REGISTRY_SERVICE_URL";
+        /// <summary> OPC discovery service endpoint url </summary>
+        public const string PCS_DISCOVERY_SERVICE_URL =
+            "PCS_DISCOVERY_SERVICE_URL";
         /// <summary> OPC vault service endpoint url </summary>
         public const string PCS_VAULT_SERVICE_URL =
             "PCS_VAULT_SERVICE_URL";
@@ -241,30 +241,28 @@ namespace Microsoft.Azure.IIoT {
         /// <summary> Server host for openapi </summary>
         public const string PCS_OPENAPI_SERVER_HOST =
             "PCS_OPENAPI_SERVER_HOST";
+
         /// <summary> Service URL path base </summary>
         public const string PCS_SERVICE_PATH_BASE =
             "PCS_SERVICE_PATH_BASE";
         /// <summary> Service URL path base for OPC twin service </summary>
         public const string PCS_TWIN_SERVICE_PATH_BASE =
             "PCS_TWIN_SERVICE_PATH_BASE";
+        /// <summary> Service URL path base for OPC discovery service </summary>
+        public const string PCS_DISCOVERY_SERVICE_PATH_BASE =
+            "PCS_DISCOVERY_SERVICE_PATH_BASE";
         /// <summary> Service URL path base for OPC registry service </summary>
-        public const string PCS_TWIN_REGISTRY_SERVICE_PATH_BASE =
-            "PCS_TWIN_REGISTRY_SERVICE_PATH_BASE";
+        public const string PCS_REGISTRY_SERVICE_PATH_BASE =
+            "PCS_REGISTRY_SERVICE_PATH_BASE";
         /// <summary> Service URL path base for OPC vault service </summary>
         public const string PCS_VAULT_SERVICE_PATH_BASE =
             "PCS_VAULT_SERVICE_PATH_BASE";
         /// <summary> Service URL path base for OPC publisher service </summary>
         public const string PCS_PUBLISHER_SERVICE_PATH_BASE =
             "PCS_PUBLISHER_SERVICE_PATH_BASE";
-        /// <summary> Service URL path base for OPC history service </summary>
-        public const string PCS_HISTORY_SERVICE_PATH_BASE =
-            "PCS_HISTORY_SERVICE_PATH_BASE";
         /// <summary> Service URL path base for gateway service </summary>
         public const string PCS_GATEWAY_SERVICE_PATH_BASE =
             "PCS_GATEWAY_SERVICE_PATH_BASE";
-        /// <summary> Service URL path base for publisher orchestrator service </summary>
-        public const string PCS_PUBLISHER_ORCHESTRATOR_SERVICE_PATH_BASE =
-            "PCS_PUBLISHER_ORCHESTRATOR_SERVICE_PATH_BASE";
         /// <summary> Service URL path base for frontend app </summary>
         public const string PCS_FRONTEND_APP_SERVICE_PATH_BASE =
             "PCS_FRONTEND_APP_SERVICE_PATH_BASE";
@@ -277,6 +275,7 @@ namespace Microsoft.Azure.IIoT {
         /// <summary> Service URL path base for user servíce </summary>
         public const string PCS_USERS_SERVICE_PATH_BASE =
             "PCS_USERS_SERVICE_PATH_BASE";
+
         /// <summary> Deployment Level </summary>
         public const string PCS_DEPLOYMENT_LEVEL =
             "PCS_DEPLOYMENT_LEVEL";

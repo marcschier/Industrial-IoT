@@ -5,6 +5,7 @@
 
 namespace Microsoft.Azure.IIoT.Authentication.Runtime {
     using Microsoft.Azure.IIoT.Utils;
+    using Microsoft.Azure.IIoT.Configuration;
     using Microsoft.Extensions.Configuration;
     using System;
     using System.Net;
@@ -13,7 +14,7 @@ namespace Microsoft.Azure.IIoT.Authentication.Runtime {
     /// <summary>
     /// Auth service oauth configuration
     /// </summary>
-    public class AuthServiceOAuthConfig : ConfigBase, IOAuthClientConfig, IOAuthServerConfig {
+    public class AuthServiceOAuthConfig : ConfigureOptionBase, IOAuthClientConfig, IOAuthServerConfig {
 
         /// <summary>
         /// Client configuration
@@ -28,40 +29,40 @@ namespace Microsoft.Azure.IIoT.Authentication.Runtime {
 
         /// <inheritdoc/>
         public bool IsValid => GetBoolOrDefault(kAuth_IsDisabledKey,
-            () => GetBoolOrDefault(PcsVariable.PCS_AUTH_SERVICE_DISABLED,
-                () => false));
+            GetBoolOrDefault(PcsVariable.PCS_AUTH_SERVICE_DISABLED,
+                false));
         /// <summary>Scheme</summary>
         public string Provider => AuthProvider.AuthService;
         /// <summary>Applicable resource</summary>
         public string Resource => Http.Resource.Platform;
         /// <summary>Application id</summary>
         public string ClientId => ClientSecret == null ? null : GetStringOrDefault(kAuth_AppIdKey,
-            () => GetStringOrDefault(PcsVariable.PCS_AUTH_SERVICE_SERVICE_APPID,
-                () => "1A98502758864C06BAA055E25F917644"))?.Trim();
+            GetStringOrDefault(PcsVariable.PCS_AUTH_SERVICE_SERVICE_APPID,
+                "1A98502758864C06BAA055E25F917644"))?.Trim();
         /// <summary>App secret</summary>
         public string ClientSecret => GetStringOrDefault(kAuth_AppSecretKey,
-            () => GetStringOrDefault(PcsVariable.PCS_AUTH_SERVICE_SERVICE_SECRET,
-                () => GetStringOrDefault(PcsVariable.PCS_AAD_SERVICE_SECRET,
-                    () => null)))?.Trim();
+            GetStringOrDefault(PcsVariable.PCS_AUTH_SERVICE_SERVICE_SECRET,
+                GetStringOrDefault(PcsVariable.PCS_AAD_SERVICE_SECRET,
+                    null)))?.Trim();
         /// <summary>Auth server instance url</summary>
         public string InstanceUrl =>
             GetStringOrDefault(kAuth_InstanceUrlKey,
-                () => GetStringOrDefault(PcsVariable.PCS_AUTH_SERVICE_URL,
-                    () => GetDefaultUrl("9090", "auth")));
+                GetStringOrDefault(PcsVariable.PCS_AUTH_SERVICE_URL,
+                    GetDefaultUrl("9090", "auth")));
         /// <summary>Trusted issuer</summary>
         public string TrustedIssuer =>
             GetStringOrDefault(kAuth_TrustedIssuerKey,
-                () => GetStringOrDefault(PcsVariable.PCS_AUTH_SERVICE_ISSUER,
-                    () => null))?.Trim();
+                GetStringOrDefault(PcsVariable.PCS_AUTH_SERVICE_ISSUER,
+                    null))?.Trim();
         /// <summary>Allowed clock skew</summary>
         public TimeSpan AllowedClockSkew =>
             TimeSpan.FromSeconds(GetIntOrDefault(kAuth_AllowedClockSkewKey,
-                () => 120));
+                120));
         /// <summary>Valid audience</summary>
         public string Audience =>
             GetStringOrDefault(kAuth_AudienceKey,
-                () => GetStringOrDefault(PcsVariable.PCS_SERVICE_NAME,
-                    () => "iiot"))?.Trim();
+                GetStringOrDefault(PcsVariable.PCS_SERVICE_NAME,
+                    "iiot"))?.Trim();
         /// <summary>No tenant</summary>
         public string TenantId => null;
 

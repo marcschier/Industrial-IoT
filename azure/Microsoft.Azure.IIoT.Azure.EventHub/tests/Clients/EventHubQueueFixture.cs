@@ -6,7 +6,6 @@
 namespace Microsoft.Azure.IIoT.Azure.EventHub.Clients {
     using Microsoft.Azure.IIoT.Azure.EventHub.Runtime;
     using Microsoft.Azure.IIoT.Azure.EventHub.Processor;
-    using Microsoft.Azure.IIoT.Azure.EventHub.Processor.Runtime;
     using Microsoft.Azure.IIoT.Messaging.Handlers;
     using Microsoft.Azure.IIoT.Messaging;
     using Microsoft.Azure.IIoT.Hub;
@@ -23,7 +22,6 @@ namespace Microsoft.Azure.IIoT.Azure.EventHub.Clients {
     using global::Azure.Identity;
     using global::Azure.ResourceManager.EventHubs;
     using global::Azure.ResourceManager.EventHubs.Models;
-    using Microsoft.Extensions.Options;
 
     public sealed class EventHubQueueFixture : IDisposable {
 
@@ -111,9 +109,8 @@ namespace Microsoft.Azure.IIoT.Azure.EventHub.Clients {
                 throw new ResourceInvalidStateException("Subscription or group not configured");
             }
 
-            var eh = new EventHubClientOptions();
-            new EventHubClientConfig(_config).Configure(eh);
-            namespaceName = ConnectionString.Parse(eh.EventHubConnString)?.Endpoint;
+            var eh = new EventHubClientConfig(_config).ToOptions();
+            namespaceName = ConnectionString.Parse(eh.Value.EventHubConnString)?.Endpoint;
             namespaceName = namespaceName?.Replace("sb://", "",
                 StringComparison.InvariantCulture).Split('.')[0];
 
@@ -138,20 +135,6 @@ namespace Microsoft.Azure.IIoT.Azure.EventHub.Clients {
         public string Description { get; } = "the test";
     }
 
-
-    public class EventHubConfig : IConfigureOptions<EventHubConsumerOptions> {
-
-        public void Configure(EventHubConsumerOptions options) {
-            options.EventHubConnString = _cs;
-            options.EventHubPath = null;
-        }
-        private readonly string _cs;
-
-        public EventHubConfig(string cs) {
-            _cs = cs;
-        }
-    }
-
     internal sealed class EventHubQueueHarness : IDisposable {
 
         internal event TelemetryEventHandler OnEvent;
@@ -174,10 +157,11 @@ namespace Microsoft.Azure.IIoT.Azure.EventHub.Clients {
                     .AddFromDotEnvFile()
                     .AddFromKeyVault()
                     .Build();
-                builder.RegisterInstance(config)
-                    .AsImplementedInterfaces();
-                builder.RegisterInstance(new EventHubConfig(connectionString))
-                    .AsImplementedInterfaces();
+                builder.AddConfiguration(config);
+                builder.Configure<EventHubConsumerOptions>(options => {
+                    options.EventHubConnString = connectionString;
+                    options.EventHubPath = null;
+                });
                 builder.RegisterType<Pid>().SingleInstance()
                     .AsImplementedInterfaces();
 

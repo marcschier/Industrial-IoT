@@ -5,10 +5,9 @@
 
 namespace Microsoft.Extensions.DependencyInjection {
     using Microsoft.AspNetCore.Builder;
-    using Microsoft.AspNetCore.Http;
-    using Microsoft.AspNetCore.HttpOverrides;
     using Microsoft.AspNetCore.HttpsPolicy;
     using Microsoft.Azure.IIoT.AspNetCore.Hosting;
+    using Microsoft.Azure.IIoT.AspNetCore.Hosting.Runtime;
     using Microsoft.Azure.IIoT.Hosting;
     using Microsoft.Extensions.Options;
     using System;
@@ -23,24 +22,13 @@ namespace Microsoft.Extensions.DependencyInjection {
         /// </summary>
         /// <param name="services"></param>
         public static IServiceCollection AddHeaderForwarding(this IServiceCollection services) {
-            var fhConfig = services.BuildServiceProvider().GetService<IHeadersConfig>();
-            if (fhConfig == null || !fhConfig.AspNetCoreForwardedHeadersEnabled) {
-                return services;
-            }
-            services.Configure<ForwardedHeadersOptions>(options => {
-                options.ForwardedHeaders = ForwardedHeaders.XForwardedFor |
-                    ForwardedHeaders.XForwardedProto;
 
-                if (fhConfig.AspNetCoreForwardedHeadersForwardLimit > 0) {
-                    options.ForwardLimit = fhConfig.AspNetCoreForwardedHeadersForwardLimit;
-                }
+            // No services associated
 
-                // Only loopback proxies are allowed by default.
-                // Clear that restriction because forwarders are enabled by explicit
-                // configuration.
-                options.KnownNetworks.Clear();
-                options.KnownProxies.Clear();
-            });
+            services.AddOptions();
+            services.AddTransient<IPostConfigureOptions<HeadersOptions>, HeadersConfig>();
+            services.AddTransient<IConfigureOptions<ForwardedHeadersOptions>, HeadersConfig>();
+            services.AddTransient<IConfigureNamedOptions<ForwardedHeadersOptions>, HeadersConfig>();
             return services;
         }
 
@@ -54,18 +42,12 @@ namespace Microsoft.Extensions.DependencyInjection {
                 options.IncludeSubDomains = true;
                 options.MaxAge = TimeSpan.FromDays(60);
             });
-            services.AddHttpsRedirection(options => options.HttpsPort = 0);
-            services.AddTransient<IConfigureOptions<HttpsRedirectionOptions>>(services => {
-                var config = services.GetService<IWebHostConfig>();
-                if (config == null) {
-                    throw new InvalidOperationException("Must have configured web host context");
-                }
-                return new ConfigureNamedOptions<HttpsRedirectionOptions>(
-                    Options.DefaultName, options => {
-                        options.RedirectStatusCode = StatusCodes.Status307TemporaryRedirect;
-                        options.HttpsPort = config.HttpsRedirectPort;
-                    });
-            });
+            services.AddHttpsRedirection(options => { });
+
+            services.AddOptions();
+            services.AddTransient<IPostConfigureOptions<WebHostOptions>, WebHostConfig>();
+            services.AddTransient<IConfigureOptions<HttpsRedirectionOptions>, WebHostConfig>();
+            services.AddTransient<IConfigureNamedOptions<HttpsRedirectionOptions>, WebHostConfig>();
             return services;
         }
     }

@@ -20,8 +20,8 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Api.Runtime {
         /// <summary>OPC vault service endpoint url</summary>
         public string OpcUaVaultServiceUrl => GetStringOrDefault(
             kOpcUaVaultServiceUrlKey,
-            () => GetStringOrDefault(PcsVariable.PCS_VAULT_SERVICE_URL,
-                () => GetDefaultUrl("9044", "vault")));
+            GetStringOrDefault(PcsVariable.PCS_VAULT_SERVICE_URL,
+                GetDefaultUrl("9044", "vault")));
 
         /// <inheritdoc/>
         public VaultConfig(IConfiguration configuration) :

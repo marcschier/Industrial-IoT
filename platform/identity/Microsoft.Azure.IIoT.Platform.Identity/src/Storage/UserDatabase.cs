@@ -32,7 +32,7 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Storage {
         /// </summary>
         /// <param name="factory"></param>
         /// <param name="roleStore"></param>
-        public UserDatabase(IItemContainerFactory factory,
+        public UserDatabase(ICollectionFactory factory,
             IRoleStore<RoleModel> roleStore) {
             if (factory == null) {
                 throw new ArgumentNullException(nameof(factory));
@@ -723,6 +723,6 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Storage {
         }
 
         private readonly IRoleStore<RoleModel> _roleStore;
-        private readonly IItemContainer _documents;
+        private readonly IDocumentCollection _documents;
     }
 }

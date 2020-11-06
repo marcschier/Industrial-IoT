@@ -10,7 +10,6 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Processor {
     using Microsoft.Azure.IIoT.Platform.OpcUa.Services;
     using Microsoft.Azure.IIoT.Azure.AppInsights;
     using Microsoft.Azure.IIoT.Azure.EventHub;
-    using Microsoft.Azure.IIoT.Azure.EventHub.Runtime;
     using Microsoft.Azure.IIoT.Azure.EventHub.Processor;
     using Microsoft.Azure.IIoT.Azure.IoTHub.Handlers;
     using Microsoft.Azure.IIoT.Messaging;
@@ -48,22 +47,15 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Processor {
         /// <returns></returns>
         public static IHostBuilder CreateHostBuilder(string[] args) {
             return Host.CreateDefaultBuilder(args)
-                .ConfigureHostConfiguration(configHost => {
-                    configHost.AddFromDotEnvFile()
+                .ConfigureHostConfiguration(builder => builder
+                    .AddFromDotEnvFile()
                     .AddEnvironmentVariables()
-                    .AddEnvironmentVariables(EnvironmentVariableTarget.User)
-                    // Above configuration providers will provide connection
-                    // details for KeyVault configuration provider.
-                    .AddFromKeyVault(providerPriority: ConfigurationProviderPriority.Lowest);
-                })
+                    .AddFromKeyVault())
                 .UseServiceProviderFactory(new AutofacServiceProviderFactory())
-                .ConfigureContainer<ContainerBuilder>((hostBuilderContext, builder) => {
-                    // registering services in the Autofac ContainerBuilder
-                    ConfigureContainer(builder, hostBuilderContext.Configuration);
-                })
-                .ConfigureServices((hostBuilderContext, services) => {
-                    services.AddHostedService<HostStarterService>();
-                });
+                .ConfigureContainer<ContainerBuilder>((hostBuilderContext, builder) =>
+                    ConfigureContainer(builder, hostBuilderContext.Configuration))
+                .ConfigureServices((hostBuilderContext, services) =>
+                    services.AddHostedService<HostStarterService>());
         }
 
 
@@ -75,17 +67,10 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Processor {
         public static ContainerBuilder ConfigureContainer(ContainerBuilder builder,
             IConfiguration configuration) {
 
-            var serviceInfo = new ServiceInfo();
-            var config = new Config(configuration);
-
-            builder.RegisterInstance(serviceInfo)
+            builder.RegisterType<ServiceInfo>()
                 .AsImplementedInterfaces();
-
-            // Register configuration interfaces
-            builder.RegisterInstance(config)
-                .AsSelf()
-                .AsImplementedInterfaces();
-            builder.RegisterInstance(config.Configuration)
+            builder.AddConfiguration(configuration);
+            builder.RegisterType<HostingOptions>()
                 .AsImplementedInterfaces();
 
             // Add prometheus endpoint
@@ -116,7 +101,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Processor {
             // --- Dependencies ---
 
             // Add Application Insights logging and dependency tracking.
-            builder.AddDependencyTracking(serviceInfo);
+            builder.AddDependencyTracking(new ServiceInfo());
             builder.AddAppInsightsLogging();
             // Event Hub client
             builder.RegisterModule<EventHubClientModule>();

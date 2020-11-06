@@ -178,7 +178,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Models {
             // get value
             var value = monitoredItem.GetFieldValue(eventFields, ObjectTypes.BaseEventType, name);
             if (value != null) {
-                return value.As<T>();
+                return value.ConvertTo<T>();
             }
             return defaultValue;
         }

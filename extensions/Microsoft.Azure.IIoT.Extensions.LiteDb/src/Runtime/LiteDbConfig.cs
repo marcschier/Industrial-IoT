@@ -4,28 +4,26 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Extensions.LiteDb.Runtime {
-    using Microsoft.Azure.IIoT.Utils;
+    using Microsoft.Azure.IIoT.Configuration;
     using Microsoft.Extensions.Configuration;
 
     /// <summary>
     /// LiteDb configuration
     /// </summary>
-    public class LiteDbConfig : ConfigBase, ILiteDbConfig {
-
-        private const string kLiteDbConnectionString = "LiteDb:ConnectionString";
+    internal sealed class LiteDbConfig : PostConfigureOptionBase<LiteDbOptions> {
 
         /// <inheritdoc/>
-        public string DbConnectionString => GetStringOrDefault(kLiteDbConnectionString,
-            () => GetStringOrDefault(PcsVariable.PCS_COSMOSDB_CONNSTRING,
-                () => GetStringOrDefault("_DB_CS",
-                    () => null)));
-
-        /// <summary>
-        /// Configuration constructor
-        /// </summary>
-        /// <param name="configuration"></param>
         public LiteDbConfig(IConfiguration configuration) :
             base(configuration) {
+        }
+
+        /// <inheritdoc/>
+        public override void PostConfigure(string name, LiteDbOptions options) {
+            if (string.IsNullOrEmpty(options.DbConnectionString)) {
+                options.DbConnectionString = 
+                    GetStringOrDefault(PcsVariable.PCS_COSMOSDB_CONNSTRING,
+                    GetStringOrDefault("_DB_CS"));
+            }
         }
     }
 }

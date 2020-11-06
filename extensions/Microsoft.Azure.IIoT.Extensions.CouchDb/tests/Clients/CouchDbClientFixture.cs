@@ -20,7 +20,7 @@ namespace Microsoft.Azure.IIoT.Extensions.CouchDb.Clients {
         /// </summary>
         /// <param name="collection">collection</param>
         /// <returns>None</returns>
-        private static async Task CreateDocumentsAsync(IItemContainer collection) {
+        private static async Task CreateDocumentsAsync(IDocumentCollection collection) {
             var AndersonFamily = new Family {
                 Id = "AndersenFamily",
                 LastName = "Andersen",
@@ -103,7 +103,7 @@ namespace Microsoft.Azure.IIoT.Extensions.CouchDb.Clients {
         /// <returns></returns>
         public static async Task<IDatabase> GetDatabaseAsync() {
             var logger = Log.Console();
-            var server = new CouchDbClient(new CouchDbConfig(null), logger);
+            var server = new CouchDbClient(new CouchDbConfig(null).ToOptions(), logger);
             return await server.OpenAsync("test", null).ConfigureAwait(false);
         }
 
@@ -112,7 +112,7 @@ namespace Microsoft.Azure.IIoT.Extensions.CouchDb.Clients {
         /// </summary>
         /// <param name="options"></param>
         /// <returns></returns>
-        public async Task<IItemContainer> GetDocumentsAsync() {
+        public async Task<IDocumentCollection> GetDocumentsAsync() {
             _query = await GetContainerAsync("test").ConfigureAwait(false);
             if (_query == null) {
                 return null;
@@ -158,9 +158,9 @@ namespace Microsoft.Azure.IIoT.Extensions.CouchDb.Clients {
     public sealed class ContainerWrapper : IDisposable {
         private readonly IDatabase _database;
 
-        public IItemContainer Container { get; }
+        public IDocumentCollection Container { get; }
 
-        public ContainerWrapper(IDatabase database, IItemContainer container) {
+        public ContainerWrapper(IDatabase database, IDocumentCollection container) {
             _database = database;
             Container = container;
         }

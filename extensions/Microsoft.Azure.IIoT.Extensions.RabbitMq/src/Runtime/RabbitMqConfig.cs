@@ -4,41 +4,37 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Extensions.RabbitMq.Runtime {
-    using Microsoft.Azure.IIoT.Utils;
+    using Microsoft.Azure.IIoT.Configuration;
     using Microsoft.Extensions.Configuration;
 
     /// <summary>
     /// RabbitMq configuration
     /// </summary>
-    public class RabbitMqConfig : ConfigBase, IRabbitMqConfig {
-
-        private const string kRabbitMqHostName = "RabbitMq:HostName";
-        private const string kRabbitMqUserName = "RabbitMq:UserName";
-        private const string kRabbitMqRoutingKey = "RabbitMq:RoutingKey";
-        private const string kRabbitMqKey = "RabbitMq:Key";
+    internal sealed class RabbitMqConfig : PostConfigureOptionBase<RabbitMqOptions> {
 
         /// <inheritdoc/>
-        public string HostName => GetStringOrDefault(kRabbitMqHostName,
-            () => GetStringOrDefault(PcsVariable.PCS_RABBITMQ_HOSTNAME,
-                () => GetStringOrDefault("_RABBITMQ_HOST", () => "localhost")));
-        /// <inheritdoc/>
-        public string UserName => GetStringOrDefault(kRabbitMqUserName,
-            () => GetStringOrDefault(PcsVariable.PCS_RABBITMQ_USERNAME,
-                () => "user"));
-        /// <inheritdoc/>
-        public string Key => GetStringOrDefault(kRabbitMqKey,
-            () => GetStringOrDefault(PcsVariable.PCS_RABBITMQ_KEY,
-                () => "bitnami"));
-        /// <inheritdoc/>
-        public string RoutingKey => GetStringOrDefault(kRabbitMqRoutingKey,
-            () => "");
-
-        /// <summary>
-        /// Configuration constructor
-        /// </summary>
-        /// <param name="configuration"></param>
         public RabbitMqConfig(IConfiguration configuration = null) :
             base(configuration) {
+        }
+
+        /// <inheritdoc/>
+        public override void PostConfigure(string name, RabbitMqOptions options) {
+            if (string.IsNullOrEmpty(options.HostName)) {
+                options.HostName =
+                    GetStringOrDefault(PcsVariable.PCS_RABBITMQ_HOSTNAME,
+                    GetStringOrDefault("_RABBITMQ_HOST", "localhost"));
+            }
+            if (string.IsNullOrEmpty(options.UserName)) {
+                options.UserName =
+                    GetStringOrDefault(PcsVariable.PCS_RABBITMQ_USERNAME, "user");
+            }
+            if (string.IsNullOrEmpty(options.Key)) {
+                options.Key =
+                    GetStringOrDefault(PcsVariable.PCS_RABBITMQ_KEY, "bitnami");
+            }
+            if (options.RoutingKey == null) {
+                options.RoutingKey = string.Empty;
+            }
         }
     }
 }

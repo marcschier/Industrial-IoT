@@ -5,6 +5,7 @@
 
 namespace Microsoft.Azure.IIoT.Extensions.Kafka {
     using Microsoft.Azure.IIoT.Extensions.Kafka.Clients;
+    using Microsoft.Azure.IIoT.Extensions.Kafka.Runtime;
     using Autofac;
 
     /// <summary>
@@ -21,6 +22,8 @@ namespace Microsoft.Azure.IIoT.Extensions.Kafka {
                 .AsImplementedInterfaces().InstancePerLifetimeScope();
             builder.RegisterType<KafkaProducerClient>()
                 .AsImplementedInterfaces().InstancePerLifetimeScope();
+            builder.RegisterType<KafkaServerConfig>()
+                .AsImplementedInterfaces();
             base.Load(builder);
         }
     }

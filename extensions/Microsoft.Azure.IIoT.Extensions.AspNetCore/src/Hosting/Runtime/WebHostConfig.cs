@@ -5,34 +5,40 @@
 
 namespace Microsoft.Azure.IIoT.AspNetCore.Hosting.Runtime {
     using Microsoft.Azure.IIoT.Hosting;
-    using Microsoft.Azure.IIoT.Utils;
+    using Microsoft.Azure.IIoT.Configuration;
     using Microsoft.Extensions.Configuration;
+    using Microsoft.Extensions.Options;
+    using Microsoft.AspNetCore.Http;
+    using Microsoft.AspNetCore.HttpsPolicy;
 
     /// <summary>
     /// Web Host configuration
     /// </summary>
-    public class WebHostConfig : ConfigBase, IWebHostConfig {
-
-        /// <summary>
-        /// Host configuration
-        /// </summary>
-        private const string kAuth_HttpsRedirectPortKey = "Auth:HttpsRedirectPort";
-        private const string kHost_ServicePathBase = "Host:ServicePathBase";
-
-        /// <summary>Https enforced</summary>
-        public int HttpsRedirectPort => GetIntOrDefault(kAuth_HttpsRedirectPortKey,
-            () => GetIntOrDefault("PCS_AUTH_HTTPSREDIRECTPORT", () => 0));
+    internal sealed class WebHostConfig : PostConfigureOptionBase<WebHostOptions>,
+        IConfigureOptions<HttpsRedirectionOptions>,
+        IConfigureNamedOptions<HttpsRedirectionOptions> {
 
         /// <inheritdoc/>
-        public string ServicePathBase => GetStringOrDefault(kHost_ServicePathBase,
-            () => GetStringOrDefault(PcsVariable.PCS_SERVICE_PATH_BASE));
-
-        /// <summary>
-        /// Configuration constructor
-        /// </summary>
-        /// <param name="configuration"></param>
         public WebHostConfig(IConfiguration configuration) :
             base(configuration) {
+        }
+
+        /// <inheritdoc/>
+        public override void PostConfigure(string name, WebHostOptions options) {
+            options.UseHttpsRedirect = GetIntOrNull(
+                AspNetCoreVariable.ASPNETCORE_HTTPSREDIRECTPORT) != null;
+        }
+
+        /// <inheritdoc/>
+        public void Configure(string name, HttpsRedirectionOptions options) {
+            options.HttpsPort = GetIntOrNull(
+                AspNetCoreVariable.ASPNETCORE_HTTPSREDIRECTPORT, options.HttpsPort);
+            options.RedirectStatusCode = StatusCodes.Status307TemporaryRedirect;
+        }
+
+        /// <inheritdoc/>
+        public void Configure(HttpsRedirectionOptions options) {
+            Configure(Options.DefaultName, options);
         }
     }
 }

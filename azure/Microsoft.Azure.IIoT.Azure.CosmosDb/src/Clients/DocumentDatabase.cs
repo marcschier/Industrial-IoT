@@ -33,7 +33,7 @@ namespace Microsoft.Azure.IIoT.Azure.CosmosDb.Clients {
         }
 
         /// <inheritdoc/>
-        public async Task<IItemContainer> OpenContainerAsync(string id,
+        public async Task<IDocumentCollection> OpenContainerAsync(string id,
             ContainerOptions options) {
             return await OpenOrCreateCollectionAsync(id, options).ConfigureAwait(false);
         }

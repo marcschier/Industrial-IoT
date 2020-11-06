@@ -6,13 +6,12 @@
 namespace Microsoft.Azure.IIoT.Platform.Events.Api.Runtime {
     using Microsoft.Azure.IIoT.Platform.Events.Api;
     using Microsoft.Azure.IIoT.Api.Runtime;
-    using Microsoft.Azure.IIoT.Messaging.SignalR;
     using Microsoft.Extensions.Configuration;
 
     /// <summary>
     /// Configuration - wraps a configuration root
     /// </summary>
-    public class EventsConfig : ApiConfigBase, IEventsConfig, ISignalRClientConfig {
+    public class EventsConfig : ApiConfigBase, IEventsConfig {
 
         /// <summary>
         /// Events configuration
@@ -22,11 +21,8 @@ namespace Microsoft.Azure.IIoT.Platform.Events.Api.Runtime {
         /// <summary>Events configuration endpoint</summary>
         public string OpcUaEventsServiceUrl => GetStringOrDefault(
             kEventsServiceUrlKey,
-            () => GetStringOrDefault(PcsVariable.PCS_EVENTS_SERVICE_URL,
-                () => GetDefaultUrl("9050", "events")));
-
-        /// <summary> Use message pack </summary>
-        public bool UseMessagePackProtocol => false;
+            GetStringOrDefault(PcsVariable.PCS_EVENTS_SERVICE_URL,
+                GetDefaultUrl("9050", "events")));
 
         /// <inheritdoc/>
         public EventsConfig(IConfiguration configuration) :

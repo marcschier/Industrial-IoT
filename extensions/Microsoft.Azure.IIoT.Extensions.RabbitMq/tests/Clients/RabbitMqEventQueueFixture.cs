@@ -5,7 +5,6 @@
 
 namespace Microsoft.Azure.IIoT.Extensions.RabbitMq.Clients {
     using Microsoft.Azure.IIoT.Extensions.RabbitMq.Runtime;
-    using Microsoft.Azure.IIoT.Extensions.RabbitMq.Services;
     using Microsoft.Azure.IIoT.Messaging.Handlers;
     using Microsoft.Azure.IIoT.Messaging;
     using Microsoft.Azure.IIoT.Hub;
@@ -32,13 +31,6 @@ namespace Microsoft.Azure.IIoT.Extensions.RabbitMq.Clients {
         }
     }
 
-    public class RabbitMqQueueConfig : IRabbitMqQueueConfig {
-        public RabbitMqQueueConfig(string queue) {
-            Queue = queue;
-        }
-        public string Queue { get; }
-    }
-
     public sealed class RabbitMqEventQueueHarness : IDisposable {
 
         internal event TelemetryEventHandler OnEvent;
@@ -60,8 +52,7 @@ namespace Microsoft.Azure.IIoT.Extensions.RabbitMq.Clients {
                 var consumerBuilder = new ContainerBuilder();
 
                 consumerBuilder.RegisterModule<RabbitMqEventProcessorModule>();
-                consumerBuilder.RegisterInstance(new RabbitMqQueueConfig(queue))
-                    .AsImplementedInterfaces();
+                consumerBuilder.Configure<RabbitMqQueueOptions>(options => options.Queue = queue);
                 consumerBuilder.RegisterType<RabbitMqConfig>()
                     .AsImplementedInterfaces().SingleInstance();
 

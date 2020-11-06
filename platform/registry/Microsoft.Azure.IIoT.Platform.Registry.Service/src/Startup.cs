@@ -4,7 +4,6 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Platform.Registry.Service {
-    using Microsoft.Azure.IIoT.Platform.Registry.Service.Runtime;
     using Microsoft.Azure.IIoT.Platform.Registry.Service.Auth;
     using Microsoft.Azure.IIoT.Platform.Registry;
     using Microsoft.Azure.IIoT.Azure.AppInsights;
@@ -12,13 +11,13 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service {
     using Microsoft.Azure.IIoT.Azure.IoTHub.Clients;
     using Microsoft.Azure.IIoT.Azure.IoTHub.Deploy;
     using Microsoft.Azure.IIoT.Azure.ServiceBus;
+    using Microsoft.Azure.IIoT.Deploy.Runtime;
     using Microsoft.Azure.IIoT.Authentication;
     using Microsoft.Azure.IIoT.Utils;
     using Microsoft.Azure.IIoT.Http.Clients;
     using Microsoft.Azure.IIoT.Serializers;
     using Microsoft.Azure.IIoT.AspNetCore.Authentication;
     using Microsoft.Azure.IIoT.AspNetCore.Authentication.Clients;
-    using Microsoft.Azure.IIoT.AspNetCore.Cors;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.Extensions.Configuration;
@@ -29,7 +28,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service {
     using Autofac;
     using Autofac.Extensions.DependencyInjection;
     using Prometheus;
-    using System;
 
     /// <summary>
     /// Webservice startup
@@ -39,7 +37,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service {
         /// <summary>
         /// Configuration - Initialized in constructor
         /// </summary>
-        public Config Config { get; }
+        public IConfiguration Configuration { get; }
 
         /// <summary>
         /// Service info - Initialized in constructor
@@ -56,26 +54,9 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service {
         /// </summary>
         /// <param name="env"></param>
         /// <param name="configuration"></param>
-        public Startup(IWebHostEnvironment env, IConfiguration configuration) :
-            this (env, new Config(new ConfigurationBuilder()
-                .AddConfiguration(configuration)
-                .AddFromDotEnvFile()
-                .AddEnvironmentVariables()
-                .AddEnvironmentVariables(EnvironmentVariableTarget.User)
-                // Above configuration providers will provide connection
-                // details for KeyVault configuration provider.
-                .AddFromKeyVault(providerPriority: ConfigurationProviderPriority.Lowest)
-                .Build())) {
-        }
-
-        /// <summary>
-        /// Create startup
-        /// </summary>
-        /// <param name="env"></param>
-        /// <param name="configuration"></param>
-        public Startup(IWebHostEnvironment env, Config configuration) {
+        public Startup(IWebHostEnvironment env, IConfiguration configuration) {
             Environment = env;
-            Config = configuration;
+            Configuration = configuration;
         }
 
         /// <summary>
@@ -129,7 +110,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service {
 
             app.UseRouting();
             app.UseHttpMetrics();
-            app.EnableCors();
+            app.UseCors();
 
             app.UseJwtBearerAuthentication();
             app.UseAuthorization();
@@ -161,9 +142,8 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service {
             // Register service info and configuration interfaces
             builder.RegisterInstance(ServiceInfo)
                 .AsImplementedInterfaces();
-            builder.RegisterInstance(Config)
-                .AsImplementedInterfaces();
-            builder.RegisterInstance(Config.Configuration)
+            builder.AddConfiguration(Configuration);
+            builder.RegisterType<HostingOptions>()
                 .AsImplementedInterfaces();
 
             // Register http client module
@@ -172,10 +152,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service {
             builder.RegisterModule<MessagePackModule>();
             builder.RegisterModule<NewtonSoftJsonModule>();
 
-            // CORS setup
-            builder.RegisterType<CorsSetup>()
-                .AsImplementedInterfaces();
-
             // --- Logic ---
 
             // Registries and repositories
@@ -183,6 +159,8 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service {
 
             // Deployments
             builder.RegisterType<IoTHubConfigurationClient>()
+                .AsImplementedInterfaces(); 
+            builder.RegisterType<ContainerRegistryConfig>()
                 .AsImplementedInterfaces();
             builder.RegisterType<IoTEdgeBaseDeployment>()
                 .AsImplementedInterfaces().SingleInstance();

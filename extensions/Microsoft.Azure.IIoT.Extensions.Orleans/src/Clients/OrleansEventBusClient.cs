@@ -9,6 +9,7 @@ namespace Microsoft.Azure.IIoT.Extensions.Orleans.Clients {
     using Microsoft.Azure.IIoT.Exceptions;
     using Microsoft.Azure.IIoT.Serializers;
     using Microsoft.Azure.IIoT.Tasks;
+    using Microsoft.Extensions.Options;
     using Microsoft.Extensions.Logging;
     using System.Threading.Tasks;
     using System.Collections.Concurrent;
@@ -25,16 +26,17 @@ namespace Microsoft.Azure.IIoT.Extensions.Orleans.Clients {
         /// <param name="client"></param>
         /// <param name="serializer"></param>
         /// <param name="processor"></param>
+        /// <param name="options"></param>
         /// <param name="logger"></param>
-        /// <param name="config"></param>
         public OrleansEventBusClient(IOrleansGrainClient client, IJsonSerializer serializer,
-            ITaskProcessor processor, ILogger logger, IOrleansBusConfig config = null) {
+            ITaskProcessor processor, IOptionsSnapshot<OrleansBusOptions> options, 
+            ILogger logger) {
             _client = client ?? throw new ArgumentNullException(nameof(client));
             _serializer = serializer ?? throw new ArgumentNullException(nameof(serializer));
             _processor = processor ?? throw new ArgumentNullException(nameof(processor));
+            _options = options ?? throw new ArgumentNullException(nameof(options));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _refs = new ConcurrentDictionary<string, Subscription>();
-            _config = config;
         }
 
         /// <inheritdoc/>
@@ -42,7 +44,7 @@ namespace Microsoft.Azure.IIoT.Extensions.Orleans.Clients {
             if (message is null) {
                 throw new ArgumentNullException(nameof(message));
             }
-            var topicName = (_config?.Prefix ?? "") + typeof(T).GetMoniker();
+            var topicName = (_options.Value.Prefix ?? "") + typeof(T).GetMoniker();
             var topic = _client.Grains.GetGrain<IOrleansTopic>(topicName);
 
             var buffer = _serializer.SerializeToBytes(message).ToArray();
@@ -57,7 +59,7 @@ namespace Microsoft.Azure.IIoT.Extensions.Orleans.Clients {
                 throw new ArgumentNullException(nameof(handler));
             }
 
-            var topicName = (_config?.Prefix ?? "") + typeof(T).GetMoniker();
+            var topicName = (_options.Value.Prefix ?? "") + typeof(T).GetMoniker();
             var topic = _client.Grains.GetGrain<IOrleansTopic>(topicName);
 
             var subscription = new Subscription(topic, topicName, buffer => 
@@ -151,11 +153,11 @@ namespace Microsoft.Azure.IIoT.Extensions.Orleans.Clients {
             private readonly Action<byte[]> _handler;
         }
 
+        private readonly IOptionsSnapshot<OrleansBusOptions> _options;
         private readonly ConcurrentDictionary<string, Subscription> _refs;
         private readonly IOrleansGrainClient _client;
         private readonly IJsonSerializer _serializer;
         private readonly ITaskProcessor _processor;
         private readonly ILogger _logger;
-        private readonly IOrleansBusConfig _config;
     }
 }

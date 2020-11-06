@@ -22,7 +22,7 @@ namespace Microsoft.Azure.IIoT.Storage {
         /// <param name="ct"></param>
         /// <returns></returns>
         public static async Task<IDocumentInfo<T>> GetAsync<T>(
-            this IItemContainer documents, string id, OperationOptions options = null,
+            this IDocumentCollection documents, string id, OperationOptions options = null,
             CancellationToken ct = default) {
             if (documents is null) {
                 throw new System.ArgumentNullException(nameof(documents));

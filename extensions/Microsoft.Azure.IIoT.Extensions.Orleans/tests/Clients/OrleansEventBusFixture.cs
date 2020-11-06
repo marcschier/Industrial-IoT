@@ -33,13 +33,6 @@ namespace Microsoft.Azure.IIoT.Extensions.Orleans.Clients {
         }
     }
 
-    public class OrleansBusConfig : IOrleansBusConfig {
-        public OrleansBusConfig(string bus) {
-            Prefix = bus;
-        }
-        public string Prefix { get; }
-    }
-
     public sealed class OrleansEventBusHarness : IDisposable {
 
         /// <summary>
@@ -65,8 +58,7 @@ namespace Microsoft.Azure.IIoT.Extensions.Orleans.Clients {
                 }
 
                 // Configure the bus
-                builder.RegisterInstance(new OrleansBusConfig(bus))
-                    .AsImplementedInterfaces();
+                builder.Configure<OrleansBusOptions>(options => options.Prefix = bus);
 
                 // Now add module
                 builder.RegisterModule<OrleansEventBusModule>();

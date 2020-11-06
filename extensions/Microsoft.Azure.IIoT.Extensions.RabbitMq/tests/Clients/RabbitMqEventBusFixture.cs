@@ -4,7 +4,6 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Extensions.RabbitMq.Clients {
-    using Microsoft.Azure.IIoT.Extensions.RabbitMq.Runtime;
     using Microsoft.Azure.IIoT.Messaging.Services;
     using Microsoft.Azure.IIoT.Messaging;
     using Microsoft.Azure.IIoT.Utils;
@@ -31,23 +30,6 @@ namespace Microsoft.Azure.IIoT.Extensions.RabbitMq.Clients {
         }
     }
 
-    public class RabbitMqEventBusConfig : IRabbitMqConfig {
-        public RabbitMqEventBusConfig(string routingKey) {
-            RoutingKey = routingKey;
-            _config = new RabbitMqConfig();
-        }
-
-        public string HostName => _config.HostName;
-
-        public string UserName => _config.UserName;
-
-        public string Key => _config.Key;
-
-        public string RoutingKey { get; }
-
-        private readonly RabbitMqConfig _config;
-    }
-
     public sealed class RabbitMqEventBusHarness : IDisposable {
 
         /// <summary>
@@ -59,9 +41,7 @@ namespace Microsoft.Azure.IIoT.Extensions.RabbitMq.Clients {
 
                 builder.RegisterModule<NewtonSoftJsonModule>();
                 builder.RegisterModule<RabbitMqEventBusModule>();
-
-                builder.RegisterInstance(new RabbitMqEventBusConfig(bus))
-                    .AsImplementedInterfaces();
+                builder.Configure<RabbitMqOptions>(options => options.RoutingKey = bus);
                 builder.RegisterType<HostAutoStart>()
                     .AutoActivate()
                     .AsImplementedInterfaces().SingleInstance();

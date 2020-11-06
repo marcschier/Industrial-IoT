@@ -19,7 +19,7 @@ namespace Microsoft.Azure.IIoT.Extensions.LiteDb.Clients {
     /// <summary>
     /// Wraps a collection
     /// </summary>
-    internal sealed class DocumentCollection : IItemContainer {
+    internal sealed class DocumentCollection : IDocumentCollection {
 
         /// <inheritdoc/>
         public string Name { get; }

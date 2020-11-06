@@ -4,10 +4,10 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Platform.Vault.Service {
-    using Microsoft.Azure.IIoT.Platform.Vault.Service.Runtime;
-    using Microsoft.Extensions.Hosting;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Mvc.Testing;
+    using Microsoft.Extensions.Hosting;
+    using Microsoft.Extensions.Configuration;
     using Autofac;
     using Autofac.Extensions.Hosting;
     using System.Net.Http;
@@ -17,11 +17,9 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Service {
     /// </summary>
     public class TestStartup : Startup {
 
-        /// <summary>
-        /// Create startup
-        /// </summary>
-        /// <param name="env"></param>
-        public TestStartup(IWebHostEnvironment env) : base(env, new Config(null)) {
+        /// <inheritdoc/>
+        public TestStartup(IWebHostEnvironment env, IConfiguration configuration) :
+            base(env, configuration) {
         }
 
         /// <inheritdoc/>
@@ -29,7 +27,8 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Service {
             // Register service info and configuration interfaces
             builder.RegisterInstance(ServiceInfo)
                 .AsImplementedInterfaces();
-            builder.RegisterInstance(Config)
+            builder.AddConfiguration(Configuration);
+            builder.RegisterType<HostingOptions>()
                 .AsImplementedInterfaces();
 
             // Add diagnostics based on configuration

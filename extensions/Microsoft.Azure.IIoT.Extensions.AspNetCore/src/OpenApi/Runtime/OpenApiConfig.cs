@@ -4,71 +4,56 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.AspNetCore.OpenApi.Runtime {
-    using Microsoft.Azure.IIoT.Utils;
+    using Microsoft.Azure.IIoT.Configuration;
     using Microsoft.Extensions.Configuration;
 
     /// <summary>
-    /// OpenApi configuration with fall back to client configuration.
+    /// OpenApi configuration 
     /// </summary>
-    public class OpenApiConfig : ConfigBase, IOpenApiConfig {
-
-        /// <summary>
-        /// OpenApi configuration
-        /// </summary>
-        private const string kOpenApi_EnabledKey = "OpenApi:Enabled";
-        private const string kOpenApi_UseV2Key = "OpenApi:UseV2";
-        private const string kOpenApi_AppIdKey = "OpenApi:AppId";
-        private const string kOpenApi_AppSecretKey = "OpenApi:AppSecret";
-        private const string kOpenApi_AuthorizationUrlKey = "OpenApi:AuthorizationUrl";
-        private const string kOpenApi_ServerHost = "OpenApi:ServerHost";
-        private const string kAuth_RequiredKey = "Auth:Required";
+    internal class OpenApiConfig : PostConfigureOptionBase<OpenApiOptions> {
 
         /// <inheritdoc/>
-        public bool UIEnabled => GetBoolOrDefault(kOpenApi_EnabledKey,
-            () => GetBoolOrDefault(PcsVariable.PCS_OPENAPI_ENABLED,
-            () => !WithAuth || !string.IsNullOrEmpty(OpenApiAppId))); // Disable with auth but no appid
-        /// <inheritdoc/>
-        public bool WithAuth => GetBoolOrDefault(kAuth_RequiredKey,
-            () => GetBoolOrDefault(PcsVariable.PCS_AUTH_REQUIRED,
-            () => !string.IsNullOrEmpty(OpenApiAppId))); // Disable if no appid
-        /// <inheritdoc/>
-        public bool UseV2 => GetBoolOrDefault(kOpenApi_UseV2Key,
-            () => GetBoolOrDefault(PcsVariable.PCS_OPENAPI_USE_V2,
-            () => GetBoolOrDefault("PCS_SWAGGER_V2",
-            () => true)));
-        /// <inheritdoc/>
-        public string OpenApiAppId => GetStringOrDefault(kOpenApi_AppIdKey,
-            () => GetStringOrDefault(PcsVariable.PCS_OPENAPI_APPID,
-            () => GetStringOrDefault(PcsVariable.PCS_AAD_CONFIDENTIAL_CLIENT_APPID,
-            () => GetStringOrDefault("PCS_WEBUI_AUTH_AAD_APPID"))))?.Trim();
-        /// <inheritdoc/>
-        public string OpenApiAppSecret => GetStringOrDefault(kOpenApi_AppSecretKey,
-            () => GetStringOrDefault(PcsVariable.PCS_OPENAPI_APP_SECRET,
-            () => GetStringOrDefault(PcsVariable.PCS_AAD_CONFIDENTIAL_CLIENT_SECRET,
-            () => GetStringOrDefault("PCS_APPLICATION_SECRET"))))?.Trim();
-        /// <inheritdoc/>
-        public string OpenApiAuthorizationEndpoint =>
-            GetStringOrDefault(kOpenApi_AuthorizationUrlKey,
-                () => $"{InstanceUrl.TrimEnd('/')}/{TenantId}/oauth2/authorize");
-        /// <inheritdoc/>
-        public string OpenApiServerHost => GetStringOrDefault(kOpenApi_ServerHost,
-            () => GetStringOrDefault(PcsVariable.PCS_OPENAPI_SERVER_HOST))?.Trim();
-
-        /// <summary>Get tenant id</summary>
-        private string TenantId =>
-            GetStringOrDefault(PcsVariable.PCS_AUTH_TENANT,
-                () => "common")?.Trim();
-        /// <summary>Get instance url</summary>
-        private string InstanceUrl =>
-            GetStringOrDefault(PcsVariable.PCS_AAD_INSTANCE,
-                () => "https://login.microsoftonline.com")?.Trim();
-
-        /// <summary>
-        /// Configuration constructor
-        /// </summary>
-        /// <param name="configuration"></param>
         public OpenApiConfig(IConfiguration configuration) :
             base(configuration) {
+        }
+
+        /// <inheritdoc/>
+        public override void PostConfigure(string name, OpenApiOptions options) {
+            if (string.IsNullOrEmpty(options.OpenApiAuthorizationEndpoint)) {
+                var tenantId = GetStringOrDefault(PcsVariable.PCS_AUTH_TENANT,
+                    "common")?.Trim();
+                var instanceUrl = GetStringOrDefault(PcsVariable.PCS_AAD_INSTANCE,
+                    "https://login.microsoftonline.com")?.Trim();
+
+                options.OpenApiAuthorizationEndpoint =
+                    $"{instanceUrl.TrimEnd('/')}/{tenantId}/oauth2/authorize";
+            }
+            if (string.IsNullOrEmpty(options.OpenApiAppId)) {
+                options.OpenApiAppId = GetStringOrDefault(PcsVariable.PCS_OPENAPI_APPID,
+                    GetStringOrDefault(PcsVariable.PCS_AAD_CONFIDENTIAL_CLIENT_APPID,
+                    GetStringOrDefault("PCS_WEBUI_AUTH_AAD_APPID")))?.Trim();
+                options.OpenApiAppSecret = GetStringOrDefault(PcsVariable.PCS_OPENAPI_APP_SECRET,
+                    GetStringOrDefault(PcsVariable.PCS_AAD_CONFIDENTIAL_CLIENT_SECRET,
+                    GetStringOrDefault("PCS_APPLICATION_SECRET")))?.Trim();
+
+                // Disable if no appid
+                options.WithAuth = GetBoolOrDefault(PcsVariable.PCS_AUTH_REQUIRED,
+                    !string.IsNullOrEmpty(options.OpenApiAppId));
+                // Disable with auth but no appid
+                options.UIEnabled = GetBoolOrDefault(PcsVariable.PCS_OPENAPI_ENABLED,
+                    !options.WithAuth || !string.IsNullOrEmpty(options.OpenApiAppId));
+            }
+
+            if (string.IsNullOrEmpty(options.OpenApiServerHost)) {
+                options.OpenApiServerHost =
+                GetStringOrDefault(PcsVariable.PCS_OPENAPI_SERVER_HOST)?.Trim();
+            }
+
+            if (options.Version != 2 && options.Version != 3) {
+                var useV2 = GetBoolOrDefault(PcsVariable.PCS_OPENAPI_USE_V2,
+                    GetBoolOrDefault("PCS_SWAGGER_V2", true));
+                options.Version = useV2 ? 2 : 3;
+            }
         }
     }
 }

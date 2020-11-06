@@ -43,7 +43,7 @@ namespace Microsoft.Azure.IIoT.AspNetCore.Authentication {
             Func<string, Func<AuthorizationHandlerContext, bool>> roles, params string[] policies) {
             return services.AddAuthorizationPolicies(
                 (n, builder, provider) => {
-                    var config = provider.GetService<IRoleConfig>();
+                    var config = provider.GetService<RoleAuthorizationOptions>();
                     if (config?.UseRoles == true) {
                         var rights = roles(n);
                         if (rights != null) {

@@ -32,7 +32,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Processor {
         /// <summary>
         /// Runtime configuration, will be provided by DI.
         /// </summary>
-        public Config Config { get; }
+        public HostingOptions Config { get; }
 
         /// <summary>
         /// Service information, will be provided by DI.
@@ -57,7 +57,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Processor {
         public HostStarterService(
             IHostEnvironment hostEnvironment,
             IHostApplicationLifetime hostApplicationLifetime,
-            Config config,
+            HostingOptions config,
             IProcessIdentity serviceInfo,
             IEnumerable<IHostProcess> hostProcesses,
             ILogger logger

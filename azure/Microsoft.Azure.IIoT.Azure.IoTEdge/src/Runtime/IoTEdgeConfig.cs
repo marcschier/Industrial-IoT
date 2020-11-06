@@ -6,14 +6,14 @@
 namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Runtime {
     using Microsoft.Azure.IIoT.Azure.IoTEdge;
     using Microsoft.Azure.IIoT.Messaging;
-    using Microsoft.Azure.IIoT.Utils;
+    using Microsoft.Azure.IIoT.Configuration;
     using Microsoft.Extensions.Configuration;
     using System;
 
     /// <summary>
     /// IoT Edge device or module configuration
     /// </summary>
-    internal sealed class IoTEdgeConfig : ConfigBase<IoTEdgeOptions> {
+    internal sealed class IoTEdgeConfig : PostConfigureOptionBase<IoTEdgeOptions> {
 
         /// <inheritdoc/>
         public IoTEdgeConfig(IConfiguration configuration = null) :
@@ -21,16 +21,23 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Runtime {
         }
 
         /// <inheritdoc/>
-        public override void Configure(string name, IoTEdgeOptions options) {
-            options.EdgeHubConnectionString = 
-                GetStringOrDefault(nameof(options.EdgeHubConnectionString));
-            options.BypassCertVerification =
-                GetBoolOrDefault(nameof(options.BypassCertVerification), () => false);
-            options.Transport = (TransportOption)Enum.Parse(typeof(TransportOption),
-                GetStringOrDefault(nameof(options.Transport), 
-                    () => nameof(TransportOption.MqttOverTcp)), true);
-            options.Product = 
-                GetStringOrDefault(nameof(options.Product), () => "iiot");
+        public override void PostConfigure(string name, IoTEdgeOptions options) {
+            if (string.IsNullOrEmpty(options.EdgeHubConnectionString)) {
+                options.EdgeHubConnectionString =
+                    GetStringOrDefault(nameof(options.EdgeHubConnectionString));
+            }
+            var bypass = GetBoolOrDefault(nameof(options.BypassCertVerification));
+            if (bypass) {
+                options.BypassCertVerification = bypass;
+            }
+            if (options.Transport == 0) {
+                options.Transport = (TransportOption)Enum.Parse(typeof(TransportOption),
+                    GetStringOrDefault(nameof(options.Transport),
+                        nameof(TransportOption.MqttOverTcp)), true);
+            }
+            if (string.IsNullOrEmpty(options.Product)) {
+                options.Product = GetStringOrDefault(nameof(options.Product), "iiot");
+            }
         }
     }
 }

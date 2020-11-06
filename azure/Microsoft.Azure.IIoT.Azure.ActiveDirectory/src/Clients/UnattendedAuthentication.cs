@@ -22,7 +22,7 @@ namespace Microsoft.Azure.IIoT.Azure.ActiveDirectory.Clients {
 
         /// <inheritdoc/>
         protected override void Load(ContainerBuilder builder) {
-            builder.RegisterModule<DefaultServiceAuthProviders>();
+            builder.RegisterModule<ActiveDirectorySupport>();
 
             builder.RegisterType<HttpBearerAuthentication>()
                 .AsImplementedInterfaces().InstancePerLifetimeScope();

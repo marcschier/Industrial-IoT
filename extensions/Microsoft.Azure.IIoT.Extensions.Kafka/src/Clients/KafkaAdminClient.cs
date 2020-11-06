@@ -9,6 +9,7 @@ namespace Microsoft.Azure.IIoT.Extensions.Kafka.Clients {
     using Microsoft.Azure.IIoT.Hosting;
     using Microsoft.Extensions.Diagnostics.HealthChecks;
     using Microsoft.Extensions.Logging;
+    using Microsoft.Extensions.Options;
     using System;
     using System.Threading.Tasks;
     using System.Threading;
@@ -18,7 +19,7 @@ namespace Microsoft.Azure.IIoT.Extensions.Kafka.Clients {
     using Confluent.Kafka.Admin;
 
     /// <summary>
-    /// Kafka producer
+    /// Kafka admin
     /// </summary>
     public sealed class KafkaAdminClient : IHealthCheck, IKafkaAdminClient, IDisposable {
 
@@ -28,11 +29,11 @@ namespace Microsoft.Azure.IIoT.Extensions.Kafka.Clients {
         /// <param name="logger"></param>
         /// <param name="config"></param>
         /// <param name="identity"></param>
-        public KafkaAdminClient(IKafkaServerConfig config, ILogger logger,
+        public KafkaAdminClient(IOptionsSnapshot<KafkaServerOptions> config, ILogger logger,
             IProcessIdentity identity = null) {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _config = config ?? throw new ArgumentNullException(nameof(config));
-            _admin = new AdminClientBuilder(config.ToClientConfig<AdminClientConfig>(
+            _admin = new AdminClientBuilder(config.Value.ToClientConfig<AdminClientConfig>(
                     identity?.Id ?? Dns.GetHostName()))
                 .SetErrorHandler(OnError)
                 .SetLogHandler((_, m) => _logger.Log(m))
@@ -60,8 +61,8 @@ namespace Microsoft.Azure.IIoT.Extensions.Kafka.Clients {
                 await _admin.CreateTopicsAsync(
                     new TopicSpecification {
                         Name = topic,
-                        NumPartitions = _config.Partitions,
-                        ReplicationFactor = (short)_config.ReplicaFactor,
+                        NumPartitions = _config.Value.Partitions,
+                        ReplicationFactor = (short)_config.Value.ReplicaFactor,
                     }.YieldReturn(),
                     new CreateTopicsOptions {
                         OperationTimeout = TimeSpan.FromSeconds(30),
@@ -102,6 +103,6 @@ namespace Microsoft.Azure.IIoT.Extensions.Kafka.Clients {
         private HealthCheckResult? _status;
         private readonly ILogger _logger;
         private readonly IAdminClient _admin;
-        private readonly IKafkaServerConfig _config;
+        private readonly IOptionsSnapshot<KafkaServerOptions> _config;
     }
 }

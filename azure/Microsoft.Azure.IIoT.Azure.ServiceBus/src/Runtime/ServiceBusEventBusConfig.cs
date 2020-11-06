@@ -4,13 +4,13 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Runtime {
-    using Microsoft.Azure.IIoT.Utils;
+    using Microsoft.Azure.IIoT.Configuration;
     using Microsoft.Extensions.Configuration;
 
     /// <summary>
     /// ServiceBus configuration
     /// </summary>
-    internal sealed class ServiceBusEventBusConfig : ConfigBase<ServiceBusEventBusOptions> {
+    internal sealed class ServiceBusEventBusConfig : PostConfigureOptionBase<ServiceBusEventBusOptions> {
 
         /// <inheritdoc/>
         public ServiceBusEventBusConfig(IConfiguration configuration = null) :
@@ -18,8 +18,10 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Runtime {
         }
 
         /// <inheritdoc/>
-        public override void Configure(string name, ServiceBusEventBusOptions options) {
-            options.Topic = GetStringOrDefault("PCS_SERVICEBUS_TOPIC", () => null);
+        public override void PostConfigure(string name, ServiceBusEventBusOptions options) {
+            if (string.IsNullOrEmpty(options.Topic)) {
+                options.Topic = GetStringOrDefault("PCS_SERVICEBUS_TOPIC");
+            }
         }
     }
 }

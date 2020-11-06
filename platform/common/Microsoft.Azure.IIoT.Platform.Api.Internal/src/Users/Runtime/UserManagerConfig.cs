@@ -20,8 +20,8 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Api.Runtime {
         /// <summary>Identitymanager service endpoint url</summary>
         public string IdentityServiceUrl => GetStringOrDefault(
             kIdentityServiceUrlKey,
-            () => GetStringOrDefault(PcsVariable.PCS_USERS_SERVICE_URL,
-                () => GetDefaultUrl("9048", "users")));
+            GetStringOrDefault(PcsVariable.PCS_USERS_SERVICE_URL,
+                GetDefaultUrl("9048", "users")));
 
         /// <inheritdoc/>
         public UserManagerConfig(IConfiguration configuration) :

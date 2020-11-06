@@ -5,13 +5,13 @@
 
 namespace Microsoft.Azure.IIoT.Platform.Publisher.Cdm.Runtime {
     using Microsoft.Azure.IIoT.Platform.Publisher.Cdm;
-    using Microsoft.Azure.IIoT.Utils;
+    using Microsoft.Azure.IIoT.Configuration;
     using Microsoft.Extensions.Configuration;
 
     /// <summary>
     /// CDM storage configuration
     /// </summary>
-    public class CdmFolderConfig : ConfigBase, ICdmFolderConfig {
+    public class CdmFolderConfig : ConfigureOptionBase, ICdmFolderConfig {
 
         /// <summary>
         /// Table storage configuration
@@ -21,14 +21,14 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Cdm.Runtime {
 
         /// <inheritdoc/>
         public string StorageDrive => GetStringOrDefault(kCdmContainerName,
-            () => GetStringOrDefault(PcsVariable.PCS_CDM_DRIVE_NAME,
-            () => GetStringOrDefault("PCS_CDM_ADLSG2_BLOBNAME",
-                () => "powerbi")));
+            GetStringOrDefault(PcsVariable.PCS_CDM_DRIVE_NAME,
+            GetStringOrDefault("PCS_CDM_ADLSG2_BLOBNAME",
+                "powerbi")));
         /// <inheritdoc/>
         public string StorageFolder => GetStringOrDefault(kCdmRootFolder,
-            () => GetStringOrDefault(PcsVariable.PCS_CDM_ROOT_FOLDER,
-            () => GetStringOrDefault("PCS_CDM_ROOTFOLDER",
-                () => "IIoTDataFlow")));
+            GetStringOrDefault(PcsVariable.PCS_CDM_ROOT_FOLDER,
+            GetStringOrDefault("PCS_CDM_ROOTFOLDER",
+                "IIoTDataFlow")));
 
         /// <summary>
         /// Configuration constructor

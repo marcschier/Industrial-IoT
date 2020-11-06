@@ -13,6 +13,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
     using Microsoft.Azure.IIoT.Serializers;
     using Microsoft.Azure.IIoT.Serializers.NewtonSoft;
     using Microsoft.Azure.IIoT.Exceptions;
+    using Microsoft.Azure.IIoT.Utils;
     using Microsoft.Azure.IIoT.Storage;
     using Microsoft.Azure.IIoT.Storage.Services;
     using Autofac.Extras.Moq;
@@ -1398,10 +1399,11 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Services {
         /// <param name="provider"></param>
         private static AutoMock Setup() {
             var mock = AutoMock.GetLoose(builder => {
+                builder.RegisterGeneric(typeof(OptionsMock<>)).AsImplementedInterfaces();
                 builder.RegisterType<NewtonSoftJsonConverters>().As<IJsonSerializerConverterProvider>();
                 builder.RegisterType<NewtonSoftJsonSerializer>().As<IJsonSerializer>();
                 builder.RegisterType<MemoryDatabase>().SingleInstance().As<IDatabaseServer>();
-                builder.RegisterType<ItemContainerFactory>().As<IItemContainerFactory>();
+                builder.RegisterType<CollectionFactory>().As<ICollectionFactory>();
                 builder.RegisterType<DataSetEntityDatabase>().AsImplementedInterfaces();
                 builder.RegisterType<DataSetWriterDatabase>().AsImplementedInterfaces();
                 builder.RegisterType<WriterGroupDatabase>().AsImplementedInterfaces();

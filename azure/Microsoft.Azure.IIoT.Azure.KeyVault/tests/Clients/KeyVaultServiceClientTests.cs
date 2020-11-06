@@ -13,8 +13,10 @@ namespace Microsoft.Azure.IIoT.Azure.KeyVault.Clients {
     using Microsoft.Azure.IIoT.Storage.Services;
     using Microsoft.Azure.IIoT.Serializers.NewtonSoft;
     using Microsoft.Azure.IIoT.Serializers;
+    using Microsoft.Azure.IIoT.Utils;
     using Microsoft.Azure.KeyVault;
     using Microsoft.Azure.KeyVault.Models;
+    using Microsoft.Extensions.Options;
     using Microsoft.Rest.Azure;
     using Autofac;
     using Autofac.Extras.Moq;
@@ -27,7 +29,6 @@ namespace Microsoft.Azure.IIoT.Azure.KeyVault.Clients {
     using System.Threading.Tasks;
     using Xunit;
     using Xunit.Categories;
-    using Microsoft.Extensions.Options;
 
     [UnitTest]
     public class KeyVaultServiceClientTests {
@@ -445,19 +446,20 @@ namespace Microsoft.Azure.IIoT.Azure.KeyVault.Clients {
         /// <param name="provider"></param>
         private static AutoMock Setup(out ICertificateIssuer issuer, out Mock<IKeyVaultClient> client) {
             var keyVault = client = new Mock<IKeyVaultClient>();
-            var config = new Mock<KeyVaultOptions>();
-            config.SetReturnsDefault(kTestVaultUri);
-            config.SetReturnsDefault(true);
 
             var mock = AutoMock.GetLoose(builder => {
+                builder.RegisterGeneric(typeof(OptionsMock<>)).AsImplementedInterfaces();
+                builder.RegisterInstance(new OptionsMock<KeyVaultOptions>(new KeyVaultOptions {
+                    KeyVaultBaseUrl = kTestVaultUri,
+                    KeyVaultIsHsm = true
+                })).AsImplementedInterfaces();
                 builder.RegisterType<NewtonSoftJsonConverters>().As<IJsonSerializerConverterProvider>();
                 builder.RegisterType<NewtonSoftJsonSerializer>().As<IJsonSerializer>();
                 builder.RegisterType<MemoryDatabase>().SingleInstance().As<IDatabaseServer>();
-                builder.RegisterType<ItemContainerFactory>().As<IItemContainerFactory>();
+                builder.RegisterType<CollectionFactory>().As<ICollectionFactory>();
                 builder.RegisterType<KeyVaultKeyHandleSerializer>().As<IKeyHandleSerializer>();
                 builder.RegisterType<CertificateDatabase>().As<ICertificateRepository>();
                 builder.RegisterType<CertificateFactory>().As<ICertificateFactory>();
-                builder.RegisterInstance(Options.Create(config.Object)).ExternallyOwned();
                 builder.RegisterMock(keyVault);
                 builder.RegisterType<KeyVaultServiceClient>().UsingConstructor(
                     typeof(ICertificateRepository), typeof(ICertificateFactory), typeof(IOptions<KeyVaultOptions>),

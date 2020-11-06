@@ -4,7 +4,6 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Platform.Vault.Service.Controllers {
-    using Microsoft.Azure.IIoT.Platform.Vault.Service.Auth;
     using Microsoft.Azure.IIoT.Platform.Vault.Service.Filters;
     using Microsoft.Azure.IIoT.Platform.Vault.Service.Models;
     using Microsoft.Azure.IIoT.Platform.Vault.Api.Models;

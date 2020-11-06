@@ -26,7 +26,7 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Storage {
         /// </summary>
         /// <param name="factory"></param>
         /// <param name="logger"></param>
-        public ResourceDatabase(IItemContainerFactory factory, ILogger logger) {
+        public ResourceDatabase(ICollectionFactory factory, ILogger logger) {
             if (factory == null) {
                 throw new ArgumentNullException(nameof(factory));
             }
@@ -196,6 +196,6 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Storage {
         }
 
         private readonly ILogger _logger;
-        private readonly IItemContainer _documents;
+        private readonly IDocumentCollection _documents;
     }
 }

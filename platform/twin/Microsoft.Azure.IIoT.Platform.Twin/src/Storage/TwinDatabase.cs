@@ -24,16 +24,11 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Storage {
         /// Create
         /// </summary>
         /// <param name="databaseServer"></param>
-        /// <param name="config"></param>
-        public TwinDatabase(IDatabaseServer databaseServer, IItemContainerConfig config) {
+        public TwinDatabase(ICollectionFactory databaseServer) {
             if (databaseServer is null) {
                 throw new ArgumentNullException(nameof(databaseServer));
             }
-            if (config is null) {
-                throw new ArgumentNullException(nameof(config));
-            }
-            var dbs = databaseServer.OpenAsync(config.DatabaseName).Result;
-            _documents = dbs.OpenContainerAsync(config.ContainerName ?? "twin").Result;
+            _documents = databaseServer.OpenAsync("twins").Result;
         }
 
         /// <inheritdoc/>
@@ -238,6 +233,6 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Storage {
             return query.GetResults();
         }
 
-        private readonly IItemContainer _documents;
+        private readonly IDocumentCollection _documents;
     }
 }

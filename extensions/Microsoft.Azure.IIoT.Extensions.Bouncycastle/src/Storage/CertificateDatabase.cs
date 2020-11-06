@@ -26,7 +26,7 @@ namespace Microsoft.Azure.IIoT.Crypto.Storage {
         /// </summary>
         /// <param name="container"></param>
         /// <param name="keys"></param>
-        public CertificateDatabase(IItemContainerFactory container,
+        public CertificateDatabase(ICollectionFactory container,
             IKeyHandleSerializer keys) {
             if (container is null) {
                 throw new ArgumentNullException(nameof(container));
@@ -333,7 +333,7 @@ namespace Microsoft.Azure.IIoT.Crypto.Storage {
                 });
         }
 
-        private readonly IItemContainer _certificates;
+        private readonly IDocumentCollection _certificates;
         private readonly IKeyHandleSerializer _keys;
     }
 }

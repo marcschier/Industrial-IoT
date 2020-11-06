@@ -24,5 +24,11 @@ namespace Microsoft.Azure.IIoT.AspNetCore {
         /// </summary>
         public const string ASPNETCORE_FORWARDEDHEADERS_FORWARDLIMIT =
             "ASPNETCORE_FORWARDEDHEADERS_FORWARDLIMIT";
+
+        /// <summary>
+        /// Redirect port
+        /// </summary>
+        public const string ASPNETCORE_HTTPSREDIRECTPORT = 
+            "PCS_AUTH_HTTPSREDIRECTPORT";
     }
 }

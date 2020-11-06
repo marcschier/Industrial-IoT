@@ -13,6 +13,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api {
         /// <summary>
         /// Opc registry service url
         /// </summary>
-        string DirectoryServiceUrl { get; }
+        string RegistryServiceUrl { get; }
     }
 }

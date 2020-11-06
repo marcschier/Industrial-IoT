@@ -222,10 +222,7 @@ Operations (Mutually exclusive):
             var configuration = new ConfigurationBuilder()
                 .AddFromDotEnvFile()
                 .AddEnvironmentVariables()
-                .AddEnvironmentVariables(EnvironmentVariableTarget.User)
-                // Above configuration providers will provide connection
-                // details for KeyVault configuration provider.
-                .AddFromKeyVault(providerPriority: ConfigurationProviderPriority.Lowest)
+                .AddFromKeyVault()
                 .Build();
             if (string.IsNullOrEmpty(iotHubCs)) {
                 iotHubCs = configuration.GetValue<string>(PcsVariable.PCS_IOTHUB_CONNSTRING, null);

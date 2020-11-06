@@ -25,7 +25,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Clients {
         /// <param name="serializer"></param>
         public RegistryServiceClient(IHttpClient httpClient, IRegistryConfig config,
             ISerializer serializer) :
-            this(httpClient, config?.DirectoryServiceUrl, serializer) {
+            this(httpClient, config?.RegistryServiceUrl, serializer) {
         }
 
         /// <summary>

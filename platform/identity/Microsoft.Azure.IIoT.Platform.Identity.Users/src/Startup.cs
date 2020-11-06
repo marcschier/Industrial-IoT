@@ -9,7 +9,6 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Users {
     using Microsoft.Azure.IIoT.Platform.Identity.Storage;
     using Microsoft.Azure.IIoT.Platform.Identity.Models;
     using Microsoft.Azure.IIoT.Platform.Identity.Services;
-    using Microsoft.Azure.IIoT.AspNetCore.Cors;
     using Microsoft.Azure.IIoT.AspNetCore.Authentication;
     using Microsoft.Azure.IIoT.AspNetCore.Authentication.Clients;
     using Microsoft.Azure.IIoT.Http.Clients;
@@ -39,7 +38,7 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Users {
         /// <summary>
         /// Configuration - Initialized in constructor
         /// </summary>
-        public Config Config { get; }
+        public IConfiguration Configuration { get; }
 
         /// <summary>
         /// Service info - Initialized in constructor
@@ -56,24 +55,9 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Users {
         /// </summary>
         /// <param name="env"></param>
         /// <param name="configuration"></param>
-        public Startup(IWebHostEnvironment env, IConfiguration configuration) :
-            this(env, new Config(new ConfigurationBuilder()
-                .AddConfiguration(configuration)
-                .AddEnvironmentVariables()
-                .AddEnvironmentVariables(EnvironmentVariableTarget.User)
-                .AddFromDotEnvFile()
-                .AddFromKeyVault()
-                .Build())) {
-        }
-
-        /// <summary>
-        /// Create startup
-        /// </summary>
-        /// <param name="env"></param>
-        /// <param name="configuration"></param>
-        public Startup(IWebHostEnvironment env, Config configuration) {
+        public Startup(IWebHostEnvironment env, IConfiguration configuration) {
             Environment = env;
-            Config = configuration;
+            Configuration = configuration;
         }
 
         /// <summary>
@@ -128,7 +112,7 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Users {
 
             app.UseRouting();
             app.UseHttpMetrics();
-            app.EnableCors();
+            app.UseCors();
 
             app.UseJwtBearerAuthentication();
             app.UseAuthorization();
@@ -147,8 +131,8 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Users {
             appLifetime.ApplicationStopped.Register(applicationContainer.Dispose);
 
             // Print some useful information at bootstrap time
-            log.LogInformation("{service} started with id {id}", ServiceInfo.Name,
-                Uptime.ProcessId);
+            log.LogInformation("{service} started with id {id}", 
+                ServiceInfo.Name, ServiceInfo.Id);
         }
 
         /// <summary>
@@ -163,9 +147,8 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Users {
             // Register service info and configuration interfaces
             builder.RegisterInstance(ServiceInfo)
                 .AsImplementedInterfaces();
-            builder.RegisterInstance(Config)
-                .AsImplementedInterfaces();
-            builder.RegisterInstance(Config.Configuration)
+            builder.AddConfiguration(Configuration);
+            builder.RegisterType<HostingOptions>()
                 .AsImplementedInterfaces();
 
             // Register http client module
@@ -173,10 +156,6 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Users {
             // Add serializers
             builder.RegisterModule<MessagePackModule>();
             builder.RegisterModule<NewtonSoftJsonModule>();
-
-            // CORS setup
-            builder.RegisterType<CorsSetup>()
-                .AsImplementedInterfaces();
 
             // --- Logic ---
 

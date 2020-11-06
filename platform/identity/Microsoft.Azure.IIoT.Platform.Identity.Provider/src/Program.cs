@@ -4,9 +4,10 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Platform.Identity.Provider {
-    using Autofac.Extensions.Hosting;
     using Microsoft.AspNetCore.Hosting;
+    using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Hosting;
+    using Autofac.Extensions.Hosting;
 
     /// <summary>
     /// Main entry point
@@ -29,6 +30,8 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Provider {
         public static IHostBuilder CreateHostBuilder(string[] args) {
             return Host.CreateDefaultBuilder(args)
                 .UseAutofac()
+                .ConfigureHostConfiguration(builder => builder
+                    .AddFromDotEnvFile())
                 .ConfigureWebHostDefaults(builder => builder
                     .UseUrls("http://*:9090")
                     .UseStartup<Startup>()

@@ -20,7 +20,7 @@ namespace Microsoft.Azure.IIoT.Storage {
         /// <param name="id"></param>
         /// <param name="options"></param>
         /// <returns></returns>
-        Task<IItemContainer> OpenContainerAsync(
+        Task<IDocumentCollection> OpenContainerAsync(
             string id = null, ContainerOptions options = null);
 
         /// <summary>

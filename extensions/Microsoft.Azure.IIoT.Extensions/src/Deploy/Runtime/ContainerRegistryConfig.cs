@@ -4,7 +4,7 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Deploy.Runtime {
-    using Microsoft.Azure.IIoT.Utils;
+    using Microsoft.Azure.IIoT.Configuration;
     using Microsoft.Extensions.Configuration;
     using System.Reflection;
     using System;
@@ -12,38 +12,31 @@ namespace Microsoft.Azure.IIoT.Deploy.Runtime {
     /// <summary>
     /// Container registry configuration
     /// </summary>
-    public class ContainerRegistryConfig : ConfigBase, IContainerRegistryConfig {
-
-        private const string kDockerServer = "Docker:Server";
-        private const string kDockerUser = "Docker:User";
-        private const string kDockerPassword = "Docker:Password";
-        private const string kImagesNamespace = "Docker:ImagesNamespace";
-        private const string kImagesTag = "Docker:ImagesTag";
+    public class ContainerRegistryConfig : PostConfigureOptionBase<ContainerRegistryOptions> {
 
         /// <inheritdoc/>
-        public string DockerServer => GetStringOrDefault(kDockerServer,
-            () => GetStringOrDefault(PcsVariable.PCS_DOCKER_SERVER));
-        /// <inheritdoc/>
-        public string DockerUser => GetStringOrDefault(kDockerUser,
-            () => GetStringOrDefault(PcsVariable.PCS_DOCKER_USER));
-        /// <inheritdoc/>
-        public string DockerPassword => GetStringOrDefault(kDockerPassword,
-            () => GetStringOrDefault(PcsVariable.PCS_DOCKER_PASSWORD));
-
-        /// <inheritdoc/>
-        public string ImagesNamespace => GetStringOrDefault(kImagesNamespace,
-            () => GetStringOrDefault(PcsVariable.PCS_IMAGES_NAMESPACE));
-        /// <inheritdoc/>
-        public string ImagesTag => GetStringOrDefault(kImagesTag,
-            () => GetStringOrDefault(PcsVariable.PCS_IMAGES_TAG,
-                () => Assembly.GetExecutingAssembly().GetReleaseVersion().ToString(3)));
-
-        /// <summary>
-        /// Configuration constructor
-        /// </summary>
-        /// <param name="configuration"></param>
         public ContainerRegistryConfig(IConfiguration configuration) :
             base(configuration) {
+        }
+
+        /// <inheritdoc/>
+        public override void PostConfigure(string name, ContainerRegistryOptions options) {
+            if (string.IsNullOrEmpty(options.DockerServer)) {
+                options.DockerServer = GetStringOrDefault(PcsVariable.PCS_DOCKER_SERVER);
+            }
+            if (string.IsNullOrEmpty(options.DockerUser)) {
+                options.DockerUser = GetStringOrDefault(PcsVariable.PCS_DOCKER_USER);
+            }
+            if (string.IsNullOrEmpty(options.DockerPassword)) {
+                options.DockerPassword = GetStringOrDefault(PcsVariable.PCS_DOCKER_PASSWORD);
+            }
+            if (string.IsNullOrEmpty(options.ImagesNamespace)) {
+                options.ImagesNamespace = GetStringOrDefault(PcsVariable.PCS_IMAGES_NAMESPACE);
+            }
+            if (string.IsNullOrEmpty(options.ImagesTag)) {
+                options.ImagesTag = GetStringOrDefault(PcsVariable.PCS_IMAGES_TAG,
+                    Assembly.GetExecutingAssembly().GetReleaseVersion().ToString(3));
+            }
         }
     }
 }

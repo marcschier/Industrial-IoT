@@ -29,7 +29,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub.Deploy {
         /// <param name="serializer"></param>
         /// <param name="logger"></param>
         public IoTEdgeDiscoveryDeployment(IDeviceDeploymentServices service,
-            IContainerRegistryConfig config, IOptions<LogAnalyticsOptions> diagnostics,
+            IOptions<ContainerRegistryOptions> config, IOptions<LogAnalyticsOptions> diagnostics,
             IJsonSerializer serializer, ILogger logger) {
             _serializer = serializer ?? throw new ArgumentNullException(nameof(serializer));
             _diagnostics = diagnostics ?? throw new ArgumentNullException(nameof(diagnostics));
@@ -78,14 +78,14 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub.Deploy {
             bool isLinux) {
 
             var registryCredentials = "";
-            if (!string.IsNullOrEmpty(_config.DockerServer) &&
-                _config.DockerServer != "mcr.microsoft.com") {
-                var registryId = _config.DockerServer.Split('.')[0];
+            if (!string.IsNullOrEmpty(_config.Value.DockerServer) &&
+                _config.Value.DockerServer != "mcr.microsoft.com") {
+                var registryId = _config.Value.DockerServer.Split('.')[0];
                 registryCredentials = @"
                     ""properties.desired.runtime.settings.registryCredentials." + registryId + @""": {
-                        ""address"": """ + _config.DockerServer + @""",
-                        ""password"": """ + _config.DockerPassword + @""",
-                        ""username"": """ + _config.DockerUser + @"""
+                        ""address"": """ + _config.Value.DockerServer + @""",
+                        ""password"": """ + _config.Value.DockerPassword + @""",
+                        ""username"": """ + _config.Value.DockerUser + @"""
                     },
                 ";
             }
@@ -114,11 +114,11 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub.Deploy {
             }
             createOptions = createOptions.Replace("\"", "\\\"", StringComparison.Ordinal);
 
-            var server = string.IsNullOrEmpty(_config.DockerServer) ?
-                "mcr.microsoft.com" : _config.DockerServer;
-            var ns = string.IsNullOrEmpty(_config.ImagesNamespace) ?
-                "" : _config.ImagesNamespace.TrimEnd('/') + "/";
-            var version = _config.ImagesTag ?? "latest";
+            var server = string.IsNullOrEmpty(_config.Value.DockerServer) ?
+                "mcr.microsoft.com" : _config.Value.DockerServer;
+            var ns = string.IsNullOrEmpty(_config.Value.ImagesNamespace) ?
+                "" : _config.Value.ImagesNamespace.TrimEnd('/') + "/";
+            var version = _config.Value.ImagesTag ?? "latest";
             var image = $"{server}/{ns}iotedge/discovery:{version}";
 
             _logger.LogInformation("Updating discovery module deployment with image {image} for {os}",
@@ -157,7 +157,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub.Deploy {
         private const string kDefaultSchemaVersion = "1.0";
         private readonly IDeviceDeploymentServices _service;
         private readonly IOptions<LogAnalyticsOptions> _diagnostics;
-        private readonly IContainerRegistryConfig _config;
+        private readonly IOptions<ContainerRegistryOptions> _config;
         private readonly IJsonSerializer _serializer;
         private readonly ILogger _logger;
     }

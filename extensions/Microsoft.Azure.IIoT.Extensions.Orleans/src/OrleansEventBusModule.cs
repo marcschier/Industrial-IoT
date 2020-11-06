@@ -5,6 +5,7 @@
 
 namespace Microsoft.Azure.IIoT.Extensions.Orleans {
     using Microsoft.Azure.IIoT.Extensions.Orleans.Clients;
+    using Microsoft.Azure.IIoT.Extensions.Orleans.Runtime;
     using Microsoft.Azure.IIoT.Extensions.Orleans.Services;
     using Microsoft.Azure.IIoT.Messaging.Services;
     using Microsoft.Azure.IIoT.Messaging;
@@ -31,6 +32,9 @@ namespace Microsoft.Azure.IIoT.Extensions.Orleans {
             builder.RegisterType<OrleansClientHost>()
                 .AsImplementedInterfaces().InstancePerLifetimeScope()
                 .IfNotRegistered(typeof(IOrleansGrainClient))
+                .IfNotRegistered(typeof(IEventBus));
+            builder.RegisterType<OrleansClusterConfig>()
+                .AsImplementedInterfaces()
                 .IfNotRegistered(typeof(IEventBus));
 
             builder.RegisterType<EventBusHost>().AsSelf()

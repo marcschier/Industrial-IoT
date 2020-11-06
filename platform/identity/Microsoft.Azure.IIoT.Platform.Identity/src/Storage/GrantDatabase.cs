@@ -22,7 +22,7 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Storage {
         /// Create grant storage
         /// </summary>
         /// <param name="factory"></param>
-        public GrantDatabase(IItemContainerFactory factory) {
+        public GrantDatabase(ICollectionFactory factory) {
             if (factory == null) {
                 throw new ArgumentNullException(nameof(factory));
             }
@@ -101,6 +101,6 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Storage {
             return query.GetResults();
         }
 
-        private readonly IItemContainer _documents;
+        private readonly IDocumentCollection _documents;
     }
 }

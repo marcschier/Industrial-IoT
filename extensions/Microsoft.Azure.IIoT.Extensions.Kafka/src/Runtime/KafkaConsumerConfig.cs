@@ -4,60 +4,45 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Extensions.Kafka.Runtime {
+    using Microsoft.Azure.IIoT.Configuration;
     using Microsoft.Extensions.Configuration;
     using System;
 
     /// <summary>
-    /// Event processor configuration - wraps a configuration root
+    /// Kafka consumer configuration
     /// </summary>
-    public class KafkaConsumerConfig : KafkaServerConfig, IKafkaConsumerConfig {
-
-        /// <summary>
-        /// Kafka producer configuration
-        /// </summary>
-        private const string kConsumerTopicKey = "ConsumerTopic";
-        private const string kConsumerGroupKey = "ConsumerGroup";
-        private const string kReceiveBatchSizeKey = "ReceiveBatchSize";
-        private const string kReceiveTimeoutKey = "ReceiveTimeout";
-        private const string kInitialReadFromEnd = "InitialReadFromEnd";
-        private const string kSkipEventsOlderThanKey = "SkipEventsOlderThan";
-        private const string kCheckpointIntervalKey = "CheckpointIntervalKey";
+    internal sealed class KafkaConsumerConfig : PostConfigureOptionBase<KafkaConsumerOptions> {
 
         /// <inheritdoc/>
-        public string ConsumerGroup => GetStringOrDefault(kConsumerGroupKey,
-            () => GetStringOrDefault(PcsVariable.PCS_KAFKA_CONSUMER_GROUP,
-            () => GetStringOrDefault("PCS_EVENTHUB_CONSUMERGROUP",
-                () => "$default")));
-        /// <inheritdoc/>
-        public string ConsumerTopic => GetStringOrDefault(kConsumerTopicKey,
-            () => GetStringOrDefault(PcsVariable.PCS_KAFKA_CONSUMER_TOPIC_REGEX,
-                () => null));
-        /// <inheritdoc/>
-        public int ReceiveBatchSize => GetIntOrDefault(kReceiveBatchSizeKey,
-            () => 999);
-        /// <inheritdoc/>
-        public TimeSpan ReceiveTimeout => GetDurationOrDefault(kReceiveTimeoutKey,
-            () => TimeSpan.FromSeconds(5));
-        /// <inheritdoc/>
-        public bool InitialReadFromEnd => GetBoolOrDefault(kInitialReadFromEnd,
-            () => false);
-        /// <inheritdoc/>
-        public TimeSpan? SkipEventsOlderThan => GetDurationOrNull(kSkipEventsOlderThanKey,
-#if DEBUG
-            () => TimeSpan.FromMinutes(5)); // Skip in debug builds where we always restarted.
-#else
-            () => null);
-#endif
-        /// <inheritdoc/>
-        public TimeSpan? CheckpointInterval => GetDurationOrDefault(kCheckpointIntervalKey,
-            () => TimeSpan.FromMinutes(1));
-
-        /// <summary>
-        /// Configuration constructor
-        /// </summary>
-        /// <param name="configuration"></param>
         public KafkaConsumerConfig(IConfiguration configuration = null) :
             base(configuration) {
+        }
+
+        /// <inheritdoc/>
+        public override void PostConfigure(string name, KafkaConsumerOptions options) {
+            if (options.CheckpointInterval == null) {
+                options.CheckpointInterval = TimeSpan.FromMinutes(1);
+            }
+            if (options.ReceiveBatchSize <= 0) {
+                options.ReceiveBatchSize = 50;
+            }
+            if (options.ReceiveTimeout == TimeSpan.Zero) {
+                options.ReceiveTimeout = TimeSpan.FromSeconds(5);
+            }
+#if DEBUG
+            if (options.SkipEventsOlderThan == null) {
+                options.SkipEventsOlderThan = TimeSpan.FromMinutes(5);
+            }
+#endif
+            if (string.IsNullOrEmpty(options.ConsumerTopic)) {
+                options.ConsumerTopic = 
+                    GetStringOrDefault(PcsVariable.PCS_KAFKA_CONSUMER_TOPIC_REGEX);
+            }
+            if (string.IsNullOrEmpty(options.ConsumerGroup)) {
+                options.ConsumerGroup =
+                    GetStringOrDefault(PcsVariable.PCS_KAFKA_CONSUMER_GROUP,
+                    GetStringOrDefault("PCS_EVENTHUB_CONSUMERGROUP", "$default"));
+            }
         }
     }
 }

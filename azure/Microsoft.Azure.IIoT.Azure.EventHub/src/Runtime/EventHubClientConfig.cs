@@ -4,13 +4,13 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Azure.EventHub.Runtime {
-    using Microsoft.Azure.IIoT.Utils;
+    using Microsoft.Azure.IIoT.Configuration;
     using Microsoft.Extensions.Configuration;
 
     /// <summary>
     /// Event hub configuration - wraps a configuration root
     /// </summary>
-    internal sealed class EventHubClientConfig : ConfigBase<EventHubClientOptions> {
+    internal sealed class EventHubClientConfig : PostConfigureOptionBase<EventHubClientOptions> {
 
         /// <inheritdoc/>
         public EventHubClientConfig(IConfiguration configuration) :
@@ -18,9 +18,13 @@ namespace Microsoft.Azure.IIoT.Azure.EventHub.Runtime {
         }
 
         /// <inheritdoc/>
-        public override void Configure(string name, EventHubClientOptions options) {
-            options.EventHubConnString = GetStringOrDefault(PcsVariable.PCS_EVENTHUB_CONNSTRING, () => null);
-            options.EventHubPath = GetStringOrDefault(PcsVariable.PCS_EVENTHUB_NAME, () => null);
+        public override void PostConfigure(string name, EventHubClientOptions options) {
+            if (string.IsNullOrEmpty(options.EventHubConnString)) {
+                options.EventHubConnString = GetStringOrDefault(PcsVariable.PCS_EVENTHUB_CONNSTRING);
+            }
+            if (string.IsNullOrEmpty(options.EventHubPath)) {
+                options.EventHubPath = GetStringOrDefault(PcsVariable.PCS_EVENTHUB_NAME);
+            }
         }
     }
 }

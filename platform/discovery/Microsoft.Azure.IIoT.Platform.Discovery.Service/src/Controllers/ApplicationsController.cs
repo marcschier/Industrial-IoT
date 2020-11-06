@@ -4,7 +4,6 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Platform.Discovery.Service.Controllers {
-    using Microsoft.Azure.IIoT.Platform.Discovery.Service.Auth;
     using Microsoft.Azure.IIoT.Platform.Discovery.Service.Filters;
     using Microsoft.Azure.IIoT.Platform.Discovery.Api.Models;
     using Microsoft.Azure.IIoT.Platform.Discovery;

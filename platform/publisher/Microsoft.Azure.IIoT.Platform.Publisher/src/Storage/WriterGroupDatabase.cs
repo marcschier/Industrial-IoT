@@ -23,16 +23,11 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Storage {
         /// Create
         /// </summary>
         /// <param name="databaseServer"></param>
-        /// <param name="config"></param>
-        public WriterGroupDatabase(IDatabaseServer databaseServer, IItemContainerConfig config) {
+        public WriterGroupDatabase(ICollectionFactory databaseServer) {
             if (databaseServer is null) {
                 throw new ArgumentNullException(nameof(databaseServer));
             }
-            if (config is null) {
-                throw new ArgumentNullException(nameof(config));
-            }
-            var dbs = databaseServer.OpenAsync(config.DatabaseName).Result;
-            _documents = dbs.OpenContainerAsync(config.ContainerName ?? "publisher").Result;
+            _documents = databaseServer.OpenAsync("publisher").Result;
         }
 
         /// <inheritdoc/>
@@ -234,6 +229,6 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Storage {
             return query.GetResults();
         }
 
-        private readonly IItemContainer _documents;
+        private readonly IDocumentCollection _documents;
     }
 }

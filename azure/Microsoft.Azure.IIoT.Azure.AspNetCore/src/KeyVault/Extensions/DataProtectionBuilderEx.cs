@@ -7,6 +7,7 @@ namespace Microsoft.Extensions.DependencyInjection {
     using Microsoft.Azure.IIoT.Diagnostics;
     using Microsoft.Azure.IIoT.Utils;
     using Microsoft.Azure.IIoT.Exceptions;
+    using Microsoft.Azure.IIoT.Configuration;
     using Microsoft.Azure.IIoT;
     using Microsoft.Azure.IIoT.Azure.AspNetCore.KeyVault;
     using Microsoft.Azure.IIoT.Azure.AspNetCore.KeyVault.Runtime;
@@ -131,7 +132,7 @@ namespace Microsoft.Extensions.DependencyInjection {
         /// <summary>
         /// Data protection default configuration
         /// </summary>
-        internal sealed class DataProtectionConfig : ConfigBase {
+        internal sealed class DataProtectionConfig : ConfigureOptionBase {
 
             private const string kKeyVaultKeyDataProtectionDefault = "dataprotection";
             private const string kBlobStorageContainerDataProtectionDefault = "dataprotection";
@@ -144,14 +145,14 @@ namespace Microsoft.Extensions.DependencyInjection {
             /// <summary>Key (in KeyVault) to be used for encription of keys</summary>
             public string KeyVaultKeyDataProtection =>
                 GetStringOrDefault(PcsVariable.PCS_KEYVAULT_KEY_DATAPROTECTION,
-                    () => Environment.GetEnvironmentVariable(
+                    Environment.GetEnvironmentVariable(
                         PcsVariable.PCS_KEYVAULT_KEY_DATAPROTECTION) ??
                         kKeyVaultKeyDataProtectionDefault).Trim();
 
             /// <summary>Blob Storage Container that holds encrypted keys</summary>
             public string BlobStorageContainerDataProtection =>
                 GetStringOrDefault(PcsVariable.PCS_STORAGE_CONTAINER_DATAPROTECTION,
-                    () => Environment.GetEnvironmentVariable(
+                    Environment.GetEnvironmentVariable(
                         PcsVariable.PCS_STORAGE_CONTAINER_DATAPROTECTION) ??
                         kBlobStorageContainerDataProtectionDefault).Trim();
 

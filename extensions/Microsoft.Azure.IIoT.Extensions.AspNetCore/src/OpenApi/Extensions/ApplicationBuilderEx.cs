@@ -11,6 +11,7 @@ namespace Microsoft.OpenApi.Models {
     using Microsoft.AspNetCore.Hosting.Server.Features;
     using Microsoft.AspNetCore.Mvc.Infrastructure;
     using Microsoft.Extensions.DependencyInjection;
+    using Microsoft.Extensions.Options;
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -26,7 +27,7 @@ namespace Microsoft.OpenApi.Models {
         /// <param name="app"></param>
         public static void UseSwagger(this IApplicationBuilder app) {
 
-            var config = app.ApplicationServices.GetRequiredService<IOpenApiConfig>();
+            var config = app.ApplicationServices.GetRequiredService<IOptions<OpenApiOptions>>();
             var auth = app.ApplicationServices.GetService<IServerAuthConfig>();
             var server = app.ApplicationServices.GetRequiredService<IServer>();
             var addresses = app.ServerFeatures.Get<IServerAddressesFeature>()?.Addresses
@@ -45,8 +46,8 @@ namespace Microsoft.OpenApi.Models {
                         var url = $"{scheme}://{request.Host.Value}";
 
                         // If config.OpenApiServerHost is set, we will use that instead of request.Host.Value
-                        if (!string.IsNullOrEmpty(config.OpenApiServerHost)) {
-                            url = $"{scheme}://{config.OpenApiServerHost}";
+                        if (!string.IsNullOrEmpty(config.Value.OpenApiServerHost)) {
+                            url = $"{scheme}://{config.Value.OpenApiServerHost}";
                         }
 
                         doc.Servers.Add(new OpenApiServer {
@@ -68,7 +69,7 @@ namespace Microsoft.OpenApi.Models {
                 options.SerializeAsV2 = true;
                 options.RouteTemplate = "swagger/{documentName}/openapi.json";
             });
-            if (!config.UIEnabled) {
+            if (!config.Value.UIEnabled) {
                 return;
             }
 
@@ -78,11 +79,11 @@ namespace Microsoft.OpenApi.Models {
             // Where to host the ui
             app.UseSwaggerUI(options => {
                 foreach (var info in infos) {
-                    if (config.WithAuth) {
+                    if (config.Value.WithAuth) {
                         options.OAuthAppName(info.Title);
-                        options.OAuthClientId(config.OpenApiAppId);
-                        if (!string.IsNullOrEmpty(config.OpenApiAppSecret)) {
-                            options.OAuthClientSecret(config.OpenApiAppSecret);
+                        options.OAuthClientId(config.Value.OpenApiAppId);
+                        if (!string.IsNullOrEmpty(config.Value.OpenApiAppSecret)) {
+                            options.OAuthClientSecret(config.Value.OpenApiAppSecret);
                         }
                         var resource = auth?.JwtBearerProviders?.FirstOrDefault();
                         if (!string.IsNullOrEmpty(resource?.Audience)) {

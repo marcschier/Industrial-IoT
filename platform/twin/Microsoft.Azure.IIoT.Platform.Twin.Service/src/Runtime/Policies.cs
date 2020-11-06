@@ -3,8 +3,7 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-
-namespace Microsoft.Azure.IIoT.Platform.Twin.Service.Auth {
+namespace Microsoft.Azure.IIoT.Platform.Twin.Service {
     using Microsoft.Azure.IIoT.AspNetCore.Authentication;
     using Microsoft.AspNetCore.Authorization;
     using System;

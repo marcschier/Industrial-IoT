@@ -4,20 +4,24 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Azure.EventHub.Processor.Runtime {
-    using Microsoft.Azure.IIoT.Utils;
+    using Microsoft.Azure.IIoT.Configuration;
     using System;
 
     /// <summary>
     /// Event processor configuration - wraps a configuration root
     /// </summary>
-    internal sealed class EventProcessorFactoryConfig : ConfigBase<EventProcessorFactoryOptions> {
+    internal sealed class EventProcessorFactoryConfig : PostConfigureOptionBase<EventProcessorFactoryOptions> {
 
         /// <inheritdoc/>
-        public override void Configure(string name, EventProcessorFactoryOptions options) {
+        public override void PostConfigure(string name, EventProcessorFactoryOptions options) {
 #if DEBUG
-            options.SkipEventsOlderThan = TimeSpan.FromMinutes(5);
+            if (options.SkipEventsOlderThan == null) {
+                options.SkipEventsOlderThan = TimeSpan.FromMinutes(5);
+            }
 #endif
-            options.CheckpointInterval = TimeSpan.FromMinutes(1);
+            if (options.CheckpointInterval == null) {
+                options.CheckpointInterval = TimeSpan.FromMinutes(1);
+            }
         }
     }
 }

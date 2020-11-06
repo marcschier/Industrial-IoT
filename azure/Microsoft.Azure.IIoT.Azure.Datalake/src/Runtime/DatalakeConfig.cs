@@ -4,13 +4,13 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Azure.Datalake.Runtime {
-    using Microsoft.Azure.IIoT.Utils;
+    using Microsoft.Azure.IIoT.Configuration;
     using Microsoft.Extensions.Configuration;
 
     /// <summary>
     /// Datalake file storage configuration
     /// </summary>
-    internal sealed class DatalakeConfig : ConfigBase<DatalakeOptions> {
+    internal sealed class DatalakeConfig : PostConfigureOptionBase<DatalakeOptions> {
 
         /// <inheritdoc/>
         public DatalakeConfig(IConfiguration configuration) :
@@ -18,20 +18,23 @@ namespace Microsoft.Azure.IIoT.Azure.Datalake.Runtime {
         }
 
         /// <inheritdoc/>
-        public override void Configure(string name, DatalakeOptions options) {
-
-            options.AccountName = GetConnectonStringTokenOrDefault(
-                PcsVariable.PCS_ADLSG2_CONNSTRING, cs => cs.Endpoint,
-                () => GetStringOrDefault(PcsVariable.PCS_ADLSG2_ACCOUNT,
-                () => null));
-            options.EndpointSuffix = GetConnectonStringTokenOrDefault(
-                PcsVariable.PCS_ADLSG2_CONNSTRING, cs => cs.EndpointSuffix,
-                () => GetStringOrDefault(PcsVariable.PCS_ADLSG2_ENDPOINTSUFFIX,
-                () => "dfs.core.windows.net"));
-            options.AccountKey = GetConnectonStringTokenOrDefault(
-                PcsVariable.PCS_ADLSG2_CONNSTRING, cs => cs.SharedAccessKey,
-                () => GetStringOrDefault(PcsVariable.PCS_ADLSG2_ACCOUNT_KEY,
-                () => null));
+        public override void PostConfigure(string name, DatalakeOptions options) {
+            if (string.IsNullOrEmpty(options.AccountName)) {
+                options.AccountName = GetConnectonStringTokenOrDefault(
+                    PcsVariable.PCS_ADLSG2_CONNSTRING, cs => cs.Endpoint,
+                    GetStringOrDefault(PcsVariable.PCS_ADLSG2_ACCOUNT));
+            }
+            if (string.IsNullOrEmpty(options.EndpointSuffix)) {
+                options.EndpointSuffix = GetConnectonStringTokenOrDefault(
+                    PcsVariable.PCS_ADLSG2_CONNSTRING, cs => cs.EndpointSuffix,
+                    GetStringOrDefault(PcsVariable.PCS_ADLSG2_ENDPOINTSUFFIX,
+                        "dfs.core.windows.net"));
+            }
+            if (string.IsNullOrEmpty(options.AccountKey)) {
+                options.AccountKey = GetConnectonStringTokenOrDefault(
+                    PcsVariable.PCS_ADLSG2_CONNSTRING, cs => cs.SharedAccessKey,
+                    GetStringOrDefault(PcsVariable.PCS_ADLSG2_ACCOUNT_KEY));
+            }
         }
     }
 }

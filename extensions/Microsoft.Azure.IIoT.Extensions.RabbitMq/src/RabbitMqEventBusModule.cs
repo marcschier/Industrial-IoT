@@ -5,6 +5,7 @@
 
 namespace Microsoft.Azure.IIoT.Extensions.RabbitMq {
     using Microsoft.Azure.IIoT.Extensions.RabbitMq.Clients;
+    using Microsoft.Azure.IIoT.Extensions.RabbitMq.Runtime;
     using Microsoft.Azure.IIoT.Messaging.Services;
     using Microsoft.Azure.IIoT.Tasks.Services;
     using Microsoft.Azure.IIoT.Tasks;
@@ -32,6 +33,8 @@ namespace Microsoft.Azure.IIoT.Extensions.RabbitMq {
                 .AsImplementedInterfaces().SingleInstance()
                 .IfNotRegistered(typeof(ITaskProcessor));
 
+            builder.RegisterType<RabbitMqConfig>()
+                .AsImplementedInterfaces();
             base.Load(builder);
         }
     }

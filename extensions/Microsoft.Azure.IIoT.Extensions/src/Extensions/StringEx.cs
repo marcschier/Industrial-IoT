@@ -126,7 +126,7 @@ namespace System {
             var bytes = new byte[str.Length / 2];
             for (var i = 0; i < str.Length; i += 2) {
                 var s = str.Substring(i, 2);
-                bytes[i / 2] = byte.Parse(s, Globalization.NumberStyles.HexNumber, null);
+                bytes[i / 2] = byte.Parse(s, NumberStyles.HexNumber, null);
             }
             return bytes;
         }

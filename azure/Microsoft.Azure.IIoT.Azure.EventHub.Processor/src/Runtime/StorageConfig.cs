@@ -4,13 +4,13 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Azure.EventHub.Processor.Runtime {
-    using Microsoft.Azure.IIoT.Utils;
+    using Microsoft.Azure.IIoT.Configuration;
     using Microsoft.Extensions.Configuration;
 
     /// <summary>
     /// Storage configuration
     /// </summary>
-    internal sealed class StorageConfig : ConfigBase<StorageOptions> {
+    internal sealed class StorageConfig : PostConfigureOptionBase<StorageOptions> {
 
         /// <inheritdoc/>
         public StorageConfig(IConfiguration configuration) :
@@ -18,23 +18,26 @@ namespace Microsoft.Azure.IIoT.Azure.EventHub.Processor.Runtime {
         }
 
         /// <inheritdoc/>
-        public override void Configure(string name, StorageOptions options) {
-
-            options.AccountName = GetConnectonStringTokenOrDefault(
-                PcsVariable.PCS_STORAGE_CONNSTRING, cs => cs.Endpoint,
-                () => GetStringOrDefault("PCS_ASA_DATA_AZUREBLOB_ACCOUNT",
-                () => GetStringOrDefault("PCS_IOTHUBREACT_AZUREBLOB_ACCOUNT",
-                () => null)));
-            options.EndpointSuffix = GetConnectonStringTokenOrDefault(
-                PcsVariable.PCS_STORAGE_CONNSTRING, cs => cs.EndpointSuffix,
-                () => GetStringOrDefault("PCS_ASA_DATA_AZUREBLOB_ENDPOINT_SUFFIX",
-                () => GetStringOrDefault("PCS_IOTHUBREACT_AZUREBLOB_ENDPOINT_SUFFIX",
-                () => "core.windows.net")));
-            options.AccountKey = GetConnectonStringTokenOrDefault(
-                PcsVariable.PCS_STORAGE_CONNSTRING, cs => cs.SharedAccessKey,
-                () => GetStringOrDefault("PCS_ASA_DATA_AZUREBLOB_KEY",
-                () => GetStringOrDefault("PCS_IOTHUBREACT_AZUREBLOB_KEY",
-                () => null)));
+        public override void PostConfigure(string name, StorageOptions options) {
+            if (string.IsNullOrEmpty(options.AccountName)) {
+                options.AccountName = GetConnectonStringTokenOrDefault(
+                    PcsVariable.PCS_STORAGE_CONNSTRING, cs => cs.Endpoint,
+                    GetStringOrDefault("PCS_ASA_DATA_AZUREBLOB_ACCOUNT",
+                    GetStringOrDefault("PCS_IOTHUBREACT_AZUREBLOB_ACCOUNT")));
+            }
+            if (string.IsNullOrEmpty(options.EndpointSuffix)) {
+                options.EndpointSuffix = GetConnectonStringTokenOrDefault(
+                    PcsVariable.PCS_STORAGE_CONNSTRING, cs => cs.EndpointSuffix,
+                    GetStringOrDefault("PCS_ASA_DATA_AZUREBLOB_ENDPOINT_SUFFIX",
+                    GetStringOrDefault("PCS_IOTHUBREACT_AZUREBLOB_ENDPOINT_SUFFIX",
+                    "core.windows.net")));
+            }
+            if (string.IsNullOrEmpty(options.AccountKey)) {
+                options.AccountKey = GetConnectonStringTokenOrDefault(
+                    PcsVariable.PCS_STORAGE_CONNSTRING, cs => cs.SharedAccessKey,
+                    GetStringOrDefault("PCS_ASA_DATA_AZUREBLOB_KEY",
+                    GetStringOrDefault("PCS_IOTHUBREACT_AZUREBLOB_KEY")));
+            }
         }
     }
 }

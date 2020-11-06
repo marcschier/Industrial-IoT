@@ -6,12 +6,13 @@
 namespace Microsoft.Azure.IIoT.Azure.ActiveDirectory.Runtime {
     using Microsoft.Azure.IIoT.Authentication;
     using Microsoft.Azure.IIoT.Utils;
+    using Microsoft.Azure.IIoT.Configuration;
     using Microsoft.Extensions.Configuration;
 
     /// <summary>
     /// Managed service identity configuration
     /// </summary>
-    public class MsiKeyVaultClientConfig : ConfigBase, IOAuthClientConfig {
+    public class MsiKeyVaultClientConfig : ConfigureOptionBase, IOAuthClientConfig {
 
         /// <summary>
         /// Client configuration
@@ -29,12 +30,12 @@ namespace Microsoft.Azure.IIoT.Azure.ActiveDirectory.Runtime {
         public string Provider => AuthProvider.Msi;
         /// <inheritdoc/>
         public string ClientId => GetStringOrDefault(kAuth_AppIdKey,
-            () => GetStringOrDefault(PcsVariable.PCS_MSI_APPID,
-                () => null))?.Trim();
+            GetStringOrDefault(PcsVariable.PCS_MSI_APPID,
+                null))?.Trim();
         /// <inheritdoc/>
         public string TenantId => GetStringOrDefault(kAuth_TenantIdKey,
-            () => GetStringOrDefault(PcsVariable.PCS_MSI_TENANT,
-                () => null))?.Trim();
+            GetStringOrDefault(PcsVariable.PCS_MSI_TENANT,
+                null))?.Trim();
         /// <inheritdoc/>
         public string InstanceUrl => null;
         /// <inheritdoc/>

@@ -1748,7 +1748,7 @@ namespace Reference {
 
             if (node is not MultiStateValueDiscreteState variable ||
                 typeInfo == null ||
-                typeInfo == Opc.Ua.TypeInfo.Unknown ||
+                typeInfo == TypeInfo.Unknown ||
                 !TypeInfo.IsNumericType(typeInfo.BuiltInType)) {
                 return StatusCodes.BadTypeMismatch;
             }
@@ -1836,7 +1836,7 @@ namespace Reference {
             if (node is not PropertyState<Opc.Ua.Range> variable ||
                 value is not ExtensionObject extensionObject ||
                 typeInfo == null ||
-                typeInfo == Opc.Ua.TypeInfo.Unknown) {
+                typeInfo == TypeInfo.Unknown) {
                 return StatusCodes.BadTypeMismatch;
             }
 

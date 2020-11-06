@@ -24,7 +24,7 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Storage {
         /// Create role database
         /// </summary>
         /// <param name="factory"></param>
-        public RoleDatabase(IItemContainerFactory factory) {
+        public RoleDatabase(ICollectionFactory factory) {
             if (factory == null) {
                 throw new ArgumentNullException(nameof(factory));
             }
@@ -238,6 +238,6 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Storage {
             }
         }
 
-        private readonly IItemContainer _documents;
+        private readonly IDocumentCollection _documents;
     }
 }

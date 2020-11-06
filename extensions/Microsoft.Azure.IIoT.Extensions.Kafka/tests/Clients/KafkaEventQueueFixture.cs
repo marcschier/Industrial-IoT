@@ -37,26 +37,6 @@ namespace Microsoft.Azure.IIoT.Extensions.Kafka.Clients {
         public string Description { get; } = "the test";
     }
 
-    /// <summary>
-    /// Event processor configuration - wraps a configuration root
-    /// </summary>
-    public class KafkaConsumerConfig : KafkaServerConfig, IKafkaConsumerConfig {
-        /// <inheritdoc/>
-        public string ConsumerGroup => "$default";
-        /// <inheritdoc/>
-        public string ConsumerTopic { get; set; }
-        /// <inheritdoc/>
-        public int ReceiveBatchSize => 10;
-        /// <inheritdoc/>
-        public TimeSpan ReceiveTimeout => TimeSpan.FromSeconds(5);
-        /// <inheritdoc/>
-        public bool InitialReadFromEnd => false;
-        /// <inheritdoc/>
-        public TimeSpan? SkipEventsOlderThan => null;
-        /// <inheritdoc/>
-        public TimeSpan? CheckpointInterval => TimeSpan.FromMinutes(1);
-    }
-
     internal sealed class KafkaEventQueueHarness : IDisposable {
 
         internal event TelemetryEventHandler OnEvent;
@@ -77,8 +57,16 @@ namespace Microsoft.Azure.IIoT.Extensions.Kafka.Clients {
                 builder.RegisterModule<KafkaConsumerModule>();
                 builder.RegisterType<KafkaServerConfig>()
                     .AsImplementedInterfaces().SingleInstance();
-                builder.RegisterInstance(new KafkaConsumerConfig { ConsumerTopic = topic })
-                    .AsImplementedInterfaces().SingleInstance();
+
+                builder.Configure<KafkaConsumerOptions>(options => {
+                    options.CheckpointInterval = TimeSpan.FromMinutes(1);
+                    options.ReceiveTimeout = TimeSpan.FromMinutes(5);
+                    options.InitialReadFromEnd = false;
+                    options.ReceiveBatchSize = 10;
+                    options.ConsumerGroup = "$default";
+                    options.ConsumerTopic = topic;
+                });
+
                 builder.RegisterType<Pid>()
                     .AsImplementedInterfaces();
 

@@ -11,8 +11,8 @@ namespace Microsoft.Azure.IIoT.Platform.Discovery.Api {
     public interface IDiscoveryConfig {
 
         /// <summary>
-        /// Opc registry service url
+        /// Discovery service url
         /// </summary>
-        string OpcUaRegistryServiceUrl { get; }
+        string DiscoveryServiceUrl { get; }
     }
 }

@@ -14,6 +14,7 @@ namespace Microsoft.Azure.IIoT.Platform.Discovery.Services {
     using Microsoft.Azure.IIoT.Serializers.NewtonSoft;
     using Microsoft.Azure.IIoT.Storage.Services;
     using Microsoft.Azure.IIoT.Storage;
+    using Microsoft.Azure.IIoT.Utils;
     using Autofac;
     using Autofac.Extras.Moq;
     using AutoFixture;
@@ -392,10 +393,11 @@ namespace Microsoft.Azure.IIoT.Platform.Discovery.Services {
             });
 
             var mock = AutoMock.GetLoose(builder => {
+                builder.RegisterGeneric(typeof(OptionsMock<>)).AsImplementedInterfaces();
                 builder.RegisterType<NewtonSoftJsonConverters>().As<IJsonSerializerConverterProvider>();
                 builder.RegisterType<NewtonSoftJsonSerializer>().As<IJsonSerializer>();
                 builder.RegisterType<MemoryDatabase>().As<IDatabaseServer>().SingleInstance();
-                builder.RegisterType<ItemContainerFactory>().As<IItemContainerFactory>();
+                builder.RegisterType<CollectionFactory>().As<ICollectionFactory>();
                 builder.RegisterType<ApplicationDatabase>().As<IApplicationRepository>();
                 builder.RegisterType<EndpointDatabase>().As<IEndpointRepository>();
                 builder.RegisterType<EndpointRegistry>().AsImplementedInterfaces();

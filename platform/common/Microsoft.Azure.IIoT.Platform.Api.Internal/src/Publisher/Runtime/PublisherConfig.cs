@@ -20,8 +20,8 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api.Runtime {
         /// <summary>OPC publisher service endpoint url</summary>
         public string OpcUaPublisherServiceUrl => GetStringOrDefault(
             kOpcUaPublisherServiceUrlKey,
-            () => GetStringOrDefault(PcsVariable.PCS_PUBLISHER_SERVICE_URL,
-                () => GetDefaultUrl("9045", "publisher")));
+            GetStringOrDefault(PcsVariable.PCS_PUBLISHER_SERVICE_URL,
+                GetDefaultUrl("9045", "publisher")));
 
         /// <inheritdoc/>
         public PublisherConfig(IConfiguration configuration) :

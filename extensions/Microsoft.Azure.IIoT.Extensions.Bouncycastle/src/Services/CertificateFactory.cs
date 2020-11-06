@@ -5,6 +5,7 @@
 
 namespace Microsoft.Azure.IIoT.Crypto.Services {
     using Microsoft.Azure.IIoT.Crypto.Models;
+    using Microsoft.Extensions.Options;
     using System;
     using System.Collections.Generic;
     using System.Globalization;
@@ -21,7 +22,7 @@ namespace Microsoft.Azure.IIoT.Crypto.Services {
         /// Configuration
         /// </summary>
         /// <param name="config"></param>
-        public CertificateFactory(ICertificateFactoryConfig config = null) {
+        public CertificateFactory(IOptions<CertificateFactoryOptions> config) {
             _config = config;
         }
 
@@ -77,7 +78,7 @@ namespace Microsoft.Azure.IIoT.Crypto.Services {
                         }
                         if (extension is X509CrlDistributionPointsExtension &&
                             canIssue &&
-                            _config.AuthorityCrlRootUrl != null) {
+                            _config.Value.AuthorityCrlRootUrl != null) {
                             continue;
                         }
                         if (extension is X509KeyUsageExtension kux) {
@@ -92,10 +93,10 @@ namespace Microsoft.Azure.IIoT.Crypto.Services {
                         X509KeyUsageFlags.DigitalSignature |
                         X509KeyUsageFlags.KeyCertSign |
                         X509KeyUsageFlags.CrlSign | keyUsages, true));
-                    if (_config?.AuthorityCrlRootUrl != null) {
+                    if (_config.Value.AuthorityCrlRootUrl != null) {
                         // add crl distribution point, if available
                         request.CertificateExtensions.Add(new X509CrlDistributionPointsExtension(
-                            PatchUrl(_config.AuthorityCrlRootUrl, serialNumber.ToString())));
+                            PatchUrl(_config.Value.AuthorityCrlRootUrl, serialNumber.ToString())));
                     }
                 }
                 else {
@@ -107,10 +108,10 @@ namespace Microsoft.Azure.IIoT.Crypto.Services {
                         X509KeyUsageFlags.KeyEncipherment | keyUsages, true));
                 }
 
-                if (_config?.AuthorityInfoRootUrl != null) {
+                if (_config.Value.AuthorityInfoRootUrl != null) {
                     // add information access point, if available for issuer authority
                     request.CertificateExtensions.Add(new X509AuthorityInformationAccessExtension(
-                        PatchUrl(_config.AuthorityInfoRootUrl, issuer.GetSerialNumberAsString())));
+                        PatchUrl(_config.Value.AuthorityInfoRootUrl, issuer.GetSerialNumberAsString())));
                 }
 
                 // Adjust validity to issued certificate
@@ -170,7 +171,7 @@ namespace Microsoft.Azure.IIoT.Crypto.Services {
                         }
                         if (extension is X509CrlDistributionPointsExtension &&
                             canIssue &&
-                            _config?.AuthorityCrlRootUrl != null) {
+                            _config.Value.AuthorityCrlRootUrl != null) {
                             continue;
                         }
                         if (extension is X509KeyUsageExtension kux) {
@@ -186,10 +187,10 @@ namespace Microsoft.Azure.IIoT.Crypto.Services {
                         X509KeyUsageFlags.KeyCertSign |
                         X509KeyUsageFlags.CrlSign | keyUsages, true));
 
-                    if (_config?.AuthorityCrlRootUrl != null) {
+                    if (_config.Value.AuthorityCrlRootUrl != null) {
                         // add crl distribution point, if available
                         request.CertificateExtensions.Add(new X509CrlDistributionPointsExtension(
-                            PatchUrl(_config.AuthorityCrlRootUrl, serialNumber.ToString())));
+                            PatchUrl(_config.Value.AuthorityCrlRootUrl, serialNumber.ToString())));
                     }
                 }
                 else {
@@ -230,6 +231,6 @@ namespace Microsoft.Azure.IIoT.Crypto.Services {
             return $"{extensionUrl.TrimEnd('/')}/{serial}";
         }
 
-        private readonly ICertificateFactoryConfig _config;
+        private readonly IOptions<CertificateFactoryOptions> _config;
     }
 }

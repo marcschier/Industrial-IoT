@@ -4,13 +4,13 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Runtime {
-    using Microsoft.Azure.IIoT.Utils;
+    using Microsoft.Azure.IIoT.Configuration;
     using Microsoft.Extensions.Configuration;
 
     /// <summary>
     /// ServiceBus configuration
     /// </summary>
-    internal sealed class ServiceBusConfig : ConfigBase<ServiceBusOptions> {
+    internal sealed class ServiceBusConfig : PostConfigureOptionBase<ServiceBusOptions> {
 
         /// <inheritdoc/>
         public ServiceBusConfig(IConfiguration configuration = null) :
@@ -18,9 +18,12 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Runtime {
         }
 
         /// <inheritdoc/>
-        public override void Configure(string name, ServiceBusOptions options) {
-            options.ServiceBusConnString = GetStringOrDefault(PcsVariable.PCS_SERVICEBUS_CONNSTRING,
-                () => GetStringOrDefault("_SB_CS", () => null));
+        public override void PostConfigure(string name, ServiceBusOptions options) {
+            if (string.IsNullOrEmpty(options.ServiceBusConnString)) {
+                options.ServiceBusConnString = 
+                    GetStringOrDefault(PcsVariable.PCS_SERVICEBUS_CONNSTRING,
+                    GetStringOrDefault("_SB_CS"));
+            }
         }
     }
 }

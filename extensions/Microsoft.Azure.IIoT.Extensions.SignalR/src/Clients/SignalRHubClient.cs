@@ -5,11 +5,11 @@
 
 namespace Microsoft.Azure.IIoT.Http.SignalR {
     using Microsoft.Azure.IIoT.Http.SignalR.Services;
-    using Microsoft.Azure.IIoT.Messaging.SignalR;
     using Microsoft.Azure.IIoT.Rpc;
     using Microsoft.Azure.IIoT.Serializers;
     using Microsoft.Azure.IIoT.Authentication;
     using Microsoft.Extensions.Logging;
+    using Microsoft.Extensions.Options;
     using System;
     using System.Threading.Tasks;
     using System.Collections.Generic;
@@ -26,12 +26,13 @@ namespace Microsoft.Azure.IIoT.Http.SignalR {
         /// <param name="config"></param>
         /// <param name="logger"></param>
         /// <param name="provider"></param>
-        /// <param name="jsonSettings"></param>
-        public SignalRHubClient(ISignalRClientConfig config, ILogger logger,
-            ITokenProvider provider = null, IJsonSerializerSettingsProvider jsonSettings = null) {
-            _jsonSettings = jsonSettings;
-            _config = config ?? throw new ArgumentNullException(nameof(config));
+        /// <param name="settings"></param>
+        public SignalRHubClient(IOptions<SignalRHubClientOptions> config, 
+            ILogger logger, IJsonSerializerSettingsProvider settings = null,
+            ITokenProvider provider = null) {
+            _options = config ?? throw new ArgumentNullException(nameof(config));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _settings = settings;
             _provider = provider;
             _clients = new Dictionary<string, SignalRClientRegistrar>();
             _lock = new SemaphoreSlim(1, 1);
@@ -58,8 +59,9 @@ namespace Microsoft.Azure.IIoT.Http.SignalR {
                         await client.DisposeAsync().ConfigureAwait(false);
                         _clients.Remove(lookup);
                     }
-                    client = await SignalRClientRegistrar.CreateAsync(_config,
-                        endpointUrl, _logger, resourceId, _provider, _jsonSettings).ConfigureAwait(false);
+                    client = await SignalRClientRegistrar.CreateAsync(
+                        _options.Value, endpointUrl, _logger, 
+                        resourceId, _provider, _settings).ConfigureAwait(false);
                     _clients.Add(lookup, client);
                 }
                 return client;
@@ -123,7 +125,7 @@ namespace Microsoft.Azure.IIoT.Http.SignalR {
             /// <summary>
             /// Create instance by creating client host and starting it.
             /// </summary>
-            /// <param name="config"></param>
+            /// <param name="options"></param>
             /// <param name="jsonSettings"></param>
             /// <param name="endpointUrl"></param>
             /// <param name="logger"></param>
@@ -131,7 +133,7 @@ namespace Microsoft.Azure.IIoT.Http.SignalR {
             /// <param name="provider"></param>
             /// <returns></returns>
             internal static async Task<SignalRClientRegistrar> CreateAsync(
-                ISignalRClientConfig config, string endpointUrl, ILogger logger,
+                SignalRHubClientOptions options, string endpointUrl, ILogger logger,
                 string resourceId, ITokenProvider provider,
                 IJsonSerializerSettingsProvider jsonSettings = null) {
 
@@ -139,7 +141,7 @@ namespace Microsoft.Azure.IIoT.Http.SignalR {
                     throw new ArgumentNullException(nameof(endpointUrl));
                 }
                 var host = new SignalRHubClientHost(endpointUrl,
-                    config.UseMessagePackProtocol, logger,
+                    options.UseMessagePackProtocol, logger,
                     resourceId, provider, jsonSettings);
 
                 await host.StartAsync().ConfigureAwait(false);
@@ -171,8 +173,8 @@ namespace Microsoft.Azure.IIoT.Http.SignalR {
             private readonly SignalRHubClientHost _client;
         }
 
-        private readonly IJsonSerializerSettingsProvider _jsonSettings;
-        private readonly ISignalRClientConfig _config;
+        private readonly IJsonSerializerSettingsProvider _settings;
+        private readonly IOptions<SignalRHubClientOptions> _options;
         private readonly Dictionary<string, SignalRClientRegistrar> _clients;
         private readonly SemaphoreSlim _lock;
         private readonly ILogger _logger;

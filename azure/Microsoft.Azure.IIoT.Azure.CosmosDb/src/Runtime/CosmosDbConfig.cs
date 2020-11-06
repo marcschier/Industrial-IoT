@@ -4,14 +4,13 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Azure.CosmosDb.Runtime {
-    using Microsoft.Azure.IIoT.Utils;
+    using Microsoft.Azure.IIoT.Configuration;
     using Microsoft.Extensions.Configuration;
-    using Microsoft.Extensions.Options;
 
     /// <summary>
     /// CosmosDb configuration
     /// </summary>
-    internal sealed class CosmosDbConfig : ConfigBase<CosmosDbOptions> {
+    internal sealed class CosmosDbConfig : PostConfigureOptionBase<CosmosDbOptions> {
 
         /// <inheritdoc/>
         public CosmosDbConfig(IConfiguration configuration) :
@@ -19,13 +18,17 @@ namespace Microsoft.Azure.IIoT.Azure.CosmosDb.Runtime {
         }
 
         /// <inheritdoc/>
-        public override void Configure(string name, CosmosDbOptions options) {
-            options.DbConnectionString = GetStringOrDefault(PcsVariable.PCS_COSMOSDB_CONNSTRING,
-                () => GetStringOrDefault("PCS_STORAGEADAPTER_DOCUMENTDB_CONNSTRING",
-                () => GetStringOrDefault("PCS_TELEMETRY_DOCUMENTDB_CONNSTRING",
-                    () => GetStringOrDefault("_DB_CS",
-                        () => null))));
-            options.ThroughputUnits = GetIntOrDefault("PCS_COSMOSDB_THROUGHPUT", () => 400);
+        public override void PostConfigure(string name, CosmosDbOptions options) {
+            if (string.IsNullOrEmpty(options.DbConnectionString)) {
+                options.DbConnectionString = 
+                    GetStringOrDefault(PcsVariable.PCS_COSMOSDB_CONNSTRING,
+                    GetStringOrDefault("PCS_STORAGEADAPTER_DOCUMENTDB_CONNSTRING",
+                    GetStringOrDefault("PCS_TELEMETRY_DOCUMENTDB_CONNSTRING",
+                    GetStringOrDefault("_DB_CS"))));
+            }
+            if (options.ThroughputUnits == null) {
+                options.ThroughputUnits = GetIntOrDefault("PCS_COSMOSDB_THROUGHPUT", 400);
+            }
         }
     }
 }

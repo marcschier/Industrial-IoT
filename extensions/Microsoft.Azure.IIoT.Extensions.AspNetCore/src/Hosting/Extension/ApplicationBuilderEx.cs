@@ -15,6 +15,7 @@ namespace Microsoft.Extensions.DependencyInjection {
     using Microsoft.Azure.IIoT.Hosting;
     using Microsoft.Azure.IIoT.AspNetCore;
     using Microsoft.Azure.IIoT.AspNetCore.Hosting;
+    using Microsoft.Extensions.Options;
     using Autofac.Extensions.DependencyInjection;
     using System;
     using System.Collections.Generic;
@@ -44,14 +45,14 @@ namespace Microsoft.Extensions.DependencyInjection {
         /// <summary>
         /// Use header forwarding
         /// </summary>
-        /// <param name="builder"></param>
+        /// <param name="app"></param>
         /// <returns></returns>
-        public static IApplicationBuilder UseHeaderForwarding(this IApplicationBuilder builder) {
-            var fhConfig = builder.ApplicationServices.GetService<IHeadersConfig>();
-            if (fhConfig == null || !fhConfig.AspNetCoreForwardedHeadersEnabled) {
-                return builder;
+        public static IApplicationBuilder UseHeaderForwarding(this IApplicationBuilder app) {
+            var headerOptions = app.ApplicationServices.GetService<IOptions<HeadersOptions>>();
+            if (headerOptions.Value.ForwardingEnabled) {
+                app = app.UseForwardedHeaders();
             }
-            return builder.UseForwardedHeaders();
+            return app;
         }
 
         /// <summary>
@@ -60,12 +61,9 @@ namespace Microsoft.Extensions.DependencyInjection {
         /// <param name="app"></param>
         /// <returns></returns>
         public static IApplicationBuilder UsePathBase(this IApplicationBuilder app) {
-            var config = app.ApplicationServices.GetService<IWebHostConfig>();
-            if (config == null) {
-                return app;
-            }
-            if (!string.IsNullOrEmpty(config.ServicePathBase)) {
-                app.UsePathBase(config.ServicePathBase);
+            var pathOptions = app.ApplicationServices.GetService<IOptions<WebHostOptions>>();
+            if (!string.IsNullOrEmpty(pathOptions.Value.ServicePathBase)) {
+                app = app.UsePathBase(pathOptions.Value.ServicePathBase);
             }
             return app;
         }
@@ -76,11 +74,8 @@ namespace Microsoft.Extensions.DependencyInjection {
         /// <param name="app"></param>
         /// <returns></returns>
         public static IApplicationBuilder UseHttpsRedirect(this IApplicationBuilder app) {
-            var config = app.ApplicationServices.GetService<IWebHostConfig>();
-            if (config == null) {
-                return app;
-            }
-            if (config.HttpsRedirectPort > 0) {
+            var httpsOptions = app.ApplicationServices.GetService<IOptions<WebHostOptions>>();
+            if (httpsOptions.Value.UseHttpsRedirect) {
                 app.UseHsts();
                 app.UseHttpsRedirection();
             }

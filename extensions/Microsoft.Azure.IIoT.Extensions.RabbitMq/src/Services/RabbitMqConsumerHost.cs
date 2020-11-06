@@ -7,6 +7,7 @@ namespace Microsoft.Azure.IIoT.Extensions.RabbitMq.Services {
     using Microsoft.Azure.IIoT.Messaging;
     using Microsoft.Azure.IIoT.Exceptions;
     using Microsoft.Azure.IIoT.Utils;
+    using Microsoft.Extensions.Options;
     using Microsoft.Extensions.Logging;
     using System;
     using System.Threading;
@@ -23,16 +24,15 @@ namespace Microsoft.Azure.IIoT.Extensions.RabbitMq.Services {
         /// Create host
         /// </summary>
         /// <param name="connection"></param>
-        /// <param name="consumer"></param>
-        /// <param name="config"></param>
         /// <param name="logger"></param>
-        public RabbitMqConsumerHost(IRabbitMqConnection connection,
-            IEventProcessingHandler consumer, IRabbitMqQueueConfig config,
-            ILogger logger) {
+        /// <param name="consumer"></param>
+        /// <param name="options"></param>
+        public RabbitMqConsumerHost(IRabbitMqConnection connection, ILogger logger, 
+            IEventProcessingHandler consumer, IOptionsSnapshot<RabbitMqQueueOptions> options) {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _connection = connection ?? throw new ArgumentNullException(nameof(connection));
             _consumer = consumer ?? throw new ArgumentNullException(nameof(consumer));
-            _config = config ?? throw new ArgumentNullException(nameof(config));
+            _options = options ?? throw new ArgumentNullException(nameof(options));
             _lock = new SemaphoreSlim(1, 1);
         }
 
@@ -44,8 +44,8 @@ namespace Microsoft.Azure.IIoT.Extensions.RabbitMq.Services {
                     throw new ResourceInvalidStateException("Already started");
                 }
                 try {
-                    var queue = _config.Queue.Split('/')[0];
-                    _channel = _connection.GetChannel(_config.Queue, this);
+                    var queue = _options.Value.Queue.Split('/')[0];
+                    _channel = _connection.GetChannel(_options.Value.Queue, this);
                     _logger.LogInformation("Queue {queue} processor started.",
                         _channel.QueueName);
                 }
@@ -111,7 +111,7 @@ namespace Microsoft.Azure.IIoT.Extensions.RabbitMq.Services {
         private readonly ILogger _logger;
         private readonly IRabbitMqConnection _connection;
         private readonly IEventProcessingHandler _consumer;
-        private readonly IRabbitMqQueueConfig _config;
+        private readonly IOptionsSnapshot<RabbitMqQueueOptions> _options;
         private readonly SemaphoreSlim _lock;
         private IRabbitMqChannel _channel;
     }

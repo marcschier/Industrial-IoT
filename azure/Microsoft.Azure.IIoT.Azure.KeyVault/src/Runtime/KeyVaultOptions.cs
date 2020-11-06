@@ -18,6 +18,6 @@ namespace Microsoft.Azure.IIoT.Azure.KeyVault {
         /// <summary>
         /// Is hsm key vault
         /// </summary>
-        public bool KeyVaultIsHsm { get; set; }
+        public bool? KeyVaultIsHsm { get; set; }
     }
 }

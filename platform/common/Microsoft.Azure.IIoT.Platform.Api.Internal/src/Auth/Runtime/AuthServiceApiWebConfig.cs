@@ -23,30 +23,30 @@ namespace Microsoft.Azure.IIoT.Authentication.Runtime {
 
         /// <inheritdoc/>
         public bool IsValid => GetBoolOrDefault(kAuth_IsDisabledKey,
-            () => GetBoolOrDefault(PcsVariable.PCS_AUTH_SERVICE_DISABLED,
-                () => false));
+            GetBoolOrDefault(PcsVariable.PCS_AUTH_SERVICE_DISABLED,
+                false));
         /// <summary>Provider</summary>
         public string Provider => AuthProvider.AuthService;
         /// <summary>Applicable resource</summary>
         public string Resource => Http.Resource.Platform;
         /// <summary>Application id</summary>
         public string ClientId =>  GetStringOrDefault(kAuth_AppIdKey,
-            () => GetStringOrDefault(PcsVariable.PCS_AUTH_SERVICE_CLIENT_APPID,
-                () => "F095B8821F4F4604B6E3AD1110EE58A4"))?.Trim();
+            GetStringOrDefault(PcsVariable.PCS_AUTH_SERVICE_CLIENT_APPID,
+                "F095B8821F4F4604B6E3AD1110EE58A4"))?.Trim();
         /// <summary>App secret</summary>
         public string ClientSecret => GetStringOrDefault(kAuth_AppSecretKey,
-            () => GetStringOrDefault(PcsVariable.PCS_AUTH_SERVICE_CLIENT_SECRET,
-                () => null))?.Trim();
+            GetStringOrDefault(PcsVariable.PCS_AUTH_SERVICE_CLIENT_SECRET,
+                null))?.Trim();
         /// <summary>Auth server instance url</summary>
         public string InstanceUrl =>
             GetStringOrDefault(kAuth_InstanceUrlKey,
-                () => GetStringOrDefault(PcsVariable.PCS_AUTH_SERVICE_URL,
-                    () => GetDefaultUrl("9090", "auth")));
+                GetStringOrDefault(PcsVariable.PCS_AUTH_SERVICE_URL,
+                    GetDefaultUrl("9090", "auth")));
         /// <summary>Valid audience</summary>
         public string Audience =>
             GetStringOrDefault(kAuth_AudienceKey,
-                () => GetStringOrDefault(PcsVariable.PCS_SERVICE_NAME,
-                    () => "iiot"))?.Trim();
+                GetStringOrDefault(PcsVariable.PCS_SERVICE_NAME,
+                    "iiot"))?.Trim();
         /// <summary>Optional tenant</summary>
         public string TenantId => null;
 

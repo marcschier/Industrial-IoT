@@ -23,7 +23,7 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Storage {
         /// Create client store
         /// </summary>
         /// <param name="factory"></param>
-        public ClientDatabase(IItemContainerFactory factory) {
+        public ClientDatabase(ICollectionFactory factory) {
             if (factory == null) {
                 throw new ArgumentNullException(nameof(factory));
             }
@@ -89,6 +89,6 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Storage {
             return results != 0;
         }
 
-        private readonly IItemContainer _documents;
+        private readonly IDocumentCollection _documents;
     }
 }

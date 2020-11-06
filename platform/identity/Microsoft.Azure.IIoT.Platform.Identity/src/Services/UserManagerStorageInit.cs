@@ -7,6 +7,7 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Services {
     using Microsoft.Azure.IIoT.Platform.Identity.Models;
     using Microsoft.Azure.IIoT.Exceptions;
     using Microsoft.AspNetCore.Identity;
+    using Microsoft.Extensions.Options;
     using Microsoft.Extensions.Logging;
     using System;
     using System.Threading.Tasks;
@@ -20,37 +21,37 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Services {
         /// Create configuration process
         /// </summary>
         /// <param name="manager"></param>
-        /// <param name="config"></param>
+        /// <param name="options"></param>
         /// <param name="logger"></param>
         public UserManagerStorageInit(UserManager<UserModel> manager,
-            IRootUserConfig config, ILogger logger) {
+            IOptions<RootUserOptions> options, ILogger logger) {
             _manager = manager ?? throw new ArgumentNullException(nameof(manager));
-            _config = config ?? throw new ArgumentNullException(nameof(config));
+            _options = options ?? throw new ArgumentNullException(nameof(options));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         /// <inheritdoc/>
         public async Task StartAsync() {
-            if (string.IsNullOrEmpty(_config.UserName)) {
+            if (string.IsNullOrEmpty(_options.Value.UserName)) {
                 _logger.LogDebug("Skipping root user configuration.");
                 return;
             }
             var rootUser = new UserModel {
-                Id = _config.UserName
+                Id = _options.Value.UserName
             };
             try {
-                var exists = await _manager.FindByIdAsync(_config.UserName).ConfigureAwait(false);
+                var exists = await _manager.FindByIdAsync(_options.Value.UserName).ConfigureAwait(false);
                 if (exists != null) {
                     return;
                 }
 
-                if (string.IsNullOrEmpty(_config.Password)) {
+                if (string.IsNullOrEmpty(_options.Value.Password)) {
                     await _manager.CreateAsync(rootUser).ConfigureAwait(false);
                 }
                 else {
-                    await _manager.CreateAsync(rootUser, _config.Password).ConfigureAwait(false);
+                    await _manager.CreateAsync(rootUser, _options.Value.Password).ConfigureAwait(false);
                 }
-                _logger.LogInformation("Root user {user} added", _config.UserName);
+                _logger.LogInformation("Root user {user} added", _options.Value.UserName);
             }
             catch (ResourceConflictException) { }
             catch (Exception ex) {
@@ -64,7 +65,7 @@ namespace Microsoft.Azure.IIoT.Platform.Identity.Services {
         }
 
         private readonly UserManager<UserModel> _manager;
-        private readonly IRootUserConfig _config;
+        private readonly IOptions<RootUserOptions> _options;
         private readonly ILogger _logger;
     }
 }

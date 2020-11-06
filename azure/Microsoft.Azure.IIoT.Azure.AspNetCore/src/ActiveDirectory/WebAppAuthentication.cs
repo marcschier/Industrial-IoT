@@ -38,7 +38,7 @@ namespace Microsoft.Azure.IIoT.AspNetCore.Authentication.Clients {
                 .AsImplementedInterfaces()
                 .IfNotRegistered(typeof(ICache));
 
-            builder.RegisterModule<DefaultServiceAuthProviders>();
+            builder.RegisterModule<ActiveDirectorySupport>();
 
             // 1) Use auth service open id token client
             builder.RegisterType<OpenIdUserTokenClient>()

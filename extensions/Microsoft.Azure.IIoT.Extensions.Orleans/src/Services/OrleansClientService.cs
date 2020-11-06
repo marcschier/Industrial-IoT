@@ -6,7 +6,6 @@
 namespace Microsoft.Azure.IIoT.Extensions.Orleans.Services {
     using Microsoft.Azure.IIoT.Exceptions;
     using Microsoft.Azure.IIoT.Utils;
-    using Microsoft.Extensions.DependencyInjection.Extensions;
     using Microsoft.Extensions.Logging;
     using Microsoft.Extensions.Hosting;
     using System;

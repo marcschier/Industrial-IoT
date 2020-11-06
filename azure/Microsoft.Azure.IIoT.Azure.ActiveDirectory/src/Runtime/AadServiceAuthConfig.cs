@@ -6,13 +6,14 @@
 namespace Microsoft.Azure.IIoT.Azure.ActiveDirectory.Runtime {
     using Microsoft.Azure.IIoT.Authentication;
     using Microsoft.Azure.IIoT.Utils;
+    using Microsoft.Azure.IIoT.Configuration;
     using Microsoft.Extensions.Configuration;
     using System;
 
     /// <summary>
     /// Service auth configuration
     /// </summary>
-    public class AadServiceAuthConfig : ConfigBase, IOAuthServerConfig {
+    public class AadServiceAuthConfig : ConfigureOptionBase, IOAuthServerConfig {
 
         /// <summary>
         /// Auth configuration
@@ -29,26 +30,26 @@ namespace Microsoft.Azure.IIoT.Azure.ActiveDirectory.Runtime {
         public string Provider => AuthProvider.AzureAD;
         /// <summary>Aad instance url</summary>
         public string InstanceUrl => GetStringOrDefault(kAuth_InstanceUrlKey,
-            () => GetStringOrDefault(PcsVariable.PCS_AAD_INSTANCE,
-            () => GetStringOrDefault("PCS_WEBUI_AUTH_AAD_INSTANCE",
-                () => "https://login.microsoftonline.com"))).Trim();
+            GetStringOrDefault(PcsVariable.PCS_AAD_INSTANCE,
+            GetStringOrDefault("PCS_WEBUI_AUTH_AAD_INSTANCE",
+                "https://login.microsoftonline.com"))).Trim();
         /// <summary>Optional tenant</summary>
         public string TenantId => GetStringOrDefault(kAuth_TenantIdKey,
-            () => GetStringOrDefault(PcsVariable.PCS_AUTH_TENANT,
-            () => GetStringOrDefault("PCS_WEBUI_AUTH_AAD_TENANT",
-                () => "common"))).Trim();
+            GetStringOrDefault(PcsVariable.PCS_AUTH_TENANT,
+            GetStringOrDefault("PCS_WEBUI_AUTH_AAD_TENANT",
+                "common"))).Trim();
         /// <summary>Trusted issuer</summary>
         public string TrustedIssuer => GetStringOrDefault(kAuth_TrustedIssuerKey,
-            () => GetStringOrDefault(PcsVariable.PCS_AAD_ISSUER,
-                () => "https://sts.windows.net/"))?.Trim();
+            GetStringOrDefault(PcsVariable.PCS_AAD_ISSUER,
+                "https://sts.windows.net/"))?.Trim();
         /// <summary>Allowed clock skew</summary>
         public TimeSpan AllowedClockSkew =>
             TimeSpan.FromSeconds(GetIntOrDefault(kAuth_AllowedClockSkewKey,
-                () => 120));
+                120));
         /// <summary>Valid audience</summary>
         public string Audience => GetStringOrDefault(kAuth_AudienceKey,
-            () => GetStringOrDefault(PcsVariable.PCS_AAD_AUDIENCE,
-                () => null))?.Trim();
+            GetStringOrDefault(PcsVariable.PCS_AAD_AUDIENCE,
+                null))?.Trim();
 
         /// <summary>
         /// Configuration constructor

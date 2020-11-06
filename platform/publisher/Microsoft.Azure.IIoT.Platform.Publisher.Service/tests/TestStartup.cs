@@ -4,15 +4,15 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Platform.Publisher.Service {
-    using Microsoft.Azure.IIoT.Platform.Publisher.Service.Runtime;
     using Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Runtime;
     using Microsoft.Azure.IIoT.Authentication;
     using Microsoft.Azure.IIoT.Messaging;
     using Microsoft.Azure.IIoT.Serializers.NewtonSoft;
     using Microsoft.Azure.IIoT.Serializers.MessagePack;
-    using Microsoft.Extensions.Hosting;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Mvc.Testing;
+    using Microsoft.Extensions.Hosting;
+    using Microsoft.Extensions.Configuration;
     using Autofac;
     using Autofac.Extensions.Hosting;
     using System.Net.Http;
@@ -23,11 +23,9 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Service {
     /// </summary>
     public class TestStartup : Startup {
 
-        /// <summary>
-        /// Create startup
-        /// </summary>
-        /// <param name="env"></param>
-        public TestStartup(IWebHostEnvironment env) : base(env, new Config(null)) {
+        /// <inheritdoc/>
+        public TestStartup(IWebHostEnvironment env, IConfiguration configuration) :
+            base(env, configuration) {
         }
 
         /// <inheritdoc/>
@@ -60,7 +58,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Service {
 
         /// <inheritdoc/>
         protected override IHostBuilder CreateHostBuilder() {
-            return Microsoft.Extensions.Hosting.Host.CreateDefaultBuilder();
+            return Host.CreateDefaultBuilder();
         }
 
         /// <inheritdoc/>

@@ -6,6 +6,7 @@
 namespace Microsoft.Azure.IIoT.Platform.Service {
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.Extensions.Hosting;
+    using Microsoft.Extensions.Configuration;
     using Autofac.Extensions.Hosting;
     using Prometheus;
 
@@ -32,6 +33,8 @@ namespace Microsoft.Azure.IIoT.Platform.Service {
         public static IHostBuilder CreateHostBuilder(string[] args) {
             return Host.CreateDefaultBuilder(args)
                 .UseAutofac()
+                .ConfigureHostConfiguration(builder => builder
+                    .AddFromDotEnvFile())
                 .ConfigureWebHostDefaults(builder => builder
                     .UseUrls("http://*:9080")
                     .UseStartup<Startup>()

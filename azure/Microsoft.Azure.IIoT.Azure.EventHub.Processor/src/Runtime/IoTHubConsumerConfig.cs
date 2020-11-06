@@ -6,22 +6,22 @@
 namespace Microsoft.Azure.IIoT.Azure.EventHub.Processor.Runtime {
     using Microsoft.Azure.IIoT.Azure.EventHub.Processor;
     using Microsoft.Azure.IIoT.Utils;
+    using Microsoft.Azure.IIoT.Configuration;
     using Microsoft.Extensions.Configuration;
     using System;
 
     /// <summary>
     /// IoT Hub Event processor configuration - wraps a configuration root
     /// </summary>
-    public class IoTHubConsumerConfig : ConfigBase<EventHubConsumerOptions> {
+    public class IoTHubConsumerConfig : ConfigureOptionBase<EventHubConsumerOptions> {
 
         /// <summary> Event hub connection string </summary>
         internal string EventHubConnString {
             get {
                 var ep = GetStringOrDefault(PcsVariable.PCS_IOTHUB_EVENTHUBENDPOINT,
-                    () => GetStringOrDefault("PCS_IOTHUBREACT_HUB_ENDPOINT",
-                    () => null));
+                    GetStringOrDefault("PCS_IOTHUBREACT_HUB_ENDPOINT"));
                 if (string.IsNullOrEmpty(ep)) {
-                    var cs = GetStringOrDefault("_EH_CS", () => null)?.Trim();
+                    var cs = GetStringOrDefault("_EH_CS")?.Trim();
                     if (string.IsNullOrEmpty(cs)) {
                         return null;
                     }
@@ -40,12 +40,12 @@ namespace Microsoft.Azure.IIoT.Azure.EventHub.Processor.Runtime {
 
         /// <summary>IoT hub connection string</summary>
         internal string IoTHubConnString => GetStringOrDefault(PcsVariable.PCS_IOTHUB_CONNSTRING,
-            () => GetStringOrDefault("_HUB_CS", () => null));
+            GetStringOrDefault("_HUB_CS"));
 
         /// <summary>Hub name</summary>
         internal string IoTHubName {
             get {
-                var name = GetStringOrDefault("PCS_IOTHUBREACT_HUB_NAME", () => null);
+                var name = GetStringOrDefault("PCS_IOTHUBREACT_HUB_NAME");
                 if (!string.IsNullOrEmpty(name)) {
                     return name;
                 }
@@ -66,10 +66,10 @@ namespace Microsoft.Azure.IIoT.Azure.EventHub.Processor.Runtime {
         /// <inheritdoc/>
         public override void Configure(string name, EventHubConsumerOptions options) {
             options.ConsumerGroup = GetStringOrDefault("PCS_IOTHUB_EVENTHUBCONSUMERGROUP",
-                () => GetStringOrDefault("PCS_IOTHUBREACT_HUB_CONSUMERGROUP", () => "$default"));
+                GetStringOrDefault("PCS_IOTHUBREACT_HUB_CONSUMERGROUP", "$default"));
             options.EventHubConnString = EventHubConnString;
             options.EventHubPath = IoTHubName;
-            options.UseWebsockets = GetBoolOrDefault("_WS", () => false);
+            options.UseWebsockets = GetBoolOrDefault("_WS");
         }
     }
 }

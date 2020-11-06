@@ -33,7 +33,7 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa {
             return new RequestHeader {
                 AuditEntryId = diagnostics?.AuditId ?? Guid.NewGuid().ToString(),
                 ReturnDiagnostics =
-                    (uint)(diagnostics?.Level ?? Platform.Core.Models.DiagnosticsLevel.None)
+                    (uint)(diagnostics?.Level ?? Core.Models.DiagnosticsLevel.None)
                      .ToStackType(),
                 Timestamp = diagnostics?.TimeStamp ?? DateTime.UtcNow,
                 TimeoutHint = timeoutHint,

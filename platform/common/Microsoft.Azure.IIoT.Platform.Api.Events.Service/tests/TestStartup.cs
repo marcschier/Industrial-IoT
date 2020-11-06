@@ -4,7 +4,6 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service {
-    using Microsoft.Azure.IIoT.Platform.Api.Events.Service.Runtime;
     using Microsoft.Azure.IIoT.Platform.Publisher.Api;
     using Microsoft.Azure.IIoT.Platform.Discovery.Api;
     using Microsoft.Azure.IIoT.Platform.Twin.Api;
@@ -15,8 +14,8 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service {
     using Microsoft.Azure.IIoT.Authentication;
     using Microsoft.Azure.IIoT.Messaging;
     using Microsoft.Azure.IIoT.Http.SignalR;
-    using Microsoft.AspNetCore.Hosting;
     using Microsoft.Extensions.Configuration;
+    using Microsoft.AspNetCore.Hosting;
     using Autofac;
     using System.Collections.Generic;
     using System.Threading.Tasks;
@@ -26,12 +25,9 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service {
     /// </summary>
     public class TestStartup : Startup {
 
-        /// <summary>
-        /// Create startup
-        /// </summary>
-        /// <param name="env"></param>
+        /// <inheritdoc/>
         public TestStartup(IWebHostEnvironment env, IConfiguration configuration) :
-            base(env, new Config(configuration)) {
+            base(env, configuration) {
         }
 
         /// <inheritdoc/>

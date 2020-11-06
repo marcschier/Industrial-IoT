@@ -4,13 +4,13 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Azure.EventHub.Processor.Runtime {
-    using Microsoft.Azure.IIoT.Utils;
+    using Microsoft.Azure.IIoT.Configuration;
     using Microsoft.Extensions.Configuration;
 
     /// <summary>
     /// Event hub configuration - wraps a configuration root
     /// </summary>
-    internal sealed class EventHubConsumerConfig : ConfigBase<EventHubConsumerOptions> {
+    internal sealed class EventHubConsumerConfig : PostConfigureOptionBase<EventHubConsumerOptions> {
 
         /// <inheritdoc/>
         public EventHubConsumerConfig(IConfiguration configuration) :
@@ -18,15 +18,24 @@ namespace Microsoft.Azure.IIoT.Azure.EventHub.Processor.Runtime {
         }
 
         /// <inheritdoc/>
-        public override void Configure(string name, EventHubConsumerOptions options) {
-            options.EventHubConnString = GetStringOrDefault(PcsVariable.PCS_EVENTHUB_CONNSTRING,
-                () => null);
-            options.EventHubPath = GetStringOrDefault(PcsVariable.PCS_EVENTHUB_NAME,
-                () => null);
-            options.UseWebsockets = GetBoolOrDefault("PCS_EVENTHUB_USE_WEBSOCKET",
-                () => GetBoolOrDefault("_WS", () => false));
-            options.ConsumerGroup = GetStringOrDefault("PCS_EVENTHUB_CONSUMERGROUP",
-                () => "$default");
+        public override void PostConfigure(string name, EventHubConsumerOptions options) {
+            if (string.IsNullOrEmpty(options.EventHubConnString)) {
+                options.EventHubConnString =
+                    GetStringOrDefault(PcsVariable.PCS_EVENTHUB_CONNSTRING);
+            }
+            if (string.IsNullOrEmpty(options.EventHubPath)) {
+                options.EventHubPath = 
+                    GetStringOrDefault(PcsVariable.PCS_EVENTHUB_NAME);
+            }
+            var useWebSockets = GetBoolOrDefault("PCS_EVENTHUB_USE_WEBSOCKET",
+                GetBoolOrDefault("_WS", false));
+            if (useWebSockets) {
+                options.UseWebsockets = useWebSockets;
+            }
+            if (string.IsNullOrEmpty(options.ConsumerGroup)) {
+                options.ConsumerGroup = 
+                    GetStringOrDefault("PCS_EVENTHUB_CONSUMERGROUP", "$default");
+            }
         }
     }
 }

@@ -6,6 +6,7 @@
 namespace Microsoft.Azure.IIoT.Extensions.LiteDb.Clients {
     using Microsoft.Azure.IIoT.Storage;
     using Microsoft.Extensions.Logging;
+    using Microsoft.Extensions.Options;
     using LiteDB;
     using System;
     using System.Threading.Tasks;
@@ -20,19 +21,19 @@ namespace Microsoft.Azure.IIoT.Extensions.LiteDb.Clients {
         /// <summary>
         /// Creates server
         /// </summary>
-        /// <param name="config"></param>
+        /// <param name="options"></param>
         /// <param name="logger"></param>
-        public LiteDbClient(ILiteDbConfig config, ILogger logger) {
-            _config = config ?? throw new ArgumentNullException(nameof(config));
+        public LiteDbClient(IOptionsSnapshot<LiteDbOptions> options, ILogger logger) {
+            _options = options ?? throw new ArgumentNullException(nameof(options));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            if (_config.DbConnectionString == null) {
-                throw new ArgumentException("Missing connection string", nameof(config));
+            if (string.IsNullOrEmpty(_options.Value.DbConnectionString)) {
+                throw new ArgumentException("Missing connection string", nameof(options));
             }
         }
 
         /// <inheritdoc/>
         public Task<IDatabase> OpenAsync(string databaseId, DatabaseOptions options) {
-            var cs = new ConnectionString(_config.DbConnectionString);
+            var cs = new ConnectionString(_options.Value.DbConnectionString);
             if (string.IsNullOrEmpty(databaseId)) {
                 databaseId = "default";
             }
@@ -51,7 +52,7 @@ namespace Microsoft.Azure.IIoT.Extensions.LiteDb.Clients {
             return Task.FromResult<IDatabase>(db);
         }
 
-        private readonly ILiteDbConfig _config;
+        private readonly IOptionsSnapshot<LiteDbOptions> _options;
         private readonly ILogger _logger;
     }
 }

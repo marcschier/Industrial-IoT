@@ -4,33 +4,27 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Platform.Identity.Runtime {
-    using Microsoft.Azure.IIoT.Utils;
+    using Microsoft.Azure.IIoT.Configuration;
     using Microsoft.Extensions.Configuration;
 
     /// <summary>
     /// Root user configuration
     /// </summary>
-    public class RootUserConfig : ConfigBase, IRootUserConfig {
-
-        /// <summary>
-        /// Root configuration
-        /// </summary>
-        private const string kUserName = "Root:UserName";
-        private const string kPassword = "Root:Password";
+    internal sealed class RootUserConfig : PostConfigureOptionBase<RootUserOptions> {
 
         /// <inheritdoc/>
-        public string UserName => GetStringOrDefault(kUserName,
-            () => GetStringOrDefault(PcsVariable.PCS_ROOT_USERID));
-        /// <inheritdoc/>
-        public string Password => GetStringOrDefault(kPassword,
-            () => GetStringOrDefault(PcsVariable.PCS_ROOT_PASSWORD));
-
-        /// <summary>
-        /// Configuration constructor
-        /// </summary>
-        /// <param name="configuration"></param>
         public RootUserConfig(IConfiguration configuration) :
             base(configuration) {
+        }
+
+        /// <inheritdoc/>
+        public override void PostConfigure(string name, RootUserOptions options) {
+            if (string.IsNullOrEmpty(options.UserName)) {
+                options.UserName = GetStringOrDefault(PcsVariable.PCS_ROOT_USERID);
+            }
+            if (string.IsNullOrEmpty(options.Password)) {
+                options.Password = GetStringOrDefault(PcsVariable.PCS_ROOT_PASSWORD);
+            }
         }
     }
 }

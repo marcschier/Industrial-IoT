@@ -21,7 +21,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Storage {
         /// Create relationship database
         /// </summary>
         /// <param name="db"></param>
-        public TrustDatabase(IItemContainerFactory db) {
+        public TrustDatabase(ICollectionFactory db) {
             if (db == null) {
                 throw new ArgumentNullException(nameof(db));
             }
@@ -121,6 +121,6 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Storage {
             return query.GetResults();
         }
 
-        private readonly IItemContainer _relationships;
+        private readonly IDocumentCollection _relationships;
     }
 }
