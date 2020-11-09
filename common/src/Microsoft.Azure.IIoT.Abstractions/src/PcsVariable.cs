@@ -34,9 +34,19 @@ namespace Microsoft.Azure.IIoT {
         /// <summary> Iot hub event hub Onboarder Consumer Group </summary>
         public const string PCS_IOTHUB_EVENTHUB_CONSUMER_GROUP_ONBOARDING =
             "PCS_IOTHUB_EVENTHUB_CONSUMER_GROUP_ONBOARDING";
+<<<<<<< HEAD
         /// <summary> Cosmos db connection string </summary>
+=======
+        /// <summary> Iot hub event hub Tunnel Consumer Group </summary>
+        public const string PCS_IOTHUB_EVENTHUB_CONSUMER_GROUP_TUNNEL =
+            "PCS_IOTHUB_EVENTHUB_CONSUMER_GROUP_TUNNEL";
+        /// <summary> CosmosDB connection string </summary>
+>>>>>>> 8310870ebaff42c9ecaeae0be0c9aff9c38dbe4d
         public const string PCS_COSMOSDB_CONNSTRING =
             "PCS_COSMOSDB_CONNSTRING";
+        /// <summary> CosmosDB throughput RUs </summary>
+        public const string PCS_COSMOSDB_THROUGHPUT =
+            "PCS_COSMOSDB_THROUGHPUT";
         /// <summary> Dps connection string </summary>
         public const string PCS_DPS_CONNSTRING =
             "PCS_DPS_CONNSTRING";
@@ -295,8 +305,11 @@ namespace Microsoft.Azure.IIoT {
         /// <summary> Batch trigger size for OPC Publisher module </summary>
         public const string PCS_DEFAULT_PUBLISH_JOB_BATCH_SIZE =
             "PCS_DEFAULT_PUBLISH_JOB_BATCH_SIZE";
-        /// <summary> The maximum size of the (IoT D2C) message egress queue </summary>
-        public const string PCS_MAX_EGRESS_MESSAGE_QUEUE =
+        /// <summary> The maximum size of the (IoT D2C) message egress queue (deprecated, use em|maxegressmessagequeue instead) </summary>
+        public const string PCS_DEFAULT_PUBLISH_MAX_OUTGRESS_MESSAGES =
+            "PCS_DEFAULT_PUBLISH_MAX_OUTGRESS_MESSAGES";
+        /// <summary> The maximum size of the (IoT D2C) message egress queue</summary>
+        public const string PCS_DEFAULT_PUBLISH_MAX_EGRESS_MESSAGE_QUEUE =
             "PCS_DEFAULT_PUBLISH_MAX_EGRESS_MESSAGE_QUEUE";
         /// <summary> Messaging mode for jobs of OPC Publisher module </summary>
         public const string PCS_DEFAULT_PUBLISH_MESSAGING_MODE =
