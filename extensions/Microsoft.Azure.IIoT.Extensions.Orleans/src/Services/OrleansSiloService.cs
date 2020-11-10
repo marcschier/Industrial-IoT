@@ -30,7 +30,7 @@ namespace Microsoft.Azure.IIoT.Extensions.Orleans.Services {
         }
 
         /// <inheritdoc/>
-        public async Task StartAsync(CancellationToken ct) {
+        public Task StartAsync(CancellationToken ct) {
             try {
                 if (_host != null) {
                     throw new ResourceInvalidStateException(
@@ -39,13 +39,19 @@ namespace Microsoft.Azure.IIoT.Extensions.Orleans.Services {
                 var hostBuilder = new HostBuilder();
                 _startup.ConfigureHost(hostBuilder);
                 var host = hostBuilder
-                    .UseOrleans(builder => _startup.ConfigureSilo(builder))
+                    .UseOrleans(builder => {
+                        _startup.ConfigureSilo(builder);
+                    })
                     .ConfigureServices(services => {
-                        services.TryAddSingleton<IOrleansSiloHost>(this);
+                         services.TryAddSingleton<IOrleansSiloHost>(this);
                     })
                     .Build();
-                await host.StartAsync(ct).ConfigureAwait(false);
+
+                // Start and return
+                _cts = new CancellationTokenSource();
+                _run = Task.Run(() => host.StartAsync(_cts.Token), ct);
                 _host = host;
+                return Task.CompletedTask;
             }
             catch (Exception ex) {
                 _logger.LogError(ex, "Failed to start silo host");
@@ -59,6 +65,11 @@ namespace Microsoft.Azure.IIoT.Extensions.Orleans.Services {
                 if (_host == null) {
                     return;
                 }
+                if (_run != null) {
+                    _cts.Cancel();
+                    await _run.ConfigureAwait(false);
+                    _run = null;
+                }
                 await _host.StopAsync(ct).ConfigureAwait(false);
             }
             catch (Exception ex) {
@@ -66,9 +77,11 @@ namespace Microsoft.Azure.IIoT.Extensions.Orleans.Services {
                 throw;
             }
             finally {
-                //  await Try.Async(() => SiloHost.DisposeAsync()).ConfigureAwait(false);
                 _host?.Dispose();
                 _host = null;
+
+                _cts?.Dispose();
+                _cts = null;
             }
         }
 
@@ -79,6 +92,8 @@ namespace Microsoft.Azure.IIoT.Extensions.Orleans.Services {
 
         private readonly ILogger _logger;
         private readonly TStartup _startup;
+        private Task _run;
         private IHost _host;
+        private CancellationTokenSource _cts;
     }
 }

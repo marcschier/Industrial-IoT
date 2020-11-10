@@ -38,12 +38,11 @@ namespace Microsoft.Azure.IIoT.Extensions.Orleans.Services {
 
         /// <inheritdoc/>
         public async Task StartAsync(CancellationToken ct) {
+            if (Client != null) {
+                throw new ResourceInvalidStateException(
+                    "Client host already started");
+            }
             try {
-                if (Client != null) {
-                    throw new ResourceInvalidStateException(
-                        "Client host already started");
-                }
-
                 var clientBuilder = new ClientBuilder();
                 _startup.ConfigureClient(clientBuilder);
                 var client = clientBuilder
@@ -62,6 +61,9 @@ namespace Microsoft.Azure.IIoT.Extensions.Orleans.Services {
 
         /// <inheritdoc/>
         public async Task StopAsync(CancellationToken ct) {
+            if (Client == null) {
+                return;
+            }
             try {
                 await Client.Close().ConfigureAwait(false);
             }

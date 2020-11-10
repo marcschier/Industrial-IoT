@@ -49,7 +49,7 @@ namespace Microsoft.Azure.IIoT.Extensions.Orleans.Clients {
 
                 //
                 // Add test cluster client - orleans bus module will then
-                // not register the generic client, however if run with 
+                // not register the generic client, however if run with
                 // silo host it will.
                 //
                 if (OrleansClusterFixture.Client != null) {

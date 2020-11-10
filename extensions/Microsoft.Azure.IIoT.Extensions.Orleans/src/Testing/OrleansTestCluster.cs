@@ -15,7 +15,7 @@ namespace Microsoft.Azure.IIoT.Extensions.Orleans.Testing {
     using global::Orleans.TestingHost;
 
     /// <summary>
-    /// Test cluster 
+    /// Test cluster
     /// </summary>
     public sealed class OrleansTestCluster<TStartup> : IOrleansClientHost, IOrleansGrainClient,
         IOrleansTestCluster, IHostedService, IDisposable where TStartup : OrleansStartup, new() {

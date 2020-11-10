@@ -1,0 +1,1774 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Anomaly Detector Cognitive Service API",
+    "description": "The Anomaly Detector Service detects anomalies automatically in time series data. It supports two functionalities, one is for detecting the whole series with model trained by the time series, another is detecting last point with model trained by points before. By using this service, developers can discover incidents and establish a logic flow for root cause analysis.",
+    "version": "v1"
+  },
+  "paths": {
+    "/anomalydetector/v1.0/timeseries/last/detect": {
+      "post": {
+        "tags": [
+          "AnomalyDetector"
+        ],
+        "summary": "Detects anomaly in the time series given the provided model.",
+        "consumes": [
+          "application/json-patch+json",
+          "application/json",
+          "text/json",
+          "application/*+json"
+        ],
+        "produces": [
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "The time series to analyze.",
+            "schema": {
+              "$ref": "#/definitions/AnomalyDetectRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/LastDetectResponse"
+            },
+            "examples": {
+              "application/json": {
+  "period": 12,
+  "suggestedWindow": 4,
+  "expectedValue": 809.23280846597038,
+  "upperMargin": 40.461640423298519,
+  "lowerMargin": 40.461640423298519,
+  "isAnomaly": false,
+  "isNegativeAnomaly": false,
+  "isPositiveAnomaly": false
+},
+              "text/json": {
+  "period": 12,
+  "suggestedWindow": 4,
+  "expectedValue": 809.23280846597038,
+  "upperMargin": 40.461640423298519,
+  "lowerMargin": 40.461640423298519,
+  "isAnomaly": false,
+  "isNegativeAnomaly": false,
+  "isPositiveAnomaly": false
+}
+            }
+          },
+          "default": {
+            "description": "Response entity accompanying non-successful responses containing additional details about the error.",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/anomalydetector/v1.0/timeseries/entire/detect": {
+      "post": {
+        "tags": [
+          "AnomalyDetector"
+        ],
+        "summary": "Detects anomaly in the time series given the provided model.",
+        "consumes": [
+          "application/json-patch+json",
+          "application/json",
+          "text/json",
+          "application/*+json"
+        ],
+        "produces": [
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "The time series to analyze.",
+            "schema": {
+              "$ref": "#/definitions/AnomalyDetectRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/EntireDetectResponse"
+            },
+            "examples": {
+              "application/json": {
+  "period": 12,
+  "expectedValues": [
+    827.79409082439679,
+    798.91337746719273,
+    888.60584318071892,
+    900.5606407986661,
+    962.83894263783043,
+    933.25916063069542,
+    891.07841047996658,
+    856.17816013636968,
+    809.89872279089411,
+    807.375129007505,
+    764.31966824485175,
+    803.933498594564,
+    823.59006208830579,
+    794.09056413342876,
+    883.164245249282,
+    894.84190006909535,
+    956.84305911012575,
+    927.62850551901136,
+    885.812983784303,
+    851.6424797402517,
+    806.0927886943216,
+    804.68268153120289,
+    762.74070738882,
+    804.0251702513732,
+    825.35236625795585,
+    798.04041887249764,
+    889.30165055776979,
+    902.4226124345937,
+    965.867078532635,
+    937.32004957366951,
+    896.17205247111019,
+    862.00873684136559,
+    816.46623420974231,
+    814.42977455247092,
+    771.8614479159354,
+    811.859271346729,
+    831.89982792155206,
+    802.947544797165,
+    892.56844074350829,
+    904.54882145338092,
+    966.85270638447071,
+    937.31683910030426,
+    895.180003672544,
+    860.36495963566347,
+    814.17072859690427,
+    811.9054862686213,
+    769.10837696107421,
+    809.23280846597038
+  ],
+  "upperMargins": [
+    41.389704541219835,
+    39.945668873359637,
+    44.430292159035943,
+    45.028032039933308,
+    48.14194713189152,
+    46.662958031534771,
+    44.553920523998329,
+    42.808908006818484,
+    40.494936139544706,
+    40.368756450375251,
+    38.215983412242586,
+    40.196674929728196,
+    41.179503104415289,
+    39.704528206671441,
+    44.1582122624641,
+    44.742095003454772,
+    47.842152955506293,
+    46.381425275950569,
+    44.290649189215145,
+    42.582123987012579,
+    40.30463943471608,
+    40.234134076560146,
+    38.137035369441,
+    40.201258512568664,
+    41.267618312897795,
+    39.902020943624883,
+    44.465082527888491,
+    45.121130621729684,
+    48.293353926631752,
+    46.866002478683477,
+    44.808602623555508,
+    43.100436842068284,
+    40.823311710487111,
+    40.721488727623544,
+    38.593072395796774,
+    40.592963567336447,
+    41.5949913960776,
+    40.147377239858251,
+    44.628422037175412,
+    45.227441072669045,
+    48.34263531922354,
+    46.865841955015213,
+    44.759000183627194,
+    43.018247981783169,
+    40.708536429845211,
+    40.595274313431062,
+    38.455418848053711,
+    40.461640423298519
+  ],
+  "lowerMargins": [
+    41.389704541219835,
+    39.945668873359637,
+    44.430292159035943,
+    45.028032039933308,
+    48.14194713189152,
+    46.662958031534771,
+    44.553920523998329,
+    42.808908006818484,
+    40.494936139544706,
+    40.368756450375251,
+    38.215983412242586,
+    40.196674929728196,
+    41.179503104415289,
+    39.704528206671441,
+    44.1582122624641,
+    44.742095003454772,
+    47.842152955506293,
+    46.381425275950569,
+    44.290649189215145,
+    42.582123987012579,
+    40.30463943471608,
+    40.234134076560146,
+    38.137035369441,
+    40.201258512568664,
+    41.267618312897795,
+    39.902020943624883,
+    44.465082527888491,
+    45.121130621729684,
+    48.293353926631752,
+    46.866002478683477,
+    44.808602623555508,
+    43.100436842068284,
+    40.823311710487111,
+    40.721488727623544,
+    38.593072395796774,
+    40.592963567336447,
+    41.5949913960776,
+    40.147377239858251,
+    44.628422037175412,
+    45.227441072669045,
+    48.34263531922354,
+    46.865841955015213,
+    44.759000183627194,
+    43.018247981783169,
+    40.708536429845211,
+    40.595274313431062,
+    38.455418848053711,
+    40.461640423298519
+  ],
+  "isAnomaly": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    true,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+  ],
+  "isNegativeAnomaly": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+  ],
+  "isPositiveAnomaly": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    true,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+  ]
+},
+              "text/json": {
+  "period": 12,
+  "expectedValues": [
+    827.79409082439679,
+    798.91337746719273,
+    888.60584318071892,
+    900.5606407986661,
+    962.83894263783043,
+    933.25916063069542,
+    891.07841047996658,
+    856.17816013636968,
+    809.89872279089411,
+    807.375129007505,
+    764.31966824485175,
+    803.933498594564,
+    823.59006208830579,
+    794.09056413342876,
+    883.164245249282,
+    894.84190006909535,
+    956.84305911012575,
+    927.62850551901136,
+    885.812983784303,
+    851.6424797402517,
+    806.0927886943216,
+    804.68268153120289,
+    762.74070738882,
+    804.0251702513732,
+    825.35236625795585,
+    798.04041887249764,
+    889.30165055776979,
+    902.4226124345937,
+    965.867078532635,
+    937.32004957366951,
+    896.17205247111019,
+    862.00873684136559,
+    816.46623420974231,
+    814.42977455247092,
+    771.8614479159354,
+    811.859271346729,
+    831.89982792155206,
+    802.947544797165,
+    892.56844074350829,
+    904.54882145338092,
+    966.85270638447071,
+    937.31683910030426,
+    895.180003672544,
+    860.36495963566347,
+    814.17072859690427,
+    811.9054862686213,
+    769.10837696107421,
+    809.23280846597038
+  ],
+  "upperMargins": [
+    41.389704541219835,
+    39.945668873359637,
+    44.430292159035943,
+    45.028032039933308,
+    48.14194713189152,
+    46.662958031534771,
+    44.553920523998329,
+    42.808908006818484,
+    40.494936139544706,
+    40.368756450375251,
+    38.215983412242586,
+    40.196674929728196,
+    41.179503104415289,
+    39.704528206671441,
+    44.1582122624641,
+    44.742095003454772,
+    47.842152955506293,
+    46.381425275950569,
+    44.290649189215145,
+    42.582123987012579,
+    40.30463943471608,
+    40.234134076560146,
+    38.137035369441,
+    40.201258512568664,
+    41.267618312897795,
+    39.902020943624883,
+    44.465082527888491,
+    45.121130621729684,
+    48.293353926631752,
+    46.866002478683477,
+    44.808602623555508,
+    43.100436842068284,
+    40.823311710487111,
+    40.721488727623544,
+    38.593072395796774,
+    40.592963567336447,
+    41.5949913960776,
+    40.147377239858251,
+    44.628422037175412,
+    45.227441072669045,
+    48.34263531922354,
+    46.865841955015213,
+    44.759000183627194,
+    43.018247981783169,
+    40.708536429845211,
+    40.595274313431062,
+    38.455418848053711,
+    40.461640423298519
+  ],
+  "lowerMargins": [
+    41.389704541219835,
+    39.945668873359637,
+    44.430292159035943,
+    45.028032039933308,
+    48.14194713189152,
+    46.662958031534771,
+    44.553920523998329,
+    42.808908006818484,
+    40.494936139544706,
+    40.368756450375251,
+    38.215983412242586,
+    40.196674929728196,
+    41.179503104415289,
+    39.704528206671441,
+    44.1582122624641,
+    44.742095003454772,
+    47.842152955506293,
+    46.381425275950569,
+    44.290649189215145,
+    42.582123987012579,
+    40.30463943471608,
+    40.234134076560146,
+    38.137035369441,
+    40.201258512568664,
+    41.267618312897795,
+    39.902020943624883,
+    44.465082527888491,
+    45.121130621729684,
+    48.293353926631752,
+    46.866002478683477,
+    44.808602623555508,
+    43.100436842068284,
+    40.823311710487111,
+    40.721488727623544,
+    38.593072395796774,
+    40.592963567336447,
+    41.5949913960776,
+    40.147377239858251,
+    44.628422037175412,
+    45.227441072669045,
+    48.34263531922354,
+    46.865841955015213,
+    44.759000183627194,
+    43.018247981783169,
+    40.708536429845211,
+    40.595274313431062,
+    38.455418848053711,
+    40.461640423298519
+  ],
+  "isAnomaly": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    true,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+  ],
+  "isNegativeAnomaly": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+  ],
+  "isPositiveAnomaly": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    true,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+  ]
+}
+            }
+          },
+          "default": {
+            "description": "Response entity accompanying non-successful responses containing additional details about the error.",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/anomalydetector/v1.0/timeseries/changepoint/detect": {
+      "post": {
+        "tags": [
+          "AnomalyDetector"
+        ],
+        "summary": "Detects trend change point in the time series given the provided model.",
+        "consumes": [
+          "application/json-patch+json",
+          "application/json",
+          "text/json",
+          "application/*+json"
+        ],
+        "produces": [
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "The time series to analyze.",
+            "schema": {
+              "$ref": "#/definitions/ChangePointDetectRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/ChangePointDetectResponse"
+            },
+            "examples": {
+              "application/json": {
+  "period": 0,
+  "isChangePoint": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    true,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    true,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    true,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+  ],
+  "confidenceScores": [
+    0.0,
+    0.0,
+    9.806188E-05,
+    0.00182711962,
+    0.002402497,
+    0.000669884146,
+    0.005241021,
+    0.005608372,
+    0.000258296728,
+    0.00286419573,
+    0.000208627156,
+    0.00287259673,
+    0.00382543658,
+    0.0037871087,
+    0.00255169277,
+    0.00279558147,
+    0.004242682,
+    0.00016682058,
+    0.00335006649,
+    0.00047369636,
+    0.00109094277,
+    0.00441697566,
+    0.328113943,
+    3.3969062E-15,
+    0.00144395255,
+    0.00263568,
+    0.000352293282,
+    0.000342562533,
+    0.00425280351,
+    0.00267236657,
+    0.0120365834,
+    0.000579779153,
+    0.00297315978,
+    0.005637712,
+    0.00670294231,
+    0.00656033168,
+    0.00237133633,
+    0.283126116,
+    3.3969062E-15,
+    6.72869355E-05,
+    0.007474321,
+    0.0007402855,
+    0.00214277161,
+    0.00104567222,
+    0.0006710837,
+    0.004880561,
+    0.007855788,
+    0.000156175054,
+    0.2230962,
+    3.3969062E-15,
+    0.000242552123,
+    0.116684005,
+    6.79381241E-15,
+    1.417167E-05,
+    0.0019566936,
+    0.00638709962,
+    0.00523404125,
+    0.00272334623,
+    0.0238658339,
+    0.01847726
+  ]
+},
+              "text/json": {
+  "period": 0,
+  "isChangePoint": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    true,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    true,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    true,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+  ],
+  "confidenceScores": [
+    0.0,
+    0.0,
+    9.806188E-05,
+    0.00182711962,
+    0.002402497,
+    0.000669884146,
+    0.005241021,
+    0.005608372,
+    0.000258296728,
+    0.00286419573,
+    0.000208627156,
+    0.00287259673,
+    0.00382543658,
+    0.0037871087,
+    0.00255169277,
+    0.00279558147,
+    0.004242682,
+    0.00016682058,
+    0.00335006649,
+    0.00047369636,
+    0.00109094277,
+    0.00441697566,
+    0.328113943,
+    3.3969062E-15,
+    0.00144395255,
+    0.00263568,
+    0.000352293282,
+    0.000342562533,
+    0.00425280351,
+    0.00267236657,
+    0.0120365834,
+    0.000579779153,
+    0.00297315978,
+    0.005637712,
+    0.00670294231,
+    0.00656033168,
+    0.00237133633,
+    0.283126116,
+    3.3969062E-15,
+    6.72869355E-05,
+    0.007474321,
+    0.0007402855,
+    0.00214277161,
+    0.00104567222,
+    0.0006710837,
+    0.004880561,
+    0.007855788,
+    0.000156175054,
+    0.2230962,
+    3.3969062E-15,
+    0.000242552123,
+    0.116684005,
+    6.79381241E-15,
+    1.417167E-05,
+    0.0019566936,
+    0.00638709962,
+    0.00523404125,
+    0.00272334623,
+    0.0238658339,
+    0.01847726
+  ]
+}
+            }
+          },
+          "default": {
+            "description": "Response entity accompanying non-successful responses containing additional details about the error.",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/ready": {
+      "get": {
+        "tags": [
+          "Ready"
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response results in a ready response (200)."
+          },
+          "503": {
+            "description": "A failed response results in an unready response (503)."
+          }
+        }
+      }
+    },
+    "/status": {
+      "get": {
+        "tags": [
+          "Status"
+        ],
+        "produces": [
+          "application/json",
+          "text/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/ServiceStatus"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "TimeSeriesPoint": {
+      "type": "object",
+      "properties": {
+        "Timestamp": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "Value": {
+          "format": "double",
+          "type": "number"
+        }
+      }
+    },
+    "Granularity": {
+      "format": "int32",
+      "description": "Defines values for Granularity.",
+      "enum": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "type": "integer"
+    },
+    "AnomalyDetectRequest": {
+      "type": "object",
+      "properties": {
+        "Series": {
+          "description": "Gets or sets time series data points. Points should be sorted by\r\ntimestamp in ascending order to match the anomaly detection result.\r\nIf the data is not sorted correctly or there is duplicated\r\ntimestamp, the API will not work. In such case, an error message\r\nwill be returned.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/TimeSeriesPoint"
+          }
+        },
+        "Granularity": {
+          "$ref": "#/definitions/Granularity"
+        },
+        "CustomInterval": {
+          "format": "int32",
+          "description": "Custom interval is used to set non-standard time intervals, for example, if the series is 5 minutes, a model can\r\nbe defined as having {Granularity=minutely} and {CustomInterval=5}.",
+          "type": "integer"
+        },
+        "Period": {
+          "format": "int32",
+          "description": "Gets or sets optional argument, periodic value of a time series. If\r\nthe value is null or does not present, the API will determine the\r\nperiod automatically.",
+          "type": "integer"
+        },
+        "MaxAnomalyRatio": {
+          "format": "double",
+          "description": "Gets or sets optional argument, advanced model parameter, max\r\nanomaly ratio in a time series.",
+          "type": "number"
+        },
+        "Sensitivity": {
+          "format": "int32",
+          "description": "Gets or sets optional argument, advanced model parameter, between\r\n0-99, the lower the value is, the larger the margin value will be\r\nwhich means less anomalies will be accepted.",
+          "type": "integer"
+        }
+      },
+      "example": {
+  "series": [
+    {
+      "timestamp": "1972-01-01T00:00:00Z",
+      "value": 826.0
+    },
+    {
+      "timestamp": "1972-02-01T00:00:00Z",
+      "value": 799.0
+    },
+    {
+      "timestamp": "1972-03-01T00:00:00Z",
+      "value": 890.0
+    },
+    {
+      "timestamp": "1972-04-01T00:00:00Z",
+      "value": 900.0
+    },
+    {
+      "timestamp": "1972-05-01T00:00:00Z",
+      "value": 961.0
+    },
+    {
+      "timestamp": "1972-06-01T00:00:00Z",
+      "value": 935.0
+    },
+    {
+      "timestamp": "1972-07-01T00:00:00Z",
+      "value": 894.0
+    },
+    {
+      "timestamp": "1972-08-01T00:00:00Z",
+      "value": 855.0
+    },
+    {
+      "timestamp": "1972-09-01T00:00:00Z",
+      "value": 809.0
+    },
+    {
+      "timestamp": "1972-10-01T00:00:00Z",
+      "value": 810.0
+    },
+    {
+      "timestamp": "1972-11-01T00:00:00Z",
+      "value": 766.0
+    },
+    {
+      "timestamp": "1972-12-01T00:00:00Z",
+      "value": 805.0
+    },
+    {
+      "timestamp": "1973-01-01T00:00:00Z",
+      "value": 821.0
+    },
+    {
+      "timestamp": "1973-02-01T00:00:00Z",
+      "value": 773.0
+    },
+    {
+      "timestamp": "1973-03-01T00:00:00Z",
+      "value": 883.0
+    },
+    {
+      "timestamp": "1973-04-01T00:00:00Z",
+      "value": 898.0
+    },
+    {
+      "timestamp": "1973-05-01T00:00:00Z",
+      "value": 957.0
+    },
+    {
+      "timestamp": "1973-06-01T00:00:00Z",
+      "value": 924.0
+    },
+    {
+      "timestamp": "1973-07-01T00:00:00Z",
+      "value": 881.0
+    },
+    {
+      "timestamp": "1973-08-01T00:00:00Z",
+      "value": 837.0
+    },
+    {
+      "timestamp": "1973-09-01T00:00:00Z",
+      "value": 784.0
+    },
+    {
+      "timestamp": "1973-10-01T00:00:00Z",
+      "value": 791.0
+    },
+    {
+      "timestamp": "1973-11-01T00:00:00Z",
+      "value": 760.0
+    },
+    {
+      "timestamp": "1973-12-01T00:00:00Z",
+      "value": 802.0
+    },
+    {
+      "timestamp": "1974-01-01T00:00:00Z",
+      "value": 828.0
+    },
+    {
+      "timestamp": "1974-02-01T00:00:00Z",
+      "value": 1030.0
+    },
+    {
+      "timestamp": "1974-03-01T00:00:00Z",
+      "value": 889.0
+    },
+    {
+      "timestamp": "1974-04-01T00:00:00Z",
+      "value": 902.0
+    },
+    {
+      "timestamp": "1974-05-01T00:00:00Z",
+      "value": 969.0
+    },
+    {
+      "timestamp": "1974-06-01T00:00:00Z",
+      "value": 947.0
+    },
+    {
+      "timestamp": "1974-07-01T00:00:00Z",
+      "value": 908.0
+    },
+    {
+      "timestamp": "1974-08-01T00:00:00Z",
+      "value": 867.0
+    },
+    {
+      "timestamp": "1974-09-01T00:00:00Z",
+      "value": 815.0
+    },
+    {
+      "timestamp": "1974-10-01T00:00:00Z",
+      "value": 812.0
+    },
+    {
+      "timestamp": "1974-11-01T00:00:00Z",
+      "value": 773.0
+    },
+    {
+      "timestamp": "1974-12-01T00:00:00Z",
+      "value": 813.0
+    },
+    {
+      "timestamp": "1975-01-01T00:00:00Z",
+      "value": 834.0
+    },
+    {
+      "timestamp": "1975-02-01T00:00:00Z",
+      "value": 782.0
+    },
+    {
+      "timestamp": "1975-03-01T00:00:00Z",
+      "value": 892.0
+    },
+    {
+      "timestamp": "1975-04-01T00:00:00Z",
+      "value": 903.0
+    },
+    {
+      "timestamp": "1975-05-01T00:00:00Z",
+      "value": 966.0
+    },
+    {
+      "timestamp": "1975-06-01T00:00:00Z",
+      "value": 937.0
+    },
+    {
+      "timestamp": "1975-07-01T00:00:00Z",
+      "value": 896.0
+    },
+    {
+      "timestamp": "1975-08-01T00:00:00Z",
+      "value": 858.0
+    },
+    {
+      "timestamp": "1975-09-01T00:00:00Z",
+      "value": 817.0
+    },
+    {
+      "timestamp": "1975-10-01T00:00:00Z",
+      "value": 827.0
+    },
+    {
+      "timestamp": "1975-11-01T00:00:00Z",
+      "value": 797.0
+    },
+    {
+      "timestamp": "1975-12-01T00:00:00Z",
+      "value": 843.0
+    }
+  ],
+  "granularity": "monthly",
+  "maxAnomalyRatio": 0.25,
+  "sensitivity": 95
+}
+    },
+    "LastDetectResponse": {
+      "type": "object",
+      "properties": {
+        "Period": {
+          "format": "int32",
+          "description": "Gets or sets frequency extracted from the series, zero means no\r\nrecurrent pattern has been found.",
+          "type": "integer"
+        },
+        "SuggestedWindow": {
+          "format": "int32",
+          "description": "Gets or sets suggested input series points needed for detecting the\r\nlatest point.",
+          "type": "integer"
+        },
+        "ExpectedValue": {
+          "format": "double",
+          "description": "Gets or sets expected value of the latest point.",
+          "type": "number"
+        },
+        "UpperMargin": {
+          "format": "double",
+          "description": "Gets or sets upper margin of the latest point. UpperMargin is used\r\nto calculate upperBoundary, which equals to expectedValue + (100 -\r\nmarginScale)*upperMargin. If the value of latest point is between\r\nupperBoundary and lowerBoundary, it should be treated as normal\r\nvalue. By adjusting marginScale value, anomaly status of latest\r\npoint can be changed.",
+          "type": "number"
+        },
+        "LowerMargin": {
+          "format": "double",
+          "description": "Gets or sets lower margin of the latest point. LowerMargin is used\r\nto calculate lowerBoundary, which equals to expectedValue - (100 -\r\nmarginScale)*lowerMargin.",
+          "type": "number"
+        },
+        "IsAnomaly": {
+          "description": "Gets or sets anomaly status of the latest point, true means the\r\nlatest point is an anomaly either in negative direction or positive\r\ndirection.",
+          "type": "boolean"
+        },
+        "IsNegativeAnomaly": {
+          "description": "Gets or sets anomaly status in negative direction of the latest\r\npoint. True means the latest point is an anomaly and its real value\r\nis smaller than the expected one.",
+          "type": "boolean"
+        },
+        "IsPositiveAnomaly": {
+          "description": "Gets or sets anomaly status in positive direction of the latest\r\npoint. True means the latest point is an anomaly and its real value\r\nis larger than the expected one.",
+          "type": "boolean"
+        }
+      }
+    },
+    "InnerError": {
+      "type": "object",
+      "properties": {
+        "RequestId": {
+          "type": "string"
+        }
+      }
+    },
+    "ErrorInformation": {
+      "type": "object",
+      "properties": {
+        "Code": {
+          "type": "string"
+        },
+        "InnerError": {
+          "$ref": "#/definitions/InnerError"
+        },
+        "Message": {
+          "type": "string"
+        }
+      }
+    },
+    "ErrorResponse": {
+      "type": "object",
+      "properties": {
+        "Error": {
+          "$ref": "#/definitions/ErrorInformation"
+        }
+      }
+    },
+    "EntireDetectResponse": {
+      "type": "object",
+      "properties": {
+        "Period": {
+          "format": "int32",
+          "description": "Gets or sets frequency extracted from the series, zero means no\r\nrecurrent pattern has been found.",
+          "type": "integer"
+        },
+        "ExpectedValues": {
+          "description": "Gets or sets expectedValues contain expected value for each input\r\npoint. The index of the array is consistent with the input series.",
+          "type": "array",
+          "items": {
+            "format": "double",
+            "type": "number"
+          }
+        },
+        "UpperMargins": {
+          "description": "Gets or sets upperMargins contain upper margin of each input point.\r\nUpperMargin is used to calculate upperBoundary, which equals to\r\nexpectedValue + (100 - marginScale)*upperMargin. Anomalies in\r\nresponse can be filtered by upperBoundary and lowerBoundary. By\r\nadjusting marginScale value, less significant anomalies can be\r\nfiltered in client side. The index of the array is consistent with\r\nthe input series.",
+          "type": "array",
+          "items": {
+            "format": "double",
+            "type": "number"
+          }
+        },
+        "LowerMargins": {
+          "description": "Gets or sets lowerMargins contain lower margin of each input point.\r\nLowerMargin is used to calculate lowerBoundary, which equals to\r\nexpectedValue - (100 - marginScale)*lowerMargin. Points between the\r\nboundary can be marked as normal ones in client side. The index of\r\nthe array is consistent with the input series.",
+          "type": "array",
+          "items": {
+            "format": "double",
+            "type": "number"
+          }
+        },
+        "IsAnomaly": {
+          "description": "Gets or sets isAnomaly contains anomaly properties for each input\r\npoint. True means an anomaly either negative or positive has been\r\ndetected. The index of the array is consistent with the input\r\nseries.",
+          "type": "array",
+          "items": {
+            "type": "boolean"
+          }
+        },
+        "IsNegativeAnomaly": {
+          "description": "Gets or sets isNegativeAnomaly contains anomaly status in negative\r\ndirection for each input point. True means a negative anomaly has\r\nbeen detected. A negative anomaly means the point is detected as an\r\nanomaly and its real value is smaller than the expected one. The\r\nindex of the array is consistent with the input series.",
+          "type": "array",
+          "items": {
+            "type": "boolean"
+          }
+        },
+        "IsPositiveAnomaly": {
+          "description": "Gets or sets isPositiveAnomaly contain anomaly status in positive\r\ndirection for each input point. True means a positive anomaly has\r\nbeen detected. A positive anomaly means the point is detected as an\r\nanomaly and its real value is larger than the expected one. The\r\nindex of the array is consistent with the input series.",
+          "type": "array",
+          "items": {
+            "type": "boolean"
+          }
+        }
+      }
+    },
+    "ChangePointDetectRequest": {
+      "type": "object",
+      "properties": {
+        "Series": {
+          "description": "Time series data points. Points should be sorted by timestamp in\r\nascending order to match the change point detection result.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/TimeSeriesPoint"
+          }
+        },
+        "Granularity": {
+          "$ref": "#/definitions/Granularity"
+        },
+        "CustomInterval": {
+          "format": "int32",
+          "description": "Custom interval is used to set non-standard time intervals, for example, if the series is 5 minutes, a model can\r\nbe defined as having {Granularity=minutely} and {CustomInterval=5}.",
+          "type": "integer"
+        },
+        "Period": {
+          "format": "int32",
+          "description": "Optional argument, periodic value of a time series.\r\n           If the value is null or does not present,\r\n           the API will determine the period automatically.",
+          "type": "integer"
+        },
+        "StableTrendWindow": {
+          "format": "int32",
+          "description": "Optional argument, advanced model parameter, a default stableTrendWindow will be used in detection.",
+          "type": "integer"
+        },
+        "Threshold": {
+          "format": "float",
+          "description": "Optional argument, advanced model parameter, between 0.0-1.0, the lower the value is,\r\n           the larger the trend error will be which means less change point will be accepted.",
+          "type": "number"
+        }
+      },
+      "example": {
+  "series": [
+    {
+      "timestamp": "2019-01-01T00:00:00Z",
+      "value": 116168307.0
+    },
+    {
+      "timestamp": "2019-01-02T00:00:00Z",
+      "value": 116195090.0
+    },
+    {
+      "timestamp": "2019-01-03T00:00:00Z",
+      "value": 116219292.0
+    },
+    {
+      "timestamp": "2019-01-04T00:00:00Z",
+      "value": 116218498.0
+    },
+    {
+      "timestamp": "2019-01-05T00:00:00Z",
+      "value": 116217643.0
+    },
+    {
+      "timestamp": "2019-01-06T00:00:00Z",
+      "value": 116234219.0
+    },
+    {
+      "timestamp": "2019-01-07T00:00:00Z",
+      "value": 116291400.0
+    },
+    {
+      "timestamp": "2019-01-08T00:00:00Z",
+      "value": 116326509.0
+    },
+    {
+      "timestamp": "2019-01-09T00:00:00Z",
+      "value": 116323167.0
+    },
+    {
+      "timestamp": "2019-01-10T00:00:00Z",
+      "value": 116360790.0
+    },
+    {
+      "timestamp": "2019-01-11T00:00:00Z",
+      "value": 116367491.0
+    },
+    {
+      "timestamp": "2019-01-12T00:00:00Z",
+      "value": 116371082.0
+    },
+    {
+      "timestamp": "2019-01-13T00:00:00Z",
+      "value": 116380405.0
+    },
+    {
+      "timestamp": "2019-01-14T00:00:00Z",
+      "value": 116393919.0
+    },
+    {
+      "timestamp": "2019-01-15T00:00:00Z",
+      "value": 116443750.0
+    },
+    {
+      "timestamp": "2019-01-16T00:00:00Z",
+      "value": 116467267.0
+    },
+    {
+      "timestamp": "2019-01-17T00:00:00Z",
+      "value": 116497910.0
+    },
+    {
+      "timestamp": "2019-01-18T00:00:00Z",
+      "value": 116499861.0
+    },
+    {
+      "timestamp": "2019-01-19T00:00:00Z",
+      "value": 116500538.0
+    },
+    {
+      "timestamp": "2019-01-20T00:00:00Z",
+      "value": 116532052.0
+    },
+    {
+      "timestamp": "2019-01-21T00:00:00Z",
+      "value": 116559282.0
+    },
+    {
+      "timestamp": "2019-01-22T00:00:00Z",
+      "value": 116597249.0
+    },
+    {
+      "timestamp": "2019-01-23T00:00:00Z",
+      "value": 118036892.0
+    },
+    {
+      "timestamp": "2019-01-24T00:00:00Z",
+      "value": 118090207.0
+    },
+    {
+      "timestamp": "2019-01-25T00:00:00Z",
+      "value": 118105517.0
+    },
+    {
+      "timestamp": "2019-01-26T00:00:00Z",
+      "value": 118107624.0
+    },
+    {
+      "timestamp": "2019-01-27T00:00:00Z",
+      "value": 118138073.0
+    },
+    {
+      "timestamp": "2019-01-28T00:00:00Z",
+      "value": 118164752.0
+    },
+    {
+      "timestamp": "2019-01-29T00:00:00Z",
+      "value": 118150854.0
+    },
+    {
+      "timestamp": "2019-01-30T00:00:00Z",
+      "value": 118168111.0
+    },
+    {
+      "timestamp": "2019-01-31T00:00:00Z",
+      "value": 118281715.0
+    },
+    {
+      "timestamp": "2019-02-01T00:00:00Z",
+      "value": 118255480.0
+    },
+    {
+      "timestamp": "2019-02-02T00:00:00Z",
+      "value": 118256700.0
+    },
+    {
+      "timestamp": "2019-02-03T00:00:00Z",
+      "value": 118256692.0
+    },
+    {
+      "timestamp": "2019-02-04T00:00:00Z",
+      "value": 118261555.0
+    },
+    {
+      "timestamp": "2019-02-05T00:00:00Z",
+      "value": 118271556.0
+    },
+    {
+      "timestamp": "2019-02-06T00:00:00Z",
+      "value": 118304847.0
+    },
+    {
+      "timestamp": "2019-02-07T00:00:00Z",
+      "value": 119575122.0
+    },
+    {
+      "timestamp": "2019-02-08T00:00:00Z",
+      "value": 119575288.0
+    },
+    {
+      "timestamp": "2019-02-09T00:00:00Z",
+      "value": 119577225.0
+    },
+    {
+      "timestamp": "2019-02-10T00:00:00Z",
+      "value": 119687273.0
+    },
+    {
+      "timestamp": "2019-02-11T00:00:00Z",
+      "value": 119696443.0
+    },
+    {
+      "timestamp": "2019-02-12T00:00:00Z",
+      "value": 119708919.0
+    },
+    {
+      "timestamp": "2019-02-13T00:00:00Z",
+      "value": 119742399.0
+    },
+    {
+      "timestamp": "2019-02-14T00:00:00Z",
+      "value": 119783758.0
+    },
+    {
+      "timestamp": "2019-02-15T00:00:00Z",
+      "value": 119778552.0
+    },
+    {
+      "timestamp": "2019-02-16T00:00:00Z",
+      "value": 119777165.0
+    },
+    {
+      "timestamp": "2019-02-17T00:00:00Z",
+      "value": 119839611.0
+    },
+    {
+      "timestamp": "2019-02-18T00:00:00Z",
+      "value": 118478044.0
+    },
+    {
+      "timestamp": "2019-02-19T00:00:00Z",
+      "value": 118510659.0
+    },
+    {
+      "timestamp": "2019-02-20T00:00:00Z",
+      "value": 118536890.0
+    },
+    {
+      "timestamp": "2019-02-21T00:00:00Z",
+      "value": 120377808.0
+    },
+    {
+      "timestamp": "2019-02-22T00:00:00Z",
+      "value": 120379137.0
+    },
+    {
+      "timestamp": "2019-02-23T00:00:00Z",
+      "value": 120380093.0
+    },
+    {
+      "timestamp": "2019-02-24T00:00:00Z",
+      "value": 120409909.0
+    },
+    {
+      "timestamp": "2019-02-25T00:00:00Z",
+      "value": 120481097.0
+    },
+    {
+      "timestamp": "2019-02-26T00:00:00Z",
+      "value": 120525030.0
+    },
+    {
+      "timestamp": "2019-02-27T00:00:00Z",
+      "value": 120554993.0
+    },
+    {
+      "timestamp": "2019-02-28T00:00:00Z",
+      "value": 120396587.0
+    },
+    {
+      "timestamp": "2019-03-01T00:00:00Z",
+      "value": 120389070.0
+    }
+  ],
+  "granularity": "daily",
+  "stableTrendWindow": 5,
+  "threshold": 0.9
+}
+    },
+    "ChangePointDetectResponse": {
+      "type": "object",
+      "properties": {
+        "Period": {
+          "format": "int32",
+          "description": "Frequency extracted from the series, zero means no recurrent pattern has been found.",
+          "type": "integer"
+        },
+        "IsChangePoint": {
+          "description": "isChangePoint contains change point properties for each input point.\r\n           True means an anomaly either negative or positive has been detected.\r\n           The index of the array is consistent with the input series.",
+          "type": "array",
+          "items": {
+            "type": "boolean"
+          }
+        },
+        "ConfidenceScores": {
+          "description": "the change point confidence of each point.",
+          "type": "array",
+          "items": {
+            "format": "float",
+            "type": "number"
+          }
+        }
+      }
+    },
+    "ServiceStatus": {
+      "type": "object",
+      "properties": {
+        "Service": {
+          "type": "string"
+        },
+        "ApiStatus": {
+          "type": "string"
+        },
+        "ApiStatusMessage": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "AnomalyDetector",
+      "description": "Anomaly API for detecting anomalies in time series data."
+    }
+  ]
+}

@@ -56,6 +56,10 @@ namespace Microsoft.Azure.IIoT.Extensions.Orleans.Services {
             Configure(builder);
         }
 
+        /// <inheritdoc/>
+        protected override void Configure(ILoggingBuilder logging) {
+        }
+
         private readonly ILifetimeScope _scope;
         private readonly IInjector _injector;
         private readonly OrleansSiloService<OrleansSiloHost> _host;

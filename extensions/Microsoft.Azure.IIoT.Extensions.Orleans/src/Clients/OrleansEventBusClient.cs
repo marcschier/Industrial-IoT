@@ -29,7 +29,7 @@ namespace Microsoft.Azure.IIoT.Extensions.Orleans.Clients {
         /// <param name="options"></param>
         /// <param name="logger"></param>
         public OrleansEventBusClient(IOrleansGrainClient client, IJsonSerializer serializer,
-            ITaskProcessor processor, IOptionsSnapshot<OrleansBusOptions> options, 
+            ITaskProcessor processor, IOptionsSnapshot<OrleansBusOptions> options,
             ILogger logger) {
             _client = client ?? throw new ArgumentNullException(nameof(client));
             _serializer = serializer ?? throw new ArgumentNullException(nameof(serializer));
@@ -62,8 +62,8 @@ namespace Microsoft.Azure.IIoT.Extensions.Orleans.Clients {
             var topicName = (_options.Value.Prefix ?? "") + typeof(T).GetMoniker();
             var topic = _client.Grains.GetGrain<IOrleansTopic>(topicName);
 
-            var subscription = new Subscription(topic, topicName, buffer => 
-                Deliver(handler, buffer));
+            var subscription = new Subscription(topic, topicName, buffer =>
+                Deliver(handler, topicName, buffer));
             var reference = await _client.Grains.CreateObjectReference<IOrleansSubscription>(
                 subscription).ConfigureAwait(true);
             subscription.Reference = reference;
@@ -101,14 +101,21 @@ namespace Microsoft.Azure.IIoT.Extensions.Orleans.Clients {
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="handler"></param>
+        /// <param name="topicName"></param>
         /// <param name="buffer"></param>
-        protected virtual void Deliver<T>(IEventHandler<T> handler, byte[] buffer) {
+        protected virtual void Deliver<T>(IEventHandler<T> handler, string topicName,
+            byte[] buffer) {
             try {
+                _logger.LogTrace("Delivering message for {topic}...", topicName);
                 var message = (T)_serializer.Deserialize(buffer, typeof(T));
-                _processor.TrySchedule(() => handler.HandleAsync(message));
+             //   _processor.TrySchedule(async () => {
+                    /*await*/ handler.HandleAsync(message);
+                    _logger.LogTrace("Message delivered to {topic}.", topicName);
+             //   });
             }
             catch (Exception ex) {
-                _logger.LogError(ex, "Failed to handle message");
+                _logger.LogError(ex, "Failed to handle message for {topic}.",
+                    topicName);
             }
         }
 
@@ -138,7 +145,7 @@ namespace Microsoft.Azure.IIoT.Extensions.Orleans.Clients {
             /// <param name="topic"></param>
             /// <param name="topicName"></param>
             /// <param name="handler"></param>
-            public Subscription(IOrleansTopic topic, string topicName, 
+            public Subscription(IOrleansTopic topic, string topicName,
                 Action<byte[]> handler) {
                 Topic = topic;
                 TopicName = topicName;
