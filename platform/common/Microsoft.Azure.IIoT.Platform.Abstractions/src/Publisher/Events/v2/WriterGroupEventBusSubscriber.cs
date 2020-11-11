@@ -14,24 +14,14 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Events.v2 {
     /// <summary>
     /// Writer Group registry change listener
     /// </summary>
-    public sealed class WriterGroupEventBusSubscriber : IEventHandler<WriterGroupEventModel>,
-        IDisposable {
+    public sealed class WriterGroupEventBusSubscriber : IEventBusConsumer<WriterGroupEventModel> {
 
         /// <summary>
         /// Create event subscriber
         /// </summary>
-        /// <param name="bus"></param>
         /// <param name="listeners"></param>
-        public WriterGroupEventBusSubscriber(IEventBus bus,
-            IEnumerable<IWriterGroupRegistryListener> listeners) {
-            _bus = bus ?? throw new ArgumentNullException(nameof(bus));
+        public WriterGroupEventBusSubscriber(IEnumerable<IWriterGroupRegistryListener> listeners) {
             _listeners = listeners?.ToList() ?? new List<IWriterGroupRegistryListener>();
-            _token = _bus.RegisterAsync(this).Result;
-        }
-
-        /// <inheritdoc/>
-        public void Dispose() {
-            _bus.UnregisterAsync(_token).Wait();
         }
 
         /// <inheritdoc/>
@@ -76,8 +66,6 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Events.v2 {
             }
         }
 
-        private readonly IEventBus _bus;
         private readonly List<IWriterGroupRegistryListener> _listeners;
-        private readonly string _token;
     }
 }

@@ -27,7 +27,7 @@ namespace Microsoft.Azure.IIoT.Messaging.Services {
         public EventBusHost(IEventBus client, IEnumerable<IHandler> handlers, ILogger logger) {
             _client = client ?? throw new ArgumentNullException(nameof(client));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            _handlers = handlers.ToDictionary(h => h, k => (string)null);
+            _handlers = handlers.ToDictionary(h => h, k => (IAsyncDisposable)null);
         }
 
         /// <inheritdoc/>
@@ -70,15 +70,15 @@ namespace Microsoft.Azure.IIoT.Messaging.Services {
         /// </summary>
         /// <returns></returns>
         private async Task UnregisterAsync() {
-            foreach (var token in _handlers.Where(x => x.Value != null).ToList()) {
+            foreach (var disposer in _handlers.Where(x => x.Value != null).ToList()) {
                 try {
                     // Unregister using stored token
-                    await _client.UnregisterAsync(token.Value).ConfigureAwait(false);
-                    _handlers[token.Key] = null;
+                    await disposer.Value.DisposeAsync().ConfigureAwait(false);
+                    _handlers[disposer.Key] = null;
                 }
                 catch (Exception ex) {
                     _logger.LogError(ex, "Failed to stop Event bus host using token {token}.",
-                        token);
+                        disposer);
                     throw;
                 }
             }
@@ -90,7 +90,7 @@ namespace Microsoft.Azure.IIoT.Messaging.Services {
         /// </summary>
         /// <returns></returns>
         private async Task RegisterAsync() {
-            var register = _client.GetType().GetMethod(nameof(IEventBus.RegisterAsync));
+            var register = _client.GetType().GetMethod(nameof(IEventBus.SubscribeAsync));
             foreach (var handler in _handlers.Keys.ToList()) {
                 var type = handler.GetType();
                 foreach (var itf in type.GetInterfaces()) {
@@ -102,9 +102,9 @@ namespace Microsoft.Azure.IIoT.Messaging.Services {
                         var method = register.MakeGenericMethod(eventType);
                         _logger.LogDebug("Starting Event bus bridge for {type}...",
                             type.Name);
-                        var token = await ((Task<string>)method.Invoke(_client,
+                        var disposer = await ((Task<IAsyncDisposable>)method.Invoke(_client,
                             new object[] { handler })).ConfigureAwait(false);
-                        _handlers[handler] = token; // Store token to unregister
+                        _handlers[handler] = disposer; // Store dispoer to unregister
                         _logger.LogInformation("Event bus bridge for {type} started.",
                             type.Name);
                     }
@@ -121,7 +121,7 @@ namespace Microsoft.Azure.IIoT.Messaging.Services {
         private Task _registration;
         private readonly IEventBus _client;
         private readonly ILogger _logger;
-        private readonly Dictionary<IHandler, string> _handlers;
+        private readonly Dictionary<IHandler, IAsyncDisposable> _handlers;
         private readonly SemaphoreSlim _lock = new SemaphoreSlim(1, 1);
     }
 }

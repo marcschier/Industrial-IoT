@@ -8,12 +8,12 @@ namespace Microsoft.Azure.IIoT.Extensions.Orleans.Clients {
     using Microsoft.Azure.IIoT.Messaging;
     using Microsoft.Azure.IIoT.Exceptions;
     using Microsoft.Azure.IIoT.Serializers;
-    using Microsoft.Azure.IIoT.Tasks;
     using Microsoft.Extensions.Options;
     using Microsoft.Extensions.Logging;
     using System.Threading.Tasks;
     using System.Collections.Concurrent;
     using System;
+    using Microsoft.Azure.IIoT.Utils;
 
     /// <summary>
     /// Orleans event bus client
@@ -25,15 +25,12 @@ namespace Microsoft.Azure.IIoT.Extensions.Orleans.Clients {
         /// </summary>
         /// <param name="client"></param>
         /// <param name="serializer"></param>
-        /// <param name="processor"></param>
         /// <param name="options"></param>
         /// <param name="logger"></param>
         public OrleansEventBusClient(IOrleansGrainClient client, IJsonSerializer serializer,
-            ITaskProcessor processor, IOptionsSnapshot<OrleansBusOptions> options,
-            ILogger logger) {
+            IOptionsSnapshot<OrleansBusOptions> options, ILogger logger) {
             _client = client ?? throw new ArgumentNullException(nameof(client));
             _serializer = serializer ?? throw new ArgumentNullException(nameof(serializer));
-            _processor = processor ?? throw new ArgumentNullException(nameof(processor));
             _options = options ?? throw new ArgumentNullException(nameof(options));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _refs = new ConcurrentDictionary<string, Subscription>();
@@ -54,11 +51,10 @@ namespace Microsoft.Azure.IIoT.Extensions.Orleans.Clients {
         }
 
         /// <inheritdoc/>
-        public async Task<string> RegisterAsync<T>(IEventHandler<T> handler) {
+        public async Task<IAsyncDisposable> SubscribeAsync<T>(IEventBusConsumer<T> handler) {
             if (handler == null) {
                 throw new ArgumentNullException(nameof(handler));
             }
-
             var topicName = (_options.Value.Prefix ?? "") + typeof(T).GetMoniker();
             var topic = _client.Grains.GetGrain<IOrleansTopic>(topicName);
 
@@ -67,22 +63,26 @@ namespace Microsoft.Azure.IIoT.Extensions.Orleans.Clients {
             var reference = await _client.Grains.CreateObjectReference<IOrleansSubscription>(
                 subscription).ConfigureAwait(true);
             subscription.Reference = reference;
-            var token = Guid.NewGuid().ToString();
-            _refs.TryAdd(token, subscription);
+            var subscriptionId = Guid.NewGuid().ToString();
+            _refs.TryAdd(subscriptionId, subscription);
 
             await topic.SubscribeAsync(reference).ConfigureAwait(true);
             _logger.LogInformation("Registered subscriber to topic {topic}.",
                 topicName);
-            return token;
+            return new AsyncDisposable(() => UnsubscribeAsync(subscriptionId));
         }
 
-        /// <inheritdoc/>
-        public async Task UnregisterAsync(string token) {
-            if (string.IsNullOrEmpty(token)) {
-                throw new ArgumentNullException(nameof(token));
+        /// <summary>
+        /// Delete the subscription
+        /// </summary>
+        /// <param name="subscriptionId"></param>
+        /// <returns></returns>
+        private async Task UnsubscribeAsync(string subscriptionId) {
+            if (string.IsNullOrEmpty(subscriptionId)) {
+                throw new ArgumentNullException(nameof(subscriptionId));
             }
-            if (!_refs.TryRemove(token, out var subscription)) {
-                throw new ResourceInvalidStateException(nameof(token));
+            if (!_refs.TryRemove(subscriptionId, out var subscription)) {
+                throw new ResourceInvalidStateException(nameof(subscriptionId));
             }
 
             var topicName = subscription.TopicName;
@@ -103,7 +103,7 @@ namespace Microsoft.Azure.IIoT.Extensions.Orleans.Clients {
         /// <param name="handler"></param>
         /// <param name="topicName"></param>
         /// <param name="buffer"></param>
-        protected virtual void Deliver<T>(IEventHandler<T> handler, string topicName,
+        protected virtual void Deliver<T>(IEventBusConsumer<T> handler, string topicName,
             byte[] buffer) {
             try {
                 _logger.LogTrace("Delivering message for {topic}...", topicName);
@@ -164,7 +164,6 @@ namespace Microsoft.Azure.IIoT.Extensions.Orleans.Clients {
         private readonly ConcurrentDictionary<string, Subscription> _refs;
         private readonly IOrleansGrainClient _client;
         private readonly IJsonSerializer _serializer;
-        private readonly ITaskProcessor _processor;
         private readonly ILogger _logger;
     }
 }

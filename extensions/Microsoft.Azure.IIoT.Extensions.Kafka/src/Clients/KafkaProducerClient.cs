@@ -23,7 +23,7 @@ namespace Microsoft.Azure.IIoT.Extensions.Kafka.Clients {
     /// <summary>
     /// Kafka producer
     /// </summary>
-    public sealed class KafkaProducerClient : IEventQueueClient, IEventClient, IDisposable {
+    public sealed class KafkaProducerClient : IEventPublisherClient, IEventClient, IDisposable {
 
         /// <summary>
         /// Create service client
@@ -46,7 +46,7 @@ namespace Microsoft.Azure.IIoT.Extensions.Kafka.Clients {
         }
 
         /// <inheritdoc/>
-        public async Task SendAsync(string target, byte[] payload,
+        public async Task PublishAsync(string target, byte[] payload,
             IDictionary<string, string> properties, string partitionKey,
             CancellationToken ct) {
             if (target == null) {
@@ -65,7 +65,23 @@ namespace Microsoft.Azure.IIoT.Extensions.Kafka.Clients {
         }
 
         /// <inheritdoc/>
-        public void Send<T>(string target, byte[] payload, T token,
+        public async Task PublishAsync(string target, IEnumerable<byte[]> batch,
+            IDictionary<string, string> properties, string partitionKey,
+            CancellationToken ct) {
+            if (target == null) {
+                throw new ArgumentNullException(nameof(target));
+            }
+            if (batch == null) {
+                throw new ArgumentNullException(nameof(batch));
+            }
+            foreach (var payload in batch) {
+                await PublishAsync(target, payload, properties, partitionKey,
+                    ct).ConfigureAwait(false);
+            }
+        }
+
+        /// <inheritdoc/>
+        public void Publish<T>(string target, byte[] payload, T token,
             Action<T, Exception> complete, IDictionary<string, string> properties,
             string partitionKey) {
             if (target == null) {

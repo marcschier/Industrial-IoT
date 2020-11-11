@@ -16,7 +16,7 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Clients {
     /// <summary>
     /// Service bus queue client
     /// </summary>
-    public sealed class ServiceBusQueueClient : IEventQueueClient, IEventClient {
+    public sealed class ServiceBusQueueClient : IEventPublisherClient, IEventClient {
 
         /// <summary>
         /// Create service client
@@ -27,7 +27,7 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Clients {
         }
 
         /// <inheritdoc/>
-        public async Task SendAsync(string target, byte[] payload,
+        public async Task PublishAsync(string target, byte[] payload,
             IDictionary<string, string> properties, string partitionKey,
             CancellationToken ct) {
             if (target == null) {
@@ -55,7 +55,23 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Clients {
         }
 
         /// <inheritdoc/>
-        public void Send<T>(string target, byte[] payload, T token,
+        public async Task PublishAsync(string target, IEnumerable<byte[]> batch,
+            IDictionary<string, string> properties, string partitionKey,
+            CancellationToken ct) {
+            if (target == null) {
+                throw new ArgumentNullException(nameof(target));
+            }
+            if (batch == null) {
+                throw new ArgumentNullException(nameof(batch));
+            }
+            foreach (var payload in batch) {
+                await PublishAsync(target, payload, properties, partitionKey,
+                    ct).ConfigureAwait(false);
+            }
+        }
+
+        /// <inheritdoc/>
+        public void Publish<T>(string target, byte[] payload, T token,
             Action<T, Exception> complete, IDictionary<string, string> properties,
             string partitionKey) {
             if (target == null) {
@@ -70,7 +86,7 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Clients {
             if (complete == null) {
                 throw new ArgumentNullException(nameof(complete));
             }
-            var t = SendAsync(target, payload, properties, partitionKey, default)
+            var t = PublishAsync(target, payload, properties, partitionKey, default)
                 .ContinueWith(task => complete?.Invoke(token, task.Exception));
             t.Wait(); // Wait to create proper send sequence.
         }

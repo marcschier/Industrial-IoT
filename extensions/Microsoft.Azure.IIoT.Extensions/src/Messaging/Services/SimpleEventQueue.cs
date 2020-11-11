@@ -17,7 +17,7 @@ namespace Microsoft.Azure.IIoT.Messaging.Services {
     /// <summary>
     /// Event hub namespace client
     /// </summary>
-    public sealed class SimpleEventQueue : IEventQueueClient, IEventClient, IEventConsumer {
+    public sealed class SimpleEventQueue : IEventPublisherClient, IEventClient, IEventReader {
 
         /// <summary>
         /// Create queue
@@ -30,7 +30,7 @@ namespace Microsoft.Azure.IIoT.Messaging.Services {
         }
 
         /// <inheritdoc/>
-        public Task SendAsync(string target, byte[] payload,
+        public Task PublishAsync(string target, byte[] payload,
             IDictionary<string, string> properties, string partitionKey,
             CancellationToken ct) {
             if (target == null) {
@@ -53,7 +53,23 @@ namespace Microsoft.Azure.IIoT.Messaging.Services {
         }
 
         /// <inheritdoc/>
-        public void Send<T>(string target, byte[] payload, T token,
+        public async Task PublishAsync(string target, IEnumerable<byte[]> batch,
+            IDictionary<string, string> properties, string partitionKey,
+            CancellationToken ct) {
+            if (target == null) {
+                throw new ArgumentNullException(nameof(target));
+            }
+            if (batch == null) {
+                throw new ArgumentNullException(nameof(batch));
+            }
+            foreach (var payload in batch) {
+                await PublishAsync(target, payload, properties, partitionKey,
+                    ct).ConfigureAwait(false);
+            }
+        }
+
+        /// <inheritdoc/>
+        public void Publish<T>(string target, byte[] payload, T token,
             Action<T, Exception> complete, IDictionary<string, string> properties,
             string partitionKey) {
             if (target == null) {
@@ -68,7 +84,7 @@ namespace Microsoft.Azure.IIoT.Messaging.Services {
             if (complete == null) {
                 throw new ArgumentNullException(nameof(complete));
             }
-            _ = SendAsync(target, payload, properties, partitionKey, default)
+            _ = PublishAsync(target, payload, properties, partitionKey, default)
                 .ContinueWith(task => complete?.Invoke(token, task.Exception));
         }
 
@@ -81,7 +97,7 @@ namespace Microsoft.Azure.IIoT.Messaging.Services {
             if (payload == null) {
                 throw new ArgumentNullException(nameof(payload));
             }
-            return SendAsync(target, payload,
+            return PublishAsync(target, payload,
                 CreateProperties(contentType, eventSchema, contentEncoding),
                 eventSchema, ct);
         }
@@ -98,7 +114,7 @@ namespace Microsoft.Azure.IIoT.Messaging.Services {
             }
             foreach (var payload in batch) {
                 var properties = CreateProperties(contentType, eventSchema, contentEncoding);
-                await SendAsync(target, payload, properties, eventSchema, ct).ConfigureAwait(false);
+                await PublishAsync(target, payload, properties, eventSchema, ct).ConfigureAwait(false);
             }
         }
 
@@ -122,7 +138,7 @@ namespace Microsoft.Azure.IIoT.Messaging.Services {
         }
 
         /// <inheritdoc/>
-        public Task<IEnumerable<(byte[], IDictionary<string, string>)>> ConsumeAsync(
+        public Task<IEnumerable<(byte[], IDictionary<string, string>)>> ReadAsync(
             CancellationToken ct) {
             return Task.Run(() => {
                 var results = new List<(byte[], IDictionary<string, string>)>();

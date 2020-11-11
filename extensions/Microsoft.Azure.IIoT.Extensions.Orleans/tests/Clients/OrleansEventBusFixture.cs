@@ -12,6 +12,38 @@ namespace Microsoft.Azure.IIoT.Extensions.Orleans.Clients {
     using System.Runtime.Serialization;
     using Autofac;
 
+    public sealed class OrleansClusterEventBusFixture : IDisposable {
+
+        public bool Skip { get; set; }
+
+        /// <summary>
+        /// Create test harness
+        /// </summary>
+        /// <returns></returns>
+        public OrleansEventBusHarness GetHarness(string bus,
+            Action<ContainerBuilder> configure = null) {
+            if (Skip) {
+                return null;
+            }
+            return new OrleansEventBusHarness(bus, builder => {
+                //
+                // Add test cluster client - orleans bus module will then
+                // not register the generic client, however if run with
+                // silo host it will.
+                //
+                if (OrleansClusterFixture.Client != null) {
+                    builder.RegisterInstance(OrleansClusterFixture.Client)
+                        .ExternallyOwned();
+                }
+                configure?.Invoke(builder);
+            });
+        }
+
+        /// <inheritdoc/>
+        public void Dispose() {
+        }
+    }
+
     public sealed class OrleansEventBusFixture : IDisposable {
 
         public bool Skip { get; set; }
@@ -47,24 +79,14 @@ namespace Microsoft.Azure.IIoT.Extensions.Orleans.Clients {
                 builder.AddDiagnostics();
                 builder.RegisterModule<NewtonSoftJsonModule>();
 
-                //
-                // Add test cluster client - orleans bus module will then
-                // not register the generic client, however if run with
-                // silo host it will.
-                //
-                if (OrleansClusterFixture.Client != null) {
-                    builder.RegisterInstance(OrleansClusterFixture.Client)
-                        .ExternallyOwned();
-                }
+                // Add additional services
+                configure?.Invoke(builder);
 
                 // Configure the bus
                 builder.Configure<OrleansBusOptions>(options => options.Prefix = bus);
 
                 // Now add module
                 builder.RegisterModule<OrleansEventBusModule>();
-
-                // Add additional services
-                configure?.Invoke(builder);
 
                 // Start it all
                 builder.RegisterType<HostAutoStart>()

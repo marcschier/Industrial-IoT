@@ -27,7 +27,7 @@ namespace Microsoft.Azure.IIoT.Http.SignalR {
         /// <param name="logger"></param>
         /// <param name="provider"></param>
         /// <param name="settings"></param>
-        public SignalRHubClient(IOptions<SignalRHubClientOptions> config, 
+        public SignalRHubClient(IOptions<SignalRHubClientOptions> config,
             ILogger logger, IJsonSerializerSettingsProvider settings = null,
             ITokenProvider provider = null) {
             _options = config ?? throw new ArgumentNullException(nameof(config));
@@ -60,7 +60,7 @@ namespace Microsoft.Azure.IIoT.Http.SignalR {
                         _clients.Remove(lookup);
                     }
                     client = await SignalRClientRegistrar.CreateAsync(
-                        _options.Value, endpointUrl, _logger, 
+                        _options.Value, endpointUrl, _logger,
                         resourceId, _provider, _settings).ConfigureAwait(false);
                     _clients.Add(lookup, client);
                 }

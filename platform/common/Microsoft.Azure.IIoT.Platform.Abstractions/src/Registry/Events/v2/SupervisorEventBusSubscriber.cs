@@ -13,7 +13,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Events.v2 {
     /// <summary>
     /// Supervisor registry change listener
     /// </summary>
-    public class SupervisorEventBusSubscriber : IEventHandler<SupervisorEventModel> {
+    public class SupervisorEventBusSubscriber : IEventBusConsumer<SupervisorEventModel> {
 
         /// <summary>
         /// Create event subscriber

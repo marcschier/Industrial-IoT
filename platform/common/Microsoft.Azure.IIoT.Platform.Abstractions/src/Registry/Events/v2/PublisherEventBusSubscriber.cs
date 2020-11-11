@@ -13,7 +13,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Events.v2 {
     /// <summary>
     /// Publisher registry change listener
     /// </summary>
-    public class PublisherEventBusSubscriber : IEventHandler<PublisherEventModel> {
+    public class PublisherEventBusSubscriber : IEventBusConsumer<PublisherEventModel> {
 
         /// <summary>
         /// Create event subscriber

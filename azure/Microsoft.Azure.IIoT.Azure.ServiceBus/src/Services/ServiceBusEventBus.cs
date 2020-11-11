@@ -77,38 +77,7 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Services {
         }
 
         /// <inheritdoc/>
-        public async Task CloseAsync() {
-            await _lock.WaitAsync().ConfigureAwait(false);
-            try {
-                foreach (var handlers in _handlers) {
-                    var eventName = handlers.Key;
-                    try {
-                        await _subscriptionClient.RemoveRuleAsync(eventName).ConfigureAwait(false);
-                    }
-                    catch (MessagingEntityNotFoundException) {
-                        _logger.LogWarning("The messaging entity {eventName} could not be found.",
-                            eventName);
-                    }
-                }
-                _handlers.Clear();
-                if (_subscriptionClient.IsClosedOrClosing) {
-                    return;
-                }
-                await _subscriptionClient.CloseAsync().ConfigureAwait(false);
-            }
-            finally {
-                _lock.Release();
-            }
-        }
-
-        /// <inheritdoc/>
-        public void Dispose() {
-            Try.Async(CloseAsync).Wait();
-            _lock.Dispose();
-        }
-
-        /// <inheritdoc/>
-        public async Task<string> RegisterAsync<T>(IEventHandler<T> handler) {
+        public async Task<IAsyncDisposable> SubscribeAsync<T>(IEventBusConsumer<T> handler) {
             if (handler == null) {
                 throw new ArgumentNullException(nameof(handler));
             }
@@ -134,12 +103,12 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Services {
                     handlers = new Dictionary<string, Subscription>();
                     _handlers.Add(eventName, handlers);
                 }
-                var token = Guid.NewGuid().ToString();
-                handlers.Add(token, new Subscription {
+                var subscriptionId = Guid.NewGuid().ToString();
+                handlers.Add(subscriptionId, new Subscription {
                     HandleAsync = e => handler.HandleAsync((T)e),
                     Type = typeof(T)
                 });
-                return token;
+                return new AsyncDisposable(() => CloseAsync(subscriptionId));
             }
             finally {
                 _lock.Release();
@@ -147,9 +116,44 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Services {
         }
 
         /// <inheritdoc/>
-        public async Task UnregisterAsync(string token) {
-            if (string.IsNullOrEmpty(token)) {
-                throw new ArgumentNullException(nameof(token));
+        public void Dispose() {
+            Try.Async(CloseAsync).GetAwaiter().GetResult();
+            _lock.Dispose();
+        }
+
+        /// <inheritdoc/>
+        public async Task CloseAsync() {
+            await _lock.WaitAsync().ConfigureAwait(false);
+            try {
+                foreach (var handlers in _handlers) {
+                    var eventName = handlers.Key;
+                    try {
+                        await _subscriptionClient.RemoveRuleAsync(eventName).ConfigureAwait(false);
+                    }
+                    catch (MessagingEntityNotFoundException) {
+                        _logger.LogWarning("The messaging entity {eventName} could not be found.",
+                            eventName);
+                    }
+                }
+                _handlers.Clear();
+                if (_subscriptionClient.IsClosedOrClosing) {
+                    return;
+                }
+                await _subscriptionClient.CloseAsync().ConfigureAwait(false);
+            }
+            finally {
+                _lock.Release();
+            }
+        }
+
+        /// <summary>
+        /// Unregister handler
+        /// </summary>
+        /// <param name="subscriptionId"></param>
+        /// <returns></returns>
+        private async Task CloseAsync(string subscriptionId) {
+            if (string.IsNullOrEmpty(subscriptionId)) {
+                throw new ArgumentNullException(nameof(subscriptionId));
             }
             await _lock.WaitAsync().ConfigureAwait(false);
             try {
@@ -157,10 +161,10 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Services {
                 var found = false;
                 foreach (var subscriptions in _handlers) {
                     eventName = subscriptions.Key;
-                    if (subscriptions.Value.TryGetValue(token, out var subscription)) {
+                    if (subscriptions.Value.TryGetValue(subscriptionId, out var subscription)) {
                         found = true;
                         // Remove handler
-                        subscriptions.Value.Remove(token);
+                        subscriptions.Value.Remove(subscriptionId);
                         if (subscriptions.Value.Count != 0) {
                             eventName = null; // Do not clean up yet
                         }

@@ -14,7 +14,7 @@ namespace Microsoft.Azure.IIoT.Platform.Discovery.Api.Clients {
     /// <summary>
     /// Application registry event publisher
     /// </summary>
-    public class ApplicationEventForwarder<THub> : IEventHandler<ApplicationEventModel> {
+    public class ApplicationEventForwarder<THub> : IEventBusConsumer<ApplicationEventModel> {
 
         /// <inheritdoc/>
         public ApplicationEventForwarder(ICallbackInvokerT<THub> callback) {

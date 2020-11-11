@@ -25,7 +25,7 @@ namespace Microsoft.Azure.IIoT.Azure.EventHub.Clients {
             var fix = new Fixture();
             var target = fix.Create<string>();
             using (var harness = _fixture.GetHarness(target)) {
-                var queue = harness.GetEventQueueClient();
+                var queue = harness.GetEventPublisherClient();
                 Skip.If(queue == null);
 
                 var data = fix.CreateMany<byte>().ToArray();
@@ -35,7 +35,7 @@ namespace Microsoft.Azure.IIoT.Azure.EventHub.Clients {
                     tcs.TrySetResult(a);
                 };
 
-                await queue.SendAsync(target, data).ConfigureAwait(false);
+                await queue.PublishAsync(target, data).ConfigureAwait(false);
 
                 var result = await tcs.Task.With2MinuteTimeout().ConfigureAwait(false);
                 Assert.True(data.SequenceEqualsSafe(result.Data));
@@ -50,7 +50,7 @@ namespace Microsoft.Azure.IIoT.Azure.EventHub.Clients {
             var fix = new Fixture();
             var target = fix.Create<string>();
             using (var harness = _fixture.GetHarness(target)) {
-                var queue = harness.GetEventQueueClient();
+                var queue = harness.GetEventPublisherClient();
                 Skip.If(queue == null);
 
                 var data = fix.CreateMany<byte>().ToArray();
@@ -61,7 +61,7 @@ namespace Microsoft.Azure.IIoT.Azure.EventHub.Clients {
                     tcs.TrySetResult(a);
                 };
 
-                await queue.SendAsync(target, data, properties).ConfigureAwait(false);
+                await queue.PublishAsync(target, data, properties).ConfigureAwait(false);
 
                 var result = await tcs.Task.With2MinuteTimeout().ConfigureAwait(false);
                 Assert.True(data.SequenceEqualsSafe(result.Data));
@@ -76,7 +76,7 @@ namespace Microsoft.Azure.IIoT.Azure.EventHub.Clients {
             var fix = new Fixture();
             var target = fix.Create<string>();
             using (var harness = _fixture.GetHarness(target)) {
-                var queue = harness.GetEventQueueClient();
+                var queue = harness.GetEventPublisherClient();
                 Skip.If(queue == null);
 
                 var data = fix.CreateMany<byte>().ToArray();
@@ -90,12 +90,12 @@ namespace Microsoft.Azure.IIoT.Azure.EventHub.Clients {
                     }
                 };
 
-                await queue.SendAsync(target, fix.CreateMany<byte>().ToArray(), properties).ConfigureAwait(false);
-                await queue.SendAsync(target, fix.CreateMany<byte>().ToArray(), properties).ConfigureAwait(false);
-                await queue.SendAsync(target, fix.CreateMany<byte>().ToArray(), properties).ConfigureAwait(false);
-                await queue.SendAsync(target, data, properties).ConfigureAwait(false);
-                await queue.SendAsync(target, fix.CreateMany<byte>().ToArray(), properties).ConfigureAwait(false);
-                await queue.SendAsync(target, fix.CreateMany<byte>().ToArray(), properties).ConfigureAwait(false);
+                await queue.PublishAsync(target, fix.CreateMany<byte>().ToArray(), properties).ConfigureAwait(false);
+                await queue.PublishAsync(target, fix.CreateMany<byte>().ToArray(), properties).ConfigureAwait(false);
+                await queue.PublishAsync(target, fix.CreateMany<byte>().ToArray(), properties).ConfigureAwait(false);
+                await queue.PublishAsync(target, data, properties).ConfigureAwait(false);
+                await queue.PublishAsync(target, fix.CreateMany<byte>().ToArray(), properties).ConfigureAwait(false);
+                await queue.PublishAsync(target, fix.CreateMany<byte>().ToArray(), properties).ConfigureAwait(false);
 
                 var result = await tcs.Task.With2MinuteTimeout().ConfigureAwait(false);
                 Assert.True(data.SequenceEqualsSafe(result.Data));
@@ -115,7 +115,7 @@ namespace Microsoft.Azure.IIoT.Azure.EventHub.Clients {
             var fix = new Fixture();
             var target = fix.Create<string>();
             using (var harness = _fixture.GetHarness(target)) {
-                var queue = harness.GetEventQueueClient();
+                var queue = harness.GetEventPublisherClient();
                 Skip.If(queue == null);
 
                 var data = fix.CreateMany<byte>().ToArray();
@@ -130,7 +130,7 @@ namespace Microsoft.Azure.IIoT.Azure.EventHub.Clients {
 
                 var rand = new Random();
                 var senders = Enumerable.Range(0, max)
-                    .Select(i => queue.SendAsync(target + "/" + rand.Next(0, 10), data, properties));
+                    .Select(i => queue.PublishAsync(target + "/" + rand.Next(0, 10), data, properties));
                 await Task.WhenAll(senders).ConfigureAwait(false);
 
                 var result = await tcs.Task.With2MinuteTimeout().ConfigureAwait(false);
@@ -146,7 +146,7 @@ namespace Microsoft.Azure.IIoT.Azure.EventHub.Clients {
             var fix = new Fixture();
             var target = fix.Create<string>();
             using (var harness = _fixture.GetHarness(target)) {
-                var queue = harness.GetEventQueueClient();
+                var queue = harness.GetEventPublisherClient();
                 Skip.If(queue == null);
 
                 var data = fix.CreateMany<byte>().ToArray();
@@ -158,7 +158,7 @@ namespace Microsoft.Azure.IIoT.Azure.EventHub.Clients {
 
                 var expected = "token";
                 var actual = new TaskCompletionSource<string>(TaskCreationOptions.RunContinuationsAsynchronously);
-                queue.Send(target, data, expected, (t, e) => {
+                queue.Publish(target, data, expected, (t, e) => {
                     if (e != null) {
                         actual.TrySetException(e);
                     }
@@ -181,7 +181,7 @@ namespace Microsoft.Azure.IIoT.Azure.EventHub.Clients {
             var fix = new Fixture();
             var target = fix.Create<string>();
             using (var harness = _fixture.GetHarness(target)) {
-                var queue = harness.GetEventQueueClient();
+                var queue = harness.GetEventPublisherClient();
                 Skip.If(queue == null);
 
                 var data = fix.CreateMany<byte>().ToArray();
@@ -194,7 +194,7 @@ namespace Microsoft.Azure.IIoT.Azure.EventHub.Clients {
 
                 var expected = 1234;
                 var actual = new TaskCompletionSource<int?>(TaskCreationOptions.RunContinuationsAsynchronously);
-                queue.Send(target, data, expected, (t, e) => {
+                queue.Publish(target, data, expected, (t, e) => {
                     if (e != null) {
                         actual.TrySetException(e);
                     }
@@ -217,7 +217,7 @@ namespace Microsoft.Azure.IIoT.Azure.EventHub.Clients {
             var fix = new Fixture();
             var target = fix.Create<string>();
             using (var harness = _fixture.GetHarness(target)) {
-                var queue = harness.GetEventQueueClient();
+                var queue = harness.GetEventPublisherClient();
                 Skip.If(queue == null);
 
                 var data = fix.CreateMany<byte>().ToArray();
@@ -233,10 +233,10 @@ namespace Microsoft.Azure.IIoT.Azure.EventHub.Clients {
 
                 var expected = 4;
                 var actual = new TaskCompletionSource<int?>(TaskCreationOptions.RunContinuationsAsynchronously);
-                queue.Send(target, fix.CreateMany<byte>().ToArray(), 1, (t, e) => { }, properties);
-                queue.Send(target, fix.CreateMany<byte>().ToArray(), 2, (t, e) => { }, properties);
-                queue.Send(target, fix.CreateMany<byte>().ToArray(), 3, (t, e) => { }, properties);
-                queue.Send(target, data, expected, (t, e) => {
+                queue.Publish(target, fix.CreateMany<byte>().ToArray(), 1, (t, e) => { }, properties);
+                queue.Publish(target, fix.CreateMany<byte>().ToArray(), 2, (t, e) => { }, properties);
+                queue.Publish(target, fix.CreateMany<byte>().ToArray(), 3, (t, e) => { }, properties);
+                queue.Publish(target, data, expected, (t, e) => {
                     if (e != null) {
                         actual.TrySetException(e);
                     }
@@ -244,7 +244,7 @@ namespace Microsoft.Azure.IIoT.Azure.EventHub.Clients {
                         actual.TrySetResult(t);
                     }
                 }, properties);
-                queue.Send(target, fix.CreateMany<byte>().ToArray(), 5, (t, e) => { }, properties);
+                queue.Publish(target, fix.CreateMany<byte>().ToArray(), 5, (t, e) => { }, properties);
 
                 var result = await tcs.Task.With2MinuteTimeout().ConfigureAwait(false);
                 Assert.Equal(expected, await actual.Task.ConfigureAwait(false));
@@ -265,7 +265,7 @@ namespace Microsoft.Azure.IIoT.Azure.EventHub.Clients {
             var fix = new Fixture();
             var target = fix.Create<string>();
             using (var harness = _fixture.GetHarness(target)) {
-                var queue = harness.GetEventQueueClient();
+                var queue = harness.GetEventPublisherClient();
                 Skip.If(queue == null);
 
                 var data = fix.CreateMany<byte>().ToArray();
@@ -282,7 +282,7 @@ namespace Microsoft.Azure.IIoT.Azure.EventHub.Clients {
                 var hashSet = new HashSet<int>(max);
                 Enumerable.Range(0, max)
                     .ToList()
-                    .ForEach(i => queue.Send(target + "/" + rand.Next(0, 100), data, i,
+                    .ForEach(i => queue.Publish(target + "/" + rand.Next(0, 100), data, i,
                         (t, e) => hashSet.Add(t), properties));
 
                 var result = await tcs.Task.With2MinuteTimeout().ConfigureAwait(false);
@@ -298,21 +298,21 @@ namespace Microsoft.Azure.IIoT.Azure.EventHub.Clients {
             var fix = new Fixture();
             var target = fix.Create<string>();
             using (var harness = _fixture.GetHarness(target)) {
-                var queue = harness.GetEventQueueClient();
+                var queue = harness.GetEventPublisherClient();
                 Skip.If(queue == null);
 
                 await Assert.ThrowsAsync<ArgumentNullException>(
-                    () => queue.SendAsync(target, null)).ConfigureAwait(false);
+                    () => queue.PublishAsync(target, (byte[])null)).ConfigureAwait(false);
                 await Assert.ThrowsAsync<ArgumentNullException>(
-                    () => queue.SendAsync(null, new byte[4])).ConfigureAwait(false);
+                    () => queue.PublishAsync(null, new byte[4])).ConfigureAwait(false);
                 Assert.Throws<ArgumentNullException>(
-                    () => queue.Send(target, null, "test", (t, e) => { }));
+                    () => queue.Publish(target, null, "test", (t, e) => { }));
                 Assert.Throws<ArgumentNullException>(
-                    () => queue.Send(null, new byte[4], "test", (t, e) => { }));
+                    () => queue.Publish(null, new byte[4], "test", (t, e) => { }));
                 Assert.Throws<ArgumentNullException>(
-                    () => queue.Send<string>(target, new byte[4], null, (t, e) => { }));
+                    () => queue.Publish<string>(target, new byte[4], null, (t, e) => { }));
                 Assert.Throws<ArgumentNullException>(
-                    () => queue.Send(target, new byte[4], "test", null));
+                    () => queue.Publish(target, new byte[4], "test", null));
             }
         }
     }

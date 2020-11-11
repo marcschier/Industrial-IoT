@@ -6,32 +6,22 @@
 namespace Microsoft.Azure.IIoT.Platform.Registry.Events.v2 {
     using Microsoft.Azure.IIoT.Platform.Registry.Events.v2.Models;
     using Microsoft.Azure.IIoT.Messaging;
-    using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
 
     /// <summary>
-    /// Discoverer registry change listener
+    /// Discoverer change listener
     /// </summary>
-    public sealed class DiscovererEventBusSubscriber : IEventHandler<DiscovererEventModel>,
-        IDisposable {
+    public sealed class DiscovererEventBusSubscriber : IEventBusConsumer<DiscovererEventModel> {
 
         /// <summary>
         /// Create event subscriber
         /// </summary>
-        /// <param name="bus"></param>
         /// <param name="listeners"></param>
-        public DiscovererEventBusSubscriber(IEventBus bus,
+        public DiscovererEventBusSubscriber(
             IEnumerable<IDiscovererRegistryListener> listeners) {
-            _bus = bus ?? throw new ArgumentNullException(nameof(bus));
             _listeners = listeners?.ToList() ?? new List<IDiscovererRegistryListener>();
-            _token = _bus.RegisterAsync(this).Result;
-        }
-
-        /// <inheritdoc/>
-        public void Dispose() {
-            _bus.UnregisterAsync(_token).Wait();
         }
 
         /// <inheritdoc/>
@@ -58,8 +48,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Events.v2 {
             }
         }
 
-        private readonly IEventBus _bus;
         private readonly List<IDiscovererRegistryListener> _listeners;
-        private readonly string _token;
     }
 }

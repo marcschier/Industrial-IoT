@@ -59,7 +59,7 @@ namespace Microsoft.Azure.IIoT.Azure.EventHub.Processor.Services {
                     throw new ArgumentNullException(nameof(partitionContext));
                 _processorId = Guid.NewGuid().ToString();
                 _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-                _handler = outer._context.Resolve<IEventProcessingHandler>();
+                _handler = outer._context.Resolve<IEventConsumer>();
                 _interval = (long?)_outer._config.Value.CheckpointInterval?.TotalMilliseconds
                     ?? long.MaxValue;
                 _sw = Stopwatch.StartNew();
@@ -292,7 +292,7 @@ namespace Microsoft.Azure.IIoT.Azure.EventHub.Processor.Services {
             }
 
             private readonly ILogger _logger;
-            private readonly IEventProcessingHandler _handler;
+            private readonly IEventConsumer _handler;
             private readonly EventProcessorFactory _outer;
             private readonly string _processorId;
             private readonly long? _interval;

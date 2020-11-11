@@ -14,7 +14,7 @@ namespace Microsoft.Azure.IIoT.Platform.Discovery.Api.Clients {
     /// <summary>
     /// Endpoint registry event publisher
     /// </summary>
-    public class DiscoveryProgressForwarder<THub> : IEventHandler<DiscoveryProgressModel> {
+    public class DiscoveryProgressForwarder<THub> : IEventBusConsumer<DiscoveryProgressModel> {
 
         /// <inheritdoc/>
         public DiscoveryProgressForwarder(ICallbackInvokerT<THub> callback) {

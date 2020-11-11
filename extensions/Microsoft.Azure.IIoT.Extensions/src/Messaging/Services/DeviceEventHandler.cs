@@ -16,7 +16,7 @@ namespace Microsoft.Azure.IIoT.Messaging.Handlers {
     /// <summary>
     /// Default device event handler implementation
     /// </summary>
-    public sealed class DeviceEventHandler : IEventProcessingHandler {
+    public sealed class DeviceEventHandler : IEventConsumer {
 
         /// <summary>
         /// Create processor factory

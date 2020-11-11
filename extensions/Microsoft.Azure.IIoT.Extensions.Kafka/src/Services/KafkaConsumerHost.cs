@@ -34,8 +34,8 @@ namespace Microsoft.Azure.IIoT.Extensions.Kafka.Services {
         /// <param name="config"></param>
         /// <param name="logger"></param>
         /// <param name="identity"></param>
-        public KafkaConsumerHost(IEventProcessingHandler consumer, IKafkaAdminClient admin,
-            IOptions<KafkaServerOptions> server, IOptions<KafkaConsumerOptions> config, 
+        public KafkaConsumerHost(IEventConsumer consumer, IKafkaAdminClient admin,
+            IOptions<KafkaServerOptions> server, IOptions<KafkaConsumerOptions> config,
             ILogger logger, IProcessIdentity identity) : base(logger, "Kafka") {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _consumer = consumer ?? throw new ArgumentNullException(nameof(consumer));
@@ -262,7 +262,7 @@ namespace Microsoft.Azure.IIoT.Extensions.Kafka.Services {
 
         private readonly ILogger _logger;
         private readonly IKafkaAdminClient _admin;
-        private readonly IEventProcessingHandler _consumer;
+        private readonly IEventConsumer _consumer;
         private readonly IOptions<KafkaConsumerOptions> _config;
         private readonly IOptions<KafkaServerOptions> _server;
         private readonly string _consumerId;

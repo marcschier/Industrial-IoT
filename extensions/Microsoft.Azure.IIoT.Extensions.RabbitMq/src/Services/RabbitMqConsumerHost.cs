@@ -28,7 +28,7 @@ namespace Microsoft.Azure.IIoT.Extensions.RabbitMq.Services {
         /// <param name="consumer"></param>
         /// <param name="options"></param>
         public RabbitMqConsumerHost(IRabbitMqConnection connection, ILogger logger, 
-            IEventProcessingHandler consumer, IOptionsSnapshot<RabbitMqQueueOptions> options) {
+            IEventConsumer consumer, IOptionsSnapshot<RabbitMqQueueOptions> options) {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _connection = connection ?? throw new ArgumentNullException(nameof(connection));
             _consumer = consumer ?? throw new ArgumentNullException(nameof(consumer));
@@ -110,7 +110,7 @@ namespace Microsoft.Azure.IIoT.Extensions.RabbitMq.Services {
 
         private readonly ILogger _logger;
         private readonly IRabbitMqConnection _connection;
-        private readonly IEventProcessingHandler _consumer;
+        private readonly IEventConsumer _consumer;
         private readonly IOptionsSnapshot<RabbitMqQueueOptions> _options;
         private readonly SemaphoreSlim _lock;
         private IRabbitMqChannel _channel;

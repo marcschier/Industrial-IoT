@@ -10,6 +10,7 @@ namespace Microsoft.Azure.IIoT.Messaging.Services {
     using System.Collections.Concurrent;
     using System;
     using System.Linq;
+    using Microsoft.Azure.IIoT.Utils;
 
     /// <summary>
     /// Simple in memory event bus
@@ -28,24 +29,16 @@ namespace Microsoft.Azure.IIoT.Messaging.Services {
         }
 
         /// <inheritdoc/>
-        public Task<string> RegisterAsync<T>(IEventHandler<T> handler) {
+        public Task<IAsyncDisposable> SubscribeAsync<T>(IEventBusConsumer<T> handler) {
             if (handler == null) {
                 throw new ArgumentNullException(nameof(handler));
             }
             var handle = new Handle(typeof(T), handler);
             _handlers.TryAdd(handle.Token, handle);
-            return Task.FromResult(handle.Token);
-        }
-
-        /// <inheritdoc/>
-        public Task UnregisterAsync(string token) {
-            if (string.IsNullOrEmpty(token)) {
-                throw new ArgumentNullException(nameof(token));
-            }
-            if (!_handlers.TryRemove(token, out _)) {
-                throw new ResourceInvalidStateException(nameof(token));
-            }
-            return Task.CompletedTask;
+            return Task.FromResult<IAsyncDisposable>(new AsyncDisposable(() => {
+                _handlers.TryRemove(handle.Token, out _);
+                return Task.CompletedTask;
+            }));
         }
 
         /// <summary>
@@ -82,7 +75,7 @@ namespace Microsoft.Azure.IIoT.Messaging.Services {
             /// <returns></returns>
             public Task HandleAsync<T>(T message) {
                 System.Diagnostics.Debug.Assert(typeof(T) == _type);
-                return ((IEventHandler<T>)_handler).HandleAsync(message);
+                return ((IEventBusConsumer<T>)_handler).HandleAsync(message);
             }
 
             private readonly Type _type;

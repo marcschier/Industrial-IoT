@@ -29,7 +29,7 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Services {
         /// <param name="config"></param>
         /// <param name="logger"></param>
         public ServiceBusProcessorHost(IServiceBusClientFactory factory,
-            IEventProcessingHandler consumer, IOptions<ServiceBusProcessorOptions> config,
+            IEventConsumer consumer, IOptions<ServiceBusProcessorOptions> config,
             ILogger logger) {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _factory = factory ?? throw new ArgumentNullException(nameof(factory));
@@ -123,7 +123,7 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Services {
 
         private readonly ILogger _logger;
         private readonly IServiceBusClientFactory _factory;
-        private readonly IEventProcessingHandler _consumer;
+        private readonly IEventConsumer _consumer;
         private readonly IOptions<ServiceBusProcessorOptions> _config;
         private readonly SemaphoreSlim _lock;
         private IQueueClient _client;

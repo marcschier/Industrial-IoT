@@ -22,7 +22,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Processors {
         /// </summary>
         /// <param name="client"></param>
         /// <param name="serializer"></param>
-        public DataSetWriterMessageForwarder(IEventQueueClient client,
+        public DataSetWriterMessageForwarder(IEventPublisherClient client,
             IJsonSerializer serializer) {
             _serializer = serializer ?? throw new ArgumentNullException(nameof(serializer));
             _client = client ?? throw new ArgumentNullException(nameof(client));
@@ -35,11 +35,11 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Processors {
                 [CommonProperties.EventSchemaType] =
                     MessageSchemaTypes.DataSetWriterMessage
             };
-            return _client.SendAsync(null, _serializer.SerializeToBytes(sample).ToArray(),
+            return _client.PublishAsync(null, _serializer.SerializeToBytes(sample).ToArray(),
                 properties, sample.DataSetWriterId);
         }
 
-        private readonly IEventQueueClient _client;
+        private readonly IEventPublisherClient _client;
         private readonly IJsonSerializer _serializer;
     }
 }

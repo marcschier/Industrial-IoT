@@ -16,7 +16,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub.Handlers {
     /// <summary>
     /// Default iot hub device event handler implementation
     /// </summary>
-    public sealed class IoTHubDeviceEventHandler : IEventProcessingHandler {
+    public sealed class IoTHubDeviceEventHandler : IEventConsumer {
 
         /// <summary>
         /// Create processor factory

@@ -15,7 +15,7 @@ namespace Microsoft.Azure.IIoT.Platform.Discovery.Handlers {
     /// Handles discovery requests received from the <see cref="DiscoveryRequestEventClient"/>
     /// instance and pushes them to the supervisor using the discovery services.
     /// </summary>
-    public sealed class DiscoveryRequestEventHandler : IEventHandler<DiscoveryRequestModel> {
+    public sealed class DiscoveryRequestEventHandler : IEventBusConsumer<DiscoveryRequestModel> {
 
         /// <summary>
         /// Create handler

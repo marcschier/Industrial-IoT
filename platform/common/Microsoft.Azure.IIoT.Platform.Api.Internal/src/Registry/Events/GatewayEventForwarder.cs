@@ -14,7 +14,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Clients {
     /// <summary>
     /// Gateway registry event publisher
     /// </summary>
-    public class GatewayEventForwarder<THub> : IEventHandler<GatewayEventModel> {
+    public class GatewayEventForwarder<THub> : IEventBusConsumer<GatewayEventModel> {
 
         /// <inheritdoc/>
         public GatewayEventForwarder(ICallbackInvokerT<THub> callback) {

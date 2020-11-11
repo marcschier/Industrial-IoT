@@ -19,11 +19,18 @@ namespace Microsoft.Azure.IIoT.Utils {
         /// </summary>
         /// <param name="disposable"></param>
         /// <param name="disposeAsync"></param>
-        public AsyncDisposable(IDisposable disposable = null,
-            Func<Task> disposeAsync = null) {
+        public AsyncDisposable(IDisposable disposable,
+            Func<Task> disposeAsync = null) : this(disposeAsync) {
             _disposable = disposable;
+        }
+
+        /// <summary>
+        /// Create disposable
+        /// </summary>
+        /// <param name="disposeAsync"></param>
+        public AsyncDisposable(Func<Task> disposeAsync) {
             if (disposeAsync != null) {
-                _disposeAsync = () => Try.Async(() => disposeAsync.Invoke());
+                _disposeAsync = disposeAsync;
             }
             else {
                 _disposeAsync = () => Task.CompletedTask;
@@ -52,6 +59,10 @@ namespace Microsoft.Azure.IIoT.Utils {
 
         /// <inheritdoc/>
         public async ValueTask DisposeAsync() {
+            if (_disposed) {
+                throw new ObjectDisposedException("Async disposable already disposed");
+            }
+            _disposed = true;
             if (_disposable != null) {
                 Try.Op(_disposable.Dispose);
             }
@@ -112,6 +123,7 @@ namespace Microsoft.Azure.IIoT.Utils {
                 .Select(d => d.DisposeAsync().AsTask())));
         }
 
+        private bool _disposed;
         private readonly IDisposable _disposable;
         private readonly Func<Task> _disposeAsync;
     }

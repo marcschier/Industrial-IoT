@@ -20,14 +20,14 @@ namespace Microsoft.Azure.IIoT.Messaging.Services {
         /// <summary>
         /// Create host
         /// </summary>
+        /// <param name="reader"></param>
         /// <param name="consumer"></param>
-        /// <param name="handler"></param>
         /// <param name="logger"></param>
-        public SimpleEventProcessor(IEventConsumer consumer,
-            IEventProcessingHandler handler, ILogger logger) : base (logger, "Consumer") {
+        public SimpleEventProcessor(IEventReader reader,
+            IEventConsumer consumer, ILogger logger) : base (logger, "Consumer") {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            _handler = handler ?? throw new ArgumentNullException(nameof(handler));
             _consumer = consumer ?? throw new ArgumentNullException(nameof(consumer));
+            _reader = reader ?? throw new ArgumentNullException(nameof(reader));
             _sw = Stopwatch.StartNew();
         }
 
@@ -40,12 +40,12 @@ namespace Microsoft.Azure.IIoT.Messaging.Services {
             while (!ct.IsCancellationRequested) {
                 try {
                     while (!ct.IsCancellationRequested) {
-                        var messages = await _consumer.ConsumeAsync(ct).ConfigureAwait(false);
+                        var messages = await _reader.ReadAsync(ct).ConfigureAwait(false);
                         foreach (var message in messages) {
-                            await _handler.HandleAsync(message.Item1, message.Item2,
+                            await _consumer.HandleAsync(message.Item1, message.Item2,
                                 () => Task.CompletedTask).ConfigureAwait(false);
                         }
-                        await Try.Async(_handler.OnBatchCompleteAsync).ConfigureAwait(false);
+                        await Try.Async(_consumer.OnBatchCompleteAsync).ConfigureAwait(false);
                     }
                 }
                 catch (OperationCanceledException) { }
@@ -59,8 +59,8 @@ namespace Microsoft.Azure.IIoT.Messaging.Services {
         }
 
         private readonly ILogger _logger;
-        private readonly IEventProcessingHandler _handler;
         private readonly IEventConsumer _consumer;
+        private readonly IEventReader _reader;
         private readonly Stopwatch _sw;
     }
 }

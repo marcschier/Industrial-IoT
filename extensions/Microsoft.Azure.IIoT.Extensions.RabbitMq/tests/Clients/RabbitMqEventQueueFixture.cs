@@ -89,8 +89,8 @@ namespace Microsoft.Azure.IIoT.Extensions.RabbitMq.Clients {
         /// </summary>
         /// <param name="options"></param>
         /// <returns></returns>
-        public IEventQueueClient GetEventQueueClient() {
-            return Try.Op(() => _client?.Resolve<IEventQueueClient>());
+        public IEventPublisherClient GetEventPublisherClient() {
+            return Try.Op(() => _client?.Resolve<IEventPublisherClient>());
         }
 
         /// <summary>

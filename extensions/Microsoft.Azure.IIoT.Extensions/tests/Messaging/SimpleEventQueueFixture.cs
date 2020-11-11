@@ -80,8 +80,8 @@ namespace Microsoft.Azure.IIoT.Messaging.Services {
         /// </summary>
         /// <param name="options"></param>
         /// <returns></returns>
-        public IEventQueueClient GetEventQueueClient() {
-            return Try.Op(() => _container?.Resolve<IEventQueueClient>());
+        public IEventPublisherClient GetEventPublisherClient() {
+            return Try.Op(() => _container?.Resolve<IEventPublisherClient>());
         }
 
         /// <summary>

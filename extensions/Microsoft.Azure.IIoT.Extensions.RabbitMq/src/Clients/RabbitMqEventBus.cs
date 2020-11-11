@@ -7,6 +7,7 @@ namespace Microsoft.Azure.IIoT.Extensions.RabbitMq.Clients {
     using Microsoft.Azure.IIoT.Messaging;
     using Microsoft.Azure.IIoT.Serializers;
     using Microsoft.Azure.IIoT.Exceptions;
+    using Microsoft.Azure.IIoT.Utils;
     using Microsoft.Extensions.Logging;
     using System;
     using System.Linq;
@@ -69,12 +70,7 @@ namespace Microsoft.Azure.IIoT.Extensions.RabbitMq.Clients {
         }
 
         /// <inheritdoc/>
-        public void Dispose() {
-            _lock.Dispose();
-        }
-
-        /// <inheritdoc/>
-        public async Task<string> RegisterAsync<T>(IEventHandler<T> handler) {
+        public async Task<IAsyncDisposable> SubscribeAsync<T>(IEventBusConsumer<T> handler) {
             if (handler == null) {
                 throw new ArgumentNullException(nameof(handler));
             }
@@ -87,7 +83,7 @@ namespace Microsoft.Azure.IIoT.Extensions.RabbitMq.Clients {
                     _consumers.TryAdd(eventName, consumer);
                 }
                 consumer.Add(tag, handler);
-                return tag;
+                return new AsyncDisposable(() => DisposeAsync(tag));
             }
             finally {
                 _lock.Release();
@@ -95,16 +91,25 @@ namespace Microsoft.Azure.IIoT.Extensions.RabbitMq.Clients {
         }
 
         /// <inheritdoc/>
-        public async Task UnregisterAsync(string token) {
-            if (string.IsNullOrEmpty(token)) {
-                throw new ArgumentNullException(nameof(token));
+        public void Dispose() {
+            _lock.Dispose();
+        }
+
+        /// <summary>
+        /// Dispose consumer tag
+        /// </summary>
+        /// <param name="tag"></param>
+        /// <returns></returns>
+        private async Task DisposeAsync(string tag) {
+            if (string.IsNullOrEmpty(tag)) {
+                throw new ArgumentNullException(nameof(tag));
             }
             string eventName = null;
             await _lock.WaitAsync().ConfigureAwait(false);
             try {
                 var found = false;
                 foreach (var consumer in _consumers) {
-                    if (consumer.Value.Remove(token, out var handler)) {
+                    if (consumer.Value.Remove(tag, out var handler)) {
                         eventName = consumer.Key;
                     }
                     if (handler != null) {
@@ -171,7 +176,7 @@ namespace Microsoft.Azure.IIoT.Extensions.RabbitMq.Clients {
                 _lock.Wait();
                 try {
                     var first = _subscriptions.Count == 0;
-                    _subscriptions.Add(token, (IEventHandler<T>)handler);
+                    _subscriptions.Add(token, (IEventBusConsumer<T>)handler);
                 }
                 finally {
                     _lock.Release();
@@ -184,7 +189,7 @@ namespace Microsoft.Azure.IIoT.Extensions.RabbitMq.Clients {
                 string routingKey, IBasicProperties properties,
                 ReadOnlyMemory<byte> body) {
                 var evt = _outer._serializer.Deserialize<T>(body);
-                List<IEventHandler<T>> handlers;
+                List<IEventBusConsumer<T>> handlers;
                 await _lock.WaitAsync().ConfigureAwait(false);
                 try {
                     handlers = _subscriptions.Values.ToList();
@@ -208,8 +213,8 @@ namespace Microsoft.Azure.IIoT.Extensions.RabbitMq.Clients {
             private readonly RabbitMqEventBus _outer;
             private readonly IRabbitMqChannel _channel;
             private readonly SemaphoreSlim _lock = new SemaphoreSlim(1, 1);
-            private readonly Dictionary<string, IEventHandler<T>> _subscriptions =
-                new Dictionary<string, IEventHandler<T>>();
+            private readonly Dictionary<string, IEventBusConsumer<T>> _subscriptions =
+                new Dictionary<string, IEventBusConsumer<T>>();
         }
 
         /// <summary>

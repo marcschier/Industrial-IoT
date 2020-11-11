@@ -23,7 +23,7 @@ namespace Microsoft.Azure.IIoT.Azure.EventHub.Clients {
     /// <summary>
     /// Event hub namespace client
     /// </summary>
-    public sealed class EventHubQueueClient : IEventQueueClient, IEventClient,
+    public sealed class EventHubQueueClient : IEventPublisherClient, IEventClient,
         IAsyncDisposable, IDisposable {
 
         /// <summary>
@@ -49,7 +49,7 @@ namespace Microsoft.Azure.IIoT.Azure.EventHub.Clients {
         }
 
         /// <inheritdoc/>
-        public async Task SendAsync(string target, byte[] payload,
+        public async Task PublishAsync(string target, byte[] payload,
             IDictionary<string, string> properties, string partitionKey,
             CancellationToken ct) {
             if (target == null) {
@@ -58,18 +58,51 @@ namespace Microsoft.Azure.IIoT.Azure.EventHub.Clients {
             if (payload == null) {
                 throw new ArgumentNullException(nameof(payload));
             }
-            var ev = new EventData(payload);
-            ev.Properties.Add(EventProperties.Target, target);
-            if (properties != null) {
-                foreach (var prop in properties) {
-                    ev.Properties.Add(prop.Key, prop.Value);
-                }
-            }
-            await _client.SendAsync(ev.YieldReturn(), GetPk(target, null, partitionKey), ct).ConfigureAwait(false);
+            var ev = CreateEvent(target, payload, properties);
+            await _client.SendAsync(ev.YieldReturn(), GetPk(target, null, partitionKey),
+                ct).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
-        public void Send<T>(string target, byte[] payload, T token,
+        public async Task PublishAsync(string target, IEnumerable<byte[]> batch,
+            IDictionary<string, string> properties, string partitionKey,
+            CancellationToken ct) {
+            if (target == null) {
+                throw new ArgumentNullException(nameof(target));
+            }
+            if (batch == null) {
+                throw new ArgumentNullException(nameof(batch));
+            }
+            var pk = GetPk(target, null, partitionKey);
+            var events = await _client.CreateBatchAsync(pk, ct).ConfigureAwait(false);
+            try {
+                foreach (var ev in batch
+                    .Select(b => CreateEvent(target, b, properties))) {
+                    if (!events.TryAdd(ev)) {
+                        if (events.SizeInBytes == 0) {
+                            throw new MessageSizeLimitException(
+                                $"Max size of event is {events.MaximumSizeInBytes}");
+                        }
+                        await _client.SendAsync(events, ct).ConfigureAwait(false);
+                        events.Dispose();
+                        events = await _client.CreateBatchAsync(pk, ct).ConfigureAwait(false); // next batch
+                        if (!events.TryAdd(ev)) {
+                            throw new MessageSizeLimitException(
+                                $"Max size of event is {events.MaximumSizeInBytes}");
+                        }
+                    }
+                }
+                if (events.SizeInBytes != 0) {
+                    await _client.SendAsync(events, ct).ConfigureAwait(false);
+                }
+            }
+            finally {
+                events?.Dispose();
+            }
+        }
+
+        /// <inheritdoc/>
+        public void Publish<T>(string target, byte[] payload, T token,
             Action<T, Exception> complete, IDictionary<string, string> properties,
             string partitionKey) {
             if (target == null) {
@@ -84,7 +117,7 @@ namespace Microsoft.Azure.IIoT.Azure.EventHub.Clients {
             if (complete == null) {
                 throw new ArgumentNullException(nameof(complete));
             }
-            var t = SendAsync(target, payload, properties, partitionKey, default)
+            var t = PublishAsync(target, payload, properties, partitionKey, default)
                 .ContinueWith(task => complete?.Invoke(token, task.Exception));
             t.Wait();
         }
@@ -214,6 +247,26 @@ namespace Microsoft.Azure.IIoT.Azure.EventHub.Clients {
             if (!string.IsNullOrEmpty(eventSchema)) {
                 ev.Properties.Add(EventProperties.EventSchema, eventSchema);
             }
+            return ev;
+        }
+
+        /// <summary>
+        /// Helper to create event
+        /// </summary>
+        /// <param name="target"></param>
+        /// <param name="payload"></param>
+        /// <param name="properties"></param>
+        /// <returns></returns>
+        private static EventData CreateEvent(string target, byte[] payload,
+            IDictionary<string, string> properties) {
+            var ev = new EventData(payload);
+            ev.Properties.Add(EventProperties.Target, target);
+            if (properties != null) {
+                foreach (var prop in properties) {
+                    ev.Properties.Add(prop.Key, prop.Value);
+                }
+            }
+
             return ev;
         }
 

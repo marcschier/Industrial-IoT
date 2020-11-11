@@ -13,7 +13,7 @@ namespace Microsoft.Azure.IIoT.Platform.Discovery.Events.v2 {
     /// <summary>
     /// Endpoint registry change listener
     /// </summary>
-    public class EndpointEventBusSubscriber : IEventHandler<EndpointEventModel> {
+    public class EndpointEventBusSubscriber : IEventBusConsumer<EndpointEventModel> {
 
         /// <summary>
         /// Create event subscriber

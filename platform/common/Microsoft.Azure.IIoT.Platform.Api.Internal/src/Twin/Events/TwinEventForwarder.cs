@@ -14,7 +14,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Api.Clients {
     /// <summary>
     /// Twin event publisher
     /// </summary>
-    public class TwinEventForwarder<THub> : IEventHandler<TwinEventModel> {
+    public class TwinEventForwarder<THub> : IEventBusConsumer<TwinEventModel> {
 
         /// <inheritdoc/>
         public TwinEventForwarder(ICallbackInvokerT<THub> callback) {

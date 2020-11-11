@@ -14,7 +14,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Api.Clients {
     /// <summary>
     /// Supervisor registry event publisher
     /// </summary>
-    public class SupervisorEventForwarder<THub> : IEventHandler<SupervisorEventModel> {
+    public class SupervisorEventForwarder<THub> : IEventBusConsumer<SupervisorEventModel> {
 
         /// <inheritdoc/>
         public SupervisorEventForwarder(ICallbackInvokerT<THub> callback) {

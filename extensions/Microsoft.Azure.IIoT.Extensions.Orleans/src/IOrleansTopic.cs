@@ -22,15 +22,15 @@ namespace Microsoft.Azure.IIoT.Extensions.Orleans {
         /// <summary>
         /// Subscribe to topic
         /// </summary>
-        /// <param name="sub"></param>
+        /// <param name="subscription"></param>
         /// <returns></returns>
-        Task SubscribeAsync(IOrleansSubscription sub);
+        Task SubscribeAsync(IOrleansSubscription subscription);
 
         /// <summary>
         /// Unsubscribe from topic
         /// </summary>
-        /// <param name="sub"></param>
+        /// <param name="subscription"></param>
         /// <returns></returns>
-        Task UnsubscribeAsync(IOrleansSubscription sub);
+        Task UnsubscribeAsync(IOrleansSubscription subscription);
     }
 }

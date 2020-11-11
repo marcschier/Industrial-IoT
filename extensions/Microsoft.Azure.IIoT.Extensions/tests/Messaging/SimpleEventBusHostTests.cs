@@ -165,7 +165,7 @@ namespace Microsoft.Azure.IIoT.Messaging.Services {
             }
         }
 
-        internal class FamilyHandler : IEventHandler<Family> {
+        internal class FamilyHandler : IEventBusConsumer<Family> {
             private readonly int _count;
             private readonly TaskCompletionSource<HashSet<Family>> _complete =
                 new TaskCompletionSource<HashSet<Family>>(TaskCreationOptions.RunContinuationsAsynchronously);
@@ -185,7 +185,7 @@ namespace Microsoft.Azure.IIoT.Messaging.Services {
                 Compare.Using<Family>((x, y) => x.Id == y.Id));
         }
 
-        internal class ChildHandler : IEventHandler<Child> {
+        internal class ChildHandler : IEventBusConsumer<Child> {
             private readonly int _count;
             private readonly TaskCompletionSource<HashSet<Child>> _complete =
                 new TaskCompletionSource<HashSet<Child>>(TaskCreationOptions.RunContinuationsAsynchronously);
@@ -204,7 +204,7 @@ namespace Microsoft.Azure.IIoT.Messaging.Services {
                 Compare.Using<Child>((x, y) => x.FirstName == y.FirstName));
         }
 
-        internal class PetHandler : IEventHandler<Pet> {
+        internal class PetHandler : IEventBusConsumer<Pet> {
             private readonly int _count;
             private readonly TaskCompletionSource<HashSet<Pet>> _complete =
                 new TaskCompletionSource<HashSet<Pet>>(TaskCreationOptions.RunContinuationsAsynchronously);

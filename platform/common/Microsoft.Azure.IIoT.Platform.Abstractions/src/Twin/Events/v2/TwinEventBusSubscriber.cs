@@ -13,7 +13,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Events.v2 {
     /// <summary>
     /// Twin registry change listener
     /// </summary>
-    public class TwinEventBusSubscriber : IEventHandler<TwinEventModel> {
+    public class TwinEventBusSubscriber : IEventBusConsumer<TwinEventModel> {
 
         /// <summary>
         /// Create event subscriber

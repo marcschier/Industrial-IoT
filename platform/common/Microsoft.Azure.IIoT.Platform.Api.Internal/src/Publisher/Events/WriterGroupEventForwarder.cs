@@ -14,7 +14,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Api.Clients {
     /// <summary>
     /// Application registry event publisher
     /// </summary>
-    public class WriterGroupEventForwarder<THub> : IEventHandler<WriterGroupEventModel> {
+    public class WriterGroupEventForwarder<THub> : IEventBusConsumer<WriterGroupEventModel> {
 
         /// <inheritdoc/>
         public WriterGroupEventForwarder(ICallbackInvokerT<THub> callback) {

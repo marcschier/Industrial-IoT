@@ -13,7 +13,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Events.v2 {
     /// <summary>
     /// Certificate Request change listener
     /// </summary>
-    public class CertificateRequestEventSubscriber : IEventHandler<CertificateRequestEventModel> {
+    public class CertificateRequestEventSubscriber : IEventBusConsumer<CertificateRequestEventModel> {
 
         /// <summary>
         /// Create event subscriber

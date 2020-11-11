@@ -13,7 +13,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Events.v2 {
     /// <summary>
     /// DataSet Writer registry change listener
     /// </summary>
-    public class DataSetWriterEventBusSubscriber : IEventHandler<DataSetWriterEventModel>{
+    public class DataSetWriterEventBusSubscriber : IEventBusConsumer<DataSetWriterEventModel>{
 
         /// <summary>
         /// Create event subscriber

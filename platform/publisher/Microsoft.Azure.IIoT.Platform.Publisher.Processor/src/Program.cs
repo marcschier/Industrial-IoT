@@ -123,7 +123,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Processor {
             /// Create forwarder
             /// </summary>
             /// <param name="client"></param>
-            public UnknownTelemetryForwarder(IEventQueueClient client) {
+            public UnknownTelemetryForwarder(IEventPublisherClient client) {
                 _client = client ?? throw new ArgumentNullException(nameof(client));
             }
 
@@ -133,10 +133,10 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Processor {
                 if (!properties.TryGetValue(SystemProperties.To, out var route)) {
                     properties.TryGetValue(EventProperties.Target, out route);
                 }
-                await _client.SendAsync(route, eventData, properties).ConfigureAwait(false);
+                await _client.PublishAsync(route, eventData, properties).ConfigureAwait(false);
             }
 
-            private readonly IEventQueueClient _client;
+            private readonly IEventPublisherClient _client;
         }
     }
 }

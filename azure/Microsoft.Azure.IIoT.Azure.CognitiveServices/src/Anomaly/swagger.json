@@ -12,6 +12,7 @@
           "AnomalyDetector"
         ],
         "summary": "Detects anomaly in the time series given the provided model.",
+        "operationId": "LastDetect",
         "consumes": [
           "application/json-patch+json",
           "application/json",
@@ -76,6 +77,7 @@
           "AnomalyDetector"
         ],
         "summary": "Detects anomaly in the time series given the provided model.",
+        "operationId": "EntireDetect",
         "consumes": [
           "application/json-patch+json",
           "application/json",
@@ -726,7 +728,8 @@
           "AnomalyDetector"
         ],
         "summary": "Detects trend change point in the time series given the provided model.",
-        "consumes": [
+         "operationId": "ChangePointDetect",
+       "consumes": [
           "application/json-patch+json",
           "application/json",
           "text/json",
@@ -1023,6 +1026,7 @@
         "tags": [
           "Ready"
         ],
+        "operationId": "IsReady",
         "responses": {
           "200": {
             "description": "A successful response results in a ready response (200)."
@@ -1038,6 +1042,7 @@
         "tags": [
           "Status"
         ],
+        "operationId": "GetStatus",
         "produces": [
           "application/json",
           "text/json"

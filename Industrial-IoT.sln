@@ -270,6 +270,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Platform", "Platform", "{D8
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Azure.IIoT.Platform.Publisher.Service.Tests", "platform\publisher\Microsoft.Azure.IIoT.Platform.Publisher.Service\tests\Microsoft.Azure.IIoT.Platform.Publisher.Service.Tests.csproj", "{2B935FC2-5F49-4665-9D98-BAAE4F7675CF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Azure.IIoT.Azure.CognitiveServices", "azure\Microsoft.Azure.IIoT.Azure.CognitiveServices\src\Microsoft.Azure.IIoT.Azure.CognitiveServices.csproj", "{7538C545-1EE5-4F85-B5CB-092F0322E6F6}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Azure.IIoT.Extensions.Mqtt", "extensions\Microsoft.Azure.IIoT.Extensions.Mqtt\src\Microsoft.Azure.IIoT.Extensions.Mqtt.csproj", "{9DD9512A-C852-4A5B-97C6-9309E4973001}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -998,6 +1002,22 @@ Global
 		{2B935FC2-5F49-4665-9D98-BAAE4F7675CF}.Release|Any CPU.Build.0 = Release|Any CPU
 		{2B935FC2-5F49-4665-9D98-BAAE4F7675CF}.Release|x64.ActiveCfg = Release|Any CPU
 		{2B935FC2-5F49-4665-9D98-BAAE4F7675CF}.Release|x64.Build.0 = Release|Any CPU
+		{7538C545-1EE5-4F85-B5CB-092F0322E6F6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7538C545-1EE5-4F85-B5CB-092F0322E6F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7538C545-1EE5-4F85-B5CB-092F0322E6F6}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{7538C545-1EE5-4F85-B5CB-092F0322E6F6}.Debug|x64.Build.0 = Debug|Any CPU
+		{7538C545-1EE5-4F85-B5CB-092F0322E6F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7538C545-1EE5-4F85-B5CB-092F0322E6F6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7538C545-1EE5-4F85-B5CB-092F0322E6F6}.Release|x64.ActiveCfg = Release|Any CPU
+		{7538C545-1EE5-4F85-B5CB-092F0322E6F6}.Release|x64.Build.0 = Release|Any CPU
+		{9DD9512A-C852-4A5B-97C6-9309E4973001}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9DD9512A-C852-4A5B-97C6-9309E4973001}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9DD9512A-C852-4A5B-97C6-9309E4973001}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{9DD9512A-C852-4A5B-97C6-9309E4973001}.Debug|x64.Build.0 = Debug|Any CPU
+		{9DD9512A-C852-4A5B-97C6-9309E4973001}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9DD9512A-C852-4A5B-97C6-9309E4973001}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9DD9512A-C852-4A5B-97C6-9309E4973001}.Release|x64.ActiveCfg = Release|Any CPU
+		{9DD9512A-C852-4A5B-97C6-9309E4973001}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -1126,6 +1146,8 @@ Global
 		{8FE8E36D-387C-405B-A568-AE8F152CC796} = {9A119B7C-C8B9-4DC0-B278-0B8CD409169B}
 		{F4C26673-5B66-435C-8F72-B1E7401C9D17} = {C8D79D8A-D92E-4AE3-BA54-0C927BEBCEBF}
 		{2B935FC2-5F49-4665-9D98-BAAE4F7675CF} = {43E69B85-2743-48EE-8FAE-A59F070E21D2}
+		{7538C545-1EE5-4F85-B5CB-092F0322E6F6} = {1185F94F-1DD9-4ECA-80D0-D194B73D2366}
+		{9DD9512A-C852-4A5B-97C6-9309E4973001} = {EDC413E0-BE91-477B-8A16-B20BBBB35933}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {F09EFCEA-59F6-4A16-9CB6-7E865A3F62D8}

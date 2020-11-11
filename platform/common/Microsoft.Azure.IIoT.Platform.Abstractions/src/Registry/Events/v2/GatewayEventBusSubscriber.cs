@@ -13,7 +13,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Events.v2 {
     /// <summary>
     /// Gateway registry change listener
     /// </summary>
-    public class GatewayEventBusSubscriber : IEventHandler<GatewayEventModel> {
+    public class GatewayEventBusSubscriber : IEventBusConsumer<GatewayEventModel> {
 
         /// <summary>
         /// Create event subscriber

@@ -17,7 +17,7 @@ namespace Microsoft.Azure.IIoT.Extensions.RabbitMq.Clients {
     /// <summary>
     /// RabbitMq queue client
     /// </summary>
-    public sealed class RabbitMqQueueClient : IEventQueueClient, IEventClient {
+    public sealed class RabbitMqQueueClient : IEventPublisherClient, IEventClient {
 
         /// <summary>
         /// Create queue client
@@ -29,12 +29,12 @@ namespace Microsoft.Azure.IIoT.Extensions.RabbitMq.Clients {
         }
 
         /// <inheritdoc/>
-        public Task SendAsync(string target, byte[] payload,
+        public Task PublishAsync(string target, byte[] payload,
             IDictionary<string, string> properties, string partitionKey,
             CancellationToken ct) {
             var tcs = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
             ct.Register(() => tcs.TrySetCanceled());
-            Send(target, payload, tcs, (t, ex) => {
+            Publish(target, payload, tcs, (t, ex) => {
                 if (ex == null) {
                     t.TrySetResult(true);
                 }
@@ -46,7 +46,23 @@ namespace Microsoft.Azure.IIoT.Extensions.RabbitMq.Clients {
         }
 
         /// <inheritdoc/>
-        public void Send<T>(string target, byte[] payload, T token,
+        public async Task PublishAsync(string target, IEnumerable<byte[]> batch,
+            IDictionary<string, string> properties, string partitionKey,
+            CancellationToken ct) {
+            if (target == null) {
+                throw new ArgumentNullException(nameof(target));
+            }
+            if (batch == null) {
+                throw new ArgumentNullException(nameof(batch));
+            }
+            foreach (var payload in batch) {
+                await PublishAsync(target, payload, properties, partitionKey,
+                    ct).ConfigureAwait(false);
+            }
+        }
+
+        /// <inheritdoc/>
+        public void Publish<T>(string target, byte[] payload, T token,
             Action<T, Exception> complete, IDictionary<string, string> properties,
             string partitionKey) {
             if (target == null) {

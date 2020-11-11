@@ -13,7 +13,7 @@ namespace Microsoft.Azure.IIoT.Platform.Discovery.Events.v2 {
     /// <summary>
     /// Discovery progress listener
     /// </summary>
-    public class DiscoveryProgressEventBusSubscriber : IEventHandler<DiscoveryProgressModel> {
+    public class DiscoveryProgressEventBusSubscriber : IEventBusConsumer<DiscoveryProgressModel> {
 
         /// <summary>
         /// Create event subscriber
