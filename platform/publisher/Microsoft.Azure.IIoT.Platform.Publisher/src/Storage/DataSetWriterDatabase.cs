@@ -4,6 +4,7 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Platform.Publisher.Storage {
+    using Microsoft.Azure.IIoT.Platform.Publisher.Storage.Models;
     using Microsoft.Azure.IIoT.Platform.Publisher.Models;
     using Microsoft.Azure.IIoT.Exceptions;
     using Microsoft.Azure.IIoT.Storage;
@@ -12,7 +13,6 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Storage {
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.Azure.IIoT.Hub;
 
     /// <summary>
     /// Database writer repository

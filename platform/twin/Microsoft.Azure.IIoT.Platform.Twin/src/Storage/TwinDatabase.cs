@@ -4,11 +4,11 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Platform.Twin.Storage {
+    using Microsoft.Azure.IIoT.Platform.Twin.Storage.Models;
     using Microsoft.Azure.IIoT.Platform.Twin.Models;
     using Microsoft.Azure.IIoT.Platform.Core.Models;
     using Microsoft.Azure.IIoT.Exceptions;
     using Microsoft.Azure.IIoT.Storage;
-    using Microsoft.Azure.IIoT.Hub;
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -51,7 +51,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Storage {
                     twin.Id = Guid.NewGuid().ToString();
                 }
                 try {
-                    var result = await _documents.AddAsync(twin.ToDocumentModel(), 
+                    var result = await _documents.AddAsync(twin.ToDocumentModel(),
                         ct: ct).ConfigureAwait(false);
                     return result.Value.ToServiceModel(result.Etag);
                 }
@@ -126,7 +126,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Storage {
                 twinId = twin.Id;
                 var updated = twin.ToDocumentModel();
                 try {
-                    var result = await _documents.ReplaceAsync(document, 
+                    var result = await _documents.ReplaceAsync(document,
                         updated, ct: ct).ConfigureAwait(false);
                     return result.Value.ToServiceModel(result.Etag);
                 }

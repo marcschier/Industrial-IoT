@@ -8,7 +8,7 @@ namespace Microsoft.Azure.IIoT.Http.Tunnel.Services {
     using Microsoft.Azure.IIoT.Http;
     using Microsoft.Azure.IIoT.Http.Clients;
     using Microsoft.Azure.IIoT.Serializers;
-    using Microsoft.Azure.IIoT.Hub;
+    using Microsoft.Azure.IIoT.Hosting;
     using Microsoft.Extensions.Logging;
     using Microsoft.Extensions.Options;
     using System;
@@ -22,20 +22,20 @@ namespace Microsoft.Azure.IIoT.Http.Tunnel.Services {
     public sealed class HttpTunnelConfigurableFactory : IHttpHandlerFactory {
 
         /// <inheritdoc/>
-        public HttpTunnelConfigurableFactory(IEventClient client, 
+        public HttpTunnelConfigurableFactory(IEventClient client,
             IJsonSerializer serializer, IOptionsMonitor<HttpTunnelOptions> options,
             IEnumerable<IHttpHandler> handlers, IIdentity identity, ILogger logger) {
-            _tunnel = new HttpTunnelEventClientFactory(client, serializer, 
+            _tunnel = new HttpTunnelEventClientFactory(client, serializer,
                 handlers, identity, logger);
             _fallback = new HttpHandlerFactory(handlers, logger);
             _options = options ?? throw new ArgumentNullException(nameof(options));
         }
 
         /// <inheritdoc/>
-        public HttpTunnelConfigurableFactory(IEventClient client, IWebProxy proxy, 
-            IJsonSerializer serializer, IOptionsMonitor<HttpTunnelOptions> options, 
+        public HttpTunnelConfigurableFactory(IEventClient client, IWebProxy proxy,
+            IJsonSerializer serializer, IOptionsMonitor<HttpTunnelOptions> options,
             IEnumerable<IHttpHandler> handlers, IIdentity identity, ILogger logger) {
-            _tunnel = new HttpTunnelEventClientFactory(client, serializer, 
+            _tunnel = new HttpTunnelEventClientFactory(client, serializer,
                 handlers, identity, logger);
             _fallback = new HttpHandlerFactory(handlers, proxy, logger);
             _options = options ?? throw new ArgumentNullException(nameof(options));
@@ -43,7 +43,7 @@ namespace Microsoft.Azure.IIoT.Http.Tunnel.Services {
 
         /// <inheritdoc/>
         public TimeSpan Create(string resource, out HttpMessageHandler handler) {
-            return _options.CurrentValue.UseTunnel && 
+            return _options.CurrentValue.UseTunnel &&
                 (resource == null || !resource.StartsWith(Resource.Local)) ?
                 _tunnel.Create(resource, out handler) :
                 _fallback.Create(resource, out handler);

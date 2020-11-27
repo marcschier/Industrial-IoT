@@ -4,6 +4,7 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Platform.Publisher.Service.Cli {
+    using Microsoft.Azure.IIoT.Platform.Registry.Models;
     using Microsoft.Azure.IIoT.Platform.OpcUa.Sample;
     using Microsoft.Azure.IIoT.Platform.OpcUa.Services;
     using Microsoft.Azure.IIoT.Diagnostics;
@@ -209,7 +210,7 @@ Options:
             var registry = new IoTHubServiceClient(
                 config, new NewtonSoftJsonSerializer(), logger);
             try {
-                await registry.CreateOrUpdateAsync(new DeviceTwinModel {
+                await registry.RegisterAsync(new DeviceRegistrationModel {
                     Id = deviceId,
                     Tags = new Dictionary<string, VariantValue> {
                         [TwinProperty.Type] = IdentityType.Gateway
@@ -223,7 +224,7 @@ Options:
                 logger.LogInformation("Gateway {deviceId} exists.", deviceId);
             }
             try {
-                await registry.CreateOrUpdateAsync(new DeviceTwinModel {
+                await registry.RegisterAsync(new DeviceRegistrationModel {
                     Id = deviceId,
                     ModuleId = moduleId,
                     Properties = new TwinPropertiesModel {

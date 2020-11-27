@@ -32,17 +32,21 @@ namespace Microsoft.Azure.IIoT.Extensions.Orleans {
             builder.RegisterType<OrleansClientHost>()
                 .AsImplementedInterfaces().InstancePerLifetimeScope()
                 .IfNotRegistered(typeof(IOrleansGrainClient))
-                .IfNotRegistered(typeof(IEventBus));
+                .IfNotRegistered(typeof(IEventBusSubscriber))
+                .IfNotRegistered(typeof(IEventBusPublisher));
             builder.RegisterType<OrleansClusterConfig>()
                 .AsImplementedInterfaces()
-                .IfNotRegistered(typeof(IEventBus));
+                .IfNotRegistered(typeof(IEventBusSubscriber))
+                .IfNotRegistered(typeof(IEventBusPublisher));
 
             builder.RegisterType<EventBusHost>().AsSelf()
                 .AsImplementedInterfaces().InstancePerLifetimeScope()
-                .IfNotRegistered(typeof(IEventBus));
+                .IfNotRegistered(typeof(IEventBusSubscriber))
+                .IfNotRegistered(typeof(IEventBusPublisher));
             builder.RegisterType<OrleansEventBusClient>()
                 .AsImplementedInterfaces().InstancePerDependency()
-                .IfNotRegistered(typeof(IEventBus));
+                .IfNotRegistered(typeof(IEventBusSubscriber))
+                .IfNotRegistered(typeof(IEventBusPublisher));
 
             builder.RegisterType<TaskProcessor>()
                 .AsImplementedInterfaces().SingleInstance()

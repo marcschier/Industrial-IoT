@@ -5,7 +5,6 @@
 
 namespace Microsoft.Azure.IIoT.Messaging.Services {
     using Microsoft.Azure.IIoT.Messaging;
-    using Microsoft.Azure.IIoT.Exceptions;
     using System;
     using System.Threading.Tasks;
     using AutoFixture;
@@ -25,13 +24,13 @@ namespace Microsoft.Azure.IIoT.Messaging.Services {
             var fix = new Fixture();
             var prefix = fix.Create<string>();
             using (var harness = _fixture.GetHarness(prefix)) {
-                var bus = harness.GetEventBus();
+                var bus = harness.GetEventBusPublisher();
                 Skip.If(bus == null);
 
                 var family = fix.Create<Family>();
 
                 var tcs = new TaskCompletionSource<Family>(TaskCreationOptions.RunContinuationsAsynchronously);
-                var token = await bus.SubscribeAsync<Family>(f => {
+                var token = await harness.GetEventBusSubscriber().SubscribeAsync<Family>(f => {
                     tcs.SetResult(f);
                     return Task.CompletedTask;
                 }).ConfigureAwait(false);
@@ -52,7 +51,7 @@ namespace Microsoft.Azure.IIoT.Messaging.Services {
             var fix = new Fixture();
             var prefix = fix.Create<string>();
             using (var harness = _fixture.GetHarness(prefix)) {
-                var bus = harness.GetEventBus();
+                var bus = harness.GetEventBusPublisher();
                 Skip.If(bus == null);
 
                 var family = fix.Create<Family>();
@@ -60,7 +59,7 @@ namespace Microsoft.Azure.IIoT.Messaging.Services {
 
                 var count = 0;
                 var tcs = new TaskCompletionSource<Family>(TaskCreationOptions.RunContinuationsAsynchronously);
-                var token = await bus.SubscribeAsync<Family>(f => {
+                var token = await harness.GetEventBusSubscriber().SubscribeAsync<Family>(f => {
                     if (++count == 4) {
                         tcs.TrySetResult(f);
                     }
@@ -86,19 +85,19 @@ namespace Microsoft.Azure.IIoT.Messaging.Services {
             var fix = new Fixture();
             var prefix = fix.Create<string>();
             using (var harness = _fixture.GetHarness(prefix)) {
-                var bus = harness.GetEventBus();
+                var bus = harness.GetEventBusPublisher();
                 Skip.If(bus == null);
 
                 var family = fix.Create<Family>();
                 var family2 = fix.Create<Family>();
 
                 var tcs1 = new TaskCompletionSource<Family>(TaskCreationOptions.RunContinuationsAsynchronously);
-                var token1 = await bus.SubscribeAsync<Family>(f => {
+                var token1 = await harness.GetEventBusSubscriber().SubscribeAsync<Family>(f => {
                     tcs1.TrySetResult(f);
                     return Task.CompletedTask;
                 }).ConfigureAwait(false);
                 var tcs2 = new TaskCompletionSource<Family>(TaskCreationOptions.RunContinuationsAsynchronously);
-                var token2 = await bus.SubscribeAsync<Family>(f => {
+                var token2 = await harness.GetEventBusSubscriber().SubscribeAsync<Family>(f => {
                     tcs2.TrySetResult(f);
                     return Task.CompletedTask;
                 }).ConfigureAwait(false);
@@ -128,18 +127,18 @@ namespace Microsoft.Azure.IIoT.Messaging.Services {
             var fix = new Fixture();
             var prefix = fix.Create<string>();
             using (var harness = _fixture.GetHarness(prefix)) {
-                var bus = harness.GetEventBus();
+                var bus = harness.GetEventBusPublisher();
                 Skip.If(bus == null);
 
                 var family = fix.Create<Family>();
 
                 var tcs2 = new TaskCompletionSource<Family>(TaskCreationOptions.RunContinuationsAsynchronously);
-                var token2 = await bus.SubscribeAsync<Family>(f => {
+                var token2 = await harness.GetEventBusSubscriber().SubscribeAsync<Family>(f => {
                     tcs2.TrySetResult(f);
                     return Task.CompletedTask;
                 }).ConfigureAwait(false);
                 var tcs1 = new TaskCompletionSource<Family>(TaskCreationOptions.RunContinuationsAsynchronously);
-                var token1 = await bus.SubscribeAsync<Family>(f => {
+                var token1 = await harness.GetEventBusSubscriber().SubscribeAsync<Family>(f => {
                     tcs1.TrySetResult(f);
                     return Task.CompletedTask;
                 }).ConfigureAwait(false);
@@ -161,15 +160,15 @@ namespace Microsoft.Azure.IIoT.Messaging.Services {
             var fix = new Fixture();
             var prefix = fix.Create<string>();
             using (var harness = _fixture.GetHarness(prefix)) {
-                var bus = harness.GetEventBus();
+                var bus = harness.GetEventBusPublisher();
                 Skip.If(bus == null);
 
                 await Assert.ThrowsAsync<ArgumentNullException>(
                     () => bus.PublishAsync<Family>(null)).ConfigureAwait(false);
                 await Assert.ThrowsAsync<ArgumentNullException>(
-                    () => bus.SubscribeAsync<Family>(null)).ConfigureAwait(false);
+                    () => harness.GetEventBusSubscriber().SubscribeAsync<Family>(null)).ConfigureAwait(false);
 
-                var token = await bus.SubscribeAsync<Family>(f => default).ConfigureAwait(false);
+                var token = await harness.GetEventBusSubscriber().SubscribeAsync<Family>(f => default).ConfigureAwait(false);
                 await token.DisposeAsync().ConfigureAwait(false);
                 await Assert.ThrowsAsync<ObjectDisposedException>(
                     () => token.DisposeAsync().AsTask()).ConfigureAwait(false);

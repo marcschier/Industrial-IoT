@@ -32,7 +32,8 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus {
                 .AsImplementedInterfaces();
             builder.RegisterType<ServiceBusEventBus>()
                 .AsImplementedInterfaces().SingleInstance()
-                .IfNotRegistered(typeof(IEventBus));
+                .IfNotRegistered(typeof(IEventBusSubscriber))
+                .IfNotRegistered(typeof(IEventBusPublisher));
             builder.RegisterType<TaskProcessor>()
                 .AsImplementedInterfaces().SingleInstance()
                 .IfNotRegistered(typeof(ITaskProcessor));

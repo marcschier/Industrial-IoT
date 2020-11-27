@@ -20,7 +20,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub.Deploy {
         /// Target condition for gateways
         /// </summary>
         public static readonly string TargetCondition =
-            $"(tags.__type__ = '{IdentityType.Gateway}' AND NOT IS_DEFINED(tags.unmanaged))";
+            $"(tags.__type__ = '{kEdgeType}' AND NOT IS_DEFINED(tags.unmanaged))";
 
         /// <summary>
         /// Create edge base deployer
@@ -36,7 +36,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub.Deploy {
         /// <inheritdoc/>
         public Task StartAsync() {
            return _service.CreateOrUpdateConfigurationAsync(new ConfigurationModel {
-                Id = IdentityType.Gateway,
+                Id = kEdgeType,
                 Content = new ConfigurationContentModel {
                     ModulesContent = GetEdgeBase()
                 },
@@ -57,7 +57,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub.Deploy {
         /// <param name="version"></param>
         /// <returns></returns>
         private IReadOnlyDictionary<string, IReadOnlyDictionary<string, object>> GetEdgeBase(
-            string version = "1.0.9") {
+            string version = "1.2.0-rc1") {
             return _serializer.Deserialize<IReadOnlyDictionary<string, IReadOnlyDictionary<string, object>>>(@"
 {
     ""$edgeAgent"": {
@@ -80,16 +80,16 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub.Deploy {
                         ""createOptions"": ""{}""
                     },
                     ""env"": {
-                        ""ExperimentalFeatures__Enabled"": {
+                        ""experimentalFeatures__enabled"": {
                             ""value"": ""true""
                         },
-                        ""ExperimentalFeatures__EnableGetLogs"": {
+                        ""experimentalFeatures__enableGetLogs"": {
                             ""value"": ""true""
                         },
-                        ""ExperimentalFeatures__EnableUploadLogs"": {
+                        ""experimentalFeatures__enableUploadLogs"": {
                             ""value"": ""true""
                         },
-                        ""ExperimentalFeatures__EnableMetrics"": {
+                        ""experimentalFeatures__enableMetrics"": {
                             ""value"": ""true""
                         }
                     }
@@ -100,7 +100,18 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub.Deploy {
                     ""restartPolicy"": ""always"",
                     ""settings"": {
                         ""image"": ""mcr.microsoft.com/azureiotedge-hub:" + version + @""",
-                        ""createOptions"":  ""{\""HostConfig\"":{\""PortBindings\"":{\""443/tcp\"":[{\""HostPort\"":\""443\""}],\""5671/tcp\"":[{\""HostPort\"":\""5671\""}],\""8883/tcp\"":[{\""HostPort\"":\""8883\""}],\""9600/tcp\"":[{\""HostPort\"":\""9600\""}]}},\""ExposedPorts\"":{\""5671/tcp\"":{},\""8883/tcp\"":{},\""9600/tcp\"":{}}}""
+                        ""createOptions"":  ""{\""HostConfig\"":{\""PortBindings\"":{\""443/tcp\"":[{\""HostPort\"":\""443\""}],\""1883/tcp\"":[{\""HostPort\"":\""1883\""}],\""5671/tcp\"":[{\""HostPort\"":\""5671\""}],\""8883/tcp\"":[{\""HostPort\"":\""8883\""}],\""9600/tcp\"":[{\""HostPort\"":\""9600\""}]}},\""ExposedPorts\"":{\""5671/tcp\"":{},\""8883/tcp\"":{}}}""
+                    },
+                    ""env"": {
+                        ""experimentalFeatures__enabled"": {
+                            ""value"": ""true""
+                        },
+                        ""experimentalFeatures__mqttBrokerEnabled"": {
+                            ""value"": ""true""
+                        },
+                        ""experimentalFeatures__nestedEdgeEnabled"": {
+                            ""value"": ""true""
+                        }
                     }
                 }
             },
@@ -123,7 +134,8 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub.Deploy {
 ");
         }
 
-        private const string kDefaultSchemaVersion = "1.0";
+        private const string kEdgeType = "iiotedge";
+        private const string kDefaultSchemaVersion = "1.2";
         private readonly IDeviceDeploymentServices _service;
         private readonly IJsonSerializer _serializer;
     }

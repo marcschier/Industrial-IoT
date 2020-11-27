@@ -8,13 +8,13 @@ namespace Microsoft.Azure.IIoT.Platform.OpcUa.Services {
     using Microsoft.Azure.IIoT.Platform.Discovery.Models;
     using Microsoft.Azure.IIoT.Platform.Core.Models;
     using Microsoft.Azure.IIoT.Platform.Discovery;
+    using Microsoft.Azure.IIoT.Hosting;
     using Microsoft.Azure.IIoT.Exceptions;
-    using Microsoft.Azure.IIoT.Hub;
     using Microsoft.Azure.IIoT.Utils;
+    using Microsoft.Extensions.Logging;
     using Opc.Ua;
     using Opc.Ua.Client;
     using Opc.Ua.Extensions;
-    using Microsoft.Extensions.Logging;
     using System;
     using System.Collections.Concurrent;
     using System.Collections.Generic;

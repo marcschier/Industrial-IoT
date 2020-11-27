@@ -4,10 +4,10 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Platform.Publisher.Storage {
+    using Microsoft.Azure.IIoT.Platform.Publisher.Storage.Models;
     using Microsoft.Azure.IIoT.Platform.Publisher.Models;
     using Microsoft.Azure.IIoT.Exceptions;
     using Microsoft.Azure.IIoT.Storage;
-    using Microsoft.Azure.IIoT.Hub;
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -325,7 +325,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Storage {
             }
             while (true) {
                 var document = await _documents.FindAsync<DataSetEntityDocument>(
-                    DataSetEntityDocumentEx.GetDocumentId(dataSetWriterId, variableId), 
+                    DataSetEntityDocumentEx.GetDocumentId(dataSetWriterId, variableId),
                         ct: ct).ConfigureAwait(false);
                 if (document == null) {
                     return null;

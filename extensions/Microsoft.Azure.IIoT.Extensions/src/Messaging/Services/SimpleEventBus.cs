@@ -5,17 +5,16 @@
 
 namespace Microsoft.Azure.IIoT.Messaging.Services {
     using Microsoft.Azure.IIoT.Messaging;
-    using Microsoft.Azure.IIoT.Exceptions;
+    using Microsoft.Azure.IIoT.Utils;
     using System.Threading.Tasks;
     using System.Collections.Concurrent;
     using System;
     using System.Linq;
-    using Microsoft.Azure.IIoT.Utils;
 
     /// <summary>
     /// Simple in memory event bus
     /// </summary>
-    public class SimpleEventBus : IEventBus {
+    public class SimpleEventBus : IEventBusPublisher, IEventBusSubscriber {
 
         /// <inheritdoc/>
         public async Task PublishAsync<T>(T message) {

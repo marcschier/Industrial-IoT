@@ -8,17 +8,17 @@ namespace Microsoft.Azure.IIoT.Extensions.Orleans.Clients {
     using Microsoft.Azure.IIoT.Messaging;
     using Microsoft.Azure.IIoT.Exceptions;
     using Microsoft.Azure.IIoT.Serializers;
+    using Microsoft.Azure.IIoT.Utils;
     using Microsoft.Extensions.Options;
     using Microsoft.Extensions.Logging;
     using System.Threading.Tasks;
     using System.Collections.Concurrent;
     using System;
-    using Microsoft.Azure.IIoT.Utils;
 
     /// <summary>
     /// Orleans event bus client
     /// </summary>
-    public class OrleansEventBusClient : IEventBus {
+    public class OrleansEventBusClient : IEventBusPublisher, IEventBusSubscriber {
 
         /// <summary>
         /// Create event bus client

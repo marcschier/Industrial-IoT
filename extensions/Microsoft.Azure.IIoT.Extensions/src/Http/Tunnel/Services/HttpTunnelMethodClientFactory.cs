@@ -9,6 +9,7 @@ namespace Microsoft.Azure.IIoT.Http.Tunnel.Services {
     using Microsoft.Azure.IIoT.Http;
     using Microsoft.Azure.IIoT.Http.Clients;
     using Microsoft.Azure.IIoT.Serializers;
+    using Microsoft.Azure.IIoT.Hosting;
     using Microsoft.Extensions.Logging;
     using System;
     using System.Linq;
@@ -17,7 +18,6 @@ namespace Microsoft.Azure.IIoT.Http.Tunnel.Services {
     using System.Threading;
     using System.Threading.Tasks;
     using System.Collections.Generic;
-    using Microsoft.Azure.IIoT.Hub;
 
     /// <summary>
     /// Provides a http handler factory using method client as tunnel.

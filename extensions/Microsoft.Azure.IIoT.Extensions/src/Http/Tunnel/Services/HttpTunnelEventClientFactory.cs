@@ -5,11 +5,11 @@
 
 namespace Microsoft.Azure.IIoT.Http.Tunnel.Services {
     using Microsoft.Azure.IIoT.Http.Tunnel.Models;
-    using Microsoft.Azure.IIoT.Hosting;
-    using Microsoft.Azure.IIoT.Messaging;
-    using Microsoft.Azure.IIoT.Hub;
     using Microsoft.Azure.IIoT.Http;
     using Microsoft.Azure.IIoT.Http.Clients;
+    using Microsoft.Azure.IIoT.Hosting;
+    using Microsoft.Azure.IIoT.Messaging;
+    using Microsoft.Azure.IIoT.Rpc;
     using Microsoft.Azure.IIoT.Serializers;
     using Microsoft.Extensions.Logging;
     using System;
@@ -157,9 +157,9 @@ namespace Microsoft.Azure.IIoT.Http.Tunnel.Services {
                 // Send events
                 for (var messageId = 0; messageId < buffers.Count; messageId++) {
                     await _outer._client.SendEventAsync(
-                        _outer._identity.AsHubResource(), buffers[messageId], 
+                        _outer._identity.AsHubResource(), buffers[messageId],
                         requestId + "_" + messageId.ToString(),
-                        HttpTunnelRequestModel.SchemaName, 
+                        HttpTunnelRequestModel.SchemaName,
                         ContentMimeType.Binary, ct).ConfigureAwait(false);
                 }
 

@@ -60,7 +60,12 @@ namespace Microsoft.Azure.IIoT.Utils {
                         return false;
                     }
                     if ((c == '"' || c == '\'') && !isEscaping) {
-                        quote = c;
+                        if (quote == c) {
+                            quote = null;
+                        }
+                        else if (quote == null) {
+                            quote = c;
+                        }
                     }
                     isEscaping = false;
                     return quote == null && char.IsWhiteSpace(c);

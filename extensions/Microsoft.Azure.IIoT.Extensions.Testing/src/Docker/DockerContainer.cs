@@ -136,7 +136,8 @@ namespace Microsoft.Azure.IIoT.Extensions.Docker {
         protected async Task StopAndRemoveContainerAsync(string containerId,
             CancellationToken ct = default) {
             using (var dockerClient = CreateDockerClient()) {
-                await StopAndRemoveContainerAsync(dockerClient, containerId, ct).ConfigureAwait(false);
+                await StopAndRemoveContainerAsync(dockerClient, containerId,
+                    ct).ConfigureAwait(false);
                 ContainerName = null;
             }
         }

@@ -4,11 +4,11 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Platform.Discovery.Storage {
+    using Microsoft.Azure.IIoT.Platform.Discovery.Storage.Models;
     using Microsoft.Azure.IIoT.Platform.Discovery.Models;
     using Microsoft.Azure.IIoT.Platform.Core.Models;
     using Microsoft.Azure.IIoT.Exceptions;
     using Microsoft.Azure.IIoT.Storage;
-    using Microsoft.Azure.IIoT.Hub;
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -104,7 +104,7 @@ namespace Microsoft.Azure.IIoT.Platform.Discovery.Storage {
                 endpointId = endpoint.Id;
                 var updated = endpoint.ToDocumentModel();
                 try {
-                    var result = await _documents.ReplaceAsync(document, 
+                    var result = await _documents.ReplaceAsync(document,
                         updated, ct: ct).ConfigureAwait(false);
                     return result.Value.ToServiceModel(result.Etag);
                 }
@@ -219,7 +219,7 @@ namespace Microsoft.Azure.IIoT.Platform.Discovery.Storage {
                 if (filter?.Certificate != null) {
                     // If cert thumbprint provided, include it in search
                     query = query.Where(x => x.Thumbprint != null);
-                    query = query.Where(x => x.Thumbprint.Equals(filter.Certificate, 
+                    query = query.Where(x => x.Thumbprint.Equals(filter.Certificate,
                         StringComparison.Ordinal));
                 }
                 if (filter?.SecurityMode != null) {

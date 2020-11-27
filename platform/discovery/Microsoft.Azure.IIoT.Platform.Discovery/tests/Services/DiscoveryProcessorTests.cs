@@ -8,8 +8,7 @@ namespace Microsoft.Azure.IIoT.Platform.Discovery.Services {
     using Microsoft.Azure.IIoT.Platform.Discovery.Storage;
     using Microsoft.Azure.IIoT.Platform.Discovery;
     using Microsoft.Azure.IIoT.Platform.Registry.Models;
-    using Microsoft.Azure.IIoT.Hub;
-    using Microsoft.Azure.IIoT.Hub.Models;
+    using Microsoft.Azure.IIoT.Hosting;
     using Microsoft.Azure.IIoT.Serializers;
     using Microsoft.Azure.IIoT.Serializers.NewtonSoft;
     using Microsoft.Azure.IIoT.Storage.Services;
@@ -326,7 +325,7 @@ namespace Microsoft.Azure.IIoT.Platform.Discovery.Services {
         /// Setup mock
         /// </summary>
         private static AutoMock Setup(out string discoverer, out List<ApplicationRegistrationModel> expectedState,
-            out List<DiscoveryResultModel> discoveryResults, int existingEntries = -1, 
+            out List<DiscoveryResultModel> discoveryResults, int existingEntries = -1,
             Func<ApplicationRegistrationModel, ApplicationRegistrationModel> fixupDatabase = null) {
 
             var fixture = new Fixture();

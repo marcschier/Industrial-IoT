@@ -58,12 +58,21 @@ namespace Microsoft.Azure.IIoT.Messaging.Services {
         }
 
         /// <summary>
-        /// Get Event Bus
+        /// Get Event Bus Publisher
         /// </summary>
         /// <param name="options"></param>
         /// <returns></returns>
-        public IEventBus GetEventBus() {
-            return Try.Op(() => _container?.Resolve<IEventBus>());
+        public IEventBusPublisher GetEventBusPublisher() {
+            return Try.Op(() => _container?.Resolve<IEventBusPublisher>());
+        }
+
+        /// <summary>
+        /// Get Event Bus Subscriber
+        /// </summary>
+        /// <param name="options"></param>
+        /// <returns></returns>
+        public IEventBusSubscriber GetEventBusSubscriber() {
+            return Try.Op(() => _container?.Resolve<IEventBusSubscriber>());
         }
 
         /// <summary>

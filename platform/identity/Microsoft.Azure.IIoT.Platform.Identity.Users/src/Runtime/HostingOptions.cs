@@ -4,7 +4,6 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Platform.Identity.Users.Runtime {
-    using Microsoft.Azure.IIoT.Utils;
     using Microsoft.Azure.IIoT.Hosting;
     using Microsoft.Azure.IIoT.Configuration;
     using Microsoft.Extensions.Configuration;

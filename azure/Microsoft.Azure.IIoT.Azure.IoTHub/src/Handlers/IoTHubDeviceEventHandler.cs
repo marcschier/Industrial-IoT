@@ -7,6 +7,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub.Handlers {
     using Microsoft.Azure.IIoT.Hub;
     using Microsoft.Azure.IIoT.Messaging;
     using Microsoft.Azure.IIoT.Utils;
+    using Microsoft.Azure.IIoT.Hosting;
     using System;
     using System.Collections.Generic;
     using System.Collections.Concurrent;

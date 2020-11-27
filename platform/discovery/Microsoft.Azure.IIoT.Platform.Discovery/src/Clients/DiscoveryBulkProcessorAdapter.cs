@@ -5,7 +5,7 @@
 
 namespace Microsoft.Azure.IIoT.Platform.Discovery.Clients {
     using Microsoft.Azure.IIoT.Platform.Discovery.Models;
-    using Microsoft.Azure.IIoT.Hub;
+    using Microsoft.Azure.IIoT.Hosting;
     using Microsoft.Extensions.Logging;
     using System;
     using System.Collections.Generic;

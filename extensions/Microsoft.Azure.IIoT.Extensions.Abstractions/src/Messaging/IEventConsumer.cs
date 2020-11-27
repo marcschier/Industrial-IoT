@@ -21,7 +21,8 @@ namespace Microsoft.Azure.IIoT.Messaging {
         /// <param name="checkpoint"></param>
         /// <returns></returns>
         Task HandleAsync(byte[] eventData,
-            IDictionary<string, string> properties, Func<Task> checkpoint);
+            IDictionary<string, string> properties,
+            Func<Task> checkpoint);
 
         /// <summary>
         /// Event batch completed

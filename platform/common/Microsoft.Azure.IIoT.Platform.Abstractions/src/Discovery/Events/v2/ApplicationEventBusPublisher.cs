@@ -20,7 +20,7 @@ namespace Microsoft.Azure.IIoT.Platform.Discovery.Events.v2 {
         /// Create event publisher
         /// </summary>
         /// <param name="bus"></param>
-        public ApplicationEventBusPublisher(IEventBus bus) {
+        public ApplicationEventBusPublisher(IEventBusPublisher bus) {
             _bus = bus ?? throw new ArgumentNullException(nameof(bus));
         }
 
@@ -65,7 +65,7 @@ namespace Microsoft.Azure.IIoT.Platform.Discovery.Events.v2 {
         /// <param name="type"></param>
         /// <param name="context"></param>
         /// <param name="application"></param>
-        /// 
+        ///
         /// <returns></returns>
         private static ApplicationEventModel Wrap(ApplicationEventType type,
             OperationContextModel context, ApplicationInfoModel application) {
@@ -76,6 +76,6 @@ namespace Microsoft.Azure.IIoT.Platform.Discovery.Events.v2 {
             };
         }
 
-        private readonly IEventBus _bus;
+        private readonly IEventBusPublisher _bus;
     }
 }

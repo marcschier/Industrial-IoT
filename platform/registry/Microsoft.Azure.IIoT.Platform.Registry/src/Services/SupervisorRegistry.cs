@@ -10,6 +10,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
     using Microsoft.Azure.IIoT.Platform.Core.Models;
     using Microsoft.Azure.IIoT.Exceptions;
     using Microsoft.Azure.IIoT.Hub;
+    using Microsoft.Azure.IIoT.Hosting;
     using Microsoft.Azure.IIoT.Serializers;
     using Microsoft.Extensions.Logging;
     using System;
@@ -139,7 +140,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
                 }
             }
 
-            var queryResult = await _iothub.QueryDeviceTwinsAsync(query, null, 
+            var queryResult = await _iothub.QueryDeviceTwinsAsync(query, null,
                 pageSize, ct).ConfigureAwait(false);
             return new SupervisorListModel {
                 ContinuationToken = queryResult.ContinuationToken,

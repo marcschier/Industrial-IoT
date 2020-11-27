@@ -12,7 +12,6 @@ namespace Microsoft.Azure.IIoT.Extensions.CouchDb.Runtime {
     /// </summary>
     internal sealed class CouchDbConfig : PostConfigureOptionBase<CouchDbOptions> {
 
-
         /// <summary>
         /// Configuration constructor
         /// </summary>
@@ -21,9 +20,10 @@ namespace Microsoft.Azure.IIoT.Extensions.CouchDb.Runtime {
             base(configuration) {
         }
 
+        /// <inheritdoc/>
         public override void PostConfigure(string name, CouchDbOptions options) {
             if (string.IsNullOrEmpty(options.HostName)) {
-                options.HostName = 
+                options.HostName =
                     GetStringOrDefault(PcsVariable.PCS_COUCHDB_HOSTNAME, "localhost");
             }
             if (string.IsNullOrEmpty(options.UserName)) {
@@ -31,7 +31,7 @@ namespace Microsoft.Azure.IIoT.Extensions.CouchDb.Runtime {
                     GetStringOrDefault(PcsVariable.PCS_COUCHDB_USERNAME, "admin");
             }
             if (string.IsNullOrEmpty(options.Key)) {
-                options.Key = 
+                options.Key =
                     GetStringOrDefault(PcsVariable.PCS_COUCHDB_KEY, "couchdb");
             }
         }

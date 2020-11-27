@@ -4,7 +4,6 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Authentication.Runtime {
-    using Microsoft.Azure.IIoT.Hosting;
     using Microsoft.Azure.IIoT.Configuration;
     using Microsoft.Extensions.Configuration;
     using System;

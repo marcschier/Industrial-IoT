@@ -27,7 +27,7 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service.Api {
         [Fact]
         public async Task TestPublishTwinEventAndReceiveAsync() {
 
-            var bus = _factory.Resolve<IEventBus>();
+            var bus = _factory.Resolve<IEventBusPublisher>();
             var client = _factory.Resolve<ITwinServiceEvents>();
 
             var expected = new TwinEventModel {
@@ -59,7 +59,7 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service.Api {
         [InlineData(46340)]
         public async Task TestPublishTwinEventAndReceiveMultipleAsync(int total) {
 
-            var bus = _factory.Resolve<IEventBus>();
+            var bus = _factory.Resolve<IEventBusPublisher>();
             var client = _factory.Resolve<ITwinServiceEvents>();
 
             var expected = new TwinEventModel {

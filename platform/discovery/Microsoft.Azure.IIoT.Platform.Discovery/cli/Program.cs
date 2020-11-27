@@ -9,17 +9,18 @@ namespace Microsoft.Azure.IIoT.Platform.Discovery.Cli {
     using Microsoft.Azure.IIoT.Platform.Discovery.Models;
     using Microsoft.Azure.IIoT.Platform.Twin;
     using Microsoft.Azure.IIoT.Platform.Twin.Models;
+    using Microsoft.Azure.IIoT.Platform.Registry.Models;
     using Microsoft.Azure.IIoT.Platform.Core.Models;
     using Microsoft.Azure.IIoT.Platform.OpcUa.Services;
     using Microsoft.Azure.IIoT.Platform.OpcUa.Transport.Probe;
     using Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Runtime;
     using Microsoft.Azure.IIoT.Diagnostics;
-    using Microsoft.Azure.IIoT.Hub;
     using Microsoft.Azure.IIoT.Azure.IoTHub.Clients;
     using Microsoft.Azure.IIoT.Azure.IoTHub;
     using Microsoft.Azure.IIoT.Azure.LogAnalytics;
     using Microsoft.Azure.IIoT.Azure.LogAnalytics.Runtime;
     using Microsoft.Azure.IIoT.Exceptions;
+    using Microsoft.Azure.IIoT.Hub;
     using Microsoft.Azure.IIoT.Hub.Models;
     using Microsoft.Azure.IIoT.Net;
     using Microsoft.Azure.IIoT.Net.Models;
@@ -167,8 +168,8 @@ usage:       [options] operation [args]
 Options:
 
      -C
-    --connection-string     IoT Hub owner connection string to use to 
-                            connect to IoT hub to create edge identity.  
+    --connection-string     IoT Hub owner connection string to use to
+                            connect to IoT hub to create edge identity.
                             If not provided, read from environment.
     --stress                Run test as stress test (if supported)
     --port / -p             Port to listen on
@@ -245,7 +246,7 @@ Operations (Mutually exclusive):
                 moduleId = "registry";
                 Console.WriteLine($"Using <moduleId> '{moduleId}'");
             }
-            
+
             var diagnostics = new LogAnalyticsConfig(configuration).ToOptions().Value;
 
             Console.WriteLine("Create or retrieve connection string...");
@@ -270,7 +271,7 @@ Operations (Mutually exclusive):
             var registry = new IoTHubServiceClient(
                 config, new NewtonSoftJsonSerializer(), logger);
             try {
-                await registry.CreateOrUpdateAsync(new DeviceTwinModel {
+                await registry.RegisterAsync(new DeviceRegistrationModel {
                     Id = deviceId,
                     Tags = new Dictionary<string, VariantValue> {
                         [TwinProperty.Type] = IdentityType.Gateway
@@ -284,7 +285,7 @@ Operations (Mutually exclusive):
                 logger.LogInformation("Gateway {deviceId} exists.", deviceId);
             }
             try {
-                await registry.CreateOrUpdateAsync(new DeviceTwinModel {
+                await registry.RegisterAsync(new DeviceRegistrationModel {
                     Id = deviceId,
                     ModuleId = moduleId,
                     Properties = new TwinPropertiesModel {
@@ -448,7 +449,7 @@ Operations (Mutually exclusive):
                 return Task.CompletedTask;
             }
 
-            public Task OnTwinActivatedAsync(OperationContextModel context, 
+            public Task OnTwinActivatedAsync(OperationContextModel context,
                 TwinInfoModel twin) {
                 Console.WriteLine($"Activated {twin.Id}");
                 return Task.CompletedTask;
@@ -460,7 +461,7 @@ Operations (Mutually exclusive):
                 return Task.CompletedTask;
             }
 
-            public Task OnTwinDeactivatedAsync(OperationContextModel context, 
+            public Task OnTwinDeactivatedAsync(OperationContextModel context,
                 TwinInfoModel twin) {
                 Console.WriteLine($"Deactivated {twin.Id}");
                 return Task.CompletedTask;

@@ -6,6 +6,7 @@
 namespace Microsoft.Azure.IIoT.Platform.Twin.Services.Module.Cli {
     using Microsoft.Azure.IIoT.Platform.Twin.Models;
     using Microsoft.Azure.IIoT.Platform.Core.Models;
+    using Microsoft.Azure.IIoT.Platform.Registry.Models;
     using Microsoft.Azure.IIoT.Platform.OpcUa.Sample;
     using Microsoft.Azure.IIoT.Platform.OpcUa.Services;
     using Microsoft.Azure.IIoT.Platform.OpcUa.Testing.Runtime;
@@ -522,8 +523,7 @@ Options:
             item.Properties = new TwinPropertiesModel {
                 Desired = properties
             };
-            await registry.CreateOrUpdateAsync(item, true,
-                default).ConfigureAwait(false);
+            await registry.PatchAsync(item, true, default).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -535,7 +535,7 @@ Options:
             var registry = new IoTHubServiceClient(
                 config, new NewtonSoftJsonSerializer(), logger);
             try {
-                await registry.CreateOrUpdateAsync(new DeviceTwinModel {
+                await registry.RegisterAsync(new DeviceRegistrationModel {
                     Id = deviceId,
                     Tags = new Dictionary<string, VariantValue> {
                         [TwinProperty.Type] = IdentityType.Gateway
@@ -549,7 +549,7 @@ Options:
                 logger.LogInformation("Gateway {deviceId} exists.", deviceId);
             }
             try {
-                await registry.CreateOrUpdateAsync(new DeviceTwinModel {
+                await registry.RegisterAsync(new DeviceRegistrationModel {
                     Id = deviceId,
                     ModuleId = moduleId,
                     Properties = new TwinPropertiesModel {
@@ -587,7 +587,7 @@ Options:
                 IgnoreDefaultValues = true,
                 UseAdvancedEncoding = true
             })
-            using (var browser = new BrowsedNodeStreamEncoder(client, 
+            using (var browser = new BrowsedNodeStreamEncoder(client,
                 endpoint.ToConnectionModel(), encoder, null, logger.Logger)) {
                 await browser.EncodeAsync(CancellationToken.None).ConfigureAwait(false);
             }
@@ -604,7 +604,7 @@ Options:
                 using (var client = new ClientServices(logger.Logger, config))
                 using (var server = new ServerWrapper(endpoint, logger)) {
                     var sw = Stopwatch.StartNew();
-                    using (var archive = await storage.OpenAsync(fileName, FileMode.Create, 
+                    using (var archive = await storage.OpenAsync(fileName, FileMode.Create,
                         FileAccess.Write).ConfigureAwait(false))
                     using (var archiver = new AddressSpaceArchiver(client,
                         endpoint.ToConnectionModel(), archive, logger.Logger)) {

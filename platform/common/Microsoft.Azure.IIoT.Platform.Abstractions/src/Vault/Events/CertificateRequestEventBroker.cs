@@ -23,7 +23,7 @@ namespace Microsoft.Azure.IIoT.Platform.Vault.Events {
         /// </summary>
         /// <param name="bus"></param>
         /// <param name="processor"></param>
-        public CertificateRequestEventBroker(IEventBus bus, ITaskProcessor processor = null) {
+        public CertificateRequestEventBroker(IEventBusPublisher bus, ITaskProcessor processor = null) {
             _processor = processor;
             _listeners = new ConcurrentDictionary<string, ICertificateRequestListener>();
 

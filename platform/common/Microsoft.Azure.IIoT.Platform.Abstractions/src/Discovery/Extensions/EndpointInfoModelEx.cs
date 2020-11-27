@@ -5,11 +5,11 @@
 
 namespace Microsoft.Azure.IIoT.Platform.Discovery.Models {
     using Microsoft.Azure.IIoT.Platform.Core.Models;
+    using Microsoft.Azure.IIoT.Hosting;
+    using Microsoft.Azure.IIoT.Utils;
     using System.Collections.Generic;
     using System.Linq;
     using System;
-    using Microsoft.Azure.IIoT.Hub;
-    using Microsoft.Azure.IIoT.Utils;
 
     /// <summary>
     /// Service model extensions for discovery service
@@ -118,7 +118,7 @@ namespace Microsoft.Azure.IIoT.Platform.Discovery.Models {
                 return true;
             }
             if (patch == null) {
-                result = existing; 
+                result = existing;
                 return false; // no changes
             }
             if (!Structural.Equals(existing, patch)) {

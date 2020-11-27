@@ -21,7 +21,7 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Services {
     /// <summary>
     /// Event bus built on top of service bus
     /// </summary>
-    public sealed class ServiceBusEventBus : IEventBus, IDisposable {
+    public sealed class ServiceBusEventBus : IEventBusPublisher, IEventBusSubscriber, IDisposable {
 
         /// <summary>
         /// Create service bus event bus

@@ -39,7 +39,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Azure.IIoT.Extens
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Azure.IIoT.Extensions", "extensions\Microsoft.Azure.IIoT.Extensions\src\Microsoft.Azure.IIoT.Extensions.csproj", "{BFD75963-2B4D-431B-AB3F-4172DCADD0A4}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Azure.IIoT.Azure.IoTHub.Mock", "azure\Microsoft.Azure.IIoT.Azure.IoTHub.Mock\src\Microsoft.Azure.IIoT.Azure.IoTHub.Mock.csproj", "{A4D23250-B507-4C71-8DED-C19D43950C91}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Azure.IIoT.Azure.Testing", "azure\Microsoft.Azure.IIoT.Azure.Testing\src\Microsoft.Azure.IIoT.Azure.Testing.csproj", "{A4D23250-B507-4C71-8DED-C19D43950C91}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Azure.IIoT.Azure.IoTHub", "azure\Microsoft.Azure.IIoT.Azure.IoTHub\src\Microsoft.Azure.IIoT.Azure.IoTHub.csproj", "{D8E43A34-8F5B-4CF5-A319-36198E035240}"
 EndProject
@@ -270,9 +270,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Platform", "Platform", "{D8
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Azure.IIoT.Platform.Publisher.Service.Tests", "platform\publisher\Microsoft.Azure.IIoT.Platform.Publisher.Service\tests\Microsoft.Azure.IIoT.Platform.Publisher.Service.Tests.csproj", "{2B935FC2-5F49-4665-9D98-BAAE4F7675CF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Azure.IIoT.Azure.CognitiveServices", "azure\Microsoft.Azure.IIoT.Azure.CognitiveServices\src\Microsoft.Azure.IIoT.Azure.CognitiveServices.csproj", "{7538C545-1EE5-4F85-B5CB-092F0322E6F6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Azure.IIoT.Azure.CognitiveServices", "azure\Microsoft.Azure.IIoT.Azure.CognitiveServices\src\Microsoft.Azure.IIoT.Azure.CognitiveServices.csproj", "{7538C545-1EE5-4F85-B5CB-092F0322E6F6}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Azure.IIoT.Extensions.Mqtt", "extensions\Microsoft.Azure.IIoT.Extensions.Mqtt\src\Microsoft.Azure.IIoT.Extensions.Mqtt.csproj", "{9DD9512A-C852-4A5B-97C6-9309E4973001}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tools", "tools", "{1F8C9B25-8586-460A-BBF8-B97DCF2027F4}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Azure.IIoT.Azure.Testing.Cli", "azure\Microsoft.Azure.IIoT.Azure.Testing\cli\Microsoft.Azure.IIoT.Azure.Testing.Cli.csproj", "{2187D69E-26CB-455D-A9BD-1FCBF4C25284}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -1018,6 +1022,14 @@ Global
 		{9DD9512A-C852-4A5B-97C6-9309E4973001}.Release|Any CPU.Build.0 = Release|Any CPU
 		{9DD9512A-C852-4A5B-97C6-9309E4973001}.Release|x64.ActiveCfg = Release|Any CPU
 		{9DD9512A-C852-4A5B-97C6-9309E4973001}.Release|x64.Build.0 = Release|Any CPU
+		{2187D69E-26CB-455D-A9BD-1FCBF4C25284}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2187D69E-26CB-455D-A9BD-1FCBF4C25284}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2187D69E-26CB-455D-A9BD-1FCBF4C25284}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{2187D69E-26CB-455D-A9BD-1FCBF4C25284}.Debug|x64.Build.0 = Debug|Any CPU
+		{2187D69E-26CB-455D-A9BD-1FCBF4C25284}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2187D69E-26CB-455D-A9BD-1FCBF4C25284}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2187D69E-26CB-455D-A9BD-1FCBF4C25284}.Release|x64.ActiveCfg = Release|Any CPU
+		{2187D69E-26CB-455D-A9BD-1FCBF4C25284}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -1148,6 +1160,8 @@ Global
 		{2B935FC2-5F49-4665-9D98-BAAE4F7675CF} = {43E69B85-2743-48EE-8FAE-A59F070E21D2}
 		{7538C545-1EE5-4F85-B5CB-092F0322E6F6} = {1185F94F-1DD9-4ECA-80D0-D194B73D2366}
 		{9DD9512A-C852-4A5B-97C6-9309E4973001} = {EDC413E0-BE91-477B-8A16-B20BBBB35933}
+		{1F8C9B25-8586-460A-BBF8-B97DCF2027F4} = {0169C791-7984-4DC1-8325-E9B9604CC3DE}
+		{2187D69E-26CB-455D-A9BD-1FCBF4C25284} = {1F8C9B25-8586-460A-BBF8-B97DCF2027F4}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {F09EFCEA-59F6-4A16-9CB6-7E865A3F62D8}

@@ -29,9 +29,14 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge {
             builder.RegisterType<EventSourceBroker>()
                 .AsImplementedInterfaces().SingleInstance();
 
-            builder.RegisterType<IoTEdgeConfig>()
+            builder.RegisterType<IoTEdgeClientConfig>()
                 .AsImplementedInterfaces();
-            builder.RegisterType<EdgeHubClient>()
+            builder.RegisterType<IoTEdgeMqttConfig>()
+                .AsImplementedInterfaces();
+
+            builder.RegisterType<IoTEdgeClientIdentity>()
+                .AsImplementedInterfaces().InstancePerLifetimeScope();
+            builder.RegisterType<IoTEdgeHubClient>()
                 .AsImplementedInterfaces().InstancePerLifetimeScope();
             builder.RegisterType<EdgeletClient>()
                 .AsImplementedInterfaces().InstancePerLifetimeScope();
@@ -45,6 +50,8 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge {
             builder.RegisterType<IoTEdgeMethodClient>()
                 .AsImplementedInterfaces().InstancePerLifetimeScope();
             builder.RegisterType<IoTEdgeMethodServer>()
+                .AsImplementedInterfaces().InstancePerLifetimeScope();
+            builder.RegisterType<IoTEdgeMqttClient>()
                 .AsImplementedInterfaces().InstancePerLifetimeScope();
 
             base.Load(builder);

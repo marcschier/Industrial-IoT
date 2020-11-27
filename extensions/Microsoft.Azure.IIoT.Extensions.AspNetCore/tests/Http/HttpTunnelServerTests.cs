@@ -7,7 +7,7 @@ namespace Microsoft.Azure.IIoT.AspNetCore.Http.Tunnel {
     using Microsoft.Azure.IIoT.AspNetCore.Tests.Models;
     using Microsoft.Azure.IIoT.AspNetCore.Tests;
     using Microsoft.Azure.IIoT.Http;
-    using Microsoft.Azure.IIoT.Hub;
+    using Microsoft.Azure.IIoT.Hosting;
     using Microsoft.Azure.IIoT.Serializers;
     using System;
     using System.Threading.Tasks;

@@ -38,7 +38,7 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Clients {
                 builder.RegisterInstance(children2).AsImplementedInterfaces();
                 builder.RegisterInstance(pets).AsImplementedInterfaces();
             })) {
-                var bus = harness.GetEventBus();
+                var bus = harness.GetEventBusPublisher();
                 Skip.If(bus == null);
 
                 var family1 = fix.Create<Family>();
@@ -93,7 +93,7 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Clients {
                 builder.RegisterInstance(families).AsImplementedInterfaces();
                 builder.RegisterInstance(pets).AsImplementedInterfaces();
             })) {
-                var bus = harness.GetEventBus();
+                var bus = harness.GetEventBusPublisher();
                 Skip.If(bus == null);
 
                 var senders = Enumerable.Range(0, count).Select(async i => {

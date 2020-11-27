@@ -3,10 +3,11 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Hosting {
+namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Clients {
     using Microsoft.Azure.IIoT.Azure.IoTEdge;
     using Microsoft.Azure.IIoT.Hub;
     using Microsoft.Azure.IIoT.Messaging;
+    using Microsoft.Azure.IIoT.Hosting;
     using Microsoft.Azure.Devices.Client;
     using System;
     using System.Collections.Generic;

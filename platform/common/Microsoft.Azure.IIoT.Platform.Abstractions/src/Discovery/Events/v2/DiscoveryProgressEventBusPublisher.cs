@@ -18,7 +18,7 @@ namespace Microsoft.Azure.IIoT.Platform.Discovery.Events.v2 {
         /// Create event discoverer
         /// </summary>
         /// <param name="bus"></param>
-        public DiscoveryProgressEventBusPublisher(IEventBus bus) {
+        public DiscoveryProgressEventBusPublisher(IEventBusPublisher bus) {
             _bus = bus ?? throw new ArgumentNullException(nameof(bus));
         }
 
@@ -31,6 +31,6 @@ namespace Microsoft.Azure.IIoT.Platform.Discovery.Events.v2 {
             return _bus.PublishAsync(message);
         }
 
-        private readonly IEventBus _bus;
+        private readonly IEventBusPublisher _bus;
     }
 }

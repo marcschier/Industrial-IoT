@@ -4,6 +4,7 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Platform.Registry.Cli {
+    using Microsoft.Azure.IIoT.Platform.Registry.Models;
     using Microsoft.Azure.IIoT.Diagnostics;
     using Microsoft.Azure.IIoT.Hub;
     using Microsoft.Azure.IIoT.Azure.IoTHub.Runtime;
@@ -142,7 +143,7 @@ Operations (Mutually exclusive):
             var registry = new IoTHubServiceClient(
                 config, new NewtonSoftJsonSerializer(), logger);
 
-            await registry.CreateOrUpdateAsync(new DeviceTwinModel {
+            await registry.RegisterAsync(new DeviceRegistrationModel {
                 Id = deviceId,
                 ModuleId = moduleId
             }, true, CancellationToken.None).ConfigureAwait(false);
@@ -194,8 +195,7 @@ Operations (Mutually exclusive):
                 item.Properties = new TwinPropertiesModel {
                     Desired = properties
                 };
-                await registry.CreateOrUpdateAsync(item, true,
-                    default).ConfigureAwait(false);
+                await registry.PatchAsync(item, true, default).ConfigureAwait(false);
             }
         }
 

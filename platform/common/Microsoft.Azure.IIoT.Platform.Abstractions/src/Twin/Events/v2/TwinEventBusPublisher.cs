@@ -20,7 +20,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Events.v2 {
         /// Create event publisher
         /// </summary>
         /// <param name="bus"></param>
-        public TwinEventBusPublisher(IEventBus bus) {
+        public TwinEventBusPublisher(IEventBusPublisher bus) {
             _bus = bus ?? throw new ArgumentNullException(nameof(bus));
         }
 
@@ -61,6 +61,6 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Events.v2 {
             };
         }
 
-        private readonly IEventBus _bus;
+        private readonly IEventBusPublisher _bus;
     }
 }

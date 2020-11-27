@@ -4,7 +4,8 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Extensions.RabbitMq.Clients {
-    using Microsoft.Azure.IIoT.Hub;
+    using Microsoft.Azure.IIoT.Hosting;
+    using Microsoft.Azure.IIoT.Messaging;
     using System;
     using System.Threading.Tasks;
     using System.Collections.Generic;

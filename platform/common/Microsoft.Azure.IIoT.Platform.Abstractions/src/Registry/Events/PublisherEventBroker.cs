@@ -24,7 +24,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Default {
         /// </summary>
         /// <param name="bus"></param>
         /// <param name="processor"></param>
-        public PublisherEventBroker(IEventBus bus, ITaskProcessor processor = null) {
+        public PublisherEventBroker(IEventBusPublisher bus, ITaskProcessor processor = null) {
             _processor = processor;
             _listeners = new ConcurrentDictionary<string, IPublisherRegistryListener>();
 

@@ -10,7 +10,7 @@ namespace Microsoft.Azure.IIoT.Platform.Discovery.Services {
     using Microsoft.Azure.IIoT.Storage.Services;
     using Microsoft.Azure.IIoT.Storage;
     using Microsoft.Azure.IIoT.Exceptions;
-    using Microsoft.Azure.IIoT.Hub;
+    using Microsoft.Azure.IIoT.Hosting;
     using Microsoft.Azure.IIoT.Utils;
     using Microsoft.Azure.IIoT.Serializers.NewtonSoft;
     using Microsoft.Azure.IIoT.Serializers;

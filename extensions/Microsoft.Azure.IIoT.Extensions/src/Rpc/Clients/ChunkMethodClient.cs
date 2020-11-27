@@ -5,8 +5,8 @@
 
 namespace Microsoft.Azure.IIoT.Rpc.Services {
     using Microsoft.Azure.IIoT.Rpc.Models;
+    using Microsoft.Azure.IIoT.Rpc;
     using Microsoft.Azure.IIoT.Exceptions;
-    using Microsoft.Azure.IIoT.Hub;
     using Microsoft.Azure.IIoT.Serializers;
     using Microsoft.Extensions.Logging;
     using System;

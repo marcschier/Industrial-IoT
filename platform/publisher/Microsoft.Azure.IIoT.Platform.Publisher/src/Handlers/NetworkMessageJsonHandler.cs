@@ -8,7 +8,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Handlers {
     using Microsoft.Azure.IIoT.Platform.Publisher.Models;
     using Microsoft.Azure.IIoT.Platform.Core.Models;
     using Microsoft.Azure.IIoT.Platform.OpcUa;
-    using Microsoft.Azure.IIoT.Hub;
+    using Microsoft.Azure.IIoT.Messaging;
     using Opc.Ua;
     using Opc.Ua.PubSub;
     using Opc.Ua.Encoders;

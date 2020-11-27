@@ -5,7 +5,7 @@
     <Description>Industrial IoT Azure Datalake support</Description>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Azure.Storage.Files.DataLake" Version="12.4.0" />
+    <PackageReference Include="Azure.Storage.Files.DataLake" Version="12.5.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\extensions\Microsoft.Azure.IIoT.Extensions\src\Microsoft.Azure.IIoT.Extensions.csproj" />

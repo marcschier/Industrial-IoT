@@ -40,6 +40,11 @@ namespace Microsoft.Azure.IIoT.Hub.Models {
         public DeviceAuthenticationModel Authentication { get; set; }
 
         /// <summary>
+        /// Device's Scope
+        /// </summary>
+        public string DeviceScope { get; set; }
+
+        /// <summary>
         /// Corresponding Device's ConnectionState
         /// </summary>
         public string ConnectionState { get; set; }

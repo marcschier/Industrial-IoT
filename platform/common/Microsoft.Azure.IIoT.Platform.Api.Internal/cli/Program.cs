@@ -27,6 +27,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
     using Microsoft.Azure.IIoT.Authentication.Runtime;
     using Microsoft.Azure.IIoT.Serializers;
     using Microsoft.Extensions.Configuration;
+    using Microsoft.Extensions.Logging;
     using Autofac;
     using System;
     using System.Collections.Generic;
@@ -35,7 +36,6 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
     using System.Linq;
     using System.Threading.Tasks;
     using Prometheus;
-    using Microsoft.Extensions.Logging;
 
     /// <summary>
     /// Api command line interface
@@ -140,7 +140,7 @@ namespace Microsoft.Azure.IIoT.Api.Cli {
         }
 
         /// <summary>
-        /// Run client
+        /// Run cli
         /// </summary>
         public async Task RunAsync(string[] args) {
             if (args is null) {

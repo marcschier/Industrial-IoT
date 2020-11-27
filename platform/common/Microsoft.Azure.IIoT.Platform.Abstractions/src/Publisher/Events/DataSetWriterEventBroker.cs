@@ -24,7 +24,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Default {
         /// </summary>
         /// <param name="bus"></param>
         /// <param name="processor"></param>
-        public DataSetWriterEventBroker(IEventBus bus, ITaskProcessor processor = null) {
+        public DataSetWriterEventBroker(IEventBusPublisher bus, ITaskProcessor processor = null) {
             _processor = processor;
             _listeners = new ConcurrentDictionary<string, IDataSetWriterRegistryListener>();
 

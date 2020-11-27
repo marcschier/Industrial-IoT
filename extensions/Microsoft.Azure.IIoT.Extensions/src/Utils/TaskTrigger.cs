@@ -43,6 +43,6 @@ namespace Microsoft.Azure.IIoT.Utils {
         }
 
         private readonly Worker _worker;
-        private readonly AsyncEvent _event = new AsyncEvent();
+        private readonly AsyncAutoResetEvent _event = new AsyncAutoResetEvent();
     }
 }

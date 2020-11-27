@@ -20,7 +20,6 @@ namespace Microsoft.Azure.IIoT.Platform.Edge.Tunnel.Service {
     using Microsoft.Extensions.Hosting;
     using Autofac;
     using Autofac.Extensions.DependencyInjection;
-    using System;
 
     /// <summary>
     /// IoT Hub device tunnel processor host.  Processes all

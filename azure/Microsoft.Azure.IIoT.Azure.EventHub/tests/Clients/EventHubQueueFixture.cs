@@ -8,7 +8,6 @@ namespace Microsoft.Azure.IIoT.Azure.EventHub.Clients {
     using Microsoft.Azure.IIoT.Azure.EventHub.Processor;
     using Microsoft.Azure.IIoT.Messaging.Handlers;
     using Microsoft.Azure.IIoT.Messaging;
-    using Microsoft.Azure.IIoT.Hub;
     using Microsoft.Azure.IIoT.Utils;
     using Microsoft.Azure.IIoT.Exceptions;
     using Microsoft.Azure.IIoT.Hosting;

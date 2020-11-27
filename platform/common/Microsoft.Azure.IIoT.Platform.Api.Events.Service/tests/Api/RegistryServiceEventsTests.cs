@@ -28,7 +28,7 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service.Api {
         [Fact]
         public async Task TestPublishApplicationEventAndReceiveAsync() {
 
-            var bus = _factory.Resolve<IEventBus>();
+            var bus = _factory.Resolve<IEventBusPublisher>();
             var client = _factory.Resolve<IDiscoveryServiceEvents>();
 
             var expected = new ApplicationEventModel {
@@ -63,7 +63,7 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service.Api {
         [InlineData(4634)]
         public async Task TestPublishApplicationEventAndReceiveMultipleAsync(int total) {
 
-            var bus = _factory.Resolve<IEventBus>();
+            var bus = _factory.Resolve<IEventBusPublisher>();
             var client = _factory.Resolve<IDiscoveryServiceEvents>();
 
             var expected = new ApplicationEventModel {
@@ -94,7 +94,7 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service.Api {
         [Fact]
         public async Task TestPublishEndpointEventAndReceiveAsync() {
 
-            var bus = _factory.Resolve<IEventBus>();
+            var bus = _factory.Resolve<IEventBusPublisher>();
             var client = _factory.Resolve<IDiscoveryServiceEvents>();
 
             var expected = new EndpointEventModel {
@@ -125,7 +125,7 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service.Api {
         [InlineData(46340)]
         public async Task TestPublishEndpointEventAndReceiveMultipleAsync(int total) {
 
-            var bus = _factory.Resolve<IEventBus>();
+            var bus = _factory.Resolve<IEventBusPublisher>();
             var client = _factory.Resolve<IDiscoveryServiceEvents>();
 
             var expected = new EndpointEventModel {
@@ -155,7 +155,7 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service.Api {
         [Fact]
         public async Task TestPublishDiscoveryProgressWithDiscovererIdAndReceiveAsync() {
 
-            var bus = _factory.Resolve<IEventBus>();
+            var bus = _factory.Resolve<IEventBusPublisher>();
             var client = _factory.Resolve<IDiscoveryServiceEvents>();
 
             var discovererId = "TestDiscoverer1";
@@ -191,7 +191,7 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service.Api {
         [Fact]
         public async Task TestPublishDiscoveryProgressWithRequestIdAndReceiveAsync() {
 
-            var bus = _factory.Resolve<IEventBus>();
+            var bus = _factory.Resolve<IEventBusPublisher>();
             var client = _factory.Resolve<IDiscoveryServiceEvents>();
 
             var requestId = "TestDiscoverer1";
@@ -236,7 +236,7 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service.Api {
         [InlineData(678)]
         public async Task TestPublishDiscoveryProgressAndReceiveMultipleAsync(int total) {
 
-            var bus = _factory.Resolve<IEventBus>();
+            var bus = _factory.Resolve<IEventBusPublisher>();
             var client = _factory.Resolve<IDiscoveryServiceEvents>();
 
             var discovererId = "TestDiscoverer1";

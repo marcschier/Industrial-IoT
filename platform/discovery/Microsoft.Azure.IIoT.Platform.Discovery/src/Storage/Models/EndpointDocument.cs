@@ -3,9 +3,9 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Platform.Discovery.Models {
+namespace Microsoft.Azure.IIoT.Platform.Discovery.Storage.Models {
+    using Microsoft.Azure.IIoT.Platform.Discovery.Models;
     using Microsoft.Azure.IIoT.Platform.Core.Models;
-    using Microsoft.Azure.IIoT.Hub;
     using System.Runtime.Serialization;
     using System.Collections.Generic;
     using System;

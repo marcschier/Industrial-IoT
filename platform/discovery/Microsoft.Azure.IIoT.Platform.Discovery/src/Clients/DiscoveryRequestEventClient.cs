@@ -21,7 +21,7 @@ namespace Microsoft.Azure.IIoT.Platform.Discovery.Clients {
         /// Create onboarding client
         /// </summary>
         /// <param name="events"></param>
-        public DiscoveryRequestEventClient(IEventBus events) {
+        public DiscoveryRequestEventClient(IEventBusPublisher events) {
             _events = events ?? throw new ArgumentNullException(nameof(events));
         }
 
@@ -65,6 +65,6 @@ namespace Microsoft.Azure.IIoT.Platform.Discovery.Clients {
             await _events.PublishAsync(request).ConfigureAwait(false);
         }
 
-        private readonly IEventBus _events;
+        private readonly IEventBusPublisher _events;
     }
 }

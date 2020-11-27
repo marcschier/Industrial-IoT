@@ -4,11 +4,11 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Platform.Discovery.Storage {
+    using Microsoft.Azure.IIoT.Platform.Discovery.Storage.Models;
     using Microsoft.Azure.IIoT.Platform.Discovery.Models;
     using Microsoft.Azure.IIoT.Platform.Core.Models;
     using Microsoft.Azure.IIoT.Exceptions;
     using Microsoft.Azure.IIoT.Storage;
-    using Microsoft.Azure.IIoT.Hub;
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -74,7 +74,7 @@ namespace Microsoft.Azure.IIoT.Platform.Discovery.Storage {
                 }
                 // Try replacing
                 try {
-                    var result = await _documents.ReplaceAsync(document, 
+                    var result = await _documents.ReplaceAsync(document,
                         updated, ct: ct).ConfigureAwait(false);
                     return result.Value.ToServiceModel(result.Etag);
                 }
@@ -214,7 +214,7 @@ namespace Microsoft.Azure.IIoT.Platform.Discovery.Storage {
                 else if (filter?.ApplicationName != null) {
                     // If application name provided, search for default name
                     query = query.Where(x => x.ApplicationName != null);
-                    query = query.Where(x => x.ApplicationName.Equals( 
+                    query = query.Where(x => x.ApplicationName.Equals(
                         filter.ApplicationName, StringComparison.Ordinal));
                 }
                 if (filter?.DiscovererId != null) {

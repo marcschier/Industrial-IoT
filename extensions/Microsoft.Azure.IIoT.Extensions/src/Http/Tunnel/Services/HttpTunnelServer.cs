@@ -6,7 +6,7 @@
 namespace Microsoft.Azure.IIoT.Http.Tunnel.Services {
     using Microsoft.Azure.IIoT.Http.Tunnel.Models;
     using Microsoft.Azure.IIoT.Rpc;
-    using Microsoft.Azure.IIoT.Hub;
+    using Microsoft.Azure.IIoT.Messaging;
     using Microsoft.Azure.IIoT.Utils;
     using Microsoft.Azure.IIoT.Http;
     using Microsoft.Azure.IIoT.Serializers;

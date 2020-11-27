@@ -5,7 +5,7 @@
     <Description>Industrial IoT Azure ServiceBus support</Description>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.Azure.ServiceBus" Version="5.0.0" />
+    <PackageReference Include="Microsoft.Azure.ServiceBus" Version="5.1.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\extensions\Microsoft.Azure.IIoT.Extensions\src\Microsoft.Azure.IIoT.Extensions.csproj" />

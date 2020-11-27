@@ -8,7 +8,6 @@ namespace Microsoft.Azure.IIoT.Platform.Discovery.Services {
     using Microsoft.Azure.IIoT.Platform.Discovery;
     using Microsoft.Azure.IIoT.Platform.Core.Models;
     using Microsoft.Azure.IIoT.Exceptions;
-    using Microsoft.Azure.IIoT.Hub.Models;
     using Microsoft.Extensions.Logging;
     using System;
     using System.Collections.Generic;
@@ -43,7 +42,7 @@ namespace Microsoft.Azure.IIoT.Platform.Discovery.Services {
 
         /// <inheritdoc/>
         public async Task<ApplicationRegistrationResultModel> RegisterApplicationAsync(
-            ApplicationRegistrationRequestModel request, OperationContextModel context, 
+            ApplicationRegistrationRequestModel request, OperationContextModel context,
             CancellationToken ct) {
             context = context.Validate();
             if (request == null) {
@@ -145,7 +144,7 @@ namespace Microsoft.Azure.IIoT.Platform.Discovery.Services {
             if (application == null) {
                 throw new ResourceNotFoundException("Could not find application");
             }
-            var endpoints = await _endpoints.GetApplicationEndpointsAsync(applicationId, 
+            var endpoints = await _endpoints.GetApplicationEndpointsAsync(applicationId,
                 application.IsLost(), ct).ConfigureAwait(false);
             return new ApplicationRegistrationModel {
                 Application = application,
@@ -166,7 +165,7 @@ namespace Microsoft.Azure.IIoT.Platform.Discovery.Services {
             var absolute = DateTime.UtcNow - notSeenSince;
             string continuation = null;
             do {
-                var applications = await _database.QueryAsync(null, continuation, null, 
+                var applications = await _database.QueryAsync(null, continuation, null,
                     ct).ConfigureAwait(false);
                 continuation = applications?.ContinuationToken;
                 if (applications?.Items == null) {
@@ -328,7 +327,7 @@ namespace Microsoft.Azure.IIoT.Platform.Discovery.Services {
                     var wasAdded = false;
                     var wasPatched = false;
                     var wasFound = false;
-                    app = await _database.AddOrUpdateAsync(app.ApplicationId, 
+                    app = await _database.AddOrUpdateAsync(app.ApplicationId,
                         existing => {
                             wasAdded = existing == null;
                             wasFound = existing?.IsLost() ?? true;

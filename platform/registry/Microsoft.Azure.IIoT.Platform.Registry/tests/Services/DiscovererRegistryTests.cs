@@ -5,9 +5,10 @@
 
 namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
     using Microsoft.Azure.IIoT.Platform.Registry.Models;
+    using Microsoft.Azure.IIoT.Azure.Testing.IoTHub;
     using Microsoft.Azure.IIoT.Exceptions;
+    using Microsoft.Azure.IIoT.Hosting;
     using Microsoft.Azure.IIoT.Hub;
-    using Microsoft.Azure.IIoT.Azure.IoTHub.Mock;
     using Microsoft.Azure.IIoT.Hub.Models;
     using Microsoft.Azure.IIoT.Serializers.NewtonSoft;
     using Microsoft.Azure.IIoT.Serializers;

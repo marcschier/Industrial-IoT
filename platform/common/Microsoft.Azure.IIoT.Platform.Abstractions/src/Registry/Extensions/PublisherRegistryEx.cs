@@ -4,10 +4,8 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Platform.Registry {
-    using Microsoft.Azure.IIoT.Exceptions;
     using Microsoft.Azure.IIoT.Platform.Registry.Models;
-    using Microsoft.Azure.IIoT.Hub;
-    using System;
+    using Microsoft.Azure.IIoT.Exceptions;
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
@@ -39,42 +37,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry {
                 return deviceId[kWriterGroupDeviceIdPrefix.Length..];
             }
             return null;
-        }
-
-        /// <summary>
-        /// Convert a writer id to a property name
-        /// </summary>
-        /// <param name="dataSetWriterId"></param>
-        /// <returns></returns>
-        public static string ToPropertyName(string dataSetWriterId) {
-            return IdentityType.DataSetWriter + "_" + dataSetWriterId;
-        }
-
-        /// <summary>
-        /// Returns writer id from property name
-        /// </summary>
-        /// <param name="propertyName"></param>
-        /// <returns></returns>
-        public static string ToDataSetWriterId(string propertyName) {
-            if (string.IsNullOrEmpty(propertyName)) {
-                return null;
-            }
-            if (propertyName.StartsWith(IdentityType.DataSetWriter)) {
-                return propertyName.Replace(IdentityType.DataSetWriter + "_", "");
-            }
-            throw new ArgumentException("Not a data set writer id");
-        }
-
-        /// <summary>
-        /// Returns writer id from property name
-        /// </summary>
-        /// <param name="propertyName"></param>
-        /// <returns></returns>
-        public static bool IsDataSetWriterProperty(string propertyName) {
-            if (string.IsNullOrEmpty(propertyName)) {
-                return false;
-            }
-            return propertyName.StartsWith(IdentityType.DataSetWriter);
         }
 
         /// <summary>

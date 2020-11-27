@@ -24,7 +24,7 @@ namespace Microsoft.Azure.IIoT.Messaging {
                 .AsImplementedInterfaces().InstancePerLifetimeScope();
             builder.RegisterType<SimpleEventBus>()
                 .AsImplementedInterfaces().InstancePerLifetimeScope()
-                .IfNotRegistered(typeof(IEventBus));
+                .IfNotRegistered(typeof(IEventBusPublisher));
 
             builder.RegisterType<TaskProcessor>()
                 .AsImplementedInterfaces().SingleInstance()

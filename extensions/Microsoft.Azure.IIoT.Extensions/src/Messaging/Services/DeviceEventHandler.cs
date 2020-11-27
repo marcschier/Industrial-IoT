@@ -4,8 +4,9 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Messaging.Handlers {
-    using Microsoft.Azure.IIoT.Hub;
     using Microsoft.Azure.IIoT.Messaging;
+    using Microsoft.Azure.IIoT.Hosting;
+    using Microsoft.Azure.IIoT.Hub;
     using Microsoft.Azure.IIoT.Utils;
     using System;
     using System.Collections.Generic;

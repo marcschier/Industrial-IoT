@@ -26,7 +26,7 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service.Api {
         [Fact]
         public async Task TestPublishPublisherEventAndReceiveAsync() {
 
-            var bus = _factory.Resolve<IEventBus>();
+            var bus = _factory.Resolve<IEventBusPublisher>();
             var client = _factory.Resolve<IRegistryServiceEvents>();
 
             var expected = new PublisherEventModel {
@@ -58,7 +58,7 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service.Api {
         [InlineData(678)]
         public async Task TestPublishPublisherEventAndReceiveMultipleAsync(int total) {
 
-            var bus = _factory.Resolve<IEventBus>();
+            var bus = _factory.Resolve<IEventBusPublisher>();
             var client = _factory.Resolve<IRegistryServiceEvents>();
 
             var expected = new PublisherEventModel {
@@ -88,7 +88,7 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service.Api {
         [Fact]
         public async Task TestPublishDiscovererEventAndReceiveAsync() {
 
-            var bus = _factory.Resolve<IEventBus>();
+            var bus = _factory.Resolve<IEventBusPublisher>();
             var client = _factory.Resolve<IRegistryServiceEvents>();
 
             var expected = new DiscovererEventModel {
@@ -118,7 +118,7 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service.Api {
         [InlineData(375)]
         public async Task TestPublishDiscovererEventAndReceiveMultipleAsync(int total) {
 
-            var bus = _factory.Resolve<IEventBus>();
+            var bus = _factory.Resolve<IEventBusPublisher>();
             var client = _factory.Resolve<IRegistryServiceEvents>();
 
             var expected = new DiscovererEventModel {
@@ -149,7 +149,7 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service.Api {
         [Fact]
         public async Task TestPublishSupervisorEventAndReceiveAsync() {
 
-            var bus = _factory.Resolve<IEventBus>();
+            var bus = _factory.Resolve<IEventBusPublisher>();
             var client = _factory.Resolve<IRegistryServiceEvents>();
 
             var expected = new SupervisorEventModel {
@@ -182,7 +182,7 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service.Api {
         [InlineData(4634)]
         public async Task TestPublishSupervisorEventAndReceiveMultipleAsync(int total) {
 
-            var bus = _factory.Resolve<IEventBus>();
+            var bus = _factory.Resolve<IEventBusPublisher>();
             var client = _factory.Resolve<IRegistryServiceEvents>();
 
             var expected = new SupervisorEventModel {
@@ -213,7 +213,7 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service.Api {
         [Fact]
         public async Task TestPublishGatewayEventAndReceiveAsync() {
 
-            var bus = _factory.Resolve<IEventBus>();
+            var bus = _factory.Resolve<IEventBusPublisher>();
             var client = _factory.Resolve<IRegistryServiceEvents>();
 
             var expected = new GatewayEventModel {
@@ -245,7 +245,7 @@ namespace Microsoft.Azure.IIoT.Platform.Api.Events.Service.Api {
         [InlineData(100)]
         public async Task TestPublishGatewayEventAndReceiveMultipleAsync(int total) {
 
-            var bus = _factory.Resolve<IEventBus>();
+            var bus = _factory.Resolve<IEventBusPublisher>();
             var client = _factory.Resolve<IRegistryServiceEvents>();
 
             var expected = new GatewayEventModel {

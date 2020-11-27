@@ -5,8 +5,8 @@
     <Description>Industrial IoT Azure CosmosDB support</Description>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.Azure.Cosmos" Version="3.14.0" />
-    <PackageReference Include="System.IO.Pipelines" Version="5.0.0-rc.2.20475.5" />
+    <PackageReference Include="Microsoft.Azure.Cosmos" Version="3.15.0" />
+    <PackageReference Include="System.IO.Pipelines" Version="5.0.0" />
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
     <PackageReference Include="System.Net.NameResolution" Version="4.3.0" />
   </ItemGroup>

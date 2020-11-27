@@ -5,7 +5,6 @@
 
 namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Clients {
     using Microsoft.Azure.IIoT.Messaging;
-    using Microsoft.Azure.IIoT.Hub;
     using Microsoft.Azure.ServiceBus;
     using System;
     using System.Collections.Generic;

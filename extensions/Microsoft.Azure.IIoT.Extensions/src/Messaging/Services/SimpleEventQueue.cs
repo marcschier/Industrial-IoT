@@ -5,7 +5,6 @@
 
 namespace Microsoft.Azure.IIoT.Messaging.Services {
     using Microsoft.Azure.IIoT.Messaging;
-    using Microsoft.Azure.IIoT.Hub;
     using Microsoft.Azure.IIoT.Exceptions;
     using System.Collections.Generic;
     using System.Threading.Tasks;

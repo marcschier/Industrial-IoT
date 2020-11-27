@@ -24,7 +24,6 @@ namespace Microsoft.Azure.IIoT.Platform.Edge.Events.Service {
     using Microsoft.Extensions.Hosting;
     using Autofac;
     using Autofac.Extensions.DependencyInjection;
-    using System;
 
     /// <summary>
     /// IoT Hub device events event processor host.  Processes all

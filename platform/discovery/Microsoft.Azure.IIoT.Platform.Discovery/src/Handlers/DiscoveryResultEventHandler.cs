@@ -6,7 +6,7 @@
 namespace Microsoft.Azure.IIoT.Platform.Discovery.Handlers {
     using Microsoft.Azure.IIoT.Platform.Discovery;
     using Microsoft.Azure.IIoT.Platform.Discovery.Models;
-    using Microsoft.Azure.IIoT.Hub;
+    using Microsoft.Azure.IIoT.Messaging;
     using Microsoft.Azure.IIoT.Serializers;
     using Microsoft.Extensions.Logging;
     using System;

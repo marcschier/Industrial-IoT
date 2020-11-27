@@ -6,7 +6,6 @@
 namespace Microsoft.Azure.IIoT.Extensions.Kafka.Clients {
     using Microsoft.Azure.IIoT.Extensions.Kafka;
     using Microsoft.Azure.IIoT.Messaging;
-    using Microsoft.Azure.IIoT.Hub;
     using Microsoft.Azure.IIoT.Hosting;
     using Microsoft.Azure.IIoT.Exceptions;
     using Microsoft.Extensions.Logging;

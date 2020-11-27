@@ -21,7 +21,8 @@ namespace Microsoft.Azure.IIoT.Extensions.RabbitMq.Clients {
     /// <summary>
     /// Event bus built on top of rabbitmq
     /// </summary>
-    public sealed class RabbitMqEventBus : IEventBus, IDisposable {
+    public sealed class RabbitMqEventBus : IEventBusPublisher, IEventBusSubscriber,
+        IDisposable {
 
         /// <summary>
         /// Create mass transit bus event bus

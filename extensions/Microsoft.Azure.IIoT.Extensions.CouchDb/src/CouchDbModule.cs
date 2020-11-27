@@ -14,10 +14,7 @@ namespace Microsoft.Azure.IIoT.Extensions.CouchDb {
     /// </summary>
     public class CouchDbModule : DatabaseModule {
 
-        /// <summary>
-        /// Load the module
-        /// </summary>
-        /// <param name="builder"></param>
+        /// <inheritdoc/>
         protected override void Load(ContainerBuilder builder) {
 
             builder.RegisterType<CouchDbClient>()

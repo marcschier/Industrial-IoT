@@ -4,52 +4,45 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Utils {
-    using System.Collections.Generic;
+    using System.Threading;
     using System.Threading.Tasks;
 
     /// <summary>
-    /// https://devblogs.microsoft.com/pfxteam/building-async-coordination-primitives-part-2-asyncautoresetevent/
+    /// Manual event
     /// </summary>
-    public class AsyncEvent {
+    public class AsyncEvent<T> {
 
         /// <summary>
         /// Wait
         /// </summary>
         /// <returns></returns>
-        public Task WaitAsync() {
-            lock (_waits) {
-                if (_signaled) {
-                    _signaled = false;
-                    return Task.CompletedTask;
-                }
-                else {
-                    var tcs = new TaskCompletionSource<bool>();
-                    _waits.Enqueue(tcs);
-                    return tcs.Task;
-                }
-            }
+        public Task<T> WaitAsync() {
+            return _tcs.Task;
         }
 
         /// <summary>
         /// Signal
         /// </summary>
-        public void Set() {
-            TaskCompletionSource<bool> toRelease = null;
-
-            lock (_waits) {
-                if (_waits.Count > 0) {
-                    toRelease = _waits.Dequeue();
-                }
-                else if (!_signaled) {
-                    _signaled = true;
-                }
-            }
-
-            toRelease?.SetResult(true);
+        public void Set(T value) {
+            _tcs.TrySetResult(value);
         }
 
-        private readonly Queue<TaskCompletionSource<bool>> _waits =
-            new Queue<TaskCompletionSource<bool>>();
-        private bool _signaled;
+        /// <summary>
+        /// Reset
+        /// </summary>
+        public void Reset() {
+            while (true) {
+                var tcs = _tcs;
+                if (!tcs.Task.IsCompleted ||
+                    Interlocked.CompareExchange(ref _tcs,
+                        new TaskCompletionSource<T>(
+                            TaskCreationOptions.RunContinuationsAsynchronously), tcs) == tcs) {
+                    return;
+                }
+            }
+        }
+
+        private volatile TaskCompletionSource<T> _tcs =
+            new TaskCompletionSource<T>(TaskCreationOptions.RunContinuationsAsynchronously);
     }
 }

@@ -24,7 +24,7 @@ namespace Microsoft.Azure.IIoT.Platform.Twin.Default {
         /// </summary>
         /// <param name="bus"></param>
         /// <param name="processor"></param>
-        public TwinEventBroker(IEventBus bus, ITaskProcessor processor = null) {
+        public TwinEventBroker(IEventBusPublisher bus, ITaskProcessor processor = null) {
             _processor = processor;
             _listeners = new ConcurrentDictionary<string, ITwinRegistryListener>();
 

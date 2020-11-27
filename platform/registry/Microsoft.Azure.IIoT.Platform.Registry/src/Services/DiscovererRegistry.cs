@@ -9,6 +9,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
     using Microsoft.Azure.IIoT.Platform.Core.Models;
     using Microsoft.Azure.IIoT.Serializers;
     using Microsoft.Azure.IIoT.Exceptions;
+    using Microsoft.Azure.IIoT.Hosting;
     using Microsoft.Azure.IIoT.Hub;
     using Microsoft.Extensions.Logging;
     using System;
@@ -92,7 +93,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
 
                     // Patch
                     twin = await _iothub.PatchAsync(registration.Patch(
-                        patched.ToDiscovererRegistration(), _serializer), 
+                        patched.ToDiscovererRegistration(), _serializer),
                         false, ct).ConfigureAwait(false);
 
                     // Send update to through broker
@@ -113,7 +114,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Services {
             string continuation, int? pageSize, CancellationToken ct) {
             var query = "SELECT * FROM devices.modules WHERE " +
                 $"properties.reported.{TwinProperty.Type} = '{IdentityType.Discoverer}' ";
-            var devices = await _iothub.QueryDeviceTwinsAsync(query, 
+            var devices = await _iothub.QueryDeviceTwinsAsync(query,
                 continuation, pageSize, ct).ConfigureAwait(false);
             return new DiscovererListModel {
                 ContinuationToken = devices.ContinuationToken,

@@ -53,38 +53,58 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub.Clients {
         }
 
         /// <inheritdoc/>
-        public async Task<DeviceTwinModel> CreateOrUpdateAsync(DeviceTwinModel twin,
+        public async Task<DeviceTwinModel> RegisterAsync(DeviceRegistrationModel registration,
             bool forceUpdate, CancellationToken ct) {
 
             // First try create device
             try {
-                var device = await _registry.AddDeviceAsync(twin.ToDevice(), ct).ConfigureAwait(false);
+                var device = await _registry.AddDeviceAsync(registration.ToDevice(),
+                    ct).ConfigureAwait(false);
             }
             catch (DeviceAlreadyExistsException)
-                when (!string.IsNullOrEmpty(twin.ModuleId) || forceUpdate) {
+                when (!string.IsNullOrEmpty(registration.ModuleId) || forceUpdate) {
                 // continue
             }
             catch (Exception e) {
-                _logger.LogTrace(e, "Create device failed in CreateOrUpdate");
+                _logger.LogTrace(e, "Create device failed during registration");
                 throw e.Translate();
             }
 
             // Then update twin assuming it now exists. If fails, retry...
-            _ = string.IsNullOrEmpty(twin.Etag) || forceUpdate ? "*" : twin.Etag;
-            if (!string.IsNullOrEmpty(twin.ModuleId)) {
+            if (!string.IsNullOrEmpty(registration.ModuleId)) {
                 // Try create module
                 try {
-                    var module = await _registry.AddModuleAsync(twin.ToModule(), ct).ConfigureAwait(false);
+                    var module = await _registry.AddModuleAsync(registration.ToModule(),
+                        ct).ConfigureAwait(false);
                 }
                 catch (DeviceAlreadyExistsException) when (forceUpdate) {
                     // Expected for update
                 }
                 catch (Exception e) {
-                    _logger.LogTrace(e, "Create module failed in CreateOrUpdate");
+                    _logger.LogTrace(e, "Create module failed during registration");
                     throw e.Translate();
                 }
             }
-            return await PatchAsync(twin, true, ct).ConfigureAwait(false); // Force update of twin
+            try {
+                Twin update;
+                // Then update twin assuming it now exists. If fails, retry...
+                var etag = "*";
+                if (!string.IsNullOrEmpty(registration.ModuleId)) {
+                    update = await _registry.UpdateTwinAsync(registration.Id,
+                        registration.ModuleId, registration.ToTwin(), etag,
+                            ct).ConfigureAwait(false);
+                }
+                else {
+                    // Patch device
+                    update = await _registry.UpdateTwinAsync(registration.Id,
+                        registration.ToTwin(), etag, ct).ConfigureAwait(false);
+                }
+                return _serializer.DeserializeTwin(update, HostName);
+            }
+            catch (Exception e) {
+                _logger.LogTrace(e, "Registration failed");
+                throw e.Translate();
+            }
         }
 
         /// <inheritdoc/>
@@ -107,40 +127,6 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub.Clients {
             }
             catch (Exception e) {
                 _logger.LogTrace(e, "Create or update failed ");
-                throw e.Translate();
-            }
-        }
-
-        /// <inheritdoc/>
-        public async Task<MethodResultModel> CallMethodAsync(string deviceId, string moduleId,
-            MethodParameterModel parameters, CancellationToken ct) {
-            try {
-                var methodInfo = new CloudToDeviceMethod(parameters.Name);
-                methodInfo.SetPayloadJson(parameters.JsonPayload);
-                var result = await (string.IsNullOrEmpty(moduleId) ?
-                     _client.InvokeDeviceMethodAsync(deviceId, methodInfo, ct) :
-                     _client.InvokeDeviceMethodAsync(deviceId, moduleId, methodInfo, ct)).ConfigureAwait(false);
-                return new MethodResultModel {
-                    JsonPayload = result.GetPayloadAsJson(),
-                    Status = result.Status
-                };
-            }
-            catch (Exception e) {
-                _logger.LogTrace(e, "Call method failed ");
-                throw e.Translate();
-            }
-        }
-
-        /// <inheritdoc/>
-        public async Task UpdatePropertiesAsync(string deviceId, string moduleId,
-            Dictionary<string, VariantValue> properties, string etag, CancellationToken ct) {
-            try {
-                var result = await (string.IsNullOrEmpty(moduleId) ?
-                    _registry.UpdateTwinAsync(deviceId, properties.ToTwin(), etag, ct) :
-                    _registry.UpdateTwinAsync(deviceId, moduleId, properties.ToTwin(), etag, ct)).ConfigureAwait(false);
-            }
-            catch (Exception e) {
-                _logger.LogTrace(e, "Update properties failed ");
                 throw e.Translate();
             }
         }
@@ -205,6 +191,20 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub.Clients {
         }
 
         /// <inheritdoc/>
+        public async Task UpdatePropertiesAsync(string deviceId, string moduleId,
+            Dictionary<string, VariantValue> properties, string etag, CancellationToken ct) {
+            try {
+                var result = await (string.IsNullOrEmpty(moduleId) ?
+                    _registry.UpdateTwinAsync(deviceId, properties.ToTwin(), etag, ct) :
+                    _registry.UpdateTwinAsync(deviceId, moduleId, properties.ToTwin(), etag, ct)).ConfigureAwait(false);
+            }
+            catch (Exception e) {
+                _logger.LogTrace(e, "Update properties failed ");
+                throw e.Translate();
+            }
+        }
+
+        /// <inheritdoc/>
         public async Task DeleteAsync(string deviceId, string moduleId, string etag,
             CancellationToken ct) {
             try {
@@ -218,6 +218,26 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub.Clients {
             }
             catch (Exception e) {
                 _logger.LogTrace(e, "Delete failed ");
+                throw e.Translate();
+            }
+        }
+
+        /// <inheritdoc/>
+        public async Task<MethodResultModel> CallMethodAsync(string deviceId, string moduleId,
+            MethodParameterModel parameters, CancellationToken ct) {
+            try {
+                var methodInfo = new CloudToDeviceMethod(parameters.Name);
+                methodInfo.SetPayloadJson(parameters.JsonPayload);
+                var result = await (string.IsNullOrEmpty(moduleId) ?
+                     _client.InvokeDeviceMethodAsync(deviceId, methodInfo, ct) :
+                     _client.InvokeDeviceMethodAsync(deviceId, moduleId, methodInfo, ct)).ConfigureAwait(false);
+                return new MethodResultModel {
+                    JsonPayload = result.GetPayloadAsJson(),
+                    Status = result.Status
+                };
+            }
+            catch (Exception e) {
+                _logger.LogTrace(e, "Call method failed ");
                 throw e.Translate();
             }
         }

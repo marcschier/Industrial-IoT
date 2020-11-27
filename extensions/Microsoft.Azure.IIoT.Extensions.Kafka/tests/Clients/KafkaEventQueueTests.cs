@@ -4,7 +4,8 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Extensions.Kafka.Clients {
-    using Microsoft.Azure.IIoT.Hub;
+    using Microsoft.Azure.IIoT.Messaging;
+    using Microsoft.Azure.IIoT.Hosting;
     using System;
     using System.Threading.Tasks;
     using System.Collections.Generic;

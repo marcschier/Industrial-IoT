@@ -24,7 +24,8 @@ namespace Microsoft.Azure.IIoT.Messaging.Services {
         /// <param name="client"></param>
         /// <param name="handlers"></param>
         /// <param name="logger"></param>
-        public EventBusHost(IEventBus client, IEnumerable<IHandler> handlers, ILogger logger) {
+        public EventBusHost(IEventBusSubscriber client, IEnumerable<IHandler> handlers,
+            ILogger logger) {
             _client = client ?? throw new ArgumentNullException(nameof(client));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _handlers = handlers.ToDictionary(h => h, k => (IAsyncDisposable)null);
@@ -90,7 +91,7 @@ namespace Microsoft.Azure.IIoT.Messaging.Services {
         /// </summary>
         /// <returns></returns>
         private async Task RegisterAsync() {
-            var register = _client.GetType().GetMethod(nameof(IEventBus.SubscribeAsync));
+            var register = _client.GetType().GetMethod(nameof(IEventBusSubscriber.SubscribeAsync));
             foreach (var handler in _handlers.Keys.ToList()) {
                 var type = handler.GetType();
                 foreach (var itf in type.GetInterfaces()) {
@@ -119,7 +120,7 @@ namespace Microsoft.Azure.IIoT.Messaging.Services {
         }
 
         private Task _registration;
-        private readonly IEventBus _client;
+        private readonly IEventBusSubscriber _client;
         private readonly ILogger _logger;
         private readonly Dictionary<IHandler, IAsyncDisposable> _handlers;
         private readonly SemaphoreSlim _lock = new SemaphoreSlim(1, 1);

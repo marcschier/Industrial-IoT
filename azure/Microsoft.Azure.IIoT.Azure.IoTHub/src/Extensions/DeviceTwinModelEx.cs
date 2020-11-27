@@ -4,43 +4,15 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Hub.Models {
-    using Microsoft.Azure.Devices;
-    using Microsoft.Azure.Devices.Shared;
     using Microsoft.Azure.IIoT.Serializers;
+    using Microsoft.Azure.Devices.Shared;
     using System.Collections.Generic;
+
 
     /// <summary>
     /// Device twin model extensions
     /// </summary>
     public static class DeviceTwinModelEx {
-
-        /// <summary>
-        /// Convert twin to device
-        /// </summary>
-        /// <param name="twin"></param>
-        /// <returns></returns>
-        public static Device ToDevice(this DeviceTwinModel twin) {
-            if (twin == null) {
-                return null;
-            }
-            return new Device(twin.Id) {
-                Capabilities = twin.Capabilities?.ToCapabilities()
-            };
-        }
-
-        /// <summary>
-        /// Convert twin to module
-        /// </summary>
-        /// <param name="twin"></param>
-        /// <returns></returns>
-        public static Module ToModule(this DeviceTwinModel twin) {
-            if (twin == null) {
-                return null;
-            }
-            return new Module(twin.Id, twin.ModuleId) {
-                ManagedBy = twin.Id
-            };
-        }
 
         /// <summary>
         /// Convert twin to twin
@@ -82,20 +54,6 @@ namespace Microsoft.Azure.IIoT.Hub.Models {
         }
 
         /// <summary>
-        /// Convert to twin collection
-        /// </summary>
-        /// <param name="props"></param>
-        /// <returns></returns>
-        private static TwinCollection ToTwinCollection(
-            this IReadOnlyDictionary<string, VariantValue> props) {
-            var collection = new TwinCollection();
-            foreach (var item in props) {
-                collection[item.Key] = item.Value.IsListOfValues ? item.Value.Values : item.Value.Value;
-            }
-            return collection;
-        }
-
-        /// <summary>
         /// Convert twin to device twin model
         /// </summary>
         /// <param name="twin"></param>
@@ -112,6 +70,7 @@ namespace Microsoft.Azure.IIoT.Hub.Models {
                 Etag = twin.ETag,
                 Hub = hub,
                 ModuleId = twin.ModuleId,
+                Version = twin.Version,
                 ConnectionState = twin.ConnectionState?.ToString(),
                 LastActivityTime = twin.LastActivityTime,
                 Status = twin.Status?.ToString(),
@@ -144,6 +103,20 @@ namespace Microsoft.Azure.IIoT.Hub.Models {
                 model.AddOrUpdate(item.Key, (VariantValue)serializer.FromObject(item.Value));
             }
             return model;
+        }
+
+        /// <summary>
+        /// Convert to twin collection
+        /// </summary>
+        /// <param name="props"></param>
+        /// <returns></returns>
+        internal static TwinCollection ToTwinCollection(
+            this IReadOnlyDictionary<string, VariantValue> props) {
+            var collection = new TwinCollection();
+            foreach (var item in props) {
+                collection[item.Key] = item.Value.IsListOfValues ? item.Value.Values : item.Value.Value;
+            }
+            return collection;
         }
     }
 }

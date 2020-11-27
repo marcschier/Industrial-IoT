@@ -7,7 +7,7 @@
   <ItemGroup>
     <PackageReference Include="M2MqttDotnetCore" Version="1.1.0" />
     <PackageReference Include="Microsoft.Azure.EventHubs" Version="4.3.1" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.CommandLine" Version="5.0.0-rc.2.20475.5" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.CommandLine" Version="5.0.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\azure\Microsoft.Azure.IIoT.Azure.ActiveDirectory\src\Microsoft.Azure.IIoT.Azure.ActiveDirectory.csproj" />

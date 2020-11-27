@@ -6,7 +6,6 @@
 namespace Microsoft.Azure.IIoT.Platform.Publisher.Events.v2 {
     using Microsoft.Azure.IIoT.Platform.Publisher.Events.v2.Models;
     using Microsoft.Azure.IIoT.Messaging;
-    using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;

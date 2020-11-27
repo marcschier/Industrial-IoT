@@ -20,7 +20,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Events.v2 {
         /// Create event publisher
         /// </summary>
         /// <param name="bus"></param>
-        public DiscovererEventBusPublisher(IEventBus bus) {
+        public DiscovererEventBusPublisher(IEventBusPublisher bus) {
             _bus = bus ?? throw new ArgumentNullException(nameof(bus));
         }
 
@@ -64,6 +64,6 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Events.v2 {
             };
         }
 
-        private readonly IEventBus _bus;
+        private readonly IEventBusPublisher _bus;
     }
 }

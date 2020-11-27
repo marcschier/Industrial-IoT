@@ -7,17 +7,17 @@ namespace Microsoft.Azure.IIoT.Azure.ServiceBus.Clients {
     using Microsoft.Azure.IIoT.Azure.ServiceBus.Runtime;
     using Microsoft.Azure.IIoT.Messaging.Handlers;
     using Microsoft.Azure.IIoT.Messaging;
-    using Microsoft.Azure.IIoT.Hub;
+    using Microsoft.Azure.IIoT.Hosting;
     using Microsoft.Azure.IIoT.Utils;
     using Microsoft.Azure.IIoT.Serializers;
     using Microsoft.Azure.ServiceBus.Management;
     using Microsoft.Extensions.Configuration;
+    using Microsoft.Extensions.Options;
     using Autofac;
     using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using System.Linq;
-    using Microsoft.Extensions.Options;
 
     public sealed class ServiceBusEventQueueFixture : IDisposable {
 

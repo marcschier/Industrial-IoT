@@ -3,7 +3,7 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Platform.Publisher.Storage {
+namespace Microsoft.Azure.IIoT.Platform.Publisher.Storage.Models {
     using Microsoft.Azure.IIoT.Platform.Core.Models;
     using Microsoft.Azure.IIoT.Platform.Publisher.Models;
     using Microsoft.Azure.IIoT.Serializers;
@@ -176,7 +176,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Storage {
             }
             var lastResult = ToServiceResultModel(document.LastResultDiagnostics,
                 document.LastResultStatusCode, document.LastResultErrorMessage);
-            var connectionState = ToConnectionStateModel(document); 
+            var connectionState = ToConnectionStateModel(document);
             if (lastResult == null && connectionState == null &&
                 document.LastResultChange == null) {
                 return null;
@@ -201,7 +201,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Storage {
                 document.ConnectionLastResultStatusCode, document.ConnectionLastResultErrorMessage);
             if (lastConnectionResult == null &&
                 document.ConnectionLastResultChange == null &&
-                (document.ConnectionState == null || 
+                (document.ConnectionState == null ||
                     document.ConnectionState.Value == ConnectionStatus.Disconnected)) {
                 return null;
             }
