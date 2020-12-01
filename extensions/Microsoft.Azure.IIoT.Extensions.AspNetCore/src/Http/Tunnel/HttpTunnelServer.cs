@@ -97,7 +97,8 @@ namespace Microsoft.Azure.IIoT.AspNetCore.Http.Tunnel {
                 byte[] payload, string contentType) {
                 if (method == _chunks.MethodName) {
                     // Pass to chunk server
-                    return await _chunks.InvokeAsync(target, payload, contentType, this).ConfigureAwait(false);
+                    return await _chunks.InvokeAsync(target, payload, contentType,
+                        this).ConfigureAwait(false);
                 }
 
                 var isSimpleCall = contentType != HttpTunnelRequestModel.SchemaName;

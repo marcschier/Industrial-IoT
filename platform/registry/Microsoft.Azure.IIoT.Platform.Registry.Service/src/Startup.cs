@@ -8,10 +8,8 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service {
     using Microsoft.Azure.IIoT.Platform.Registry;
     using Microsoft.Azure.IIoT.Azure.AppInsights;
     using Microsoft.Azure.IIoT.Azure.IoTHub;
-    using Microsoft.Azure.IIoT.Azure.IoTHub.Clients;
     using Microsoft.Azure.IIoT.Azure.IoTHub.Deploy;
     using Microsoft.Azure.IIoT.Azure.ServiceBus;
-    using Microsoft.Azure.IIoT.Deploy.Runtime;
     using Microsoft.Azure.IIoT.Authentication;
     using Microsoft.Azure.IIoT.Utils;
     using Microsoft.Azure.IIoT.Http.Clients;
@@ -158,12 +156,7 @@ namespace Microsoft.Azure.IIoT.Platform.Registry.Service {
             builder.RegisterModule<RegistryServices>();
 
             // Deployments
-            builder.RegisterType<IoTHubConfigurationClient>()
-                .AsImplementedInterfaces(); 
-            builder.RegisterType<ContainerRegistryConfig>()
-                .AsImplementedInterfaces();
-            builder.RegisterType<IoTEdgeBaseDeployment>()
-                .AsImplementedInterfaces().SingleInstance();
+            builder.RegisterModule<IoTEdgeDeploymentModule>();
             builder.RegisterType<IoTEdgeDiscoveryDeployment>()
                 .AsImplementedInterfaces().SingleInstance();
             builder.RegisterType<IoTEdgeTwinDeployment>()

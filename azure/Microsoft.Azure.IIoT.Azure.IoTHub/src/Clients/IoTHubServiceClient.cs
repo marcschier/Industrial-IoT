@@ -5,8 +5,7 @@
 
 namespace Microsoft.Azure.IIoT.Azure.IoTHub.Clients {
     using Microsoft.Azure.IIoT.Azure.IoTHub.Models;
-    using Microsoft.Azure.IIoT.Hub;
-    using Microsoft.Azure.IIoT.Hub.Models;
+    using Microsoft.Azure.IIoT.Azure.IoTHub;
     using Microsoft.Azure.IIoT.Utils;
     using Microsoft.Azure.IIoT.Serializers;
     using Microsoft.Azure.Devices;
@@ -84,6 +83,12 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub.Clients {
                     _logger.LogTrace(e, "Create module failed during registration");
                     throw e.Translate();
                 }
+            }
+            if (!(registration.Tags?.Any() ?? false) &&
+                !(registration.Properties?.Desired?.Any() ?? false)) {
+                // no twin
+                return await GetAsync(registration.Id, registration.ModuleId,
+                    ct).ConfigureAwait(false);
             }
             try {
                 Twin update;

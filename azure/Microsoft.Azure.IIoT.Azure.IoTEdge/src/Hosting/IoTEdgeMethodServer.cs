@@ -39,12 +39,13 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Hosting {
         }
 
         /// <inheritdoc/>
-        public async Task StopAsync() {
+        public async Task StartAsync() {
             await _lock.WaitAsync().ConfigureAwait(false);
             try {
-                if (_started) {
-                    await _client.SetMethodDefaultHandlerAsync(null, null).ConfigureAwait(false);
-                    _started = false;
+                if (!_started) {
+                    await _client.SetMethodDefaultHandlerAsync((request, _) =>
+                        InvokeMethodAsync(request), null).ConfigureAwait(false);
+                    _started = true;
                 }
             }
             finally {
@@ -53,13 +54,12 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Hosting {
         }
 
         /// <inheritdoc/>
-        public async Task StartAsync() {
+        public async Task StopAsync() {
             await _lock.WaitAsync().ConfigureAwait(false);
             try {
-                if (!_started) {
-                    await _client.SetMethodDefaultHandlerAsync((request, _) =>
-                        InvokeMethodAsync(request), null).ConfigureAwait(false);
-                    _started = true;
+                if (_started) {
+                    await _client.SetMethodDefaultHandlerAsync(null, null).ConfigureAwait(false);
+                    _started = false;
                 }
             }
             finally {

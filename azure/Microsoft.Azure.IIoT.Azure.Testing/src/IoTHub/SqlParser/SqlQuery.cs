@@ -3,9 +3,9 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Azure.Testing.IoTHub.SqlParser {
-    using Microsoft.Azure.IIoT.Azure.Testing.IoTHub;
-    using Microsoft.Azure.IIoT.Hub.Models;
+namespace Microsoft.Azure.IIoT.Azure.IoTHub.Testing.SqlParser {
+    using Microsoft.Azure.IIoT.Azure.IoTHub.Testing;
+    using Microsoft.Azure.IIoT.Azure.IoTHub.Models;
     using Microsoft.Azure.IIoT.Serializers;
     using Antlr4.Runtime;
     using Antlr4.Runtime.Tree;

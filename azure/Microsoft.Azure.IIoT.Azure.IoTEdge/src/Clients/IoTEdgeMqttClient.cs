@@ -39,14 +39,14 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Clients {
             _tokens = tokens ?? throw new ArgumentNullException(nameof(tokens));
             _edge = edge ?? throw new ArgumentNullException(nameof(edge));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            _client = CreateMqttClientAsync();
+            _expires = DateTime.UtcNow;
         }
 
         /// <inhertidoc/>
         public void Publish<T>(string target, byte[] payload, T token,
             Action<T, Exception> complete, IDictionary<string, string> properties,
             string partitionKey) {
-            GetMqttClientAsync().ContinueWith(client => {
+            GetClientAsync().ContinueWith(client => {
                 if (client.IsFaulted) {
                     complete(token, client.Exception);
                 }
@@ -54,7 +54,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Clients {
                     complete(token, new TaskCanceledException());
                 }
                 else {
-                    client.Result.Item2.Publish(target, payload, token,
+                    client.Result.Publish(target, payload, token,
                         complete, properties, partitionKey);
                 }
             }, TaskContinuationOptions.RunContinuationsAsynchronously);
@@ -64,8 +64,8 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Clients {
         public async Task PublishAsync(string target, byte[] payload,
             IDictionary<string, string> properties, string partitionKey,
             CancellationToken ct) {
-            var client = await GetMqttClientAsync().ConfigureAwait(false);
-            await client.Item2.PublishAsync(target, payload, properties, partitionKey,
+            var client = await GetClientAsync(ct).ConfigureAwait(false);
+            await client.PublishAsync(target, payload, properties, partitionKey,
                 ct).ConfigureAwait(false);
         }
 
@@ -73,77 +73,89 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Clients {
         public async Task PublishAsync(string target, IEnumerable<byte[]> batch,
             IDictionary<string, string> properties, string partitionKey,
             CancellationToken ct) {
-            var client = await GetMqttClientAsync().ConfigureAwait(false);
-            await client.Item2.PublishAsync(target, batch, properties, partitionKey,
+            var client = await GetClientAsync(ct).ConfigureAwait(false);
+            await client.PublishAsync(target, batch, properties, partitionKey,
                 ct).ConfigureAwait(false);
         }
 
         /// <inhertidoc/>
         public async Task<IAsyncDisposable> SubscribeAsync(string target,
             IEventConsumer consumer) {
-            var client = await GetMqttClientAsync().ConfigureAwait(false);
-            return await client.Item2.SubscribeAsync(target, consumer).ConfigureAwait(false);
+            var client = await GetClientAsync().ConfigureAwait(false);
+            return await client.SubscribeAsync(target, consumer).ConfigureAwait(false);
         }
 
         /// <inhertidoc/>
         public void Dispose() {
-            lock (_lock) {
-                if (!_client.IsFaulted && !_client.IsCanceled) {
-                    _client.Result.Item2.Dispose();
-                }
-            }
+            _expires = DateTime.MaxValue;
+            _client?.Dispose();
+            _client = null;
+            _lock.Dispose();
         }
 
         /// <summary>
         /// Get client
         /// </summary>
         /// <returns></returns>
-        private Task<(DateTime, MqttClient)> GetMqttClientAsync() {
-            lock (_lock) {
-                if (_client.IsFaulted || _client.IsCanceled|| (
-                    _client.IsCompletedSuccessfully &&
-                    _client.Result.Item1 >= DateTime.UtcNow)) {
-                    _client = CreateMqttClientAsync();
-                }
+        private async Task<MqttClient> GetClientAsync(CancellationToken ct = default) {
+            if (_expires > DateTime.UtcNow) {
                 return _client;
             }
-        }
 
-        /// <summary>
-        /// Create mqtt client
-        /// </summary>
-        /// <returns></returns>
-        private async Task<(DateTime, MqttClient)> CreateMqttClientAsync(
-            CancellationToken ct = default) {
-            var token = await _tokens.GenerateTokenAsync(_identity.Hub,
-                ct).ConfigureAwait(false);
-            var sas = SasToken.Parse(token);
-            var expires = sas.ExpiresOn - TimeSpan.FromSeconds(30);
-            var clientId = _identity.DeviceId;
-            if (!string.IsNullOrEmpty(_identity.ModuleId)) {
-                clientId += "/" + _identity.ModuleId;
+            await _lock.WaitAsync(ct).ConfigureAwait(false); // Guard the expiration
+            try {
+                if (_expires > DateTime.UtcNow) {
+                    return _client;
+                }
+
+                var token = await _tokens.GenerateTokenAsync(_identity.Hub,
+                    ct).ConfigureAwait(false);
+                var clientId = _identity.DeviceId;
+                if (!string.IsNullOrEmpty(_identity.ModuleId)) {
+                    clientId += "/" + _identity.ModuleId;
+                }
+
+                var userName = $"{_identity.Hub}/{clientId}/?api-version=2018-06-30";
+
+                var mqttOptions = Options.Create(new MqttOptions {
+                    AllowUntrustedCertificates = _edge.Value.BypassCertVerification,
+                    ClientId = clientId,
+                    UserName = userName,
+                    Password = token,
+                    UseTls = true,
+                    HostName = _identity.Gateway ?? _identity.Hub,
+                    Port = 8883,
+                    QoS = _options.Value.QoS,
+                    QueueSize = _options.Value.QueueSize,
+                    Retain = _options.Value.Retain
+                });
+
+                _client?.Dispose();
+                _client = new MqttClient(mqttOptions, _logger);
+                try {
+                    // Wait until successfully connected
+                    await _client.ConnectAsync(ct).ConfigureAwait(false);
+
+                    _expires = SasToken.Parse(token).ExpiresOn - TimeSpan.FromSeconds(30);
+                    _logger.LogInformation(
+                        "New Mqtt broker client created. Expires {expiration}", _expires);
+                    return _client;
+                }
+                catch (Exception ex) {
+                    _logger.LogError(ex, "Failed to create Mqtt broker client");
+                    _client.Dispose();
+                    _client = null;
+                    throw;
+                }
             }
-            var userName = $"{_identity.Hub}/{clientId}/?api-version=2018-06-30";
-            var mqttOptions = Options.Create(new MqttOptions {
-                AllowUntrustedCertificates = _edge.Value.BypassCertVerification,
-                ClientId = clientId,
-                UserName = userName,
-                Password = sas.Signature,
-                UseTls = true,
-                HostName = _identity.Gateway ?? _identity.Hub,
-                Port = 8883,
-                QoS = _options.Value.QoS,
-                QueueSize = _options.Value.QueueSize,
-                Retain = _options.Value.Retain
-            });
-            var client = new MqttClient(mqttOptions, _logger);
-            _logger.LogInformation(
-                "New Mqtt broker client created. Expires {expiration}", expires);
-            return (expires, client);
+            finally {
+                _lock.Release();
+            }
         }
 
-        private Task<(DateTime, MqttClient)> _client;
-        private readonly object _lock = new object();
+        private DateTime _expires;
+        private MqttClient _client;
+        private readonly SemaphoreSlim _lock = new SemaphoreSlim(1, 1);
         private readonly IOptions<IoTEdgeMqttOptions> _options;
         private readonly IOptions<IoTEdgeClientOptions> _edge;
         private readonly IIdentity _identity;

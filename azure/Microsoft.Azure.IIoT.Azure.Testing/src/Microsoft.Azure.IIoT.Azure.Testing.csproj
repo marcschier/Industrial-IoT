@@ -12,7 +12,7 @@
   <ItemGroup>
     <Antlr4 Update="**/*.g4">
       <Generator>MSBuild:Compile</Generator>
-      <CustomToolNamespace>$(RootNamespace).IoTHub.SqlParser</CustomToolNamespace>
+      <CustomToolNamespace>Microsoft.Azure.IIoT.Azure.IoTHub.Testing.SqlParser</CustomToolNamespace>
       <Listener>False</Listener>
       <Visitor>False</Visitor>
     </Antlr4>

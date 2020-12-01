@@ -3,11 +3,11 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.Azure.IIoT.Azure.Testing.IoTEdge {
+namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Testing {
+    using Microsoft.Azure.IIoT.Azure.IoTHub;
+    using Microsoft.Azure.IIoT.Azure.IoTHub.Models;
     using Microsoft.Azure.IIoT.Extensions.Docker;
     using Microsoft.Azure.IIoT.Utils;
-    using Microsoft.Azure.IIoT.Hub;
-    using Microsoft.Azure.IIoT.Hub.Models;
     using Microsoft.Azure.IIoT.Serializers;
     using Microsoft.Azure.IIoT.Exceptions;
     using Microsoft.Extensions.Diagnostics.HealthChecks;
@@ -127,6 +127,7 @@ namespace Microsoft.Azure.IIoT.Azure.Testing.IoTEdge {
                 }) {
                 Name = _cs.DeviceId,
                 HostConfig = new HostConfig {
+                    Privileged = true,
                     PortBindings = containerPorts.ToDictionary(k => k.ToString(),
                     v => (IList<PortBinding>)new List<PortBinding> {
                         new PortBinding {

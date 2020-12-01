@@ -6,7 +6,6 @@
 namespace Microsoft.Azure.IIoT.Messaging.Handlers {
     using Microsoft.Azure.IIoT.Messaging;
     using Microsoft.Azure.IIoT.Hosting;
-    using Microsoft.Azure.IIoT.Hub;
     using Microsoft.Azure.IIoT.Utils;
     using System;
     using System.Collections.Generic;
@@ -39,17 +38,8 @@ namespace Microsoft.Azure.IIoT.Messaging.Handlers {
             IDictionary<string, string> properties, Func<Task> checkpoint) {
 
             var handled = false;
-            if (properties.TryGetValue(CommonProperties.EventSchemaType, out var schemaType) ||
-                properties.TryGetValue(EventProperties.EventSchema, out schemaType)) {
-
-                string source = null;
-                if (properties.TryGetValue(CommonProperties.DeviceId, out var deviceId)) {
-                    properties.TryGetValue(CommonProperties.ModuleId, out var moduleId);
-                    source = HubResource.Format(null, deviceId, moduleId);
-                }
-                else {
-                    properties.TryGetValue(EventProperties.Target, out source);
-                }
+            if (properties.TryGetValue(EventProperties.EventSchema, out var schemaType)) {
+                properties.TryGetValue(EventProperties.Target, out var source);
 
                 if (source != null &&
                     _handlers.TryGetValue(schemaType.ToLowerInvariant(), out var handler)) {

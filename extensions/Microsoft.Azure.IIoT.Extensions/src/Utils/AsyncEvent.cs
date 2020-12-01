@@ -13,6 +13,11 @@ namespace Microsoft.Azure.IIoT.Utils {
     public class AsyncEvent<T> {
 
         /// <summary>
+        /// Whether event is set
+        /// </summary>
+        public bool IsSet => _tcs.Task.IsCompletedSuccessfully;
+
+        /// <summary>
         /// Wait
         /// </summary>
         /// <returns></returns>

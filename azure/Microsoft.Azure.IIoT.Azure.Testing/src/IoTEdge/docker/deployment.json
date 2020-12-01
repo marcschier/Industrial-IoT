@@ -86,52 +86,52 @@
                     "route": "FROM /messages/* INTO $upstream"
                 },
                 "schemaVersion": "1.2",
-                "mqttBroker":{
-            "authorizations":[
-               {
-                  "identities": [
-                     "mqttclient"
-                  ],
-                  "allow":[
-                     {
-                        "operations":[
-                           "mqtt:connect"
-                        ]
-                     }
-                  ]
-               },
-               {
-                  "identities": [
-                     "mqttclient"
-                  ],
-                  "allow":[
-                     {
-                        "operations":[
-                           "mqtt:subscribe"
-                        ],
-                        "resources":[
-                           "#"
-                        ]
-                     }
-                  ]
-               },
-               {
-                  "identities": [
-                     "mqttclient"
-                  ],
-                  "allow":[
-                     {
-                        "operations":[
-                           "mqtt:publish"
-                        ],
-                        "resources":[
-                           "#"
-                        ]
-                     }
-                  ]
-               }
-            ]
-         },
+                "mqttBroker": {
+                    "authorizations": [
+                        {
+                            "identities": [
+                                "mqttclient"
+                            ],
+                            "allow": [
+                                {
+                                    "operations": [
+                                        "mqtt:connect"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "identities": [
+                                "mqttclient"
+                            ],
+                            "allow": [
+                                {
+                                    "operations": [
+                                        "mqtt:subscribe"
+                                    ],
+                                    "resources": [
+                                        "#"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "identities": [
+                                "mqttclient"
+                            ],
+                            "allow": [
+                                {
+                                    "operations": [
+                                        "mqtt:publish"
+                                    ],
+                                    "resources": [
+                                        "#"
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                },
                 "storeAndForwardConfiguration": {
                     "timeToLiveSecs": 7200
                 }

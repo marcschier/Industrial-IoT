@@ -5,7 +5,6 @@
 
 namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Clients {
     using Microsoft.Azure.IIoT.Azure.IoTEdge;
-    using Microsoft.Azure.IIoT.Hub;
     using Microsoft.Azure.IIoT.Messaging;
     using Microsoft.Azure.IIoT.Hosting;
     using Microsoft.Azure.Devices.Client;
@@ -91,18 +90,10 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Clients {
                 //  CreationTimeUtc = DateTime.UtcNow
             };
             if (!string.IsNullOrEmpty(contentEncoding)) {
-                msg.Properties.Add(CommonProperties.ContentEncoding, contentEncoding);
+                msg.Properties.Add(EventProperties.ContentEncoding, contentEncoding);
             }
             if (!string.IsNullOrEmpty(eventSchema)) {
-                msg.Properties.Add(CommonProperties.EventSchemaType, eventSchema);
-            }
-            var deviceId = _identity?.DeviceId;
-            if (!string.IsNullOrEmpty(deviceId)) {
-                msg.Properties.Add(CommonProperties.DeviceId, deviceId);
-            }
-            var moduleId = _identity?.ModuleId;
-            if (!string.IsNullOrEmpty(moduleId)) {
-                msg.Properties.Add(CommonProperties.ModuleId, moduleId);
+                msg.Properties.Add(EventProperties.EventSchema, eventSchema);
             }
             return msg;
         }

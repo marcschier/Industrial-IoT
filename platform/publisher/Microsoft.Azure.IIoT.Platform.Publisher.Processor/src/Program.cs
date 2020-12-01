@@ -12,9 +12,10 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Processor {
     using Microsoft.Azure.IIoT.Azure.EventHub;
     using Microsoft.Azure.IIoT.Azure.EventHub.Processor;
     using Microsoft.Azure.IIoT.Azure.IoTHub.Handlers;
+    using Microsoft.Azure.IIoT.Azure.IoTHub.Models;
+    using Microsoft.Azure.IIoT.Azure.IoTHub;
     using Microsoft.Azure.IIoT.Messaging;
     using Microsoft.Azure.IIoT.Serializers;
-    using Microsoft.Azure.IIoT.Hub;
     using Microsoft.Azure.IIoT.AspNetCore.Diagnostics.Default;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;

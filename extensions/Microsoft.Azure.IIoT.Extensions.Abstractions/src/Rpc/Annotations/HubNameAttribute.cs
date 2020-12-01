@@ -39,12 +39,14 @@ namespace Microsoft.Azure.IIoT.Rpc {
             var name = type.GetCustomAttribute<HubNameAttribute>(false)?.Name;
             if (string.IsNullOrEmpty(name)) {
                 name = type.Name;
-                if (name.EndsWith(nameof(Hub), StringComparison.OrdinalIgnoreCase)) {
-                    name = name.Replace(nameof(Hub), "", StringComparison.OrdinalIgnoreCase);
+                if (name.EndsWith(kHubExtension, StringComparison.OrdinalIgnoreCase)) {
+                    name = name.Replace(kHubExtension, "", StringComparison.OrdinalIgnoreCase);
                 }
                 name = name.ToLower(CultureInfo.CurrentCulture);
             }
             return name;
         }
+
+        private const string kHubExtension = "Hub";
     }
 }

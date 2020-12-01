@@ -4,7 +4,7 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Azure.IoTHub.Handlers {
-    using Microsoft.Azure.IIoT.Hub;
+    using Microsoft.Azure.IIoT.Azure.IoTHub;
     using Microsoft.Azure.IIoT.Messaging;
     using Microsoft.Azure.IIoT.Utils;
     using Microsoft.Azure.IIoT.Hosting;
@@ -37,21 +37,19 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub.Handlers {
         /// <inheritdoc/>
         public async Task HandleAsync(byte[] eventData,
             IDictionary<string, string> properties, Func<Task> checkpoint) {
-            if (!properties.TryGetValue(CommonProperties.DeviceId, out var deviceId) &&
-                !properties.TryGetValue(SystemProperties.ConnectionDeviceId, out deviceId) &&
+            if (!properties.TryGetValue(SystemProperties.ConnectionDeviceId, out var deviceId) &&
                 !properties.TryGetValue(SystemProperties.DeviceId, out deviceId)) {
                 // Not from a device
                 return;
             }
 
-            if (!properties.TryGetValue(CommonProperties.ModuleId, out var moduleId) &&
-                !properties.TryGetValue(SystemProperties.ConnectionModuleId, out moduleId) &&
+            if (!properties.TryGetValue(SystemProperties.ConnectionModuleId, out var moduleId) &&
                 !properties.TryGetValue(SystemProperties.ModuleId, out moduleId)) {
                 // Not from a module
                 moduleId = null;
             }
 
-            if (properties.TryGetValue(CommonProperties.EventSchemaType, out var schemaType) ||
+            if (properties.TryGetValue(EventProperties.EventSchema, out var schemaType) ||
                 properties.TryGetValue(SystemProperties.MessageSchema, out schemaType)) {
 
                 //  TODO: when handling third party OPC UA PubSub Messages

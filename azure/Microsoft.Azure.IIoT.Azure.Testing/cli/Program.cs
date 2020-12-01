@@ -4,15 +4,15 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.IIoT.Azure.Testing.Cli {
-    using Microsoft.Azure.IIoT.Azure.IoTHub.Clients;
-    using Microsoft.Azure.IIoT.Azure.Testing.IoTEdge;
-    using Microsoft.Azure.IIoT.Diagnostics;
-    using Microsoft.Azure.IIoT.Extensions.Mqtt;
-    using Microsoft.Azure.IIoT.Hub;
+    using Microsoft.Azure.IIoT.Azure.IoTEdge.Testing;
+    using Microsoft.Azure.IIoT.Azure.IoTEdge;
+    using Microsoft.Azure.IIoT.Azure.IoTHub;
+    using Microsoft.Azure.IIoT.Azure.IoTHub.Models;
+    using Microsoft.Azure.IIoT.Http.Clients;
     using Microsoft.Azure.IIoT.Messaging;
     using Microsoft.Azure.IIoT.Serializers;
-    using Microsoft.Azure.IIoT.Serializers.NewtonSoft;
     using Microsoft.Azure.IIoT.Utils;
+    using Microsoft.Azure.IIoT.Exceptions;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Logging;
     using Autofac;
@@ -20,36 +20,80 @@ namespace Microsoft.Azure.IIoT.Azure.Testing.Cli {
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
-    using Microsoft.Azure.IIoT.Azure.IoTEdge;
-    using System.Threading;
-    using Microsoft.Azure.IIoT.Hub.Models;
-    using Microsoft.Azure.IIoT.Exceptions;
     using System.Net;
+    using System.IO;
 
     /// <summary>
-    /// Networking command line interface
+    /// Azure testing command line interface
     /// </summary>
-    public class Program {
+    public sealed class Program : IDisposable {
+
+        /// <summary>
+        /// Configure Dependency injection
+        /// </summary>
+        public static IContainer ConfigureContainer(IConfiguration configuration) {
+            var builder = new ContainerBuilder();
+
+            builder.AddConfiguration(configuration);
+            builder.AddOptions();
+            builder.AddDiagnostics(builder => builder.AddDebug());
+            builder.RegisterModule<NewtonSoftJsonModule>();
+            builder.RegisterModule<IoTHubSupportModule>();
+            builder.RegisterModule<IoTEdgeDeploymentModule>();
+
+            // Create automatic deployment on startup
+            builder.RegisterType<HostAutoStart>()
+                .AutoActivate()
+                .AsImplementedInterfaces().SingleInstance();
+
+            return builder.Build();
+        }
+
 
         /// <summary>
         /// Main entry point
         /// </summary>
         public static void Main(string[] args) {
-            RunAsync(args).Wait();
+
+            // Load hosting configuration
+            var config = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json", true)
+                .AddFromDotEnvFile()
+                .AddEnvironmentVariables()
+                .AddFromKeyVault(allowInteractiveLogon: true)
+                .Build();
+
+            using (var scope = new Program(config)) {
+                scope.RunAsync(args).Wait();
+            }
+        }
+
+
+        /// <summary>
+        /// Configure Dependency injection
+        /// </summary>
+        public Program(IConfiguration configuration) {
+            var container = ConfigureContainer(configuration);
+            _iotHubScope = container.BeginLifetimeScope();
+        }
+
+        /// <inheritdoc/>
+        public void Dispose() {
+            _iotHubScope.Dispose();
         }
 
         /// <summary>
         /// Run cli
         /// </summary>
-        public static async Task RunAsync(string[] args) {
+        public async Task RunAsync(string[] args) {
             if (args is null) {
                 throw new ArgumentNullException(nameof(args));
             }
 
-            var interactive = false;
             try {
                 do {
-                    if (interactive) {
+                    if (_interactive) {
                         Console.Write("> ");
                         args = CliOptions.ParseAsCommandLine(Console.ReadLine());
                     }
@@ -62,11 +106,11 @@ namespace Microsoft.Azure.IIoT.Azure.Testing.Cli {
                         var command = args[0];
                         switch (command) {
                             case "exit":
-                                interactive = false;
+                                _interactive = false;
                                 break;
                             case "console":
                                 Console.WriteLine("Azure Tester");
-                                interactive = true;
+                                _interactive = true;
                                 break;
                             case "iotedge":
                                 if (args.Length < 2) {
@@ -76,13 +120,13 @@ namespace Microsoft.Azure.IIoT.Azure.Testing.Cli {
                                 options = new CliOptions(args, 2);
                                 switch (command) {
                                     case "test":
-                                        await TestMqttClientAsync(options).ConfigureAwait(false);
+                                        await RunAsync(TestMqttClientAsync, options).ConfigureAwait(false);
                                         break;
                                     case "start":
-                                        await StartIoTEdgeAsync(options).ConfigureAwait(false);
+                                        await RunAsync(StartIoTEdgeAsync, options).ConfigureAwait(false);
                                         break;
                                     case "stop":
-                                        await StopIoTEdgeAsync(options).ConfigureAwait(false);
+                                        await RunAsync(StopIoTEdgeAsync, options).ConfigureAwait(false);
                                         break;
                                     case "-?":
                                     case "-h":
@@ -106,7 +150,7 @@ namespace Microsoft.Azure.IIoT.Azure.Testing.Cli {
                     }
                     catch (ArgumentException e) {
                         Console.WriteLine(e.Message);
-                        if (!interactive) {
+                        if (!_interactive) {
                             PrintHelp();
                             return;
                         }
@@ -117,44 +161,24 @@ namespace Microsoft.Azure.IIoT.Azure.Testing.Cli {
                         Console.WriteLine("==================");
                     }
                 }
-                while (interactive);
+                while (_interactive);
             }
             finally {
-                await CleanupAsync().ConfigureAwait(false);
-            }
-        }
-
-        private static readonly Dictionary<string, IoTEdgeDevice> kEdges = new();
-
-        /// <summary>
-        /// Stop an IoT edge
-        /// </summary>
-        /// <param name="options"></param>
-        /// <returns></returns>
-        private static async Task CleanupAsync() {
-            List<IoTEdgeDevice> edges;
-            lock (kEdges) {
-                edges = kEdges.Values.ToList();
-                kEdges.Clear();
-            }
-            foreach (var edge in edges) {
-                await edge.StopAsync().ConfigureAwait(false);
+                await DisposeAsync().ConfigureAwait(false);
             }
         }
 
         /// <summary>
         /// Stop an IoT edge
         /// </summary>
-        /// <param name="options"></param>
-        /// <returns></returns>
-        private static async Task StopIoTEdgeAsync(CliOptions options) {
+        private async Task StopIoTEdgeAsync(CliOptions options) {
             IoTEdgeDevice container = null;
-            lock (kEdges) {
+            lock (_edges) {
                 var deviceId = options.GetValue<string>("-d", "--deviceId");
-                if (!kEdges.TryGetValue(deviceId, out container)) {
+                if (!_edges.TryGetValue(deviceId, out container)) {
                     return;
                 }
-                kEdges.Remove(deviceId);
+                _edges.Remove(deviceId);
             }
             await container.StopAsync().ConfigureAwait(false);
         }
@@ -162,36 +186,17 @@ namespace Microsoft.Azure.IIoT.Azure.Testing.Cli {
         /// <summary>
         /// Start an IoT edge
         /// </summary>
-        /// <param name="options"></param>
-        /// <returns></returns>
-        private static async Task StartIoTEdgeAsync(CliOptions options) {
+        private async Task StartIoTEdgeAsync(CliOptions options) {
             IoTEdgeDevice container = null;
-            lock (kEdges) {
+            lock (_edges) {
                 var deviceId = options.GetValue<string>("-d", "--deviceId");
-                if (kEdges.ContainsKey(deviceId)) {
+                if (_edges.ContainsKey(deviceId)) {
                     return;
                 }
-                var logger = Log.Console(LogLevel.Error);
-                var configuration = new ConfigurationBuilder()
-                    .AddFromDotEnvFile()
-                    .AddEnvironmentVariables()
-                    .AddFromKeyVault()
-                    .Build();
-                var iotHubCs = configuration.GetValue<string>(PcsVariable.PCS_IOTHUB_CONNSTRING, null);
-                if (string.IsNullOrEmpty(iotHubCs)) {
-                    iotHubCs = configuration.GetValue<string>("_HUB_CS", null);
-                }
-                if (string.IsNullOrEmpty(iotHubCs)) {
-                    throw new ArgumentException("Missing connection string.");
-                }
-                if (!ConnectionString.TryParse(iotHubCs, out var connectionString)) {
-                    throw new ArgumentException("Bad connection string.");
-                }
-                var config = connectionString.ToIoTHubOptions();
-                var registry = new IoTHubServiceClient(
-                    config, new NewtonSoftJsonSerializer(), logger);
+                var registry = _iotHubScope.Resolve<IDeviceTwinServices>();
+                var logger = _iotHubScope.Resolve<ILogger<IoTEdgeDevice>>();
                 container = new IoTEdgeDevice(registry, deviceId, logger);
-                kEdges.Add(deviceId, container);
+                _edges.Add(deviceId, container);
             }
             await container.StartAsync().ConfigureAwait(false);
         }
@@ -199,31 +204,46 @@ namespace Microsoft.Azure.IIoT.Azure.Testing.Cli {
         /// <summary>
         /// Test mqtt client
         /// </summary>
-        /// <returns></returns>
-        private static async Task TestMqttClientAsync(CliOptions options) {
+        private async Task TestMqttClientAsync(CliOptions options) {
 
+            var logger = _iotHubScope.Resolve<ILogger>();
             // Get the gateway device id.
             var gatewayDeviceId = options.GetValue<string>("-d", "--deviceId");
-            if (!kEdges.TryGetValue(gatewayDeviceId, out _)) {
+            if (!_edges.TryGetValue(gatewayDeviceId, out _)) {
                 throw new ArgumentException("Gateway device not started.");
             }
 
             // Get mqtt client device id and create device to get connection string.
             var clientDeviceId = options.GetValueOrDefault("-c", "--clientId",
                 Dns.GetHostName());
-            var cs = await GetConnectionStringAsync(gatewayDeviceId, clientDeviceId,
-                null).ConfigureAwait(false);
+            var registry = _iotHubScope.Resolve<IDeviceTwinServices>();
+            try {
+                var registration = await registry.GetRegistrationAsync(
+                    gatewayDeviceId, null, default).ConfigureAwait(false);
+                // Register device with scope
+                await registry.RegisterAsync(new DeviceRegistrationModel {
+                    Id = clientDeviceId,
+                    ModuleId = null,
+                    DeviceScope = registration.DeviceScope,
+                    Hub = registration.Hub
+                }, false, default).ConfigureAwait(false);
+            }
+            catch (ResourceConflictException) {
+                logger.LogInformation("Client {deviceId} exists.", clientDeviceId);
+            }
+            var cs = await registry.GetConnectionStringAsync(clientDeviceId).ConfigureAwait(false);
 
-            var topic = options.GetValueOrDefault("-t", "--topic", "test_topic");
-
+            // Build the edge client container.
             var builder = new ContainerBuilder();
             builder.AddDiagnostics();
             builder.AddOptions();
+            builder.RegisterModule<HttpClientModule>();
             builder.RegisterModule<IoTEdgeHosting>();
             builder.RegisterModule<NewtonSoftJsonModule>();
 
             // Connect to the IoT Edge device whose host name is always its deviceId
-            Environment.SetEnvironmentVariable("IOTEDGE_GATEWAYHOSTNAME", gatewayDeviceId);
+            Environment.SetEnvironmentVariable("IOTEDGE_GATEWAYHOSTNAME",
+                options.IsProvidedOrNull("-l", "--localhost") != null ? "localhost" : gatewayDeviceId);
             builder.Configure<IoTEdgeClientOptions>(o => {
                 o.BypassCertVerification = options.IsProvidedOrNull("-a", "--acceptall")
                     ?? false;
@@ -235,14 +255,13 @@ namespace Microsoft.Azure.IIoT.Azure.Testing.Cli {
                 o.Retain = options.IsProvidedOrNull("-r", "--retain") ?? false;
                 o.QueueSize = options.GetValueOrDefault<uint?>("-s", "--queuesize", null);
             });
-
             using var scope = builder.Build();
-
             var publisher = scope.Resolve<IEventPublisherClient>();
             var subscriber = scope.Resolve<IEventSubscriberClient>();
             var serializer = scope.Resolve<IJsonSerializer>();
 
             // Subscribe to topic
+            var topic = options.GetValueOrDefault("-t", "--topic", "test_topic");
             var bufSize = options.GetValueOrDefault("-b", "--bufsize", 160 * 1024);
             var numberOfMessages = options.GetValueOrDefault("-c", "--count", 100);
             var buffer = new byte[bufSize];
@@ -273,49 +292,42 @@ namespace Microsoft.Azure.IIoT.Azure.Testing.Cli {
         }
 
         /// <summary>
-        /// Create mqtt client device
+        /// Run interruptable command
         /// </summary>
-        /// <param name="gateway"></param>
-        /// <param name="deviceId"></param>
-        /// <param name="moduleId"></param>
+        /// <param name="options"></param>
+        /// <param name="command"></param>
         /// <returns></returns>
-        private static async Task<ConnectionString> GetConnectionStringAsync(
-            string gateway, string deviceId, string moduleId) {
-            var logger = Log.Console(LogLevel.Error);
-            var configuration = new ConfigurationBuilder()
-                .AddFromDotEnvFile()
-                .AddEnvironmentVariables()
-                .AddFromKeyVault()
-                .Build();
-            var iotHubCs = configuration.GetValue<string>(
-                PcsVariable.PCS_IOTHUB_CONNSTRING, null);
-            if (string.IsNullOrEmpty(iotHubCs)) {
-                iotHubCs = configuration.GetValue<string>("_HUB_CS", null);
+        private async Task RunAsync(Func<CliOptions, Task> command, CliOptions options) {
+            if (_interactive) {
+                var c = Console.TreatControlCAsInput;
+                Console.TreatControlCAsInput = true;
+                try {
+                    await Task.WhenAny(command(options),
+                        Task.Run(() => Console.ReadKey())).ConfigureAwait(false);
+                }
+                finally {
+                    Console.TreatControlCAsInput = c;
+                }
             }
-            if (string.IsNullOrEmpty(iotHubCs)) {
-                throw new ArgumentException("Missing connection string.");
+            else {
+                await command(options).ConfigureAwait(false);
             }
-            if (!ConnectionString.TryParse(iotHubCs, out var connectionString)) {
-                throw new ArgumentException("Bad connection string.");
+        }
+
+        /// <summary>
+        /// Stop an IoT edge
+        /// </summary>
+        /// <param name="options"></param>
+        /// <returns></returns>
+        private async Task DisposeAsync() {
+            List<IoTEdgeDevice> edges;
+            lock (_edges) {
+                edges = _edges.Values.ToList();
+                _edges.Clear();
             }
-            var config = connectionString.ToIoTHubOptions();
-            var registry = new IoTHubServiceClient(
-                config, new NewtonSoftJsonSerializer(), logger);
-            try {
-                var registration = await registry.GetRegistrationAsync(
-                    gateway, null, default).ConfigureAwait(false);
-                // Register device with scope
-                await registry.RegisterAsync(new DeviceRegistrationModel {
-                    Id = deviceId,
-                    ModuleId = moduleId,
-                    DeviceScope = registration.DeviceScope,
-                    Hub = registration.Hub
-                }, false, default).ConfigureAwait(false);
+            foreach (var edge in edges) {
+                await edge.StopAsync().ConfigureAwait(false);
             }
-            catch (ResourceConflictException) {
-                logger.LogInformation("Gateway {deviceId} exists.", deviceId);
-            }
-            return await registry.GetConnectionStringAsync(deviceId).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -345,6 +357,10 @@ Operations (Mutually exclusive):
 "
                 );
         }
+
+        private readonly Dictionary<string, IoTEdgeDevice> _edges = new();
+        private readonly ILifetimeScope _iotHubScope;
+        private bool _interactive;
     }
 }
 

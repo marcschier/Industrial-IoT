@@ -83,7 +83,7 @@ namespace Microsoft.Azure.IIoT.Rpc.Services {
         /// <summary>
         /// Processes chunks
         /// </summary>
-        private class ChunkProcessor {
+        private sealed class ChunkProcessor {
 
             /// <summary>
             /// Request handle

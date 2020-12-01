@@ -8,7 +8,6 @@ namespace Microsoft.Azure.IIoT.Azure.IoTEdge.Runtime {
     using Microsoft.Azure.IIoT.Messaging;
     using Microsoft.Azure.IIoT.Configuration;
     using Microsoft.Extensions.Configuration;
-    using Microsoft.Extensions.Options;
     using System;
 
     /// <summary>

@@ -6,7 +6,6 @@
 namespace Microsoft.Azure.IIoT.Platform.Publisher.Processors {
     using Microsoft.Azure.IIoT.Platform.Publisher.Models;
     using Microsoft.Azure.IIoT.Messaging;
-    using Microsoft.Azure.IIoT.Hub;
     using Microsoft.Azure.IIoT.Serializers;
     using System;
     using System.Collections.Generic;
@@ -32,7 +31,7 @@ namespace Microsoft.Azure.IIoT.Platform.Publisher.Processors {
         public Task HandleMessageAsync(PublishedDataSetItemMessageModel sample) {
             // Set timestamp as source timestamp
             var properties = new Dictionary<string, string>() {
-                [CommonProperties.EventSchemaType] =
+                [EventProperties.EventSchema] =
                     MessageSchemaTypes.DataSetWriterMessage
             };
             return _client.PublishAsync(null, _serializer.SerializeToBytes(sample).ToArray(),

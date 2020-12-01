@@ -13,10 +13,7 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub {
     /// </summary>
     public class IoTHubSupportModule : Module {
 
-        /// <summary>
-        /// Load the module
-        /// </summary>
-        /// <param name="builder"></param>
+        /// <inheritdoc/>
         protected override void Load(ContainerBuilder builder) {
 
             // Clients
@@ -35,4 +32,5 @@ namespace Microsoft.Azure.IIoT.Azure.IoTHub {
             base.Load(builder);
         }
     }
+
 }

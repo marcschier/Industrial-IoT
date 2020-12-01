@@ -147,8 +147,14 @@ namespace Microsoft.Azure.IIoT.Extensions.Mqtt.Clients {
         }
 
         /// <inheritdoc/>
+        public Task ConnectAsync(CancellationToken ct) {
+            ct.Register(() => _firstConnect.TrySetCanceled());
+            return _firstConnect.Task;
+        }
+
+        /// <inheritdoc/>
         public void Dispose() {
-            if (!_client.IsFaulted) {
+            if (!_client.IsFaulted && !_client.IsCanceled) {
                 _client.Result.Dispose();
             }
         }
@@ -159,6 +165,7 @@ namespace Microsoft.Azure.IIoT.Extensions.Mqtt.Clients {
         /// <param name="args"></param>
         private void HandleClientConnected(MqttClientConnectedEventArgs args) {
             _connected.Set();
+            _firstConnect.TrySetResult(true);
             _logger.LogInformation("Client connected with {result}.",
                 args.AuthenticateResult.ResultCode);
         }
@@ -169,6 +176,7 @@ namespace Microsoft.Azure.IIoT.Extensions.Mqtt.Clients {
         /// <param name="args"></param>
         private void HandleClientConnectingFailed(ManagedProcessFailedEventArgs args) {
             _connected.Reset();
+            _firstConnect.TrySetException(args.Exception);
             _logger.LogError(args.Exception, "Client connecting failed.");
         }
 
@@ -177,6 +185,7 @@ namespace Microsoft.Azure.IIoT.Extensions.Mqtt.Clients {
         /// </summary>
         /// <param name="args"></param>
         private void HandleSubscriptionFailed(ManagedProcessFailedEventArgs args) {
+            _firstConnect.TrySetException(args.Exception);
             _logger.LogError(args.Exception, "Subscription synchronization failed.");
         }
 
@@ -235,17 +244,18 @@ namespace Microsoft.Azure.IIoT.Extensions.Mqtt.Clients {
         /// <summary>
         /// Handle disconnected
         /// </summary>
-        /// <param name="arg"></param>
+        /// <param name="args"></param>
         /// <returns></returns>
-        private void HandleClientDisconnected(MqttClientDisconnectedEventArgs arg) {
+        private void HandleClientDisconnected(MqttClientDisconnectedEventArgs args) {
             _connected.Reset();
-            if (arg.Exception != null) {
-                _logger.LogError(arg.Exception, "Disconnected {state} due to {reason}",
-                    arg.ClientWasConnected ? "connecting" : "connected", arg.ReasonCode);
+            if (args.Exception != null) {
+                _firstConnect.TrySetException(args.Exception);
+                _logger.LogError(args.Exception, "Disconnected {state} due to {reason}",
+                    args.ClientWasConnected ? "connecting" : "connected", args.ReasonCode);
             }
             else {
                 _logger.LogInformation("{state} client disconnected due to {reason}",
-                    arg.ClientWasConnected ? "Connecting" : "Connected", arg.ReasonCode);
+                    args.ClientWasConnected ? "Connecting" : "Connected", args.ReasonCode);
             }
         }
 
@@ -380,6 +390,8 @@ namespace Microsoft.Azure.IIoT.Extensions.Mqtt.Clients {
         }
 
         private volatile int _queueSize;
+        private readonly TaskCompletionSource<bool> _firstConnect =
+            new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
         private readonly IOptions<MqttOptions> _options;
         private readonly ILogger _logger;
         private readonly Task<IManagedMqttClient> _client;
