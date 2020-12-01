@@ -49,7 +49,7 @@ namespace Microsoft.IIoT.Platform.Discovery.Services {
         /// <param name="serializer"></param>
         /// <param name="progress"></param>
         public DiscoveryServices(IEndpointDiscovery client, IJsonSerializer serializer,
-            IDiscoveryResultHandler publish, ILogger logger, 
+            IDiscoveryResultHandler publish, ILogger logger,
             IDiscoveryProgressHandler progress = null) {
 
             _publish = publish ?? throw new ArgumentNullException(nameof(publish));

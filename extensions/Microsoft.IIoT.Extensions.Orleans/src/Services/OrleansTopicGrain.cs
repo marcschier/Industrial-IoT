@@ -32,7 +32,7 @@ namespace Microsoft.IIoT.Extensions.Orleans.Grains {
             foreach (var subscription in _subscriptions.Keys) {
                 try {
                     subscription.Consume(buffer);
-                    _logger.LogTrace("Sent message through topic to {observer}", 
+                    _logger.LogTrace("Sent message through topic to {observer}",
                         subscription.GetPrimaryKey());
                 }
                 catch (Exception ex) {
@@ -53,7 +53,7 @@ namespace Microsoft.IIoT.Extensions.Orleans.Grains {
         /// <inheritdoc/>
         public Task UnsubscribeAsync(IOrleansSubscription subscription) {
             _subscriptions.TryRemove(subscription, out _);
-            _logger.LogInformation("Unsubscribed {observer} from topic", 
+            _logger.LogInformation("Unsubscribed {observer} from topic",
                 subscription.GetPrimaryKey());
             return Task.CompletedTask;
         }

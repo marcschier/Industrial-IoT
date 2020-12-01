@@ -176,7 +176,7 @@ namespace Microsoft.IIoT.Platform.Vault.Services {
             if (parent == null) {
                 return await RenewGroupRootAsync(group, notBefore, ct).ConfigureAwait(false);
             }
-            return await RenewGroupFromParentAsync(group, parent, notBefore, 
+            return await RenewGroupFromParentAsync(group, parent, notBefore,
                 ct).ConfigureAwait(false);
         }
 

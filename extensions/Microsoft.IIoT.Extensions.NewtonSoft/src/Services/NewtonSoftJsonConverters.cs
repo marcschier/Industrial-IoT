@@ -20,7 +20,7 @@ namespace Microsoft.IIoT.Serializers.NewtonSoft {
         /// <summary>
         /// Create provider
         /// </summary>
-        public NewtonSoftJsonConverters() : this (false) {
+        public NewtonSoftJsonConverters() : this(false) {
         }
 
         /// <summary>

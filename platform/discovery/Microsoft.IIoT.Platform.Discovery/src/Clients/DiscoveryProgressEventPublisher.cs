@@ -29,7 +29,7 @@ namespace Microsoft.IIoT.Platform.Discovery.Clients {
         /// <param name="logger"></param>
         public DiscoveryProgressEventPublisher(IEventClient events, IIdentity identity,
             ITaskProcessor processor, IJsonSerializer serializer, ILogger logger) :
-            base (logger) {
+            base(logger) {
             _serializer = serializer ?? throw new ArgumentNullException(nameof(serializer));
             _identity = identity ?? throw new ArgumentNullException(nameof(identity));
             _events = events ?? throw new ArgumentNullException(nameof(events));

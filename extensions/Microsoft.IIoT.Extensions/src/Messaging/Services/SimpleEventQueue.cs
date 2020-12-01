@@ -24,7 +24,7 @@ namespace Microsoft.IIoT.Messaging.Services {
         public SimpleEventQueue() {
             _control = new BlockingCollection<Message>();
             _targets = new ConcurrentDictionary<int, BlockingCollection<Message>> {
-                [ 0 ] = _control
+                [0] = _control
             };
         }
 

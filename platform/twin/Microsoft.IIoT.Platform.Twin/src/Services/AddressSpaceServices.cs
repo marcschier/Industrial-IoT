@@ -87,7 +87,7 @@ namespace Microsoft.IIoT.Platform.Twin.Services {
                     result.ContinuationToken = await AddReferencesToBrowseResultAsync(session, codec,
                         (request.Header?.Diagnostics).ToStackModel(), request.TargetNodesOnly ?? false,
                         request.ReadVariableValues ?? false, rawMode, references, diagnostics,
-                        response.Results[0].ContinuationPoint, 
+                        response.Results[0].ContinuationPoint,
                         response.Results[0].References, ct).ConfigureAwait(false);
 
                     result.References = references;
@@ -103,7 +103,7 @@ namespace Microsoft.IIoT.Platform.Twin.Services {
         }
 
         /// <inheritdoc/>
-        public Task<BrowseNextResultModel> NodeBrowseNextAsync(ConnectionModel connection, 
+        public Task<BrowseNextResultModel> NodeBrowseNextAsync(ConnectionModel connection,
             BrowseNextRequestModel request, CancellationToken ct) {
             if (request == null) {
                 throw new ArgumentNullException(nameof(request));
@@ -116,7 +116,7 @@ namespace Microsoft.IIoT.Platform.Twin.Services {
                 var diagnostics = new List<OperationResultModel>();
                 var references = new List<NodeReferenceModel>();
                 var response = await session.BrowseNextAsync(
-                    (request.Header?.Diagnostics).ToStackModel(), request.Abort ?? false, 
+                    (request.Header?.Diagnostics).ToStackModel(), request.Abort ?? false,
                     new ByteStringCollection { continuationPoint }).ConfigureAwait(false);
                 OperationResultEx.Validate("BrowseNext_" + request.ContinuationToken,
                     diagnostics, response.Results.Select(r => r.StatusCode),
@@ -138,7 +138,7 @@ namespace Microsoft.IIoT.Platform.Twin.Services {
         }
 
         /// <inheritdoc/>
-        public Task<BrowsePathResultModel> NodeBrowsePathAsync(ConnectionModel connection, 
+        public Task<BrowsePathResultModel> NodeBrowsePathAsync(ConnectionModel connection,
             BrowsePathRequestModel request, CancellationToken ct) {
             if (request == null) {
                 throw new ArgumentNullException(nameof(request));
@@ -561,30 +561,30 @@ namespace Microsoft.IIoT.Platform.Twin.Services {
                 throw new ArgumentException("Bad attributes", nameof(request));
             }
             return _client.ExecuteServiceAsync(connection, request.Header?.Elevation, async session => {
-                    var codec = _codec.Create(session.MessageContext);
-                    var requests = new ReadValueIdCollection(request.Attributes
-                        .Select(a => new ReadValueId {
-                            AttributeId = (uint)a.Attribute,
-                            NodeId = a.NodeId.ToNodeId(session.MessageContext)
-                        }));
-                    var response = await session.ReadAsync(
-                        (request.Header?.Diagnostics).ToStackModel(), 0, TimestampsToReturn.Both,
-                        requests).ConfigureAwait(false);
-                    SessionClientEx.Validate(response.Results, response.DiagnosticInfos, requests);
-                    return new ReadResultModel {
-                        Results = response.Results
-                            .Select((value, index) => {
-                                var diagnostics = response.DiagnosticInfos == null ||
-                                            response.DiagnosticInfos.Count == 0 ? null :
-                                    response.DiagnosticInfos[index];
-                                return new AttributeReadResultModel {
-                                    Value = codec.Encode(value.WrappedValue, out var wellKnown),
-                                    ErrorInfo = codec.Encode(diagnostics,
-                                        value.StatusCode, "NodeRead", request.Header?.Diagnostics)
-                                };
-                            }).ToList()
-                    };
-                }, ct: ct);
+                var codec = _codec.Create(session.MessageContext);
+                var requests = new ReadValueIdCollection(request.Attributes
+                    .Select(a => new ReadValueId {
+                        AttributeId = (uint)a.Attribute,
+                        NodeId = a.NodeId.ToNodeId(session.MessageContext)
+                    }));
+                var response = await session.ReadAsync(
+                    (request.Header?.Diagnostics).ToStackModel(), 0, TimestampsToReturn.Both,
+                    requests).ConfigureAwait(false);
+                SessionClientEx.Validate(response.Results, response.DiagnosticInfos, requests);
+                return new ReadResultModel {
+                    Results = response.Results
+                        .Select((value, index) => {
+                            var diagnostics = response.DiagnosticInfos == null ||
+                                        response.DiagnosticInfos.Count == 0 ? null :
+                                response.DiagnosticInfos[index];
+                            return new AttributeReadResultModel {
+                                Value = codec.Encode(value.WrappedValue, out var wellKnown),
+                                ErrorInfo = codec.Encode(diagnostics,
+                                    value.StatusCode, "NodeRead", request.Header?.Diagnostics)
+                            };
+                        }).ToList()
+                };
+            }, ct: ct);
         }
 
         /// <inheritdoc/>
@@ -600,30 +600,30 @@ namespace Microsoft.IIoT.Platform.Twin.Services {
                 throw new ArgumentException("Missing node id in attributes", nameof(request));
             }
             return _client.ExecuteServiceAsync(connection, request.Header?.Elevation, async session => {
-                    var codec = _codec.Create(session.MessageContext);
-                    var requests = new WriteValueCollection(request.Attributes
-                        .Select(a => new WriteValue {
-                            AttributeId = (uint)a.Attribute,
-                            NodeId = a.NodeId.ToNodeId(session.MessageContext),
-                            Value = new DataValue(codec.Decode(a.Value,
-                                AttributeMap.GetBuiltInType((uint)a.Attribute)))
-                        }));
-                    var response = await session.WriteAsync(
-                        (request.Header?.Diagnostics).ToStackModel(), requests).ConfigureAwait(false);
-                    SessionClientEx.Validate(response.Results, response.DiagnosticInfos, requests);
-                    return new WriteResultModel {
-                        Results = response.Results
-                            .Select((value, index) => {
-                                var diagnostics = response.DiagnosticInfos == null ||
-                                            response.DiagnosticInfos.Count == 0 ? null :
-                                    response.DiagnosticInfos[index];
-                                return new AttributeWriteResultModel {
-                                    ErrorInfo = codec.Encode(diagnostics,
-                                        value, "NodeWrite", request.Header?.Diagnostics)
-                                };
-                            }).ToList()
-                    };
-                }, ct: ct);
+                var codec = _codec.Create(session.MessageContext);
+                var requests = new WriteValueCollection(request.Attributes
+                    .Select(a => new WriteValue {
+                        AttributeId = (uint)a.Attribute,
+                        NodeId = a.NodeId.ToNodeId(session.MessageContext),
+                        Value = new DataValue(codec.Decode(a.Value,
+                            AttributeMap.GetBuiltInType((uint)a.Attribute)))
+                    }));
+                var response = await session.WriteAsync(
+                    (request.Header?.Diagnostics).ToStackModel(), requests).ConfigureAwait(false);
+                SessionClientEx.Validate(response.Results, response.DiagnosticInfos, requests);
+                return new WriteResultModel {
+                    Results = response.Results
+                        .Select((value, index) => {
+                            var diagnostics = response.DiagnosticInfos == null ||
+                                        response.DiagnosticInfos.Count == 0 ? null :
+                                response.DiagnosticInfos[index];
+                            return new AttributeWriteResultModel {
+                                ErrorInfo = codec.Encode(diagnostics,
+                                    value, "NodeWrite", request.Header?.Diagnostics)
+                            };
+                        }).ToList()
+                };
+            }, ct: ct);
         }
 
         /// <inheritdoc/>
@@ -687,27 +687,27 @@ namespace Microsoft.IIoT.Platform.Twin.Services {
                 throw new ArgumentException("Missing continuation", nameof(request));
             }
             return _client.ExecuteServiceAsync(connection, request.Header?.Elevation, async session => {
-                    var codec = _codec.Create(session.MessageContext);
-                    var diagnostics = new List<OperationResultModel>();
-                    var response = await session.HistoryReadAsync(
-                        (request.Header?.Diagnostics).ToStackModel(), null, TimestampsToReturn.Both,
-                        request.Abort ?? false, new HistoryReadValueIdCollection {
+                var codec = _codec.Create(session.MessageContext);
+                var diagnostics = new List<OperationResultModel>();
+                var response = await session.HistoryReadAsync(
+                    (request.Header?.Diagnostics).ToStackModel(), null, TimestampsToReturn.Both,
+                    request.Abort ?? false, new HistoryReadValueIdCollection {
                         new HistoryReadValueId {
                             ContinuationPoint = request.ContinuationToken.DecodeAsBase64(),
                             DataEncoding = null // TODO
                         }
-                    }).ConfigureAwait(false);
-                    OperationResultEx.Validate("HistoryReadNext_" + request.ContinuationToken,
-                        diagnostics, response.Results.Select(r => r.StatusCode),
-                        response.DiagnosticInfos, false);
-                    SessionClientEx.Validate(response.Results, response.DiagnosticInfos);
-                    return new HistoryReadNextResultModel<VariantValue> {
-                        ContinuationToken = response.Results[0].ContinuationPoint.ToBase64String(),
-                        History = codec.Encode(new Variant(response.Results[0].HistoryData),
-                            out var tmp),
-                        ErrorInfo = codec.Encode(diagnostics, request.Header?.Diagnostics)
-                    };
-                }, ct: ct);
+                }).ConfigureAwait(false);
+                OperationResultEx.Validate("HistoryReadNext_" + request.ContinuationToken,
+                    diagnostics, response.Results.Select(r => r.StatusCode),
+                    response.DiagnosticInfos, false);
+                SessionClientEx.Validate(response.Results, response.DiagnosticInfos);
+                return new HistoryReadNextResultModel<VariantValue> {
+                    ContinuationToken = response.Results[0].ContinuationPoint.ToBase64String(),
+                    History = codec.Encode(new Variant(response.Results[0].HistoryData),
+                        out var tmp),
+                    ErrorInfo = codec.Encode(diagnostics, request.Header?.Diagnostics)
+                };
+            }, ct: ct);
         }
 
         /// <inheritdoc/>
@@ -865,8 +865,8 @@ namespace Microsoft.IIoT.Platform.Twin.Services {
                     if (!rawMode) {
                         // Check for children
                         try {
-                            var response = await session.BrowseAsync(header, null, nodeId, 1, 
-                                Opc.Ua.BrowseDirection.Forward, ReferenceTypeIds.HierarchicalReferences, 
+                            var response = await session.BrowseAsync(header, null, nodeId, 1,
+                                Opc.Ua.BrowseDirection.Forward, ReferenceTypeIds.HierarchicalReferences,
                                 true, 0, BrowseResultMask.All, ct: ct).ConfigureAwait(false);
                             OperationResultEx.Validate("FetchChildren_" + nodeId,
                                 diagnostics, response?.Results?.Select(r => r.StatusCode),
@@ -932,13 +932,13 @@ namespace Microsoft.IIoT.Platform.Twin.Services {
         /// <returns></returns>
         private static async Task AddTargetsToBrowseResultAsync(Session session, IVariantEncoder codec,
             RequestHeader header, bool readValues, bool rawMode, List<NodePathTargetModel> result,
-            List<OperationResultModel> diagnostics, BrowsePathTargetCollection targets, string[] path, 
+            List<OperationResultModel> diagnostics, BrowsePathTargetCollection targets, string[] path,
             CancellationToken ct) {
             if (targets != null) {
                 foreach (var target in targets) {
                     try {
                         var nodeId = target.TargetId.ToNodeId(session.NamespaceUris);
-                        var model = await ReadNodeModelAsync(session, codec, header, nodeId, null, 
+                        var model = await ReadNodeModelAsync(session, codec, header, nodeId, null,
                             !readValues, rawMode, false, diagnostics, true, ct).ConfigureAwait(false);
                         result.Add(new NodePathTargetModel {
                             BrowsePath = path,

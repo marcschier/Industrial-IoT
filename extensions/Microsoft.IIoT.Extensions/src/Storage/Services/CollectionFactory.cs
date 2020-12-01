@@ -18,7 +18,7 @@ namespace Microsoft.IIoT.Storage.Services {
         /// </summary>
         /// <param name="server"></param>
         /// <param name="options"></param>
-        public CollectionFactory(IDatabaseServer server, 
+        public CollectionFactory(IDatabaseServer server,
             IOptionsSnapshot<CollectionFactoryOptions> options) {
             _server = server ?? throw new ArgumentNullException(nameof(server));
             _options = options ?? throw new ArgumentNullException(nameof(options));
@@ -26,7 +26,7 @@ namespace Microsoft.IIoT.Storage.Services {
 
         /// <inheritdoc/>
         public async Task<IDocumentCollection> OpenAsync(string name) {
-            var option = string.IsNullOrEmpty(name) ? 
+            var option = string.IsNullOrEmpty(name) ?
                 _options.Value : _options.Get(name);
             var database = await _server.OpenAsync(
                 option.DatabaseName ?? name).ConfigureAwait(false);

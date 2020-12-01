@@ -17,7 +17,7 @@ namespace Microsoft.IIoT.Extensions.CouchDb.Clients {
 
     [SystemTest]
     [Collection(CouchDbServerCollection.Name)]
-    public class CouchDbContainerTests  {
+    public class CouchDbContainerTests {
 
         [SkippableFact]
         public async Task FindItemTestAsync() {

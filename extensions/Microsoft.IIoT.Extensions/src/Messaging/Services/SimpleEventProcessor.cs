@@ -24,7 +24,7 @@ namespace Microsoft.IIoT.Messaging.Services {
         /// <param name="consumer"></param>
         /// <param name="logger"></param>
         public SimpleEventProcessor(IEventReader reader,
-            IEventConsumer consumer, ILogger logger) : base (logger, "Consumer") {
+            IEventConsumer consumer, ILogger logger) : base(logger, "Consumer") {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _consumer = consumer ?? throw new ArgumentNullException(nameof(consumer));
             _reader = reader ?? throw new ArgumentNullException(nameof(reader));

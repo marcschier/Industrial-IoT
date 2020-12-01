@@ -27,9 +27,9 @@ namespace Microsoft.IIoT.Platform.Twin.Api {
 
         /// <inheritdoc/>
         public async Task<HistoryReadResultModel<VariantValue>> HistoryReadAsync(
-            string twin, HistoryReadRequestModel<VariantValue> request, 
+            string twin, HistoryReadRequestModel<VariantValue> request,
             CancellationToken ct) {
-            var result = await _client.HistoryReadRawAsync(twin, 
+            var result = await _client.HistoryReadRawAsync(twin,
                 request.ToApiModel(), ct).ConfigureAwait(false);
             return result.ToServiceModel();
         }
@@ -37,7 +37,7 @@ namespace Microsoft.IIoT.Platform.Twin.Api {
         /// <inheritdoc/>
         public async Task<HistoryReadNextResultModel<VariantValue>> HistoryReadNextAsync(
             string twin, HistoryReadNextRequestModel request, CancellationToken ct) {
-            var result = await _client.HistoryReadRawNextAsync(twin, 
+            var result = await _client.HistoryReadRawNextAsync(twin,
                 request.ToApiModel(), ct).ConfigureAwait(false);
             return result.ToServiceModel();
         }
@@ -46,7 +46,7 @@ namespace Microsoft.IIoT.Platform.Twin.Api {
         public async Task<HistoryUpdateResultModel> HistoryUpdateAsync(
             string twin, HistoryUpdateRequestModel<VariantValue> request,
             CancellationToken ct) {
-            var result = await _client.HistoryUpdateRawAsync(twin, 
+            var result = await _client.HistoryUpdateRawAsync(twin,
                 request.ToApiModel(), ct).ConfigureAwait(false);
             return result.ToServiceModel();
         }

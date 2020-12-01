@@ -340,9 +340,9 @@ namespace Microsoft.IIoT.Azure.CosmosDb.Clients {
             Assert.Single(results);
 
             families = from f in documents.CreateQuery<Family>()
-                           where (f.Id == "AndersenFamily" || f.Id == "WakefieldFamily") &&
-                            (f.Address.City == "Seattle" || f.Address.Zip > 0)
-                           select f;
+                       where (f.Id == "AndersenFamily" || f.Id == "WakefieldFamily") &&
+                        (f.Address.City == "Seattle" || f.Address.Zip > 0)
+                       select f;
 
             results = await RunAsync(families).ConfigureAwait(false);
             Assert.Equal(2, results.Count);

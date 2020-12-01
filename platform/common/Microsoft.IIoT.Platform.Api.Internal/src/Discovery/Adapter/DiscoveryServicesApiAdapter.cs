@@ -51,9 +51,9 @@ namespace Microsoft.IIoT.Platform.Discovery.Api.Clients {
 
         /// <inheritdoc/>
         public async Task<ApplicationRegistrationResultModel> RegisterApplicationAsync(
-            ApplicationRegistrationRequestModel request, OperationContextModel context, 
+            ApplicationRegistrationRequestModel request, OperationContextModel context,
             CancellationToken ct) {
-            var result = await _client.RegisterAsync(request.ToApiModel(), 
+            var result = await _client.RegisterAsync(request.ToApiModel(),
                 ct).ConfigureAwait(false);
             return result.ToServiceModel();
         }
@@ -61,7 +61,7 @@ namespace Microsoft.IIoT.Platform.Discovery.Api.Clients {
         /// <inheritdoc/>
         public async Task<ApplicationRegistrationModel> GetApplicationAsync(
             string applicationId, CancellationToken ct) {
-            var result = await _client.GetApplicationAsync(applicationId, 
+            var result = await _client.GetApplicationAsync(applicationId,
                 ct).ConfigureAwait(false);
             return result.ToServiceModel();
         }
@@ -76,7 +76,7 @@ namespace Microsoft.IIoT.Platform.Discovery.Api.Clients {
         /// <inheritdoc/>
         public async Task<ApplicationInfoListModel> ListApplicationsAsync(
             string continuation, int? pageSize, CancellationToken ct) {
-            var result = await _client.ListApplicationsAsync(continuation, 
+            var result = await _client.ListApplicationsAsync(continuation,
                 pageSize, ct).ConfigureAwait(false);
             return result.ToServiceModel();
         }
@@ -108,7 +108,7 @@ namespace Microsoft.IIoT.Platform.Discovery.Api.Clients {
         }
 
         /// <inheritdoc/>
-        public Task CancelAsync(DiscoveryCancelModel request, 
+        public Task CancelAsync(DiscoveryCancelModel request,
             OperationContextModel context, CancellationToken ct) {
             return _client.CancelAsync(request.ToApiModel(), ct);
         }

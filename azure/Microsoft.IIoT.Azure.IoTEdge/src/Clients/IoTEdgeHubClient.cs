@@ -785,7 +785,7 @@ namespace Microsoft.IIoT.Azure.IoTEdge.Clients {
             /// <param name="cs"></param>
             /// <param name="transportSetting"></param>
             /// <returns></returns>
-            private static Devices.Client.DeviceClient Create(IotHubConnectionStringBuilder cs,
+            private static DeviceClient Create(IotHubConnectionStringBuilder cs,
                 ITransportSettings transportSetting) {
                 try {
                     if (cs == null) {

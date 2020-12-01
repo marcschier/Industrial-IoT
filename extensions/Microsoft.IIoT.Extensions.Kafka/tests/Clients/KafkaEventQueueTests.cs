@@ -38,7 +38,7 @@ namespace Microsoft.IIoT.Extensions.Kafka.Clients {
 
                 var tcs = new TaskCompletionSource<TelemetryEventArgs>(TaskCreationOptions.RunContinuationsAsynchronously);
                 harness.OnEvent += (_, a) => {
-                    if (a.HandlerSchema == "Test1"){
+                    if (a.HandlerSchema == "Test1") {
                         tcs.TrySetResult(a);
                     }
                 };
@@ -143,9 +143,9 @@ namespace Microsoft.IIoT.Extensions.Kafka.Clients {
 
         [SkippableTheory]
         [InlineData(10)]
-       // [InlineData(50)]
-       // [InlineData(100)]
-       // [InlineData(1000)]
+        // [InlineData(50)]
+        // [InlineData(100)]
+        // [InlineData(1000)]
         public async Task SendDeviceEventTestBatch2Async(int max) {
             var fix = new Fixture();
             var hub = fix.Create<string>();

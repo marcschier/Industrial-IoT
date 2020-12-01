@@ -611,7 +611,7 @@ namespace Microsoft.IIoT.Utils {
         /// <returns></returns>
         public static Task WithoutDelay(ILogger logger, CancellationToken ct,
             Action work, Func<Exception, bool> cont, int? maxRetry = null) {
-            return Do(logger, ct, work, cont, NoBackoff, maxRetry?? DefaultMaxRetryCount);
+            return Do(logger, ct, work, cont, NoBackoff, maxRetry ?? DefaultMaxRetryCount);
         }
 
         /// <summary>

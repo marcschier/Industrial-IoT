@@ -44,7 +44,7 @@ namespace Microsoft.IIoT.Platform.Vault.Storage {
             if (string.IsNullOrEmpty(subjectId)) {
                 throw new ArgumentNullException(nameof(subjectId));
             }
-            var query = CreateQuery(_relationships.CreateQuery<TrustDocument>(), 
+            var query = CreateQuery(_relationships.CreateQuery<TrustDocument>(),
                 subjectId, direction, objectId);
             await query.ForEachAsync(
                 d => _relationships.DeleteAsync<TrustDocument>(d.Id, ct: ct), ct).ConfigureAwait(false);
@@ -90,7 +90,7 @@ namespace Microsoft.IIoT.Platform.Vault.Storage {
 
             if (trusted && trusts) {
                 if (objectId == null) {
-                    query = query.Where(x => 
+                    query = query.Where(x =>
                         x.TrustedId == entityId || x.TrustingId == entityId);
                 }
                 else {

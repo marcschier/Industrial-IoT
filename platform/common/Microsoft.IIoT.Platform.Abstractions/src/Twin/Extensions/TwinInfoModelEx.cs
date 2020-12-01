@@ -45,9 +45,9 @@ namespace Microsoft.IIoT.Platform.Twin.Models {
                 model.Id == that.Id &&
                 model.User.IsSameAs(that.User) &&
                 model.OperationTimeout == that.OperationTimeout &&
-              //  model.Created.IsSameAs(that.Created) &&
-              //  model.Updated.IsSameAs(that.Updated) &&
-              //  model.Diagnostics.IsSameAs(that.Diagnostics) &&
+                //  model.Created.IsSameAs(that.Created) &&
+                //  model.Updated.IsSameAs(that.Updated) &&
+                //  model.Diagnostics.IsSameAs(that.Diagnostics) &&
                 model.ConnectionState.IsSameAs(that.ConnectionState);
         }
 

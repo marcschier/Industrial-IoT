@@ -4,6 +4,7 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.IIoT.Platform.OpcUa.Transport {
+    using Microsoft.Extensions.Logging;
     using Opc.Ua.Bindings;
     using Opc.Ua;
     using System;
@@ -12,8 +13,8 @@ namespace Microsoft.IIoT.Platform.OpcUa.Transport {
     using System.Net.Sockets;
     using System.Security.Cryptography.X509Certificates;
     using System.Threading;
-    using Microsoft.Extensions.Logging;
     using Autofac;
+    using System.Threading.Tasks;
 
     /// <summary>
     /// Manages the raw tcp connections for a UA TCP server.
@@ -100,7 +101,7 @@ namespace Microsoft.IIoT.Platform.OpcUa.Transport {
         }
 
         /// <inheritdoc/>
-        public bool TransferListenerChannel(uint channelId, string server, Uri endpointUrl) {
+        public Task<bool> TransferListenerChannel(uint channelId, string server, Uri endpointUrl) {
             throw new NotImplementedException();
         }
 
@@ -159,7 +160,7 @@ namespace Microsoft.IIoT.Platform.OpcUa.Transport {
                             _serverCertificate ?? _controller.Certificate,
                             _serverCertificateChain ?? _controller.CertificateChain,
                             GetEndpoints());
-                        channel.SetRequestReceivedCallback(OnRequestReceived);
+                        channel.SetRequestReceivedCallback(new TcpChannelRequestEventHandler(OnRequestReceived));
 
                         var channelId = (uint)Interlocked.Increment(ref _lastChannelId);
                         var socket = new TcpMessageSocket(channel, e.AcceptSocket,

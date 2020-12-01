@@ -13,7 +13,7 @@ namespace Microsoft.IIoT.Platform.Discovery.Events.v2 {
     /// <summary>
     /// Application registry change listener
     /// </summary>
-    public class ApplicationEventBusSubscriber : IEventBusConsumer<ApplicationEventModel>{
+    public class ApplicationEventBusSubscriber : IEventBusConsumer<ApplicationEventModel> {
 
         /// <summary>
         /// Create event subscriber

@@ -1726,7 +1726,7 @@ namespace Microsoft.IIoT.Platform.Twin.Services {
             // check the application certificate.
             var hasAppCertificate =
                 await application.CheckApplicationInstanceCertificate(true,
-                    CertificateFactory.defaultKeySize).ConfigureAwait(false);
+                    CertificateFactory.DefaultKeySize).ConfigureAwait(false);
             if (!hasAppCertificate) {
                 throw new InvalidConfigurationException("OPC UA application certificate can not be validated");
             }

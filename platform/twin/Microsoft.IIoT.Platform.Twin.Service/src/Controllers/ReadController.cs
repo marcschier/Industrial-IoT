@@ -29,7 +29,7 @@ namespace Microsoft.IIoT.Platform.Twin.Service.Controllers {
         /// </summary>
         /// <param name="historian"></param>
         /// <param name="nodes"></param>
-        public ReadController(IHistorianServices<string> historian, 
+        public ReadController(IHistorianServices<string> historian,
             INodeServices<string> nodes) {
             _historian = historian ?? throw new ArgumentNullException(nameof(historian));
             _nodes = nodes ?? throw new ArgumentNullException(nameof(nodes));
@@ -48,7 +48,7 @@ namespace Microsoft.IIoT.Platform.Twin.Service.Controllers {
         /// <returns>The read value response</returns>
         [HttpPost("{endpointId}")]
         public async Task<ValueReadResponseApiModel> ReadValueAsync(
-            string endpointId, [FromBody] [Required] ValueReadRequestApiModel request) {
+            string endpointId, [FromBody][Required] ValueReadRequestApiModel request) {
             if (request == null) {
                 throw new ArgumentNullException(nameof(request));
             }
@@ -70,7 +70,7 @@ namespace Microsoft.IIoT.Platform.Twin.Service.Controllers {
         /// <returns>The read response</returns>
         [HttpPost("{endpointId}/attributes")]
         public async Task<ReadResponseApiModel> ReadAttributesAsync(
-            string endpointId, [FromBody] [Required] ReadRequestApiModel request) {
+            string endpointId, [FromBody][Required] ReadRequestApiModel request) {
             if (request == null) {
                 throw new ArgumentNullException(nameof(request));
             }
@@ -92,7 +92,7 @@ namespace Microsoft.IIoT.Platform.Twin.Service.Controllers {
         /// <returns>The read value response</returns>
         [HttpGet("{endpointId}")]
         public async Task<ValueReadResponseApiModel> GetValueAsync(
-            string endpointId, [FromQuery] [Required] string nodeId) {
+            string endpointId, [FromQuery][Required] string nodeId) {
             if (string.IsNullOrEmpty(nodeId)) {
                 throw new ArgumentNullException(nameof(nodeId));
             }

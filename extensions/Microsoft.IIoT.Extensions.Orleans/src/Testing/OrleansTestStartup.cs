@@ -13,7 +13,7 @@ namespace Microsoft.IIoT.Extensions.Orleans.Testing {
     /// <summary>
     /// Test cluster configuration
     /// </summary>
-    public class OrleansTestStartup<TStartup> : IClientBuilderConfigurator, 
+    public class OrleansTestStartup<TStartup> : IClientBuilderConfigurator,
         ISiloConfigurator, IHostConfigurator where TStartup : OrleansStartup, new() {
 
         /// <inheritdoc/>

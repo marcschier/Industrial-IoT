@@ -114,7 +114,7 @@ namespace System.Threading.Tasks {
         /// </summary>
         public static Task ContinueAfter1Minutes(this Task task,
             Action handler = null) {
-            return task.WithTimeoutOf(TimeSpan.FromMinutes(2), 
+            return task.WithTimeoutOf(TimeSpan.FromMinutes(2),
                 () => handler?.Invoke());
         }
 

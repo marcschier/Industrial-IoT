@@ -41,8 +41,7 @@ namespace Opc.Ua.Extensions {
         }
 
         [Fact]
-        public void DecodeNodeIdFromStringInvalidUri()
-        {
+        public void DecodeNodeIdFromStringInvalidUri() {
             var context = new ServiceMessageContext();
             var expected = "   space    tests /(%)§;#;;#;()§$\"))\"\")(§";
             var uri = "invalidUri";

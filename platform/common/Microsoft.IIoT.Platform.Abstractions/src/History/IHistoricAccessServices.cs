@@ -23,7 +23,7 @@ namespace Microsoft.IIoT.Platform.Twin {
         /// <param name="ct"></param>
         /// <returns></returns>
         Task<HistoryReadResultModel<VariantValue>> HistoryReadAsync(T twin,
-            HistoryReadRequestModel<VariantValue> request, 
+            HistoryReadRequestModel<VariantValue> request,
             CancellationToken ct = default);
 
         /// <summary>

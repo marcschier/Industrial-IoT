@@ -527,7 +527,7 @@ namespace Microsoft.IIoT.Serializers.MessagePack {
                 }
 
                 /// <inheritdoc/>
-                public T Deserialize(ref MessagePackReader reader, 
+                public T Deserialize(ref MessagePackReader reader,
                     MessagePackSerializerOptions options) {
                     var constructors = typeof(T).GetConstructors();
                     var message = reader.ReadString();

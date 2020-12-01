@@ -92,7 +92,7 @@ namespace Opc.Ua.Client {
         /// <param name="deleteSubscriptions"></param>
         /// <param name="ct"></param>
         /// <returns></returns>
-        public static Task<ResponseHeader> CloseSessionAsync(this SessionClient client, 
+        public static Task<ResponseHeader> CloseSessionAsync(this SessionClient client,
             RequestHeader requestHeader, bool deleteSubscriptions, CancellationToken ct = default) {
             return Task.Factory.FromAsync(
                 (callback, state) => client.BeginCloseSession(requestHeader,
@@ -123,7 +123,7 @@ namespace Opc.Ua.Client {
             uint maxResultsToReturn, BrowseDirection browseDirection,
             NodeId referenceTypeId, bool includeSubtypes, uint nodeClassMask,
             BrowseResultMask resultMask = BrowseResultMask.All, CancellationToken ct = default) {
-            return client.BrowseAsync(requestHeader, view, maxResultsToReturn, 
+            return client.BrowseAsync(requestHeader, view, maxResultsToReturn,
                 new BrowseDescriptionCollection {
                     new BrowseDescription {
                         BrowseDirection = browseDirection,
@@ -192,7 +192,7 @@ namespace Opc.Ua.Client {
         /// <param name="ct"></param>
         /// <returns></returns>
         public static Task<TranslateBrowsePathsToNodeIdsResponse> TranslateBrowsePathsToNodeIdsAsync(
-            this SessionClient client, RequestHeader requestHeader, BrowsePathCollection browsePaths, 
+            this SessionClient client, RequestHeader requestHeader, BrowsePathCollection browsePaths,
             CancellationToken ct = default) {
             return Task.Factory.FromAsync(
                 (callback, state) => client.BeginTranslateBrowsePathsToNodeIds(requestHeader,
@@ -260,7 +260,7 @@ namespace Opc.Ua.Client {
         /// <param name="ct"></param>
         /// <returns></returns>
         public static Task<CallResponse> CallAsync(this SessionClient client,
-            RequestHeader requestHeader, CallMethodRequestCollection methodsToCall, 
+            RequestHeader requestHeader, CallMethodRequestCollection methodsToCall,
             CancellationToken ct = default) {
             return Task.Factory.FromAsync(
                 (callback, state) => client.BeginCall(requestHeader,
@@ -329,7 +329,7 @@ namespace Opc.Ua.Client {
         /// <param name="ct"></param>
         /// <returns></returns>
         public static Task<HistoryUpdateResponse> HistoryUpdateAsync(this SessionClient client,
-            RequestHeader requestHeader, ExtensionObjectCollection historyUpdateDetails, 
+            RequestHeader requestHeader, ExtensionObjectCollection historyUpdateDetails,
             CancellationToken ct = default) {
             return Task.Factory.FromAsync(
                 (callback, state) => client.BeginHistoryUpdate(requestHeader,
@@ -432,7 +432,7 @@ namespace Opc.Ua.Client {
         /// <returns></returns>
         public static Task<SetMonitoringModeResponse> SetMonitoringModeAsync(
             this SessionClient client, RequestHeader requestHeader, uint subscriptionId,
-            MonitoringMode monitoringMode, UInt32Collection monitoredItemIds, 
+            MonitoringMode monitoringMode, UInt32Collection monitoredItemIds,
             CancellationToken ct = default) {
             return Task.Factory.FromAsync(
                 (callback, state) => client.BeginSetMonitoringMode(requestHeader,
@@ -516,7 +516,7 @@ namespace Opc.Ua.Client {
         public static Task<ModifySubscriptionResponse> ModifySubscriptionAsync(
             this SessionClient client, RequestHeader requestHeader, uint subscriptionId,
             double requestedPublishingInterval, uint requestedLifetimeCount,
-            uint requestedMaxKeepAliveCount, uint maxNotificationsPerPublish, byte priority, 
+            uint requestedMaxKeepAliveCount, uint maxNotificationsPerPublish, byte priority,
             CancellationToken ct = default) {
             return Task.Factory.FromAsync(
                 (callback, state) => client.BeginModifySubscription(requestHeader, subscriptionId,

@@ -89,7 +89,7 @@ namespace Microsoft.IIoT.Platform.Publisher.Services {
                     Name = "Test",
                 }).ConfigureAwait(false);
 
-                var result2  = await service.AddDataSetWriterAsync(new DataSetWriterAddRequestModel {
+                var result2 = await service.AddDataSetWriterAsync(new DataSetWriterAddRequestModel {
                     EndpointId = "endpointfakeurl",
                     DataSetName = "Test",
                     SubscriptionSettings = new PublishedDataSetSourceSettingsModel {
@@ -1412,17 +1412,17 @@ namespace Microsoft.IIoT.Platform.Publisher.Services {
                 registry
                     .Setup(e => e.GetEndpointAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
                     .Returns(Task.FromResult(new EndpointInfoModel {
-                            Id = "endpointfakeurl",
-                            Endpoint = new EndpointModel {
-                                Url = "fakeurl",
-                                SecurityMode = SecurityMode.Sign
-                            }
+                        Id = "endpointfakeurl",
+                        Endpoint = new EndpointModel {
+                            Url = "fakeurl",
+                            SecurityMode = SecurityMode.Sign
+                        }
                     }));
                 registry.Setup(e => e.QueryEndpointsAsync(It.IsNotNull<EndpointInfoQueryModel>(),
                     It.IsAny<int>(), It.IsAny<CancellationToken>()))
                     .Returns<EndpointInfoQueryModel, int?, CancellationToken>((q, i, c) =>
                         Task.FromResult(new EndpointInfoListModel {
-                        Items = new List<EndpointInfoModel> {
+                            Items = new List<EndpointInfoModel> {
                             new EndpointInfoModel {
                                 Id = "endpoint" + q.Url,
                                 Endpoint = new EndpointModel {
@@ -1432,7 +1432,7 @@ namespace Microsoft.IIoT.Platform.Publisher.Services {
                                 }
                             }
                         }
-                    }));
+                        }));
                 builder.RegisterMock(registry);
                 builder.RegisterType<WriterGroupRegistry>().AsImplementedInterfaces();
             });

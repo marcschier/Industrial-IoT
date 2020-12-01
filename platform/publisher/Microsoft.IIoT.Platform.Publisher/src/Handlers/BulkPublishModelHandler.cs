@@ -29,7 +29,7 @@ namespace Microsoft.IIoT.Platform.Publisher.Handlers {
         /// <param name="processor"></param>
         /// <param name="bulk"></param>
         /// <param name="logger"></param>
-        public BulkPublishModelHandler(INodeSetProcessor processor, IDataSetBatchOperations bulk, 
+        public BulkPublishModelHandler(INodeSetProcessor processor, IDataSetBatchOperations bulk,
             ILogger logger) {
             _processor = processor ?? throw new ArgumentNullException(nameof(processor));
             _bulk = bulk ?? throw new ArgumentNullException(nameof(bulk));
@@ -95,7 +95,7 @@ namespace Microsoft.IIoT.Platform.Publisher.Handlers {
                     // This call will clean up in case of exception and thus have nothing added.
                     await _outer._bulk.AddVariablesToDefaultDataSetWriterAsync(_endpointId,
                         new DataSetAddVariableBatchRequestModel {
-                           // User = request.Header?.Elevation,
+                            // User = request.Header?.Elevation,
                             Variables = _cache
                                 .Select(n => new DataSetAddVariableRequestModel {
                                     PublishedVariableNodeId = n.NodeId.AsString(ctx),

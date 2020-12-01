@@ -18,7 +18,7 @@ namespace Microsoft.IIoT.Platform.Twin.Models {
         /// <param name="model"></param>
         /// <param name="convert"></param>
         public static HistoryReadResultModel<T> ToSpecificModel<T>(
-            this HistoryReadResultModel<VariantValue> model, 
+            this HistoryReadResultModel<VariantValue> model,
             Func<VariantValue, T> convert) {
             if (model == null) {
                 throw new ArgumentNullException(nameof(model));
@@ -39,7 +39,7 @@ namespace Microsoft.IIoT.Platform.Twin.Models {
         /// <param name="model"></param>
         /// <param name="convert"></param>
         public static HistoryReadNextResultModel<T> ToSpecificModel<T>(
-            this HistoryReadNextResultModel<VariantValue> model, 
+            this HistoryReadNextResultModel<VariantValue> model,
             Func<VariantValue, T> convert) {
             if (model == null) {
                 throw new ArgumentNullException(nameof(model));

@@ -45,7 +45,7 @@ namespace Microsoft.IIoT.Platform.Twin.Service.Controllers {
         /// <returns>The method metadata response</returns>
         [HttpPost("{endpointId}/metadata")]
         public async Task<MethodMetadataResponseApiModel> GetCallMetadataAsync(
-            string endpointId, [FromBody] [Required] MethodMetadataRequestApiModel request) {
+            string endpointId, [FromBody][Required] MethodMetadataRequestApiModel request) {
             if (request == null) {
                 throw new ArgumentNullException(nameof(request));
             }
@@ -67,7 +67,7 @@ namespace Microsoft.IIoT.Platform.Twin.Service.Controllers {
         /// <returns>The method call response</returns>
         [HttpPost("{endpointId}")]
         public async Task<MethodCallResponseApiModel> CallMethodAsync(
-            string endpointId, [FromBody] [Required] MethodCallRequestApiModel request) {
+            string endpointId, [FromBody][Required] MethodCallRequestApiModel request) {
             if (request == null) {
                 throw new ArgumentNullException(nameof(request));
             }

@@ -47,7 +47,7 @@ namespace Microsoft.IIoT.Platform.Publisher.Api {
         /// <param name="callback"></param>
         /// <returns></returns>
         Task<IAsyncDisposable> SubscribeEventDataSetMessagesAsync(
-            string dataSetWriterId, 
+            string dataSetWriterId,
             Func<PublishedDataSetItemMessageApiModel, Task> callback);
 
         /// <summary>

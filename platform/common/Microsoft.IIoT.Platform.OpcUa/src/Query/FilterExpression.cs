@@ -56,9 +56,9 @@ namespace Microsoft.IIoT.Platform.OpcUa.Parser {
                     _ = Enum.Parse<NodeAttribute>(expr.attr_op().attributeId().GetText(), true);
 
                     var operand = new SimpleAttributeOperand {
-                       // TypeDefinitionId = expr.attr_op()
-                       // AttributeId = (field.InstanceDeclaration.NodeClass == NodeClass.Object) ? Attributes.NodeId : Attributes.Value,
-                       // BrowsePath = field.InstanceDeclaration.BrowsePath
+                        // TypeDefinitionId = expr.attr_op()
+                        // AttributeId = (field.InstanceDeclaration.NodeClass == NodeClass.Object) ? Attributes.NodeId : Attributes.Value,
+                        // BrowsePath = field.InstanceDeclaration.BrowsePath
                     };
                     SelectClause.Add(operand);
                 }

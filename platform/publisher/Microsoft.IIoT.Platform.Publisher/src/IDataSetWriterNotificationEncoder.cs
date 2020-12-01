@@ -22,7 +22,7 @@ namespace Microsoft.IIoT.Platform.Publisher.Services {
         /// <param name="notification"></param>
         /// <param name="stringTable"></param>
         /// <param name="context"></param>
-        void Decode(byte[] header, byte[] payload, out string dataSetWriterId, 
+        void Decode(byte[] header, byte[] payload, out string dataSetWriterId,
             out uint sequenceNumber, out NotificationData notification,
             out IList<string> stringTable, ref ServiceMessageContext context);
 

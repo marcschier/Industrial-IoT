@@ -24,11 +24,11 @@ namespace Microsoft.IIoT.Extensions.Kafka.Runtime {
                     PcsVariable.PCS_KAFKA_BOOTSTRAP_SERVERS, "localhost:9092");
             }
             if (options.Partitions == 0) {
-                options.Partitions = 
+                options.Partitions =
                     GetIntOrDefault(PcsVariable.PCS_KAFKA_PARTITION_COUNT, 8);
             }
             if (options.ReplicaFactor == 0) {
-                options.ReplicaFactor = 
+                options.ReplicaFactor =
                     GetIntOrDefault(PcsVariable.PCS_KAFKA_REPLICA_FACTOR, 2);
             }
         }

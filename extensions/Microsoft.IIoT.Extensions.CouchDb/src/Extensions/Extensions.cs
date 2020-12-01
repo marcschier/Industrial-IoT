@@ -72,8 +72,7 @@ namespace System {
             catch (FlurlHttpException ex) {
                 var couchError = await ex.GetResponseJsonAsync<OperationError>()
                     .ConfigureAwait(false) ?? new OperationError();
-                throw ex.Call.HttpStatus switch
-                {
+                throw ex.Call.HttpStatus switch {
                     HttpStatusCode.Conflict => new ResourceConflictException(
                         couchError.ToString(message), ex),
                     HttpStatusCode.NotFound => new ResourceNotFoundException(

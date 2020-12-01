@@ -43,7 +43,7 @@ namespace Autofac {
                     ["TEST"] = "test"
                 })
                 .Build();
-            builder.AddConfiguration(c); 
+            builder.AddConfiguration(c);
             builder.AddEnvironmentVariableConfiguration(); // Will be found here
 
             using var scope = builder.Build();
@@ -66,7 +66,7 @@ namespace Autofac {
                 })
                 .Build();
             builder.AddConfiguration(c); // Will be found here
-            builder.AddEnvironmentVariableConfiguration(ConfigSourcePriority.Low); 
+            builder.AddEnvironmentVariableConfiguration(ConfigSourcePriority.Low);
 
             using var scope = builder.Build();
             var confguration = scope.Resolve<IConfiguration>();
@@ -75,7 +75,7 @@ namespace Autofac {
             Assert.NotNull(confguration);
 
             var value = confguration.GetValue<string>("TEST");
-            Assert.Equal("test", value); 
+            Assert.Equal("test", value);
         }
 
         [Fact]
@@ -83,7 +83,7 @@ namespace Autofac {
             var builder = new ContainerBuilder();
             Environment.SetEnvironmentVariable("TEST", "other");
 
-            builder.AddEnvironmentVariableConfiguration(); 
+            builder.AddEnvironmentVariableConfiguration();
             var c = new ConfigurationBuilder()
                 .AddInMemoryCollection(new Dictionary<string, string> {
                     ["TEST"] = "test"
@@ -98,7 +98,7 @@ namespace Autofac {
             Assert.NotNull(confguration);
 
             var value = confguration.GetValue<string>("TEST");
-            Assert.Equal("test", value); 
+            Assert.Equal("test", value);
         }
 
         [Fact]
@@ -186,7 +186,7 @@ namespace Autofac {
             builder.AddConfigurationSource(configuration => {
                 // Capture value and then return bool source
                 capturedValue = configuration.GetValue<string>("TEST");
-                return new CustomSource<bool>(); 
+                return new CustomSource<bool>();
             }); // last item should now resolve
 
             using var scope = builder.Build();

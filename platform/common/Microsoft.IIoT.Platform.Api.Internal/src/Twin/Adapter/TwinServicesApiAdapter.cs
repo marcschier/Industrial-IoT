@@ -46,13 +46,13 @@ namespace Microsoft.IIoT.Platform.Twin.Api.Clients {
         /// <inheritdoc/>
         public async Task<TwinInfoListModel> QueryTwinsAsync(
             TwinInfoQueryModel query, int? pageSize, CancellationToken ct) {
-            var result = await _client.QueryTwinsAsync(query.ToApiModel(), 
+            var result = await _client.QueryTwinsAsync(query.ToApiModel(),
                 pageSize, ct).ConfigureAwait(false);
             return result.ToServiceModel();
         }
 
         /// <inheritdoc/>
-        public async Task<TwinModel> GetTwinAsync(string twin, 
+        public async Task<TwinModel> GetTwinAsync(string twin,
             CancellationToken ct) {
             var result = await _client.GetTwinAsync(twin,
                 ct).ConfigureAwait(false);
@@ -60,7 +60,7 @@ namespace Microsoft.IIoT.Platform.Twin.Api.Clients {
         }
 
         /// <inheritdoc/>
-        public async Task UpdateTwinAsync(string twin, TwinInfoUpdateModel request, 
+        public async Task UpdateTwinAsync(string twin, TwinInfoUpdateModel request,
             OperationContextModel context, CancellationToken ct) {
             await _client.UpdateTwinAsync(twin, request.ToApiModel(),
                 ct).ConfigureAwait(false);
@@ -69,14 +69,14 @@ namespace Microsoft.IIoT.Platform.Twin.Api.Clients {
         /// <inheritdoc/>
         public async Task DeactivateTwinAsync(string twin, string generationId,
             OperationContextModel context, CancellationToken ct) {
-            await _client.DectivateTwinAsync(twin, generationId, 
+            await _client.DectivateTwinAsync(twin, generationId,
                 ct).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
         public async Task<BrowseResultModel> NodeBrowseFirstAsync(
             string twin, BrowseRequestModel request, CancellationToken ct) {
-            var result = await _client.NodeBrowseFirstAsync(twin, 
+            var result = await _client.NodeBrowseFirstAsync(twin,
                 request.ToApiModel(), ct).ConfigureAwait(false);
             return result.ToServiceModel();
         }
@@ -140,7 +140,7 @@ namespace Microsoft.IIoT.Platform.Twin.Api.Clients {
         /// <inheritdoc/>
         public async Task<WriteResultModel> NodeWriteAsync(
             string twin, WriteRequestModel request, CancellationToken ct) {
-            var result = await _client.NodeWriteAsync(twin, 
+            var result = await _client.NodeWriteAsync(twin,
                 request.ToApiModel(), ct).ConfigureAwait(false);
             return result.ToServiceModel();
         }
@@ -148,7 +148,7 @@ namespace Microsoft.IIoT.Platform.Twin.Api.Clients {
         /// <inheritdoc/>
         public async Task<ModelUploadStartResultModel> ModelUploadStartAsync(
             string twin, ModelUploadStartRequestModel request, CancellationToken ct) {
-            var result = await _client.ModelUploadStartAsync(twin, 
+            var result = await _client.ModelUploadStartAsync(twin,
                 request.ToApiModel(), ct).ConfigureAwait(false);
             return result.ToServiceModel();
         }

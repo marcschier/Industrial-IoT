@@ -44,7 +44,7 @@ namespace Microsoft.IIoT.Platform.Twin.Service.Controllers {
         /// <returns>The start upload response</returns>
         [HttpPost("{endpointId}")]
         public async Task<ModelUploadStartResponseApiModel> ModelUploadStartAsync(
-            string endpointId, [FromBody] [Required] ModelUploadStartRequestApiModel request) {
+            string endpointId, [FromBody][Required] ModelUploadStartRequestApiModel request) {
             if (request == null) {
                 throw new ArgumentNullException(nameof(request));
             }

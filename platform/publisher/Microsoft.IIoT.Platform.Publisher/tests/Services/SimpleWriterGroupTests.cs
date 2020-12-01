@@ -451,14 +451,14 @@ namespace Microsoft.IIoT.Platform.Publisher.Services {
                 registry
                     .Setup(e => e.GetEndpointAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
                     .Returns(Task.FromResult(new EndpointInfoModel {
-                            Id = "endpoint1",
-                            Endpoint = new EndpointModel {
-                                Url = url,
-                                AlternativeUrls = _hostEntry?.AddressList
+                        Id = "endpoint1",
+                        Endpoint = new EndpointModel {
+                            Url = url,
+                            AlternativeUrls = _hostEntry?.AddressList
                                     .Where(ip => ip.AddressFamily == AddressFamily.InterNetwork)
                                     .Select(ip => $"opc.tcp://{ip}:{_server.Port}/UA/SampleServer").ToHashSet(),
-                                Certificate = _server.Certificate?.RawData?.ToThumbprint()
-                            }
+                            Certificate = _server.Certificate?.RawData?.ToThumbprint()
+                        }
                     }));
                 builder.RegisterMock(registry);
                 builder.RegisterType<DataSetWriterEventBroker>().AsImplementedInterfaces().SingleInstance();

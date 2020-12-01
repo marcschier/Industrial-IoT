@@ -51,9 +51,9 @@ namespace Microsoft.IIoT.Platform.Edge.Events.Service {
                     .AddEnvironmentVariables()
                     .AddFromKeyVault())
                 .UseServiceProviderFactory(new AutofacServiceProviderFactory())
-                .ConfigureContainer<ContainerBuilder>((hostBuilderContext, builder) => 
+                .ConfigureContainer<ContainerBuilder>((hostBuilderContext, builder) =>
                     ConfigureContainer(builder, hostBuilderContext.Configuration))
-                .ConfigureServices((hostBuilderContext, services) => 
+                .ConfigureServices((hostBuilderContext, services) =>
                     services.AddHostedService<HostStarterService>());
         }
 
@@ -90,8 +90,8 @@ namespace Microsoft.IIoT.Platform.Edge.Events.Service {
 
             // 2.) Registry storage for data plane control events
             builder.RegisterModule<DiscoveryStorage>();
-          //  builder.RegisterType<TwinEventHandler>()
-          //      .AsImplementedInterfaces();
+            //  builder.RegisterType<TwinEventHandler>()
+            //      .AsImplementedInterfaces();
 
             // 3.) Publisher storage for edge events
             builder.RegisterModule<PublisherStorage>();

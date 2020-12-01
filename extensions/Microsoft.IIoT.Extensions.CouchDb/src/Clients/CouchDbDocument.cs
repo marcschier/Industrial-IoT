@@ -43,12 +43,8 @@ namespace Microsoft.IIoT.Extensions.CouchDb.Clients {
         /// <inheritdoc/>
         [JsonIgnore]
         public string Etag {
-            get {
-                return Rev;
-            }
-            set {
-                Rev = value;
-            }
+            get => Rev;
+            set => Rev = value;
         }
 
         /// <summary>

@@ -61,7 +61,7 @@ namespace Microsoft.IIoT.Platform.Discovery.Services {
         /// <inheritdoc/>
         public async Task<EndpointInfoListModel> ListEndpointsAsync(string continuation,
             int? pageSize, CancellationToken ct) {
-            return await _database.QueryAsync(null, 
+            return await _database.QueryAsync(null,
                 continuation, pageSize, ct).ConfigureAwait(false);
         }
 
@@ -104,7 +104,7 @@ namespace Microsoft.IIoT.Platform.Discovery.Services {
             // stop half way and throw and do not complete.
             var endpoints = await GetEndpointsAsync(application.ApplicationId).ConfigureAwait(false);
             foreach (var endpoint in endpoints) {
-                await _database.DeleteAsync(endpoint.Id, 
+                await _database.DeleteAsync(endpoint.Id,
                     ep => Task.FromResult(true)).ConfigureAwait(false);
                 if (!endpoint.IsLost()) {
                     await _broker.NotifyAllAsync(l => l.OnEndpointLostAsync(context,
@@ -119,8 +119,8 @@ namespace Microsoft.IIoT.Platform.Discovery.Services {
         public async Task<IEnumerable<EndpointInfoModel>> GetApplicationEndpointsAsync(
             string applicationId, bool includeDeleted, CancellationToken ct) {
             // Include non-visible twins if the application itself is not visible. Otherwise omit.
-            var endpoints = await GetEndpointsAsync(applicationId, 
-                includeDeleted ? (EntityVisibility?)null : EntityVisibility.Found, 
+            var endpoints = await GetEndpointsAsync(applicationId,
+                includeDeleted ? (EntityVisibility?)null : EntityVisibility.Found,
                     ct).ConfigureAwait(false);
             return endpoints;
         }

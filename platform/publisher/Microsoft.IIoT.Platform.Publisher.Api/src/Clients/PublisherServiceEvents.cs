@@ -123,7 +123,7 @@ namespace Microsoft.IIoT.Platform.Publisher.Api {
 
         /// <inheritdoc/>
         public async Task<IAsyncDisposable> SubscribeDataSetVariableMessagesAsync(
-            string dataSetWriterId, string variableId, 
+            string dataSetWriterId, string variableId,
             Func<PublishedDataSetItemMessageApiModel, Task> callback) {
 
             if (callback == null) {
@@ -133,7 +133,7 @@ namespace Microsoft.IIoT.Platform.Publisher.Api {
                 Resource.Platform).ConfigureAwait(false);
             var registration = hub.Register(EventTargets.DataSetVariableMessageTarget, callback);
             try {
-                await SubscribeDataSetVariableMessagesAsync(dataSetWriterId, variableId, 
+                await SubscribeDataSetVariableMessagesAsync(dataSetWriterId, variableId,
                     hub.ConnectionId, CancellationToken.None).ConfigureAwait(false);
                 return new AsyncDisposable(registration,
                     () => UnsubscribeDataSetVariableMessagesAsync(dataSetWriterId, variableId,

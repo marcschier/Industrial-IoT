@@ -25,7 +25,7 @@ namespace Microsoft.IIoT.Platform.Twin.Services {
     /// <summary>
     /// Transfer large data to and from cloud
     /// </summary>
-    public sealed class DataTransferServices : ITransferServices<ConnectionModel>, 
+    public sealed class DataTransferServices : ITransferServices<ConnectionModel>,
         IDisposable {
 
         /// <summary>
@@ -48,7 +48,7 @@ namespace Microsoft.IIoT.Platform.Twin.Services {
 
         /// <inheritdoc/>
         public Task<ModelUploadStartResultModel> ModelUploadStartAsync(
-            ConnectionModel connection, ModelUploadStartRequestModel request, 
+            ConnectionModel connection, ModelUploadStartRequestModel request,
             CancellationToken ct) {
             if (connection == null) {
                 throw new ArgumentNullException(nameof(connection));
@@ -157,7 +157,7 @@ namespace Microsoft.IIoT.Platform.Twin.Services {
 
 
                             // Otherwise browse model
-                            await BrowseEncodeModelAsync(id.Connection, diagnostics, stream, 
+                            await BrowseEncodeModelAsync(id.Connection, diagnostics, stream,
                                 ct).ConfigureAwait(false);
                         }
 

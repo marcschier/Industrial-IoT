@@ -44,7 +44,7 @@ namespace Microsoft.IIoT.Platform.Twin.Service.Controllers {
         /// <returns>The write value response</returns>
         [HttpPost("{endpointId}")]
         public async Task<ValueWriteResponseApiModel> WriteValueAsync(
-            string endpointId, [FromBody] [Required] ValueWriteRequestApiModel request) {
+            string endpointId, [FromBody][Required] ValueWriteRequestApiModel request) {
             if (request == null) {
                 throw new ArgumentNullException(nameof(request));
             }
@@ -66,7 +66,7 @@ namespace Microsoft.IIoT.Platform.Twin.Service.Controllers {
         /// <returns>The batch write response</returns>
         [HttpPost("{endpointId}/attributes")]
         public async Task<WriteResponseApiModel> WriteAttributesAsync(
-            string endpointId, [FromBody] [Required] WriteRequestApiModel request) {
+            string endpointId, [FromBody][Required] WriteRequestApiModel request) {
             if (request == null) {
                 throw new ArgumentNullException(nameof(request));
             }

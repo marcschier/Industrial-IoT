@@ -34,8 +34,8 @@ namespace Microsoft.IIoT.Platform.Publisher.Service {
             base.ConfigureContainer(builder);
 
             // Add fakes
-          //  builder.RegisterType<TestRegistry>()
-          //      .AsImplementedInterfaces().SingleInstance();
+            //  builder.RegisterType<TestRegistry>()
+            //      .AsImplementedInterfaces().SingleInstance();
             builder.RegisterType<TestClientServicesConfig>()
                 .AsImplementedInterfaces().SingleInstance();
             builder.RegisterType<TestAuthConfig>()

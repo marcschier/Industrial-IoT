@@ -149,7 +149,7 @@ namespace Microsoft.IIoT.Platform.Twin.Service.Controllers.Test {
             return Task.FromException<TwinInfoListApiModel>(new NotImplementedException());
         }
 
-        public Task<TwinInfoListApiModel> QueryTwinsAsync(TwinInfoQueryApiModel query, 
+        public Task<TwinInfoListApiModel> QueryTwinsAsync(TwinInfoQueryApiModel query,
             int? pageSize, CancellationToken ct) {
             return Task.FromException<TwinInfoListApiModel>(new NotImplementedException());
         }
@@ -158,7 +158,7 @@ namespace Microsoft.IIoT.Platform.Twin.Service.Controllers.Test {
             return Task.FromException<TwinApiModel>(new NotImplementedException());
         }
 
-        public Task UpdateTwinAsync(string twinId, TwinInfoUpdateApiModel model, 
+        public Task UpdateTwinAsync(string twinId, TwinInfoUpdateApiModel model,
             CancellationToken ct) {
             return Task.FromException(new NotImplementedException());
         }

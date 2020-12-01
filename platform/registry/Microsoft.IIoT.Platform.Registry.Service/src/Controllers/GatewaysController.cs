@@ -61,7 +61,7 @@ namespace Microsoft.IIoT.Platform.Registry.Service.Controllers {
         [HttpPatch("{GatewayId}")]
         [Authorize(Policy = Policies.CanChange)]
         public async Task UpdateGatewayAsync(string GatewayId,
-            [FromBody] [Required] GatewayUpdateApiModel request) {
+            [FromBody][Required] GatewayUpdateApiModel request) {
             if (request == null) {
                 throw new ArgumentNullException(nameof(request));
             }
@@ -134,7 +134,7 @@ namespace Microsoft.IIoT.Platform.Registry.Service.Controllers {
         /// <returns>Gateway</returns>
         [HttpPost("query")]
         public async Task<GatewayListApiModel> QueryGatewayAsync(
-            [FromBody] [Required] GatewayQueryApiModel query,
+            [FromBody][Required] GatewayQueryApiModel query,
             [FromQuery] int? pageSize) {
             if (query == null) {
                 throw new ArgumentNullException(nameof(query));
@@ -160,7 +160,7 @@ namespace Microsoft.IIoT.Platform.Registry.Service.Controllers {
         /// <returns>Gateway</returns>
         [HttpGet("query")]
         public async Task<GatewayListApiModel> GetFilteredListOfGatewayAsync(
-            [FromQuery] [Required] GatewayQueryApiModel query,
+            [FromQuery][Required] GatewayQueryApiModel query,
             [FromQuery] int? pageSize) {
 
             if (query == null) {

@@ -92,7 +92,7 @@ namespace Microsoft.IIoT.Platform.Vault.Service.Controllers {
         [HttpPost("{groupId}")]
         [Authorize(Policy = Policies.CanManage)]
         public async Task UpdateGroupAsync(string groupId,
-            [FromBody] [Required] TrustGroupUpdateRequestApiModel request) {
+            [FromBody][Required] TrustGroupUpdateRequestApiModel request) {
             if (request == null) {
                 throw new ArgumentNullException(nameof(request));
             }
@@ -110,7 +110,7 @@ namespace Microsoft.IIoT.Platform.Vault.Service.Controllers {
         [HttpPut("root")]
         [Authorize(Policy = Policies.CanManage)]
         public async Task<TrustGroupRegistrationResponseApiModel> CreateRootAsync(
-            [FromBody] [Required] TrustGroupRootCreateRequestApiModel request) {
+            [FromBody][Required] TrustGroupRootCreateRequestApiModel request) {
             if (request == null) {
                 throw new ArgumentNullException(nameof(request));
             }
@@ -129,7 +129,7 @@ namespace Microsoft.IIoT.Platform.Vault.Service.Controllers {
         [HttpPut]
         [Authorize(Policy = Policies.CanManage)]
         public async Task<TrustGroupRegistrationResponseApiModel> CreateGroupAsync(
-            [FromBody] [Required] TrustGroupRegistrationRequestApiModel request) {
+            [FromBody][Required] TrustGroupRegistrationRequestApiModel request) {
             if (request == null) {
                 throw new ArgumentNullException(nameof(request));
             }

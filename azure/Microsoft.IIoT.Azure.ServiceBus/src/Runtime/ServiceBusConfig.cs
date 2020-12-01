@@ -20,7 +20,7 @@ namespace Microsoft.IIoT.Azure.ServiceBus.Runtime {
         /// <inheritdoc/>
         public override void PostConfigure(string name, ServiceBusOptions options) {
             if (string.IsNullOrEmpty(options.ServiceBusConnString)) {
-                options.ServiceBusConnString = 
+                options.ServiceBusConnString =
                     GetStringOrDefault(PcsVariable.PCS_SERVICEBUS_CONNSTRING,
                     GetStringOrDefault("_SB_CS"));
             }

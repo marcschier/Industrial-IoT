@@ -20,7 +20,7 @@ namespace Microsoft.IIoT.Platform.Twin.Clients {
         /// </summary>
         /// <param name="client"></param>
         /// <param name="codec"></param>
-        public HistorianServicesAdapter(IHistoricAccessServices<T> client, 
+        public HistorianServicesAdapter(IHistoricAccessServices<T> client,
             IVariantEncoderFactory codec) {
             _codec = codec?.Default ?? throw new ArgumentNullException(nameof(codec));
             _client = client ?? throw new ArgumentNullException(nameof(client));
@@ -86,7 +86,7 @@ namespace Microsoft.IIoT.Platform.Twin.Clients {
         public async Task<HistoryReadResultModel<HistoricEventModel[]>> HistoryReadEventsAsync(
             T twin, HistoryReadRequestModel<ReadEventsDetailsModel> request,
             CancellationToken ct) {
-            var results = await _client.HistoryReadAsync(twin, request.ToRawModel(_codec.Encode), 
+            var results = await _client.HistoryReadAsync(twin, request.ToRawModel(_codec.Encode),
                 ct).ConfigureAwait(false);
             return results.ToSpecificModel(_codec.DecodeEvents);
         }
@@ -111,7 +111,7 @@ namespace Microsoft.IIoT.Platform.Twin.Clients {
         public async Task<HistoryReadResultModel<HistoricValueModel[]>> HistoryReadValuesAtTimesAsync(
             T twin, HistoryReadRequestModel<ReadValuesAtTimesDetailsModel> request,
             CancellationToken ct) {
-            var results = await _client.HistoryReadAsync(twin, request.ToRawModel(_codec.Encode), 
+            var results = await _client.HistoryReadAsync(twin, request.ToRawModel(_codec.Encode),
                 ct).ConfigureAwait(false);
             return results.ToSpecificModel(_codec.DecodeValues);
         }
@@ -129,7 +129,7 @@ namespace Microsoft.IIoT.Platform.Twin.Clients {
         public async Task<HistoryReadResultModel<HistoricValueModel[]>> HistoryReadModifiedValuesAsync(
             T twin, HistoryReadRequestModel<ReadModifiedValuesDetailsModel> request,
             CancellationToken ct) {
-            var results = await _client.HistoryReadAsync(twin, request.ToRawModel(_codec.Encode), 
+            var results = await _client.HistoryReadAsync(twin, request.ToRawModel(_codec.Encode),
                 ct).ConfigureAwait(false);
             return results.ToSpecificModel(_codec.DecodeValues);
         }

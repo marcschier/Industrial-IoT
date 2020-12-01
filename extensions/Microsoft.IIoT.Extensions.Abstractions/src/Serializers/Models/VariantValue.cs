@@ -50,11 +50,7 @@ namespace Microsoft.IIoT.Serializers {
         /// <summary>
         /// Property names of object
         /// </summary>
-        public IEnumerable<string> PropertyNames {
-            get {
-                return GetObjectProperties();
-            }
-        }
+        public IEnumerable<string> PropertyNames => GetObjectProperties();
 
         /// <summary>
         /// The primitive value
@@ -1144,7 +1140,7 @@ namespace Microsoft.IIoT.Serializers {
                     break;
             }
             var result = true;
-                 if (s == kFloatMinValue) {
+            if (s == kFloatMinValue) {
                 o = float.MinValue;
             }
             else if (s == kFloatMaxValue) {

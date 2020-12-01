@@ -131,7 +131,7 @@ namespace Microsoft.IIoT.Platform.Identity.Users {
             appLifetime.ApplicationStopped.Register(applicationContainer.Dispose);
 
             // Print some useful information at bootstrap time
-            log.LogInformation("{service} started with id {id}", 
+            log.LogInformation("{service} started with id {id}",
                 ServiceInfo.Name, ServiceInfo.Id);
         }
 

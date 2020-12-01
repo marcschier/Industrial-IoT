@@ -44,7 +44,7 @@ namespace Microsoft.IIoT.Extensions.CouchDb.Clients {
                         })
                         // ...
                         ;
-            });
+                });
             var db = new CouchDbDatabase(client, _logger);
             return Task.FromResult<IDatabase>(db);
         }
@@ -64,7 +64,7 @@ namespace Microsoft.IIoT.Extensions.CouchDb.Clients {
                     return up ? HealthCheckResult.Healthy() :
                         HealthCheckResult.Degraded();
                 }
-                catch (Exception ex){
+                catch (Exception ex) {
                     return HealthCheckResult.Unhealthy("Not up", ex);
                 }
             }

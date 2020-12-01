@@ -43,7 +43,7 @@ namespace Microsoft.IIoT.Extensions.Orleans.Services {
                         _startup.ConfigureSilo(builder);
                     })
                     .ConfigureServices(services => {
-                         services.TryAddSingleton<IOrleansSiloHost>(this);
+                        services.TryAddSingleton<IOrleansSiloHost>(this);
                     })
                     .Build();
 

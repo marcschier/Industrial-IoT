@@ -45,8 +45,8 @@ namespace Microsoft.IIoT.Azure.AppInsights {
             services.AddApplicationInsightsTelemetry();
             builder.Populate(services);
 
-          //  return builder.RegisterModule(
-          //      new Log(new ApplicationInsightsLogger(config, log, addConsole)));
+            //  return builder.RegisterModule(
+            //      new Log(new ApplicationInsightsLogger(config, log, addConsole)));
 
             builder.RegisterModule<Logging>();
 
@@ -72,7 +72,7 @@ namespace Microsoft.IIoT.Azure.AppInsights {
 
             var telemetryInitializer = new ApplicationInsightsTelemetryInitializer(processIdentity);
             var telemetryConfig = TelemetryConfiguration.CreateDefault();
-          // TODO:  telemetryConfig.InstrumentationKey = diagnosticsConfig.InstrumentationKey;
+            // TODO:  telemetryConfig.InstrumentationKey = diagnosticsConfig.InstrumentationKey;
             telemetryConfig.TelemetryInitializers.Add(telemetryInitializer);
             var depModule = new DependencyTrackingTelemetryModule();
 

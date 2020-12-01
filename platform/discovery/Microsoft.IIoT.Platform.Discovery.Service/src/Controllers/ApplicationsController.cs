@@ -51,13 +51,13 @@ namespace Microsoft.IIoT.Platform.Discovery.Service.Controllers {
         [HttpPost]
         [Authorize(Policy = Policies.CanManage)]
         public async Task RegisterServerAsync(
-            [FromBody] [Required] ServerRegistrationRequestApiModel request) {
+            [FromBody][Required] ServerRegistrationRequestApiModel request) {
             if (request == null) {
                 throw new ArgumentNullException(nameof(request));
             }
             var context = (OperationContextModel)null;
             // TODO: var context.AuthorityId = User.Identity.Name;
-            await _discovery.RegisterAsync(request.ToServiceModel(), 
+            await _discovery.RegisterAsync(request.ToServiceModel(),
                 context).ConfigureAwait(false);
         }
 
@@ -73,7 +73,7 @@ namespace Microsoft.IIoT.Platform.Discovery.Service.Controllers {
         [HttpPost("discover")]
         [Authorize(Policy = Policies.CanManage)]
         public async Task DiscoverServerAsync(
-            [FromBody] [Required] DiscoveryRequestApiModel request) {
+            [FromBody][Required] DiscoveryRequestApiModel request) {
             if (request == null) {
                 throw new ArgumentNullException(nameof(request));
             }
@@ -117,7 +117,7 @@ namespace Microsoft.IIoT.Platform.Discovery.Service.Controllers {
         [HttpPut]
         [Authorize(Policy = Policies.CanManage)]
         public async Task<ApplicationRegistrationResponseApiModel> CreateApplicationAsync(
-            [FromBody] [Required] ApplicationRegistrationRequestApiModel request) {
+            [FromBody][Required] ApplicationRegistrationRequestApiModel request) {
             if (request == null) {
                 throw new ArgumentNullException(nameof(request));
             }
@@ -157,7 +157,7 @@ namespace Microsoft.IIoT.Platform.Discovery.Service.Controllers {
         [HttpPatch("{applicationId}")]
         [Authorize(Policy = Policies.CanChange)]
         public async Task UpdateApplicationAsync(string applicationId,
-            [FromBody] [Required] ApplicationInfoUpdateApiModel request) {
+            [FromBody][Required] ApplicationInfoUpdateApiModel request) {
             if (string.IsNullOrEmpty(applicationId)) {
                 throw new ArgumentNullException(nameof(applicationId));
             }
@@ -167,7 +167,7 @@ namespace Microsoft.IIoT.Platform.Discovery.Service.Controllers {
             var model = request.ToServiceModel();
             var context = (OperationContextModel)null;
             // TODO: var context.AuthorityId = User.Identity.Name;
-            await _applications.UpdateApplicationAsync(applicationId, model, 
+            await _applications.UpdateApplicationAsync(applicationId, model,
                 context).ConfigureAwait(false);
         }
 
@@ -258,7 +258,7 @@ namespace Microsoft.IIoT.Platform.Discovery.Service.Controllers {
         /// <returns>Applications</returns>
         [HttpPost("query")]
         public async Task<ApplicationInfoListApiModel> QueryApplicationsAsync(
-            [FromBody] [Required] ApplicationInfoQueryApiModel query,
+            [FromBody][Required] ApplicationInfoQueryApiModel query,
             [FromQuery] int? pageSize) {
 
             if (query == null) {
@@ -286,7 +286,7 @@ namespace Microsoft.IIoT.Platform.Discovery.Service.Controllers {
         /// <returns>Applications</returns>
         [HttpGet("query")]
         public async Task<ApplicationInfoListApiModel> GetFilteredListOfApplicationsAsync(
-            [FromBody] [Required] ApplicationInfoQueryApiModel query,
+            [FromBody][Required] ApplicationInfoQueryApiModel query,
             [FromQuery] int? pageSize) {
 
             if (query == null) {

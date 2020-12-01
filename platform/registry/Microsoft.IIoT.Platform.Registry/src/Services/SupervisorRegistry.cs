@@ -9,7 +9,6 @@ namespace Microsoft.IIoT.Platform.Registry.Services {
     using Microsoft.IIoT.Platform.Discovery.Models;
     using Microsoft.IIoT.Platform.Core.Models;
     using Microsoft.IIoT.Azure.IoTHub;
-    using Microsoft.IIoT.Azure.IoTHub.Models;
     using Microsoft.IIoT.Exceptions;
     using Microsoft.IIoT.Hosting;
     using Microsoft.IIoT.Serializers;

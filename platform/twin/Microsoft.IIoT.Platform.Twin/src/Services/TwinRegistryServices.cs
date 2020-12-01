@@ -50,7 +50,7 @@ namespace Microsoft.IIoT.Platform.Twin.Services {
 
         /// <inheritdoc/>
         public async Task<TwinActivationResultModel> ActivateTwinAsync(
-            TwinActivationRequestModel request, OperationContextModel context, 
+            TwinActivationRequestModel request, OperationContextModel context,
             CancellationToken ct) {
             context = context.Validate();
             if (request == null) {
@@ -91,7 +91,7 @@ namespace Microsoft.IIoT.Platform.Twin.Services {
             if (twin == null) {
                 throw new ResourceNotFoundException("Twin not found");
             }
-            var endpoint = await _endpoints.FindEndpointAsync(twin.EndpointId, 
+            var endpoint = await _endpoints.FindEndpointAsync(twin.EndpointId,
                 ct).ConfigureAwait(false);
             if (endpoint == null) {
                 // TODO: Consider deleting the twin
@@ -115,14 +115,14 @@ namespace Microsoft.IIoT.Platform.Twin.Services {
         /// <inheritdoc/>
         public async Task<TwinInfoListModel> ListTwinsAsync(string continuation,
             int? pageSize, CancellationToken ct) {
-            return await _database.QueryAsync(null, 
+            return await _database.QueryAsync(null,
                 continuation, pageSize, ct).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
-        public async Task<TwinInfoListModel> QueryTwinsAsync(TwinInfoQueryModel model, 
+        public async Task<TwinInfoListModel> QueryTwinsAsync(TwinInfoQueryModel model,
             int? pageSize, CancellationToken ct) {
-            return await _database.QueryAsync(model, 
+            return await _database.QueryAsync(model,
                 null, pageSize, ct).ConfigureAwait(false);
         }
 
@@ -133,7 +133,7 @@ namespace Microsoft.IIoT.Platform.Twin.Services {
             if (request == null) {
                 throw new ArgumentNullException(nameof(request));
             }
-            
+
             context = context.Validate();
             var twin = await _database.UpdateAsync(twinId, existing => {
                 if (existing.GenerationId != request.GenerationId) {
@@ -160,7 +160,7 @@ namespace Microsoft.IIoT.Platform.Twin.Services {
         }
 
         /// <inheritdoc/>
-        public async Task DeactivateTwinAsync(string twinId, string generationId, 
+        public async Task DeactivateTwinAsync(string twinId, string generationId,
             OperationContextModel context, CancellationToken ct) {
             context = context.Validate();
             if (string.IsNullOrEmpty(twinId)) {
@@ -180,7 +180,7 @@ namespace Microsoft.IIoT.Platform.Twin.Services {
         }
 
         /// <inheritdoc/>
-        public Task OnEndpointNewAsync(OperationContextModel context, 
+        public Task OnEndpointNewAsync(OperationContextModel context,
             EndpointInfoModel endpoint) {
             return Task.CompletedTask;
         }

@@ -44,7 +44,7 @@ namespace Microsoft.IIoT.Platform.Identity.Users {
         /// <returns></returns>
         [HttpPut]
         public async Task CreateRoleAsync(
-            [FromBody] [Required] RoleApiModel role) {
+            [FromBody][Required] RoleApiModel role) {
             if (role == null) {
                 throw new ArgumentNullException(nameof(role));
             }

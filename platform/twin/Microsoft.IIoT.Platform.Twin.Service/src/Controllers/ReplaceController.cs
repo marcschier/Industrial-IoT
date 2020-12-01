@@ -45,7 +45,7 @@ namespace Microsoft.IIoT.Platform.Twin.Service.Controllers {
         [HttpPost("{endpointId}/values")]
         public async Task<HistoryUpdateResponseApiModel> HistoryReplaceValuesAsync(
             string endpointId,
-            [FromBody] [Required] HistoryUpdateRequestApiModel<ReplaceValuesDetailsApiModel> request) {
+            [FromBody][Required] HistoryUpdateRequestApiModel<ReplaceValuesDetailsApiModel> request) {
             if (request == null) {
                 throw new ArgumentNullException(nameof(request));
             }
@@ -68,7 +68,7 @@ namespace Microsoft.IIoT.Platform.Twin.Service.Controllers {
         [HttpPost("{endpointId}/events")]
         public async Task<HistoryUpdateResponseApiModel> HistoryReplaceEventsAsync(
             string endpointId,
-            [FromBody] [Required] HistoryUpdateRequestApiModel<ReplaceEventsDetailsApiModel> request) {
+            [FromBody][Required] HistoryUpdateRequestApiModel<ReplaceEventsDetailsApiModel> request) {
             if (request == null) {
                 throw new ArgumentNullException(nameof(request));
             }

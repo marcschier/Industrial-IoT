@@ -70,7 +70,7 @@ namespace Opc.Ua.Extensions {
                 return DateTime.MaxValue;
             }
             else {
-                if (dateTime.Kind != DateTimeKind.Utc)                     {
+                if (dateTime.Kind != DateTimeKind.Utc) {
                     return dateTime.ToUniversalTime();
                 }
             }

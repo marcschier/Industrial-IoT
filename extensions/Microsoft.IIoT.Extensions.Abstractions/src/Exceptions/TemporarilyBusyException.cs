@@ -48,7 +48,7 @@ namespace Microsoft.IIoT.Exceptions {
 
         /// <inheritdoc />
         public TemporarilyBusyException(string message, Exception innerException) :
-            this(message, innerException, (TimeSpan?)null) {
+            this(message, innerException, null) {
         }
     }
 }

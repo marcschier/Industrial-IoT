@@ -22,7 +22,7 @@ namespace Microsoft.IIoT.Platform.Twin {
         /// <param name="ct"></param>
         /// <returns></returns>
         Task<TwinActivationResultModel> ActivateTwinAsync(
-            TwinActivationRequestModel request, 
+            TwinActivationRequestModel request,
             OperationContextModel context = null,
             CancellationToken ct = default);
 
@@ -65,7 +65,7 @@ namespace Microsoft.IIoT.Platform.Twin {
         /// <param name="ct"></param>
         /// <returns></returns>
         Task UpdateTwinAsync(string twinId, TwinInfoUpdateModel model,
-            OperationContextModel context = null, 
+            OperationContextModel context = null,
             CancellationToken ct = default);
 
         /// <summary>

@@ -24,7 +24,7 @@ namespace Microsoft.IIoT.Platform.OpcUa {
         /// <param name="listener"></param>
         /// <returns></returns>
         Task<ISubscriptionHandle> CreateSubscriptionAsync(
-            SubscriptionModel subscriptionModel, 
+            SubscriptionModel subscriptionModel,
             ISubscriptionListener listener);
     }
 }

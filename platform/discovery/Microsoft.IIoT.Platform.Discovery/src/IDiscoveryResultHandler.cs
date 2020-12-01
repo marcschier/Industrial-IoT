@@ -20,7 +20,7 @@ namespace Microsoft.IIoT.Platform.Discovery {
         /// <param name="results"></param>
         /// <param name="ct"></param>
         /// <returns></returns>
-        Task ReportResultsAsync(IEnumerable<DiscoveryResultModel> results, 
+        Task ReportResultsAsync(IEnumerable<DiscoveryResultModel> results,
             CancellationToken ct = default);
     }
 }

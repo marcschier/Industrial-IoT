@@ -1019,8 +1019,8 @@ namespace Microsoft.IIoT.Api.Cli {
                 EndpointId = options.GetValue<string>("-e", "--endpoint"),
                 WriterGroupId = options.GetValueOrDefault<string>("-g", "--group", null),
                 DataSetName = options.GetValueOrDefault<string>("-n", "--name", null),
-               // User = null,
-               // ExtensionFields = null,
+                // User = null,
+                // ExtensionFields = null,
                 MessageSettings = BuildDataSetWriterMessageSettings(options),
                 SubscriptionSettings = BuildDataSetWriterSubscriptionSettings(options)
             }).ConfigureAwait(false);
@@ -1203,8 +1203,8 @@ namespace Microsoft.IIoT.Api.Cli {
                     SamplingInterval = options.GetValueOrDefault<TimeSpan>("-s", "--sampling", null),
                     IndexRange = options.GetValueOrDefault<string>("-r", "--range", null),
                     Order = options.GetValueOrDefault<int>("-o", "--order", null),
-                  //  MetaDataProperties = null, // TODO
-                  //  SubstituteValue = null // TODO
+                    //  MetaDataProperties = null, // TODO
+                    //  SubstituteValue = null // TODO
                     MonitoringMode = options.GetValueOrDefault<MonitoringMode?>("-m", "--mode", null),
                     TriggerId = options.GetValueOrDefault<string>("-t", "--triggerid", null),
                 }).ConfigureAwait(false);

@@ -15,6 +15,7 @@ namespace Microsoft.IIoT.Platform.OpcUa.Transport {
     using System.Security.Cryptography.X509Certificates;
     using System.Threading;
     using Autofac;
+    using System.Threading.Tasks;
 
     /// <summary>
     /// Enables websocket middleware to pass sockets on to listener
@@ -109,7 +110,7 @@ namespace Microsoft.IIoT.Platform.OpcUa.Transport {
         }
 
         /// <inheritdoc/>
-        public bool TransferListenerChannel(uint channelId, string server, Uri endpointUrl) {
+        public Task<bool> TransferListenerChannel(uint channelId, string server, Uri endpointUrl) {
             throw new NotImplementedException();
         }
 

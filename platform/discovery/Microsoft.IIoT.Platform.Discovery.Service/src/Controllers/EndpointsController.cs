@@ -31,7 +31,7 @@ namespace Microsoft.IIoT.Platform.Discovery.Service.Controllers {
         /// </summary>
         /// <param name="endpoints"></param>
         /// <param name="certificates"></param>
-        public EndpointsController(IEndpointRegistry endpoints, 
+        public EndpointsController(IEndpointRegistry endpoints,
             ICertificateServices<string> certificates) {
             _endpoints = endpoints;
             _certificates = certificates;
@@ -115,7 +115,7 @@ namespace Microsoft.IIoT.Platform.Discovery.Service.Controllers {
         /// <returns>List of endpoints and continuation token to use for next request</returns>
         [HttpPost("query")]
         public async Task<EndpointInfoListApiModel> QueryEndpointsAsync(
-            [FromBody] [Required] EndpointInfoQueryApiModel query,
+            [FromBody][Required] EndpointInfoQueryApiModel query,
             [FromQuery] int? pageSize) {
             if (query == null) {
                 throw new ArgumentNullException(nameof(query));
@@ -143,7 +143,7 @@ namespace Microsoft.IIoT.Platform.Discovery.Service.Controllers {
         /// <returns>List of endpoints and continuation token to use for next request</returns>
         [HttpGet("query")]
         public async Task<EndpointInfoListApiModel> GetFilteredListOfEndpointsAsync(
-            [FromQuery] [Required] EndpointInfoQueryApiModel query,
+            [FromQuery][Required] EndpointInfoQueryApiModel query,
             [FromQuery] int? pageSize) {
             if (query == null) {
                 throw new ArgumentNullException(nameof(query));

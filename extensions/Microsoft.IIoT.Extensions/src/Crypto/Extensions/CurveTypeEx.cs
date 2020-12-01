@@ -171,7 +171,7 @@ namespace Microsoft.IIoT.Crypto.Models {
                 case "1.3.132.0.10":
                     return CurveType.P256K;
 
-                // ...
+                    // ...
             }
 
             // Try match on friendly name

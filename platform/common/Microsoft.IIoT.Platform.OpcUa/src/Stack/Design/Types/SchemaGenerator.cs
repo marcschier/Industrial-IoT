@@ -226,7 +226,7 @@ namespace Opc.Ua.Design.Schema {
             var fields = new List<Parameter>();
             var parents = new Stack<DataTypeDesign>();
 
-            for (var parent = dataType as DataTypeDesign; parent != null; parent = parent.BaseTypeNode as DataTypeDesign) {
+            for (var parent = dataType; parent != null; parent = parent.BaseTypeNode as DataTypeDesign) {
                 if (parent.Fields != null) {
                     parents.Push(parent);
                 }

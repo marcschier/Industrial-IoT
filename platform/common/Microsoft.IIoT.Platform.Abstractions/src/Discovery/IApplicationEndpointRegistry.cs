@@ -22,7 +22,7 @@ namespace Microsoft.IIoT.Platform.Discovery {
         /// <param name="ct"></param>
         /// <returns></returns>
         Task<IEnumerable<EndpointInfoModel>> GetApplicationEndpointsAsync(
-            string applicationId, bool includeDeleted = false, 
+            string applicationId, bool includeDeleted = false,
             CancellationToken ct = default);
     }
 }

@@ -28,7 +28,7 @@ namespace Microsoft.IIoT.AspNetCore {
         /// <summary>
         /// Redirect port
         /// </summary>
-        public const string ASPNETCORE_HTTPSREDIRECTPORT = 
+        public const string ASPNETCORE_HTTPSREDIRECTPORT =
             "PCS_AUTH_HTTPSREDIRECTPORT";
     }
 }

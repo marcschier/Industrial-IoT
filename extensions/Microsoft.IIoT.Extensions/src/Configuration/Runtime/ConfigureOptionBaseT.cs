@@ -10,14 +10,14 @@ namespace Microsoft.IIoT.Configuration {
     /// <summary>
     /// Configuration base helper class
     /// </summary>
-    public abstract class ConfigureOptionBase<T> : ConfigureOptionBase, 
+    public abstract class ConfigureOptionBase<T> : ConfigureOptionBase,
         IConfigureOptions<T>, IConfigureNamedOptions<T> where T : class {
 
         /// <summary>
         /// Configuration constructor
         /// </summary>
         /// <param name="configuration"></param>
-        protected ConfigureOptionBase(IConfiguration configuration = null) : 
+        protected ConfigureOptionBase(IConfiguration configuration = null) :
             base(configuration) {
         }
 

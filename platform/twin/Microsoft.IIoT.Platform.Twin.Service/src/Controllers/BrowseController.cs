@@ -47,7 +47,7 @@ namespace Microsoft.IIoT.Platform.Twin.Service.Controllers {
         /// <returns>The browse response</returns>
         [HttpPost("{twinId}")]
         public async Task<BrowseResponseApiModel> BrowseAsync(string twinId,
-            [FromBody] [Required] BrowseRequestApiModel request) {
+            [FromBody][Required] BrowseRequestApiModel request) {
             if (request == null) {
                 throw new ArgumentNullException(nameof(request));
             }
@@ -69,7 +69,7 @@ namespace Microsoft.IIoT.Platform.Twin.Service.Controllers {
         /// <returns>The browse response</returns>
         [HttpPost("{twinId}/next")]
         public async Task<BrowseNextResponseApiModel> BrowseNextAsync(
-            string twinId, [FromBody] [Required] BrowseNextRequestApiModel request) {
+            string twinId, [FromBody][Required] BrowseNextRequestApiModel request) {
             if (request == null) {
                 throw new ArgumentNullException(nameof(request));
             }
@@ -95,7 +95,7 @@ namespace Microsoft.IIoT.Platform.Twin.Service.Controllers {
         /// <returns>The browse path response</returns>
         [HttpPost("{twinId}/path")]
         public async Task<BrowsePathResponseApiModel> BrowseUsingPathAsync(string twinId,
-            [FromBody] [Required] BrowsePathRequestApiModel request) {
+            [FromBody][Required] BrowsePathRequestApiModel request) {
             if (request == null) {
                 throw new ArgumentNullException(nameof(request));
             }
@@ -132,7 +132,7 @@ namespace Microsoft.IIoT.Platform.Twin.Service.Controllers {
                 TargetNodesOnly = true,
                 ReadVariableValues = true
             };
-            var browseresult = await _browser.NodeBrowseAsync(twinId, 
+            var browseresult = await _browser.NodeBrowseAsync(twinId,
                 request).ConfigureAwait(false);
             return browseresult.ToApiModel();
         }
@@ -155,7 +155,7 @@ namespace Microsoft.IIoT.Platform.Twin.Service.Controllers {
         [HttpGet("{twinId}/next")]
         [AutoRestExtension(NextPageLinkName = "continuationToken")]
         public async Task<BrowseNextResponseApiModel> GetNextSetOfUniqueNodesAsync(
-            string twinId, [FromQuery] [Required] string continuationToken) {
+            string twinId, [FromQuery][Required] string continuationToken) {
             continuationToken = Request.GetContinuationToken(continuationToken);
             if (string.IsNullOrEmpty(continuationToken)) {
                 throw new ArgumentNullException(nameof(continuationToken));
@@ -165,7 +165,7 @@ namespace Microsoft.IIoT.Platform.Twin.Service.Controllers {
                 TargetNodesOnly = true,
                 ReadVariableValues = true
             };
-            var browseresult = await _browser.NodeBrowseNextAsync(twinId, 
+            var browseresult = await _browser.NodeBrowseNextAsync(twinId,
                 request).ConfigureAwait(false);
             return browseresult.ToApiModel();
         }

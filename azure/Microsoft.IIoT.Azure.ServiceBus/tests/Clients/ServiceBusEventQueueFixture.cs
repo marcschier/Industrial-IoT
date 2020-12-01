@@ -118,9 +118,9 @@ namespace Microsoft.IIoT.Azure.ServiceBus.Clients {
             }
             var config = _container.Resolve<IOptions<ServiceBusOptions>>();
             var managementClient = new ManagementClient(config.Value.ServiceBusConnString);
-          //  managementClient.GetQueuesAsync().Result
-          //      .ToList().ForEach(q => managementClient.DeleteQueueAsync(q.Path).Wait());
-             managementClient.DeleteQueueAsync(_queue).Wait();
+            //  managementClient.GetQueuesAsync().Result
+            //      .ToList().ForEach(q => managementClient.DeleteQueueAsync(q.Path).Wait());
+            managementClient.DeleteQueueAsync(_queue).Wait();
             _container.Dispose();
         }
 

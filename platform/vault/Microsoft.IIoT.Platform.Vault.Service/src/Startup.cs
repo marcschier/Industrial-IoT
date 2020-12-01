@@ -160,7 +160,7 @@ namespace Microsoft.IIoT.Platform.Vault.Service {
             builder.RegisterModule<MessagePackModule>();
             builder.RegisterModule<NewtonSoftJsonModule>();
 
-             // --- Logic ---
+            // --- Logic ---
 
             // Crypto services
             builder.RegisterType<CertificateDatabase>()

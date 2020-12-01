@@ -28,7 +28,7 @@ namespace Microsoft.IIoT.Platform.Discovery.Api {
             var result = await service.QueryEndpointsAsync(query, null, ct).ConfigureAwait(false);
             registrations.AddRange(result.Items);
             while (result.ContinuationToken != null) {
-                result = await service.ListEndpointsAsync(result.ContinuationToken, 
+                result = await service.ListEndpointsAsync(result.ContinuationToken,
                     null, ct).ConfigureAwait(false);
                 registrations.AddRange(result.Items);
             }
@@ -47,7 +47,7 @@ namespace Microsoft.IIoT.Platform.Discovery.Api {
             var result = await service.ListEndpointsAsync(null, null, ct).ConfigureAwait(false);
             registrations.AddRange(result.Items);
             while (result.ContinuationToken != null) {
-                result = await service.ListEndpointsAsync(result.ContinuationToken, 
+                result = await service.ListEndpointsAsync(result.ContinuationToken,
                     null, ct).ConfigureAwait(false);
                 registrations.AddRange(result.Items);
             }
@@ -87,7 +87,7 @@ namespace Microsoft.IIoT.Platform.Discovery.Api {
             var result = await service.ListApplicationsAsync(null, null, ct).ConfigureAwait(false);
             registrations.AddRange(result.Items);
             while (result.ContinuationToken != null) {
-                result = await service.ListApplicationsAsync(result.ContinuationToken, 
+                result = await service.ListApplicationsAsync(result.ContinuationToken,
                     null, ct).ConfigureAwait(false);
                 registrations.AddRange(result.Items);
             }

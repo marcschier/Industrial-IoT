@@ -76,7 +76,7 @@ namespace Microsoft.IIoT.Platform.Identity.Runtime {
                 client.ClientUri = uri;
                 client.AllowedGrantTypes = GrantTypes.Hybrid;
                 client.RedirectUris = new List<string> { $"{uri}/signin-oidc" };
-                client.PostLogoutRedirectUris = new List<string>{ uri };
+                client.PostLogoutRedirectUris = new List<string> { uri };
                 client.FrontChannelLogoutUri = $"{uri}/signout-oidc";
 
                 client.AllowedScopes.Add(IdentityServerConstants.StandardScopes.OpenId);
@@ -84,10 +84,10 @@ namespace Microsoft.IIoT.Platform.Identity.Runtime {
                 client.AllowedScopes.Add(IdentityServerConstants.StandardScopes.Email);
             }
 
-          // TODO  else if (config is IOpenApiClientConfig swagger) {
-          // TODO      client.AllowedGrantTypes = GrantTypes.Implicit;
-          // TODO      client.RedirectUris = swagger.RedirectUris ?? new List<string>();
-          // TODO  }
+            // TODO  else if (config is IOpenApiClientConfig swagger) {
+            // TODO      client.AllowedGrantTypes = GrantTypes.Implicit;
+            // TODO      client.RedirectUris = swagger.RedirectUris ?? new List<string>();
+            // TODO  }
 
             else {
                 client.AllowedGrantTypes = GrantTypes.Implicit;

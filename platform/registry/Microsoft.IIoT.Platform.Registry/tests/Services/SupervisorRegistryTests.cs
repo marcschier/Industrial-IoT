@@ -27,7 +27,7 @@ namespace Microsoft.IIoT.Platform.Registry.Services {
 
         [Fact]
         public void GetSupervisorThatDoesNotExist() {
-            CreateSupervisorFixtures(out var hubName, out var site,out var supervisors, out var modules);
+            CreateSupervisorFixtures(out var hubName, out var site, out var supervisors, out var modules);
 
             using (var mock = AutoMock.GetLoose(builder => {
                 var hub = IoTHubServices.Create(hubName, modules);
@@ -49,10 +49,10 @@ namespace Microsoft.IIoT.Platform.Registry.Services {
 
         [Fact]
         public void GetSupervisorThatExists() {
-            CreateSupervisorFixtures(out var hubName, out var site,out var supervisors, out var modules);
+            CreateSupervisorFixtures(out var hubName, out var site, out var supervisors, out var modules);
 
             using (var mock = AutoMock.GetLoose(builder => {
-                var hub = IoTHubServices.Create(hubName,modules);
+                var hub = IoTHubServices.Create(hubName, modules);
                 builder.RegisterType<NewtonSoftJsonConverters>().As<IJsonSerializerConverterProvider>();
                 builder.RegisterType<NewtonSoftJsonSerializer>().As<IJsonSerializer>();
                 builder.RegisterInstance(hub).As<IDeviceTwinServices>();
@@ -69,10 +69,10 @@ namespace Microsoft.IIoT.Platform.Registry.Services {
 
         [Fact]
         public void UpdateSupervisorThatExists() {
-            CreateSupervisorFixtures(out var hubName, out var site,out var supervisors, out var modules);
+            CreateSupervisorFixtures(out var hubName, out var site, out var supervisors, out var modules);
 
             using (var mock = AutoMock.GetLoose(builder => {
-                var hub = IoTHubServices.Create(hubName,modules);
+                var hub = IoTHubServices.Create(hubName, modules);
                 builder.RegisterType<NewtonSoftJsonConverters>().As<IJsonSerializerConverterProvider>();
                 builder.RegisterType<NewtonSoftJsonSerializer>().As<IJsonSerializer>();
                 builder.RegisterInstance(hub).As<IDeviceTwinServices>();
@@ -93,10 +93,10 @@ namespace Microsoft.IIoT.Platform.Registry.Services {
 
         [Fact]
         public void ListAllSupervisors() {
-            CreateSupervisorFixtures(out var hubName, out var site,out var supervisors, out var modules);
+            CreateSupervisorFixtures(out var hubName, out var site, out var supervisors, out var modules);
 
             using (var mock = AutoMock.GetLoose(builder => {
-                var hub = IoTHubServices.Create(hubName,modules);
+                var hub = IoTHubServices.Create(hubName, modules);
                 builder.RegisterType<NewtonSoftJsonConverters>().As<IJsonSerializerConverterProvider>();
                 builder.RegisterType<NewtonSoftJsonSerializer>().As<IJsonSerializer>();
                 builder.RegisterInstance(hub).As<IDeviceTwinServices>();
@@ -113,10 +113,10 @@ namespace Microsoft.IIoT.Platform.Registry.Services {
 
         [Fact]
         public void ListAllSupervisorsUsingQuery() {
-            CreateSupervisorFixtures(out var hubName, out var site,out var supervisors, out var modules);
+            CreateSupervisorFixtures(out var hubName, out var site, out var supervisors, out var modules);
 
             using (var mock = AutoMock.GetLoose(builder => {
-                var hub = IoTHubServices.Create(hubName,modules);
+                var hub = IoTHubServices.Create(hubName, modules);
                 builder.RegisterType<NewtonSoftJsonConverters>().As<IJsonSerializerConverterProvider>();
                 builder.RegisterType<NewtonSoftJsonSerializer>().As<IJsonSerializer>();
                 builder.RegisterInstance(hub).As<IDeviceTwinServices>();

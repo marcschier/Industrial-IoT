@@ -26,7 +26,7 @@ namespace Microsoft.IIoT.Platform.Vault.Api.Clients {
         /// <param name="serializer"></param>
         public VaultServiceClient(IHttpClient httpClient, IVaultConfig config,
             ISerializer serializer) :
-            this(httpClient, config?.OpcUaVaultServiceUrl,serializer) {
+            this(httpClient, config?.OpcUaVaultServiceUrl, serializer) {
         }
 
         /// <summary>

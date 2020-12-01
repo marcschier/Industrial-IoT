@@ -55,7 +55,7 @@ namespace Microsoft.IIoT.Azure.EventHub.Processor.Services {
             public DefaultProcessor(EventProcessorFactory outer, PartitionContext partitionContext,
                 ILogger logger) {
                 _outer = outer ?? throw new ArgumentNullException(nameof(outer));
-                _partitionContext = partitionContext ?? 
+                _partitionContext = partitionContext ??
                     throw new ArgumentNullException(nameof(partitionContext));
                 _processorId = Guid.NewGuid().ToString();
                 _logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -78,7 +78,7 @@ namespace Microsoft.IIoT.Azure.EventHub.Processor.Services {
                     messagesCount++;
                     if (_outer._config.Value.SkipEventsOlderThan != null &&
                         eventData.SystemProperties.TryGetValue("x-opt-enqueued-time", out var enqueued) &&
-                        (DateTime)enqueued + _outer._config.Value.SkipEventsOlderThan < DateTime.UtcNow ) {
+                        (DateTime)enqueued + _outer._config.Value.SkipEventsOlderThan < DateTime.UtcNow) {
                         continue;
                     }
                     var properties = new EventProperties(eventData.SystemProperties,

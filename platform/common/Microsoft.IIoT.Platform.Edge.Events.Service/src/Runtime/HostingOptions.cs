@@ -14,9 +14,9 @@ namespace Microsoft.IIoT.Platform.Edge.Events.Service.Runtime {
     /// <summary>
     /// Telemetry processor service configuration
     /// </summary>
-    public class HostingOptions : ConfigureOptionBase<MetricsServerOptions>, 
+    public class HostingOptions : ConfigureOptionBase<MetricsServerOptions>,
         IConfigureOptions<EventHubConsumerOptions>,
-        IConfigureOptions<EventProcessorHostOptions>, 
+        IConfigureOptions<EventProcessorHostOptions>,
         IConfigureOptions<EventProcessorFactoryOptions> {
 
         /// <inheritdoc/>

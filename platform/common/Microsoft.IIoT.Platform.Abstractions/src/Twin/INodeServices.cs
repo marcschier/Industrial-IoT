@@ -41,7 +41,7 @@ namespace Microsoft.IIoT.Platform.Twin {
         /// <param name="ct"></param>
         /// <returns></returns>
         Task<MethodMetadataResultModel> NodeMethodGetMetadataAsync(
-            T twin, MethodMetadataRequestModel request, 
+            T twin, MethodMetadataRequestModel request,
             CancellationToken ct = default);
 
         /// <summary>

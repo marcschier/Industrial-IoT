@@ -140,7 +140,7 @@ namespace Autofac {
             // priority builder's sources either at the front or end.  
             //
             builder.RegisterServiceMiddleware<IConfigurationBuilder>(resolver,
-                priority == ConfigSourcePriority.Low ? 
+                priority == ConfigSourcePriority.Low ?
                     MiddlewareInsertionMode.StartOfPhase : MiddlewareInsertionMode.EndOfPhase);
             return builder.AddConfiguration();
         }
@@ -168,7 +168,7 @@ namespace Autofac {
             public IConfigurationRoot Build() {
                 return new ConfigurationRoot(Sources
                     .Select(c => c)
-                    .Reverse() 
+                    .Reverse()
                     .Select(s => s.Build(this))
                     .ToList());
             }
@@ -188,7 +188,7 @@ namespace Autofac {
             /// <param name="factory"></param>
             /// <param name="insertFirst"></param>
             public ConfigurationBuilderResolver(
-                Func<IConfigurationBuilder, IConfigurationSource> factory, 
+                Func<IConfigurationBuilder, IConfigurationSource> factory,
                 bool insertFirst = false) {
                 _factory = factory ?? throw new ArgumentNullException(nameof(factory));
                 _insertFirst = insertFirst;

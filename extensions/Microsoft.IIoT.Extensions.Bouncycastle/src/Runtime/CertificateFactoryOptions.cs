@@ -19,6 +19,6 @@ namespace Microsoft.IIoT.Crypto {
         /// <summary>
         /// Authority information access template
         /// </summary>
-        public string AuthorityInfoRootUrl { get; set; }    
+        public string AuthorityInfoRootUrl { get; set; }
     }
 }

@@ -41,8 +41,8 @@ namespace Microsoft.IIoT.Platform.Twin.Services {
         /// <param name="maxValues"></param>
         /// <param name="priority"></param>
         public HistoricValueStreamEncoder(IConnectionServices client, ConnectionModel connection,
-            Stream stream, string contentType, string nodeId, ILogger logger, 
-            DateTime? startTime = null, DateTime? endTime = null, int? maxValues = null, 
+            Stream stream, string contentType, string nodeId, ILogger logger,
+            DateTime? startTime = null, DateTime? endTime = null, int? maxValues = null,
             int priority = int.MaxValue) :
             this(client, connection, nodeId, logger, startTime, endTime, maxValues, priority) {
             _encoder = new ModelEncoder(stream, contentType);
@@ -61,7 +61,7 @@ namespace Microsoft.IIoT.Platform.Twin.Services {
         /// <param name="maxValues"></param>
         /// <param name="priority"></param>
         public HistoricValueStreamEncoder(IConnectionServices client, ConnectionModel connection,
-            IEncoder encoder, string nodeId, ILogger logger, DateTime? startTime = null, 
+            IEncoder encoder, string nodeId, ILogger logger, DateTime? startTime = null,
             DateTime? endTime = null, int? maxValues = null, int priority = int.MaxValue) :
             this(client, connection, nodeId, logger, startTime, endTime, maxValues, priority) {
             _encoder = new ModelEncoder(encoder);
@@ -79,7 +79,7 @@ namespace Microsoft.IIoT.Platform.Twin.Services {
         /// <param name="maxValues"></param>
         /// <param name="priority"></param>
         private HistoricValueStreamEncoder(IConnectionServices client, ConnectionModel connection,
-            string nodeId, ILogger logger, DateTime? startTime, DateTime? endTime, 
+            string nodeId, ILogger logger, DateTime? startTime, DateTime? endTime,
             int? maxValues, int priority) {
 
             _client = client ?? throw new ArgumentNullException(nameof(client));
@@ -109,7 +109,7 @@ namespace Microsoft.IIoT.Platform.Twin.Services {
             }
             bool eventSource;
             try {
-                var node = await _client.ExecuteServiceAsync(_connection, 
+                var node = await _client.ExecuteServiceAsync(_connection,
                     _priority, async session => {
                         _encoder.Context.UpdateFromSession(session);
                         var nodeId = _nodeId.ToNodeId(session.MessageContext);
@@ -251,7 +251,7 @@ namespace Microsoft.IIoT.Platform.Twin.Services {
             while (true) {
                 ct.ThrowIfCancellationRequested();
                 try {
-                    var result = await ReadHistoryAsync<HistoryEvent>(details, 
+                    var result = await ReadHistoryAsync<HistoryEvent>(details,
                         ct).ConfigureAwait(false);
                     if (result.history?.Events != null) {
                         _logger.LogTrace("  {count} events...",
@@ -318,7 +318,7 @@ namespace Microsoft.IIoT.Platform.Twin.Services {
                     return null;
                 }
                 var read = await RawNodeModel.ReadValueAsync(session, null,
-                    (NodeId)filterNode.Results[0].Targets[0].TargetId, _diagnostics, 
+                    (NodeId)filterNode.Results[0].Targets[0].TargetId, _diagnostics,
                         false, ct).ConfigureAwait(false);
                 if (ExtensionObject.ToEncodeable(read.Value.Value as ExtensionObject)
                     is EventFilter eventFilter) {

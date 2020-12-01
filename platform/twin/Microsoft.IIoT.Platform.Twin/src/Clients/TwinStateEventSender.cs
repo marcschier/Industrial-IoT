@@ -25,7 +25,7 @@ namespace Microsoft.IIoT.Platform.Twin.Clients {
         /// <param name="serializer"></param>
         /// <param name="processor"></param>
         /// <param name="logger"></param>
-        public TwinStateEventSender(IEventClient events, IJsonSerializer serializer, 
+        public TwinStateEventSender(IEventClient events, IJsonSerializer serializer,
             ITaskProcessor processor, ILogger logger) {
             _serializer = serializer ?? throw new ArgumentNullException(nameof(serializer));
             _processor = processor ?? throw new ArgumentNullException(nameof(processor));

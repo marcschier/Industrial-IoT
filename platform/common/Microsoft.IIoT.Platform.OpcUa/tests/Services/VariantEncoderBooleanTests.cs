@@ -38,7 +38,7 @@ namespace Microsoft.IIoT.Platform.OpcUa.Services {
         [Fact]
         public void DecodeEncodeBooleanFromJValueTypeNull() {
             var codec = new VariantEncoderFactory().Default;
-            var str =  _serializer.FromObject(true);
+            var str = _serializer.FromObject(true);
             var variant = codec.Decode(str, BuiltInType.Null);
             var expected = new Variant(true);
             var encoded = codec.Encode(variant);
@@ -49,7 +49,7 @@ namespace Microsoft.IIoT.Platform.OpcUa.Services {
         [Fact]
         public void DecodeEncodeBooleanArrayFromJArrayTypeNull() {
             var codec = new VariantEncoderFactory().Default;
-            var str =  _serializer.FromArray(true, true, false);
+            var str = _serializer.FromArray(true, true, false);
             var variant = codec.Decode(str, BuiltInType.Null);
             var expected = new Variant(new bool[] { true, true, false });
             var encoded = codec.Encode(variant);
@@ -71,7 +71,7 @@ namespace Microsoft.IIoT.Platform.OpcUa.Services {
         [Fact]
         public void DecodeEncodeBooleanArrayFromString() {
             var codec = new VariantEncoderFactory().Default;
-            var str =  "true, true, false";
+            var str = "true, true, false";
             var variant = codec.Decode(str, BuiltInType.Boolean);
             var expected = new Variant(new bool[] { true, true, false });
             var encoded = codec.Encode(variant);

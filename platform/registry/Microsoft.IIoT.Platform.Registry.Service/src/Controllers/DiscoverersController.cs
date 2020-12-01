@@ -62,7 +62,7 @@ namespace Microsoft.IIoT.Platform.Registry.Service.Controllers {
         [HttpPatch("{discovererId}")]
         [Authorize(Policy = Policies.CanChange)]
         public async Task UpdateDiscovererAsync(string discovererId,
-            [FromBody] [Required] DiscovererUpdateApiModel request) {
+            [FromBody][Required] DiscovererUpdateApiModel request) {
             if (request == null) {
                 throw new ArgumentNullException(nameof(request));
             }
@@ -112,7 +112,7 @@ namespace Microsoft.IIoT.Platform.Registry.Service.Controllers {
         /// <returns>Discoverers</returns>
         [HttpPost("query")]
         public async Task<DiscovererListApiModel> QueryDiscoverersAsync(
-            [FromBody] [Required] DiscovererQueryApiModel query,
+            [FromBody][Required] DiscovererQueryApiModel query,
             [FromQuery] int? pageSize) {
             if (query == null) {
                 throw new ArgumentNullException(nameof(query));
@@ -139,7 +139,7 @@ namespace Microsoft.IIoT.Platform.Registry.Service.Controllers {
         /// <returns>Discoverers</returns>
         [HttpGet("query")]
         public async Task<DiscovererListApiModel> GetFilteredListOfDiscoverersAsync(
-            [FromQuery] [Required] DiscovererQueryApiModel query,
+            [FromQuery][Required] DiscovererQueryApiModel query,
             [FromQuery] int? pageSize) {
 
             if (query == null) {

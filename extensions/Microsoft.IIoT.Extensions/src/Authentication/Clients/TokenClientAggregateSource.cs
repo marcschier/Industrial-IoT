@@ -31,7 +31,7 @@ namespace Microsoft.IIoT.Authentication.Clients {
         /// <param name="clients"></param>
         /// <param name="logger"></param>
         public TokenClientAggregateSource(IEnumerable<ITokenClient> clients, ILogger logger) :
-            this (Reorder(clients), Http.Resource.Platform, logger) {
+            this(Reorder(clients), Http.Resource.Platform, logger) {
         }
 
         /// <summary>
@@ -43,7 +43,7 @@ namespace Microsoft.IIoT.Authentication.Clients {
         /// <param name="prefer"></param>
         protected TokenClientAggregateSource(IEnumerable<ITokenClient> clients,
             string resource, ILogger logger, params ITokenClient[] prefer)
-            : this (Reorder(clients, prefer), resource, logger) {
+            : this(Reorder(clients, prefer), resource, logger) {
         }
 
         /// <summary>

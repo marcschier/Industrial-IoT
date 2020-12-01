@@ -81,10 +81,10 @@ namespace Microsoft.IIoT.Platform.Publisher.Services {
             if (updated) {
                 // If updated notify about dataset writer change
                 await _itemEvents.NotifyAllAsync(
-                    l => l.OnPublishedDataSetEventsStateChangeAsync(context, 
+                    l => l.OnPublishedDataSetEventsStateChangeAsync(context,
                         dataSetWriterId, result)).ConfigureAwait(false);
                 await _writerEvents.NotifyAllAsync(
-                    l => l.OnDataSetWriterStateChangeAsync(context, 
+                    l => l.OnDataSetWriterStateChangeAsync(context,
                         dataSetWriterId, null)).ConfigureAwait(false);
             }
         }
@@ -127,10 +127,10 @@ namespace Microsoft.IIoT.Platform.Publisher.Services {
             if (updated) {
                 // If updated notify about dataset writer change
                 await _itemEvents.NotifyAllAsync(
-                    l => l.OnPublishedDataSetVariableStateChangeAsync(context, 
+                    l => l.OnPublishedDataSetVariableStateChangeAsync(context,
                         dataSetWriterId, result)).ConfigureAwait(false);
                 await _writerEvents.NotifyAllAsync(
-                    l => l.OnDataSetWriterStateChangeAsync(context, 
+                    l => l.OnDataSetWriterStateChangeAsync(context,
                         dataSetWriterId, null)).ConfigureAwait(false);
             }
         }
@@ -176,7 +176,7 @@ namespace Microsoft.IIoT.Platform.Publisher.Services {
             if (updated) {
                 // If updated notify about dataset writer state change
                 await _writerEvents.NotifyAllAsync(
-                    l => l.OnDataSetWriterStateChangeAsync(context, 
+                    l => l.OnDataSetWriterStateChangeAsync(context,
                         dataSetWriterId, writer)).ConfigureAwait(false);
             }
         }
@@ -329,7 +329,7 @@ namespace Microsoft.IIoT.Platform.Publisher.Services {
             if (updated) {
                 // If updated notify about dataset writer state change
                 await _writerEvents.NotifyAllAsync(
-                    l => l.OnDataSetWriterStateChangeAsync(context, 
+                    l => l.OnDataSetWriterStateChangeAsync(context,
                         dataSetWriterId, writer)).ConfigureAwait(false);
             }
         }

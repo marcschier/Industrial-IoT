@@ -45,6 +45,9 @@ namespace Microsoft.IIoT.Platform.OpcUa.Transport {
         public int Handle => _socket.GetHashCode();
 
         /// <inheritdoc/>
+        public TransportChannelFeatures MessageSocketFeatures => TransportChannelFeatures.None;
+
+        /// <inheritdoc/>
         public void Close() {
             if (_open.IsCancellationRequested) {
                 return;

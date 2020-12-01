@@ -1722,7 +1722,7 @@ namespace Microsoft.IIoT.Platform.Publisher.Api.Models {
             }
             return new DataSetUpdateVariableRequestModel {
                 GenerationId = model.GenerationId,
-                DataChangeFilter = (Publisher.Models.DataChangeTriggerType ?)model.DataChangeFilter,
+                DataChangeFilter = (Publisher.Models.DataChangeTriggerType?)model.DataChangeFilter,
                 DeadbandType = (Publisher.Models.DeadbandType?)model.DeadbandType,
                 DeadbandValue = model.DeadbandValue,
                 DiscardNew = model.DiscardNew,

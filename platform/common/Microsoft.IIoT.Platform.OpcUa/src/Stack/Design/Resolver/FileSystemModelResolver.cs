@@ -62,7 +62,7 @@ namespace Opc.Ua.Design.Resolver {
                 throw new ArgumentNullException(nameof(symbolicId));
             }
             if (!_assigners.TryGetValue(ns, out var assigner)) {
-                assigner = LoadIdentifiers(ns) as INodeIdAssigner;
+                assigner = LoadIdentifiers(ns);
                 if (assigner == null) {
                     return null;
                 }

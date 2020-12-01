@@ -35,7 +35,7 @@ namespace Microsoft.IIoT.Azure.IoTHub.Deploy {
 
         /// <inheritdoc/>
         public Task StartAsync() {
-           return _service.CreateOrUpdateConfigurationAsync(new ConfigurationModel {
+            return _service.CreateOrUpdateConfigurationAsync(new ConfigurationModel {
                 Id = kEdgeType,
                 Content = new ConfigurationContentModel {
                     ModulesContent = GetEdgeBase()
@@ -76,7 +76,7 @@ namespace Microsoft.IIoT.Azure.IoTHub.Deploy {
                 ""edgeAgent"": {
                     ""type"": ""docker"",
                     ""settings"": {
-                        ""image"": ""mcr.microsoft.com/azureiotedge-agent:" + version+ @""",
+                        ""image"": ""mcr.microsoft.com/azureiotedge-agent:" + version + @""",
                         ""createOptions"": ""{}""
                     },
                     ""env"": {

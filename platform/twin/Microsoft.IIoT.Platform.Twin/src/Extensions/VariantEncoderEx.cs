@@ -23,7 +23,7 @@ namespace Microsoft.IIoT.Platform.OpcUa {
         /// <param name="codec"></param>
         /// <param name="details"></param>
         /// <returns></returns>
-        public static VariantValue Encode(this IVariantEncoder codec, 
+        public static VariantValue Encode(this IVariantEncoder codec,
             DeleteValuesAtTimesDetailsModel details) {
             if (details == null) {
                 throw new ArgumentNullException(nameof(details));
@@ -63,7 +63,7 @@ namespace Microsoft.IIoT.Platform.OpcUa {
         /// <param name="codec"></param>
         /// <param name="details"></param>
         /// <returns></returns>
-        public static VariantValue Encode(this IVariantEncoder codec, 
+        public static VariantValue Encode(this IVariantEncoder codec,
             DeleteValuesDetailsModel details) {
             if (codec is null) {
                 throw new ArgumentNullException(nameof(codec));
@@ -111,7 +111,7 @@ namespace Microsoft.IIoT.Platform.OpcUa {
         /// <param name="codec"></param>
         /// <param name="details"></param>
         /// <returns></returns>
-        public static VariantValue Encode(this IVariantEncoder codec, 
+        public static VariantValue Encode(this IVariantEncoder codec,
             ReplaceValuesDetailsModel details) {
             if (codec is null) {
                 throw new ArgumentNullException(nameof(codec));
@@ -143,7 +143,7 @@ namespace Microsoft.IIoT.Platform.OpcUa {
         /// <param name="codec"></param>
         /// <param name="details"></param>
         /// <returns></returns>
-        public static VariantValue Encode(this IVariantEncoder codec, 
+        public static VariantValue Encode(this IVariantEncoder codec,
             InsertValuesDetailsModel details) {
             if (details == null) {
                 throw new ArgumentNullException(nameof(details));
@@ -172,7 +172,7 @@ namespace Microsoft.IIoT.Platform.OpcUa {
         /// <param name="codec"></param>
         /// <param name="details"></param>
         /// <returns></returns>
-        public static VariantValue Encode(this IVariantEncoder codec, 
+        public static VariantValue Encode(this IVariantEncoder codec,
             ReplaceEventsDetailsModel details) {
             if (details == null) {
                 throw new ArgumentNullException(nameof(details));
@@ -198,7 +198,7 @@ namespace Microsoft.IIoT.Platform.OpcUa {
         /// <param name="codec"></param>
         /// <param name="details"></param>
         /// <returns></returns>
-        public static VariantValue Encode(this IVariantEncoder codec, 
+        public static VariantValue Encode(this IVariantEncoder codec,
             InsertEventsDetailsModel details) {
             if (codec is null) {
                 throw new ArgumentNullException(nameof(codec));
@@ -250,7 +250,7 @@ namespace Microsoft.IIoT.Platform.OpcUa {
         /// <param name="codec"></param>
         /// <param name="details"></param>
         /// <returns></returns>
-        public static VariantValue Encode(this IVariantEncoder codec, 
+        public static VariantValue Encode(this IVariantEncoder codec,
             ReadEventsDetailsModel details) {
             if (codec is null) {
                 throw new ArgumentNullException(nameof(codec));
@@ -259,12 +259,12 @@ namespace Microsoft.IIoT.Platform.OpcUa {
                 throw new ArgumentNullException(nameof(details));
             }
             if (details.EndTime == null && details.StartTime == null) {
-                throw new ArgumentException("Start time and end time cannot both be null", 
+                throw new ArgumentException("Start time and end time cannot both be null",
                     nameof(details));
             }
             if ((details.StartTime == null || details.EndTime == null) &&
                 ((details.NumEvents ?? 0) == 0)) {
-                throw new ArgumentException("Value bound must be set", 
+                throw new ArgumentException("Value bound must be set",
                     nameof(details));
             }
             return codec.Encode(new ExtensionObject(new ReadEventDetails {
@@ -281,7 +281,7 @@ namespace Microsoft.IIoT.Platform.OpcUa {
         /// <param name="codec"></param>
         /// <param name="details"></param>
         /// <returns></returns>
-        public static VariantValue Encode(this IVariantEncoder codec, 
+        public static VariantValue Encode(this IVariantEncoder codec,
             ReadProcessedValuesDetailsModel details) {
             if (codec is null) {
                 throw new ArgumentNullException(nameof(codec));
@@ -290,14 +290,14 @@ namespace Microsoft.IIoT.Platform.OpcUa {
                 throw new ArgumentNullException(nameof(details));
             }
             if (details.EndTime == null && details.StartTime == null) {
-                throw new ArgumentException("Start time and end time cannot both be null", 
+                throw new ArgumentException("Start time and end time cannot both be null",
                     nameof(details));
             }
             var aggregate = details.AggregateTypeId?.ToNodeId(codec.Context);
             return codec.Encode(new ExtensionObject(new ReadProcessedDetails {
                 EndTime = details.EndTime ?? DateTime.MinValue,
                 StartTime = details.StartTime ?? DateTime.MinValue,
-                AggregateType = aggregate == null ? null : 
+                AggregateType = aggregate == null ? null :
                     new NodeIdCollection(aggregate.YieldReturn()),
                 ProcessingInterval = details.ProcessingInterval ?? 0,
                 AggregateConfiguration = details.AggregateConfiguration.ToStackModel()
@@ -310,7 +310,7 @@ namespace Microsoft.IIoT.Platform.OpcUa {
         /// <param name="codec"></param>
         /// <param name="details"></param>
         /// <returns></returns>
-        public static VariantValue Encode(this IVariantEncoder codec, 
+        public static VariantValue Encode(this IVariantEncoder codec,
             ReadValuesDetailsModel details) {
             if (codec is null) {
                 throw new ArgumentNullException(nameof(codec));
@@ -319,12 +319,12 @@ namespace Microsoft.IIoT.Platform.OpcUa {
                 throw new ArgumentNullException(nameof(details));
             }
             if (details.EndTime == null && details.StartTime == null) {
-                throw new ArgumentException("Start time and end time cannot both be null", 
+                throw new ArgumentException("Start time and end time cannot both be null",
                     nameof(details));
             }
-            if ((details.StartTime == null || details.EndTime == null) && 
+            if ((details.StartTime == null || details.EndTime == null) &&
                 ((details.NumValues ?? 0) == 0)) {
-                throw new ArgumentException("Value bound must be set", 
+                throw new ArgumentException("Value bound must be set",
                     nameof(details));
             }
             return codec.Encode(new ExtensionObject(new ReadRawModifiedDetails {
@@ -342,7 +342,7 @@ namespace Microsoft.IIoT.Platform.OpcUa {
         /// <param name="codec"></param>
         /// <param name="details"></param>
         /// <returns></returns>
-        public static VariantValue Encode(this IVariantEncoder codec, 
+        public static VariantValue Encode(this IVariantEncoder codec,
             ReadModifiedValuesDetailsModel details) {
             if (codec is null) {
                 throw new ArgumentNullException(nameof(codec));
@@ -354,9 +354,9 @@ namespace Microsoft.IIoT.Platform.OpcUa {
                 throw new ArgumentException("Start time and end time cannot both be null",
                     nameof(details));
             }
-            if ((details.StartTime == null || details.EndTime == null) && 
+            if ((details.StartTime == null || details.EndTime == null) &&
                 ((details.NumValues ?? 0) == 0)) {
-                throw new ArgumentException("Value bound must be set", 
+                throw new ArgumentException("Value bound must be set",
                     nameof(details));
             }
             return codec.Encode(new ExtensionObject(new ReadRawModifiedDetails {
@@ -437,7 +437,7 @@ namespace Microsoft.IIoT.Platform.OpcUa {
         /// <param name="codec"></param>
         /// <param name="o"></param>
         /// <returns></returns>
-        internal static VariantValue Encode(this IVariantEncoder codec, 
+        internal static VariantValue Encode(this IVariantEncoder codec,
             ExtensionObject o) {
             if (codec is null) {
                 throw new ArgumentNullException(nameof(codec));

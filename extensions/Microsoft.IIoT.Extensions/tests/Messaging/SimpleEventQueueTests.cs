@@ -36,7 +36,7 @@ namespace Microsoft.IIoT.Messaging.Services {
 
                 var tcs = new TaskCompletionSource<TelemetryEventArgs>(TaskCreationOptions.RunContinuationsAsynchronously);
                 harness.OnEvent += (_, a) => {
-                    if (a.HandlerSchema == "Test1"){
+                    if (a.HandlerSchema == "Test1") {
                         tcs.TrySetResult(a);
                     }
                 };

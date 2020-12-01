@@ -27,9 +27,9 @@ namespace Microsoft.IIoT.Platform.Twin.Api {
 
         /// <inheritdoc/>
         public async Task<HistoryUpdateResultModel> HistoryReplaceEventsAsync(
-            string twin, HistoryUpdateRequestModel<ReplaceEventsDetailsModel> request, 
+            string twin, HistoryUpdateRequestModel<ReplaceEventsDetailsModel> request,
             CancellationToken ct) {
-            var result = await _client.HistoryReplaceEventsAsync(twin, 
+            var result = await _client.HistoryReplaceEventsAsync(twin,
                 request.ToApiModel(m => m.ToApiModel()), ct).ConfigureAwait(false);
             return result.ToServiceModel();
         }
@@ -47,7 +47,7 @@ namespace Microsoft.IIoT.Platform.Twin.Api {
         public async Task<HistoryUpdateResultModel> HistoryDeleteEventsAsync(
             string twin, HistoryUpdateRequestModel<DeleteEventsDetailsModel> request,
             CancellationToken ct) {
-            var result = await _client.HistoryDeleteEventsAsync(twin, 
+            var result = await _client.HistoryDeleteEventsAsync(twin,
                 request.ToApiModel(m => m.ToApiModel()), ct).ConfigureAwait(false);
             return result.ToServiceModel();
         }
@@ -56,7 +56,7 @@ namespace Microsoft.IIoT.Platform.Twin.Api {
         public async Task<HistoryUpdateResultModel> HistoryDeleteValuesAtTimesAsync(
             string twin, HistoryUpdateRequestModel<DeleteValuesAtTimesDetailsModel> request,
             CancellationToken ct) {
-            var result = await _client.HistoryDeleteValuesAtTimesAsync(twin, 
+            var result = await _client.HistoryDeleteValuesAtTimesAsync(twin,
                 request.ToApiModel(m => m.ToApiModel()), ct).ConfigureAwait(false);
             return result.ToServiceModel();
         }
@@ -65,7 +65,7 @@ namespace Microsoft.IIoT.Platform.Twin.Api {
         public async Task<HistoryUpdateResultModel> HistoryDeleteModifiedValuesAsync(
             string twin, HistoryUpdateRequestModel<DeleteModifiedValuesDetailsModel> request,
             CancellationToken ct) {
-            var result = await _client.HistoryDeleteModifiedValuesAsync(twin, 
+            var result = await _client.HistoryDeleteModifiedValuesAsync(twin,
                 request.ToApiModel(m => m.ToApiModel()), ct).ConfigureAwait(false);
             return result.ToServiceModel();
         }
@@ -74,7 +74,7 @@ namespace Microsoft.IIoT.Platform.Twin.Api {
         public async Task<HistoryUpdateResultModel> HistoryDeleteValuesAsync(
             string twin, HistoryUpdateRequestModel<DeleteValuesDetailsModel> request,
             CancellationToken ct) {
-            var result = await _client.HistoryDeleteValuesAsync(twin, 
+            var result = await _client.HistoryDeleteValuesAsync(twin,
                 request.ToApiModel(m => m.ToApiModel()), ct).ConfigureAwait(false);
             return result.ToServiceModel();
         }
@@ -83,7 +83,7 @@ namespace Microsoft.IIoT.Platform.Twin.Api {
         public async Task<HistoryUpdateResultModel> HistoryReplaceValuesAsync(
             string twin, HistoryUpdateRequestModel<ReplaceValuesDetailsModel> request,
             CancellationToken ct) {
-            var result = await _client.HistoryReplaceValuesAsync(twin, 
+            var result = await _client.HistoryReplaceValuesAsync(twin,
                 request.ToApiModel(m => m.ToApiModel()), ct).ConfigureAwait(false);
             return result.ToServiceModel();
         }
@@ -117,7 +117,7 @@ namespace Microsoft.IIoT.Platform.Twin.Api {
         /// <inheritdoc/>
         public async Task<HistoryReadResultModel<HistoricValueModel[]>> HistoryReadValuesAsync(
             string twin, HistoryReadRequestModel<ReadValuesDetailsModel> request, CancellationToken ct) {
-            var result = await _client.HistoryReadValuesAsync(twin, 
+            var result = await _client.HistoryReadValuesAsync(twin,
                 request.ToApiModel(m => m.ToApiModel()), ct).ConfigureAwait(false);
             return result.ToServiceModel(m => m?.Select(x => x.ToServiceModel()).ToArray());
         }
@@ -144,7 +144,7 @@ namespace Microsoft.IIoT.Platform.Twin.Api {
         public async Task<HistoryReadResultModel<HistoricValueModel[]>> HistoryReadModifiedValuesAsync(
             string twin, HistoryReadRequestModel<ReadModifiedValuesDetailsModel> request,
             CancellationToken ct) {
-            var result = await _client.HistoryReadModifiedValuesAsync(twin, 
+            var result = await _client.HistoryReadModifiedValuesAsync(twin,
                 request.ToApiModel(m => m.ToApiModel()), ct).ConfigureAwait(false);
             return result.ToServiceModel(m => m?.Select(x => x.ToServiceModel()).ToArray());
         }
@@ -152,7 +152,7 @@ namespace Microsoft.IIoT.Platform.Twin.Api {
         /// <inheritdoc/>
         public async Task<HistoryReadNextResultModel<HistoricValueModel[]>> HistoryReadValuesNextAsync(
             string twin, HistoryReadNextRequestModel request, CancellationToken ct) {
-            var result = await _client.HistoryReadValuesNextAsync(twin, 
+            var result = await _client.HistoryReadValuesNextAsync(twin,
                 request.ToApiModel(), ct).ConfigureAwait(false);
             return result.ToServiceModel(m => m?.Select(x => x.ToServiceModel()).ToArray());
         }

@@ -121,7 +121,7 @@ namespace Microsoft.IIoT.Platform.Publisher.Services {
                         UseUriEncoding = true,
                         UseReversibleEncoding = false
                     };
-                    foreach(var element in chunk) {
+                    foreach (var element in chunk) {
                         encoder.WriteEncodeable(null, element);
                     }
                     encoder.Close();
@@ -136,7 +136,7 @@ namespace Microsoft.IIoT.Platform.Publisher.Services {
                         (MessagesProcessedCount + 1);
                     AvgNotificationsPerMessage = ((AvgNotificationsPerMessage * MessagesProcessedCount) +
                         chunk.Count) / (MessagesProcessedCount + 1);
-                        MessagesProcessedCount++;
+                    MessagesProcessedCount++;
                     chunk.Clear();
                     messageSize = 2;
                     yield return encoded;

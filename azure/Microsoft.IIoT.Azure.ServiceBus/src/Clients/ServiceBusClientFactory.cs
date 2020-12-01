@@ -230,7 +230,7 @@ namespace Microsoft.IIoT.Azure.ServiceBus.Clients {
         /// <returns></returns>
         private static bool IsRetryableException(ServiceBusException ex) {
             return
-    // https://docs.microsoft.com/en-us/azure/service-bus-messaging/service-bus-resource-manager-exceptions
+            // https://docs.microsoft.com/en-us/azure/service-bus-messaging/service-bus-resource-manager-exceptions
             ex.Message.StartsWith("Resource Conflict", StringComparison.InvariantCultureIgnoreCase) ||
                 ex.Message.StartsWith("SubCode=40900", StringComparison.InvariantCultureIgnoreCase) ||
                 ex.Message.StartsWith("SubCode=40901", StringComparison.InvariantCultureIgnoreCase) ||

@@ -45,7 +45,7 @@ namespace Microsoft.IIoT.Platform.Twin.Services {
         public BrowsedNodeStreamEncoder(IConnectionServices client, ConnectionModel endpoint,
             Stream stream, string contentType, DiagnosticsModel diagnostics, ILogger logger,
             int priority = int.MaxValue) :
-            this(client, endpoint, diagnostics, logger,  priority) {
+            this(client, endpoint, diagnostics, logger, priority) {
             _encoder = new ModelEncoder(stream, contentType, PushNode);
         }
 
@@ -154,11 +154,11 @@ namespace Microsoft.IIoT.Platform.Twin.Services {
             try {
                 // Read node with value
                 var response = await _client.ExecuteServiceAsync(_endpoint, _priority, session => {
-                        _encoder.Context.UpdateFromSession(session);
-                        return session.BrowseAsync(_diagnostics.ToStackModel(), null,
-                            nodeModel.NodeId, 0u, Opc.Ua.BrowseDirection.Both,
-                            ReferenceTypeIds.References, true, 0u);
-                    }, ct).ConfigureAwait(false);
+                    _encoder.Context.UpdateFromSession(session);
+                    return session.BrowseAsync(_diagnostics.ToStackModel(), null,
+                        nodeModel.NodeId, 0u, Opc.Ua.BrowseDirection.Both,
+                        ReferenceTypeIds.References, true, 0u);
+                }, ct).ConfigureAwait(false);
 
                 SessionClientEx.Validate(response.Results, response.DiagnosticInfos);
                 OperationResultEx.Validate("Browse_" + nodeModel.NodeId, Diagnostics,
@@ -198,24 +198,24 @@ namespace Microsoft.IIoT.Platform.Twin.Services {
             try {
                 // Read node with value
                 return await _client.ExecuteServiceAsync(_endpoint, _priority, async session => {
-                        _encoder.Context.UpdateFromSession(session);
-                        var node = await RawNodeModel.ReadAsync(session, _diagnostics.ToStackModel(),
-                            nodeId, false, Diagnostics, false, ct).ConfigureAwait(false);
-                        // Determine whether to read events or historic data later
-                        if (node.IsHistorizedNode) {
-                            _history.Add(node.LocalId, node.NodeId.AsString(
-                                session.MessageContext));
-                        }
-                        else {
-                            // Otherwise mark as visited so we do not browse again.
-                            _visited.Add(nodeId);
-                        }
-                        var isProperty =
-                            (node.NodeClass == Opc.Ua.NodeClass.Variable ||
-                             node.NodeClass == Opc.Ua.NodeClass.VariableType) &&
-                             session.TypeTree.IsTypeOf(node.NodeId, VariableTypeIds.PropertyType);
-                        return node.ToNodeModel(isProperty);
-                    }, ct).ConfigureAwait(false);
+                    _encoder.Context.UpdateFromSession(session);
+                    var node = await RawNodeModel.ReadAsync(session, _diagnostics.ToStackModel(),
+                        nodeId, false, Diagnostics, false, ct).ConfigureAwait(false);
+                    // Determine whether to read events or historic data later
+                    if (node.IsHistorizedNode) {
+                        _history.Add(node.LocalId, node.NodeId.AsString(
+                            session.MessageContext));
+                    }
+                    else {
+                        // Otherwise mark as visited so we do not browse again.
+                        _visited.Add(nodeId);
+                    }
+                    var isProperty =
+                        (node.NodeClass == Opc.Ua.NodeClass.Variable ||
+                         node.NodeClass == Opc.Ua.NodeClass.VariableType) &&
+                         session.TypeTree.IsTypeOf(node.NodeId, VariableTypeIds.PropertyType);
+                    return node.ToNodeModel(isProperty);
+                }, ct).ConfigureAwait(false);
             }
             catch (Exception ex) {
                 _logger.LogError(ex, "Failed reading node object for node {nodeId}.", nodeId);

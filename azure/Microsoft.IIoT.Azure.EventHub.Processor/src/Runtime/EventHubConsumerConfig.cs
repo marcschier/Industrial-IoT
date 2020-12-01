@@ -24,7 +24,7 @@ namespace Microsoft.IIoT.Azure.EventHub.Processor.Runtime {
                     GetStringOrDefault(PcsVariable.PCS_EVENTHUB_CONNSTRING);
             }
             if (string.IsNullOrEmpty(options.EventHubPath)) {
-                options.EventHubPath = 
+                options.EventHubPath =
                     GetStringOrDefault(PcsVariable.PCS_EVENTHUB_NAME);
             }
             var useWebSockets = GetBoolOrDefault("PCS_EVENTHUB_USE_WEBSOCKET",
@@ -33,7 +33,7 @@ namespace Microsoft.IIoT.Azure.EventHub.Processor.Runtime {
                 options.UseWebsockets = useWebSockets;
             }
             if (string.IsNullOrEmpty(options.ConsumerGroup)) {
-                options.ConsumerGroup = 
+                options.ConsumerGroup =
                     GetStringOrDefault("PCS_EVENTHUB_CONSUMERGROUP", "$default");
             }
         }

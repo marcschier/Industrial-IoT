@@ -165,7 +165,7 @@ namespace Microsoft.IIoT.Extensions.RabbitMq.Clients {
                     }
                     catch (OperationInterruptedException ex) {
                         _logger.LogError(ex, "Failed to open channel {attempt}", attempt);
-                        if (++attempt > 10) { 
+                        if (++attempt > 10) {
                             throw;
                         }
                         // Try again

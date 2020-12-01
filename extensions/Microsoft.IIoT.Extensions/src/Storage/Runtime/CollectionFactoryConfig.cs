@@ -13,7 +13,7 @@ namespace Microsoft.IIoT.Storage.Runtime {
     internal sealed class CollectionFactoryConfig : PostConfigureOptionBase<CollectionFactoryOptions> {
 
         /// <inheritdoc/>
-        public CollectionFactoryConfig(IConfiguration configuration = null) 
+        public CollectionFactoryConfig(IConfiguration configuration = null)
             : base(configuration) {
         }
 

@@ -63,7 +63,7 @@ namespace Microsoft.IIoT.Platform.Registry.Service.Controllers {
         [HttpPatch("{publisherId}")]
         [Authorize(Policy = Policies.CanChange)]
         public async Task UpdatePublisherAsync(string publisherId,
-            [FromBody] [Required] PublisherUpdateApiModel request) {
+            [FromBody][Required] PublisherUpdateApiModel request) {
             if (request == null) {
                 throw new ArgumentNullException(nameof(request));
             }
@@ -113,7 +113,7 @@ namespace Microsoft.IIoT.Platform.Registry.Service.Controllers {
         /// <returns>Publisher</returns>
         [HttpPost("query")]
         public async Task<PublisherListApiModel> QueryPublisherAsync(
-            [FromBody] [Required] PublisherQueryApiModel query,
+            [FromBody][Required] PublisherQueryApiModel query,
             [FromQuery] int? pageSize) {
             if (query == null) {
                 throw new ArgumentNullException(nameof(query));
@@ -142,7 +142,7 @@ namespace Microsoft.IIoT.Platform.Registry.Service.Controllers {
         /// <returns>Publisher</returns>
         [HttpGet("query")]
         public async Task<PublisherListApiModel> GetFilteredListOfPublisherAsync(
-            [FromQuery] [Required] PublisherQueryApiModel query,
+            [FromQuery][Required] PublisherQueryApiModel query,
             [FromQuery] int? pageSize) {
 
             if (query == null) {

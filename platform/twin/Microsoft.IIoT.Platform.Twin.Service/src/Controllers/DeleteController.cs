@@ -45,7 +45,7 @@ namespace Microsoft.IIoT.Platform.Twin.Service.Controllers {
         [HttpPost("{endpointId}/values/pick")]
         public async Task<HistoryUpdateResponseApiModel> HistoryDeleteValuesAtTimesAsync(
             string endpointId,
-            [FromBody] [Required] HistoryUpdateRequestApiModel<DeleteValuesAtTimesDetailsApiModel> request) {
+            [FromBody][Required] HistoryUpdateRequestApiModel<DeleteValuesAtTimesDetailsApiModel> request) {
             if (request == null) {
                 throw new ArgumentNullException(nameof(request));
             }
@@ -68,7 +68,7 @@ namespace Microsoft.IIoT.Platform.Twin.Service.Controllers {
         [HttpPost("{endpointId}/values")]
         public async Task<HistoryUpdateResponseApiModel> HistoryDeleteValuesAsync(
             string endpointId,
-            [FromBody] [Required] HistoryUpdateRequestApiModel<DeleteValuesDetailsApiModel> request) {
+            [FromBody][Required] HistoryUpdateRequestApiModel<DeleteValuesDetailsApiModel> request) {
             if (request == null) {
                 throw new ArgumentNullException(nameof(request));
             }
@@ -91,7 +91,7 @@ namespace Microsoft.IIoT.Platform.Twin.Service.Controllers {
         [HttpPost("{endpointId}/values/modified")]
         public async Task<HistoryUpdateResponseApiModel> HistoryDeleteModifiedValuesAsync(
             string endpointId,
-            [FromBody] [Required] HistoryUpdateRequestApiModel<DeleteModifiedValuesDetailsApiModel> request) {
+            [FromBody][Required] HistoryUpdateRequestApiModel<DeleteModifiedValuesDetailsApiModel> request) {
             if (request == null) {
                 throw new ArgumentNullException(nameof(request));
             }
@@ -114,7 +114,7 @@ namespace Microsoft.IIoT.Platform.Twin.Service.Controllers {
         [HttpPost("{endpointId}/events")]
         public async Task<HistoryUpdateResponseApiModel> HistoryDeleteEventsAsync(
             string endpointId,
-            [FromBody] [Required] HistoryUpdateRequestApiModel<DeleteEventsDetailsApiModel> request) {
+            [FromBody][Required] HistoryUpdateRequestApiModel<DeleteEventsDetailsApiModel> request) {
             if (request == null) {
                 throw new ArgumentNullException(nameof(request));
             }

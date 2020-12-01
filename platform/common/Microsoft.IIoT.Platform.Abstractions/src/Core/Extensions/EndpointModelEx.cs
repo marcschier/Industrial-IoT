@@ -22,7 +22,7 @@ namespace Microsoft.IIoT.Platform.Core.Models {
         /// <param name="operationTimeout"></param>
         /// <returns></returns>
         public static ConnectionModel ToConnectionModel(this EndpointModel model,
-            CredentialModel user = null, DiagnosticsModel diagnostics = null, 
+            CredentialModel user = null, DiagnosticsModel diagnostics = null,
             TimeSpan? operationTimeout = null) {
             return new ConnectionModel {
                 Endpoint = model.Clone(),
@@ -60,7 +60,7 @@ namespace Microsoft.IIoT.Platform.Core.Models {
         /// <param name="model"></param>
         /// <param name="that"></param>
         /// <returns></returns>
-        public static bool HasSameSecurityProperties(this EndpointModel model, 
+        public static bool HasSameSecurityProperties(this EndpointModel model,
             EndpointModel that) {
             if (model == that) {
                 return true;
@@ -71,7 +71,7 @@ namespace Microsoft.IIoT.Platform.Core.Models {
             if (!that.Certificate.SequenceEqualsSafe(model.Certificate)) {
                 return false;
             }
-            if (that.SecurityPolicy != model.SecurityPolicy && 
+            if (that.SecurityPolicy != model.SecurityPolicy &&
                 that.SecurityPolicy != null && model.SecurityPolicy != null) {
                 return false;
             }

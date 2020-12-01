@@ -52,7 +52,7 @@ namespace Microsoft.IIoT.Platform.Vault.Service.Controllers {
         [HttpPut("sign")]
         [Authorize(Policy = Policies.CanWrite)]
         public async Task<StartSigningRequestResponseApiModel> StartSigningRequestAsync(
-            [FromBody] [Required] StartSigningRequestApiModel signingRequest) {
+            [FromBody][Required] StartSigningRequestApiModel signingRequest) {
             if (signingRequest == null) {
                 throw new ArgumentNullException(nameof(signingRequest));
             }
@@ -104,7 +104,7 @@ namespace Microsoft.IIoT.Platform.Vault.Service.Controllers {
         [HttpPut("keypair")]
         [Authorize(Policy = Policies.CanWrite)]
         public async Task<StartNewKeyPairRequestResponseApiModel> StartNewKeyPairRequestAsync(
-            [FromBody] [Required] StartNewKeyPairRequestApiModel newKeyPairRequest) {
+            [FromBody][Required] StartNewKeyPairRequestApiModel newKeyPairRequest) {
             if (newKeyPairRequest == null) {
                 throw new ArgumentNullException(nameof(newKeyPairRequest));
             }

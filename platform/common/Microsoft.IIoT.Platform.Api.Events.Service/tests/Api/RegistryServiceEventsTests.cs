@@ -34,7 +34,7 @@ namespace Microsoft.IIoT.Platform.Api.Events.Service.Api {
             var expected = new ApplicationEventModel {
                 Application = new ApplicationInfoModel {
                     ApplicationType = Core.Models.ApplicationType.Client,
-                    Capabilities = new HashSet<string>{ "ag", "sadf", "" },
+                    Capabilities = new HashSet<string> { "ag", "sadf", "" },
                 }.SetAsLost()
             };
             var result = new TaskCompletionSource<ApplicationEventApiModel>(TaskCreationOptions.RunContinuationsAsynchronously);

@@ -15,7 +15,7 @@ namespace Microsoft.IIoT.Platform.Twin {
     /// Twin grain
     /// </summary>
     public interface IAddressSpaceGrain : IGrainWithStringKey {
-        
+
         /// <summary>
         /// Get certificate
         /// </summary>
@@ -31,7 +31,7 @@ namespace Microsoft.IIoT.Platform.Twin {
         /// <param name="ct"></param>
         /// <returns></returns>
         Task<HistoryReadResultModel<VariantValue>> HistoryReadAsync(
-            HistoryReadRequestModel<VariantValue> request, 
+            HistoryReadRequestModel<VariantValue> request,
             CancellationToken ct);
 
         /// <summary>
@@ -50,9 +50,9 @@ namespace Microsoft.IIoT.Platform.Twin {
         /// <param name="ct"></param>
         /// <returns></returns>
         Task<HistoryUpdateResultModel> HistoryUpdateAsync(
-            HistoryUpdateRequestModel<VariantValue> request, 
+            HistoryUpdateRequestModel<VariantValue> request,
             CancellationToken ct);
-        
+
         /// <summary>
         /// Browse first
         /// </summary>

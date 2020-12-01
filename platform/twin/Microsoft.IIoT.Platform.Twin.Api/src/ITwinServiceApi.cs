@@ -210,7 +210,7 @@ namespace Microsoft.IIoT.Platform.Twin.Api {
         /// <param name="generationId"></param>
         /// <param name="ct"></param>
         /// <returns></returns>
-        Task DectivateTwinAsync(string twinId, string generationId, 
+        Task DectivateTwinAsync(string twinId, string generationId,
             CancellationToken ct = default);
     }
 

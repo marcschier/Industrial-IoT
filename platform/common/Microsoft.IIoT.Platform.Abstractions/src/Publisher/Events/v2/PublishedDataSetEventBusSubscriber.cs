@@ -13,7 +13,7 @@ namespace Microsoft.IIoT.Platform.Publisher.Events.v2 {
     /// <summary>
     /// DataSet Writer registry change listener
     /// </summary>
-    public class PublishedDataSetEventBusSubscriber : IEventBusConsumer<PublishedDataSetItemEventModel>{
+    public class PublishedDataSetEventBusSubscriber : IEventBusConsumer<PublishedDataSetItemEventModel> {
 
         /// <summary>
         /// Create event subscriber

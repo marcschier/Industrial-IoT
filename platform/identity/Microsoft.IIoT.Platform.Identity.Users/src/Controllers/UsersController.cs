@@ -47,7 +47,7 @@ namespace Microsoft.IIoT.Platform.Identity.Users {
         /// <returns></returns>
         [HttpPut]
         public async Task CreateUserAsync(
-            [FromBody] [Required] UserApiModel user) {
+            [FromBody][Required] UserApiModel user) {
             if (user == null) {
                 throw new ArgumentNullException(nameof(user));
             }
@@ -62,7 +62,7 @@ namespace Microsoft.IIoT.Platform.Identity.Users {
         /// <returns></returns>
         [HttpGet]
         public async Task<UserApiModel> GetUserByNameAsync(
-            [FromQuery] [Required] string name) {
+            [FromQuery][Required] string name) {
             if (string.IsNullOrWhiteSpace(name)) {
                 throw new ArgumentNullException(nameof(name));
             }
@@ -77,7 +77,7 @@ namespace Microsoft.IIoT.Platform.Identity.Users {
         /// <returns></returns>
         [HttpGet]
         public async Task<UserApiModel> GetUserByEmailAsync(
-            [FromQuery] [Required] string email) {
+            [FromQuery][Required] string email) {
             if (string.IsNullOrWhiteSpace(email)) {
                 throw new ArgumentNullException(nameof(email));
             }
@@ -123,7 +123,7 @@ namespace Microsoft.IIoT.Platform.Identity.Users {
         /// <returns></returns>
         [HttpPut("{userId}/claims")]
         public async Task AddClaimAsync(string userId,
-            [FromBody] [Required] ClaimApiModel model) {
+            [FromBody][Required] ClaimApiModel model) {
             if (!_manager.SupportsUserClaim) {
                 throw new NotSupportedException("Claim management not supported");
             }

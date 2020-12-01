@@ -26,7 +26,7 @@ namespace Microsoft.IIoT.Azure.IoTHub.Handlers {
         /// <param name="logger"></param>
         public TwinChangeEventHandler(IJsonSerializer serializer,
             IEnumerable<IDeviceTwinEventHandler> handlers, ILogger logger)
-            : base (serializer, handlers, logger) {
+            : base(serializer, handlers, logger) {
         }
 
         /// <summary>

@@ -18,7 +18,7 @@ namespace Microsoft.IIoT.Platform.Discovery.Models {
         /// <summary>
         /// The entity is currently not visible
         /// </summary>
-        Lost, 
+        Lost,
 
         /// <summary>
         /// The entity was found in the network

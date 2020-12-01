@@ -694,7 +694,7 @@ namespace CouchDB.Driver.Query {
 
             private static List<MethodInfo> Supported { get; }
 
-            internal static bool IsSupported( MethodInfo methodInfo) {
+            internal static bool IsSupported(MethodInfo methodInfo) {
                 if (methodInfo.IsGenericMethod) {
                     methodInfo = methodInfo.GetGenericMethodDefinition();
                 }

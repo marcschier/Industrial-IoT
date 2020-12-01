@@ -5,7 +5,6 @@
 
 namespace Microsoft.IIoT.Messaging.Handlers {
     using Microsoft.IIoT.Messaging;
-    using Microsoft.IIoT.Hosting;
     using Microsoft.IIoT.Utils;
     using System;
     using System.Collections.Generic;

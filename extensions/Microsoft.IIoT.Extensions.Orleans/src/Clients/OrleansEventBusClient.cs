@@ -108,10 +108,11 @@ namespace Microsoft.IIoT.Extensions.Orleans.Clients {
             try {
                 _logger.LogTrace("Delivering message for {topic}...", topicName);
                 var message = (T)_serializer.Deserialize(buffer, typeof(T));
-             //   _processor.TrySchedule(async () => {
-                    /*await*/ handler.HandleAsync(message);
-                    _logger.LogTrace("Message delivered to {topic}.", topicName);
-             //   });
+                //   _processor.TrySchedule(async () => {
+                /*await*/
+                handler.HandleAsync(message);
+                _logger.LogTrace("Message delivered to {topic}.", topicName);
+                //   });
             }
             catch (Exception ex) {
                 _logger.LogError(ex, "Failed to handle message for {topic}.",

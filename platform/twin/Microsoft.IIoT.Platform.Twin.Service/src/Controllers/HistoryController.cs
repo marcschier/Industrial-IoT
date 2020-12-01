@@ -45,7 +45,7 @@ namespace Microsoft.IIoT.Platform.Twin.Service.Controllers {
         /// <returns>The history read response</returns>
         [HttpPost("read/{endpointId}")]
         public async Task<HistoryReadResponseApiModel<VariantValue>> HistoryReadRawAsync(
-            string endpointId, [FromBody] [Required] HistoryReadRequestApiModel<VariantValue> request) {
+            string endpointId, [FromBody][Required] HistoryReadRequestApiModel<VariantValue> request) {
             if (request == null) {
                 throw new ArgumentNullException(nameof(request));
             }
@@ -67,7 +67,7 @@ namespace Microsoft.IIoT.Platform.Twin.Service.Controllers {
         /// <returns>The history read response</returns>
         [HttpPost("read/{endpointId}/next")]
         public async Task<HistoryReadNextResponseApiModel<VariantValue>> HistoryReadRawNextAsync(
-            string endpointId, [FromBody] [Required] HistoryReadNextRequestApiModel request) {
+            string endpointId, [FromBody][Required] HistoryReadNextRequestApiModel request) {
             if (request == null) {
                 throw new ArgumentNullException(nameof(request));
             }
@@ -90,7 +90,7 @@ namespace Microsoft.IIoT.Platform.Twin.Service.Controllers {
         [HttpPost("update/{endpointId}")]
         [Authorize(Policy = Policies.CanControl)]
         public async Task<HistoryUpdateResponseApiModel> HistoryUpdateRawAsync(
-            string endpointId, [FromBody] [Required] HistoryUpdateRequestApiModel<VariantValue> request) {
+            string endpointId, [FromBody][Required] HistoryUpdateRequestApiModel<VariantValue> request) {
             if (request == null) {
                 throw new ArgumentNullException(nameof(request));
             }

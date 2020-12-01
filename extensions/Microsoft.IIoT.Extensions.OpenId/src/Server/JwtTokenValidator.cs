@@ -42,7 +42,7 @@ namespace Microsoft.IIoT.Authentication.Server.Default {
             if (jwtToken == null) {
                 throw new ArgumentNullException(nameof(jwtToken));
             }
-            foreach(var validator in _validators.Values) {
+            foreach (var validator in _validators.Values) {
                 var token = await validator.ValidateAsync(jwtToken, ct).ConfigureAwait(false);
                 if (token != null) {
                     return token;

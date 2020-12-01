@@ -57,7 +57,7 @@ namespace Microsoft.IIoT.Platform.Vault.Storage {
                 throw new ArgumentNullException(nameof(requestId));
             }
             while (true) {
-                var document = await _requests.FindAsync<RequestDocument>(requestId, 
+                var document = await _requests.FindAsync<RequestDocument>(requestId,
                     ct: ct).ConfigureAwait(false);
                 if (document == null) {
                     throw new ResourceNotFoundException("Request not found");
@@ -84,7 +84,7 @@ namespace Microsoft.IIoT.Platform.Vault.Storage {
                 throw new ArgumentNullException(nameof(requestId));
             }
             while (true) {
-                var document = await _requests.FindAsync<RequestDocument>(requestId, 
+                var document = await _requests.FindAsync<RequestDocument>(requestId,
                     ct: ct).ConfigureAwait(false);
                 if (document == null) {
                     return null;

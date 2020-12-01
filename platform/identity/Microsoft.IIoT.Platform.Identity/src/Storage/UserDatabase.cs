@@ -189,7 +189,7 @@ namespace Microsoft.IIoT.Platform.Identity.Storage {
                 normalizedRoleName, ct).ConfigureAwait(false);
             if (foundRole == null) {
                 throw new ArgumentException(
-                    $"The role {normalizedRoleName} does not exist", 
+                    $"The role {normalizedRoleName} does not exist",
                     nameof(normalizedRoleName));
             }
             await UpdateUserDocumentAsync(user, document => {

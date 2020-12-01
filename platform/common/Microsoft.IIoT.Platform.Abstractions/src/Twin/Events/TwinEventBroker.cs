@@ -16,7 +16,7 @@ namespace Microsoft.IIoT.Platform.Twin.Default {
     /// all event versions to event bus
     /// </summary>
     public sealed class TwinEventBroker :
-        ITwinEventBroker<ITwinRegistryListener>, 
+        ITwinEventBroker<ITwinRegistryListener>,
         ITwinEvents<ITwinRegistryListener> {
 
         /// <summary>

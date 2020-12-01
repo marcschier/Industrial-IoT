@@ -88,9 +88,9 @@ namespace Microsoft.IIoT.Extensions.Orleans.Testing {
         /// </summary>
         /// <param name="builder"></param>
         private static void ConfigureHostConfiguration(IConfigurationBuilder builder) {
-           // builder.AddInMemoryCollection(new Dictionary<string, string> {
-           //     { "ZooKeeperConnectionString", "127.0.0.1:2181" }
-           // });
+            // builder.AddInMemoryCollection(new Dictionary<string, string> {
+            //     { "ZooKeeperConnectionString", "127.0.0.1:2181" }
+            // });
         }
 
         private readonly ILogger _logger;

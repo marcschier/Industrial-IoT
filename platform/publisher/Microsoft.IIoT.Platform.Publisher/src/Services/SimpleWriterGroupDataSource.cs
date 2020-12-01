@@ -21,7 +21,7 @@ namespace Microsoft.IIoT.Platform.Publisher.Services {
     /// source subscriptions in a dictionary and adds or removes based on 
     /// the configuration provided by control client.
     /// </summary>
-    public sealed class SimpleWriterGroupDataSource : IWriterGroupDataSource, 
+    public sealed class SimpleWriterGroupDataSource : IWriterGroupDataSource,
         IDataSetWriterDataSink, IDisposable {
 
         /// <inheritdoc/>
@@ -49,8 +49,8 @@ namespace Microsoft.IIoT.Platform.Publisher.Services {
         /// <param name="sink"></param>
         /// <param name="client"></param>
         /// <param name="logger"></param>
-        public SimpleWriterGroupDataSource(ISubscriptionClient client, IWriterGroupDataSink sink, 
-            IDataSetWriterDiagnostics diagnostics, IDataSetWriterStateReporter writerState, 
+        public SimpleWriterGroupDataSource(ISubscriptionClient client, IWriterGroupDataSink sink,
+            IDataSetWriterDiagnostics diagnostics, IDataSetWriterStateReporter writerState,
             IWriterGroupStateReporter groupState, IVariantEncoderFactory codec, ILogger logger) {
 
             _writerState = writerState ?? throw new ArgumentNullException(nameof(writerState));
@@ -98,7 +98,7 @@ namespace Microsoft.IIoT.Platform.Publisher.Services {
                     await subscription.ConfigureAsync(writer.DataSet).ConfigureAwait(false);
                     return subscription;
                 });
-                _writers.AddOrUpdate(writer.DataSetWriterId, writer, (k,v) => writer);
+                _writers.AddOrUpdate(writer.DataSetWriterId, writer, (k, v) => writer);
             }
 
             if (!_writers.IsEmpty) {

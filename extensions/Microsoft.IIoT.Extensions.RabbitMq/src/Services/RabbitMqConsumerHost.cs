@@ -27,7 +27,7 @@ namespace Microsoft.IIoT.Extensions.RabbitMq.Services {
         /// <param name="logger"></param>
         /// <param name="consumer"></param>
         /// <param name="options"></param>
-        public RabbitMqConsumerHost(IRabbitMqConnection connection, ILogger logger, 
+        public RabbitMqConsumerHost(IRabbitMqConnection connection, ILogger logger,
             IEventConsumer consumer, IOptionsSnapshot<RabbitMqQueueOptions> options) {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _connection = connection ?? throw new ArgumentNullException(nameof(connection));

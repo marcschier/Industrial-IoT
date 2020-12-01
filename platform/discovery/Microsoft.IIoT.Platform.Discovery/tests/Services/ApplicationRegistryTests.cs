@@ -317,7 +317,7 @@ namespace Microsoft.IIoT.Platform.Discovery.Services {
             var discx = disc = HubResource.Format(hubx, fixture.Create<string>(), null);
             apps = fixture
                 .Build<ApplicationInfoModel>()
-               // .Without(x => x.NotSeenSince)
+                // .Without(x => x.NotSeenSince)
                 .With(x => x.DiscovererId, discx)
                 .CreateMany(10)
                 .ToList();

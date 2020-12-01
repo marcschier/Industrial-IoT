@@ -118,7 +118,7 @@ namespace Microsoft.IIoT.Platform.Identity.Storage {
         /// <inheritdoc/>
         public async Task<IEnumerable<ApiResource>> FindApiResourcesByNameAsync(
             IEnumerable<string> apiResourceNames) {
-            var results = CreateNameQuery(_documents.CreateQuery<ResourceDocumentModel>(), 
+            var results = CreateNameQuery(_documents.CreateQuery<ResourceDocumentModel>(),
                 apiResourceNames, nameof(ApiResource));
 
             var apiResources = new List<ApiResource>();

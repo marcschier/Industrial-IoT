@@ -83,9 +83,9 @@ namespace Microsoft.Extensions.DependencyInjection {
             var containerName = config.BlobStorageContainerDataProtection;
             var connectionString = config.Storage.Value.GetStorageConnString();
             if (string.IsNullOrEmpty(connectionString)) {
-               throw new InvalidConfigurationException(
-                   "Storage configuration is missing in your configuration for " +
-                   "dataprotection to store all keys across all instances.");
+                throw new InvalidConfigurationException(
+                    "Storage configuration is missing in your configuration for " +
+                    "dataprotection to store all keys across all instances.");
             }
             var storageAccount = CloudStorageAccount.Parse(config.Storage.Value.GetStorageConnString());
             var relativePath = $"{containerName}/keys.xml";

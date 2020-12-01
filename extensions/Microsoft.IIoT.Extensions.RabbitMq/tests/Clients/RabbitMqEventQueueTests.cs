@@ -38,7 +38,7 @@ namespace Microsoft.IIoT.Extensions.RabbitMq.Clients {
 
                 var tcs = new TaskCompletionSource<TelemetryEventArgs>(TaskCreationOptions.RunContinuationsAsynchronously);
                 harness.OnEvent += (_, a) => {
-                    if (a.HandlerSchema == "Test1"){
+                    if (a.HandlerSchema == "Test1") {
                         tcs.TrySetResult(a);
                     }
                 };

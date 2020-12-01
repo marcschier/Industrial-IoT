@@ -93,7 +93,7 @@ namespace Microsoft.IIoT.Platform.Twin.Api.Clients {
         }
 
         /// <inheritdoc/>
-        public async Task DectivateTwinAsync(string twinId, string generationId, 
+        public async Task DectivateTwinAsync(string twinId, string generationId,
             CancellationToken ct) {
             if (string.IsNullOrEmpty(twinId)) {
                 throw new ArgumentNullException(nameof(twinId));

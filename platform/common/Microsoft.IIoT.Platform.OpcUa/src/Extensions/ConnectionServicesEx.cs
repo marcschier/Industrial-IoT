@@ -41,7 +41,7 @@ namespace Microsoft.IIoT.Platform.OpcUa {
         /// <param name="handler"></param>
         /// <returns></returns>
         public static Task<T> ExecuteServiceAsync<T>(this IConnectionServices client,
-            ConnectionModel connection, Func<Session, Task<T>> service, 
+            ConnectionModel connection, Func<Session, Task<T>> service,
             Func<Exception, bool> handler, CancellationToken ct = default) {
             return client.ExecuteServiceAsync(connection, null, 0, service,
                 null, handler, ct);
@@ -58,9 +58,9 @@ namespace Microsoft.IIoT.Platform.OpcUa {
         /// <param name="ct"></param>
         /// <returns></returns>
         public static Task<T> ExecuteServiceAsync<T>(this IConnectionServices client,
-            ConnectionModel connection, int priority, Func<Session, Task<T>> service, 
+            ConnectionModel connection, int priority, Func<Session, Task<T>> service,
             CancellationToken ct = default) {
-            return client.ExecuteServiceAsync(connection, null, priority, service, 
+            return client.ExecuteServiceAsync(connection, null, priority, service,
                 null, _ => true, ct);
         }
 
@@ -75,9 +75,9 @@ namespace Microsoft.IIoT.Platform.OpcUa {
         /// <param name="ct"></param>
         /// <returns></returns>
         public static Task<T> ExecuteServiceAsync<T>(this IConnectionServices client,
-            ConnectionModel connection, CredentialModel elevation, 
+            ConnectionModel connection, CredentialModel elevation,
             Func<Session, Task<T>> service, CancellationToken ct = default) {
-            return client.ExecuteServiceAsync(connection, elevation, 0, service, 
+            return client.ExecuteServiceAsync(connection, elevation, 0, service,
                 null, _ => true, ct);
         }
 
@@ -95,8 +95,8 @@ namespace Microsoft.IIoT.Platform.OpcUa {
         /// <param name="ct"></param>
         /// <returns></returns>
         public static Task<T> ExecuteServiceAsync<T>(this IConnectionServices client,
-            EndpointModel endpoint, CredentialModel elevation, int priority, 
-            Func<Session, Task<T>> service, TimeSpan? timeout, 
+            EndpointModel endpoint, CredentialModel elevation, int priority,
+            Func<Session, Task<T>> service, TimeSpan? timeout,
             Func<Exception, bool> exceptionHandler, CancellationToken ct = default) {
             return client.ExecuteServiceAsync(endpoint.ToConnectionModel(),
                 elevation, priority, service, timeout, exceptionHandler, ct);
@@ -114,7 +114,7 @@ namespace Microsoft.IIoT.Platform.OpcUa {
         /// <param name="ct"></param>
         /// <returns></returns>
         public static Task<T> ExecuteServiceAsync<T>(this IConnectionServices client,
-            EndpointModel endpoint, CredentialModel elevation, 
+            EndpointModel endpoint, CredentialModel elevation,
             Func<Session, Task<T>> service, CancellationToken ct = default) {
             return client.ExecuteServiceAsync(endpoint, elevation, 0, service,
                 null, _ => true, ct);

@@ -63,7 +63,7 @@ namespace Microsoft.IIoT.Platform.Registry.Service.Controllers {
         [HttpPatch("{supervisorId}")]
         [Authorize(Policy = Policies.CanChange)]
         public async Task UpdateSupervisorAsync(string supervisorId,
-            [FromBody] [Required] SupervisorUpdateApiModel request) {
+            [FromBody][Required] SupervisorUpdateApiModel request) {
             if (request == null) {
                 throw new ArgumentNullException(nameof(request));
             }
@@ -112,7 +112,7 @@ namespace Microsoft.IIoT.Platform.Registry.Service.Controllers {
         /// <returns>Supervisors</returns>
         [HttpPost("query")]
         public async Task<SupervisorListApiModel> QuerySupervisorsAsync(
-            [FromBody] [Required] SupervisorQueryApiModel query,
+            [FromBody][Required] SupervisorQueryApiModel query,
             [FromQuery] int? pageSize) {
             if (query == null) {
                 throw new ArgumentNullException(nameof(query));
@@ -141,7 +141,7 @@ namespace Microsoft.IIoT.Platform.Registry.Service.Controllers {
         /// <returns>Supervisors</returns>
         [HttpGet("query")]
         public async Task<SupervisorListApiModel> GetFilteredListOfSupervisorsAsync(
-            [FromQuery] [Required] SupervisorQueryApiModel query,
+            [FromQuery][Required] SupervisorQueryApiModel query,
             [FromQuery] int? pageSize) {
 
             if (query == null) {
@@ -149,7 +149,7 @@ namespace Microsoft.IIoT.Platform.Registry.Service.Controllers {
             }
             pageSize = Request.GetPageSize(pageSize);
             var result = await _supervisors.QuerySupervisorsAsync(
-                query.ToServiceModel(),  pageSize).ConfigureAwait(false);
+                query.ToServiceModel(), pageSize).ConfigureAwait(false);
 
             // TODO: Filter results based on RBAC
 

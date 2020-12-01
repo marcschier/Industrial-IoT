@@ -328,7 +328,7 @@ namespace Microsoft.IIoT.Serializers.NewtonSoft {
         [Fact]
         public void TestDataContract2() {
             var v1 = new DataContractModel2 {
-                Bytes = new byte [] { 1, 2, 3, 4, 5, 6, 7, 8},
+                Bytes = new byte[] { 1, 2, 3, 4, 5, 6, 7, 8 },
                 Dictionary = new Dictionary<string, string> {
                     ["test1"] = "3test",
                     ["test2"] = "2test",

@@ -12,14 +12,14 @@ namespace Microsoft.IIoT.Platform.Core.Api.Models {
     /// Data value model
     /// </summary>
     [DataContract]
-    public class DataValueApiModel{
+    public class DataValueApiModel {
 
         /// <summary>
         /// Value
         /// </summary>
         [DataMember(Name = "value", Order = 0,
             EmitDefaultValue = false)]
-        public VariantValue Value {get; set; }
+        public VariantValue Value { get; set; }
 
         /// <summary>
         /// Data type of value

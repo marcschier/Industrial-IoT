@@ -99,7 +99,7 @@ namespace Opc.Ua.Encoders {
         /// <inheritdoc/>
         public sbyte ReadSByte(string property) {
             return ReadValue<sbyte>(property,
-                v => v < sbyte.MinValue || v > sbyte.MaxValue ? (sbyte)0 : v);
+                v => v < sbyte.MinValue || v > sbyte.MaxValue ? 0 : v);
         }
 
         /// <inheritdoc/>
@@ -985,7 +985,7 @@ namespace Opc.Ua.Encoders {
                             return !unsigned ? new Variant((long)token) :
                                 new Variant((ulong)token);
                         }
-                        catch (OverflowException){
+                        catch (OverflowException) {
                             return new Variant((ulong)token);
                         }
                     case JTokenType.Boolean:
@@ -1596,7 +1596,7 @@ namespace Opc.Ua.Encoders {
             }
             var dictionary = new Dictionary<string, T>();
             foreach (var p in o.Properties()) {
-                    dictionary[p.Name] = ReadToken(p.Value, reader);
+                dictionary[p.Name] = ReadToken(p.Value, reader);
             }
             return dictionary;
         }

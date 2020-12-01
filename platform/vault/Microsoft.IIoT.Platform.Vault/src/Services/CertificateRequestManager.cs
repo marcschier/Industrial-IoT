@@ -26,7 +26,7 @@ namespace Microsoft.IIoT.Platform.Vault.Services {
         public CertificateRequestManager(IRequestRepository repo,
             ICertificateRequestEventBroker broker, IJsonSerializer serializer) {
             _repo = repo ?? throw new ArgumentNullException(nameof(repo));
-			_serializer = serializer ?? throw new ArgumentNullException(nameof(serializer));
+            _serializer = serializer ?? throw new ArgumentNullException(nameof(serializer));
             _broker = broker ?? throw new ArgumentNullException(nameof(broker));
         }
 
@@ -200,7 +200,7 @@ namespace Microsoft.IIoT.Platform.Vault.Services {
         }
 
         private readonly IRequestRepository _repo;
-		private readonly IJsonSerializer _serializer;
+        private readonly IJsonSerializer _serializer;
         private readonly ICertificateRequestEventBroker _broker;
     }
 }

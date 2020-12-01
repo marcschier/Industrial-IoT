@@ -40,7 +40,7 @@ namespace Microsoft.IIoT.Platform.OpcUa.Models {
             RequestHeader requestHeader, NodeId nodeId, bool skipValue,
             List<OperationResultModel> operations, bool traceOnly, CancellationToken ct) {
             var node = new RawNodeModel(nodeId, session.NamespaceUris);
-            await node.ReadAsync(session, requestHeader, skipValue, operations, traceOnly, 
+            await node.ReadAsync(session, requestHeader, skipValue, operations, traceOnly,
                 ct).ConfigureAwait(false);
             return node;
         }
@@ -75,7 +75,7 @@ namespace Microsoft.IIoT.Platform.OpcUa.Models {
         /// <param name="ct"></param>
         /// <returns></returns>
         public async Task ReadAsync(Session session, RequestHeader requestHeader,
-            bool skipValue, List<OperationResultModel> operations, bool traceOnly, 
+            bool skipValue, List<OperationResultModel> operations, bool traceOnly,
             CancellationToken ct) {
             var readValueCollection = new ReadValueIdCollection(_attributes.Keys
                 .Where(a => !skipValue || a != Attributes.Value)
@@ -87,7 +87,7 @@ namespace Microsoft.IIoT.Platform.OpcUa.Models {
                 true, traceOnly, ct).ConfigureAwait(false);
             if (skipValue && NodeClass == NodeClass.VariableType) {
                 // Read default value
-                await ReadValueAsync(session, requestHeader, operations, true, 
+                await ReadValueAsync(session, requestHeader, operations, true,
                     traceOnly, ct).ConfigureAwait(false);
             }
         }

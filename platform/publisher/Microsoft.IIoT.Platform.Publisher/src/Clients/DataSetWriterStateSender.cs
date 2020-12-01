@@ -24,7 +24,7 @@ namespace Microsoft.IIoT.Platform.Publisher.Clients {
         /// <param name="serializer"></param>
         /// <param name="processor"></param>
         /// <param name="logger"></param>
-        public DataSetWriterStateSender(IEventClient events, IJsonSerializer serializer, 
+        public DataSetWriterStateSender(IEventClient events, IJsonSerializer serializer,
             ITaskProcessor processor, ILogger logger) {
             _serializer = serializer ?? throw new ArgumentNullException(nameof(serializer));
             _processor = processor ?? throw new ArgumentNullException(nameof(processor));

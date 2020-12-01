@@ -338,7 +338,7 @@ namespace Microsoft.IIoT.Platform.Publisher.Api.Clients {
         }
 
         /// <inheritdoc/>
-        public async Task ActivateWriterGroupAsync(string writerGroupId, CancellationToken ct ) {
+        public async Task ActivateWriterGroupAsync(string writerGroupId, CancellationToken ct) {
             if (string.IsNullOrEmpty(writerGroupId)) {
                 throw new ArgumentNullException(nameof(writerGroupId));
             }

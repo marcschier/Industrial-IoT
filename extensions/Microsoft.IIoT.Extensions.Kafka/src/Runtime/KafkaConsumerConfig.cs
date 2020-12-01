@@ -35,7 +35,7 @@ namespace Microsoft.IIoT.Extensions.Kafka.Runtime {
             }
 #endif
             if (string.IsNullOrEmpty(options.ConsumerTopic)) {
-                options.ConsumerTopic = 
+                options.ConsumerTopic =
                     GetStringOrDefault(PcsVariable.PCS_KAFKA_CONSUMER_TOPIC_REGEX);
             }
             if (string.IsNullOrEmpty(options.ConsumerGroup)) {

@@ -29,7 +29,7 @@ namespace Microsoft.IIoT.Azure.SignalR.Services {
         /// <param name="options"></param>
         /// <param name="logger"></param>
         public SignalRServiceHost(IOptions<SignalRServiceOptions> options, ILogger logger)
-            : base (options) {
+            : base(options) {
 
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             if (string.IsNullOrEmpty(options.Value?.SignalRConnString)) {
@@ -52,10 +52,10 @@ namespace Microsoft.IIoT.Azure.SignalR.Services {
             var hub = _hub;
             try {
                 if (hub == null) {
-                    hub = await _serviceManager.CreateHubContextAsync(Resource, 
+                    hub = await _serviceManager.CreateHubContextAsync(Resource,
                         cancellationToken: ct).ConfigureAwait(false);
                 }
-                await hub.Clients.All.SendCoreAsync("ping", Array.Empty<object>(), 
+                await hub.Clients.All.SendCoreAsync("ping", Array.Empty<object>(),
                     ct).ConfigureAwait(false);
                 return HealthCheckResult.Healthy();
             }

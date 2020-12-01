@@ -22,7 +22,7 @@ namespace Microsoft.IIoT.Platform.Twin {
         /// <param name="ct"></param>
         /// <returns></returns>
         Task<HistoryUpdateResultModel> HistoryReplaceEventsAsync(T twin,
-            HistoryUpdateRequestModel<ReplaceEventsDetailsModel> request, 
+            HistoryUpdateRequestModel<ReplaceEventsDetailsModel> request,
             CancellationToken ct = default);
 
         /// <summary>

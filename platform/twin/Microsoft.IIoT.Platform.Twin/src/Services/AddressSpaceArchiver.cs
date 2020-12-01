@@ -33,7 +33,7 @@ namespace Microsoft.IIoT.Platform.Twin.Services {
         /// <param name="maxValues"></param>
         /// <param name="logger"></param>
         public AddressSpaceArchiver(IConnectionServices client, ConnectionModel connection,
-            IArchive archive, string contentType, DateTime? startTime, DateTime? endTime, 
+            IArchive archive, string contentType, DateTime? startTime, DateTime? endTime,
             int? maxValues, ILogger logger) {
 
             _client = client ?? throw new ArgumentNullException(nameof(client));
@@ -86,7 +86,7 @@ namespace Microsoft.IIoT.Platform.Twin.Services {
                     using (var stream = _archive.GetStream("_history/" + nodeId,
                         FileMode.CreateNew))
                     using (var encoder = new HistoricValueStreamEncoder(_client, _connection,
-                        stream, _contentType, nodeId, _logger, 
+                        stream, _contentType, nodeId, _logger,
                         _startTime, _endTime, _maxValues)) {
                         await encoder.EncodeAsync(ct).ConfigureAwait(false);
                         diagnostics.AddRange(encoder.Diagnostics);

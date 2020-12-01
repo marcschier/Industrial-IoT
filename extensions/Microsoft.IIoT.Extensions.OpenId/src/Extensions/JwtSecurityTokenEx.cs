@@ -16,7 +16,7 @@ namespace Microsoft.IIoT.Authentication.Models {
         /// Convert to Token model
         /// </summary>
         /// <param name="token"></param>
-            /// <returns></returns>
+        /// <returns></returns>
         public static TokenResultModel ToTokenResult(
             this JwtSecurityToken token) {
             return new TokenResultModel {

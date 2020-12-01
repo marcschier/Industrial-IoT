@@ -10,12 +10,12 @@ namespace Microsoft.IIoT.Platform.Core.Models {
     /// <summary>
     /// Data value model
     /// </summary>
-    public class DataValueModel{
+    public class DataValueModel {
 
         /// <summary>
         /// Value
         /// </summary>
-        public VariantValue Value {get; set; }
+        public VariantValue Value { get; set; }
 
         /// <summary>
         /// Data type of value

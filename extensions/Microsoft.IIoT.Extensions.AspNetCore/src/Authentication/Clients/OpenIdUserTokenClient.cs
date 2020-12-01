@@ -283,7 +283,7 @@ namespace Microsoft.IIoT.AspNetCore.Authentication.Clients {
             await _ctx.HttpContext.SignInAsync(result.Principal, result.Properties).ConfigureAwait(false);
         }
 
-        static readonly ConcurrentDictionary<string, Lazy<Task<string>>> kRequests =
+        private static readonly ConcurrentDictionary<string, Lazy<Task<string>>> kRequests =
             new ConcurrentDictionary<string, Lazy<Task<string>>>();
         private readonly IAuthenticationSchemeProvider _schemes;
         private readonly IOptionsMonitor<OpenIdConnectOptions> _oidc;

@@ -27,8 +27,8 @@ namespace Microsoft.IIoT.Platform.Twin.Grains {
         /// <param name="nodes"></param>
         /// <param name="certificates"></param>
         /// <param name="history"></param>
-        public AddressSpaceGrain(ICertificateServices<ConnectionModel> certificates, 
-            IBrowseServices<ConnectionModel> browse, INodeServices<ConnectionModel> nodes, 
+        public AddressSpaceGrain(ICertificateServices<ConnectionModel> certificates,
+            IBrowseServices<ConnectionModel> browse, INodeServices<ConnectionModel> nodes,
             IHistoricAccessServices<ConnectionModel> history, ITwinRegistry registry) {
 
             _certificates = certificates ?? throw new ArgumentNullException(nameof(certificates));
@@ -75,14 +75,14 @@ namespace Microsoft.IIoT.Platform.Twin.Grains {
         /// <inheritdoc/>
         public async Task<ValueReadResultModel> NodeValueReadAsync(
             ValueReadRequestModel request, CancellationToken ct) {
-            return await _nodes.NodeValueReadAsync(_twin.Connection, 
+            return await _nodes.NodeValueReadAsync(_twin.Connection,
                 request, ct).ConfigureAwait(true);
         }
 
         /// <inheritdoc/>
         public async Task<ValueWriteResultModel> NodeValueWriteAsync(
             ValueWriteRequestModel request, CancellationToken ct) {
-            return await _nodes.NodeValueWriteAsync(_twin.Connection, 
+            return await _nodes.NodeValueWriteAsync(_twin.Connection,
                 request, ct).ConfigureAwait(true);
         }
 
@@ -110,14 +110,14 @@ namespace Microsoft.IIoT.Platform.Twin.Grains {
         /// <inheritdoc/>
         public async Task<WriteResultModel> NodeWriteAsync(WriteRequestModel request,
             CancellationToken ct) {
-            return await _nodes.NodeWriteAsync(_twin.Connection, 
+            return await _nodes.NodeWriteAsync(_twin.Connection,
                 request, ct).ConfigureAwait(true);
         }
 
         /// <inheritdoc/>
         public async Task<X509CertificateChainModel> GetCertificateAsync(
             CancellationToken ct) {
-            return await _certificates.GetCertificateAsync(_twin.Connection, 
+            return await _certificates.GetCertificateAsync(_twin.Connection,
                 ct).ConfigureAwait(true);
         }
 

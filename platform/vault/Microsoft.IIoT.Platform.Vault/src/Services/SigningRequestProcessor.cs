@@ -49,7 +49,7 @@ namespace Microsoft.IIoT.Platform.Vault.Services {
                 throw new ArgumentException("Missing group id", nameof(request));
             }
 
-            var entity = await _entities.FindEntityAsync(request.EntityId, 
+            var entity = await _entities.FindEntityAsync(request.EntityId,
                 ct).ConfigureAwait(false);
             if (entity == null) {
                 throw new ResourceNotFoundException("Entity not found");

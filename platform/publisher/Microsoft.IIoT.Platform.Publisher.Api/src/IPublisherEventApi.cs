@@ -41,7 +41,7 @@ namespace Microsoft.IIoT.Platform.Publisher.Api {
         /// <param name="ct"></param>
         /// <returns></returns>
         Task SubscribeDataSetVariableMessagesAsync(string dataSetWriterId,
-            string variableId, string connectionId, 
+            string variableId, string connectionId,
             CancellationToken ct = default);
 
         /// <summary>
@@ -53,7 +53,7 @@ namespace Microsoft.IIoT.Platform.Publisher.Api {
         /// <param name="ct"></param>
         /// <returns></returns>
         Task UnsubscribeDataSetVariableMessagesAsync(string dataSetWriterId,
-            string variableId, string connectionId, 
+            string variableId, string connectionId,
             CancellationToken ct = default);
 
         /// <summary>
@@ -63,7 +63,7 @@ namespace Microsoft.IIoT.Platform.Publisher.Api {
         /// <param name="connectionId"></param>
         /// <param name="ct"></param>
         /// <returns></returns>
-        Task SubscribeDataSetEventMessagesAsync(string dataSetWriterId, 
+        Task SubscribeDataSetEventMessagesAsync(string dataSetWriterId,
             string connectionId, CancellationToken ct = default);
 
         /// <summary>
@@ -73,7 +73,7 @@ namespace Microsoft.IIoT.Platform.Publisher.Api {
         /// <param name="connectionId"></param>
         /// <param name="ct"></param>
         /// <returns></returns>
-        Task UnsubscribeDataSetEventMessagesAsync(string dataSetWriterId, 
+        Task UnsubscribeDataSetEventMessagesAsync(string dataSetWriterId,
             string connectionId, CancellationToken ct = default);
     }
 }

@@ -63,7 +63,7 @@ namespace Microsoft.IIoT.Platform.Publisher.Services {
 
             _subscription = await _client.CreateSubscriptionAsync(config,
                 this).ConfigureAwait(false);
-            await _subscription.ApplyAsync(config.MonitoredItems, 
+            await _subscription.ApplyAsync(config.MonitoredItems,
                 config.Configuration).ConfigureAwait(false);
             _logger.LogInformation("Started {writer} subscription...", DataSetWriterId);
 

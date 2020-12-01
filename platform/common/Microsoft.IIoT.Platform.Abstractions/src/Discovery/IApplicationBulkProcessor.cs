@@ -21,7 +21,7 @@ namespace Microsoft.IIoT.Platform.Discovery {
         /// <param name="results"></param>
         /// <returns></returns>
         Task ProcessDiscoveryEventsAsync(string discovererId,
-            DiscoveryContextModel header, 
+            DiscoveryContextModel header,
             IEnumerable<DiscoveryResultModel> results);
     }
 }

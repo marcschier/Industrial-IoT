@@ -147,7 +147,7 @@ namespace Microsoft.IIoT.Platform.Twin.Ua.Service {
 
             // Auto start listeners
             builder.RegisterType<TcpChannelListener>()
-               // .AutoActivate()
+                // .AutoActivate()
                 .AsImplementedInterfaces().SingleInstance();
             builder.RegisterType<WebSocketChannelListener>()
                 .AutoActivate()

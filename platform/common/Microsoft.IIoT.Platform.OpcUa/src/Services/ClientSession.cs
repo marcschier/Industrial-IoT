@@ -651,7 +651,7 @@ namespace Microsoft.IIoT.Platform.OpcUa.Services {
                 var complexTypeSystem = new ComplexTypeSystem(session);
                 await complexTypeSystem.Load().ConfigureAwait(false);
             }
-            catch (Exception ex){
+            catch (Exception ex) {
                 _logger.LogError(ex, "Failed to load complex type system");
             }
             return session;

@@ -46,7 +46,7 @@ namespace Microsoft.IIoT.Platform.Api.Events.Service {
                             .AddInMemoryCollection(new Dictionary<string, string> {
                                 ["PCS_EVENTS_SERVICE_URL"] = BaseAddress
                             });
-                        }
+                    }
                     )
                     .UseStartup<TestStartup>()
                     .UseKestrel(o => o.AddServerHeader = false))

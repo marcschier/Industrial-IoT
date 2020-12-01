@@ -17,7 +17,7 @@ namespace Microsoft.IIoT.Platform.Edge.Events.Service {
     /// <summary>
     /// Generic host service which manages IHostProcess objects.
     /// </summary>
-    class HostStarterService : IHostedService {
+    internal class HostStarterService : IHostedService {
 
         /// <summary>
         /// Details of application hosting environment.

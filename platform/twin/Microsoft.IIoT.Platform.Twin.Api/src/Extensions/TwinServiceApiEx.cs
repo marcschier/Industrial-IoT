@@ -32,13 +32,13 @@ namespace Microsoft.IIoT.Platform.Twin.Api {
             this ITwinServiceApi service, string twin, BrowseRequestApiModel request,
             CancellationToken ct = default) {
             if (request.MaxReferencesToReturn != null) {
-                return await service.NodeBrowseFirstAsync(twin, request, 
+                return await service.NodeBrowseFirstAsync(twin, request,
                     ct).ConfigureAwait(false);
             }
             while (true) {
                 // Limit size of batches to a reasonable default to avoid communication timeouts.
                 request.MaxReferencesToReturn = 500;
-                var result = await service.NodeBrowseFirstAsync(twin, request, 
+                var result = await service.NodeBrowseFirstAsync(twin, request,
                     ct).ConfigureAwait(false);
                 while (result.ContinuationToken != null) {
                     try {
@@ -93,7 +93,7 @@ namespace Microsoft.IIoT.Platform.Twin.Api {
         /// <returns></returns>
         public static async Task<IEnumerable<HistoricValueApiModel>> HistoryReadAllModifiedValuesAsync(
             this IHistoryServiceApi client, string twinId,
-            HistoryReadRequestApiModel<ReadModifiedValuesDetailsApiModel> request, 
+            HistoryReadRequestApiModel<ReadModifiedValuesDetailsApiModel> request,
             CancellationToken ct = default) {
             var result = await client.HistoryReadModifiedValuesAsync(twinId, request,
                 ct).ConfigureAwait(false);
@@ -151,7 +151,7 @@ namespace Microsoft.IIoT.Platform.Twin.Api {
             CancellationToken ct = default) {
             var result = await client.HistoryReadEventsAsync(twinId, request,
                 ct).ConfigureAwait(false);
-            return await HistoryReadAllRemainingEventsAsync(client, twinId, request.Header, 
+            return await HistoryReadAllRemainingEventsAsync(client, twinId, request.Header,
                 result.ContinuationToken, result.History.AsEnumerable(), ct).ConfigureAwait(false);
         }
 
@@ -171,7 +171,7 @@ namespace Microsoft.IIoT.Platform.Twin.Api {
             string continuationToken, IEnumerable<HistoricValueApiModel> returning,
             CancellationToken ct = default) {
             while (continuationToken != null) {
-                var response = await client.HistoryReadValuesNextAsync(twinId, 
+                var response = await client.HistoryReadValuesNextAsync(twinId,
                     new HistoryReadNextRequestApiModel {
                         ContinuationToken = continuationToken,
                         Header = header
@@ -197,7 +197,7 @@ namespace Microsoft.IIoT.Platform.Twin.Api {
             string continuationToken, IEnumerable<HistoricEventApiModel> returning,
             CancellationToken ct = default) {
             while (continuationToken != null) {
-                var response = await client.HistoryReadEventsNextAsync(twinId, 
+                var response = await client.HistoryReadEventsNextAsync(twinId,
                     new HistoryReadNextRequestApiModel {
                         ContinuationToken = continuationToken,
                         Header = header

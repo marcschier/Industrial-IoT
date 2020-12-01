@@ -77,7 +77,7 @@ namespace Microsoft.IIoT.Utils {
                     }
                     catch (ResourceInvalidStateException rex) {
                         // Already started.
-                        _logger.LogWarning(rex, 
+                        _logger.LogWarning(rex,
                             "Tried to start {type} but was already started.",
                             host.GetType().Name);
                     }

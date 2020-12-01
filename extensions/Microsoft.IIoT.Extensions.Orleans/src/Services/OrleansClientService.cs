@@ -33,7 +33,7 @@ namespace Microsoft.IIoT.Extensions.Orleans.Services {
         public OrleansClientService(ILogger logger, TStartup startup = null) {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _startup = startup ?? (TStartup)Activator.CreateInstance(typeof(TStartup));
-           // _register = startup != null;
+            // _register = startup != null;
         }
 
         /// <inheritdoc/>
@@ -47,7 +47,7 @@ namespace Microsoft.IIoT.Extensions.Orleans.Services {
                 _startup.ConfigureClient(clientBuilder);
                 var client = clientBuilder
                     .ConfigureServices(services => {
-                     //   services.TryAddSingleton<IOrleansGrainClient>(this);
+                        //   services.TryAddSingleton<IOrleansGrainClient>(this);
                     })
                     .Build();
                 await client.Connect().ConfigureAwait(false);

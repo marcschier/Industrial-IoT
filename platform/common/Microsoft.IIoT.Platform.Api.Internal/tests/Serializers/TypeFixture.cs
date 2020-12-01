@@ -21,7 +21,7 @@ namespace Microsoft.IIoT.Api {
     public class TypeFixture {
 
         public static IEnumerable<object[]> GetDataContractTypes() {
-            return      GetAllApiModelTypes<BrowseDirection>()
+            return GetAllApiModelTypes<BrowseDirection>()
                 .Concat(GetAllApiModelTypes<UsersServiceClient>())
                 .Concat(GetAllApiModelTypes<VaultServiceClient>())
                 .Concat(GetAllApiModelTypes<TwinServiceClient>())

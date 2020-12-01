@@ -8,11 +8,12 @@ namespace Microsoft.IIoT.Azure.EventHub.Processor.Services {
     using Microsoft.IIoT.Exceptions;
     using Microsoft.Azure.EventHubs;
     using Microsoft.Azure.EventHubs.Processor;
+    using Microsoft.Extensions.Options;
     using Microsoft.Extensions.Logging;
     using System;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.Extensions.Options;
+    using Host = Microsoft.Azure.EventHubs.Processor.EventProcessorHost;
 
     /// <summary>
     /// Implementation of event processor host interface to host event
@@ -57,15 +58,14 @@ namespace Microsoft.IIoT.Azure.EventHub.Processor.Services {
                 }
                 _logger.LogInformation("Using Consumer Group: \"{consumerGroup}\"", consumerGroup);
                 if (_lease != null && _checkpoint != null) {
-                    _host = new EventHubs.Processor.EventProcessorHost(
+                    _host = new Host(
                         $"host-{Guid.NewGuid()}", _hub.Value.EventHubPath, consumerGroup,
                         GetEventHubConnectionString(out _), _checkpoint, _lease);
                 }
                 else {
                     var blobConnectionString = _config.Value.GetStorageConnString();
                     if (!string.IsNullOrEmpty(blobConnectionString)) {
-                        _host = new EventHubs.Processor.EventProcessorHost(
-                            _hub.Value.EventHubPath, consumerGroup,
+                        _host = new Host(_hub.Value.EventHubPath, consumerGroup,
                             GetEventHubConnectionString(out var eventHub),
                             blobConnectionString,
                             !string.IsNullOrEmpty(_config.Value.LeaseContainerName) ?
@@ -160,6 +160,6 @@ namespace Microsoft.IIoT.Azure.EventHub.Processor.Services {
         private readonly IEventProcessorFactory _factory;
         private readonly ILeaseManager _lease;
         private readonly ICheckpointManager _checkpoint;
-        private EventHubs.Processor.EventProcessorHost _host;
+        private Host _host;
     }
 }

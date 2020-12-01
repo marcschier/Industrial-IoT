@@ -125,7 +125,7 @@ namespace Microsoft.IIoT.Crypto.Services {
         /// <param name="mock"></param>
         private static AutoMock Setup() {
             var mock = AutoMock.GetLoose(builder => {
-                builder.RegisterGeneric(typeof(OptionsMock<>)).AsImplementedInterfaces(); 
+                builder.RegisterGeneric(typeof(OptionsMock<>)).AsImplementedInterfaces();
                 builder.RegisterType<NewtonSoftJsonConverters>().As<IJsonSerializerConverterProvider>();
                 builder.RegisterType<NewtonSoftJsonSerializer>().As<IJsonSerializer>();
                 builder.RegisterType<MemoryDatabase>().SingleInstance().As<IDatabaseServer>();

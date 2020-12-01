@@ -14,7 +14,7 @@ namespace Microsoft.IIoT.Platform.Twin.Clients {
     /// <summary>
     /// Implements node services as adapter through twin registry
     /// </summary>
-    public sealed class AddressSpaceAdapter : 
+    public sealed class AddressSpaceAdapter :
         IBrowseServices<string>, IHistoricAccessServices<string>, INodeServices<string> {
 
         /// <summary>
@@ -25,7 +25,7 @@ namespace Microsoft.IIoT.Platform.Twin.Clients {
         /// <param name="nodes"></param>
         /// <param name="history"></param>
         public AddressSpaceAdapter(ITwinRegistry registry,
-            IBrowseServices<ConnectionModel> browse, INodeServices<ConnectionModel> nodes, 
+            IBrowseServices<ConnectionModel> browse, INodeServices<ConnectionModel> nodes,
             IHistoricAccessServices<ConnectionModel> history) {
 
             _registry = registry ?? throw new ArgumentNullException(nameof(registry));

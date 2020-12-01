@@ -21,7 +21,7 @@ namespace Microsoft.IIoT.Platform.Twin {
         /// <param name="ct"></param>
         /// <returns>file name of the model exported</returns>
         Task<ModelUploadStartResultModel> ModelUploadStartAsync(T twin,
-            ModelUploadStartRequestModel request, 
+            ModelUploadStartRequestModel request,
             CancellationToken ct = default);
     }
 }

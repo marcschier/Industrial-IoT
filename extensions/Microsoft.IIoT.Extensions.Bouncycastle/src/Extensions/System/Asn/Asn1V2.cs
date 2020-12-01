@@ -109,7 +109,7 @@ namespace System.Security.Cryptography.Asn1 {
         }
 
         public Asn1Tag(UniversalTagNumber universalTagNumber, bool isConstructed = false)
-            : this(isConstructed ? kConstructedMask : (byte)0, (int)universalTagNumber) {
+            : this(isConstructed ? kConstructedMask : 0, (int)universalTagNumber) {
             // T-REC-X.680-201508 sec 8.6 (Table 1)
             const UniversalTagNumber ReservedIndex = (UniversalTagNumber)15;
 

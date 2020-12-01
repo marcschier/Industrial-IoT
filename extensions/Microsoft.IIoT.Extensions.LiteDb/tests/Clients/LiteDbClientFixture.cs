@@ -51,7 +51,7 @@ namespace Microsoft.IIoT.Extensions.LiteDb.Clients {
                     City = "Seattle"
                 },
                 Colors = new HashSet<string> { "yellow", "blue", "orange" },
-                Certificate = new byte[] {1, 2, 3, 4, 5},
+                Certificate = new byte[] { 1, 2, 3, 4, 5 },
                 Items = new Dictionary<string, bool> {
                     ["false"] = false,
                     ["true"] = true

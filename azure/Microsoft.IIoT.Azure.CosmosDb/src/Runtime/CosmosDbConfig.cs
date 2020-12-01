@@ -20,7 +20,7 @@ namespace Microsoft.IIoT.Azure.CosmosDb.Runtime {
         /// <inheritdoc/>
         public override void PostConfigure(string name, CosmosDbOptions options) {
             if (string.IsNullOrEmpty(options.DbConnectionString)) {
-                options.DbConnectionString = 
+                options.DbConnectionString =
                     GetStringOrDefault(PcsVariable.PCS_COSMOSDB_CONNSTRING,
                     GetStringOrDefault("PCS_STORAGEADAPTER_DOCUMENTDB_CONNSTRING",
                     GetStringOrDefault("PCS_TELEMETRY_DOCUMENTDB_CONNSTRING",

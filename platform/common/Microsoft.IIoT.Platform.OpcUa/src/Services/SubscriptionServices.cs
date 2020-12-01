@@ -450,7 +450,7 @@ namespace Microsoft.IIoT.Platform.OpcUa.Services {
                             if (item.GetTriggeringLinks(out var added, out var removed)) {
                                 var response = await rawSubscription.Session.SetTriggeringAsync(
                                     null, rawSubscription.Id, item.ServerId.GetValueOrDefault(),
-                                    new UInt32Collection(added), 
+                                    new UInt32Collection(added),
                                     new UInt32Collection(removed)).ConfigureAwait(false);
                             }
                         }
@@ -672,7 +672,7 @@ namespace Microsoft.IIoT.Platform.OpcUa.Services {
             /// <param name="subscription"></param>
             /// <param name="notification"></param>
             /// <param name="stringTable"></param>
-            private void OnSubscriptionEventChanged(Subscription subscription, 
+            private void OnSubscriptionEventChanged(Subscription subscription,
                 EventNotificationList notification, IList<string> stringTable) {
                 if (_currentlyMonitored == null || notification == null) {
                     return;
@@ -727,7 +727,7 @@ namespace Microsoft.IIoT.Platform.OpcUa.Services {
             /// <summary>
             /// Last published time
             /// </summary>
-            public DateTime NextHeartbeat {get; private set; }
+            public DateTime NextHeartbeat { get; private set; }
 
             /// <summary>
             /// validates if a heartbeat is required.

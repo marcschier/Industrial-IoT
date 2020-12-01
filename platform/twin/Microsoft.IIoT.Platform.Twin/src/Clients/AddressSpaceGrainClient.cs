@@ -16,8 +16,8 @@ namespace Microsoft.IIoT.Platform.Twin.Clients {
     /// <summary>
     /// Implements addpress space and certificate services as grain client
     /// </summary>
-    public sealed class AddressSpaceGrainClient : IBrowseServices<string>, 
-        ICertificateServices<string>, INodeServices<string>, 
+    public sealed class AddressSpaceGrainClient : IBrowseServices<string>,
+        ICertificateServices<string>, INodeServices<string>,
         IHistoricAccessServices<string> {
 
         /// <summary>

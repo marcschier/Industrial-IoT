@@ -18,7 +18,7 @@ namespace Microsoft.IIoT.Platform.Core {
         /// <param name="id"></param>
         /// <param name="ct"></param>
         /// <returns></returns>
-        Task ActivateAsync(T id, 
+        Task ActivateAsync(T id,
             CancellationToken ct = default);
 
         /// <summary>

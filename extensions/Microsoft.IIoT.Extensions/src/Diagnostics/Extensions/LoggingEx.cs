@@ -33,7 +33,7 @@ namespace Autofac {
             // Add logging
             builder.AddOptions();
             builder.RegisterModule<Logging>();
-           
+
             var log = new LogBuilder();
             if (configure != null) {
                 configure(log);

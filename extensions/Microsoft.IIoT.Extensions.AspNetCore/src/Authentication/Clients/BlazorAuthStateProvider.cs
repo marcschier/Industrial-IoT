@@ -145,7 +145,7 @@ namespace Microsoft.IIoT.AspNetCore.Authentication.Clients {
                     }
                 }
             }
-            catch  {
+            catch {
                 ForceSignOut();
             }
         }

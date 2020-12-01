@@ -343,10 +343,10 @@ namespace Microsoft.IIoT.Platform.Publisher.Services {
                 registry
                     .Setup(e => e.GetEndpointAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
                     .Returns(Task.FromResult(new EndpointInfoModel {
-                            Id = "endpoint1",
-                            Endpoint = new EndpointModel {
-                                Url = "fakeurl"
-                            }
+                        Id = "endpoint1",
+                        Endpoint = new EndpointModel {
+                            Url = "fakeurl"
+                        }
                     }));
                 builder.RegisterMock(registry);
                 builder.RegisterType<WriterGroupRegistry>().AsImplementedInterfaces();

@@ -62,7 +62,7 @@ namespace Microsoft.IIoT.Platform.Api.Events.Service.Controllers {
         [HttpDelete("{dataSetWriterId}/status/{connectionId}")]
         public async Task UnsubscribeAsync(string dataSetWriterId,
             string connectionId) {
-            await _events.UnsubscribeAsync(dataSetWriterId, 
+            await _events.UnsubscribeAsync(dataSetWriterId,
                 connectionId).ConfigureAwait(false);
         }
 
@@ -86,7 +86,7 @@ namespace Microsoft.IIoT.Platform.Api.Events.Service.Controllers {
             if (string.IsNullOrEmpty(variableId)) {
                 throw new ArgumentNullException(nameof(variableId));
             }
-            await _events.SubscribeAsync($"{dataSetWriterId}_{variableId}", 
+            await _events.SubscribeAsync($"{dataSetWriterId}_{variableId}",
                 connectionId).ConfigureAwait(false);
         }
 
@@ -110,7 +110,7 @@ namespace Microsoft.IIoT.Platform.Api.Events.Service.Controllers {
             if (string.IsNullOrEmpty(variableId)) {
                 throw new ArgumentNullException(nameof(variableId));
             }
-            await _events.UnsubscribeAsync($"{dataSetWriterId}_{variableId}", 
+            await _events.UnsubscribeAsync($"{dataSetWriterId}_{variableId}",
                 connectionId).ConfigureAwait(false);
         }
 
@@ -125,7 +125,7 @@ namespace Microsoft.IIoT.Platform.Api.Events.Service.Controllers {
         /// samples.</param>
         /// <returns></returns>
         [HttpPut("{dataSetWriterId}/event")]
-        public async Task SubscribeEventsAsync(string dataSetWriterId, 
+        public async Task SubscribeEventsAsync(string dataSetWriterId,
             [FromBody] string connectionId) {
             if (string.IsNullOrEmpty(dataSetWriterId)) {
                 throw new ArgumentNullException(nameof(dataSetWriterId));

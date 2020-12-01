@@ -12,7 +12,6 @@ namespace Microsoft.IIoT.Platform.Publisher.Processor {
     using Microsoft.IIoT.Azure.EventHub;
     using Microsoft.IIoT.Azure.EventHub.Processor;
     using Microsoft.IIoT.Azure.IoTHub.Handlers;
-    using Microsoft.IIoT.Azure.IoTHub.Models;
     using Microsoft.IIoT.Azure.IoTHub;
     using Microsoft.IIoT.Messaging;
     using Microsoft.IIoT.Serializers;

@@ -95,7 +95,7 @@ namespace Microsoft.IIoT.Extensions.Kafka.Server {
         /// </summary>
         /// <returns></returns>
         private async Task WaitForClusterHealthAsync() {
-            for (var attempt = 0; attempt < 10; attempt ++){
+            for (var attempt = 0; attempt < 10; attempt++) {
                 var up = true;
                 foreach (var check in _checks) {
                     var result = await check.CheckHealthAsync(null).ConfigureAwait(false);

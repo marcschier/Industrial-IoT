@@ -70,7 +70,7 @@ namespace Microsoft.IIoT.Platform.Publisher.Services {
             if (string.IsNullOrEmpty(dataSetWriterId)) {
                 throw new ArgumentNullException(nameof(dataSetWriterId));
             }
-            if (request.Variables == null||
+            if (request.Variables == null ||
                 request.Variables.Count == 0 || request.Variables.Count > kMaxBatchSize) {
                 throw new ArgumentException(
                     "Number of variables in request is invalid.", nameof(request));
@@ -105,7 +105,7 @@ namespace Microsoft.IIoT.Platform.Publisher.Services {
 
                 // If successful notify about dataset writer change
                 await _writerEvents.NotifyAllAsync(
-                    l => l.OnDataSetWriterUpdatedAsync(context, dataSetWriterId, 
+                    l => l.OnDataSetWriterUpdatedAsync(context, dataSetWriterId,
                         writer)).ConfigureAwait(false);
                 return new DataSetAddVariableBatchResultModel {
                     Results = results
@@ -151,7 +151,7 @@ namespace Microsoft.IIoT.Platform.Publisher.Services {
                         //
                         dataSetVariable.Id = dataSetVariable.PublishedVariableNodeId.ToSha256Hash();
                         var result = await _dataSets.AddOrUpdateDataSetVariableAsync(
-                            endpointId, dataSetVariable.Id, 
+                            endpointId, dataSetVariable.Id,
                             _ => Task.FromResult(dataSetVariable), ct).ConfigureAwait(false);
                         results.Add(new DataSetAddVariableResultModel {
                             GenerationId = result.GenerationId,
@@ -346,7 +346,7 @@ namespace Microsoft.IIoT.Platform.Publisher.Services {
 
             // If successful notify about dataset writer change
             await _itemEvents.NotifyAllAsync(
-                l => l.OnPublishedDataSetVariableAddedAsync(context, dataSetWriterId, 
+                l => l.OnPublishedDataSetVariableAddedAsync(context, dataSetWriterId,
                     result)).ConfigureAwait(false);
             await _writerEvents.NotifyAllAsync(
                 l => l.OnDataSetWriterUpdatedAsync(context, dataSetWriterId)).ConfigureAwait(false);
@@ -379,7 +379,7 @@ namespace Microsoft.IIoT.Platform.Publisher.Services {
 
             // Check writer group in same site
             if (!string.IsNullOrEmpty(request.WriterGroupId)) {
-                var group = await _groups.FindAsync(request.WriterGroupId, 
+                var group = await _groups.FindAsync(request.WriterGroupId,
                     ct).ConfigureAwait(false);
                 if (group == null) {
                     throw new ArgumentException(
@@ -622,75 +622,75 @@ namespace Microsoft.IIoT.Platform.Publisher.Services {
             var updated = false;
             var result = await _dataSets.UpdateDataSetVariableAsync(dataSetWriterId,
                 variableId, existing => {
-                if (request.GenerationId != null &&
-                    request.GenerationId != existing.GenerationId) {
-                    throw new ResourceOutOfDateException("Generation does not match.");
-                }
-                if (request.DiscardNew != null) {
-                    existing.DiscardNew = request.DiscardNew == false ?
-                        null : request.DiscardNew;
-                    updated = true;
-                }
-                if (request.DeadbandType != null) {
-                    existing.DeadbandType = request.DeadbandType == 0 ?
-                        null : request.DeadbandType;
-                    updated = true;
-                }
-                if (request.DeadbandValue != null) {
-                    existing.DeadbandValue = request.DeadbandValue == 0.0 ?
-                        null : request.DeadbandValue;
-                    updated = true;
-                }
-                if (request.DataChangeFilter != null) {
-                    existing.DataChangeFilter = request.DataChangeFilter == 0 ?
-                        null : request.DataChangeFilter;
-                    updated = true;
-                }
-                if (!(request.SubstituteValue is null)) {
-                    existing.SubstituteValue = request.SubstituteValue.IsNull() ?
-                        null : request.SubstituteValue;
-                    updated = true;
-                }
-                if (request.QueueSize != null) {
-                    existing.QueueSize = request.QueueSize == 0 ?
-                        null : request.QueueSize;
-                    updated = true;
-                }
-                if (request.MonitoringMode != null) {
-                    existing.MonitoringMode = request.MonitoringMode == 0 ?
-                        null : request.MonitoringMode;
-                    updated = true;
-                }
-                if (request.SamplingInterval != null) {
-                    existing.SamplingInterval = request.SamplingInterval <= TimeSpan.Zero ?
-                        null : request.SamplingInterval;
-                    updated = true;
-                }
-                if (request.HeartbeatInterval != null) {
-                    existing.HeartbeatInterval = request.HeartbeatInterval <= TimeSpan.Zero ?
-                        null : request.HeartbeatInterval;
-                    updated = true;
-                }
-                if (request.TriggerId != null) {
-                    existing.TriggerId = string.IsNullOrEmpty(request.TriggerId) ?
-                        null : request.TriggerId;
-                    updated = true;
-                }
-                if (request.PublishedVariableDisplayName != null) {
-                    existing.PublishedVariableDisplayName =
-                    string.IsNullOrEmpty(request.PublishedVariableDisplayName) ?
-                        null : request.PublishedVariableDisplayName;
-                    updated = true;
-                }
-                return Task.FromResult(updated);
-            }, ct).ConfigureAwait(false);
+                    if (request.GenerationId != null &&
+                        request.GenerationId != existing.GenerationId) {
+                        throw new ResourceOutOfDateException("Generation does not match.");
+                    }
+                    if (request.DiscardNew != null) {
+                        existing.DiscardNew = request.DiscardNew == false ?
+                            null : request.DiscardNew;
+                        updated = true;
+                    }
+                    if (request.DeadbandType != null) {
+                        existing.DeadbandType = request.DeadbandType == 0 ?
+                            null : request.DeadbandType;
+                        updated = true;
+                    }
+                    if (request.DeadbandValue != null) {
+                        existing.DeadbandValue = request.DeadbandValue == 0.0 ?
+                            null : request.DeadbandValue;
+                        updated = true;
+                    }
+                    if (request.DataChangeFilter != null) {
+                        existing.DataChangeFilter = request.DataChangeFilter == 0 ?
+                            null : request.DataChangeFilter;
+                        updated = true;
+                    }
+                    if (!(request.SubstituteValue is null)) {
+                        existing.SubstituteValue = request.SubstituteValue.IsNull() ?
+                            null : request.SubstituteValue;
+                        updated = true;
+                    }
+                    if (request.QueueSize != null) {
+                        existing.QueueSize = request.QueueSize == 0 ?
+                            null : request.QueueSize;
+                        updated = true;
+                    }
+                    if (request.MonitoringMode != null) {
+                        existing.MonitoringMode = request.MonitoringMode == 0 ?
+                            null : request.MonitoringMode;
+                        updated = true;
+                    }
+                    if (request.SamplingInterval != null) {
+                        existing.SamplingInterval = request.SamplingInterval <= TimeSpan.Zero ?
+                            null : request.SamplingInterval;
+                        updated = true;
+                    }
+                    if (request.HeartbeatInterval != null) {
+                        existing.HeartbeatInterval = request.HeartbeatInterval <= TimeSpan.Zero ?
+                            null : request.HeartbeatInterval;
+                        updated = true;
+                    }
+                    if (request.TriggerId != null) {
+                        existing.TriggerId = string.IsNullOrEmpty(request.TriggerId) ?
+                            null : request.TriggerId;
+                        updated = true;
+                    }
+                    if (request.PublishedVariableDisplayName != null) {
+                        existing.PublishedVariableDisplayName =
+                        string.IsNullOrEmpty(request.PublishedVariableDisplayName) ?
+                            null : request.PublishedVariableDisplayName;
+                        updated = true;
+                    }
+                    return Task.FromResult(updated);
+                }, ct).ConfigureAwait(false);
             if (updated) {
                 // If updated notify about dataset writer change
                 await _itemEvents.NotifyAllAsync(
                     l => l.OnPublishedDataSetVariableUpdatedAsync(context,
                         dataSetWriterId, result)).ConfigureAwait(false);
                 await _writerEvents.NotifyAllAsync(
-                    l => l.OnDataSetWriterUpdatedAsync(context, 
+                    l => l.OnDataSetWriterUpdatedAsync(context,
                         dataSetWriterId)).ConfigureAwait(false);
             }
         }
@@ -927,7 +927,7 @@ namespace Microsoft.IIoT.Platform.Publisher.Services {
             if (request is null) {
                 throw new ArgumentNullException(nameof(request));
             }
-            if (request?.Variables == null||
+            if (request?.Variables == null ||
                 request.Variables.Count == 0 || request.Variables.Count > kMaxBatchSize) {
                 throw new ArgumentException(
                     "Number of variables in request is invalid.", nameof(request));
@@ -1059,7 +1059,7 @@ namespace Microsoft.IIoT.Platform.Publisher.Services {
         private async Task<DataSetWriterModel> GetDataSetWriterAsync(
             DataSetWriterInfoModel writerInfo, CancellationToken ct) {
             var endpoint = string.IsNullOrEmpty(writerInfo.DataSet.EndpointId) ? null :
-                await _endpoints.GetEndpointAsync(writerInfo.DataSet.EndpointId, 
+                await _endpoints.GetEndpointAsync(writerInfo.DataSet.EndpointId,
                     ct).ConfigureAwait(false);
             var connection = endpoint?.Endpoint == null ? null :
                 new ConnectionModel {
@@ -1067,7 +1067,7 @@ namespace Microsoft.IIoT.Platform.Publisher.Services {
                     User = writerInfo.DataSet?.User.Clone()
                 };
             // Find event
-            var events = await _dataSets.FindEventDataSetAsync(writerInfo.DataSetWriterId, 
+            var events = await _dataSets.FindEventDataSetAsync(writerInfo.DataSetWriterId,
                 ct).ConfigureAwait(false);
             if (events != null) {
                 return writerInfo.AsDataSetWriter(connection, null, events);

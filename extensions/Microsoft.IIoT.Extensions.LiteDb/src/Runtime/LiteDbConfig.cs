@@ -20,7 +20,7 @@ namespace Microsoft.IIoT.Extensions.LiteDb.Runtime {
         /// <inheritdoc/>
         public override void PostConfigure(string name, LiteDbOptions options) {
             if (string.IsNullOrEmpty(options.DbConnectionString)) {
-                options.DbConnectionString = 
+                options.DbConnectionString =
                     GetStringOrDefault(PcsVariable.PCS_COSMOSDB_CONNSTRING,
                     GetStringOrDefault("_DB_CS"));
             }

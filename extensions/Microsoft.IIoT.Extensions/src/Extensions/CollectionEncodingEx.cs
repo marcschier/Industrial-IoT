@@ -43,7 +43,7 @@ namespace Microsoft.IIoT.Utils {
             }
             var result = new Dictionary<string, TValue>();
             var i = 0;
-            foreach ( var item in list) {
+            foreach (var item in list) {
                 result.Add(i.ToString(CultureInfo.InvariantCulture),
                     converter(item));
                 i++;

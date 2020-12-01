@@ -560,7 +560,7 @@ namespace HistoricalEvents {
                 return null;
             }
 
-            if (session.RestoreHistoryContinuationPoint(continuationPoint) 
+            if (session.RestoreHistoryContinuationPoint(continuationPoint)
                 is not HistoryReadRequest request) {
                 return null;
             }

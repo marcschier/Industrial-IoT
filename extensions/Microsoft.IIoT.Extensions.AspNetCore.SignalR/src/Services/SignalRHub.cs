@@ -62,7 +62,7 @@ namespace Microsoft.IIoT.Messaging.SignalR.Services {
             catch (Exception ex) {
                 _logger.LogDebug(ex, "Failed to send unicast message");
             }
-         }
+        }
 
         /// <inheritdoc/>
         public async Task MulticastAsync(string group, string method, object[] arguments,

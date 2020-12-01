@@ -23,7 +23,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{EDC413E0-BE9
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{ADA1CE90-5727-4D1E-8544-50C19B09D3A1}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Hosting", "Hosting", "{3C07D78B-E4C6-4552-894A-BB91174B5745}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Modules", "Modules", "{3C07D78B-E4C6-4552-894A-BB91174B5745}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.IIoT.Extensions.AspNetCore.Tests", "extensions\Microsoft.IIoT.Extensions.AspNetCore\tests\Microsoft.IIoT.Extensions.AspNetCore.Tests.csproj", "{E782A06D-9679-4872-A1E7-8AB0951868D6}"
 EndProject

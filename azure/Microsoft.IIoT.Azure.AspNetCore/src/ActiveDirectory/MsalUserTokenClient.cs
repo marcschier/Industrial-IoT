@@ -300,7 +300,7 @@ namespace Microsoft.IIoT.AspNetCore.Authentication.Clients {
             builder = builder
                 .WithClientSecret(config.ClientSecret)
                 .WithTenantId(config.TenantId)
-              //  .WithHttpClientFactory(...)
+                //  .WithHttpClientFactory(...)
                 .WithAuthority($"{config.GetAuthority()}/")
                 ;
             return new MsalConfidentialClientDecorator(builder.Build(), _cache, config.ClientId,
@@ -308,7 +308,7 @@ namespace Microsoft.IIoT.AspNetCore.Authentication.Clients {
         }
 
         /// <summary> Scopes requested internally already </summary>
-        public static readonly string[] ScopesRequestedByMsal = new [] {
+        public static readonly string[] ScopesRequestedByMsal = new[] {
             "openid", "profile", "offline_acccess"
         };
 

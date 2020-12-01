@@ -44,7 +44,7 @@ namespace Microsoft.IIoT.Platform.Registry {
             var result = await service.ListSitesAsync(null, null, ct).ConfigureAwait(false);
             sites.AddRange(result.Sites);
             while (result.ContinuationToken != null) {
-                result = await service.ListSitesAsync(result.ContinuationToken, 
+                result = await service.ListSitesAsync(result.ContinuationToken,
                     null, ct).ConfigureAwait(false);
                 sites.AddRange(result.Sites);
             }

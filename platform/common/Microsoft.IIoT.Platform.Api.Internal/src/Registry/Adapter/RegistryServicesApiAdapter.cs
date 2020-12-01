@@ -15,7 +15,7 @@ namespace Microsoft.IIoT.Platform.Registry.Api.Clients {
     /// <summary>
     /// Directory services adapter to run dependent services outside of cloud.
     /// </summary>
-    public sealed class RegistryServicesApiAdapter : ISupervisorRegistry, 
+    public sealed class RegistryServicesApiAdapter : ISupervisorRegistry,
         IPublisherRegistry, IDiscovererRegistry, IGatewayRegistry {
 
         /// <summary>
@@ -81,9 +81,9 @@ namespace Microsoft.IIoT.Platform.Registry.Api.Clients {
         }
 
         /// <inheritdoc/>
-        public async Task UpdatePublisherAsync(string id, 
+        public async Task UpdatePublisherAsync(string id,
             PublisherUpdateModel request, CancellationToken ct) {
-            await _client.UpdatePublisherAsync(id, request.ToApiModel(), 
+            await _client.UpdatePublisherAsync(id, request.ToApiModel(),
                 ct).ConfigureAwait(false);
         }
 
@@ -98,7 +98,7 @@ namespace Microsoft.IIoT.Platform.Registry.Api.Clients {
         /// <inheritdoc/>
         public async Task<GatewayListModel> ListGatewaysAsync(
             string continuation, int? pageSize, CancellationToken ct) {
-            var result = await _client.ListGatewaysAsync(continuation, 
+            var result = await _client.ListGatewaysAsync(continuation,
                 pageSize, ct).ConfigureAwait(false);
             return result.ToServiceModel();
         }
@@ -119,9 +119,9 @@ namespace Microsoft.IIoT.Platform.Registry.Api.Clients {
         }
 
         /// <inheritdoc/>
-        public async Task UpdateGatewayAsync(string id, 
+        public async Task UpdateGatewayAsync(string id,
             GatewayUpdateModel request, CancellationToken ct) {
-            await _client.UpdateGatewayAsync(id, request.ToApiModel(), 
+            await _client.UpdateGatewayAsync(id, request.ToApiModel(),
                 ct).ConfigureAwait(false);
         }
 
@@ -144,15 +144,15 @@ namespace Microsoft.IIoT.Platform.Registry.Api.Clients {
         /// <inheritdoc/>
         public async Task<DiscovererModel> GetDiscovererAsync(
             string id, CancellationToken ct) {
-            var result = await _client.GetDiscovererAsync(id, 
+            var result = await _client.GetDiscovererAsync(id,
                 ct).ConfigureAwait(false);
             return result.ToServiceModel();
         }
 
         /// <inheritdoc/>
-        public async Task UpdateDiscovererAsync(string id, 
+        public async Task UpdateDiscovererAsync(string id,
             DiscovererUpdateModel request, CancellationToken ct) {
-            await _client.UpdateDiscovererAsync(id, request.ToApiModel(), 
+            await _client.UpdateDiscovererAsync(id, request.ToApiModel(),
                 ct).ConfigureAwait(false);
         }
 

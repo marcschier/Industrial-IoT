@@ -16,7 +16,7 @@ namespace Microsoft.IIoT.Platform.Discovery.Default {
     /// all event versions to event bus
     /// </summary>
     public sealed class EndpointEventBroker :
-        IDiscoveryEventBroker<IEndpointRegistryListener>, 
+        IDiscoveryEventBroker<IEndpointRegistryListener>,
         IDiscoveryEvents<IEndpointRegistryListener> {
 
         /// <summary>

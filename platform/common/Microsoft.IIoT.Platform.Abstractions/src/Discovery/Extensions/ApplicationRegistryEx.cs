@@ -47,7 +47,7 @@ namespace Microsoft.IIoT.Platform.Discovery {
             var result = await service.QueryApplicationsAsync(query, null, ct).ConfigureAwait(false);
             registrations.AddRange(result.Items);
             while (result.ContinuationToken != null) {
-                result = await service.ListApplicationsAsync(result.ContinuationToken, 
+                result = await service.ListApplicationsAsync(result.ContinuationToken,
                     null, ct).ConfigureAwait(false);
                 registrations.AddRange(result.Items);
             }

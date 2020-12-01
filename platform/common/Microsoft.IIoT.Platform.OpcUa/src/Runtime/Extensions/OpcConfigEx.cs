@@ -97,7 +97,7 @@ namespace Microsoft.IIoT.Platform.OpcUa {
                         await applicationConfiguration.Validate(applicationConfiguration.ApplicationType).ConfigureAwait(false);
                         var application = new ApplicationInstance(applicationConfiguration);
                         var hasAppCertificate = await application.CheckApplicationInstanceCertificate(true,
-                            CertificateFactory.defaultKeySize).ConfigureAwait(false);
+                            CertificateFactory.DefaultKeySize).ConfigureAwait(false);
                         if (!hasAppCertificate) {
                             throw new InvalidConfigurationException("OPC UA application certificate invalid");
                         }

@@ -37,7 +37,7 @@ namespace Microsoft.IIoT.Diagnostics {
             if (string.IsNullOrEmpty(eventSource)) {
                 throw new ArgumentNullException(nameof(eventSource));
             }
-            var source = _subscribers.GetOrAdd(eventSource, 
+            var source = _subscribers.GetOrAdd(eventSource,
                 name => new EventSourceWrapper(this));
             return source.Add(subscriber);
         }
@@ -69,7 +69,7 @@ namespace Microsoft.IIoT.Diagnostics {
         /// <summary>
         /// Event Source with subscriptions
         /// </summary>
-        class EventSourceWrapper {
+        private class EventSourceWrapper {
 
             /// <summary>
             /// Event source
@@ -81,7 +81,7 @@ namespace Microsoft.IIoT.Diagnostics {
             /// </summary>
             /// <param name="listener"></param>
             /// <param name="eventSource"></param>
-            internal EventSourceWrapper(EventSourceBroker listener, 
+            internal EventSourceWrapper(EventSourceBroker listener,
                 EventSource eventSource = null) {
                 EventSource = eventSource;
                 _listener = listener;
@@ -103,7 +103,7 @@ namespace Microsoft.IIoT.Diagnostics {
             internal void UpdateEventLevel() {
                 if (EventSource != null) {
                     lock (_subscriptions) {
-                        var level = _subscriptions.Any() ? 
+                        var level = _subscriptions.Any() ?
                             _subscriptions.Max(s => s.Level) : EventLevel.LogAlways;
                         if (level != _enabledLevel) {
                             _enabledLevel = level;
@@ -131,7 +131,7 @@ namespace Microsoft.IIoT.Diagnostics {
             /// <returns></returns>
             internal EventSourceSubscriber Add(IEventSourceSubscriber subscriber) {
                 var subscription = new EventSourceSubscriber(subscriber, this);
-                lock(_subscriptions) {
+                lock (_subscriptions) {
                     _subscriptions.Add(subscription);
                 }
                 UpdateEventLevel();
@@ -151,14 +151,14 @@ namespace Microsoft.IIoT.Diagnostics {
 
             private EventLevel _enabledLevel = EventLevel.LogAlways;
             private readonly EventSourceBroker _listener;
-            private readonly List<EventSourceSubscriber> _subscriptions = 
+            private readonly List<EventSourceSubscriber> _subscriptions =
                 new List<EventSourceSubscriber>();
         }
 
         /// <summary>
         /// Wraps event source subscriber
         /// </summary>
-        class EventSourceSubscriber : IDisposable, IEventSourceSubscriber {
+        private class EventSourceSubscriber : IDisposable, IEventSourceSubscriber {
 
             /// <inheritdoc/>
             public EventLevel Level => _subscriber.Level;

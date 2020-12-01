@@ -119,7 +119,7 @@ namespace Microsoft.IIoT.Azure.CosmosDb.Clients {
 
         private readonly Database _database;
         private readonly ILogger _logger;
-      //  private readonly int? _databaseThroughput;
+        //  private readonly int? _databaseThroughput;
         private readonly ConcurrentDictionary<string, DocumentCollection> _collections;
         private readonly IJsonSerializer _serializer;
     }

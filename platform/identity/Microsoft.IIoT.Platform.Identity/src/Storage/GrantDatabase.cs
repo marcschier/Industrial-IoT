@@ -69,7 +69,7 @@ namespace Microsoft.IIoT.Platform.Identity.Storage {
             if (filter == null) {
                 throw new ArgumentNullException(nameof(filter));
             }
-            var results = CreateQuery(_documents.CreateQuery<GrantDocumentModel>(), 
+            var results = CreateQuery(_documents.CreateQuery<GrantDocumentModel>(),
                 filter);
             await results.ForEachAsync(d =>
                 _documents.DeleteAsync<GrantDocumentModel>(d.Id)).ConfigureAwait(false);

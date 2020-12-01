@@ -14,7 +14,7 @@ namespace Microsoft.IIoT.AspNetCore.Hosting.Runtime {
     /// Forwarded headers processing configuration.
     /// </summary>
     internal sealed class HeadersConfig : PostConfigureOptionBase<HeadersOptions>,
-        IConfigureOptions<ForwardedHeadersOptions>, 
+        IConfigureOptions<ForwardedHeadersOptions>,
         IConfigureNamedOptions<ForwardedHeadersOptions> {
 
         /// <inheritdoc/>

@@ -117,7 +117,7 @@ namespace Microsoft.IIoT.Platform.OpcUa.Services {
             // check the application certificate.
             var hasAppCertificate =
                 await application.CheckApplicationInstanceCertificate(true,
-                    CertificateFactory.defaultKeySize).ConfigureAwait(false);
+                    CertificateFactory.DefaultKeySize).ConfigureAwait(false);
             if (!hasAppCertificate) {
                 _logger.LogError("Failed validating own certificate!");
                 throw new Exception("Application instance certificate invalid!");

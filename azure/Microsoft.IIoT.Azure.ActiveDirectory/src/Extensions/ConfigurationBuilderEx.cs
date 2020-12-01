@@ -241,7 +241,7 @@ namespace Microsoft.Extensions.Configuration {
                     await provider.ValidateReadSecretAsync(keyVaultUrlVarName).ConfigureAwait(false);
                 }
                 catch (Exception ex) {
-// https://github.com/Azure/Industrial-IoT/tree/master/deploy/helm/azure-industrial-iot#load-configuration-from-azure-key-vault
+                    // https://github.com/Azure/Industrial-IoT/tree/master/deploy/helm/azure-industrial-iot#load-configuration-from-azure-key-vault
                     throw new InvalidConfigurationException(
                         "Could not access the provided keyvault URI. " +
                         "If you want to read configuration from the keyvault, make sure " +
@@ -256,8 +256,8 @@ namespace Microsoft.Extensions.Configuration {
                             break;
                         }
                         // try again...
-                        catch (TaskCanceledException) {}
-                        catch (SocketException) {}
+                        catch (TaskCanceledException) { }
+                        catch (SocketException) { }
                         await Task.Delay(TimeSpan.FromSeconds(1)).ConfigureAwait(false);
                         logger.LogDebug("Failed loading secrets due to timeout or network - try again ...");
                     }
@@ -301,7 +301,7 @@ namespace Microsoft.Extensions.Configuration {
                     if (secretPage.NextPageLink == null) {
                         break;
                     }
-                    secretPage =  await _keyVault.Client.GetSecretsNextAsync(
+                    secretPage = await _keyVault.Client.GetSecretsNextAsync(
                         secretPage.NextPageLink).ConfigureAwait(false);
                     allSecrets.AddRange(secretPage.ToList());
                 }

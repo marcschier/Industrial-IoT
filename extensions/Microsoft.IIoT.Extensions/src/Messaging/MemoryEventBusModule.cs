@@ -30,7 +30,7 @@ namespace Microsoft.IIoT.Messaging {
                 .AsImplementedInterfaces().SingleInstance()
                 .IfNotRegistered(typeof(ITaskProcessor));
 
-            base.Load(builder); 
+            base.Load(builder);
         }
     }
 }
