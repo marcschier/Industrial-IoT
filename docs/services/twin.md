@@ -2,7 +2,7 @@
 
 [Home](readme.md)
 
-Namespace: Microsoft.Azure.IIoT.Services.OpcUa.Twin
+Namespace: Microsoft.IIoT.Services.OpcUa.Twin
 
 ## Overview
 

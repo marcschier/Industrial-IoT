@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+    <IsPackable>true</IsPackable>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <Description>Azure Industrial IoT Message Pack Serializer</Description>
+  </PropertyGroup>
+  <ItemGroup>
+    <!--<PackageReference Include="MessagePack" Version="1.9.11" />-->
+    <PackageReference Include="MessagePack" Version="2.2.60" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Microsoft.IIoT.Extensions\src\Microsoft.IIoT.Extensions.csproj" />
+  </ItemGroup>
+</Project>

@@ -2,7 +2,7 @@
 
 [Home](readme.md)
 
-Namespace: Microsoft.Azure.IIoT.Services.OpcUa.Events
+Namespace: Microsoft.IIoT.Services.OpcUa.Events
 
 ## Overview
 

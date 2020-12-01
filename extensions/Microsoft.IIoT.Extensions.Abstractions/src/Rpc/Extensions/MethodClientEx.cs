@@ -1,0 +1,36 @@
+// ------------------------------------------------------------
+//  Copyright (c) Microsoft Corporation.  All rights reserved.
+//  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
+// ------------------------------------------------------------
+
+namespace Microsoft.IIoT.Rpc {
+    using System;
+    using System.Text;
+    using System.Threading;
+    using System.Threading.Tasks;
+
+    /// <summary>
+    /// Method client extensions
+    /// </summary>
+    public static class MethodClientEx {
+
+        /// <summary>
+        /// Call method with json payload.
+        /// </summary>
+        /// <param name="client"></param>
+        /// <param name="target"></param>
+        /// <param name="method"></param>
+        /// <param name="json"></param>
+        /// <param name="timeout"></param>
+        /// <param name="ct"></param>
+        /// <returns></returns>
+        public static async Task<string> CallMethodAsync(this IMethodClient client,
+            string target, string method, string json,
+            TimeSpan? timeout = null, CancellationToken ct = default) {
+            var response = await client.CallMethodAsync(target, method,
+                json == null ? null : Encoding.UTF8.GetBytes(json),
+                ContentMimeType.Json, timeout, ct).ConfigureAwait(false);
+            return response.Length == 0 ? null : Encoding.UTF8.GetString(response);
+        }
+    }
+}

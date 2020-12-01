@@ -1,0 +1,35 @@
+﻿// ------------------------------------------------------------
+//  Copyright (c) Microsoft Corporation.  All rights reserved.
+//  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
+// ------------------------------------------------------------
+
+namespace Microsoft.IIoT.Platform.Publisher.Events.v2.Models {
+    using Microsoft.IIoT.Platform.Publisher.Models;
+    using Microsoft.IIoT.Platform.Core.Models;
+
+    /// <summary>
+    /// Dataset writer event
+    /// </summary>
+    public class DataSetWriterEventModel {
+
+        /// <summary>
+        /// Event type
+        /// </summary>
+        public DataSetWriterEventType EventType { get; set; }
+
+        /// <summary>
+        /// Context
+        /// </summary>
+        public OperationContextModel Context { get; set; }
+
+        /// <summary>
+        /// Writer id
+        /// </summary>
+        public string Id { get; set; }
+
+        /// <summary>
+        /// Writer
+        /// </summary>
+        public DataSetWriterInfoModel DataSetWriter { get; set; }
+    }
+}

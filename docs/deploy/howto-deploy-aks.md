@@ -1,11 +1,11 @@
-# Microsoft.Azure.IIoT.Deployment (Preview) <!-- omit in toc -->
+# Microsoft.IIoT.Deployment (Preview) <!-- omit in toc -->
 
 [Home](readme.md)
 
 ## Table Of Contents <!-- omit in toc -->
 
-* [Download `Microsoft.Azure.IIoT.Deployment` Binaries](#download-microsoftazureiiotdeployment-binaries)
-* [Running Microsoft.Azure.IIoT.Deployment](#running-microsoftazureiiotdeployment)
+* [Download `Microsoft.IIoT.Deployment` Binaries](#download-microsoftazureiiotdeployment-binaries)
+* [Running Microsoft.IIoT.Deployment](#running-microsoftazureiiotdeployment)
   * [Run Modes](#run-modes)
   * [Running with User Credentials](#running-with-user-credentials)
   * [Running with Service Principal Credentials](#running-with-service-principal-credentials)
@@ -28,39 +28,39 @@
   * [User Interface](#user-interface)
 * [Resources](#resources)
 
-`Microsoft.Azure.IIoT.Deployment` is a command line application for deploying Azure Industrial IoT solution.
+`Microsoft.IIoT.Deployment` is a command line application for deploying Azure Industrial IoT solution.
 It takes care of deploying Azure infrastructure resources and microservices of Azure Industrial IoT solution.
 By default, it deploys `2.7.170` version of Azure Industrial IoT microservices.
 
 The main difference compared to the [script based deployment](howto-deploy-all-in-one.md) option is that
-from an infrastructure perspective `Microsoft.Azure.IIoT.Deployment` deploys microservices to an Azure
+from an infrastructure perspective `Microsoft.IIoT.Deployment` deploys microservices to an Azure
 Kubernetes Service (AKS) cluster, while `deploy.ps1` runs the entire platform as a web application.
 
-Source codes of `Microsoft.Azure.IIoT.Deployment` can be found in the following directory:
-[deploy/src/Microsoft.Azure.IIoT.Deployment/](../../deploy/src/Microsoft.Azure.IIoT.Deployment/)
+Source codes of `Microsoft.IIoT.Deployment` can be found in the following directory:
+[deploy/src/Microsoft.IIoT.Deployment/](../../deploy/src/Microsoft.IIoT.Deployment/)
 
-## Download `Microsoft.Azure.IIoT.Deployment` Binaries
+## Download `Microsoft.IIoT.Deployment` Binaries
 
-Latest compiled binaries of `Microsoft.Azure.IIoT.Deployment` can be found here:
+Latest compiled binaries of `Microsoft.IIoT.Deployment` can be found here:
 
-* [linux-x64](https://azureiiot.blob.core.windows.net/binaries/master/preview/linux-x64/Microsoft.Azure.IIoT.Deployment)
-* [osx-x64](https://azureiiot.blob.core.windows.net/binaries/master/preview/osx-x64/Microsoft.Azure.IIoT.Deployment)
-* [win-x64](https://azureiiot.blob.core.windows.net/binaries/master/preview/win-x64/Microsoft.Azure.IIoT.Deployment.exe)
+* [linux-x64](https://azureiiot.blob.core.windows.net/binaries/master/preview/linux-x64/Microsoft.IIoT.Deployment)
+* [osx-x64](https://azureiiot.blob.core.windows.net/binaries/master/preview/osx-x64/Microsoft.IIoT.Deployment)
+* [win-x64](https://azureiiot.blob.core.windows.net/binaries/master/preview/win-x64/Microsoft.IIoT.Deployment.exe)
 
-## Running Microsoft.Azure.IIoT.Deployment
+## Running Microsoft.IIoT.Deployment
 
-`Microsoft.Azure.IIoT.Deployment` application can be run with either user or Service Principal credentials.
+`Microsoft.IIoT.Deployment` application can be run with either user or Service Principal credentials.
 And those two methods have different setup requirements before the application can run successfully.
 The main difference is that when running with user credentials, the application will require onboarding of
 `AzureIndustrialIoTDeployment` Enterprise Application into your Azure AD and that will require consent of
 organization administrator.
 
-Additionally, `Microsoft.Azure.IIoT.Deployment` has three distinct run modes which require different
+Additionally, `Microsoft.IIoT.Deployment` has three distinct run modes which require different
 permissions.
 
 ### Run Modes
 
-`Microsoft.Azure.IIoT.Deployment` supports the following three run modes:
+`Microsoft.IIoT.Deployment` supports the following three run modes:
 
 | RunMode                   | Description                                                                                                                                       |
 |---------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -80,7 +80,7 @@ requires Administrator role, but second one does not.
 
 ### Running with User Credentials
 
-Execution of `Microsoft.Azure.IIoT.Deployment` application with user credentials will result in initiation of
+Execution of `Microsoft.IIoT.Deployment` application with user credentials will result in initiation of
 onboarding process of `AzureIndustrialIoTDeployment` Enterprise Application into your Azure AD, if it is not
 already present. If you have admin role, then first run of the application will ask you whether you want to
 add `AzureIndustrialIoTDeployment` Enterprise Application in your Azure AD. This will happen immediately after
@@ -89,13 +89,13 @@ to your organization administrator. After this, an administrator should also con
 the application requires to run in your Azure AD. The steps to do so are described in
 [Granting Admin Consent](#granting-admin-consent) bellow.
 
-Successful execution of `Microsoft.Azure.IIoT.Deployment` application will be possible only after
+Successful execution of `Microsoft.IIoT.Deployment` application will be possible only after
 `AzureIndustrialIoTDeployment` Enterprise Application has been added to your Azure AD and consent has been
 granted.
 
 ### Running with Service Principal Credentials
 
-To run `Microsoft.Azure.IIoT.Deployment` with Service Principal credentials, you would first need to
+To run `Microsoft.IIoT.Deployment` with Service Principal credentials, you would first need to
 create a Service Principal with enough permissions to execute the application and then pass Service
 Principal `ClientId` (also referred as `ApplicationId` or `AppId`) and `ClientSecret` (also referred as
 password) to the application via configuration. Please note that if you do not pass those configuration
@@ -147,7 +147,7 @@ az ad sp create-for-rbac --name ServicePrincipalName
 ### Sample Run
 
 Sample run of `Full` deployment without any configuration parameters is described below.
-`Microsoft.Azure.IIoT.Deployment` would interactively prompt for all required parameters that are not
+`Microsoft.IIoT.Deployment` would interactively prompt for all required parameters that are not
 provided through configuration. And if no authentication configuration is provided, then authentication flow
 with user credentials will be used.
 
@@ -155,17 +155,17 @@ with user credentials will be used.
 and [Granting Admin Consent](#granting-admin-consent) walks you through steps to mitigate that problem.
 You will still need to run the application once before granting the consent and that first run will fail.
 
-1. Run `Microsoft.Azure.IIoT.Deployment` application from command line:
+1. Run `Microsoft.IIoT.Deployment` application from command line:
 
     ``` bash
-    ./Microsoft.Azure.IIoT.Deployment
+    ./Microsoft.IIoT.Deployment
     ```
 
     On Linux and MacOS you might need to assign execute permission to the application before you can run it.
     To do that run the following command first:
 
     ``` bash
-    chmod +x Microsoft.Azure.IIoT.Deployment
+    chmod +x Microsoft.IIoT.Deployment
     ```
 
 2. The application will ask you to provide your Tenant Id. This is the same as Directory Id. To find out your
@@ -380,12 +380,12 @@ To grant admin consent you have to be **admin** in the Azure account. Here are t
 
 ### Resource Cleanup
 
-`Microsoft.Azure.IIoT.Deployment` will prompt for resource cleanup if it encounters an error during
+`Microsoft.IIoT.Deployment` will prompt for resource cleanup if it encounters an error during
 deployment of Industrial IoT solution. Cleanup works by deleting registered Applications and the
 Resource Group that has been selected for deployment. This means, that one should be cautious with
 cleanup if an existing Resource Group has been selected for the deployment, since the cleanup will
 trigger deletion of **all** resources within the Resource Group, even the ones that have been present
-before execution of `Microsoft.Azure.IIoT.Deployment`. We will introduce more granular cleanup in the
+before execution of `Microsoft.IIoT.Deployment`. We will introduce more granular cleanup in the
 next iterations of the application.
 
 Cleanup prompt looks like this:
@@ -404,7 +404,7 @@ y
 
 ## Configuration
 
-For configuration of `Microsoft.Azure.IIoT.Deployment` we are using the following .Net Core configuration
+For configuration of `Microsoft.IIoT.Deployment` we are using the following .Net Core configuration
 providers, in the order of increasing priority:
 
 * [JSON File Configuration Provider](https://docs.microsoft.com/aspnet/core/fundamentals/configuration/?view=aspnetcore-3.1#json-configuration-provider)
@@ -490,7 +490,7 @@ Valid values for `Auth:AzureEnvironment` are listed bellow, default is `AzureGlo
 
 #### ResourceGroup:Region <!-- omit in toc -->
 
-The following Azure regions are supported by `Microsoft.Azure.IIoT.Deployment` for `ResourceGroup:Region`:
+The following Azure regions are supported by `Microsoft.IIoT.Deployment` for `ResourceGroup:Region`:
 
 | Valid Values    |
 |-----------------|
@@ -528,7 +528,7 @@ The following Azure regions are supported by `Microsoft.Azure.IIoT.Deployment` f
     instead of creating new application registrations and Service Principals for deployment of Azure
     resources.
   
-    This is particularly useful in `ResourceDeployment` mode, where `Microsoft.Azure.IIoT.Deployment` would
+    This is particularly useful in `ResourceDeployment` mode, where `Microsoft.IIoT.Deployment` would
     rely on existing Application Registrations and Service Principals.
 
     > **Note**: Execution in `ApplicationRegistration` run mode will output JSON object for this property that should be used on consequent `ResourceDeployment`
@@ -590,7 +590,7 @@ The following Azure regions are supported by `Microsoft.Azure.IIoT.Deployment` f
 ### AKS
 
 All cloud microservices of Azure Industrial IoT solution are deployed to an AKS Kubernetes cluster.
-`Microsoft.Azure.IIoT.Deployment` deploys `1.16.10` version of Kubernetes.
+`Microsoft.IIoT.Deployment` deploys `1.16.10` version of Kubernetes.
 
 #### Kubernetes Dashboard
 
@@ -637,12 +637,12 @@ Alternatively, you can run the following commands:
 
 ### Helm Charts
 
-`Microsoft.Azure.IIoT.Deployment` will deploy components of Azure Industrial IoT solution using
+`Microsoft.IIoT.Deployment` will deploy components of Azure Industrial IoT solution using
 `azure-industrial-iot` Helm chart. The deployment creates `azure-industrial-iot` namespace where
 `azure-industrial-iot` Helm chart will be deployed. For more details about the chart please check its
 [documentation](../../deploy/helm/azure-industrial-iot/README.md).
 
-By default, `Microsoft.Azure.IIoT.Deployment` deploys `0.3.1` version of `azure-industrial-iot` Helm chart
+By default, `Microsoft.IIoT.Deployment` deploys `0.3.1` version of `azure-industrial-iot` Helm chart
 with `2.7.170` version of Azure Industrial IoT components. Both chart version and components version can be
 changed using configuration parameters. Please check `Helm:ChartVersion` and `Helm:ImageTag` parameters for
 that.
@@ -658,7 +658,7 @@ Additionally, the following Helm charts will be deployed:
 
 You should be able to access APIs of microservices through URL of Public IP Address resource that is deployed
 to AKS-manages resource group. The URL will be printed during successful run of
-`Microsoft.Azure.IIoT.Deployment`. It is also available as DNS name in overview of `aks-public-ip` Public IP
+`Microsoft.IIoT.Deployment`. It is also available as DNS name in overview of `aks-public-ip` Public IP
 Address resource. For example, you can access OPC Registry Service by appending `/registry/` to the URL. It
 should look something like the link bellow, where `aiiotdeployment27170` is the name of the deployment.
 
@@ -684,13 +684,13 @@ The following microservice endpoints are exposed:
 
 ### Configuring Azure Resources
 
-Currently `Microsoft.Azure.IIoT.Deployment` application deploys predefined Azure resources. In the next
+Currently `Microsoft.IIoT.Deployment` application deploys predefined Azure resources. In the next
 iterations we will provide a way to re-use existing Azure resources and specifying you own definitions of
 resources.
 
 ### User Interface
 
-We plan to add an interactive UI experience for `Microsoft.Azure.IIoT.Deployment` that will guide you
+We plan to add an interactive UI experience for `Microsoft.IIoT.Deployment` that will guide you
 through deployment steps. This will be available only on Windows.
 
 ## Resources

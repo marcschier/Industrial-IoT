@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Microsoft.IIoT.Extensions.Cli": {
+      "commandName": "Project",
+      "commandLineArgs": "console"
+    }
+  }
+}

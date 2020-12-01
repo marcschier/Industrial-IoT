@@ -24,7 +24,7 @@ semantic-validator: true
 ``` yaml 
 csharp:
   - output-folder: csharp
-    namespace: Microsoft.Azure.IIoT.Opc.Twin
+    namespace: Microsoft.IIoT.Opc.Twin
 ```
 ### Go
 ``` yaml 
@@ -52,7 +52,7 @@ typescript:
 ``` yaml 
 php:
   - output-folder: php
-    namespace: Microsoft.Azure.IIoT.Api
+    namespace: Microsoft.IIoT.Api
 ```
 ### Python
 ``` yaml 

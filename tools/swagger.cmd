@@ -75,10 +75,10 @@ goto :eof
 
 if not "%_hostname%" == "" goto :run
 rem start all services
-pushd %build_root%\services\src\Microsoft.Azure.IIoT.Services.All\src
+pushd %build_root%\services\src\Microsoft.IIoT.Services.All\src
 rem force https scheme only
 rem set PCS_AUTH_HTTPSREDIRECTPORT=443
-start dotnet run --project Microsoft.Azure.IIoT.Services.All.csproj
+start dotnet run --project Microsoft.IIoT.Services.All.csproj
 set _hostname=localhost:9080
 goto :run
 

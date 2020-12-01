@@ -8,30 +8,30 @@
     "MultiProjectConfigurations": {
         "Local development": {
             "Projects": {
-                "Microsoft.Azure.IIoT.Platform.App": {},
-                "Microsoft.Azure.IIoT.Platform.Api.Cli": {},
-                "Microsoft.Azure.IIoT.Platform.Test.Scenarios": {},
-                "Microsoft.Azure.IIoT.Platform.Service": {},
-                "Microsoft.Azure.IIoT.Platform.Discovery.Edge.Module.Cli": {},
-                "Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Cli": {},
-                "Microsoft.Azure.IIoT.Platform.Publisher.Edge.Module.Cli": {}
+                "Microsoft.IIoT.Platform.App": {},
+                "Microsoft.IIoT.Platform.Api.Cli": {},
+                "Microsoft.IIoT.Platform.Test.Scenarios": {},
+                "Microsoft.IIoT.Platform.Service": {},
+                "Microsoft.IIoT.Platform.Discovery.Edge.Module.Cli": {},
+                "Microsoft.IIoT.Platform.Twin.Edge.Module.Cli": {},
+                "Microsoft.IIoT.Platform.Publisher.Edge.Module.Cli": {}
             }
         },
         "No services": {
             "Projects": {
-                "Microsoft.Azure.IIoT.Platform.App": {},
-                "Microsoft.Azure.IIoT.Platform.Api.Cli": {},
-                "Microsoft.Azure.IIoT.Platform.Test.Scenarios": {},
-                "Microsoft.Azure.IIoT.Platform.Discovery.Edge.Module.Cli": {},
-                "Microsoft.Azure.IIoT.Platform.Twin.Edge.Module.Cli": {},
-                "Microsoft.Azure.IIoT.Platform.Publisher.Edge.Module.Cli": {}
+                "Microsoft.IIoT.Platform.App": {},
+                "Microsoft.IIoT.Platform.Api.Cli": {},
+                "Microsoft.IIoT.Platform.Test.Scenarios": {},
+                "Microsoft.IIoT.Platform.Discovery.Edge.Module.Cli": {},
+                "Microsoft.IIoT.Platform.Twin.Edge.Module.Cli": {},
+                "Microsoft.IIoT.Platform.Publisher.Edge.Module.Cli": {}
             }
         },
         "Engineering tool": {
             "Projects": {
-                "Microsoft.Azure.IIoT.Platform.App": {},
-                "Microsoft.Azure.IIoT.Platform.Api.Cli": {},
-                "Microsoft.Azure.IIoT.Platform.Test.Scenarios": {}
+                "Microsoft.IIoT.Platform.App": {},
+                "Microsoft.IIoT.Platform.Api.Cli": {},
+                "Microsoft.IIoT.Platform.Test.Scenarios": {}
             }
         }
     }

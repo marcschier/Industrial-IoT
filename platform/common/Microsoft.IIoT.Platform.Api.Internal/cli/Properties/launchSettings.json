@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Microsoft.IIoT.Api.Cli": {
+      "commandName": "Project",
+      "commandLineArgs": "console --useMsgPack"
+    }
+  }
+}

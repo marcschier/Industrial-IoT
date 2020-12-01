@@ -4,7 +4,7 @@
 
 ## Overview
 
-Namespace: Microsoft.Azure.IIoT.Services.OpcUa.Registry
+Namespace: Microsoft.IIoT.Services.OpcUa.Registry
 
 The role of the Registry Microservice is to manage entities and identities in IoT Hub. These include:
 

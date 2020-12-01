@@ -1,0 +1,7 @@
+{
+  "profiles": {
+    "Microsoft.IIoT.Services.Processor.Events": {
+      "commandName": "Project"
+    }
+  }
+}

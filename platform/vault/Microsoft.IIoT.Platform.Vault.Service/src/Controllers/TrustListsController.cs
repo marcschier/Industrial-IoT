@@ -1,0 +1,95 @@
+// ------------------------------------------------------------
+//  Copyright (c) Microsoft Corporation.  All rights reserved.
+//  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
+// ------------------------------------------------------------
+
+namespace Microsoft.IIoT.Platform.Vault.Service.Controllers {
+    using Microsoft.IIoT.Platform.Vault.Service.Filters;
+    using Microsoft.IIoT.Platform.Vault.Service.Models;
+    using Microsoft.IIoT.Platform.Vault.Api.Models;
+    using Microsoft.IIoT.Platform.Vault;
+    using Microsoft.IIoT.AspNetCore.OpenApi;
+    using Microsoft.AspNetCore.Http;
+    using Microsoft.AspNetCore.Authorization;
+    using Microsoft.AspNetCore.Mvc;
+    using System.Threading.Tasks;
+
+    /// <summary>
+    /// Trust lists services.
+    /// </summary>
+    [ExceptionsFilter]
+    [ApiVersion("3")]
+    [Route("v{version:apiVersion}/trustlists")]
+    [Authorize(Policy = Policies.CanRead)]
+    [ApiController]
+    public sealed class TrustListsController : ControllerBase {
+
+        /// <summary>
+        /// Create the controller.
+        /// </summary>
+        /// <param name="services"></param>
+        public TrustListsController(ITrustListServices services) {
+            _services = services;
+        }
+
+        /// <summary>
+        /// Add trust relationship
+        /// </summary>
+        /// <remarks>
+        /// Define trust between two entities.  The entities are identifiers
+        /// of application, groups, or endpoints.
+        /// </remarks>
+        /// <param name="entityId">The entity identifier, e.g. group, etc.</param>
+        /// <param name="trustedEntityId">The trusted entity identifier</param>
+        /// <returns>The group registration</returns>
+        [HttpPut("{entityId}/{trustedEntityId}")]
+        [Authorize(Policy = Policies.CanManage)]
+        public Task AddTrustRelationshipAsync(string entityId,
+            string trustedEntityId) {
+            return _services.AddTrustRelationshipAsync(entityId, trustedEntityId);
+        }
+
+        /// <summary>
+        /// List trusted certificates
+        /// </summary>
+        /// <remarks>
+        /// Returns all certificates the entity should trust based on the
+        /// applied trust configuration.
+        /// </remarks>
+        /// <param name="entityId"></param>
+        /// <param name="continuationToken">optional, continuation token</param>
+        /// <param name="pageSize">optional, the maximum number of result per page</param>
+        [HttpGet("{entityId}")]
+        [AutoRestExtension(NextPageLinkName = "continuationToken")]
+        public async Task<X509CertificateListApiModel> ListTrustedCertificatesAsync(string entityId,
+            [FromQuery] string continuationToken, [FromQuery] int? pageSize) {
+            continuationToken = Request.GetContinuationToken(continuationToken);
+            pageSize = Request.GetPageSize(pageSize);
+            // Use service principal
+            HttpContext.User = null; // TODO Set up
+
+            var result = await _services.ListTrustedCertificatesAsync(entityId, continuationToken,
+                pageSize).ConfigureAwait(false);
+            return result.ToApiModel();
+        }
+
+        /// <summary>
+        /// Remove a trust relationship
+        /// </summary>
+        /// <remarks>
+        /// Removes trust between two entities.  The entities are identifiers
+        /// of application, groups, or endpoints.
+        /// </remarks>
+        /// <param name="entityId">The entity identifier, e.g. group, etc.</param>
+        /// <param name="untrustedEntityId">The trusted entity identifier</param>
+        /// <returns>The group registration</returns>
+        [HttpDelete("{entityId}/{untrustedEntityId}")]
+        [Authorize(Policy = Policies.CanManage)]
+        public Task RemoveTrustRelationshipAsync(string entityId,
+            string untrustedEntityId) {
+            return _services.RemoveTrustRelationshipAsync(entityId, untrustedEntityId);
+        }
+
+        private readonly ITrustListServices _services;
+    }
+}

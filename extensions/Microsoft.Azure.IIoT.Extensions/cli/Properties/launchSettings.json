@@ -1,8 +1,0 @@
-{
-  "profiles": {
-    "Microsoft.Azure.IIoT.Extensions.Cli": {
-      "commandName": "Project",
-      "commandLineArgs": "console"
-    }
-  }
-}

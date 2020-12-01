@@ -58,7 +58,7 @@ jobs:
       inputs:
         ConnectedServiceName: 'Code Signing Certificate'
         FolderPath: '$(agent.builddirectory)'
-        Pattern: '/**/Microsoft.Azure.IIoT.*.dll'
+        Pattern: '/**/Microsoft.IIoT.*.dll'
         UseMinimatch: true
         signConfigType: inlineSignParams
         inlineOperation: |
@@ -114,7 +114,7 @@ jobs:
       inputs:
         ConnectedServiceName: 'Code Signing Certificate'
         FolderPath: '$(Build.ArtifactStagingDirectory)'
-        Pattern: 'Microsoft.Azure.IIoT.*.nupkg'
+        Pattern: 'Microsoft.IIoT.*.nupkg'
         UseMinimatch: true
         signConfigType: inlineSignParams
         inlineOperation: |

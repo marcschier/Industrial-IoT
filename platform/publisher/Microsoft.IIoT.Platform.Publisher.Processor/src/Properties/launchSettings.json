@@ -1,0 +1,7 @@
+{
+  "profiles": {
+    "Microsoft.IIoT.Services.Processor.Telemetry": {
+      "commandName": "Project"
+    }
+  }
+}

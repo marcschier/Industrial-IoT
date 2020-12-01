@@ -37,7 +37,7 @@ for PoC and demo purposes. For production scenarios, we recommend running compon
 platform in Kubernetes cluster. This article will guide you through the steps of making your existing
 deployment into a more production-ready one.
 
-Please note that we also provide `Microsoft.Azure.IIoT.Deployment (Preview)` command-line application, which
+Please note that we also provide `Microsoft.IIoT.Deployment (Preview)` command-line application, which
 similar to deployment scripts creates an instance of Azure Industrial IoT Platform. In contrast to
 deployment scripts, it deploys components of Azure Industrial IoT Platform into an AKS cluster. Please use
 that application if you are starting from scratch:
@@ -527,7 +527,7 @@ az aks browse --resource-group myResourceGroup --name myAksCluster
 To enable prometheus metrics scraping let's use `04_oms_agent_configmap.yaml` file that we have in the repo:
 
 ```bash
-kubectl apply -f .\deploy\src\Microsoft.Azure.IIoT.Deployment\Resources\aks\04_oms_agent_configmap.yaml
+kubectl apply -f .\deploy\src\Microsoft.IIoT.Deployment\Resources\aks\04_oms_agent_configmap.yaml
 ```
 
 ### Update Redirect URIs of web App Registration

@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Microsoft.IIoT.OpcUa.Testing.Cli": {
+      "commandName": "Project",
+      "commandLineArgs": "--host"
+    }
+  }
+}

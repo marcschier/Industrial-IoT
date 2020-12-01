@@ -1,0 +1,28 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net5.0</TargetFramework>
+   </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Configuration.CommandLine" Version="5.0.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\extensions\Microsoft.IIoT.Extensions.Mqtt\src\Microsoft.IIoT.Extensions.Mqtt.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Microsoft.IIoT.Azure.ActiveDirectory\src\Microsoft.IIoT.Azure.ActiveDirectory.csproj" />
+    <ProjectReference Include="..\..\Microsoft.IIoT.Azure.CognitiveServices\src\Microsoft.IIoT.Azure.CognitiveServices.csproj" />
+    <ProjectReference Include="..\..\Microsoft.IIoT.Azure.CosmosDb\src\Microsoft.IIoT.Azure.CosmosDb.csproj" />
+    <ProjectReference Include="..\..\Microsoft.IIoT.Azure.Datalake\src\Microsoft.IIoT.Azure.Datalake.csproj" />
+    <ProjectReference Include="..\..\Microsoft.IIoT.Azure.EventHub\src\Microsoft.IIoT.Azure.EventHub.csproj" />
+    <ProjectReference Include="..\..\Microsoft.IIoT.Azure.IoTEdge\src\Microsoft.IIoT.Azure.IoTEdge.csproj" />
+    <ProjectReference Include="..\..\Microsoft.IIoT.Azure.IoTHub\src\Microsoft.IIoT.Azure.IoTHub.csproj" />
+    <ProjectReference Include="..\..\Microsoft.IIoT.Azure.KeyVault\src\Microsoft.IIoT.Azure.KeyVault.csproj" />
+    <ProjectReference Include="..\..\Microsoft.IIoT.Azure.Monitor\src\Microsoft.IIoT.Azure.Monitor.csproj" />
+    <ProjectReference Include="..\..\Microsoft.IIoT.Azure.ServiceBus\src\Microsoft.IIoT.Azure.ServiceBus.csproj" />
+    <ProjectReference Include="..\..\Microsoft.IIoT.Azure.SignalR\src\Microsoft.IIoT.Azure.SignalR.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\src\Microsoft.IIoT.Azure.Testing.csproj" />
+  </ItemGroup>
+</Project>

@@ -226,7 +226,7 @@
                     "appSettings": [
                         {
                             "name": "PROJECT",
-                            "value": "[if(not(parameters('deployFromSource')), '', 'services/src/Microsoft.Azure.IIoT.Services.All/src/Microsoft.Azure.IIoT.Services.All.csproj')]"
+                            "value": "[if(not(parameters('deployFromSource')), '', 'services/src/Microsoft.IIoT.Services.All/src/Microsoft.IIoT.Services.All.csproj')]"
                         },
                         {
                             "name": "DOCKER_REGISTRY_SERVER_URL",
@@ -279,7 +279,7 @@
                     "name": "appsettings",
                     "apiVersion": "2018-11-01",
                     "properties": {
-                        "PROJECT": "[if(not(parameters('deployFromSource')), '', 'services/src/Microsoft.Azure.IIoT.Services.All/src/Microsoft.Azure.IIoT.Services.All.csproj')]",
+                        "PROJECT": "[if(not(parameters('deployFromSource')), '', 'services/src/Microsoft.IIoT.Services.All/src/Microsoft.IIoT.Services.All.csproj')]",
                         "PCS_SERVICE_URL": "[if(empty(parameters('serviceSiteName')), '', concat('https://', reference(variables('serviceSiteResourceId'), '2018-11-01').hostNames[0]))]",
                         "PCS_KEYVAULT_URL": "[parameters('keyVaultUri')]",
                         "PCS_MSI_APPID": "[parameters('managedIdentityClientId')]",
@@ -389,7 +389,7 @@
                     "appSettings": [
                         {
                             "name": "PROJECT",
-                            "value": "[if(not(parameters('deployFromSource')), '', 'samples/src/Microsoft.Azure.IIoT.App/src/Microsoft.Azure.IIoT.App.csproj')]"
+                            "value": "[if(not(parameters('deployFromSource')), '', 'samples/src/Microsoft.IIoT.App/src/Microsoft.IIoT.App.csproj')]"
                         },
                         {
                             "name": "DOCKER_REGISTRY_SERVER_URL",

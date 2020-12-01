@@ -23,7 +23,7 @@ To begin using it, please have a look at the following examples:
 Each invocation of `TrackEvent` would set a value of 1.
 
 ```csharp
-using Microsoft.Azure.IIoT.Diagnostics;
+using Microsoft.IIoT.Diagnostics;
 
 public class EndpointSecurityAlerter : IEndpointRegistryListener, IApplicationRegistryListener {
     private readonly IMetricsLogger _metrics;
@@ -53,7 +53,7 @@ public class EndpointSecurityAlerter : IEndpointRegistryListener, IApplicationRe
 Gauges can have any numeric value and change arbitrarily.
 
 ```csharp
-using Microsoft.Azure.IIoT.Diagnostics;
+using Microsoft.IIoT.Diagnostics;
 
 public class EndpointSecurityAlerter : IEndpointRegistryListener, IApplicationRegistryListener {
     private readonly IMetricsLogger _metrics;
@@ -83,7 +83,7 @@ public class EndpointSecurityAlerter : IEndpointRegistryListener, IApplicationRe
 Timers can be used to report the duration of an operation(in milliseconds). Wrap the operation you want to measure in a using block.
 
 ```csharp
-using Microsoft.Azure.IIoT.Diagnostics;
+using Microsoft.IIoT.Diagnostics;
 
 public class EndpointSecurityAlerter : IEndpointRegistryListener, IApplicationRegistryListener {
     private readonly IMetricsLogger _metrics;

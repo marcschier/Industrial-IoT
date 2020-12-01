@@ -1,0 +1,13 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <Description>Industrial IoT Azure ServiceBus support</Description>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="RabbitMQ.Client" Version="6.2.1" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Microsoft.IIoT.Extensions\src\Microsoft.IIoT.Extensions.csproj" />
+  </ItemGroup>
+</Project>

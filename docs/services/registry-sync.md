@@ -4,7 +4,7 @@
 
 ## Overview
 
-Namespace: Microsoft.Azure.IIoT.Services.OpcUa.Registry.Sync
+Namespace: Microsoft.IIoT.Services.OpcUa.Registry.Sync
 
 This agent has the following responsibilities:
 

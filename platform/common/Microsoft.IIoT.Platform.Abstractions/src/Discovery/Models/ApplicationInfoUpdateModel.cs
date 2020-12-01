@@ -1,0 +1,60 @@
+// ------------------------------------------------------------
+//  Copyright (c) Microsoft Corporation.  All rights reserved.
+//  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
+// ------------------------------------------------------------
+
+namespace Microsoft.IIoT.Platform.Discovery.Models {
+    using System.Collections.Generic;
+
+    /// <summary>
+    /// Application update request
+    /// </summary>
+    public class ApplicationInfoUpdateModel {
+
+        /// <summary>
+        /// Generation Id to match
+        /// </summary>
+        public string GenerationId { get; set; }
+
+        /// <summary>
+        /// Product uri
+        /// </summary>
+        public string ProductUri { get; set; }
+
+        /// <summary>
+        /// Default name of application
+        /// </summary>
+        public string ApplicationName { get; set; }
+
+        /// <summary>
+        /// Locale of name - defaults to "en"
+        /// </summary>
+        public string Locale { get; set; }
+
+        /// <summary>
+        /// Localized names, keyed on locale.
+        /// Set name to null to remove locale.
+        /// </summary>
+        public IReadOnlyDictionary<string, string> LocalizedNames { get; set; }
+
+        /// <summary>
+        /// Application capabilities
+        /// </summary>
+        public IReadOnlySet<string> Capabilities { get; set; }
+
+        /// <summary>
+        /// Discovery urls of the application
+        /// </summary>
+        public IReadOnlySet<string> DiscoveryUrls { get; set; }
+
+        /// <summary>
+        /// Discovery profile uri
+        /// </summary>
+        public string DiscoveryProfileUri { get; set; }
+
+        /// <summary>
+        /// Gateway server uri
+        /// </summary>
+        public string GatewayServerUri { get; set; }
+    }
+}

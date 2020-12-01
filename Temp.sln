@@ -3,21 +3,21 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29201.188
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Azure.IIoT.Extensions.Abstractions", "extensions\Microsoft.Azure.IIoT.Extensions.Abstractions\src\Microsoft.Azure.IIoT.Extensions.Abstractions.csproj", "{F34353F1-AB1D-4740-9D91-D266E46F6FD6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.IIoT.Extensions.Abstractions", "extensions\Microsoft.IIoT.Extensions.Abstractions\src\Microsoft.IIoT.Extensions.Abstractions.csproj", "{F34353F1-AB1D-4740-9D91-D266E46F6FD6}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Azure.IIoT.Extensions", "extensions\Microsoft.Azure.IIoT.Extensions\src\Microsoft.Azure.IIoT.Extensions.csproj", "{BFD75963-2B4D-431B-AB3F-4172DCADD0A4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.IIoT.Extensions", "extensions\Microsoft.IIoT.Extensions\src\Microsoft.IIoT.Extensions.csproj", "{BFD75963-2B4D-431B-AB3F-4172DCADD0A4}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Azure.IIoT.Extensions.AspNetCore", "extensions\Microsoft.Azure.IIoT.Extensions.AspNetCore\src\Microsoft.Azure.IIoT.Extensions.AspNetCore.csproj", "{7C3C842E-A979-4118-B322-7F7403835E23}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.IIoT.Extensions.AspNetCore", "extensions\Microsoft.IIoT.Extensions.AspNetCore\src\Microsoft.IIoT.Extensions.AspNetCore.csproj", "{7C3C842E-A979-4118-B322-7F7403835E23}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{28187370-EAF1-4848-922A-81278030AE03}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
-		extensions\Microsoft.Azure.IIoT.Extensions.AspNetCore\tests\Http\HttpTunnelSimpleTests.cs = extensions\Microsoft.Azure.IIoT.Extensions.AspNetCore\tests\Http\HttpTunnelSimpleTests.cs
+		extensions\Microsoft.IIoT.Extensions.AspNetCore\tests\Http\HttpTunnelSimpleTests.cs = extensions\Microsoft.IIoT.Extensions.AspNetCore\tests\Http\HttpTunnelSimpleTests.cs
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Azure.IIoT.Extensions.OpenId", "extensions\Microsoft.Azure.IIoT.Extensions.OpenId\src\Microsoft.Azure.IIoT.Extensions.OpenId.csproj", "{4F6123E1-17C4-4541-AA85-77631498785B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.IIoT.Extensions.OpenId", "extensions\Microsoft.IIoT.Extensions.OpenId\src\Microsoft.IIoT.Extensions.OpenId.csproj", "{4F6123E1-17C4-4541-AA85-77631498785B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Azure.IIoT.Extensions.NewtonSoft", "extensions\Microsoft.Azure.IIoT.Extensions.NewtonSoft\src\Microsoft.Azure.IIoT.Extensions.NewtonSoft.csproj", "{3E8DCA50-F1BC-45F4-A9E5-67F6BB55DA33}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.IIoT.Extensions.NewtonSoft", "extensions\Microsoft.IIoT.Extensions.NewtonSoft\src\Microsoft.IIoT.Extensions.NewtonSoft.csproj", "{3E8DCA50-F1BC-45F4-A9E5-67F6BB55DA33}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{EDC413E0-BE91-477B-8A16-B20BBBB35933}"
 EndProject
@@ -25,15 +25,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{ADA1CE90
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Hosting", "Hosting", "{3C07D78B-E4C6-4552-894A-BB91174B5745}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Azure.IIoT.Extensions.AspNetCore.Tests", "extensions\Microsoft.Azure.IIoT.Extensions.AspNetCore\tests\Microsoft.Azure.IIoT.Extensions.AspNetCore.Tests.csproj", "{E782A06D-9679-4872-A1E7-8AB0951868D6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.IIoT.Extensions.AspNetCore.Tests", "extensions\Microsoft.IIoT.Extensions.AspNetCore\tests\Microsoft.IIoT.Extensions.AspNetCore.Tests.csproj", "{E782A06D-9679-4872-A1E7-8AB0951868D6}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Azure.IIoT.Extensions.MessagePack", "extensions\Microsoft.Azure.IIoT.Extensions.MessagePack\src\Microsoft.Azure.IIoT.Extensions.MessagePack.csproj", "{880C65E5-9486-4AF8-9004-0FD9160416E0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.IIoT.Extensions.MessagePack", "extensions\Microsoft.IIoT.Extensions.MessagePack\src\Microsoft.IIoT.Extensions.MessagePack.csproj", "{880C65E5-9486-4AF8-9004-0FD9160416E0}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Azure.IIoT.Azure.IoTEdge", "azure\Microsoft.Azure.IIoT.Azure.IoTEdge\src\Microsoft.Azure.IIoT.Azure.IoTEdge.csproj", "{72D941F7-5AA2-46D1-967A-5030E94EFE7B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.IIoT.Azure.IoTEdge", "azure\Microsoft.IIoT.Azure.IoTEdge\src\Microsoft.IIoT.Azure.IoTEdge.csproj", "{72D941F7-5AA2-46D1-967A-5030E94EFE7B}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Extensions", "Extensions", "{9C3FCA57-F055-4A2D-B169-C617D44E96AA}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Azure.IIoT.Extensions.Mqtt", "extensions\Microsoft.Azure.IIoT.Extensions.Mqtt\src\Microsoft.Azure.IIoT.Extensions.Mqtt.csproj", "{6C748C49-EE10-4379-879D-7D660D779E9D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.IIoT.Extensions.Mqtt", "extensions\Microsoft.IIoT.Extensions.Mqtt\src\Microsoft.IIoT.Extensions.Mqtt.csproj", "{6C748C49-EE10-4379-879D-7D660D779E9D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
