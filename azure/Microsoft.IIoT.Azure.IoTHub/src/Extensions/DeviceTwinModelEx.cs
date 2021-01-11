@@ -4,7 +4,7 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.IIoT.Azure.IoTHub.Models {
-    using Microsoft.IIoT.Serializers;
+    using Microsoft.IIoT.Extensions.Serializers;
     using Microsoft.Azure.Devices.Shared;
     using System;
     using System.Collections.Generic;
@@ -65,7 +65,7 @@ namespace Microsoft.IIoT.Azure.IoTHub.Models {
             }
             return new DeviceTwinModel {
                 Capabilities = model.Capabilities == null ? null :
-                    new DeviceCapabilitiesModel {
+                    new CapabilitiesModel {
                         IotEdge = model.Capabilities.IotEdge
                     },
                 ConnectionState = model.ConnectionState,
@@ -170,8 +170,8 @@ namespace Microsoft.IIoT.Azure.IoTHub.Models {
         /// <param name="hub"></param>
         /// <param name="serializer"></param>
         /// <returns></returns>
-        public static DeviceTwinModel DeserializeTwin(this IJsonSerializer serializer,
-            Twin twin, string hub) {
+        public static DeviceTwinModel ToDeviceTwinModel(this Twin twin,
+            IJsonSerializer serializer, string hub) {
             if (twin == null) {
                 return null;
             }
@@ -186,14 +186,14 @@ namespace Microsoft.IIoT.Azure.IoTHub.Models {
                 Status = twin.Status?.ToString(),
                 StatusReason = twin.StatusReason,
                 StatusUpdatedTime = twin.StatusUpdatedTime,
-                Tags = serializer.DeserializeTwinProperties(twin.Tags),
+                Tags = twin.Tags.ToTwinProperties(serializer),
                 Properties = new TwinPropertiesModel {
                     Desired =
-                        serializer.DeserializeTwinProperties(twin.Properties?.Desired),
+                        twin.Properties?.Desired.ToTwinProperties(serializer),
                     Reported =
-                        serializer.DeserializeTwinProperties(twin.Properties?.Reported)
+                        twin.Properties?.Reported.ToTwinProperties(serializer)
                 },
-                Capabilities = twin.Capabilities?.ToModel()
+                Capabilities = twin.Capabilities?.ToCapabilitiesModel()
             };
         }
 
@@ -203,8 +203,8 @@ namespace Microsoft.IIoT.Azure.IoTHub.Models {
         /// <param name="props"></param>
         /// <param name="serializer"></param>
         /// <returns></returns>
-        public static Dictionary<string, VariantValue> DeserializeTwinProperties(
-            this IJsonSerializer serializer, TwinCollection props) {
+        public static Dictionary<string, VariantValue> ToTwinProperties(
+            this TwinCollection props, IJsonSerializer serializer) {
             if (props == null) {
                 return null;
             }

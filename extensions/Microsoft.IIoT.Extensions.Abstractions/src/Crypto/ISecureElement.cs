@@ -3,7 +3,7 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.Crypto {
+namespace Microsoft.IIoT.Extensions.Crypto {
     using System.Security.Cryptography.X509Certificates;
     using System.Threading.Tasks;
     using System;

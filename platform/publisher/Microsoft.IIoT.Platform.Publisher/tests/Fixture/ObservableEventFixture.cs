@@ -6,9 +6,9 @@
 namespace Microsoft.IIoT.Platform.Publisher.Services {
     using Microsoft.IIoT.Platform.Publisher;
     using Microsoft.IIoT.Platform.Publisher.Models;
-    using Microsoft.IIoT.Messaging;
-    using Microsoft.IIoT.Serializers;
-    using Microsoft.IIoT.Serializers.NewtonSoft;
+    using Microsoft.IIoT.Extensions.Messaging;
+    using Microsoft.IIoT.Extensions.Serializers;
+    using Microsoft.IIoT.Extensions.Serializers.NewtonSoft;
     using System.Collections.Generic;
     using System.Collections.Concurrent;
     using System.Threading;

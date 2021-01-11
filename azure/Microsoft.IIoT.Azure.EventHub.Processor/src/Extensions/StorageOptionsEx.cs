@@ -4,7 +4,7 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.IIoT.Azure.EventHub.Processor {
-    using Microsoft.IIoT.Utils;
+    using Microsoft.IIoT.Extensions.Utils;
 
     /// <summary>
     /// Storage options extension

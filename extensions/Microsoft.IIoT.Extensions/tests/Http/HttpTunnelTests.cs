@@ -3,16 +3,16 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.Http.Tunnel.Services {
-    using Microsoft.IIoT.Rpc;
-    using Microsoft.IIoT.Rpc.Services;
-    using Microsoft.IIoT.Http;
-    using Microsoft.IIoT.Http.Clients;
-    using Microsoft.IIoT.Serializers;
-    using Microsoft.IIoT.Serializers.NewtonSoft;
-    using Microsoft.IIoT.Hosting;
-    using Microsoft.IIoT.Messaging;
-    using Microsoft.IIoT.Diagnostics;
+namespace Microsoft.IIoT.Extensions.Http.Tunnel.Services {
+    using Microsoft.IIoT.Extensions.Rpc;
+    using Microsoft.IIoT.Extensions.Rpc.Services;
+    using Microsoft.IIoT.Extensions.Http;
+    using Microsoft.IIoT.Extensions.Http.Clients;
+    using Microsoft.IIoT.Extensions.Serializers;
+    using Microsoft.IIoT.Extensions.Serializers.NewtonSoft;
+    using Microsoft.IIoT.Extensions.Hosting;
+    using Microsoft.IIoT.Extensions.Messaging;
+    using Microsoft.IIoT.Extensions.Diagnostics;
     using AutoFixture;
     using AutoFixture.AutoMoq;
     using Moq;
@@ -313,7 +313,7 @@ namespace Microsoft.IIoT.Http.Tunnel.Services {
                 string eventSchema, string contentEncoding, CancellationToken ct) {
                 return Handler.HandleAsync(target, data, new Dictionary<string, string> {
                     ["content-type"] = contentType
-                }, () => Task.CompletedTask);
+                }.ToEventProperties(), () => Task.CompletedTask);
             }
 
             /// <inheritdoc/>

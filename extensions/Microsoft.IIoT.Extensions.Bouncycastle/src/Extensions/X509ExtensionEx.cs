@@ -4,7 +4,7 @@
 // ------------------------------------------------------------
 
 namespace System.Security.Cryptography.X509Certificates {
-    using Microsoft.IIoT.Crypto.Models;
+    using Microsoft.IIoT.Extensions.Crypto.Models;
 
     /// <summary>
     /// Extension factory

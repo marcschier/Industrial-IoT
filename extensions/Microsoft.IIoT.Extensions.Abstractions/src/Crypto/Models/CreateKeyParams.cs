@@ -4,7 +4,7 @@
 // ------------------------------------------------------------
 
 
-namespace Microsoft.IIoT.Crypto.Models {
+namespace Microsoft.IIoT.Extensions.Crypto.Models {
 
     /// <summary>
     /// Create key parameters

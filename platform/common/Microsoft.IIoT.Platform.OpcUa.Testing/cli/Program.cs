@@ -9,7 +9,7 @@ namespace Microsoft.IIoT.Platform.Cli {
     using Microsoft.IIoT.Platform.OpcUa.Sample;
     using Microsoft.IIoT.Platform.OpcUa.Services;
     using Microsoft.IIoT.Platform.OpcUa.Testing.Runtime;
-    using Microsoft.IIoT.Diagnostics;
+    using Microsoft.IIoT.Extensions.Diagnostics;
     using Opc.Ua;
     using Microsoft.Extensions.Logging;
     using System;

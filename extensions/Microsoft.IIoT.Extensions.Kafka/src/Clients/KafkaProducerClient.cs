@@ -5,8 +5,8 @@
 
 namespace Microsoft.IIoT.Extensions.Kafka.Clients {
     using Microsoft.IIoT.Extensions.Kafka;
-    using Microsoft.IIoT.Messaging;
-    using Microsoft.IIoT.Hosting;
+    using Microsoft.IIoT.Extensions.Messaging;
+    using Microsoft.IIoT.Extensions.Hosting;
     using Microsoft.IIoT.Exceptions;
     using Microsoft.Extensions.Logging;
     using Microsoft.Extensions.Options;
@@ -46,7 +46,7 @@ namespace Microsoft.IIoT.Extensions.Kafka.Clients {
 
         /// <inheritdoc/>
         public async Task PublishAsync(string target, byte[] payload,
-            IDictionary<string, string> properties, string partitionKey,
+            IEventProperties properties, string partitionKey,
             CancellationToken ct) {
             if (target == null) {
                 throw new ArgumentNullException(nameof(target));
@@ -65,7 +65,7 @@ namespace Microsoft.IIoT.Extensions.Kafka.Clients {
 
         /// <inheritdoc/>
         public async Task PublishAsync(string target, IEnumerable<byte[]> batch,
-            IDictionary<string, string> properties, string partitionKey,
+            IEventProperties properties, string partitionKey,
             CancellationToken ct) {
             if (target == null) {
                 throw new ArgumentNullException(nameof(target));
@@ -81,7 +81,7 @@ namespace Microsoft.IIoT.Extensions.Kafka.Clients {
 
         /// <inheritdoc/>
         public void Publish<T>(string target, byte[] payload, T token,
-            Action<T, Exception> complete, IDictionary<string, string> properties,
+            Action<T, Exception> complete, IEventProperties properties,
             string partitionKey) {
             if (target == null) {
                 throw new ArgumentNullException(nameof(target));
@@ -199,7 +199,7 @@ namespace Microsoft.IIoT.Extensions.Kafka.Clients {
         /// <param name="target"></param>
         /// <param name="properties"></param>
         /// <returns></returns>
-        private static Headers CreateHeader(string target, IDictionary<string, string> properties) {
+        private static Headers CreateHeader(string target, IEventProperties properties) {
             var header = new Headers();
             if (properties != null) {
                 foreach (var prop in properties) {

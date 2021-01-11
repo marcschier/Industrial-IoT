@@ -18,7 +18,7 @@ namespace Microsoft.IIoT.Azure.IoTHub.Models {
         /// <param name="model"></param>
         /// <returns></returns>
         public static bool? IsConnected(this DeviceModel model) {
-            if (model is null) {
+            if (model == null) {
                 return null;
             }
             return model.ConnectionState?.Equals("Connected",
@@ -31,7 +31,7 @@ namespace Microsoft.IIoT.Azure.IoTHub.Models {
         /// <param name="model"></param>
         /// <returns></returns>
         public static bool? IsDisabled(this DeviceModel model) {
-            if (model is null) {
+            if (model == null) {
                 return null;
             }
             return model.Status?.Equals("disabled",
@@ -58,35 +58,23 @@ namespace Microsoft.IIoT.Azure.IoTHub.Models {
         }
 
         /// <summary>
-        /// Clone authentication
-        /// </summary>
-        /// <param name="model"></param>
-        /// <returns></returns>
-        public static DeviceAuthenticationModel Clone(this DeviceAuthenticationModel model) {
-            if (model == null) {
-                return null;
-            }
-            return new DeviceAuthenticationModel {
-                PrimaryKey = model.PrimaryKey,
-                SecondaryKey = model.SecondaryKey
-            };
-        }
-
-        /// <summary>
         /// Convert twin to module
         /// </summary>
         /// <param name="module"></param>
         /// <param name="hub"></param>
         /// <returns></returns>
         public static DeviceModel ToModel(this Module module, string hub) {
+            if (module == null) {
+                return null;
+            }
             return new DeviceModel {
                 Id = module.DeviceId,
                 Hub = hub,
                 ModuleId = module.Id,
                 Status = "enabled",
-                DeviceScope = null,
+                Scope = null,
                 ConnectionState = module.ConnectionState.ToString(),
-                Authentication = module.Authentication.ToModel(),
+                Authentication = module.Authentication.ToAuthenticationModel(),
                 Etag = module.ETag
             };
         }
@@ -98,27 +86,18 @@ namespace Microsoft.IIoT.Azure.IoTHub.Models {
         /// <param name="hub"></param>
         /// <returns></returns>
         public static DeviceModel ToModel(this Device device, string hub) {
+            if (device == null) {
+                return null;
+            }
             return new DeviceModel {
                 Id = device.Id,
                 Hub = hub,
                 ModuleId = null,
-                DeviceScope = device.Scope,
+                Scope = device.Scope,
                 Status = device.Status.ToString().ToLowerInvariant(),
                 ConnectionState = device.ConnectionState.ToString(),
-                Authentication = device.Authentication.ToModel(),
+                Authentication = device.Authentication.ToAuthenticationModel(),
                 Etag = device.ETag
-            };
-        }
-
-        /// <summary>
-        /// Convert twin to module
-        /// </summary>
-        /// <param name="auth"></param>
-        /// <returns></returns>
-        public static DeviceAuthenticationModel ToModel(this AuthenticationMechanism auth) {
-            return new DeviceAuthenticationModel {
-                PrimaryKey = auth.SymmetricKey.PrimaryKey,
-                SecondaryKey = auth.SymmetricKey.SecondaryKey
             };
         }
     }

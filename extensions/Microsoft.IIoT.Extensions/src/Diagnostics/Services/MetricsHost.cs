@@ -3,8 +3,8 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.Diagnostics.Services {
-    using Microsoft.IIoT.Diagnostics;
+namespace Microsoft.IIoT.Extensions.Diagnostics.Services {
+    using Microsoft.IIoT.Extensions.Diagnostics;
     using Microsoft.Extensions.Logging;
     using Microsoft.Extensions.Options;
     using Prometheus;
@@ -12,7 +12,7 @@ namespace Microsoft.IIoT.Diagnostics.Services {
     using System.Threading.Tasks;
     using System.Collections.Generic;
     using System.Linq;
-    using Microsoft.IIoT.Utils;
+    using Microsoft.IIoT.Extensions.Utils;
 
     /// <summary>
     /// Start and stop metrics collection

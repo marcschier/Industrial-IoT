@@ -3,7 +3,7 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.Http.Diagnostics {
+namespace Microsoft.IIoT.Extensions.Http.Diagnostics {
     using Microsoft.Extensions.Logging;
     using System.Net.Http.Headers;
     using System.Threading.Tasks;

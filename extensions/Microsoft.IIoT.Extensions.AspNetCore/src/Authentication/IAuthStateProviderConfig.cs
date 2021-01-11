@@ -3,7 +3,7 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.AspNetCore.Authentication {
+namespace Microsoft.IIoT.Extensions.AspNetCore.Authentication {
     using System;
 
     /// <summary>
@@ -13,7 +13,7 @@ namespace Microsoft.IIoT.AspNetCore.Authentication {
     public interface IAuthStateProviderConfig {
 
         /// <summary>
-        /// Target <see cref="IIoT.Http.Resource"/> which
+        /// Target <see cref="Extensions.Http.Resource"/> which
         /// determines the configuration to use.
         /// </summary>
         string Resource { get; }

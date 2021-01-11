@@ -9,7 +9,7 @@ namespace Microsoft.IIoT.Platform.Publisher.Service.Controllers {
     using Microsoft.IIoT.Platform.Publisher.Api.Models;
     using Microsoft.IIoT.Platform.Publisher;
     using Microsoft.IIoT.Platform.Core.Models;
-    using Microsoft.IIoT.AspNetCore.OpenApi;
+    using Microsoft.IIoT.Extensions.AspNetCore.OpenApi;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;

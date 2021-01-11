@@ -7,9 +7,9 @@ namespace Microsoft.IIoT.Platform.Registry.Services {
     using Microsoft.IIoT.Platform.Registry.Models;
     using Microsoft.IIoT.Platform.Registry;
     using Microsoft.IIoT.Platform.Core.Models;
-    using Microsoft.IIoT.Serializers;
+    using Microsoft.IIoT.Extensions.Serializers;
     using Microsoft.IIoT.Exceptions;
-    using Microsoft.IIoT.Hosting;
+    using Microsoft.IIoT.Extensions.Hosting;
     using Microsoft.IIoT.Azure.IoTHub;
     using Microsoft.Extensions.Logging;
     using System;

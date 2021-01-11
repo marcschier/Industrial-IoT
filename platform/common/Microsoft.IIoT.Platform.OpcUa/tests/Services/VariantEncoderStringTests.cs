@@ -4,8 +4,8 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.IIoT.Platform.OpcUa.Services {
-    using Microsoft.IIoT.Serializers.NewtonSoft;
-    using Microsoft.IIoT.Serializers;
+    using Microsoft.IIoT.Extensions.Serializers.NewtonSoft;
+    using Microsoft.IIoT.Extensions.Serializers;
     using Opc.Ua;
     using Xunit;
     using Xunit.Categories;

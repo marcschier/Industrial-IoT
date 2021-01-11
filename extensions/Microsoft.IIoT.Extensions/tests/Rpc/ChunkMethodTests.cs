@@ -3,9 +3,9 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.Rpc {
-    using Microsoft.IIoT.Serializers;
-    using Microsoft.IIoT.Serializers.NewtonSoft;
+namespace Microsoft.IIoT.Extensions.Rpc {
+    using Microsoft.IIoT.Extensions.Serializers;
+    using Microsoft.IIoT.Extensions.Serializers.NewtonSoft;
     using System;
     using System.Text;
     using AutoFixture;

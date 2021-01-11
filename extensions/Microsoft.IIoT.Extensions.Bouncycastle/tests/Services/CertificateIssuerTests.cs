@@ -3,14 +3,14 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.Crypto.Services {
-    using Microsoft.IIoT.Crypto.Models;
-    using Microsoft.IIoT.Crypto.Storage;
-    using Microsoft.IIoT.Storage;
-    using Microsoft.IIoT.Storage.Services;
-    using Microsoft.IIoT.Serializers;
-    using Microsoft.IIoT.Serializers.NewtonSoft;
-    using Microsoft.IIoT.Utils;
+namespace Microsoft.IIoT.Extensions.Crypto.Services {
+    using Microsoft.IIoT.Extensions.Crypto.Models;
+    using Microsoft.IIoT.Extensions.Crypto.Storage;
+    using Microsoft.IIoT.Extensions.Storage;
+    using Microsoft.IIoT.Extensions.Storage.Services;
+    using Microsoft.IIoT.Extensions.Serializers;
+    using Microsoft.IIoT.Extensions.Serializers.NewtonSoft;
+    using Microsoft.IIoT.Extensions.Utils;
     using Autofac;
     using Autofac.Extras.Moq;
     using System;

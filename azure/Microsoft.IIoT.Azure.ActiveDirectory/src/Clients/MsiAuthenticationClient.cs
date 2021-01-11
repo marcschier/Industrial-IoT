@@ -4,7 +4,7 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.IIoT.Azure.ActiveDirectory.Clients {
-    using Microsoft.IIoT.Authentication;
+    using Microsoft.IIoT.Extensions.Authentication;
     using Microsoft.Azure.Services.AppAuthentication;
     using Microsoft.Extensions.Logging;
     using System.Collections.Generic;
@@ -45,7 +45,7 @@ namespace Microsoft.IIoT.Azure.ActiveDirectory.Clients {
             var provider = new AzureServiceTokenProvider(cs, config.GetAuthority(true));
             logger.LogInformation("Managed service identity {clientId} in {tenant} registered.",
                 config.ClientId, config.TenantId);
-            return KeyValuePair.Create(config.Resource ?? Http.Resource.Platform, (config, provider));
+            return KeyValuePair.Create(config.Resource ?? Extensions.Http.Resource.Platform, (config, provider));
         }
 
         private readonly List<KeyValuePair<string, (IOAuthClientConfig, AzureServiceTokenProvider)>> _config;

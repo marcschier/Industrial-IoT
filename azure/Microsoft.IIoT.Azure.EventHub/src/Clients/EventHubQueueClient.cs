@@ -4,11 +4,11 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.IIoT.Azure.EventHub.Clients {
-    using Microsoft.IIoT.Messaging;
+    using Microsoft.IIoT.Extensions.Messaging;
     using Microsoft.IIoT.Exceptions;
-    using Microsoft.IIoT.Authentication;
-    using Microsoft.IIoT.Utils;
-    using Microsoft.IIoT.Http;
+    using Microsoft.IIoT.Extensions.Authentication;
+    using Microsoft.IIoT.Extensions.Utils;
+    using Microsoft.IIoT.Extensions.Http;
     using Microsoft.Extensions.Options;
     using System;
     using System.Collections.Generic;
@@ -32,24 +32,24 @@ namespace Microsoft.IIoT.Azure.EventHub.Clients {
         /// <param name="provider"></param>
         public EventHubQueueClient(IOptions<EventHubClientOptions> options,
             ITokenProvider provider = null) {
-            if (string.IsNullOrEmpty(options.Value.EventHubConnString)) {
+            if (string.IsNullOrEmpty(options.Value.ConnectionString)) {
                 throw new ArgumentException("Missing connection string", nameof(options));
             }
             if (provider != null && provider.Supports(Resource.EventHub)) {
-                var cs = ConnectionString.Parse(options.Value.EventHubConnString);
+                var cs = ConnectionString.Parse(options.Value.ConnectionString);
                 var credential = new EventHubTokenProvider(provider);
                 _client = new EventHubProducerClient(cs.Endpoint,
-                    options.Value.EventHubPath, credential);
+                    options.Value.Path, credential);
             }
             else {
-                _client = new EventHubProducerClient(options.Value.EventHubConnString,
-                    options.Value.EventHubPath); // ok if path is null - then uses cs
+                _client = new EventHubProducerClient(options.Value.ConnectionString,
+                    options.Value.Path); // ok if path is null - then uses cs
             }
         }
 
         /// <inheritdoc/>
         public async Task PublishAsync(string target, byte[] payload,
-            IDictionary<string, string> properties, string partitionKey,
+            IEventProperties properties, string partitionKey,
             CancellationToken ct) {
             if (target == null) {
                 throw new ArgumentNullException(nameof(target));
@@ -64,7 +64,7 @@ namespace Microsoft.IIoT.Azure.EventHub.Clients {
 
         /// <inheritdoc/>
         public async Task PublishAsync(string target, IEnumerable<byte[]> batch,
-            IDictionary<string, string> properties, string partitionKey,
+            IEventProperties properties, string partitionKey,
             CancellationToken ct) {
             if (target == null) {
                 throw new ArgumentNullException(nameof(target));
@@ -102,7 +102,7 @@ namespace Microsoft.IIoT.Azure.EventHub.Clients {
 
         /// <inheritdoc/>
         public void Publish<T>(string target, byte[] payload, T token,
-            Action<T, Exception> complete, IDictionary<string, string> properties,
+            Action<T, Exception> complete, IEventProperties properties,
             string partitionKey) {
             if (target == null) {
                 throw new ArgumentNullException(nameof(target));
@@ -257,7 +257,7 @@ namespace Microsoft.IIoT.Azure.EventHub.Clients {
         /// <param name="properties"></param>
         /// <returns></returns>
         private static EventData CreateEvent(string target, byte[] payload,
-            IDictionary<string, string> properties) {
+            IEventProperties properties) {
             var ev = new EventData(payload);
             ev.Properties.Add(EventProperties.Target, target);
             if (properties != null) {

@@ -7,7 +7,7 @@ namespace Microsoft.IIoT.Platform.OpcUa.Testing.Tests {
     using Microsoft.IIoT.Platform.Twin.Models;
     using Microsoft.IIoT.Platform.Core.Models;
     using Microsoft.IIoT.Platform.Twin;
-    using Microsoft.IIoT.Serializers;
+    using Microsoft.IIoT.Extensions.Serializers;
     using System;
     using System.Linq;
     using System.Collections.Generic;

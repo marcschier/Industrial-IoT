@@ -4,8 +4,8 @@
 // ------------------------------------------------------------
 
 
-namespace Microsoft.IIoT.Http.Clients {
-    using Microsoft.IIoT.Utils;
+namespace Microsoft.IIoT.Extensions.Http.Clients {
+    using Microsoft.IIoT.Extensions.Utils;
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;

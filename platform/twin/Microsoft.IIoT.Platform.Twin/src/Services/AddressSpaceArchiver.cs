@@ -7,7 +7,7 @@ namespace Microsoft.IIoT.Platform.Twin.Services {
     using Microsoft.IIoT.Platform.OpcUa;
     using Microsoft.IIoT.Platform.OpcUa.Models;
     using Microsoft.IIoT.Platform.Core.Models;
-    using Microsoft.IIoT.Storage;
+    using Microsoft.IIoT.Extensions.Storage;
     using Microsoft.Extensions.Logging;
     using Opc.Ua.Encoders;
     using System;

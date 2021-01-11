@@ -5,9 +5,9 @@
 
 namespace Microsoft.IIoT.Azure.KeyVault.Clients {
     using Microsoft.IIoT.Azure.KeyVault.Models;
-    using Microsoft.IIoT.Crypto;
-    using Microsoft.IIoT.Crypto.Models;
-    using Microsoft.IIoT.Serializers;
+    using Microsoft.IIoT.Extensions.Crypto;
+    using Microsoft.IIoT.Extensions.Crypto.Models;
+    using Microsoft.IIoT.Extensions.Serializers;
     using System;
     using System.Linq;
     using System.Collections.Generic;

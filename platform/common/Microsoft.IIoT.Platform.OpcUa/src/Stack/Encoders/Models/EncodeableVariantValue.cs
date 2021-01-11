@@ -4,7 +4,7 @@
 // ------------------------------------------------------------
 
 namespace Opc.Ua.Encoders {
-    using Microsoft.IIoT.Serializers;
+    using Microsoft.IIoT.Extensions.Serializers;
     using System;
 
     /// <summary>

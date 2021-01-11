@@ -7,8 +7,8 @@ namespace Microsoft.IIoT.Platform.OpcUa.Services {
     using Microsoft.IIoT.Platform.OpcUa.Exceptions;
     using Microsoft.IIoT.Platform.OpcUa.Models;
     using Microsoft.IIoT.Platform.Core.Models;
-    using Microsoft.IIoT.Hosting;
-    using Microsoft.IIoT.Utils;
+    using Microsoft.IIoT.Extensions.Hosting;
+    using Microsoft.IIoT.Extensions.Utils;
     using Opc.Ua;
     using Opc.Ua.Client;
     using Opc.Ua.Client.ComplexTypes;

@@ -11,7 +11,7 @@ namespace Microsoft.IIoT.Azure.IoTHub.Models {
     /// <summary>
     /// Configuration metrics model extensions
     /// </summary>
-    public static class ConfigurationMetricsModelEx {
+    internal static class ConfigurationMetricsModelEx {
 
         /// <summary>
         /// Convert configuration metrics model to
@@ -19,9 +19,9 @@ namespace Microsoft.IIoT.Azure.IoTHub.Models {
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
-        public static ConfigurationMetrics ToContent(this ConfigurationMetricsModel model) {
-            if (model is null) {
-                throw new ArgumentNullException(nameof(model));
+        public static ConfigurationMetrics ToConfigurationMetrics(this ConfigurationMetricsModel model) {
+            if (model == null) {
+                return null;
             }
             return new ConfigurationMetrics {
                 Queries = model.Queries.Clone(),
@@ -32,15 +32,15 @@ namespace Microsoft.IIoT.Azure.IoTHub.Models {
         /// <summary>
         /// Convert configuration metrics to model
         /// </summary>
-        /// <param name="content"></param>
+        /// <param name="model"></param>
         /// <returns></returns>
-        public static ConfigurationMetricsModel ToModel(this ConfigurationMetrics content) {
-            if (content is null) {
-                throw new ArgumentNullException(nameof(content));
+        public static ConfigurationMetricsModel ToConfigurationMetricsModel(this ConfigurationMetrics model) {
+            if (model == null) {
+                return null;
             }
             return new ConfigurationMetricsModel {
-                Queries = content.Queries.Clone(),
-                Results = content.Results.Clone()
+                Queries = model.Queries.Clone(),
+                Results = model.Results.Clone()
             };
         }
     }

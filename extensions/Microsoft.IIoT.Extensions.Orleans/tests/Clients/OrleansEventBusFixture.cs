@@ -4,10 +4,10 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.IIoT.Extensions.Orleans.Clients {
-    using Microsoft.IIoT.Messaging.Services;
-    using Microsoft.IIoT.Messaging;
-    using Microsoft.IIoT.Serializers;
-    using Microsoft.IIoT.Utils;
+    using Microsoft.IIoT.Extensions.Messaging.Services;
+    using Microsoft.IIoT.Extensions.Messaging;
+    using Microsoft.IIoT.Extensions.Serializers;
+    using Microsoft.IIoT.Extensions.Utils;
     using System;
     using System.Runtime.Serialization;
     using Autofac;

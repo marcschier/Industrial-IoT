@@ -4,7 +4,7 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.IIoT.Azure.IoTHub.Runtime {
-    using Microsoft.IIoT.Configuration;
+    using Microsoft.IIoT.Extensions.Configuration;
     using Microsoft.Extensions.Configuration;
     using System.Reflection;
     using System;

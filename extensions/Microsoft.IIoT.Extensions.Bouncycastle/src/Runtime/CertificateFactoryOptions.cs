@@ -4,7 +4,7 @@
 // ------------------------------------------------------------
 
 
-namespace Microsoft.IIoT.Crypto {
+namespace Microsoft.IIoT.Extensions.Crypto {
 
     /// <summary>
     /// Issuer configuration

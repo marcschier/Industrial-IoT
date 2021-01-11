@@ -4,13 +4,13 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.IIoT.Core.Cli {
-    using Microsoft.IIoT.Diagnostics;
+    using Microsoft.IIoT.Extensions.Diagnostics;
     using Microsoft.IIoT.Extensions.Mqtt;
-    using Microsoft.IIoT.Messaging;
-    using Microsoft.IIoT.Net;
-    using Microsoft.IIoT.Net.Models;
-    using Microsoft.IIoT.Net.Scanner;
-    using Microsoft.IIoT.Utils;
+    using Microsoft.IIoT.Extensions.Messaging;
+    using Microsoft.IIoT.Extensions.Net;
+    using Microsoft.IIoT.Extensions.Net.Models;
+    using Microsoft.IIoT.Extensions.Net.Scanner;
+    using Microsoft.IIoT.Extensions.Utils;
     using Autofac;
     using System;
     using System.Diagnostics;
@@ -18,7 +18,7 @@ namespace Microsoft.IIoT.Core.Cli {
     using System.Net;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.IIoT.Serializers;
+    using Microsoft.IIoT.Extensions.Serializers;
 
     /// <summary>
     /// Networking command line interface

@@ -3,7 +3,7 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.Messaging.Services {
+namespace Microsoft.IIoT.Extensions.Messaging.Services {
     using System;
     using System.Threading.Tasks;
     using System.Collections.Generic;
@@ -54,7 +54,7 @@ namespace Microsoft.IIoT.Messaging.Services {
                 Skip.If(queue == null);
 
                 var data = fix.CreateMany<byte>().ToArray();
-                var properties = fix.Create<Dictionary<string, string>>();
+                var properties = fix.Create<Dictionary<string, string>>().ToEventProperties();
 
                 var tcs = new TaskCompletionSource<TelemetryEventArgs>(TaskCreationOptions.RunContinuationsAsynchronously);
                 harness.OnEvent += (_, a) => {
@@ -67,7 +67,7 @@ namespace Microsoft.IIoT.Messaging.Services {
                 Assert.True(data.SequenceEqualsSafe(result.Data));
                 Assert.Null(result.DeviceId);
                 Assert.Null(result.ModuleId);
-                Assert.True(result.Properties.DictionaryEqualsSafe(properties));
+                Assert.True(result.Properties.IsSameAs(properties));
             }
         }
 
@@ -80,7 +80,7 @@ namespace Microsoft.IIoT.Messaging.Services {
                 Skip.If(queue == null);
 
                 var data = fix.CreateMany<byte>().ToArray();
-                var properties = fix.Create<Dictionary<string, string>>();
+                var properties = fix.Create<Dictionary<string, string>>().ToEventProperties();
 
                 var count = 0;
                 var tcs = new TaskCompletionSource<TelemetryEventArgs>(TaskCreationOptions.RunContinuationsAsynchronously);
@@ -101,7 +101,7 @@ namespace Microsoft.IIoT.Messaging.Services {
                 Assert.True(data.SequenceEqualsSafe(result.Data));
                 Assert.Null(result.DeviceId);
                 Assert.Null(result.ModuleId);
-                Assert.True(result.Properties.DictionaryEqualsSafe(properties));
+                Assert.True(result.Properties.IsSameAs(properties));
             }
         }
 
@@ -119,7 +119,7 @@ namespace Microsoft.IIoT.Messaging.Services {
                 Skip.If(queue == null);
 
                 var data = fix.CreateMany<byte>().ToArray();
-                var properties = fix.Create<Dictionary<string, string>>();
+                var properties = fix.Create<Dictionary<string, string>>().ToEventProperties();
                 var count = 0;
                 var tcs = new TaskCompletionSource<TelemetryEventArgs>(TaskCreationOptions.RunContinuationsAsynchronously);
                 harness.OnEvent += (_, a) => {
@@ -137,7 +137,7 @@ namespace Microsoft.IIoT.Messaging.Services {
                 Assert.True(data.SequenceEqualsSafe(result.Data));
                 Assert.Null(result.DeviceId);
                 Assert.Null(result.ModuleId);
-                Assert.True(result.Properties.DictionaryEqualsSafe(properties));
+                Assert.True(result.Properties.IsSameAs(properties));
             }
         }
 
@@ -185,7 +185,7 @@ namespace Microsoft.IIoT.Messaging.Services {
                 Skip.If(queue == null);
 
                 var data = fix.CreateMany<byte>().ToArray();
-                var properties = fix.Create<Dictionary<string, string>>();
+                var properties = fix.Create<Dictionary<string, string>>().ToEventProperties();
 
                 var tcs = new TaskCompletionSource<TelemetryEventArgs>(TaskCreationOptions.RunContinuationsAsynchronously);
                 harness.OnEvent += (_, a) => {
@@ -208,7 +208,7 @@ namespace Microsoft.IIoT.Messaging.Services {
                 Assert.True(data.SequenceEqualsSafe(result.Data));
                 Assert.Null(result.DeviceId);
                 Assert.Null(result.ModuleId);
-                Assert.True(result.Properties.DictionaryEqualsSafe(properties));
+                Assert.True(result.Properties.IsSameAs(properties));
             }
         }
 
@@ -221,7 +221,7 @@ namespace Microsoft.IIoT.Messaging.Services {
                 Skip.If(queue == null);
 
                 var data = fix.CreateMany<byte>().ToArray();
-                var properties = fix.Create<Dictionary<string, string>>();
+                var properties = fix.Create<Dictionary<string, string>>().ToEventProperties();
 
                 var count = 0;
                 var tcs = new TaskCompletionSource<TelemetryEventArgs>(TaskCreationOptions.RunContinuationsAsynchronously);
@@ -251,7 +251,7 @@ namespace Microsoft.IIoT.Messaging.Services {
                 Assert.True(data.SequenceEqualsSafe(result.Data));
                 Assert.Null(result.DeviceId);
                 Assert.Null(result.ModuleId);
-                Assert.True(result.Properties.DictionaryEqualsSafe(properties));
+                Assert.True(result.Properties.IsSameAs(properties));
             }
         }
 
@@ -269,7 +269,7 @@ namespace Microsoft.IIoT.Messaging.Services {
                 Skip.If(queue == null);
 
                 var data = fix.CreateMany<byte>().ToArray();
-                var properties = fix.Create<Dictionary<string, string>>();
+                var properties = fix.Create<Dictionary<string, string>>().ToEventProperties();
                 var count = 0;
                 var tcs = new TaskCompletionSource<TelemetryEventArgs>(TaskCreationOptions.RunContinuationsAsynchronously);
                 harness.OnEvent += (_, a) => {
@@ -289,7 +289,7 @@ namespace Microsoft.IIoT.Messaging.Services {
                 Assert.True(data.SequenceEqualsSafe(result.Data));
                 Assert.Null(result.DeviceId);
                 Assert.Null(result.ModuleId);
-                Assert.True(result.Properties.DictionaryEqualsSafe(properties));
+                Assert.True(result.Properties.IsSameAs(properties));
             }
         }
 

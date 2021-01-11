@@ -4,7 +4,7 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.IIoT.Platform.OpcUa.Transport {
-    using Microsoft.IIoT.Utils;
+    using Microsoft.IIoT.Extensions.Utils;
     using Opc.Ua;
     using Opc.Ua.Bindings;
     using Microsoft.Extensions.Logging;

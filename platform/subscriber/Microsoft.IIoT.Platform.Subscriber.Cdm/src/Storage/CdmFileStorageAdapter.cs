@@ -4,7 +4,7 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.IIoT.Platform.Publisher.Cdm.Storage {
-    using Microsoft.IIoT.Storage;
+    using Microsoft.IIoT.Extensions.Storage;
     using Microsoft.CommonDataModel.ObjectModel.Storage;
     using Newtonsoft.Json.Linq;
     using Microsoft.Extensions.Logging;

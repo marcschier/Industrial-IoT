@@ -5,7 +5,7 @@
 
 namespace Microsoft.IIoT.Extensions.RabbitMq.Runtime {
     using Microsoft.IIoT.Extensions.RabbitMq;
-    using Microsoft.IIoT.Configuration;
+    using Microsoft.IIoT.Extensions.Configuration;
     using Microsoft.Extensions.Configuration;
 
     /// <summary>

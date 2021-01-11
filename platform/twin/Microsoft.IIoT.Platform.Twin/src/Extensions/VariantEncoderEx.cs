@@ -5,7 +5,7 @@
 
 namespace Microsoft.IIoT.Platform.OpcUa {
     using Microsoft.IIoT.Platform.Twin.Models;
-    using Microsoft.IIoT.Serializers;
+    using Microsoft.IIoT.Extensions.Serializers;
     using Opc.Ua;
     using Opc.Ua.Encoders;
     using Opc.Ua.Extensions;

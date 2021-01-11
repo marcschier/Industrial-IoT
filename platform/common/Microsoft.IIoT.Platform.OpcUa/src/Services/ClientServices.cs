@@ -8,9 +8,9 @@ namespace Microsoft.IIoT.Platform.OpcUa.Services {
     using Microsoft.IIoT.Platform.Discovery.Models;
     using Microsoft.IIoT.Platform.Core.Models;
     using Microsoft.IIoT.Platform.Discovery;
-    using Microsoft.IIoT.Hosting;
+    using Microsoft.IIoT.Extensions.Hosting;
     using Microsoft.IIoT.Exceptions;
-    using Microsoft.IIoT.Utils;
+    using Microsoft.IIoT.Extensions.Utils;
     using Microsoft.Extensions.Logging;
     using Opc.Ua;
     using Opc.Ua.Client;

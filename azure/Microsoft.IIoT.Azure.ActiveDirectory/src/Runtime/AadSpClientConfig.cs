@@ -4,8 +4,8 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.IIoT.Azure.ActiveDirectory.Runtime {
-    using Microsoft.IIoT.Authentication;
-    using Microsoft.IIoT.Configuration;
+    using Microsoft.IIoT.Extensions.Authentication;
+    using Microsoft.IIoT.Extensions.Configuration;
     using Microsoft.Extensions.Configuration;
 
     /// <summary>
@@ -50,7 +50,7 @@ namespace Microsoft.IIoT.Azure.ActiveDirectory.Runtime {
             GetStringOrDefault(PcsVariable.PCS_AAD_AUDIENCE,
                 null))?.Trim();
         /// <summary>Resource</summary>
-        public string Resource => Http.Resource.Platform;
+        public string Resource => Extensions.Http.Resource.Platform;
 
         /// <summary>
         /// Configuration constructor

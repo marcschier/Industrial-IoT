@@ -4,7 +4,7 @@
 // ------------------------------------------------------------
 
 namespace Autofac {
-    using Microsoft.IIoT.Configuration;
+    using Microsoft.IIoT.Extensions.Configuration;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Options;
     using System.Collections.Generic;

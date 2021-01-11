@@ -5,8 +5,8 @@
 
 namespace Opc.Ua.Encoders {
     using Opc.Ua.Models;
-    using Microsoft.IIoT.Serializers;
-    using Microsoft.IIoT.Serializers.NewtonSoft;
+    using Microsoft.IIoT.Extensions.Serializers;
+    using Microsoft.IIoT.Extensions.Serializers.NewtonSoft;
     using System.Globalization;
     using System.Collections.Generic;
     using System.Linq;

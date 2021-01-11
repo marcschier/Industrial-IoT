@@ -6,7 +6,7 @@
 namespace Microsoft.IIoT.Platform.Api.Events.Service.Controllers {
     using Microsoft.IIoT.Platform.Api.Events.Service.Auth;
     using Microsoft.IIoT.Platform.Api.Events.Service.Filters;
-    using Microsoft.IIoT.Rpc;
+    using Microsoft.IIoT.Extensions.Rpc;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using System.Threading.Tasks;

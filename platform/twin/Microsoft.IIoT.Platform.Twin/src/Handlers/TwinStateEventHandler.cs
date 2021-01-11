@@ -5,8 +5,8 @@
 
 namespace Microsoft.IIoT.Platform.Twin.Handlers {
     using Microsoft.IIoT.Platform.Twin.Models;
-    using Microsoft.IIoT.Serializers;
-    using Microsoft.IIoT.Messaging;
+    using Microsoft.IIoT.Extensions.Serializers;
+    using Microsoft.IIoT.Extensions.Messaging;
     using Microsoft.Extensions.Logging;
     using System;
     using System.Text;
@@ -40,7 +40,7 @@ namespace Microsoft.IIoT.Platform.Twin.Handlers {
 
         /// <inheritdoc/>
         public async Task HandleAsync(string source, byte[] payload,
-            IDictionary<string, string> properties, Func<Task> checkpoint) {
+            IEventProperties properties, Func<Task> checkpoint) {
             TwinStateEventModel change;
             try {
                 change = _serializer.Deserialize<TwinStateEventModel>(payload);

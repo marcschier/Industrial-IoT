@@ -6,7 +6,7 @@
 namespace Microsoft.IIoT.Platform.OpcUa.Testing.Runtime {
     using Microsoft.IIoT.Platform.OpcUa;
     using Microsoft.IIoT.Platform.OpcUa.Runtime;
-    using Microsoft.IIoT.Utils;
+    using Microsoft.IIoT.Extensions.Utils;
     using Microsoft.Extensions.Configuration;
     using System;
     using System.IO;

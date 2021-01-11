@@ -6,7 +6,7 @@
 namespace Microsoft.IIoT.Azure.IoTHub {
     using Microsoft.IIoT.Azure.IoTHub.Clients;
     using Microsoft.IIoT.Azure.IoTHub.Runtime;
-    using Microsoft.IIoT.Azure.IoTHub.Deploy;
+    using Microsoft.IIoT.Azure.IoTHub.Services;
     using Autofac;
 
     /// <summary>
@@ -17,11 +17,12 @@ namespace Microsoft.IIoT.Azure.IoTHub {
         /// <inheritdoc/>
         protected override void Load(ContainerBuilder builder) {
 
-            builder.RegisterType<IoTHubConfig>()
+            builder.RegisterType<IoTHubServiceConfig>()
                 .AsImplementedInterfaces();
             builder.RegisterType<IoTHubConfigurationClient>()
                 .AsImplementedInterfaces();
 
+            builder.AddOptions();
             builder.RegisterType<ContainerRegistryConfig>()
                 .AsImplementedInterfaces();
             builder.RegisterType<IoTEdgeBaseDeployment>()

@@ -3,8 +3,8 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.AspNetCore.OpenApi.Runtime {
-    using Microsoft.IIoT.Configuration;
+namespace Microsoft.IIoT.Extensions.AspNetCore.OpenApi.Runtime {
+    using Microsoft.IIoT.Extensions.Configuration;
     using Microsoft.Extensions.Configuration;
 
     /// <summary>

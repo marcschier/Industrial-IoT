@@ -3,7 +3,7 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.Serializers.MessagePack {
+namespace Microsoft.IIoT.Extensions.Serializers.MessagePack {
     using System.Collections.Generic;
     using global::MessagePack;
 

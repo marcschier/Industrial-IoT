@@ -3,8 +3,8 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.Authentication.Runtime {
-    using Microsoft.IIoT.Configuration;
+namespace Microsoft.IIoT.Extensions.Authentication.Runtime {
+    using Microsoft.IIoT.Extensions.Configuration;
     using Microsoft.Extensions.Configuration;
     using System;
     using System.Net;

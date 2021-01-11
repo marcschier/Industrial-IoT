@@ -4,8 +4,8 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.IIoT.Azure.SignalR.Services {
-    using Microsoft.IIoT.Rpc;
-    using Microsoft.IIoT.Utils;
+    using Microsoft.IIoT.Extensions.Rpc;
+    using Microsoft.IIoT.Extensions.Utils;
     using Microsoft.Azure.SignalR.Management;
     using Microsoft.Azure.SignalR.Common;
     using Microsoft.AspNetCore.SignalR;
@@ -32,10 +32,10 @@ namespace Microsoft.IIoT.Azure.SignalR.Services {
             : base(options) {
 
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            if (string.IsNullOrEmpty(options.Value?.SignalRConnString)) {
+            if (string.IsNullOrEmpty(options.Value?.ConnectionString)) {
                 throw new ArgumentException("Missing connection string", nameof(options));
             }
-            if (!options.Value.SignalRServerLess) {
+            if (!options.Value.IsServerLess) {
                 throw new ArgumentException(
                     "SignalR is not configured to be in serverless mode according to " +
                     "the configuration. SignalR service should be configured serverless " +

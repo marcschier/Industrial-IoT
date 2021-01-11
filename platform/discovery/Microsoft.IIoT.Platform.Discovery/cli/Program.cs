@@ -14,19 +14,19 @@ namespace Microsoft.IIoT.Platform.Discovery.Cli {
     using Microsoft.IIoT.Platform.OpcUa.Services;
     using Microsoft.IIoT.Platform.OpcUa.Transport.Probe;
     using Microsoft.IIoT.Platform.OpcUa.Testing.Runtime;
-    using Microsoft.IIoT.Diagnostics;
+    using Microsoft.IIoT.Extensions.Diagnostics;
     using Microsoft.IIoT.Azure.IoTHub.Clients;
     using Microsoft.IIoT.Azure.IoTHub.Models;
     using Microsoft.IIoT.Azure.IoTHub;
     using Microsoft.IIoT.Azure.LogAnalytics;
     using Microsoft.IIoT.Azure.LogAnalytics.Runtime;
     using Microsoft.IIoT.Exceptions;
-    using Microsoft.IIoT.Net;
-    using Microsoft.IIoT.Net.Models;
-    using Microsoft.IIoT.Net.Scanner;
-    using Microsoft.IIoT.Serializers;
-    using Microsoft.IIoT.Utils;
-    using Microsoft.IIoT.Serializers.NewtonSoft;
+    using Microsoft.IIoT.Extensions.Net;
+    using Microsoft.IIoT.Extensions.Net.Models;
+    using Microsoft.IIoT.Extensions.Net.Scanner;
+    using Microsoft.IIoT.Extensions.Serializers;
+    using Microsoft.IIoT.Extensions.Utils;
+    using Microsoft.IIoT.Extensions.Serializers.NewtonSoft;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Options;
     using Microsoft.Extensions.Logging;
@@ -264,18 +264,17 @@ Operations (Mutually exclusive):
         /// <summary>
         /// Add or get module identity
         /// </summary>
-        private static async Task<ConnectionString> AddOrGetAsync(IOptions<IoTHubOptions> config,
+        private static async Task<ConnectionString> AddOrGetAsync(IOptions<IoTHubServiceOptions> config,
             LogAnalyticsOptions diagnostics, string deviceId, string moduleId) {
             var logger = Log.Console(LogLevel.Error);
             var registry = new IoTHubServiceClient(
                 config, new NewtonSoftJsonSerializer(), logger);
             try {
-                await registry.RegisterAsync(new DeviceRegistrationModel {
-                    Id = deviceId,
+                await registry.RegisterAsync(deviceId, null, new DeviceRegistrationModel {
                     Tags = new Dictionary<string, VariantValue> {
                         [TwinProperty.Type] = IdentityType.Gateway
                     },
-                    Capabilities = new DeviceCapabilitiesModel {
+                    Capabilities = new CapabilitiesModel {
                         IotEdge = true
                     }
                 }, false, CancellationToken.None).ConfigureAwait(false);
@@ -284,14 +283,10 @@ Operations (Mutually exclusive):
                 logger.LogInformation("Gateway {deviceId} exists.", deviceId);
             }
             try {
-                await registry.RegisterAsync(new DeviceRegistrationModel {
-                    Id = deviceId,
-                    ModuleId = moduleId,
-                    Properties = new TwinPropertiesModel {
-                        Desired = new Dictionary<string, VariantValue> {
-                            [nameof(diagnostics.LogWorkspaceId)] = diagnostics?.LogWorkspaceId,
-                            [nameof(diagnostics.LogWorkspaceKey)] = diagnostics?.LogWorkspaceKey
-                        }
+                await registry.RegisterAsync(deviceId, moduleId, new DeviceRegistrationModel {
+                    Properties = new Dictionary<string, VariantValue> {
+                        [nameof(diagnostics.LogWorkspaceId)] = diagnostics?.LogWorkspaceId,
+                        [nameof(diagnostics.LogWorkspaceKey)] = diagnostics?.LogWorkspaceKey
                     }
                 }, true, CancellationToken.None).ConfigureAwait(false);
             }

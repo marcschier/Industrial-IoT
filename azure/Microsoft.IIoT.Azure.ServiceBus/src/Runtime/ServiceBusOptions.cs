@@ -12,6 +12,6 @@ namespace Microsoft.IIoT.Azure.ServiceBus {
         /// <summary>
         /// Service bus connection string
         /// </summary>
-        public string ServiceBusConnString { get; set; }
+        public string ConnectionString { get; set; }
     }
 }

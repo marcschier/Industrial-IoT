@@ -15,7 +15,7 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
-    "Microsoft.IIoT.AspNetCore.Tests": {
+    "Microsoft.IIoT.Extensions.AspNetCore.Tests": {
       "commandName": "Project",
       "launchBrowser": true,
       "environmentVariables": {

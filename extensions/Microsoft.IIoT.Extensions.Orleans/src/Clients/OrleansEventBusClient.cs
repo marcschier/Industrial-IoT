@@ -5,10 +5,10 @@
 
 namespace Microsoft.IIoT.Extensions.Orleans.Clients {
     using Microsoft.IIoT.Extensions.Orleans;
-    using Microsoft.IIoT.Messaging;
+    using Microsoft.IIoT.Extensions.Messaging;
     using Microsoft.IIoT.Exceptions;
-    using Microsoft.IIoT.Serializers;
-    using Microsoft.IIoT.Utils;
+    using Microsoft.IIoT.Extensions.Serializers;
+    using Microsoft.IIoT.Extensions.Utils;
     using Microsoft.Extensions.Options;
     using Microsoft.Extensions.Logging;
     using System.Threading.Tasks;

@@ -5,7 +5,7 @@
 
 namespace Microsoft.IIoT.Platform.Publisher.Clients {
     using Microsoft.IIoT.Platform.Publisher.Models;
-    using Microsoft.IIoT.Tasks;
+    using Microsoft.IIoT.Extensions.Tasks;
     using Microsoft.Extensions.Logging;
     using System;
 

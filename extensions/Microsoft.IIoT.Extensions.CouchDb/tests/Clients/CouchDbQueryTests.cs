@@ -4,7 +4,7 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.IIoT.Extensions.CouchDb.Clients {
-    using Microsoft.IIoT.Storage;
+    using Microsoft.IIoT.Extensions.Storage;
     using AutoFixture;
     using Autofac;
     using System;

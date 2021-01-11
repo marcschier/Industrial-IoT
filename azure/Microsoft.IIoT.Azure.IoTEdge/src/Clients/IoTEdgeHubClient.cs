@@ -5,11 +5,11 @@
 
 namespace Microsoft.IIoT.Azure.IoTEdge.Clients {
     using Microsoft.IIoT.Azure.IoTEdge;
-    using Microsoft.IIoT.Messaging;
+    using Microsoft.IIoT.Extensions.Messaging;
     using Microsoft.IIoT.Exceptions;
-    using Microsoft.IIoT.Utils;
-    using Microsoft.IIoT.Diagnostics;
-    using Microsoft.IIoT.Hosting;
+    using Microsoft.IIoT.Extensions.Utils;
+    using Microsoft.IIoT.Extensions.Diagnostics;
+    using Microsoft.IIoT.Extensions.Hosting;
     using Microsoft.Azure.Devices.Client;
     using Microsoft.Azure.Devices.Client.Transport.Mqtt;
     using Microsoft.Azure.Devices.Client.Exceptions;
@@ -28,7 +28,7 @@ namespace Microsoft.IIoT.Azure.IoTEdge.Clients {
     /// <summary>
     /// Injectable IoT Sdk client
     /// </summary>
-    public sealed class IoTEdgeHubClient : IIoTEdgeClient, IDisposable {
+    public sealed class IoTEdgeHubClient : IIoTEdgeDeviceClient, IDisposable {
 
         /// <summary>
         /// Create sdk factory
@@ -39,11 +39,11 @@ namespace Microsoft.IIoT.Azure.IoTEdge.Clients {
         /// <param name="ctrl"></param>
         /// <param name="logger"></param>
         public IoTEdgeHubClient(IOptions<IoTEdgeClientOptions> options, IIdentity identity,
-            IEventSourceBroker broker, IProcessControl ctrl, ILogger logger) {
+            IEventSourceBroker broker, ILogger logger, IProcessControl ctrl = null) {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            _ctrl = ctrl ?? throw new ArgumentNullException(nameof(ctrl));
             _options = options ?? throw new ArgumentNullException(nameof(options));
             _identity = identity ?? throw new ArgumentNullException(nameof(identity));
+            _ctrl = ctrl;
 
             if (broker != null) {
                 _logHook = broker.Subscribe(IoTSdkLogger.EventSource, new IoTSdkLogger(logger));
@@ -238,11 +238,11 @@ namespace Microsoft.IIoT.Azure.IoTEdge.Clients {
         /// <param name="cs"></param>
         /// <param name="settings"></param>
         /// <returns></returns>
-        private async Task<IIoTEdgeClient> CreateAdapterAsync(
+        private async Task<IIoTEdgeDeviceClient> CreateAdapterAsync(
             IotHubConnectionStringBuilder cs, List<ITransportSettings> settings) {
             if (settings.Count != 0) {
                 return await Try.Options(settings
-                    .Select<ITransportSettings, Func<Task<IIoTEdgeClient>>>(t =>
+                    .Select<ITransportSettings, Func<Task<IIoTEdgeDeviceClient>>>(t =>
                          () => CreateAdapterAsync(cs, t))
                     .ToArray()).ConfigureAwait(false);
             }
@@ -255,7 +255,7 @@ namespace Microsoft.IIoT.Azure.IoTEdge.Clients {
         /// <param name="cs"></param>
         /// <param name="setting"></param>
         /// <returns></returns>
-        private async Task<IIoTEdgeClient> CreateAdapterAsync(
+        private async Task<IIoTEdgeDeviceClient> CreateAdapterAsync(
             IotHubConnectionStringBuilder cs, ITransportSettings setting) {
             var timeout = TimeSpan.FromMinutes(5);
             if (string.IsNullOrEmpty(_identity.ModuleId)) {
@@ -275,7 +275,7 @@ namespace Microsoft.IIoT.Azure.IoTEdge.Clients {
         /// <summary>
         /// Adapts module client to interface
         /// </summary>
-        internal sealed class ModuleClientAdapter : IIoTEdgeClient {
+        internal sealed class ModuleClientAdapter : IIoTEdgeDeviceClient {
 
             /// <summary>
             /// Whether the client is closed
@@ -302,7 +302,7 @@ namespace Microsoft.IIoT.Azure.IoTEdge.Clients {
             /// <param name="onConnectionLost"></param>
             /// <param name="logger"></param>
             /// <returns></returns>
-            public static async Task<IIoTEdgeClient> CreateAsync(string product,
+            public static async Task<IIoTEdgeDeviceClient> CreateAsync(string product,
                 IotHubConnectionStringBuilder cs, string deviceId, string moduleId,
                 ITransportSettings transportSetting,
                 TimeSpan timeout, Action onConnectionLost, ILogger logger) {
@@ -562,7 +562,7 @@ namespace Microsoft.IIoT.Azure.IoTEdge.Clients {
         /// <summary>
         /// Adapts device client to interface
         /// </summary>
-        private sealed class DeviceClientAdapter : IIoTEdgeClient {
+        private sealed class DeviceClientAdapter : IIoTEdgeDeviceClient {
 
             /// <summary>
             /// Whether the client is closed
@@ -588,7 +588,7 @@ namespace Microsoft.IIoT.Azure.IoTEdge.Clients {
             /// <param name="onConnectionLost"></param>
             /// <param name="logger"></param>
             /// <returns></returns>
-            public static async Task<IIoTEdgeClient> CreateAsync(string product,
+            public static async Task<IIoTEdgeDeviceClient> CreateAsync(string product,
                 IotHubConnectionStringBuilder cs, string deviceId,
                 ITransportSettings transportSetting, TimeSpan timeout,
                 Action onConnectionLost, ILogger logger) {
@@ -845,7 +845,7 @@ namespace Microsoft.IIoT.Azure.IoTEdge.Clients {
         }
 
 
-        private readonly Task<IIoTEdgeClient> _client;
+        private readonly Task<IIoTEdgeDeviceClient> _client;
         private readonly ILogger _logger;
         private readonly IProcessControl _ctrl;
         private readonly IOptions<IoTEdgeClientOptions> _options;

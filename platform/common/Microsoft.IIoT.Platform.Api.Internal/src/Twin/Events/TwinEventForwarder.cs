@@ -6,8 +6,8 @@
 namespace Microsoft.IIoT.Platform.Twin.Api.Clients {
     using Microsoft.IIoT.Platform.Twin.Api.Models;
     using Microsoft.IIoT.Platform.Twin.Events.v2.Models;
-    using Microsoft.IIoT.Messaging;
-    using Microsoft.IIoT.Rpc;
+    using Microsoft.IIoT.Extensions.Messaging;
+    using Microsoft.IIoT.Extensions.Rpc;
     using System.Threading.Tasks;
     using System;
 

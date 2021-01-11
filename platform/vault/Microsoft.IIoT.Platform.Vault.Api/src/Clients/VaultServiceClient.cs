@@ -6,9 +6,9 @@
 namespace Microsoft.IIoT.Platform.Vault.Api.Clients {
     using Microsoft.IIoT.Platform.Vault.Api.Models;
     using Microsoft.IIoT.Platform.Core.Api.Models;
-    using Microsoft.IIoT.Http;
-    using Microsoft.IIoT.Serializers;
-    using Microsoft.IIoT.Serializers.NewtonSoft;
+    using Microsoft.IIoT.Extensions.Http;
+    using Microsoft.IIoT.Extensions.Serializers;
+    using Microsoft.IIoT.Extensions.Serializers.NewtonSoft;
     using System;
     using System.Threading;
     using System.Threading.Tasks;

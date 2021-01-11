@@ -1,22 +1,24 @@
-// ------------------------------------------------------------
+﻿// ------------------------------------------------------------
 //  Copyright (c) Microsoft Corporation.  All rights reserved.
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
 namespace Microsoft.IIoT.Azure.IoTHub.Models {
+    using System.Collections.Generic;
+
     /// <summary>
-    /// Authentication information
+    /// Query result with continuation token
     /// </summary>
-    public class DeviceAuthenticationModel {
+    public class EnrollmentGroupListModel {
 
         /// <summary>
-        /// Primary sas key
+        /// Continuation token to use for next call or null
         /// </summary>
-        public string PrimaryKey { get; set; }
+        public string ContinuationToken { get; set; }
 
         /// <summary>
-        /// Secondary sas key
+        /// Result returned
         /// </summary>
-        public string SecondaryKey { get; set; }
+        public IEnumerable<EnrollmentGroupModel> Groups { get; set; }
     }
 }

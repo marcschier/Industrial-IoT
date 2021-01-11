@@ -6,8 +6,8 @@
 namespace Microsoft.IIoT.Platform.Registry.Models {
     using Microsoft.IIoT.Azure.IoTHub.Models;
     using Microsoft.IIoT.Azure.IoTHub;
-    using Microsoft.IIoT.Hosting;
-    using Microsoft.IIoT.Serializers;
+    using Microsoft.IIoT.Extensions.Hosting;
+    using Microsoft.IIoT.Extensions.Serializers;
     using System;
     using System.Collections.Generic;
 

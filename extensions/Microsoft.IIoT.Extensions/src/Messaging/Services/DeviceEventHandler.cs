@@ -3,9 +3,9 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.Messaging.Handlers {
-    using Microsoft.IIoT.Messaging;
-    using Microsoft.IIoT.Utils;
+namespace Microsoft.IIoT.Extensions.Messaging.Handlers {
+    using Microsoft.IIoT.Extensions.Messaging;
+    using Microsoft.IIoT.Extensions.Utils;
     using System;
     using System.Collections.Generic;
     using System.Collections.Concurrent;
@@ -34,16 +34,16 @@ namespace Microsoft.IIoT.Messaging.Handlers {
 
         /// <inheritdoc/>
         public async Task HandleAsync(byte[] eventData,
-            IDictionary<string, string> properties, Func<Task> checkpoint) {
+            IEventProperties properties, Func<Task> checkpoint) {
 
             var handled = false;
             if (properties.TryGetValue(EventProperties.EventSchema, out var schemaType)) {
-                properties.TryGetValue(EventProperties.Target, out var source);
+                properties.TryGetValue(EventProperties.Target, out var target);
 
-                if (source != null &&
+                if (target != null &&
                     _handlers.TryGetValue(schemaType.ToLowerInvariant(), out var handler)) {
                     _used.Enqueue(handler);
-                    await handler.HandleAsync(source, eventData, properties, checkpoint).ConfigureAwait(false);
+                    await handler.HandleAsync(target, eventData, properties, checkpoint).ConfigureAwait(false);
                     handled = true;
                 }
             }

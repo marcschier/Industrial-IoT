@@ -5,7 +5,7 @@
 
 namespace Microsoft.IIoT.Platform.Twin.Clients {
     using Microsoft.IIoT.Platform.Core.Models;
-    using Microsoft.IIoT.Tasks;
+    using Microsoft.IIoT.Extensions.Tasks;
     using Microsoft.Extensions.Logging;
     using System;
 

@@ -4,7 +4,7 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.IIoT.Azure.ServiceBus.Runtime {
-    using Microsoft.IIoT.Configuration;
+    using Microsoft.IIoT.Extensions.Configuration;
     using Microsoft.Extensions.Configuration;
 
     /// <summary>
@@ -19,8 +19,8 @@ namespace Microsoft.IIoT.Azure.ServiceBus.Runtime {
 
         /// <inheritdoc/>
         public override void PostConfigure(string name, ServiceBusOptions options) {
-            if (string.IsNullOrEmpty(options.ServiceBusConnString)) {
-                options.ServiceBusConnString =
+            if (string.IsNullOrEmpty(options.ConnectionString)) {
+                options.ConnectionString =
                     GetStringOrDefault(PcsVariable.PCS_SERVICEBUS_CONNSTRING,
                     GetStringOrDefault("_SB_CS"));
             }

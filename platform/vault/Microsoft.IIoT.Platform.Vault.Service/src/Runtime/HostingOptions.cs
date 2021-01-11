@@ -8,8 +8,8 @@ namespace Microsoft.IIoT.Platform.Vault.Service {
     using Microsoft.IIoT.Platform.Discovery.Api.Runtime;
     using Microsoft.IIoT.Platform.Vault;
     using Microsoft.IIoT.Platform.Vault.Runtime;
-    using Microsoft.IIoT.Hosting;
-    using Microsoft.IIoT.Configuration;
+    using Microsoft.IIoT.Extensions.Hosting;
+    using Microsoft.IIoT.Extensions.Configuration;
     using Microsoft.Extensions.Configuration;
 
     /// <summary>

@@ -3,7 +3,7 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.Storage {
+namespace Microsoft.IIoT.Extensions.Storage {
     using System;
     using System.IO;
     using System.Threading.Tasks;

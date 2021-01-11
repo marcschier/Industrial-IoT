@@ -23,6 +23,7 @@ namespace Microsoft.IIoT.Azure.EventHub {
             builder.RegisterType<EventHubQueueClient>()
                 .AsImplementedInterfaces();
 
+            builder.AddOptions();
             builder.RegisterType<EventHubClientConfig>()
                 .AsImplementedInterfaces();
 

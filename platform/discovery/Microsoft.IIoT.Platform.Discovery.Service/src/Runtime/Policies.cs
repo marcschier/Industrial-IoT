@@ -4,7 +4,7 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.IIoT.Platform.Discovery.Service {
-    using Microsoft.IIoT.AspNetCore.Authentication;
+    using Microsoft.IIoT.Extensions.AspNetCore.Authentication;
     using Microsoft.AspNetCore.Authorization;
     using System;
 

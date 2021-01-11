@@ -10,7 +10,7 @@ namespace Microsoft.IIoT.Platform.Twin.Services {
     using Microsoft.IIoT.Platform.Discovery.Models;
     using Microsoft.IIoT.Platform.Core.Models;
     using Microsoft.IIoT.Exceptions;
-    using Microsoft.IIoT.Utils;
+    using Microsoft.IIoT.Extensions.Utils;
     using Microsoft.Extensions.Logging;
     using System;
     using System.Threading.Tasks;

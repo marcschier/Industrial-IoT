@@ -3,7 +3,7 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.Diagnostics {
+namespace Microsoft.IIoT.Extensions.Diagnostics {
     using System;
 
     /// <summary>

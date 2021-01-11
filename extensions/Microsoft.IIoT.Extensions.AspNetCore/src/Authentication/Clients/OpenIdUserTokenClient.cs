@@ -2,10 +2,10 @@
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 
 
-namespace Microsoft.IIoT.AspNetCore.Authentication.Clients {
-    using Microsoft.IIoT.Authentication;
-    using Microsoft.IIoT.Authentication.Models;
-    using Microsoft.IIoT.Http.Clients;
+namespace Microsoft.IIoT.Extensions.AspNetCore.Authentication.Clients {
+    using Microsoft.IIoT.Extensions.Authentication;
+    using Microsoft.IIoT.Extensions.Authentication.Models;
+    using Microsoft.IIoT.Extensions.Http.Clients;
     using Microsoft.AspNetCore.Authentication;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Authentication.OpenIdConnect;

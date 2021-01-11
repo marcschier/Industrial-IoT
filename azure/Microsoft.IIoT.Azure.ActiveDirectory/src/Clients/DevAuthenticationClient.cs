@@ -4,7 +4,7 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.IIoT.Azure.ActiveDirectory.Clients {
-    using Microsoft.IIoT.Authentication;
+    using Microsoft.IIoT.Extensions.Authentication;
     using Microsoft.Azure.Services.AppAuthentication;
     using Microsoft.Extensions.Logging;
     using System.Collections.Generic;
@@ -40,11 +40,11 @@ namespace Microsoft.IIoT.Azure.ActiveDirectory.Clients {
             CreateProvider(IOAuthClientConfig config) {
             var authority = config.GetAuthority(true);
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) {
-                yield return KeyValuePair.Create(config.Resource ?? Http.Resource.Platform,
+                yield return KeyValuePair.Create(config.Resource ?? Extensions.Http.Resource.Platform,
                     (config, new AzureServiceTokenProvider(
                         "RunAs=Developer; DeveloperTool=VisualStudio", authority)));
             }
-            yield return KeyValuePair.Create(config.Resource ?? Http.Resource.Platform,
+            yield return KeyValuePair.Create(config.Resource ?? Extensions.Http.Resource.Platform,
                 (config, new AzureServiceTokenProvider(
                     "RunAs=Developer; DeveloperTool=AzureCli", authority)));
         }

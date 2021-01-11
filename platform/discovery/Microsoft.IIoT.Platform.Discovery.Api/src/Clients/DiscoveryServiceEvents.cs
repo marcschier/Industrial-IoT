@@ -6,11 +6,11 @@
 namespace Microsoft.IIoT.Platform.Discovery.Api {
     using Microsoft.IIoT.Platform.Discovery.Api.Models;
     using Microsoft.IIoT.Platform.Events.Api;
-    using Microsoft.IIoT.Serializers;
-    using Microsoft.IIoT.Serializers.NewtonSoft;
-    using Microsoft.IIoT.Rpc;
-    using Microsoft.IIoT.Http;
-    using Microsoft.IIoT.Utils;
+    using Microsoft.IIoT.Extensions.Serializers;
+    using Microsoft.IIoT.Extensions.Serializers.NewtonSoft;
+    using Microsoft.IIoT.Extensions.Rpc;
+    using Microsoft.IIoT.Extensions.Http;
+    using Microsoft.IIoT.Extensions.Utils;
     using System;
     using System.Threading.Tasks;
     using System.Threading;

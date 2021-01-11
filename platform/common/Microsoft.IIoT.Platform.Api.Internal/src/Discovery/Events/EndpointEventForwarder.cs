@@ -6,8 +6,8 @@
 namespace Microsoft.IIoT.Platform.Discovery.Api.Clients {
     using Microsoft.IIoT.Platform.Discovery.Api.Models;
     using Microsoft.IIoT.Platform.Discovery.Events.v2.Models;
-    using Microsoft.IIoT.Messaging;
-    using Microsoft.IIoT.Rpc;
+    using Microsoft.IIoT.Extensions.Messaging;
+    using Microsoft.IIoT.Extensions.Rpc;
     using System.Threading.Tasks;
     using System;
 

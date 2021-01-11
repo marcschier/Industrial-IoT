@@ -11,12 +11,12 @@ namespace Microsoft.IIoT.Platform.Discovery.Services {
     using Microsoft.IIoT.Platform.OpcUa.Transport.Probe;
     using Microsoft.IIoT.Platform.OpcUa.Models;
     using Microsoft.IIoT.Platform.OpcUa;
-    using Microsoft.IIoT.Net.Scanner;
-    using Microsoft.IIoT.Net.Models;
-    using Microsoft.IIoT.Net;
+    using Microsoft.IIoT.Extensions.Net.Scanner;
+    using Microsoft.IIoT.Extensions.Net.Models;
+    using Microsoft.IIoT.Extensions.Net;
     using Microsoft.IIoT.Exceptions;
-    using Microsoft.IIoT.Utils;
-    using Microsoft.IIoT.Serializers;
+    using Microsoft.IIoT.Extensions.Utils;
+    using Microsoft.IIoT.Extensions.Serializers;
     using System;
     using System.Collections.Generic;
     using System.Collections.Concurrent;

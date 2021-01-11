@@ -4,7 +4,7 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.IIoT.Azure.SignalR.Services {
-    using Microsoft.IIoT.Rpc;
+    using Microsoft.IIoT.Extensions.Rpc;
     using Microsoft.Azure.SignalR.Management;
     using Microsoft.AspNetCore.SignalR;
     using Microsoft.Extensions.Options;
@@ -31,10 +31,10 @@ namespace Microsoft.IIoT.Azure.SignalR.Services {
         /// <param name="options"></param>
         public SignalRServiceEndpoint(IOptions<SignalRServiceOptions> options) {
             Resource = HubNameAttribute.GetHubName(typeof(THub));
-            if (!string.IsNullOrEmpty(options.Value?.SignalRConnString) &&
-                options.Value.SignalRServerLess) {
+            if (!string.IsNullOrEmpty(options.Value?.ConnectionString) &&
+                options.Value.IsServerLess) {
                 _serviceManager = new ServiceManagerBuilder().WithOptions(option => {
-                    option.ConnectionString = options.Value.SignalRConnString;
+                    option.ConnectionString = options.Value.ConnectionString;
                     option.ServiceTransportType = ServiceTransportType.Persistent;
                 }).Build();
             }

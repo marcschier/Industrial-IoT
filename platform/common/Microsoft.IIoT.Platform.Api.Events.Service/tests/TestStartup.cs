@@ -9,11 +9,11 @@ namespace Microsoft.IIoT.Platform.Api.Events.Service {
     using Microsoft.IIoT.Platform.Twin.Api;
     using Microsoft.IIoT.Platform.Registry.Api;
     using Microsoft.IIoT.Platform.Events.Api.Runtime;
-    using Microsoft.IIoT.Authentication.Runtime;
-    using Microsoft.IIoT.Authentication.Models;
-    using Microsoft.IIoT.Authentication;
-    using Microsoft.IIoT.Messaging;
-    using Microsoft.IIoT.Http.SignalR;
+    using Microsoft.IIoT.Extensions.Authentication.Runtime;
+    using Microsoft.IIoT.Extensions.Authentication.Models;
+    using Microsoft.IIoT.Extensions.Authentication;
+    using Microsoft.IIoT.Extensions.Messaging;
+    using Microsoft.IIoT.Extensions.Http.SignalR.Clients;
     using Microsoft.Extensions.Configuration;
     using Microsoft.AspNetCore.Hosting;
     using Autofac;

@@ -22,10 +22,12 @@ namespace Microsoft.IIoT.Azure.ServiceBus {
             // Register event bus for integration events
             builder.RegisterType<ServiceBusClientFactory>()
                 .AsImplementedInterfaces();
-            builder.RegisterType<ServiceBusConfig>()
-                .AsImplementedInterfaces();
             builder.RegisterType<ServiceBusQueueClient>()
                 .AsImplementedInterfaces().SingleInstance();
+
+            builder.AddOptions();
+            builder.RegisterType<ServiceBusConfig>()
+                .AsImplementedInterfaces();
             base.Load(builder);
         }
     }

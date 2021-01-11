@@ -6,8 +6,8 @@
 namespace Microsoft.IIoT.Extensions.Mqtt {
     using Microsoft.IIoT.Extensions.Mqtt.Clients;
     using Microsoft.IIoT.Extensions.Mqtt.Runtime;
-    using Microsoft.IIoT.Messaging.Clients;
-    using Microsoft.IIoT.Messaging;
+    using Microsoft.IIoT.Extensions.Messaging.Clients;
+    using Microsoft.IIoT.Extensions.Messaging;
     using Autofac;
 
     /// <summary>
@@ -25,6 +25,8 @@ namespace Microsoft.IIoT.Extensions.Mqtt {
                 .AsImplementedInterfaces().InstancePerLifetimeScope()
                 .IfNotRegistered(typeof(IEventPublisherClient))
                 .IfNotRegistered(typeof(IEventSubscriberClient));
+
+            builder.AddOptions();
             builder.RegisterType<MqttConfig>()
                 .AsImplementedInterfaces();
             base.Load(builder);

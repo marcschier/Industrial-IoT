@@ -4,7 +4,7 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.IIoT.Extensions.RabbitMq.Clients {
-    using Microsoft.IIoT.Messaging;
+    using Microsoft.IIoT.Extensions.Messaging;
     using System;
     using System.Collections.Generic;
     using System.Threading;
@@ -29,7 +29,7 @@ namespace Microsoft.IIoT.Extensions.RabbitMq.Clients {
 
         /// <inheritdoc/>
         public Task PublishAsync(string target, byte[] payload,
-            IDictionary<string, string> properties, string partitionKey,
+            IEventProperties properties, string partitionKey,
             CancellationToken ct) {
             var tcs = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
             ct.Register(() => tcs.TrySetCanceled());
@@ -46,7 +46,7 @@ namespace Microsoft.IIoT.Extensions.RabbitMq.Clients {
 
         /// <inheritdoc/>
         public async Task PublishAsync(string target, IEnumerable<byte[]> batch,
-            IDictionary<string, string> properties, string partitionKey,
+            IEventProperties properties, string partitionKey,
             CancellationToken ct) {
             if (target == null) {
                 throw new ArgumentNullException(nameof(target));
@@ -62,7 +62,7 @@ namespace Microsoft.IIoT.Extensions.RabbitMq.Clients {
 
         /// <inheritdoc/>
         public void Publish<T>(string target, byte[] payload, T token,
-            Action<T, Exception> complete, IDictionary<string, string> properties,
+            Action<T, Exception> complete, IEventProperties properties,
             string partitionKey) {
             if (target == null) {
                 throw new ArgumentNullException(nameof(target));

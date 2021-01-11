@@ -14,7 +14,7 @@ namespace Microsoft.IIoT.Api.Runtime {
     using Microsoft.IIoT.Platform.Vault.Api.Runtime;
     using Microsoft.IIoT.Platform.Events.Api.Runtime;
     using Microsoft.IIoT.Platform.Events.Api;
-    using Microsoft.IIoT.Configuration;
+    using Microsoft.IIoT.Extensions.Configuration;
     using Microsoft.Extensions.Configuration;
 
     /// <summary>

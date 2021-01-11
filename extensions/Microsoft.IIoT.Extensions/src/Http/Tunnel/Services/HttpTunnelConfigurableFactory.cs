@@ -3,12 +3,12 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.Http.Tunnel.Services {
-    using Microsoft.IIoT.Messaging;
-    using Microsoft.IIoT.Http;
-    using Microsoft.IIoT.Http.Clients;
-    using Microsoft.IIoT.Serializers;
-    using Microsoft.IIoT.Hosting;
+namespace Microsoft.IIoT.Extensions.Http.Tunnel.Services {
+    using Microsoft.IIoT.Extensions.Messaging;
+    using Microsoft.IIoT.Extensions.Http;
+    using Microsoft.IIoT.Extensions.Http.Clients;
+    using Microsoft.IIoT.Extensions.Serializers;
+    using Microsoft.IIoT.Extensions.Hosting;
     using Microsoft.Extensions.Logging;
     using Microsoft.Extensions.Options;
     using System;

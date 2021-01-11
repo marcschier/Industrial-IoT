@@ -8,7 +8,7 @@ namespace Microsoft.IIoT.Platform.Publisher.Handlers {
     using Microsoft.IIoT.Platform.Publisher.Models;
     using Microsoft.IIoT.Platform.Core.Models;
     using Microsoft.IIoT.Platform.OpcUa;
-    using Microsoft.IIoT.Messaging;
+    using Microsoft.IIoT.Extensions.Messaging;
     using Opc.Ua;
     using Opc.Ua.PubSub;
     using Opc.Ua.Encoders;
@@ -42,7 +42,7 @@ namespace Microsoft.IIoT.Platform.Publisher.Handlers {
 
         /// <inheritdoc/>
         public async Task HandleAsync(string source, byte[] payload,
-            IDictionary<string, string> properties, Func<Task> checkpoint) {
+            IEventProperties properties, Func<Task> checkpoint) {
 
             try {
                 var context = new ServiceMessageContext();

@@ -19,6 +19,8 @@ namespace Microsoft.IIoT.Azure.KeyVault {
                 .AsImplementedInterfaces();
             builder.RegisterType<KeyVaultServiceClient>()
                 .AsImplementedInterfaces();
+
+            builder.AddOptions();
             builder.RegisterType<KeyVaultConfig>()
                 .AsImplementedInterfaces();
             base.Load(builder);

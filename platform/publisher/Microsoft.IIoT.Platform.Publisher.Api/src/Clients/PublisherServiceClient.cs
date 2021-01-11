@@ -5,9 +5,9 @@
 
 namespace Microsoft.IIoT.Platform.Publisher.Api.Clients {
     using Microsoft.IIoT.Platform.Publisher.Api.Models;
-    using Microsoft.IIoT.Http;
-    using Microsoft.IIoT.Serializers.NewtonSoft;
-    using Microsoft.IIoT.Serializers;
+    using Microsoft.IIoT.Extensions.Http;
+    using Microsoft.IIoT.Extensions.Serializers.NewtonSoft;
+    using Microsoft.IIoT.Extensions.Serializers;
     using System;
     using System.Threading.Tasks;
     using System.Threading;

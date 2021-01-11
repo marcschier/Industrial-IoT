@@ -5,8 +5,8 @@
 
 namespace Microsoft.IIoT.Platform.Publisher.Processor.Runtime {
     using Microsoft.IIoT.Azure.EventHub.Processor;
-    using Microsoft.IIoT.Diagnostics;
-    using Microsoft.IIoT.Configuration;
+    using Microsoft.IIoT.Extensions.Diagnostics;
+    using Microsoft.IIoT.Extensions.Configuration;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Options;
 

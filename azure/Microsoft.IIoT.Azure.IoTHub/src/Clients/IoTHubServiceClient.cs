@@ -6,8 +6,8 @@
 namespace Microsoft.IIoT.Azure.IoTHub.Clients {
     using Microsoft.IIoT.Azure.IoTHub.Models;
     using Microsoft.IIoT.Azure.IoTHub;
-    using Microsoft.IIoT.Utils;
-    using Microsoft.IIoT.Serializers;
+    using Microsoft.IIoT.Extensions.Utils;
+    using Microsoft.IIoT.Extensions.Serializers;
     using Microsoft.Azure.Devices;
     using Microsoft.Azure.Devices.Common.Exceptions;
     using Microsoft.Azure.Devices.Shared;
@@ -35,33 +35,37 @@ namespace Microsoft.IIoT.Azure.IoTHub.Clients {
         /// <param name="options"></param>
         /// <param name="serializer"></param>
         /// <param name="logger"></param>
-        public IoTHubServiceClient(IOptions<IoTHubOptions> options, IJsonSerializer serializer,
+        public IoTHubServiceClient(IOptions<IoTHubServiceOptions> options, IJsonSerializer serializer,
             ILogger logger) {
-            if (string.IsNullOrEmpty(options.Value.IoTHubConnString)) {
+            if (string.IsNullOrEmpty(options.Value.ConnectionString)) {
                 throw new ArgumentException("Missing connection string", nameof(options));
             }
 
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _serializer = serializer ?? throw new ArgumentNullException(nameof(serializer));
-            _client = ServiceClient.CreateFromConnectionString(options.Value.IoTHubConnString);
-            _registry = RegistryManager.CreateFromConnectionString(options.Value.IoTHubConnString);
+            _client = ServiceClient.CreateFromConnectionString(options.Value.ConnectionString);
+            _registry = RegistryManager.CreateFromConnectionString(options.Value.ConnectionString);
 
             Task.WaitAll(_client.OpenAsync(), _registry.OpenAsync());
 
-            HostName = ConnectionString.Parse(options.Value.IoTHubConnString).HostName;
+            HostName = ConnectionString.Parse(options.Value.ConnectionString).HostName;
         }
 
         /// <inheritdoc/>
-        public async Task<DeviceTwinModel> RegisterAsync(DeviceRegistrationModel registration,
-            bool forceUpdate, CancellationToken ct) {
+        public async Task<DeviceTwinModel> RegisterAsync(string deviceId, string moduleId,
+            DeviceRegistrationModel registration, bool forceUpdate, CancellationToken ct) {
+
+            if (string.IsNullOrEmpty(deviceId)) {
+                throw new ArgumentNullException(nameof(deviceId));
+            }
 
             // First try create device
             try {
-                var device = await _registry.AddDeviceAsync(registration.ToDevice(),
+                var device = await _registry.AddDeviceAsync(registration.ToDevice(deviceId),
                     ct).ConfigureAwait(false);
             }
             catch (DeviceAlreadyExistsException)
-                when (!string.IsNullOrEmpty(registration.ModuleId) || forceUpdate) {
+                when (!string.IsNullOrEmpty(moduleId) || forceUpdate) {
                 // continue
             }
             catch (Exception e) {
@@ -70,11 +74,11 @@ namespace Microsoft.IIoT.Azure.IoTHub.Clients {
             }
 
             // Then update twin assuming it now exists. If fails, retry...
-            if (!string.IsNullOrEmpty(registration.ModuleId)) {
+            if (!string.IsNullOrEmpty(moduleId)) {
                 // Try create module
                 try {
-                    var module = await _registry.AddModuleAsync(registration.ToModule(),
-                        ct).ConfigureAwait(false);
+                    var module = await _registry.AddModuleAsync(
+                        registration.ToModule(deviceId, moduleId), ct).ConfigureAwait(false);
                 }
                 catch (DeviceAlreadyExistsException) when (forceUpdate) {
                     // Expected for update
@@ -84,27 +88,25 @@ namespace Microsoft.IIoT.Azure.IoTHub.Clients {
                     throw e.Translate();
                 }
             }
-            if (!(registration.Tags?.Any() ?? false) &&
-                !(registration.Properties?.Desired?.Any() ?? false)) {
+            if (!(registration.Tags?.Any() ?? false) && !(registration.Properties?.Any() ?? false)) {
                 // no twin
-                return await GetAsync(registration.Id, registration.ModuleId,
-                    ct).ConfigureAwait(false);
+                return await GetAsync(deviceId, moduleId, ct).ConfigureAwait(false);
             }
             try {
                 Twin update;
                 // Then update twin assuming it now exists. If fails, retry...
-                var etag = "*";
-                if (!string.IsNullOrEmpty(registration.ModuleId)) {
-                    update = await _registry.UpdateTwinAsync(registration.Id,
-                        registration.ModuleId, registration.ToTwin(), etag,
+                if (!string.IsNullOrEmpty(moduleId)) {
+                    update = await _registry.UpdateTwinAsync(deviceId, moduleId,
+                        registration.ToTwin(deviceId, moduleId), "*",
                             ct).ConfigureAwait(false);
                 }
                 else {
                     // Patch device
-                    update = await _registry.UpdateTwinAsync(registration.Id,
-                        registration.ToTwin(), etag, ct).ConfigureAwait(false);
+                    update = await _registry.UpdateTwinAsync(deviceId,
+                        registration.ToTwin(deviceId, moduleId), "*",
+                            ct).ConfigureAwait(false);
                 }
-                return _serializer.DeserializeTwin(update, HostName);
+                return update.ToDeviceTwinModel(_serializer, HostName);
             }
             catch (Exception e) {
                 _logger.LogTrace(e, "Registration failed");
@@ -128,7 +130,7 @@ namespace Microsoft.IIoT.Azure.IoTHub.Clients {
                     update = await _registry.UpdateTwinAsync(twin.Id,
                         twin.ToTwin(true), etag, ct).ConfigureAwait(false);
                 }
-                return _serializer.DeserializeTwin(update, HostName);
+                return update.ToDeviceTwinModel(_serializer, HostName);
             }
             catch (Exception e) {
                 _logger.LogTrace(e, "Create or update failed ");
@@ -147,7 +149,7 @@ namespace Microsoft.IIoT.Azure.IoTHub.Clients {
                 else {
                     twin = await _registry.GetTwinAsync(deviceId, moduleId, ct).ConfigureAwait(false);
                 }
-                return _serializer.DeserializeTwin(twin, HostName);
+                return twin.ToDeviceTwinModel(_serializer, HostName);
             }
             catch (Exception e) {
                 _logger.LogTrace(e, "Get twin failed ");
@@ -201,7 +203,8 @@ namespace Microsoft.IIoT.Azure.IoTHub.Clients {
             try {
                 var result = await (string.IsNullOrEmpty(moduleId) ?
                     _registry.UpdateTwinAsync(deviceId, properties.ToTwin(), etag, ct) :
-                    _registry.UpdateTwinAsync(deviceId, moduleId, properties.ToTwin(), etag, ct)).ConfigureAwait(false);
+                    _registry.UpdateTwinAsync(deviceId, moduleId, properties.ToTwin(), etag, ct)
+                    ).ConfigureAwait(false);
             }
             catch (Exception e) {
                 _logger.LogTrace(e, "Update properties failed ");

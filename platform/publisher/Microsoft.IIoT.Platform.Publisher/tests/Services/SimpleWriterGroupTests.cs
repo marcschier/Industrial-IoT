@@ -14,12 +14,12 @@ namespace Microsoft.IIoT.Platform.Publisher.Services {
     using Microsoft.IIoT.Platform.Discovery.Models;
     using Microsoft.IIoT.Platform.OpcUa.Testing.Fixtures;
     using Microsoft.IIoT.Platform.OpcUa.Runtime;
-    using Microsoft.IIoT.Serializers;
-    using Microsoft.IIoT.Serializers.NewtonSoft;
-    using Microsoft.IIoT.Storage;
-    using Microsoft.IIoT.Storage.Services;
-    using Microsoft.IIoT.Diagnostics;
-    using Microsoft.IIoT.Utils;
+    using Microsoft.IIoT.Extensions.Serializers;
+    using Microsoft.IIoT.Extensions.Serializers.NewtonSoft;
+    using Microsoft.IIoT.Extensions.Storage;
+    using Microsoft.IIoT.Extensions.Storage.Services;
+    using Microsoft.IIoT.Extensions.Diagnostics;
+    using Microsoft.IIoT.Extensions.Utils;
     using Microsoft.Extensions.Configuration;
     using Autofac;
     using Autofac.Extras.Moq;

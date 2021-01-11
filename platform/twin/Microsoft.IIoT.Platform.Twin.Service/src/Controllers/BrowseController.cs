@@ -8,7 +8,7 @@ namespace Microsoft.IIoT.Platform.Twin.Service.Controllers {
     using Microsoft.IIoT.Platform.Twin;
     using Microsoft.IIoT.Platform.Twin.Models;
     using Microsoft.IIoT.Platform.Twin.Api.Models;
-    using Microsoft.IIoT.AspNetCore.OpenApi;
+    using Microsoft.IIoT.Extensions.AspNetCore.OpenApi;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;

@@ -5,7 +5,7 @@
 
 namespace Microsoft.IIoT.Extensions.RabbitMq.Clients {
     using Microsoft.IIoT.Exceptions;
-    using Microsoft.IIoT.Utils;
+    using Microsoft.IIoT.Extensions.Utils;
     using Microsoft.Extensions.Logging;
     using Microsoft.Extensions.Options;
     using System;

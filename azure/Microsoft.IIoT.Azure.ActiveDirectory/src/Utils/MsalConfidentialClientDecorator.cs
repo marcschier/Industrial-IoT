@@ -4,7 +4,7 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.IIoT.Azure.ActiveDirectory.Utils {
-    using Microsoft.IIoT.Storage;
+    using Microsoft.IIoT.Extensions.Storage;
     using Microsoft.Identity.Client;
     using System.Threading.Tasks;
 

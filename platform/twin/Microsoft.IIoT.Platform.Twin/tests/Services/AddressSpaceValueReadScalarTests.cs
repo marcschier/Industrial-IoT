@@ -9,7 +9,7 @@ namespace Microsoft.IIoT.Platform.Twin.Services {
     using Microsoft.IIoT.Platform.OpcUa.Services;
     using Microsoft.IIoT.Platform.OpcUa.Testing.Fixtures;
     using Microsoft.IIoT.Platform.OpcUa.Testing.Tests;
-    using Microsoft.IIoT.Utils;
+    using Microsoft.IIoT.Extensions.Utils;
     using Opc.Ua;
     using System.Linq;
     using System.Net;

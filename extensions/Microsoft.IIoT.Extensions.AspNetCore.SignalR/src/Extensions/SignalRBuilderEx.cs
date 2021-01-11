@@ -4,7 +4,7 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Extensions.DependencyInjection {
-    using Microsoft.IIoT.Serializers;
+    using Microsoft.IIoT.Extensions.Serializers;
     using Microsoft.Extensions.Options;
     using Microsoft.AspNetCore.SignalR;
     using System.Collections.Generic;

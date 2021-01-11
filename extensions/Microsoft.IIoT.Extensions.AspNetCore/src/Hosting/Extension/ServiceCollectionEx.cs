@@ -6,9 +6,9 @@
 namespace Microsoft.Extensions.DependencyInjection {
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.HttpsPolicy;
-    using Microsoft.IIoT.AspNetCore.Hosting;
-    using Microsoft.IIoT.AspNetCore.Hosting.Runtime;
-    using Microsoft.IIoT.Hosting;
+    using Microsoft.IIoT.Extensions.AspNetCore.Hosting;
+    using Microsoft.IIoT.Extensions.AspNetCore.Hosting.Runtime;
+    using Microsoft.IIoT.Extensions.Hosting;
     using Microsoft.Extensions.Options;
     using System;
 

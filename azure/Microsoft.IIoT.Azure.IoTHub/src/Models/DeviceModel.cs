@@ -37,12 +37,12 @@ namespace Microsoft.IIoT.Azure.IoTHub.Models {
         /// <summary>
         /// Authentication information
         /// </summary>
-        public DeviceAuthenticationModel Authentication { get; set; }
+        public AuthenticationModel Authentication { get; set; }
 
         /// <summary>
         /// Device's Scope
         /// </summary>
-        public string DeviceScope { get; set; }
+        public string Scope { get; set; }
 
         /// <summary>
         /// Corresponding Device's ConnectionState

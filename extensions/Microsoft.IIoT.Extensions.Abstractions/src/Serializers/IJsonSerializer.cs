@@ -3,7 +3,7 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.Serializers {
+namespace Microsoft.IIoT.Extensions.Serializers {
 
     /// <summary>
     /// Json serializer tag to inject json

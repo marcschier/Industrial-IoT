@@ -7,7 +7,7 @@ namespace Microsoft.IIoT.Platform.Publisher.Storage {
     using Microsoft.IIoT.Platform.Publisher.Storage.Models;
     using Microsoft.IIoT.Platform.Publisher.Models;
     using Microsoft.IIoT.Exceptions;
-    using Microsoft.IIoT.Storage;
+    using Microsoft.IIoT.Extensions.Storage;
     using System;
     using System.Collections.Generic;
     using System.Linq;

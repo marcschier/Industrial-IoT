@@ -3,11 +3,11 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.Rpc {
-    using Microsoft.IIoT.Rpc.Services;
-    using Microsoft.IIoT.Diagnostics;
-    using Microsoft.IIoT.Hosting;
-    using Microsoft.IIoT.Serializers;
+namespace Microsoft.IIoT.Extensions.Rpc {
+    using Microsoft.IIoT.Extensions.Rpc.Services;
+    using Microsoft.IIoT.Extensions.Diagnostics;
+    using Microsoft.IIoT.Extensions.Hosting;
+    using Microsoft.IIoT.Extensions.Serializers;
     using System;
     using System.Threading.Tasks;
     using System.Threading;

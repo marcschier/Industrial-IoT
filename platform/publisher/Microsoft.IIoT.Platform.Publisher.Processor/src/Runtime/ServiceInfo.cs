@@ -4,7 +4,7 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.IIoT.Platform.Publisher.Processor.Runtime {
-    using Microsoft.IIoT.Hosting;
+    using Microsoft.IIoT.Extensions.Hosting;
 
     /// <summary>
     /// Service information

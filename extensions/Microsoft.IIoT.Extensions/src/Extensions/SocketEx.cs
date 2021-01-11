@@ -4,7 +4,7 @@
 // ------------------------------------------------------------
 
 namespace System.Net.Sockets {
-    using Microsoft.IIoT.Utils;
+    using Microsoft.IIoT.Extensions.Utils;
     using System.Threading.Tasks;
 
     /// <summary>

@@ -3,9 +3,9 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.Storage.Services {
-    using Microsoft.IIoT.Serializers;
-    using Microsoft.IIoT.Utils;
+namespace Microsoft.IIoT.Extensions.Storage.Services {
+    using Microsoft.IIoT.Extensions.Serializers;
+    using Microsoft.IIoT.Extensions.Utils;
     using System;
     using System.Collections.Generic;
     using System.IO;

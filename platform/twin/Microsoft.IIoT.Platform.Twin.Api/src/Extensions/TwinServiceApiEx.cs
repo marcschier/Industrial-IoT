@@ -6,7 +6,7 @@
 namespace Microsoft.IIoT.Platform.Twin.Api {
     using Microsoft.IIoT.Platform.Twin.Api.Models;
     using Microsoft.IIoT.Platform.Core.Api.Models;
-    using Microsoft.IIoT.Utils;
+    using Microsoft.IIoT.Extensions.Utils;
     using System;
     using System.Collections.Generic;
     using System.Linq;

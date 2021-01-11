@@ -4,8 +4,8 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.IIoT.Platform.Publisher.Service {
-    using Microsoft.IIoT.Hosting;
-    using Microsoft.IIoT.Configuration;
+    using Microsoft.IIoT.Extensions.Hosting;
+    using Microsoft.IIoT.Extensions.Configuration;
     using Microsoft.Extensions.Configuration;
 
     /// <summary>

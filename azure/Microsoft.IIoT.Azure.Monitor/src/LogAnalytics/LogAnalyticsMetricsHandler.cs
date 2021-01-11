@@ -4,10 +4,10 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.IIoT.Azure.LogAnalytics {
-    using Microsoft.IIoT.Diagnostics;
-    using Microsoft.IIoT.Http;
-    using Microsoft.IIoT.Http.Clients;
-    using Microsoft.IIoT.Serializers;
+    using Microsoft.IIoT.Extensions.Diagnostics;
+    using Microsoft.IIoT.Extensions.Http;
+    using Microsoft.IIoT.Extensions.Http.Clients;
+    using Microsoft.IIoT.Extensions.Serializers;
     using Microsoft.Extensions.Logging;
     using Microsoft.Extensions.Options;
     using System;
@@ -58,7 +58,7 @@ namespace Microsoft.IIoT.Azure.LogAnalytics {
             }
             // Create client if not configured before...
             if (HttpClient == null) {
-                HttpClient = new Http.Clients.HttpClient(_factory, _logger);
+                HttpClient = new Extensions.Http.Clients.HttpClient(_factory, _logger);
             }
         }
 

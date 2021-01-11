@@ -4,7 +4,7 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.KeyVault.WebKey {
-    using Microsoft.IIoT.Crypto.Models;
+    using Microsoft.IIoT.Extensions.Crypto.Models;
     using System;
     using System.Security.Cryptography;
     using Xunit;

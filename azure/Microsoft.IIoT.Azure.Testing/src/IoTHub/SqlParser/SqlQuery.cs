@@ -6,7 +6,7 @@
 namespace Microsoft.IIoT.Azure.IoTHub.Testing.SqlParser {
     using Microsoft.IIoT.Azure.IoTHub.Testing;
     using Microsoft.IIoT.Azure.IoTHub.Models;
-    using Microsoft.IIoT.Serializers;
+    using Microsoft.IIoT.Extensions.Serializers;
     using Antlr4.Runtime;
     using Antlr4.Runtime.Tree;
     using System;

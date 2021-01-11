@@ -5,8 +5,8 @@
 
 namespace Microsoft.IIoT.Azure.AppInsights {
     using Microsoft.IIoT.Azure.AppInsights.Runtime;
-    using Microsoft.IIoT.Diagnostics;
-    using Microsoft.IIoT.Hosting;
+    using Microsoft.IIoT.Extensions.Diagnostics;
+    using Microsoft.IIoT.Extensions.Hosting;
     using Microsoft.Extensions.Logging.Debug;
     using Microsoft.Extensions.Logging.Console;
     using Microsoft.ApplicationInsights.DependencyCollector;

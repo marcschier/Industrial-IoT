@@ -3,7 +3,7 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.AspNetCore.OpenApi {
+namespace Microsoft.IIoT.Extensions.AspNetCore.OpenApi {
     using Swashbuckle.AspNetCore.SwaggerGen;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc.Controllers;

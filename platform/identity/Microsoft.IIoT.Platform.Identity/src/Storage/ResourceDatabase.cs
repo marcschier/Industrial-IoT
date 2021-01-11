@@ -5,7 +5,7 @@
 
 namespace Microsoft.IIoT.Platform.Identity.Storage {
     using Microsoft.IIoT.Platform.Identity.Models;
-    using Microsoft.IIoT.Storage;
+    using Microsoft.IIoT.Extensions.Storage;
     using Microsoft.IIoT.Exceptions;
     using IdentityServer4.Models;
     using IdentityServer4.Stores;

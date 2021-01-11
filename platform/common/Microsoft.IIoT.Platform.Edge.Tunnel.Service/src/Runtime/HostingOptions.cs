@@ -5,8 +5,8 @@
 
 namespace Microsoft.IIoT.Platform.Edge.Tunnel.Service.Runtime {
     using Microsoft.IIoT.Azure.EventHub.Processor;
-    using Microsoft.IIoT.Diagnostics;
-    using Microsoft.IIoT.Configuration;
+    using Microsoft.IIoT.Extensions.Diagnostics;
+    using Microsoft.IIoT.Extensions.Configuration;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Options;
     using System;
@@ -14,7 +14,8 @@ namespace Microsoft.IIoT.Platform.Edge.Tunnel.Service.Runtime {
     /// <summary>
     /// Telemetry processor service configuration
     /// </summary>
-    public class HostingOptions : ConfigureOptionBase, IConfigureOptions<EventHubConsumerOptions>,
+    public class HostingOptions : ConfigureOptionBase,
+        IConfigureOptions<EventHubConsumerOptions>,
         IConfigureOptions<EventProcessorHostOptions>,
         IConfigureOptions<EventProcessorFactoryOptions>,
         IConfigureOptions<MetricsServerOptions> {

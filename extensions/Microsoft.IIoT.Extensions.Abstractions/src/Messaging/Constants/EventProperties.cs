@@ -3,7 +3,7 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.Messaging {
+namespace Microsoft.IIoT.Extensions.Messaging {
 
     /// <summary>
     /// Common event hub message properties
@@ -13,12 +13,12 @@ namespace Microsoft.IIoT.Messaging {
         /// <summary>
         /// Content encoding of event
         /// </summary>
-        public const string ContentEncoding = "ContentEncoding";
+        public const string ContentEncoding = "content-encoding";
 
         /// <summary>
         /// Content type of event.
         /// </summary>
-        public const string ContentType = "ContentType";
+        public const string ContentType = "content-type";
 
         /// <summary>
         /// Event schema.

@@ -3,13 +3,13 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.AspNetCore.Http.Tunnel {
-    using Microsoft.IIoT.AspNetCore;
+namespace Microsoft.IIoT.Extensions.AspNetCore.Http.Tunnel {
+    using Microsoft.IIoT.Extensions.AspNetCore;
     using Microsoft.IIoT.Exceptions;
-    using Microsoft.IIoT.Hosting;
-    using Microsoft.IIoT.Http.Tunnel.Models;
-    using Microsoft.IIoT.Rpc.Services;
-    using Microsoft.IIoT.Serializers;
+    using Microsoft.IIoT.Extensions.Hosting;
+    using Microsoft.IIoT.Extensions.Http.Tunnel.Models;
+    using Microsoft.IIoT.Extensions.Rpc.Services;
+    using Microsoft.IIoT.Extensions.Serializers;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Http.Features;
     using Microsoft.Extensions.DependencyInjection;

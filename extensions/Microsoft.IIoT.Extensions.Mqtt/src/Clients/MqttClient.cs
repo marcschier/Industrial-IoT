@@ -4,10 +4,10 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.IIoT.Extensions.Mqtt.Clients {
-    using Microsoft.IIoT.Exceptions;
     using Microsoft.IIoT.Extensions.Mqtt;
-    using Microsoft.IIoT.Messaging;
-    using Microsoft.IIoT.Utils;
+    using Microsoft.IIoT.Extensions.Messaging;
+    using Microsoft.IIoT.Extensions.Utils;
+    using Microsoft.IIoT.Exceptions;
     using Microsoft.Extensions.Logging;
     using Microsoft.Extensions.Options;
     using MQTTnet;
@@ -46,7 +46,7 @@ namespace Microsoft.IIoT.Extensions.Mqtt.Clients {
 
         /// <inheritdoc/>
         public async Task PublishAsync(string target, byte[] payload,
-            IDictionary<string, string> properties, string partitionKey,
+            IEventProperties properties, string partitionKey,
             CancellationToken ct) {
             if (target == null) {
                 throw new ArgumentNullException(nameof(target));
@@ -73,7 +73,7 @@ namespace Microsoft.IIoT.Extensions.Mqtt.Clients {
 
         /// <inheritdoc/>
         public async Task PublishAsync(string target, IEnumerable<byte[]> batch,
-            IDictionary<string, string> properties, string partitionKey,
+            IEventProperties properties, string partitionKey,
             CancellationToken ct) {
             if (target == null) {
                 throw new ArgumentNullException(nameof(target));
@@ -100,7 +100,7 @@ namespace Microsoft.IIoT.Extensions.Mqtt.Clients {
 
         /// <inheritdoc/>
         public void Publish<T>(string target, byte[] payload, T token,
-            Action<T, Exception> complete, IDictionary<string, string> properties,
+            Action<T, Exception> complete, IEventProperties properties,
             string partitionKey) {
             if (target == null) {
                 throw new ArgumentNullException(nameof(target));
@@ -233,7 +233,7 @@ namespace Microsoft.IIoT.Extensions.Mqtt.Clients {
                         new Dictionary<string, string>();
                 foreach (var consumer in consumers) {
                     await consumer.HandleAsync(args.ApplicationMessage.Payload,
-                        userProperties, () => Task.CompletedTask).ConfigureAwait(false);
+                        userProperties.ToEventProperties(), () => Task.CompletedTask).ConfigureAwait(false);
                 }
             }
             finally {

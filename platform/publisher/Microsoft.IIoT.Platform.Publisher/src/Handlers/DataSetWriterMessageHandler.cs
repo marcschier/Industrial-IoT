@@ -6,8 +6,8 @@
 namespace Microsoft.IIoT.Platform.Publisher.Handlers {
     using Microsoft.IIoT.Platform.Publisher;
     using Microsoft.IIoT.Platform.Publisher.Models;
-    using Microsoft.IIoT.Messaging;
-    using Microsoft.IIoT.Serializers;
+    using Microsoft.IIoT.Extensions.Messaging;
+    using Microsoft.IIoT.Extensions.Serializers;
     using Microsoft.Extensions.Logging;
     using System;
     using System.Threading.Tasks;
@@ -37,7 +37,7 @@ namespace Microsoft.IIoT.Platform.Publisher.Handlers {
 
         /// <inheritdoc/>
         public async Task HandleAsync(string source, byte[] payload,
-            IDictionary<string, string> properties, Func<Task> checkpoint) {
+            IEventProperties properties, Func<Task> checkpoint) {
             try {
                 var sample = _serializer.Deserialize<PublishedDataSetItemMessageModel>(payload);
 

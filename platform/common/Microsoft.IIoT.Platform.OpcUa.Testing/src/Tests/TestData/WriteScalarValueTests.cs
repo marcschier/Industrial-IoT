@@ -6,8 +6,8 @@
 namespace Microsoft.IIoT.Platform.OpcUa.Testing.Tests {
     using Microsoft.IIoT.Platform.Twin.Models;
     using Microsoft.IIoT.Platform.Twin;
-    using Microsoft.IIoT.Serializers;
-    using Microsoft.IIoT.Serializers.NewtonSoft;
+    using Microsoft.IIoT.Extensions.Serializers;
+    using Microsoft.IIoT.Extensions.Serializers.NewtonSoft;
     using MemoryBuffer;
     using System;
     using System.Threading.Tasks;

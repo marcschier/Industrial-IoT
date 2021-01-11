@@ -11,48 +11,48 @@ namespace Microsoft.IIoT.Azure.IoTHub.Models {
     /// <summary>
     /// Configuration model extensions
     /// </summary>
-    public static class ConfigurationModelEx {
+    internal static class ConfigurationModelEx {
 
         /// <summary>
         /// Convert configuration model to configuration
         /// </summary>
-        /// <param name="config"></param>
+        /// <param name="model"></param>
         /// <returns></returns>
-        public static Configuration ToConfiguration(this ConfigurationModel config) {
-            if (config is null) {
-                throw new ArgumentNullException(nameof(config));
+        public static Configuration ToConfiguration(this ConfigurationModel model) {
+            if (model == null) {
+                return null;
             }
-            return new Configuration(config.Id) {
-                Content = config.Content.ToContent(),
-                ETag = config.Etag,
-                Labels = config.Labels.Clone(),
-                Priority = config.Priority,
-                TargetCondition = config.TargetCondition
+            return new Configuration(model.Id) {
+                Content = model.Content.ToConfigurationContent(),
+                ETag = model.Etag,
+                Labels = model.Labels.Clone(),
+                Priority = model.Priority,
+                TargetCondition = model.TargetCondition
             };
         }
 
         /// <summary>
         /// Convert configuration to model
         /// </summary>
-        /// <param name="config"></param>
+        /// <param name="model"></param>
         /// <returns></returns>
-        public static ConfigurationModel ToModel(this Configuration config) {
-            if (config is null) {
-                throw new ArgumentNullException(nameof(config));
+        public static ConfigurationModel ToConfigurationModel(this Configuration model) {
+            if (model == null) {
+                return null;
             }
             return new ConfigurationModel {
-                Id = config.Id,
-                Etag = config.ETag,
-                ContentType = config.ContentType,
-                TargetCondition = config.TargetCondition,
-                Priority = config.Priority,
-                Labels = config.Labels.Clone(),
-                Content = config.Content.ToModel(),
-                CreatedTimeUtc = config.CreatedTimeUtc,
-                LastUpdatedTimeUtc = config.LastUpdatedTimeUtc,
-                Metrics = config.Metrics.ToModel(),
-                SchemaVersion = config.SchemaVersion,
-                SystemMetrics = config.SystemMetrics.ToModel()
+                Id = model.Id,
+                Etag = model.ETag,
+                ContentType = model.ContentType,
+                TargetCondition = model.TargetCondition,
+                Priority = model.Priority,
+                Labels = model.Labels.Clone(),
+                Content = model.Content.ToConfigurationContentModel(),
+                CreatedTimeUtc = model.CreatedTimeUtc,
+                LastUpdatedTimeUtc = model.LastUpdatedTimeUtc,
+                Metrics = model.Metrics.ToConfigurationMetricsModel(),
+                SchemaVersion = model.SchemaVersion,
+                SystemMetrics = model.SystemMetrics.ToConfigurationMetricsModel()
             };
         }
     }

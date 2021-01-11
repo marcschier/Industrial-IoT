@@ -4,23 +4,23 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.IIoT.Azure.IoTHub.Runtime {
-    using Microsoft.IIoT.Configuration;
+    using Microsoft.IIoT.Extensions.Configuration;
     using Microsoft.Extensions.Configuration;
 
     /// <summary>
     /// IoT hub services runtime configuration
     /// </summary>
-    public sealed class IoTHubConfig : PostConfigureOptionBase<IoTHubOptions> {
+    public sealed class IoTHubServiceConfig : PostConfigureOptionBase<IoTHubServiceOptions> {
 
         /// <inheritdoc/>
-        public IoTHubConfig(IConfiguration configuration) :
+        public IoTHubServiceConfig(IConfiguration configuration) :
             base(configuration) {
         }
 
         /// <inheritdoc/>
-        public override void PostConfigure(string name, IoTHubOptions options) {
-            if (string.IsNullOrEmpty(options.IoTHubConnString)) {
-                options.IoTHubConnString = GetStringOrDefault(PcsVariable.PCS_IOTHUB_CONNSTRING,
+        public override void PostConfigure(string name, IoTHubServiceOptions options) {
+            if (string.IsNullOrEmpty(options.ConnectionString)) {
+                options.ConnectionString = GetStringOrDefault(PcsVariable.PCS_IOTHUB_CONNSTRING,
                     GetStringOrDefault("_HUB_CS"));
             }
         }

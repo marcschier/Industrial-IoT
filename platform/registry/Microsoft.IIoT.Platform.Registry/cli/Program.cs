@@ -5,14 +5,14 @@
 
 namespace Microsoft.IIoT.Platform.Registry.Cli {
     using Microsoft.IIoT.Platform.Registry.Models;
-    using Microsoft.IIoT.Diagnostics;
+    using Microsoft.IIoT.Extensions.Diagnostics;
     using Microsoft.IIoT.Azure.IoTHub.Runtime;
     using Microsoft.IIoT.Azure.IoTHub.Clients;
     using Microsoft.IIoT.Azure.IoTHub;
     using Microsoft.IIoT.Azure.IoTHub.Models;
-    using Microsoft.IIoT.Serializers;
-    using Microsoft.IIoT.Utils;
-    using Microsoft.IIoT.Serializers.NewtonSoft;
+    using Microsoft.IIoT.Extensions.Serializers;
+    using Microsoft.IIoT.Extensions.Utils;
+    using Microsoft.IIoT.Extensions.Serializers.NewtonSoft;
     using Newtonsoft.Json;
     using Opc.Ua;
     using System;
@@ -139,20 +139,17 @@ Operations (Mutually exclusive):
         /// </summary>
         private static async Task MakeSupervisorAsync(string deviceId, string moduleId) {
             var logger = Log.Console();
-            var config = new IoTHubConfig(null).ToOptions();
+            var config = new IoTHubServiceConfig(null).ToOptions();
             var registry = new IoTHubServiceClient(
                 config, new NewtonSoftJsonSerializer(), logger);
 
-            await registry.RegisterAsync(new DeviceRegistrationModel {
-                Id = deviceId,
-                ModuleId = moduleId
-            }, true, CancellationToken.None).ConfigureAwait(false);
+            await registry.RegisterAsync(deviceId, moduleId, null, true, CancellationToken.None).ConfigureAwait(false);
 
             var module = await registry.GetRegistrationAsync(deviceId, moduleId, CancellationToken.None).ConfigureAwait(false);
             Console.WriteLine(JsonConvert.SerializeObject(module));
             var twin = await registry.GetAsync(deviceId, moduleId, CancellationToken.None).ConfigureAwait(false);
             Console.WriteLine(JsonConvert.SerializeObject(twin));
-            var cs = ConnectionString.Parse(config.Value.IoTHubConnString);
+            var cs = ConnectionString.Parse(config.Value.ConnectionString);
             Console.WriteLine("Connection string:");
             Console.WriteLine($"HostName={cs.HostName};DeviceId={deviceId};" +
                 $"ModuleId={moduleId};SharedAccessKey={module.Authentication.PrimaryKey}");
@@ -163,7 +160,7 @@ Operations (Mutually exclusive):
         /// </summary>
         private static async Task ClearSupervisorsAsync() {
             var logger = Log.Console();
-            var config = new IoTHubConfig(null).ToOptions();
+            var config = new IoTHubServiceConfig(null).ToOptions();
             var registry = new IoTHubServiceClient(
                 config, new NewtonSoftJsonSerializer(), logger);
 
@@ -204,7 +201,7 @@ Operations (Mutually exclusive):
         /// </summary>
         private static async Task ClearRegistryAsync() {
             var logger = Log.Console();
-            var config = new IoTHubConfig(null).ToOptions();
+            var config = new IoTHubServiceConfig(null).ToOptions();
             var registry = new IoTHubServiceClient(
                 config, new NewtonSoftJsonSerializer(), logger);
 

@@ -3,8 +3,8 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.Net.Scanner {
-    using Microsoft.IIoT.Net.Models;
+namespace Microsoft.IIoT.Extensions.Net.Scanner {
+    using Microsoft.IIoT.Extensions.Net.Models;
     using Microsoft.Extensions.Logging;
     using System;
     using System.Collections.Generic;

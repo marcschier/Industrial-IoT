@@ -3,7 +3,7 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.Http.Ssl {
+namespace Microsoft.IIoT.Extensions.Http.Ssl {
     using Microsoft.Extensions.Logging;
     using Microsoft.Extensions.Options;
     using System;

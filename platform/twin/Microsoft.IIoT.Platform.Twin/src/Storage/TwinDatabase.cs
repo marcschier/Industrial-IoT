@@ -8,7 +8,7 @@ namespace Microsoft.IIoT.Platform.Twin.Storage {
     using Microsoft.IIoT.Platform.Twin.Models;
     using Microsoft.IIoT.Platform.Core.Models;
     using Microsoft.IIoT.Exceptions;
-    using Microsoft.IIoT.Storage;
+    using Microsoft.IIoT.Extensions.Storage;
     using System;
     using System.Collections.Generic;
     using System.Linq;

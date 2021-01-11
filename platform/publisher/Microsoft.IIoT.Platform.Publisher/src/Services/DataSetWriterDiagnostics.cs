@@ -4,7 +4,7 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.IIoT.Platform.Publisher.Services {
-    using Microsoft.IIoT.Hosting;
+    using Microsoft.IIoT.Extensions.Hosting;
     using Microsoft.Extensions.Logging;
     using Prometheus;
     using System;

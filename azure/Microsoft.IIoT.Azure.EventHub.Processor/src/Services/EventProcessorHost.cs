@@ -4,7 +4,7 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.IIoT.Azure.EventHub.Processor.Services {
-    using Microsoft.IIoT.Messaging;
+    using Microsoft.IIoT.Extensions.Messaging;
     using Microsoft.IIoT.Exceptions;
     using Microsoft.Azure.EventHubs;
     using Microsoft.Azure.EventHubs.Processor;
@@ -26,16 +26,20 @@ namespace Microsoft.IIoT.Azure.EventHub.Processor.Services {
         /// </summary>
         /// <param name="factory"></param>
         /// <param name="hub"></param>
-        /// <param name="config"></param>
+        /// <param name="options"></param>
+        /// <param name="storage"></param>
         /// <param name="checkpoint"></param>
         /// <param name="lease"></param>
         /// <param name="logger"></param>
-        public EventProcessorHost(IEventProcessorFactory factory, ILogger logger,
-            IOptions<EventHubConsumerOptions> hub, IOptions<EventProcessorHostOptions> config,
+        public EventProcessorHost(IEventProcessorFactory factory,
+            IOptions<EventHubConsumerOptions> hub,
+            IOptions<EventProcessorHostOptions> options,
+            IOptions<StorageOptions> storage, ILogger logger,
             ICheckpointManager checkpoint = null, ILeaseManager lease = null) {
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _hub = hub ?? throw new ArgumentNullException(nameof(hub));
-            _config = config ?? throw new ArgumentNullException(nameof(config));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _options = options ?? throw new ArgumentNullException(nameof(options));
+            _storage = storage ?? throw new ArgumentNullException(nameof(storage));
             _factory = factory ?? throw new ArgumentNullException(nameof(factory));
             _lease = lease;
             _checkpoint = checkpoint;
@@ -59,17 +63,18 @@ namespace Microsoft.IIoT.Azure.EventHub.Processor.Services {
                 _logger.LogInformation("Using Consumer Group: \"{consumerGroup}\"", consumerGroup);
                 if (_lease != null && _checkpoint != null) {
                     _host = new Host(
-                        $"host-{Guid.NewGuid()}", _hub.Value.EventHubPath, consumerGroup,
+                        $"host-{Guid.NewGuid()}", _hub.Value.Path, consumerGroup,
                         GetEventHubConnectionString(out _), _checkpoint, _lease);
                 }
                 else {
-                    var blobConnectionString = _config.Value.GetStorageConnString();
+                    var blobConnectionString = _storage.Value.GetStorageConnString();
+                    var cs = GetEventHubConnectionString(out var eventHub);
+                    var containerName = !string.IsNullOrEmpty(_options.Value.LeaseContainerName) ?
+                        _options.Value.LeaseContainerName :
+                        "lease" + eventHub.ToSha256Hash().ToLowerInvariant().Substring(0, 32);
                     if (!string.IsNullOrEmpty(blobConnectionString)) {
-                        _host = new Host(_hub.Value.EventHubPath, consumerGroup,
-                            GetEventHubConnectionString(out var eventHub),
-                            blobConnectionString,
-                            !string.IsNullOrEmpty(_config.Value.LeaseContainerName) ?
-                                _config.Value.LeaseContainerName : eventHub.ToSha256Hash());
+                        _host = new Host(_hub.Value.Path, consumerGroup, cs,
+                            blobConnectionString, containerName);
                     }
                     else {
                         throw new InvalidConfigurationException(
@@ -79,11 +84,11 @@ namespace Microsoft.IIoT.Azure.EventHub.Processor.Services {
                 }
                 await _host.RegisterEventProcessorFactoryAsync(
                     _factory, new EventProcessorOptions {
-                        InitialOffsetProvider = s => _config.Value.InitialReadFromEnd ?
+                        InitialOffsetProvider = s => _options.Value.InitialReadFromEnd ?
                             EventPosition.FromEnqueuedTime(DateTime.UtcNow) :
                             EventPosition.FromStart(),
-                        MaxBatchSize = _config.Value.ReceiveBatchSize,
-                        ReceiveTimeout = _config.Value.ReceiveTimeout,
+                        MaxBatchSize = _options.Value.ReceiveBatchSize,
+                        ReceiveTimeout = _options.Value.ReceiveTimeout,
                         InvokeProcessorAfterReceiveTimeout = true
                     }).ConfigureAwait(false);
                 _logger.LogInformation("Event processor host started.");
@@ -128,11 +133,11 @@ namespace Microsoft.IIoT.Azure.EventHub.Processor.Services {
         /// Helper to get connection string and validate configuration
         /// </summary>
         private string GetEventHubConnectionString(out string eventHubPath) {
-            if (!string.IsNullOrEmpty(_hub.Value.EventHubConnString)) {
+            if (!string.IsNullOrEmpty(_hub.Value.ConnectionString)) {
                 try {
                     var csb = new EventHubsConnectionStringBuilder(
-                        _hub.Value.EventHubConnString);
-                    eventHubPath = _hub.Value.EventHubPath;
+                        _hub.Value.ConnectionString);
+                    eventHubPath = _hub.Value.Path;
                     if (string.IsNullOrEmpty(eventHubPath)) {
                         eventHubPath = csb.EntityPath;
                     }
@@ -146,7 +151,7 @@ namespace Microsoft.IIoT.Azure.EventHub.Processor.Services {
                 catch {
                     throw new InvalidConfigurationException(
                         "Invalid Event hub connection string " +
-                        $"{_hub.Value.EventHubConnString} configured.");
+                        $"{_hub.Value.ConnectionString} configured.");
                 }
             }
             throw new InvalidConfigurationException(
@@ -156,7 +161,8 @@ namespace Microsoft.IIoT.Azure.EventHub.Processor.Services {
         private readonly SemaphoreSlim _lock;
         private readonly ILogger _logger;
         private readonly IOptions<EventHubConsumerOptions> _hub;
-        private readonly IOptions<EventProcessorHostOptions> _config;
+        private readonly IOptions<EventProcessorHostOptions> _options;
+        private readonly IOptions<StorageOptions> _storage;
         private readonly IEventProcessorFactory _factory;
         private readonly ILeaseManager _lease;
         private readonly ICheckpointManager _checkpoint;

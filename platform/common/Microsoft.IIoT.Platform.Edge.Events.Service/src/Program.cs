@@ -16,9 +16,9 @@ namespace Microsoft.IIoT.Platform.Edge.Events.Service {
     using Microsoft.IIoT.Azure.CosmosDb;
     using Microsoft.IIoT.Azure.ActiveDirectory.Clients;
     using Microsoft.IIoT.Azure.IoTHub;
-    using Microsoft.IIoT.Http.Clients;
-    using Microsoft.IIoT.AspNetCore.Diagnostics.Default;
-    using Microsoft.IIoT.Serializers;
+    using Microsoft.IIoT.Extensions.Http.Clients;
+    using Microsoft.IIoT.Extensions.AspNetCore.Diagnostics.Default;
+    using Microsoft.IIoT.Extensions.Serializers;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;

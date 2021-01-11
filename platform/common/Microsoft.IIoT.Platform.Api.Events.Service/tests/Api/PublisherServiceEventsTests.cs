@@ -8,7 +8,7 @@ namespace Microsoft.IIoT.Platform.Api.Events.Service.Api {
     using Microsoft.IIoT.Platform.Publisher.Api.Models;
     using Microsoft.IIoT.Platform.Publisher.Models;
     using Microsoft.IIoT.Platform.Publisher;
-    using Microsoft.IIoT.Serializers;
+    using Microsoft.IIoT.Extensions.Serializers;
     using System.Threading.Tasks;
     using Xunit;
     using System;

@@ -6,8 +6,8 @@
 namespace Microsoft.IIoT.Platform.Vault.Services {
     using Microsoft.IIoT.Platform.Vault.Models;
     using Microsoft.IIoT.Platform.Core.Models;
-    using Microsoft.IIoT.Crypto;
-    using Microsoft.IIoT.Crypto.Models;
+    using Microsoft.IIoT.Extensions.Crypto;
+    using Microsoft.IIoT.Extensions.Crypto.Models;
     using Microsoft.IIoT.Exceptions;
     using System;
     using System.Linq;

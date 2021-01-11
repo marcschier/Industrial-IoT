@@ -3,7 +3,7 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.Http.Tunnel {
+namespace Microsoft.IIoT.Extensions.Http.Tunnel {
 
     /// <summary>
     /// Configuration for http tunnel usage

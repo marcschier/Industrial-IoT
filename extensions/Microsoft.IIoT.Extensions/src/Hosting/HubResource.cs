@@ -3,7 +3,7 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.Hosting {
+namespace Microsoft.IIoT.Extensions.Hosting {
     using System;
     using System.Text;
 
@@ -75,6 +75,10 @@ namespace Microsoft.IIoT.Hosting {
             var delim = asHostName ? '.' : '/';
             var sb = new StringBuilder();
             if (!string.IsNullOrEmpty(hub)) {
+                var index = hub.IndexOf('.');
+                if (index != -1) {
+                    hub = hub.Substring(0, index);
+                }
                 sb.Append(hub);
                 sb.Append(delim);
             }

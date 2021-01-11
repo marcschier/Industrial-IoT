@@ -6,7 +6,7 @@
 namespace Microsoft.IIoT.Extensions.Kafka.Clients {
     using Microsoft.IIoT.Extensions.Kafka.Runtime;
     using Microsoft.IIoT.Extensions.Kafka.Server;
-    using Microsoft.IIoT.Utils;
+    using Microsoft.IIoT.Extensions.Utils;
     using Autofac;
     using System;
     using System.Threading;

@@ -4,8 +4,8 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.IIoT.Platform.Registry.Default {
-    using Microsoft.IIoT.Messaging;
-    using Microsoft.IIoT.Tasks;
+    using Microsoft.IIoT.Extensions.Messaging;
+    using Microsoft.IIoT.Extensions.Tasks;
     using System;
     using System.Linq;
     using System.Threading.Tasks;

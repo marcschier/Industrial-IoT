@@ -4,8 +4,8 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.IIoT.Azure.EventHub.Processor.Services {
-    using Microsoft.IIoT.Messaging;
-    using Microsoft.IIoT.Utils;
+    using Microsoft.IIoT.Extensions.Messaging;
+    using Microsoft.IIoT.Extensions.Utils;
     using Microsoft.Azure.EventHubs;
     using Microsoft.Azure.EventHubs.Processor;
     using Microsoft.Extensions.Logging;
@@ -167,7 +167,15 @@ namespace Microsoft.IIoT.Azure.EventHub.Processor.Services {
             /// <summary>
             /// Wraps the properties into a string dictionary
             /// </summary>
-            private class EventProperties : IDictionary<string, string> {
+            private class EventProperties : IEventProperties {
+
+                /// <inheritdoc/>
+                public string this[string key] {
+                    get {
+                        TryGetValue(key, out var value);
+                        return value;
+                    }
+                }
 
                 /// <summary>
                 /// Create properties wrapper
@@ -181,50 +189,6 @@ namespace Microsoft.IIoT.Azure.EventHub.Processor.Services {
                 }
 
                 /// <inheritdoc/>
-                public ICollection<string> Keys => _user.Keys
-                    .Concat(_system.Keys).ToList();
-
-                /// <inheritdoc/>
-                public ICollection<string> Values => _user.Values
-                    .Select(v => v.ToString())
-                    .Concat(_system.Values
-                        .Select(v => v.ToString()))
-                    .ToList();
-
-                /// <inheritdoc/>
-                public int Count =>
-                    _system.Count + _user.Count;
-
-                /// <inheritdoc/>
-                public bool IsReadOnly => true;
-
-                /// <inheritdoc/>
-                public string this[string key] {
-                    get {
-                        if (!_user.TryGetValue(key, out var result)) {
-                            result = _system[key];
-                        }
-                        return result.ToString();
-                    }
-                    set => _user[key] = value;
-                }
-
-                /// <inheritdoc/>
-                public void Add(string key, string value) {
-                    _user.Add(key, value);
-                }
-
-                /// <inheritdoc/>
-                public bool ContainsKey(string key) {
-                    return _user.ContainsKey(key) || _system.ContainsKey(key);
-                }
-
-                /// <inheritdoc/>
-                public bool Remove(string key) {
-                    return _user.Remove(key) || _system.Remove(key);
-                }
-
-                /// <inheritdoc/>
                 public bool TryGetValue(string key, out string value) {
                     if (_user.TryGetValue(key, out var result) ||
                         _system.TryGetValue(key, out result)) {
@@ -232,44 +196,6 @@ namespace Microsoft.IIoT.Azure.EventHub.Processor.Services {
                         return true;
                     }
                     value = null;
-                    return false;
-                }
-
-                /// <inheritdoc/>
-                public void Add(KeyValuePair<string, string> item) {
-                    _user.Add(new KeyValuePair<string, object>(item.Key, item.Value));
-                }
-
-                /// <inheritdoc/>
-                public void Clear() {
-                    _user.Clear();
-                    _system.Clear();
-                }
-
-                /// <inheritdoc/>
-                public bool Contains(KeyValuePair<string, string> item) {
-                    if (TryGetValue(item.Key, out var value)) {
-                        return value == item.Value.ToString();
-                    }
-                    return false;
-                }
-
-                /// <inheritdoc/>
-                public void CopyTo(KeyValuePair<string, string>[] array, int arrayIndex) {
-                    var index = arrayIndex;
-                    foreach (var item in this) {
-                        if (index >= array.Length) {
-                            return;
-                        }
-                        array[index++] = item;
-                    }
-                }
-
-                /// <inheritdoc/>
-                public bool Remove(KeyValuePair<string, string> item) {
-                    if (Contains(item)) {
-                        return Remove(item.Key);
-                    }
                     return false;
                 }
 

@@ -3,9 +3,9 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.Tasks.Services {
+namespace Microsoft.IIoT.Extensions.Tasks.Services {
     using Microsoft.Extensions.Logging;
-    using Microsoft.IIoT.Utils;
+    using Microsoft.IIoT.Extensions.Utils;
     using System;
     using System.Collections.Concurrent;
     using System.Collections.Generic;

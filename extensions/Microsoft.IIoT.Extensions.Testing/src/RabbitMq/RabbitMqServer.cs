@@ -5,7 +5,7 @@
 
 namespace Microsoft.IIoT.Extensions.RabbitMq.Server {
     using Microsoft.IIoT.Extensions.Docker;
-    using Microsoft.IIoT.Utils;
+    using Microsoft.IIoT.Extensions.Utils;
     using Microsoft.Extensions.Diagnostics.HealthChecks;
     using Microsoft.Extensions.Logging;
     using System;

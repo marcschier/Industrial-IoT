@@ -5,11 +5,11 @@
 
 namespace Microsoft.IIoT.Platform.Discovery.Clients {
     using Microsoft.IIoT.Platform.Discovery.Models;
-    using Microsoft.IIoT.Hosting;
-    using Microsoft.IIoT.Messaging;
-    using Microsoft.IIoT.Tasks;
-    using Microsoft.IIoT.Utils;
-    using Microsoft.IIoT.Serializers;
+    using Microsoft.IIoT.Extensions.Hosting;
+    using Microsoft.IIoT.Extensions.Messaging;
+    using Microsoft.IIoT.Extensions.Tasks;
+    using Microsoft.IIoT.Extensions.Utils;
+    using Microsoft.IIoT.Extensions.Serializers;
     using Microsoft.Extensions.Logging;
     using System;
     using System.Threading.Tasks;

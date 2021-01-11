@@ -10,12 +10,12 @@ namespace Microsoft.IIoT.Platform.Publisher.Services {
     using Microsoft.IIoT.Platform.Discovery;
     using Microsoft.IIoT.Platform.Discovery.Models;
     using Microsoft.IIoT.Platform.Core.Models;
-    using Microsoft.IIoT.Serializers;
-    using Microsoft.IIoT.Serializers.NewtonSoft;
+    using Microsoft.IIoT.Extensions.Serializers;
+    using Microsoft.IIoT.Extensions.Serializers.NewtonSoft;
     using Microsoft.IIoT.Exceptions;
-    using Microsoft.IIoT.Utils;
-    using Microsoft.IIoT.Storage;
-    using Microsoft.IIoT.Storage.Services;
+    using Microsoft.IIoT.Extensions.Utils;
+    using Microsoft.IIoT.Extensions.Storage;
+    using Microsoft.IIoT.Extensions.Storage.Services;
     using Autofac.Extras.Moq;
     using Autofac;
     using System;

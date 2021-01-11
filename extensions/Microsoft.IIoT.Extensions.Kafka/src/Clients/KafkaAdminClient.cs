@@ -5,8 +5,8 @@
 
 namespace Microsoft.IIoT.Extensions.Kafka.Clients {
     using Microsoft.IIoT.Extensions.Kafka;
-    using Microsoft.IIoT.Utils;
-    using Microsoft.IIoT.Hosting;
+    using Microsoft.IIoT.Extensions.Utils;
+    using Microsoft.IIoT.Extensions.Hosting;
     using Microsoft.Extensions.Diagnostics.HealthChecks;
     using Microsoft.Extensions.Logging;
     using Microsoft.Extensions.Options;

@@ -15,12 +15,12 @@ namespace Microsoft.IIoT.Platform.Twin.Services.Module.Cli {
     using Microsoft.IIoT.Azure.IoTHub.Clients;
     using Microsoft.IIoT.Azure.LogAnalytics;
     using Microsoft.IIoT.Azure.LogAnalytics.Runtime;
-    using Microsoft.IIoT.Diagnostics;
+    using Microsoft.IIoT.Extensions.Diagnostics;
     using Microsoft.IIoT.Exceptions;
-    using Microsoft.IIoT.Serializers;
-    using Microsoft.IIoT.Serializers.NewtonSoft;
-    using Microsoft.IIoT.Storage.Services;
-    using Microsoft.IIoT.Utils;
+    using Microsoft.IIoT.Extensions.Serializers;
+    using Microsoft.IIoT.Extensions.Serializers.NewtonSoft;
+    using Microsoft.IIoT.Extensions.Storage.Services;
+    using Microsoft.IIoT.Extensions.Utils;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Logging;
     using Microsoft.Extensions.Options;
@@ -86,7 +86,7 @@ namespace Microsoft.IIoT.Platform.Twin.Services.Module.Cli {
                 cs = configuration.GetValue<string>("_HUB_CS", null);
             }
             var diagnostics = new LogAnalyticsConfig(configuration).ToOptions().Value;
-            IOptions<IoTHubOptions> config = null;
+            IOptions<IoTHubServiceOptions> config = null;
             var endpoint = new EndpointModel();
             string fileName = null;
             var host = Utils.GetHostName();
@@ -368,7 +368,7 @@ Options:
         /// <summary>
         /// Host the module giving it its connection string.
         /// </summary>
-        private static async Task HostAsync(IOptions<IoTHubOptions> config,
+        private static async Task HostAsync(IOptions<IoTHubServiceOptions> config,
             LogAnalyticsOptions diagnostics, string deviceId, string moduleId) {
             Console.WriteLine("Create or retrieve connection string...");
             var logger = Log.Console(LogLevel.Error);
@@ -386,7 +386,7 @@ Options:
         /// <summary>
         /// Add supervisor
         /// </summary>
-        private static async Task AddAsync(IOptions<IoTHubOptions> config, LogAnalyticsOptions diagnostics,
+        private static async Task AddAsync(IOptions<IoTHubServiceOptions> config, LogAnalyticsOptions diagnostics,
             string deviceId, string moduleId) {
             var cs = await AddOrGetAsync(config, diagnostics, deviceId, moduleId).ConfigureAwait(false);
             Console.WriteLine(cs);
@@ -396,7 +396,7 @@ Options:
         /// Get module connection string
         /// </summary>
         private static async Task GetAsync(
-            IOptions<IoTHubOptions> config, string deviceId, string moduleId) {
+            IOptions<IoTHubServiceOptions> config, string deviceId, string moduleId) {
             var logger = Log.Console(LogLevel.Error);
             var registry = new IoTHubServiceClient(
                 config, new NewtonSoftJsonSerializer(), logger);
@@ -407,7 +407,7 @@ Options:
         /// <summary>
         /// Reset supervisor
         /// </summary>
-        private static async Task ResetAsync(IOptions<IoTHubOptions> config,
+        private static async Task ResetAsync(IOptions<IoTHubServiceOptions> config,
             string deviceId, string moduleId) {
             var logger = Log.Console(LogLevel.Error);
             var registry = new IoTHubServiceClient(
@@ -419,7 +419,7 @@ Options:
         /// <summary>
         /// Delete supervisor
         /// </summary>
-        private static async Task DeleteAsync(IOptions<IoTHubOptions> config,
+        private static async Task DeleteAsync(IOptions<IoTHubServiceOptions> config,
             string deviceId, string moduleId) {
             var logger = Log.Console(LogLevel.Error);
             var registry = new IoTHubServiceClient(
@@ -430,7 +430,7 @@ Options:
         /// <summary>
         /// List all twin module identities
         /// </summary>
-        private static async Task ListAsync(IOptions<IoTHubOptions> config) {
+        private static async Task ListAsync(IOptions<IoTHubServiceOptions> config) {
             var logger = Log.Console(LogLevel.Error);
             var registry = new IoTHubServiceClient(
                 config, new NewtonSoftJsonSerializer(), logger);
@@ -446,7 +446,7 @@ Options:
         /// <summary>
         /// Reset all supervisor tags and properties
         /// </summary>
-        private static async Task ResetAllAsync(IOptions<IoTHubOptions> config) {
+        private static async Task ResetAllAsync(IOptions<IoTHubServiceOptions> config) {
             var logger = Log.Console(LogLevel.Error);
             var registry = new IoTHubServiceClient(
                 config, new NewtonSoftJsonSerializer(), logger);
@@ -463,7 +463,7 @@ Options:
         /// <summary>
         /// Clear registry
         /// </summary>
-        private static async Task CleanupAsync(IOptions<IoTHubOptions> config,
+        private static async Task CleanupAsync(IOptions<IoTHubServiceOptions> config,
             bool includeSupervisors) {
             var logger = Log.Console(LogLevel.Error);
             var registry = new IoTHubServiceClient(
@@ -492,7 +492,7 @@ Options:
         /// Reset supervisor
         /// </summary>
         private static async Task ResetAsync(IoTHubServiceClient registry,
-            DeviceTwinModel item) {
+            Azure.IoTHub.Models.DeviceTwinModel item) {
             var properties = new Dictionary<string, VariantValue>();
             var tags = new Dictionary<string, VariantValue>();
             if (item.Tags != null) {
@@ -528,18 +528,17 @@ Options:
         /// <summary>
         /// Add or get module identity
         /// </summary>
-        private static async Task<ConnectionString> AddOrGetAsync(IOptions<IoTHubOptions> config,
+        private static async Task<ConnectionString> AddOrGetAsync(IOptions<IoTHubServiceOptions> config,
             LogAnalyticsOptions diagnostics, string deviceId, string moduleId) {
             var logger = Log.Console(LogLevel.Error);
             var registry = new IoTHubServiceClient(
                 config, new NewtonSoftJsonSerializer(), logger);
             try {
-                await registry.RegisterAsync(new DeviceRegistrationModel {
-                    Id = deviceId,
+                await registry.RegisterAsync(deviceId, null, new DeviceRegistrationModel {
                     Tags = new Dictionary<string, VariantValue> {
                         [TwinProperty.Type] = IdentityType.Gateway
                     },
-                    Capabilities = new DeviceCapabilitiesModel {
+                    Capabilities = new CapabilitiesModel {
                         IotEdge = true
                     }
                 }, false, CancellationToken.None).ConfigureAwait(false);
@@ -548,14 +547,10 @@ Options:
                 logger.LogInformation("Gateway {deviceId} exists.", deviceId);
             }
             try {
-                await registry.RegisterAsync(new DeviceRegistrationModel {
-                    Id = deviceId,
-                    ModuleId = moduleId,
-                    Properties = new TwinPropertiesModel {
-                        Desired = new Dictionary<string, VariantValue> {
-                            [nameof(diagnostics.LogWorkspaceId)] = diagnostics?.LogWorkspaceId,
-                            [nameof(diagnostics.LogWorkspaceKey)] = diagnostics?.LogWorkspaceKey
-                        }
+                await registry.RegisterAsync(deviceId, moduleId, new DeviceRegistrationModel {
+                    Properties = new Dictionary<string, VariantValue> {
+                        [nameof(diagnostics.LogWorkspaceId)] = diagnostics?.LogWorkspaceId,
+                        [nameof(diagnostics.LogWorkspaceKey)] = diagnostics?.LogWorkspaceKey
                     }
                 }, true, CancellationToken.None).ConfigureAwait(false);
             }

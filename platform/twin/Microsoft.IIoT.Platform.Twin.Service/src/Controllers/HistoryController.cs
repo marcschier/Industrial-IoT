@@ -7,7 +7,7 @@ namespace Microsoft.IIoT.Platform.Twin.Service.Controllers {
     using Microsoft.IIoT.Platform.Twin.Service.Filters;
     using Microsoft.IIoT.Platform.Twin.Api.Models;
     using Microsoft.IIoT.Platform.Twin;
-    using Microsoft.IIoT.Serializers;
+    using Microsoft.IIoT.Extensions.Serializers;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using System;

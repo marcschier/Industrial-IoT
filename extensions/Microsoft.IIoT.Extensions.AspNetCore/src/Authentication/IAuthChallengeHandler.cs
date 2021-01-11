@@ -3,9 +3,9 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.AspNetCore.Authentication {
+namespace Microsoft.IIoT.Extensions.AspNetCore.Authentication {
     using Microsoft.AspNetCore.Http;
-    using Microsoft.IIoT.Authentication.Models;
+    using Microsoft.IIoT.Extensions.Authentication.Models;
     using System.Security.Authentication;
     using System.Threading.Tasks;
 

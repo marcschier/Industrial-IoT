@@ -5,9 +5,9 @@
 
 namespace Microsoft.IIoT.Extensions.Kafka.Services {
     using Microsoft.IIoT.Extensions.Kafka.Clients;
-    using Microsoft.IIoT.Messaging;
-    using Microsoft.IIoT.Hosting;
-    using Microsoft.IIoT.Utils;
+    using Microsoft.IIoT.Extensions.Messaging;
+    using Microsoft.IIoT.Extensions.Hosting;
+    using Microsoft.IIoT.Extensions.Utils;
     using Microsoft.Extensions.Logging;
     using Microsoft.Extensions.Options;
     using System;
@@ -145,7 +145,7 @@ namespace Microsoft.IIoT.Extensions.Kafka.Services {
         /// <summary>
         /// Wraps the properties into a string dictionary
         /// </summary>
-        private class EventHeader : IDictionary<string, string> {
+        private class EventHeader : IEventProperties {
 
             /// <summary>
             /// Create properties wrapper
@@ -160,41 +160,11 @@ namespace Microsoft.IIoT.Extensions.Kafka.Services {
             }
 
             /// <inheritdoc/>
-            public ICollection<string> Keys => _headers.Select(x => x.Key).ToList();
-
-            /// <inheritdoc/>
-            public ICollection<string> Values => Keys.Select(x => this[x]).ToList();
-
-            /// <inheritdoc/>
-            public int Count => _headers.Count;
-
-            /// <inheritdoc/>
-            public bool IsReadOnly => true;
-
-            /// <inheritdoc/>
             public string this[string key] {
                 get {
-                    if (TryGetValue(key, out var result)) {
-                        return result;
-                    }
-                    return null;
+                    TryGetValue(key, out var value);
+                    return value;
                 }
-                set => throw new NotSupportedException();
-            }
-
-            /// <inheritdoc/>
-            public void Add(string key, string value) {
-                throw new NotSupportedException();
-            }
-
-            /// <inheritdoc/>
-            public bool ContainsKey(string key) {
-                return _headers.TryGetLastBytes(key, out _);
-            }
-
-            /// <inheritdoc/>
-            public bool Remove(string key) {
-                throw new NotSupportedException();
             }
 
             /// <inheritdoc/>
@@ -205,40 +175,6 @@ namespace Microsoft.IIoT.Extensions.Kafka.Services {
                 }
                 value = null;
                 return false;
-            }
-
-            /// <inheritdoc/>
-            public void Add(KeyValuePair<string, string> item) {
-                throw new NotSupportedException();
-            }
-
-            /// <inheritdoc/>
-            public void Clear() {
-                throw new NotSupportedException();
-            }
-
-            /// <inheritdoc/>
-            public bool Contains(KeyValuePair<string, string> item) {
-                if (TryGetValue(item.Key, out var value)) {
-                    return value == item.Value.ToString();
-                }
-                return false;
-            }
-
-            /// <inheritdoc/>
-            public void CopyTo(KeyValuePair<string, string>[] array, int arrayIndex) {
-                var index = arrayIndex;
-                foreach (var item in this) {
-                    if (index >= array.Length) {
-                        return;
-                    }
-                    array[index++] = item;
-                }
-            }
-
-            /// <inheritdoc/>
-            public bool Remove(KeyValuePair<string, string> item) {
-                throw new NotSupportedException();
             }
 
             /// <inheritdoc/>

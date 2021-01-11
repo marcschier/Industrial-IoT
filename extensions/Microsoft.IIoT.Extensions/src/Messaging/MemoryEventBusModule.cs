@@ -3,10 +3,10 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.Messaging {
-    using Microsoft.IIoT.Messaging.Services;
-    using Microsoft.IIoT.Tasks.Services;
-    using Microsoft.IIoT.Tasks;
+namespace Microsoft.IIoT.Extensions.Messaging {
+    using Microsoft.IIoT.Extensions.Messaging.Services;
+    using Microsoft.IIoT.Extensions.Tasks.Services;
+    using Microsoft.IIoT.Extensions.Tasks;
     using Autofac;
 
     /// <summary>

@@ -9,7 +9,7 @@ namespace Microsoft.IIoT.Platform.Discovery.Service.Controllers {
     using Microsoft.IIoT.Platform.Discovery;
     using Microsoft.IIoT.Platform.Discovery.Models;
     using Microsoft.IIoT.Platform.Core.Models;
-    using Microsoft.IIoT.AspNetCore.OpenApi;
+    using Microsoft.IIoT.Extensions.AspNetCore.OpenApi;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;

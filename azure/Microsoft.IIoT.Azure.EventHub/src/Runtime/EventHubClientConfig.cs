@@ -4,7 +4,7 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.IIoT.Azure.EventHub.Runtime {
-    using Microsoft.IIoT.Configuration;
+    using Microsoft.IIoT.Extensions.Configuration;
     using Microsoft.Extensions.Configuration;
 
     /// <summary>
@@ -19,11 +19,11 @@ namespace Microsoft.IIoT.Azure.EventHub.Runtime {
 
         /// <inheritdoc/>
         public override void PostConfigure(string name, EventHubClientOptions options) {
-            if (string.IsNullOrEmpty(options.EventHubConnString)) {
-                options.EventHubConnString = GetStringOrDefault(PcsVariable.PCS_EVENTHUB_CONNSTRING);
+            if (string.IsNullOrEmpty(options.ConnectionString)) {
+                options.ConnectionString = GetStringOrDefault(PcsVariable.PCS_EVENTHUB_CONNSTRING);
             }
-            if (string.IsNullOrEmpty(options.EventHubPath)) {
-                options.EventHubPath = GetStringOrDefault(PcsVariable.PCS_EVENTHUB_NAME);
+            if (string.IsNullOrEmpty(options.Path)) {
+                options.Path = GetStringOrDefault(PcsVariable.PCS_EVENTHUB_NAME);
             }
         }
     }

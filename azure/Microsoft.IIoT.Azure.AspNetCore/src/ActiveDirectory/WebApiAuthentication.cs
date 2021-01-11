@@ -3,13 +3,13 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.AspNetCore.Authentication.Clients {
+namespace Microsoft.IIoT.Extensions.AspNetCore.Authentication.Clients {
     using Microsoft.IIoT.Azure.ActiveDirectory;
-    using Microsoft.IIoT.Authentication.Clients;
-    using Microsoft.IIoT.Authentication.Runtime;
-    using Microsoft.IIoT.Http.Auth;
+    using Microsoft.IIoT.Extensions.Authentication.Clients;
+    using Microsoft.IIoT.Extensions.Authentication.Runtime;
+    using Microsoft.IIoT.Extensions.Http.Auth;
     using Autofac;
-    using Microsoft.IIoT.Authentication;
+    using Microsoft.IIoT.Extensions.Authentication;
 
     /// <summary>
     /// Default web service authentication

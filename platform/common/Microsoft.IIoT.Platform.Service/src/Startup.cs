@@ -6,7 +6,7 @@
 namespace Microsoft.IIoT.Platform.Service {
     using Microsoft.IIoT.Azure.ActiveDirectory;
     using Microsoft.IIoT.Azure.AppInsights;
-    using Microsoft.IIoT.Utils;
+    using Microsoft.IIoT.Extensions.Utils;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.Extensions.Configuration;

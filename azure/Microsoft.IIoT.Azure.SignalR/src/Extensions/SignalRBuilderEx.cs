@@ -28,12 +28,12 @@ namespace Microsoft.Extensions.DependencyInjection {
             if (options == null) {
                 options = builder.Services.BuildServiceProvider().GetService<IOptions<SignalRServiceOptions>>()?.Value;
             }
-            if (string.IsNullOrEmpty(options?.SignalRConnString) || options.SignalRServerLess) {
+            if (string.IsNullOrEmpty(options?.ConnectionString) || options.IsServerLess) {
                 // not using signalr service because of legacy configuration.
                 return builder;
             }
             builder.AddAzureSignalR().Services.Configure((Action<ServiceOptions>)(serviceOptions => {
-                serviceOptions.ConnectionString = options.SignalRConnString;
+                serviceOptions.ConnectionString = options.ConnectionString;
                 serviceOptions.ClaimsProvider = context => context.User.Claims
                     .Where(c => c.Type == ClaimTypes.NameIdentifier);
             }));

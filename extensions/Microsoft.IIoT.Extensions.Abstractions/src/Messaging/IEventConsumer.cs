@@ -3,9 +3,8 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.Messaging {
+namespace Microsoft.IIoT.Extensions.Messaging {
     using System;
-    using System.Collections.Generic;
     using System.Threading.Tasks;
 
     /// <summary>
@@ -21,8 +20,7 @@ namespace Microsoft.IIoT.Messaging {
         /// <param name="checkpoint"></param>
         /// <returns></returns>
         Task HandleAsync(byte[] eventData,
-            IDictionary<string, string> properties,
-            Func<Task> checkpoint);
+            IEventProperties properties, Func<Task> checkpoint);
 
         /// <summary>
         /// Event batch completed

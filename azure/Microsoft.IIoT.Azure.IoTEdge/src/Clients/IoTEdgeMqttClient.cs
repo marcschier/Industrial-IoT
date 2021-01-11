@@ -4,12 +4,12 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.IIoT.Azure.IoTEdge.Clients {
-    using Microsoft.IIoT.Authentication;
+    using Microsoft.IIoT.Extensions.Authentication;
     using Microsoft.IIoT.Extensions.Mqtt;
     using Microsoft.IIoT.Extensions.Mqtt.Clients;
-    using Microsoft.IIoT.Hosting;
-    using Microsoft.IIoT.Messaging;
-    using Microsoft.IIoT.Utils;
+    using Microsoft.IIoT.Extensions.Hosting;
+    using Microsoft.IIoT.Extensions.Messaging;
+    using Microsoft.IIoT.Extensions.Utils;
     using Microsoft.Extensions.Logging;
     using Microsoft.Extensions.Options;
     using System;
@@ -44,7 +44,7 @@ namespace Microsoft.IIoT.Azure.IoTEdge.Clients {
 
         /// <inhertidoc/>
         public void Publish<T>(string target, byte[] payload, T token,
-            Action<T, Exception> complete, IDictionary<string, string> properties,
+            Action<T, Exception> complete, IEventProperties properties,
             string partitionKey) {
             GetClientAsync().ContinueWith(client => {
                 if (client.IsFaulted) {
@@ -62,7 +62,7 @@ namespace Microsoft.IIoT.Azure.IoTEdge.Clients {
 
         /// <inhertidoc/>
         public async Task PublishAsync(string target, byte[] payload,
-            IDictionary<string, string> properties, string partitionKey,
+            IEventProperties properties, string partitionKey,
             CancellationToken ct) {
             var client = await GetClientAsync(ct).ConfigureAwait(false);
             await client.PublishAsync(target, payload, properties, partitionKey,
@@ -71,7 +71,7 @@ namespace Microsoft.IIoT.Azure.IoTEdge.Clients {
 
         /// <inhertidoc/>
         public async Task PublishAsync(string target, IEnumerable<byte[]> batch,
-            IDictionary<string, string> properties, string partitionKey,
+            IEventProperties properties, string partitionKey,
             CancellationToken ct) {
             var client = await GetClientAsync(ct).ConfigureAwait(false);
             await client.PublishAsync(target, batch, properties, partitionKey,

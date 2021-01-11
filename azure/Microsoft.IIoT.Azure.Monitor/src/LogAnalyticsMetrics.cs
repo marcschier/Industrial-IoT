@@ -5,7 +5,7 @@
 
 namespace Microsoft.IIoT.Azure.LogAnalytics {
     using Microsoft.IIoT.Azure.LogAnalytics.Runtime;
-    using Microsoft.IIoT.Diagnostics;
+    using Microsoft.IIoT.Extensions.Diagnostics;
     using Autofac;
     using Prometheus;
 
@@ -19,8 +19,11 @@ namespace Microsoft.IIoT.Azure.LogAnalytics {
             builder.RegisterType<MetricsCollector>()
                 .AsImplementedInterfaces().InstancePerLifetimeScope()
                 .IfNotRegistered(typeof(IMetricServer));
+
+            builder.AddOptions();
             builder.RegisterType<LogAnalyticsConfig>()
                 .AsImplementedInterfaces().InstancePerLifetimeScope();
+
             builder.RegisterType<LogAnalyticsMetricsHandler>()
                 .AsImplementedInterfaces().InstancePerLifetimeScope()
                 .PropertiesAutowired(

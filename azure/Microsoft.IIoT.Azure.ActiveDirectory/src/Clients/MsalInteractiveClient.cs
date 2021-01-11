@@ -4,8 +4,8 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.IIoT.Azure.ActiveDirectory.Clients {
-    using Microsoft.IIoT.Authentication;
-    using Microsoft.IIoT.Authentication.Models;
+    using Microsoft.IIoT.Extensions.Authentication;
+    using Microsoft.IIoT.Extensions.Authentication.Models;
     using Microsoft.Identity.Client;
     using Microsoft.Extensions.Logging;
     using System.Collections.Generic;

@@ -4,6 +4,7 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.IIoT.Extensions.RabbitMq.Clients {
+    using Microsoft.IIoT.Extensions.Messaging;
     using System;
     using System.Threading.Tasks;
     using System.Collections.Generic;
@@ -55,7 +56,7 @@ namespace Microsoft.IIoT.Extensions.RabbitMq.Clients {
                 Skip.If(queue == null);
 
                 var data = fix.CreateMany<byte>().ToArray();
-                var properties = fix.Create<Dictionary<string, string>>();
+                var properties = fix.Create<Dictionary<string, string>>().ToEventProperties();
 
                 var tcs = new TaskCompletionSource<TelemetryEventArgs>(TaskCreationOptions.RunContinuationsAsynchronously);
                 harness.OnEvent += (_, a) => {
@@ -68,7 +69,7 @@ namespace Microsoft.IIoT.Extensions.RabbitMq.Clients {
                 Assert.True(data.SequenceEqualsSafe(result.Data));
                 Assert.Null(result.DeviceId);
                 Assert.Null(result.ModuleId);
-                Assert.True(result.Properties.DictionaryEqualsSafe(properties));
+                Assert.True(result.Properties.IsSameAs(properties));
             }
         }
 
@@ -81,7 +82,7 @@ namespace Microsoft.IIoT.Extensions.RabbitMq.Clients {
                 Skip.If(queue == null);
 
                 var data = fix.CreateMany<byte>().ToArray();
-                var properties = fix.Create<Dictionary<string, string>>();
+                var properties = fix.Create<Dictionary<string, string>>().ToEventProperties();
 
                 var count = 0;
                 var tcs = new TaskCompletionSource<TelemetryEventArgs>(TaskCreationOptions.RunContinuationsAsynchronously);
@@ -102,7 +103,7 @@ namespace Microsoft.IIoT.Extensions.RabbitMq.Clients {
                 Assert.True(data.SequenceEqualsSafe(result.Data));
                 Assert.Null(result.DeviceId);
                 Assert.Null(result.ModuleId);
-                Assert.True(result.Properties.DictionaryEqualsSafe(properties));
+                Assert.True(result.Properties.IsSameAs(properties));
             }
         }
 
@@ -120,7 +121,7 @@ namespace Microsoft.IIoT.Extensions.RabbitMq.Clients {
                 Skip.If(queue == null);
 
                 var data = fix.CreateMany<byte>().ToArray();
-                var properties = fix.Create<Dictionary<string, string>>();
+                var properties = fix.Create<Dictionary<string, string>>().ToEventProperties();
                 var count = 0;
                 var tcs = new TaskCompletionSource<TelemetryEventArgs>(TaskCreationOptions.RunContinuationsAsynchronously);
                 harness.OnEvent += (_, a) => {
@@ -138,7 +139,7 @@ namespace Microsoft.IIoT.Extensions.RabbitMq.Clients {
                 Assert.True(data.SequenceEqualsSafe(result.Data));
                 Assert.Null(result.DeviceId);
                 Assert.Null(result.ModuleId);
-                Assert.True(result.Properties.DictionaryEqualsSafe(properties));
+                Assert.True(result.Properties.IsSameAs(properties));
             }
         }
 
@@ -186,7 +187,7 @@ namespace Microsoft.IIoT.Extensions.RabbitMq.Clients {
                 Skip.If(queue == null);
 
                 var data = fix.CreateMany<byte>().ToArray();
-                var properties = fix.Create<Dictionary<string, string>>();
+                var properties = fix.Create<Dictionary<string, string>>().ToEventProperties();
 
                 var tcs = new TaskCompletionSource<TelemetryEventArgs>(TaskCreationOptions.RunContinuationsAsynchronously);
                 harness.OnEvent += (_, a) => {
@@ -209,7 +210,7 @@ namespace Microsoft.IIoT.Extensions.RabbitMq.Clients {
                 Assert.True(data.SequenceEqualsSafe(result.Data));
                 Assert.Null(result.DeviceId);
                 Assert.Null(result.ModuleId);
-                Assert.True(result.Properties.DictionaryEqualsSafe(properties));
+                Assert.True(result.Properties.IsSameAs(properties));
             }
         }
 
@@ -222,7 +223,7 @@ namespace Microsoft.IIoT.Extensions.RabbitMq.Clients {
                 Skip.If(queue == null);
 
                 var data = fix.CreateMany<byte>().ToArray();
-                var properties = fix.Create<Dictionary<string, string>>();
+                var properties = fix.Create<Dictionary<string, string>>().ToEventProperties();
 
                 var count = 0;
                 var tcs = new TaskCompletionSource<TelemetryEventArgs>(TaskCreationOptions.RunContinuationsAsynchronously);
@@ -252,7 +253,7 @@ namespace Microsoft.IIoT.Extensions.RabbitMq.Clients {
                 Assert.True(data.SequenceEqualsSafe(result.Data));
                 Assert.Null(result.DeviceId);
                 Assert.Null(result.ModuleId);
-                Assert.True(result.Properties.DictionaryEqualsSafe(properties));
+                Assert.True(result.Properties.IsSameAs(properties));
             }
         }
 
@@ -270,7 +271,7 @@ namespace Microsoft.IIoT.Extensions.RabbitMq.Clients {
                 Skip.If(queue == null);
 
                 var data = fix.CreateMany<byte>().ToArray();
-                var properties = fix.Create<Dictionary<string, string>>();
+                var properties = fix.Create<Dictionary<string, string>>().ToEventProperties();
                 var count = 0;
                 var tcs = new TaskCompletionSource<TelemetryEventArgs>(TaskCreationOptions.RunContinuationsAsynchronously);
                 harness.OnEvent += (_, a) => {
@@ -290,7 +291,7 @@ namespace Microsoft.IIoT.Extensions.RabbitMq.Clients {
                 Assert.True(data.SequenceEqualsSafe(result.Data));
                 Assert.Null(result.DeviceId);
                 Assert.Null(result.ModuleId);
-                Assert.True(result.Properties.DictionaryEqualsSafe(properties));
+                Assert.True(result.Properties.IsSameAs(properties));
             }
         }
 

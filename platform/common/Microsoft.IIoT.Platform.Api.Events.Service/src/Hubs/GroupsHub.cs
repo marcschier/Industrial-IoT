@@ -5,7 +5,7 @@
 
 namespace Microsoft.IIoT.Platform.Api.Events.Service {
     using Microsoft.IIoT.Platform.Api.Events.Service.Auth;
-    using Microsoft.IIoT.Rpc;
+    using Microsoft.IIoT.Extensions.Rpc;
     using Microsoft.AspNetCore.SignalR;
     using Microsoft.AspNetCore.Authorization;
 

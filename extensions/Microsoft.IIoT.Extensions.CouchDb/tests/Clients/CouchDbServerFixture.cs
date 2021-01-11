@@ -6,7 +6,7 @@
 namespace Microsoft.IIoT.Extensions.CouchDb.Clients {
     using Microsoft.IIoT.Extensions.CouchDb.Server;
     using Microsoft.Extensions.Diagnostics.HealthChecks;
-    using Microsoft.IIoT.Diagnostics;
+    using Microsoft.IIoT.Extensions.Diagnostics;
     using System;
     using Xunit;
     using Autofac;

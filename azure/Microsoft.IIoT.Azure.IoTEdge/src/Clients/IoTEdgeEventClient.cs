@@ -5,8 +5,8 @@
 
 namespace Microsoft.IIoT.Azure.IoTEdge.Clients {
     using Microsoft.IIoT.Azure.IoTEdge;
-    using Microsoft.IIoT.Messaging;
-    using Microsoft.IIoT.Hosting;
+    using Microsoft.IIoT.Extensions.Messaging;
+    using Microsoft.IIoT.Extensions.Hosting;
     using Microsoft.Azure.Devices.Client;
     using System;
     using System.Collections.Generic;
@@ -24,7 +24,7 @@ namespace Microsoft.IIoT.Azure.IoTEdge.Clients {
         /// </summary>
         /// <param name="client"></param>
         /// <param name="identity"></param>
-        public IoTEdgeEventClient(IIoTEdgeClient client, IIdentity identity = null) {
+        public IoTEdgeEventClient(IIoTEdgeDeviceClient client, IIdentity identity = null) {
             _client = client ?? throw new ArgumentNullException(nameof(client));
             _identity = identity;
         }
@@ -33,6 +33,12 @@ namespace Microsoft.IIoT.Azure.IoTEdge.Clients {
         public async Task SendEventAsync(string target, IEnumerable<byte[]> batch,
             string contentType, string eventSchema, string contentEncoding,
             CancellationToken ct) {
+            if (string.IsNullOrEmpty(target)) {
+                throw new ArgumentNullException(nameof(target));
+            }
+            if (batch == null) {
+                throw new ArgumentNullException(nameof(batch));
+            }
 
             // TODO: Must batch based on sizes since a batch must be less than max
 
@@ -51,8 +57,13 @@ namespace Microsoft.IIoT.Azure.IoTEdge.Clients {
         /// <inheritdoc/>
         public async Task SendEventAsync(string target, byte[] data, string contentType,
             string eventSchema, string contentEncoding, CancellationToken ct) {
-            using (var msg = CreateMessage(data, contentEncoding, contentType,
-                eventSchema)) {
+            if (string.IsNullOrEmpty(target)) {
+                throw new ArgumentNullException(nameof(target));
+            }
+            if (data == null) {
+                throw new ArgumentNullException(nameof(data));
+            }
+            using (var msg = CreateMessage(data, contentEncoding, contentType, eventSchema)) {
                 await _client.SendEventAsync(target, msg, ct).ConfigureAwait(false);
             }
         }
@@ -60,6 +71,12 @@ namespace Microsoft.IIoT.Azure.IoTEdge.Clients {
         /// <inheritdoc/>
         public void SendEvent<T>(string target, byte[] data, string contentType,
             string eventSchema, string contentEncoding, T token, Action<T, Exception> complete) {
+            if (string.IsNullOrEmpty(target)) {
+                throw new ArgumentNullException(nameof(target));
+            }
+            if (data == null) {
+                throw new ArgumentNullException(nameof(data));
+            }
             if (token is null) {
                 throw new ArgumentNullException(nameof(token));
             }
@@ -98,7 +115,7 @@ namespace Microsoft.IIoT.Azure.IoTEdge.Clients {
             return msg;
         }
 
-        private readonly IIoTEdgeClient _client;
+        private readonly IIoTEdgeDeviceClient _client;
         private readonly IIdentity _identity;
     }
 }

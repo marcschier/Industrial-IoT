@@ -6,6 +6,7 @@
 namespace Microsoft.IIoT.Azure.IoTHub {
     using Microsoft.IIoT.Azure.IoTHub.Clients;
     using Microsoft.IIoT.Azure.IoTHub.Runtime;
+    using Microsoft.IIoT.Azure.IoTHub.Services;
     using Autofac;
 
     /// <summary>
@@ -25,8 +26,13 @@ namespace Microsoft.IIoT.Azure.IoTHub {
                 .AsImplementedInterfaces();
             builder.RegisterType<IoTHubTwinMethodClient>()
                 .AsImplementedInterfaces();
+            builder.RegisterType<ProvisioningServiceClient>()
+                .AsImplementedInterfaces();
 
-            builder.RegisterType<IoTHubConfig>()
+            builder.AddOptions();
+            builder.RegisterType<IoTHubServiceConfig>()
+                .AsImplementedInterfaces();
+            builder.RegisterType<ProvisioningServiceConfig>()
                 .AsImplementedInterfaces();
 
             base.Load(builder);

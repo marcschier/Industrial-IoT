@@ -4,8 +4,8 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.IIoT.Extensions.LiteDb.Clients {
-    using Microsoft.IIoT.Serializers.NewtonSoft;
-    using Microsoft.IIoT.Serializers;
+    using Microsoft.IIoT.Extensions.Serializers.NewtonSoft;
+    using Microsoft.IIoT.Extensions.Serializers;
     using LiteDB;
     using System;
     using System.Reflection;

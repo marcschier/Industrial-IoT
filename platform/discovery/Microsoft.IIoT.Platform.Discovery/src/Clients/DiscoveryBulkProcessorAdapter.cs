@@ -5,7 +5,7 @@
 
 namespace Microsoft.IIoT.Platform.Discovery.Clients {
     using Microsoft.IIoT.Platform.Discovery.Models;
-    using Microsoft.IIoT.Hosting;
+    using Microsoft.IIoT.Extensions.Hosting;
     using Microsoft.Extensions.Logging;
     using System;
     using System.Collections.Generic;

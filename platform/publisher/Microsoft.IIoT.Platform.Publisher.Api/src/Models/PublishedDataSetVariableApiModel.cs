@@ -5,7 +5,7 @@
 
 namespace Microsoft.IIoT.Platform.Publisher.Api.Models {
     using Microsoft.IIoT.Platform.Core.Api.Models;
-    using Microsoft.IIoT.Serializers;
+    using Microsoft.IIoT.Extensions.Serializers;
     using System.Runtime.Serialization;
     using System;
     using System.Collections.Generic;

@@ -4,12 +4,12 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.IIoT.Azure.IoTEdge {
-    using Microsoft.IIoT.Azure.IoTEdge.Hosting;
+    using Microsoft.IIoT.Azure.IoTEdge.Services;
     using Microsoft.IIoT.Azure.IoTEdge.Runtime;
     using Microsoft.IIoT.Azure.IoTEdge.Clients;
-    using Microsoft.IIoT.Diagnostics;
-    using Microsoft.IIoT.Diagnostics.Services;
-    using Microsoft.IIoT.Storage.Services;
+    using Microsoft.IIoT.Extensions.Diagnostics;
+    using Microsoft.IIoT.Extensions.Diagnostics.Services;
+    using Microsoft.IIoT.Extensions.Storage.Services;
     using Autofac;
 
     /// <summary>
@@ -29,6 +29,7 @@ namespace Microsoft.IIoT.Azure.IoTEdge {
             builder.RegisterType<EventSourceBroker>()
                 .AsImplementedInterfaces().SingleInstance();
 
+            builder.AddOptions();
             builder.RegisterType<IoTEdgeClientConfig>()
                 .AsImplementedInterfaces();
             builder.RegisterType<IoTEdgeMqttConfig>()

@@ -6,7 +6,7 @@
 namespace Microsoft.IIoT.Extensions.LiteDb {
     using Microsoft.IIoT.Extensions.LiteDb.Clients;
     using Microsoft.IIoT.Extensions.LiteDb.Runtime;
-    using Microsoft.IIoT.Storage;
+    using Microsoft.IIoT.Extensions.Storage;
     using Autofac;
 
     /// <summary>
@@ -22,6 +22,8 @@ namespace Microsoft.IIoT.Extensions.LiteDb {
 
             builder.RegisterType<LiteDbClient>()
                 .AsImplementedInterfaces();
+
+            builder.AddOptions();
             builder.RegisterType<LiteDbConfig>()
                 .AsImplementedInterfaces();
 

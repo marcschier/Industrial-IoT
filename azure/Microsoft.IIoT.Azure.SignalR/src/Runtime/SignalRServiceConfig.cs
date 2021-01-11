@@ -4,7 +4,7 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.IIoT.Azure.SignalR.Runtime {
-    using Microsoft.IIoT.Configuration;
+    using Microsoft.IIoT.Extensions.Configuration;
     using Microsoft.Extensions.Configuration;
     using System;
 
@@ -15,13 +15,13 @@ namespace Microsoft.IIoT.Azure.SignalR.Runtime {
 
         /// <inheritdoc/>
         public override void PostConfigure(string name, SignalRServiceOptions options) {
-            if (string.IsNullOrEmpty(options.SignalRConnString)) {
-                options.SignalRConnString = GetStringOrDefault(PcsVariable.PCS_SIGNALR_CONNSTRING);
+            if (string.IsNullOrEmpty(options.ConnectionString)) {
+                options.ConnectionString = GetStringOrDefault(PcsVariable.PCS_SIGNALR_CONNSTRING);
             }
             var serverless = GetStringOrDefault(PcsVariable.PCS_SIGNALR_MODE)
                 .EqualsIgnoreCase(kSignalRServerLessMode);
             if (serverless) {
-                options.SignalRServerLess = serverless;
+                options.IsServerLess = serverless;
             }
         }
 

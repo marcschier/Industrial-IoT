@@ -6,7 +6,7 @@
 namespace Newtonsoft.Json {
     using Newtonsoft.Json.Linq;
     using Newtonsoft.Json.Serialization;
-    using Microsoft.IIoT.Utils;
+    using Microsoft.IIoT.Extensions.Utils;
     using System;
     using System.Collections.Generic;
     using System.Linq;

@@ -4,9 +4,9 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.IIoT.Extensions.Orleans.Clients {
-    using Microsoft.IIoT.Messaging;
+    using Microsoft.IIoT.Extensions.Messaging;
     using Microsoft.IIoT.Exceptions;
-    using Microsoft.IIoT.Utils;
+    using Microsoft.IIoT.Extensions.Utils;
     using AutoFixture;
     using Autofac;
     using System;

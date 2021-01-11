@@ -5,7 +5,7 @@
 
 namespace Microsoft.IIoT.Platform.Edge.Events.Service {
     using Microsoft.IIoT.Platform.Edge.Events.Service.Runtime;
-    using Microsoft.IIoT.Hosting;
+    using Microsoft.IIoT.Extensions.Hosting;
     using Microsoft.Extensions.Hosting;
     using System;
     using System.Collections.Generic;

@@ -3,10 +3,10 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.AspNetCore.Authentication.Clients {
+namespace Microsoft.IIoT.Extensions.AspNetCore.Authentication.Clients {
     using Microsoft.AspNetCore.Authentication;
     using Microsoft.AspNetCore.Http;
-    using Microsoft.IIoT.Authentication;
+    using Microsoft.IIoT.Extensions.Authentication;
     using Microsoft.Extensions.Logging;
     using Microsoft.Extensions.Options;
     using System;

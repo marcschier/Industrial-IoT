@@ -3,15 +3,15 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.AspNetCore.Authentication.Clients {
+namespace Microsoft.IIoT.Extensions.AspNetCore.Authentication.Clients {
     using Microsoft.IIoT.Azure.ActiveDirectory;
-    using Microsoft.IIoT.Authentication.Clients;
-    using Microsoft.IIoT.Authentication.Runtime;
-    using Microsoft.IIoT.Authentication;
-    using Microsoft.IIoT.Http.Auth;
-    using Microsoft.IIoT.Http.Clients;
-    using Microsoft.IIoT.Storage.Services;
-    using Microsoft.IIoT.Storage;
+    using Microsoft.IIoT.Extensions.Authentication.Clients;
+    using Microsoft.IIoT.Extensions.Authentication.Runtime;
+    using Microsoft.IIoT.Extensions.Authentication;
+    using Microsoft.IIoT.Extensions.Http.Auth;
+    using Microsoft.IIoT.Extensions.Http.Clients;
+    using Microsoft.IIoT.Extensions.Storage.Services;
+    using Microsoft.IIoT.Extensions.Storage;
     using Autofac;
     using Microsoft.Extensions.Logging;
     using System.Collections.Generic;
@@ -64,7 +64,7 @@ namespace Microsoft.IIoT.AspNetCore.Authentication.Clients {
             /// <inheritdoc/>
             public UserTokenSource(OpenIdUserTokenClient oi, MsalUserTokenClient uc,
                 IEnumerable<ITokenClient> providers, ILogger logger)
-                : base(providers, IIoT.Http.Resource.Platform, logger, oi, uc) {
+                : base(providers, Extensions.Http.Resource.Platform, logger, oi, uc) {
             }
         }
     }

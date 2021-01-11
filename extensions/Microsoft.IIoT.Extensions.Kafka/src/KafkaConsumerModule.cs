@@ -7,7 +7,7 @@ namespace Microsoft.IIoT.Extensions.Kafka {
     using Microsoft.IIoT.Extensions.Kafka.Clients;
     using Microsoft.IIoT.Extensions.Kafka.Runtime;
     using Microsoft.IIoT.Extensions.Kafka.Services;
-    using Microsoft.IIoT.Messaging.Handlers;
+    using Microsoft.IIoT.Extensions.Messaging.Handlers;
     using Autofac;
 
     /// <summary>
@@ -22,14 +22,16 @@ namespace Microsoft.IIoT.Extensions.Kafka {
         protected override void Load(ContainerBuilder builder) {
             builder.RegisterType<KafkaConsumerHost>()
                 .AsImplementedInterfaces().InstancePerLifetimeScope();
-            builder.RegisterType<KafkaConsumerConfig>()
-                .AsImplementedInterfaces();
             builder.RegisterType<KafkaServerConfig>()
                 .AsImplementedInterfaces();
             builder.RegisterType<KafkaAdminClient>()
                 .AsImplementedInterfaces().InstancePerLifetimeScope();
             builder.RegisterType<DeviceEventHandler>()
                 .AsImplementedInterfaces().InstancePerLifetimeScope();
+
+            builder.AddOptions();
+            builder.RegisterType<KafkaConsumerConfig>()
+                .AsImplementedInterfaces();
             base.Load(builder);
         }
     }

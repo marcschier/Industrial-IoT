@@ -3,8 +3,7 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.Messaging {
-    using System.Collections.Generic;
+namespace Microsoft.IIoT.Extensions.Messaging {
     using System.Threading.Tasks;
 
     /// <summary>
@@ -18,7 +17,6 @@ namespace Microsoft.IIoT.Messaging {
         /// <param name="eventData"></param>
         /// <param name="properties"></param>
         /// <returns></returns>
-        Task HandleAsync(byte[] eventData,
-            IDictionary<string, string> properties);
+        Task HandleAsync(byte[] eventData, IEventProperties properties);
     }
 }

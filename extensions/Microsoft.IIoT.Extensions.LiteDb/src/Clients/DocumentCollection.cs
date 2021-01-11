@@ -4,9 +4,9 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.IIoT.Extensions.LiteDb.Clients {
-    using Microsoft.IIoT.Storage;
+    using Microsoft.IIoT.Extensions.Storage;
     using Microsoft.IIoT.Exceptions;
-    using Microsoft.IIoT.Utils;
+    using Microsoft.IIoT.Extensions.Utils;
     using Microsoft.Extensions.Logging;
     using System;
     using System.Threading;

@@ -5,7 +5,7 @@
 
 namespace Microsoft.IIoT.Platform.Twin.Storage.Models {
     using Microsoft.IIoT.Platform.Core.Models;
-    using Microsoft.IIoT.Serializers;
+    using Microsoft.IIoT.Extensions.Serializers;
     using System.Runtime.Serialization;
     using System.Collections.Generic;
     using System;

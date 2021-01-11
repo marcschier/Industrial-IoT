@@ -6,7 +6,7 @@
 namespace Microsoft.Extensions.Configuration {
     using Microsoft.Extensions.Primitives;
     using Microsoft.IIoT.Azure.ActiveDirectory.Utils;
-    using Microsoft.IIoT.Diagnostics;
+    using Microsoft.IIoT.Extensions.Diagnostics;
     using Microsoft.IIoT.Exceptions;
     using Microsoft.IIoT;
     using Microsoft.Azure.KeyVault;

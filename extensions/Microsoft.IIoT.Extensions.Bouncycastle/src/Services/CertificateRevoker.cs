@@ -3,8 +3,8 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.Crypto.Services {
-    using Microsoft.IIoT.Crypto.Models;
+namespace Microsoft.IIoT.Extensions.Crypto.Services {
+    using Microsoft.IIoT.Extensions.Crypto.Models;
     using System;
     using System.Collections.Generic;
     using System.Threading;

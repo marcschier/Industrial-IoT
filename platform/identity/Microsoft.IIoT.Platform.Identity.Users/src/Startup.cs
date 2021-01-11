@@ -9,12 +9,12 @@ namespace Microsoft.IIoT.Platform.Identity.Users {
     using Microsoft.IIoT.Platform.Identity.Storage;
     using Microsoft.IIoT.Platform.Identity.Models;
     using Microsoft.IIoT.Platform.Identity.Services;
-    using Microsoft.IIoT.AspNetCore.Authentication;
-    using Microsoft.IIoT.AspNetCore.Authentication.Clients;
-    using Microsoft.IIoT.Http.Clients;
-    using Microsoft.IIoT.Utils;
-    using Microsoft.IIoT.Serializers;
-    using Microsoft.IIoT.Authentication;
+    using Microsoft.IIoT.Extensions.AspNetCore.Authentication;
+    using Microsoft.IIoT.Extensions.AspNetCore.Authentication.Clients;
+    using Microsoft.IIoT.Extensions.Http.Clients;
+    using Microsoft.IIoT.Extensions.Utils;
+    using Microsoft.IIoT.Extensions.Serializers;
+    using Microsoft.IIoT.Extensions.Authentication;
     using Microsoft.IIoT.Azure.CosmosDb;
     using Microsoft.IIoT.Azure.AppInsights;
     using Microsoft.AspNetCore.Builder;

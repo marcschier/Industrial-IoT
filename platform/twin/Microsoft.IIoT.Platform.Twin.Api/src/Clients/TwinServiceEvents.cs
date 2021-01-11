@@ -6,9 +6,9 @@
 namespace Microsoft.IIoT.Platform.Twin.Api {
     using Microsoft.IIoT.Platform.Twin.Api.Models;
     using Microsoft.IIoT.Platform.Events.Api;
-    using Microsoft.IIoT.Rpc;
-    using Microsoft.IIoT.Http;
-    using Microsoft.IIoT.Utils;
+    using Microsoft.IIoT.Extensions.Rpc;
+    using Microsoft.IIoT.Extensions.Http;
+    using Microsoft.IIoT.Extensions.Utils;
     using System;
     using System.Threading.Tasks;
 

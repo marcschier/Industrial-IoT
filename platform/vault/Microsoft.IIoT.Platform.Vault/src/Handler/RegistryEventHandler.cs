@@ -8,7 +8,7 @@ namespace Microsoft.IIoT.Platform.Vault.Handler {
     using Microsoft.IIoT.Platform.Discovery;
     using Microsoft.IIoT.Platform.Discovery.Models;
     using Microsoft.IIoT.Platform.Core.Models;
-    using Microsoft.IIoT.Utils;
+    using Microsoft.IIoT.Extensions.Utils;
     using System;
     using System.Threading.Tasks;
 

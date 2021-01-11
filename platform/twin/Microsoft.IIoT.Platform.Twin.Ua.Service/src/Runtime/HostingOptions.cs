@@ -9,8 +9,8 @@ namespace Microsoft.IIoT.Platform.Twin.Ua.Service.Runtime {
     using Microsoft.IIoT.Platform.OpcUa.Transport;
     using Microsoft.IIoT.Platform.Discovery.Api;
     using Microsoft.IIoT.Platform.Discovery.Api.Runtime;
-    using Microsoft.IIoT.Hosting;
-    using Microsoft.IIoT.Configuration;
+    using Microsoft.IIoT.Extensions.Hosting;
+    using Microsoft.IIoT.Extensions.Configuration;
     using Microsoft.Extensions.Configuration;
     using System;
     using System.IdentityModel.Selectors;

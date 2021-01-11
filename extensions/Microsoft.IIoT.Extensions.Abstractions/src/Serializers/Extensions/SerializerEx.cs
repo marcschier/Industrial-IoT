@@ -3,8 +3,8 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.Serializers {
-    using Microsoft.IIoT.Http;
+namespace Microsoft.IIoT.Extensions.Serializers {
+    using Microsoft.IIoT.Extensions.Http;
     using System;
     using System.Buffers;
     using System.IO;

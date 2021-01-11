@@ -6,7 +6,7 @@
 namespace Microsoft.IIoT.Extensions.CouchDb.Server {
     using Microsoft.IIoT.Extensions.Docker;
     using Microsoft.Extensions.Diagnostics.HealthChecks;
-    using Microsoft.IIoT.Utils;
+    using Microsoft.IIoT.Extensions.Utils;
     using Microsoft.Extensions.Logging;
     using System;
     using System.Collections.Generic;

@@ -5,14 +5,14 @@
 
 namespace Microsoft.IIoT.Azure.KeyVault.Clients {
     using Microsoft.IIoT.Azure.KeyVault.Models;
-    using Microsoft.IIoT.Crypto;
-    using Microsoft.IIoT.Crypto.Models;
+    using Microsoft.IIoT.Extensions.Crypto;
+    using Microsoft.IIoT.Extensions.Crypto.Models;
     using Microsoft.IIoT.Exceptions;
-    using Microsoft.IIoT.Serializers;
-    using Microsoft.IIoT.Storage;
-    using Microsoft.IIoT.Authentication;
-    using Microsoft.IIoT.Http;
-    using Microsoft.IIoT.Utils;
+    using Microsoft.IIoT.Extensions.Serializers;
+    using Microsoft.IIoT.Extensions.Storage;
+    using Microsoft.IIoT.Extensions.Authentication;
+    using Microsoft.IIoT.Extensions.Http;
+    using Microsoft.IIoT.Extensions.Utils;
     using Microsoft.Azure.KeyVault;
     using Microsoft.Azure.KeyVault.Models;
     using Microsoft.Azure.KeyVault.WebKey;

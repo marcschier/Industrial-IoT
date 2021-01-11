@@ -6,8 +6,8 @@
 namespace Microsoft.IIoT.Platform.Twin.Service.Controllers.Test {
     using Microsoft.IIoT.Platform.Twin.Api.Models;
     using Microsoft.IIoT.Platform.Twin.Api;
-    using Microsoft.IIoT.Http;
-    using Microsoft.IIoT.Serializers;
+    using Microsoft.IIoT.Extensions.Http;
+    using Microsoft.IIoT.Extensions.Serializers;
     using System;
     using System.Threading.Tasks;
     using System.Threading;

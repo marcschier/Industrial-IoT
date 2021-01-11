@@ -4,7 +4,7 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.IIoT.Azure.KeyVault.Models {
-    using Microsoft.IIoT.Crypto.Models;
+    using Microsoft.IIoT.Extensions.Crypto.Models;
     using Microsoft.Azure.KeyVault.Models;
     using System;
     using System.Runtime.Serialization;

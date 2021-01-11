@@ -4,9 +4,9 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.IIoT.Azure.ServiceBus.Services {
-    using Microsoft.IIoT.Messaging;
+    using Microsoft.IIoT.Extensions.Messaging;
     using Microsoft.IIoT.Exceptions;
-    using Microsoft.IIoT.Utils;
+    using Microsoft.IIoT.Extensions.Utils;
     using Microsoft.Azure.ServiceBus;
     using Microsoft.Extensions.Logging;
     using Microsoft.Extensions.Options;
@@ -115,8 +115,7 @@ namespace Microsoft.IIoT.Azure.ServiceBus.Services {
         /// <param name="ct"></param>
         /// <returns></returns>
         private async Task OnMessageAsync(Message ev, CancellationToken ct) {
-            await _consumer.HandleAsync(ev.Body, ev.UserProperties
-                .ToDictionary(k => k.Key, v => v.Value?.ToString()),
+            await _consumer.HandleAsync(ev.Body, ev.UserProperties.ToEventProperties(),
                 () => Task.CompletedTask).ConfigureAwait(false);
             await Try.Async(_consumer.OnBatchCompleteAsync).ConfigureAwait(false);
         }

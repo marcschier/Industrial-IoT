@@ -3,8 +3,8 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.Net {
-    using Microsoft.IIoT.Net.Models;
+namespace Microsoft.IIoT.Extensions.Net {
+    using Microsoft.IIoT.Extensions.Net.Models;
     using System.Collections.Generic;
     using System.Linq;
     using System.Net;

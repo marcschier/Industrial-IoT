@@ -4,9 +4,9 @@
 // ------------------------------------------------------------
 
 namespace System.Security.Cryptography.X509Certificates {
-    using Microsoft.IIoT.Crypto;
-    using Microsoft.IIoT.Crypto.BouncyCastle;
-    using Microsoft.IIoT.Crypto.Models;
+    using Microsoft.IIoT.Extensions.Crypto;
+    using Microsoft.IIoT.Extensions.Crypto.BouncyCastle;
+    using Microsoft.IIoT.Extensions.Crypto.Models;
     using Xunit;
     using Xunit.Categories;
 

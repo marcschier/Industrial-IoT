@@ -7,16 +7,16 @@ namespace Microsoft.IIoT.Platform.Publisher.Service.Cli {
     using Microsoft.IIoT.Platform.Registry.Models;
     using Microsoft.IIoT.Platform.OpcUa.Sample;
     using Microsoft.IIoT.Platform.OpcUa.Services;
-    using Microsoft.IIoT.Diagnostics;
-    using Microsoft.IIoT.Utils;
+    using Microsoft.IIoT.Extensions.Diagnostics;
+    using Microsoft.IIoT.Extensions.Utils;
     using Microsoft.IIoT.Azure.LogAnalytics;
     using Microsoft.IIoT.Azure.LogAnalytics.Runtime;
     using Microsoft.IIoT.Azure.IoTHub.Clients;
     using Microsoft.IIoT.Azure.IoTHub.Models;
     using Microsoft.IIoT.Azure.IoTHub;
     using Microsoft.IIoT.Exceptions;
-    using Microsoft.IIoT.Serializers.NewtonSoft;
-    using Microsoft.IIoT.Serializers;
+    using Microsoft.IIoT.Extensions.Serializers.NewtonSoft;
+    using Microsoft.IIoT.Extensions.Serializers;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Options;
     using Microsoft.Extensions.Logging;
@@ -51,7 +51,7 @@ namespace Microsoft.IIoT.Platform.Publisher.Service.Cli {
                 cs = configuration.GetValue<string>("_HUB_CS", null);
             }
             var diagnostics = new LogAnalyticsConfig(configuration).ToOptions().Value;
-            IOptions<IoTHubOptions> config = null;
+            IOptions<IoTHubServiceOptions> config = null;
             var unknownArgs = new List<string>();
             try {
                 for (var i = 0; i < args.Length; i++) {
@@ -151,7 +151,7 @@ Options:
         /// <summary>
         /// Host the module giving it its connection string.
         /// </summary>
-        private static async Task HostAsync(IOptions<IoTHubOptions> config, LogAnalyticsOptions diagnostics,
+        private static async Task HostAsync(IOptions<IoTHubServiceOptions> config, LogAnalyticsOptions diagnostics,
             ILogger logger, string deviceId, string moduleId, string[] args, bool acceptAll) {
             Console.WriteLine("Create or retrieve connection string...");
 
@@ -172,7 +172,7 @@ Options:
         /// <summary>
         /// Setup publishing from sample server
         /// </summary>
-        private static async Task WithServerAsync(IOptions<IoTHubOptions> config, LogAnalyticsOptions diagnostics,
+        private static async Task WithServerAsync(IOptions<IoTHubServiceOptions> config, LogAnalyticsOptions diagnostics,
             ILogger logger, string deviceId, string moduleId, string[] args) {
             var fileName = Path.GetRandomFileName() + ".json";
             try {
@@ -203,18 +203,17 @@ Options:
         /// <summary>
         /// Add or get module identity
         /// </summary>
-        private static async Task<ConnectionString> AddOrGetAsync(IOptions<IoTHubOptions> config,
+        private static async Task<ConnectionString> AddOrGetAsync(IOptions<IoTHubServiceOptions> config,
             LogAnalyticsOptions diagnostics, string deviceId, string moduleId) {
             var logger = Log.Console(LogLevel.Error);
             var registry = new IoTHubServiceClient(
                 config, new NewtonSoftJsonSerializer(), logger);
             try {
-                await registry.RegisterAsync(new DeviceRegistrationModel {
-                    Id = deviceId,
+                await registry.RegisterAsync(deviceId, null, new DeviceRegistrationModel {
                     Tags = new Dictionary<string, VariantValue> {
                         [TwinProperty.Type] = IdentityType.Gateway
                     },
-                    Capabilities = new DeviceCapabilitiesModel {
+                    Capabilities = new CapabilitiesModel {
                         IotEdge = true
                     }
                 }, false, CancellationToken.None).ConfigureAwait(false);
@@ -223,14 +222,10 @@ Options:
                 logger.LogInformation("Gateway {deviceId} exists.", deviceId);
             }
             try {
-                await registry.RegisterAsync(new DeviceRegistrationModel {
-                    Id = deviceId,
-                    ModuleId = moduleId,
-                    Properties = new TwinPropertiesModel {
-                        Desired = new Dictionary<string, VariantValue> {
-                            [nameof(diagnostics.LogWorkspaceId)] = diagnostics?.LogWorkspaceId,
-                            [nameof(diagnostics.LogWorkspaceKey)] = diagnostics?.LogWorkspaceKey
-                        }
+                await registry.RegisterAsync(deviceId, moduleId, new DeviceRegistrationModel {
+                    Properties = new Dictionary<string, VariantValue> {
+                        [nameof(diagnostics.LogWorkspaceId)] = diagnostics?.LogWorkspaceId,
+                        [nameof(diagnostics.LogWorkspaceKey)] = diagnostics?.LogWorkspaceKey
                     }
                 }, true, CancellationToken.None).ConfigureAwait(false);
             }

@@ -5,7 +5,7 @@
 
 namespace Microsoft.IIoT.Platform.Discovery.Models {
     using Microsoft.IIoT.Platform.Core.Models;
-    using Microsoft.IIoT.Serializers;
+    using Microsoft.IIoT.Extensions.Serializers;
 
     /// <summary>
     /// Discovery context

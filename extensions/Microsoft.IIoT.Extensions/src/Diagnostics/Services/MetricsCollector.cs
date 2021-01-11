@@ -3,8 +3,8 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.Diagnostics {
-    using Microsoft.IIoT.Utils;
+namespace Microsoft.IIoT.Extensions.Diagnostics {
+    using Microsoft.IIoT.Extensions.Utils;
     using Prometheus;
     using Microsoft.Extensions.Logging;
     using Microsoft.Extensions.Options;

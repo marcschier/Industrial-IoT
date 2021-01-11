@@ -4,9 +4,9 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.IIoT.Platform.OpcUa.Services {
-    using Microsoft.IIoT.Serializers;
-    using Microsoft.IIoT.Serializers.NewtonSoft;
-    using Microsoft.IIoT.Utils;
+    using Microsoft.IIoT.Extensions.Serializers;
+    using Microsoft.IIoT.Extensions.Serializers.NewtonSoft;
+    using Microsoft.IIoT.Extensions.Utils;
     using Opc.Ua;
     using Opc.Ua.Encoders;
     using System;

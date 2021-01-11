@@ -4,9 +4,9 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.IIoT.Azure.CosmosDb.Clients {
-    using Microsoft.IIoT.Storage;
-    using Microsoft.IIoT.Utils;
-    using Microsoft.IIoT.Serializers;
+    using Microsoft.IIoT.Extensions.Storage;
+    using Microsoft.IIoT.Extensions.Utils;
+    using Microsoft.IIoT.Extensions.Serializers;
     using Microsoft.Azure.Cosmos;
     using Microsoft.Extensions.Logging;
     using Microsoft.Extensions.Options;
@@ -29,7 +29,7 @@ namespace Microsoft.IIoT.Azure.CosmosDb.Clients {
             _config = config ?? throw new ArgumentNullException(nameof(config));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _serializer = serializer ?? throw new ArgumentNullException(nameof(serializer));
-            if (string.IsNullOrEmpty(_config.Value.DbConnectionString)) {
+            if (string.IsNullOrEmpty(_config.Value.ConnectionString)) {
                 throw new ArgumentException("Connection string missing", nameof(config));
             }
         }
@@ -39,7 +39,7 @@ namespace Microsoft.IIoT.Azure.CosmosDb.Clients {
             if (string.IsNullOrEmpty(databaseId)) {
                 databaseId = "default";
             }
-            var cs = ConnectionString.Parse(_config.Value.DbConnectionString);
+            var cs = ConnectionString.Parse(_config.Value.ConnectionString);
             var client = new CosmosClient(cs.Endpoint, cs.SharedAccessKey,
                 new CosmosClientOptions {
                     ConsistencyLevel = options?.Consistency.ToConsistencyLevel()

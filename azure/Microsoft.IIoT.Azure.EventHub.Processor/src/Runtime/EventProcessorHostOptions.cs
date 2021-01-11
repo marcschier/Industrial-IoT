@@ -9,7 +9,7 @@ namespace Microsoft.IIoT.Azure.EventHub.Processor {
     /// <summary>
     /// Eventprocessor host configuration
     /// </summary>
-    public class EventProcessorHostOptions : StorageOptions {
+    public class EventProcessorHostOptions {
 
         /// <summary>
         /// Receive batch size

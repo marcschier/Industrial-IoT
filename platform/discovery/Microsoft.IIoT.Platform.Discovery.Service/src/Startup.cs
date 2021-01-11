@@ -6,15 +6,15 @@
 namespace Microsoft.IIoT.Platform.Discovery.Service {
     using Microsoft.IIoT.Platform.Discovery;
     using Microsoft.IIoT.Platform.OpcUa;
-    using Microsoft.IIoT.Authentication;
-    using Microsoft.IIoT.Utils;
-    using Microsoft.IIoT.Http.Clients;
-    using Microsoft.IIoT.Serializers;
+    using Microsoft.IIoT.Extensions.Authentication;
+    using Microsoft.IIoT.Extensions.Utils;
+    using Microsoft.IIoT.Extensions.Http.Clients;
+    using Microsoft.IIoT.Extensions.Serializers;
     using Microsoft.IIoT.Extensions.LiteDb;
     using Microsoft.IIoT.Extensions.Orleans;
-    using Microsoft.IIoT.AspNetCore.Authentication;
-    using Microsoft.IIoT.AspNetCore.Authentication.Clients;
-    using Microsoft.IIoT.AspNetCore.Http.Tunnel;
+    using Microsoft.IIoT.Extensions.AspNetCore.Authentication;
+    using Microsoft.IIoT.Extensions.AspNetCore.Authentication.Clients;
+    using Microsoft.IIoT.Extensions.AspNetCore.Http.Tunnel;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.Extensions.Configuration;

@@ -5,10 +5,10 @@
 
 namespace Microsoft.IIoT.Azure.CosmosDb.Clients {
     using Microsoft.IIoT.Azure.CosmosDb.Runtime;
-    using Microsoft.IIoT.Utils;
-    using Microsoft.IIoT.Diagnostics;
-    using Microsoft.IIoT.Serializers.NewtonSoft;
-    using Microsoft.IIoT.Storage;
+    using Microsoft.IIoT.Extensions.Utils;
+    using Microsoft.IIoT.Extensions.Diagnostics;
+    using Microsoft.IIoT.Extensions.Serializers.NewtonSoft;
+    using Microsoft.IIoT.Extensions.Storage;
     using Microsoft.Extensions.Configuration;
     using System;
     using System.Threading.Tasks;

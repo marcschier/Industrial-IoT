@@ -3,10 +3,10 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.Crypto.Storage {
-    using Microsoft.IIoT.Crypto.Storage.Models;
-    using Microsoft.IIoT.Crypto.Models;
-    using Microsoft.IIoT.Serializers;
+namespace Microsoft.IIoT.Extensions.Crypto.Storage {
+    using Microsoft.IIoT.Extensions.Crypto.Storage.Models;
+    using Microsoft.IIoT.Extensions.Crypto.Models;
+    using Microsoft.IIoT.Extensions.Serializers;
     using System;
     using System.Linq;
     using System.Collections.Generic;

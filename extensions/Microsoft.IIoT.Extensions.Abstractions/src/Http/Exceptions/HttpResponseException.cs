@@ -3,7 +3,7 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.Http.Exceptions {
+namespace Microsoft.IIoT.Extensions.Http.Exceptions {
     using System;
     using System.Net;
 

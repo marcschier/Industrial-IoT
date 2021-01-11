@@ -5,7 +5,7 @@
 
 namespace Microsoft.IIoT.Platform.Discovery.Events.v2 {
     using Microsoft.IIoT.Platform.Discovery.Models;
-    using Microsoft.IIoT.Messaging;
+    using Microsoft.IIoT.Extensions.Messaging;
     using System;
     using System.Threading.Tasks;
 

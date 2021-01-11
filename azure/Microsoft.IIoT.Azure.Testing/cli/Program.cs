@@ -8,10 +8,10 @@ namespace Microsoft.IIoT.Azure.Testing.Cli {
     using Microsoft.IIoT.Azure.IoTEdge;
     using Microsoft.IIoT.Azure.IoTHub;
     using Microsoft.IIoT.Azure.IoTHub.Models;
-    using Microsoft.IIoT.Http.Clients;
-    using Microsoft.IIoT.Messaging;
-    using Microsoft.IIoT.Serializers;
-    using Microsoft.IIoT.Utils;
+    using Microsoft.IIoT.Extensions.Http.Clients;
+    using Microsoft.IIoT.Extensions.Messaging;
+    using Microsoft.IIoT.Extensions.Serializers;
+    using Microsoft.IIoT.Extensions.Utils;
     using Microsoft.IIoT.Exceptions;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Logging;
@@ -221,10 +221,8 @@ namespace Microsoft.IIoT.Azure.Testing.Cli {
                 var registration = await registry.GetRegistrationAsync(
                     gatewayDeviceId, null, default).ConfigureAwait(false);
                 // Register device with scope
-                await registry.RegisterAsync(new DeviceRegistrationModel {
-                    Id = clientDeviceId,
-                    ModuleId = null,
-                    DeviceScope = registration.DeviceScope,
+                await registry.RegisterAsync(clientDeviceId, null, new DeviceRegistrationModel {
+                    DeviceScope = registration.Scope,
                     Hub = registration.Hub
                 }, false, default).ConfigureAwait(false);
             }

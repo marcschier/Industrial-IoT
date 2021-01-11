@@ -3,11 +3,11 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.Http.SignalR.Services {
-    using Microsoft.IIoT.Utils;
-    using Microsoft.IIoT.Authentication;
-    using Microsoft.IIoT.Serializers;
-    using Microsoft.IIoT.Rpc;
+namespace Microsoft.IIoT.Extensions.Http.SignalR.Services {
+    using Microsoft.IIoT.Extensions.Utils;
+    using Microsoft.IIoT.Extensions.Authentication;
+    using Microsoft.IIoT.Extensions.Serializers;
+    using Microsoft.IIoT.Extensions.Rpc;
     using Microsoft.AspNetCore.SignalR.Client;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Logging;

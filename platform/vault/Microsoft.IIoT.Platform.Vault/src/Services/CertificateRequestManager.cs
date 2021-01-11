@@ -6,7 +6,7 @@
 namespace Microsoft.IIoT.Platform.Vault.Services {
     using Microsoft.IIoT.Platform.Vault.Models;
     using Microsoft.IIoT.Exceptions;
-    using Microsoft.IIoT.Serializers;
+    using Microsoft.IIoT.Extensions.Serializers;
     using System;
     using System.Linq;
     using System.Threading;

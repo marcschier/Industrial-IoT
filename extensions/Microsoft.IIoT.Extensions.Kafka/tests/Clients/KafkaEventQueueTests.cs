@@ -4,8 +4,8 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.IIoT.Extensions.Kafka.Clients {
-    using Microsoft.IIoT.Messaging;
-    using Microsoft.IIoT.Hosting;
+    using Microsoft.IIoT.Extensions.Messaging;
+    using Microsoft.IIoT.Extensions.Hosting;
     using System;
     using System.Threading.Tasks;
     using System.Collections.Generic;

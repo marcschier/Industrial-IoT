@@ -3,9 +3,9 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.AspNetCore.Authentication.Clients {
-    using Microsoft.IIoT.Authentication;
-    using Microsoft.IIoT.Authentication.Models;
+namespace Microsoft.IIoT.Extensions.AspNetCore.Authentication.Clients {
+    using Microsoft.IIoT.Extensions.Authentication;
+    using Microsoft.IIoT.Extensions.Authentication.Models;
     using Microsoft.AspNetCore.Components.Server;
     using Microsoft.AspNetCore.Components.Authorization;
     using Microsoft.Extensions.Logging;
@@ -15,7 +15,7 @@ namespace Microsoft.IIoT.AspNetCore.Authentication.Clients {
     using System.Threading.Tasks;
     using System.Threading;
     using System.Security.Claims;
-    using Microsoft.IIoT.Utils;
+    using Microsoft.IIoT.Extensions.Utils;
 
     /// <summary>
     /// Revalidate all user token providers

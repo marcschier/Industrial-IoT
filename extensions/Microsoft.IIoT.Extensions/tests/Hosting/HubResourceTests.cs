@@ -3,7 +3,7 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.Hosting {
+namespace Microsoft.IIoT.Extensions.Hosting {
     using AutoFixture;
     using System;
     using Xunit;
@@ -99,6 +99,22 @@ namespace Microsoft.IIoT.Hosting {
             Assert.Null(h);
             Assert.Equal(device, d);
             Assert.Null(m);
+        }
+
+        [Fact]
+        public void TestFormatParse5() {
+
+            var fix = new Fixture();
+            var hub = "a.b.com";
+            var device = fix.Create<string>();
+            var module = fix.Create<string>();
+
+            var target = HubResource.Format(hub, device, module);
+            var d = HubResource.Parse(target, out var h, out var m);
+
+            Assert.Equal("a", h);
+            Assert.Equal(device, d);
+            Assert.Equal(module, m);
         }
 
         [Fact]
@@ -258,6 +274,22 @@ namespace Microsoft.IIoT.Hosting {
             Assert.Null(h);
             Assert.Equal(device, d);
             Assert.Null(m);
+        }
+
+        [Fact]
+        public void TestFormatParse5AsHost() {
+
+            var fix = new Fixture();
+            var hub = "a.b.com";
+            var device = fix.Create<string>();
+            var module = fix.Create<string>();
+
+            var target = HubResource.Format(hub, device, module, true);
+            var d = HubResource.Parse(target, out var h, out var m, true);
+
+            Assert.Equal("a", h);
+            Assert.Equal(device, d);
+            Assert.Equal(module, m);
         }
 
         [Fact]

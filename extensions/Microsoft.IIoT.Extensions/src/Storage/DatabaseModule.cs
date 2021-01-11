@@ -3,9 +3,9 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.Storage {
-    using Microsoft.IIoT.Storage.Runtime;
-    using Microsoft.IIoT.Storage.Services;
+namespace Microsoft.IIoT.Extensions.Storage {
+    using Microsoft.IIoT.Extensions.Storage.Runtime;
+    using Microsoft.IIoT.Extensions.Storage.Services;
     using Autofac;
 
     /// <summary>

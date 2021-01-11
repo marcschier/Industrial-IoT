@@ -6,7 +6,7 @@
 namespace Microsoft.IIoT.Azure.EventHub.Processor {
     using Microsoft.IIoT.Azure.EventHub.Processor.Services;
     using Microsoft.IIoT.Azure.EventHub.Processor.Runtime;
-    using Microsoft.IIoT.Messaging;
+    using Microsoft.IIoT.Extensions.Messaging;
     using Autofac;
 
     /// <summary>
@@ -27,6 +27,7 @@ namespace Microsoft.IIoT.Azure.EventHub.Processor {
             builder.RegisterType<EventProcessorFactory>()
                 .AsImplementedInterfaces();
 
+            builder.AddOptions();
             builder.RegisterType<StorageConfig>()
                 .AsImplementedInterfaces();
             builder.RegisterType<EventHubConsumerConfig>()

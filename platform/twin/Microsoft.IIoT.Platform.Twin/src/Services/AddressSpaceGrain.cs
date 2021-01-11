@@ -8,7 +8,7 @@ namespace Microsoft.IIoT.Platform.Twin.Grains {
     using Microsoft.IIoT.Platform.Twin;
     using Microsoft.IIoT.Platform.Discovery;
     using Microsoft.IIoT.Platform.Core.Models;
-    using Microsoft.IIoT.Serializers;
+    using Microsoft.IIoT.Extensions.Serializers;
     using System;
     using System.Threading.Tasks;
     using System.Threading;

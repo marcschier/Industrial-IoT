@@ -4,10 +4,10 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.IIoT.Azure.IoTHub.Clients {
-    using Microsoft.IIoT.Authentication;
+    using Microsoft.IIoT.Extensions.Authentication;
     using Microsoft.IIoT.Azure.IoTHub;
-    using Microsoft.IIoT.Storage;
-    using Microsoft.IIoT.Utils;
+    using Microsoft.IIoT.Extensions.Storage;
+    using Microsoft.IIoT.Extensions.Utils;
     using System;
     using System.Threading.Tasks;
 

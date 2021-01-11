@@ -5,7 +5,7 @@
 
 namespace Microsoft.IIoT.Platform.Twin.Events.v2 {
     using Microsoft.IIoT.Platform.Twin.Events.v2.Models;
-    using Microsoft.IIoT.Messaging;
+    using Microsoft.IIoT.Extensions.Messaging;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;

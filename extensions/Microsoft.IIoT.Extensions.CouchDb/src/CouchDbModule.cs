@@ -6,7 +6,7 @@
 namespace Microsoft.IIoT.Extensions.CouchDb {
     using Microsoft.IIoT.Extensions.CouchDb.Runtime;
     using Microsoft.IIoT.Extensions.CouchDb.Clients;
-    using Microsoft.IIoT.Storage;
+    using Microsoft.IIoT.Extensions.Storage;
     using Autofac;
 
     /// <summary>
@@ -19,6 +19,8 @@ namespace Microsoft.IIoT.Extensions.CouchDb {
 
             builder.RegisterType<CouchDbClient>()
                 .AsImplementedInterfaces();
+
+            builder.AddOptions();
             builder.RegisterType<CouchDbConfig>()
                 .AsImplementedInterfaces();
 

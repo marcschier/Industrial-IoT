@@ -7,7 +7,7 @@ namespace Microsoft.IIoT.Platform.Publisher.Api.Clients {
     using Microsoft.IIoT.Platform.Publisher.Api.Models;
     using Microsoft.IIoT.Platform.Publisher;
     using Microsoft.IIoT.Platform.Publisher.Models;
-    using Microsoft.IIoT.Rpc;
+    using Microsoft.IIoT.Extensions.Rpc;
     using System;
     using System.Threading.Tasks;
 

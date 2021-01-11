@@ -4,7 +4,7 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.IIoT.Azure.ServiceBus.Clients {
-    using Microsoft.IIoT.Utils;
+    using Microsoft.IIoT.Extensions.Utils;
     using Microsoft.Azure.ServiceBus;
     using Microsoft.Azure.ServiceBus.Management;
     using Microsoft.Extensions.Logging;
@@ -24,7 +24,7 @@ namespace Microsoft.IIoT.Azure.ServiceBus.Clients {
         /// <summary>
         /// Connection string
         /// </summary>
-        public string ServiceBusConnString => _config.CurrentValue.ServiceBusConnString;
+        public string ServiceBusConnString => _config.CurrentValue.ConnectionString;
 
         /// <summary>
         /// Create factory

@@ -3,9 +3,9 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.AspNetCore.Tests {
-    using Microsoft.IIoT.Serializers.NewtonSoft;
-    using Microsoft.IIoT.Serializers.MessagePack;
+namespace Microsoft.IIoT.Extensions.AspNetCore.Tests {
+    using Microsoft.IIoT.Extensions.Serializers.NewtonSoft;
+    using Microsoft.IIoT.Extensions.Serializers.MessagePack;
     using Microsoft.Extensions.Hosting;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Mvc.Testing;

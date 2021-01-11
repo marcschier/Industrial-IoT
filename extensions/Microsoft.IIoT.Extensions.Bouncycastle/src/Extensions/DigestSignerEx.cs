@@ -4,8 +4,8 @@
 // ------------------------------------------------------------
 
 namespace System.Security.Cryptography.X509Certificates {
-    using Microsoft.IIoT.Crypto.Models;
-    using Microsoft.IIoT.Crypto;
+    using Microsoft.IIoT.Extensions.Crypto.Models;
+    using Microsoft.IIoT.Extensions.Crypto;
     using System.Security.Cryptography.Asn1;
 
     /// <summary>

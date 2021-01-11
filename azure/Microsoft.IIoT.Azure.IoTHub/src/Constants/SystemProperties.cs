@@ -116,6 +116,11 @@ namespace Microsoft.IIoT.Azure.IoTHub {
         public const string ModuleId = "moduleId";
 
         /// <summary>
+        /// Hub name
+        /// </summary>
+        public const string HubName = "hubName";
+
+        /// <summary>
         /// Diagnostics id
         /// </summary>
         public const string DiagId = "iothub-diag-id";

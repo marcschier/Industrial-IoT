@@ -6,7 +6,7 @@
 namespace Microsoft.IIoT.Extensions.RabbitMq.Clients {
     using Microsoft.IIoT.Extensions.RabbitMq.Runtime;
     using Microsoft.IIoT.Extensions.RabbitMq.Server;
-    using Microsoft.IIoT.Utils;
+    using Microsoft.IIoT.Extensions.Utils;
     using Autofac;
     using System;
     using System.Threading;

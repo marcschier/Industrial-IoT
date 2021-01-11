@@ -6,7 +6,7 @@
 namespace Microsoft.IIoT.Platform.Vault.Events.v2 {
     using Microsoft.IIoT.Platform.Vault.Events.v2.Models;
     using Microsoft.IIoT.Platform.Vault.Models;
-    using Microsoft.IIoT.Messaging;
+    using Microsoft.IIoT.Extensions.Messaging;
     using System;
     using System.Threading.Tasks;
 

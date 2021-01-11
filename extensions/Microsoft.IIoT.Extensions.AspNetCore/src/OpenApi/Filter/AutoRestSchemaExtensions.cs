@@ -3,8 +3,8 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.AspNetCore.OpenApi {
-    using Microsoft.IIoT.Serializers;
+namespace Microsoft.IIoT.Extensions.AspNetCore.OpenApi {
+    using Microsoft.IIoT.Extensions.Serializers;
     using Microsoft.OpenApi.Any;
     using Microsoft.OpenApi.Models;
     using Newtonsoft.Json;

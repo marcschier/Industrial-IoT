@@ -4,7 +4,7 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.IIoT.Platform.OpcUa.Sample {
-    using Microsoft.IIoT.Utils;
+    using Microsoft.IIoT.Extensions.Utils;
     using Microsoft.IIoT.Platform.OpcUa;
     using Microsoft.Extensions.Logging;
     using Opc.Ua;

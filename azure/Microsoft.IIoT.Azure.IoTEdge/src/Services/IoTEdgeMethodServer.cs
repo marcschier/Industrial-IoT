@@ -3,9 +3,9 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.Azure.IoTEdge.Hosting {
+namespace Microsoft.IIoT.Azure.IoTEdge.Services {
     using Microsoft.IIoT.Azure.IoTEdge;
-    using Microsoft.IIoT.Hosting;
+    using Microsoft.IIoT.Extensions.Hosting;
     using Microsoft.IIoT.Exceptions;
     using Microsoft.Azure.Devices.Client;
     using Microsoft.Extensions.Logging;
@@ -29,7 +29,7 @@ namespace Microsoft.IIoT.Azure.IoTEdge.Hosting {
         /// <param name="logger"></param>
         /// <param name="identity"></param>
         /// <param name="routers"></param>
-        public IoTEdgeMethodServer(IIoTEdgeClient client, ILogger logger,
+        public IoTEdgeMethodServer(IIoTEdgeDeviceClient client, ILogger logger,
             IIdentity identity, IEnumerable<IMethodHandler> routers) {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _identity = identity ?? throw new ArgumentNullException(nameof(identity));
@@ -106,7 +106,7 @@ namespace Microsoft.IIoT.Azure.IoTEdge.Hosting {
         }
 
 
-        private readonly IIoTEdgeClient _client;
+        private readonly IIoTEdgeDeviceClient _client;
         private readonly List<IMethodHandler> _routers;
         private readonly ILogger _logger;
         private readonly IIdentity _identity;

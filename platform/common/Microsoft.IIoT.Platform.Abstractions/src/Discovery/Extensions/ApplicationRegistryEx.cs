@@ -6,7 +6,7 @@
 namespace Microsoft.IIoT.Platform.Discovery {
     using Microsoft.IIoT.Exceptions;
     using Microsoft.IIoT.Platform.Discovery.Models;
-    using Microsoft.IIoT.Utils;
+    using Microsoft.IIoT.Extensions.Utils;
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;

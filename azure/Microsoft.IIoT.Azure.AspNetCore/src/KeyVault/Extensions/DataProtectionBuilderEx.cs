@@ -4,10 +4,10 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Extensions.DependencyInjection {
-    using Microsoft.IIoT.Diagnostics;
-    using Microsoft.IIoT.Utils;
+    using Microsoft.IIoT.Extensions.Diagnostics;
+    using Microsoft.IIoT.Extensions.Utils;
     using Microsoft.IIoT.Exceptions;
-    using Microsoft.IIoT.Configuration;
+    using Microsoft.IIoT.Extensions.Configuration;
     using Microsoft.IIoT;
     using Microsoft.IIoT.Azure.AspNetCore.KeyVault;
     using Microsoft.IIoT.Azure.AspNetCore.KeyVault.Runtime;

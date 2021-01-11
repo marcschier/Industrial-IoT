@@ -6,8 +6,8 @@
 namespace Microsoft.IIoT.Platform.Registry.Api.Clients {
     using Microsoft.IIoT.Platform.Registry.Api.Models;
     using Microsoft.IIoT.Platform.Registry.Events.v2.Models;
-    using Microsoft.IIoT.Messaging;
-    using Microsoft.IIoT.Rpc;
+    using Microsoft.IIoT.Extensions.Messaging;
+    using Microsoft.IIoT.Extensions.Rpc;
     using System.Threading.Tasks;
     using System;
 

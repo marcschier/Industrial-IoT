@@ -3,8 +3,9 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.Messaging.Services {
-    using Microsoft.IIoT.Hosting;
+namespace Microsoft.IIoT.Extensions.Messaging.Services {
+    using Microsoft.IIoT.Extensions.Messaging;
+    using Microsoft.IIoT.Extensions.Hosting;
     using System;
     using System.Threading.Tasks;
     using System.Collections.Generic;

@@ -25,6 +25,8 @@ namespace Microsoft.IIoT.Extensions.RabbitMq {
                 .AsImplementedInterfaces().SingleInstance();
             builder.RegisterType<RabbitMqHealthCheck>()
                 .AsImplementedInterfaces().SingleInstance();
+
+            builder.AddOptions();
             builder.RegisterType<RabbitMqConfig>()
                 .AsImplementedInterfaces();
             builder.RegisterType<RabbitMqQueueConfig>()

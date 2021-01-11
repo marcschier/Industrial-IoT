@@ -8,8 +8,8 @@ namespace Microsoft.IIoT.Platform.OpcUa.Testing.Fixtures {
     using Microsoft.IIoT.Platform.OpcUa.Services;
     using Microsoft.IIoT.Platform.OpcUa.Sample;
     using Microsoft.IIoT.Platform.OpcUa;
-    using Microsoft.IIoT.Diagnostics;
-    using Microsoft.IIoT.Utils;
+    using Microsoft.IIoT.Extensions.Diagnostics;
+    using Microsoft.IIoT.Extensions.Utils;
     using Microsoft.Extensions.Logging;
     using Opc.Ua.Server;
     using System;

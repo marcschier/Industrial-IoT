@@ -6,8 +6,8 @@
 namespace Microsoft.IIoT.Platform.Discovery.Handlers {
     using Microsoft.IIoT.Platform.Discovery.Models;
     using Microsoft.IIoT.Platform.Discovery.Clients;
-    using Microsoft.IIoT.Tasks;
-    using Microsoft.IIoT.Messaging;
+    using Microsoft.IIoT.Extensions.Tasks;
+    using Microsoft.IIoT.Extensions.Messaging;
     using System;
     using System.Threading.Tasks;
 

@@ -21,11 +21,11 @@ namespace Microsoft.IIoT.Api.Cli {
     using Microsoft.IIoT.Platform.Vault.Api;
     using Microsoft.IIoT.Platform.Vault.Api.Clients;
     using Microsoft.IIoT.Platform.Vault.Api.Models;
-    using Microsoft.IIoT.Http.Clients;
-    using Microsoft.IIoT.Http.SignalR;
-    using Microsoft.IIoT.Utils;
-    using Microsoft.IIoT.Authentication.Runtime;
-    using Microsoft.IIoT.Serializers;
+    using Microsoft.IIoT.Extensions.Http.Clients;
+    using Microsoft.IIoT.Extensions.Http.SignalR.Clients;
+    using Microsoft.IIoT.Extensions.Utils;
+    using Microsoft.IIoT.Extensions.Authentication.Runtime;
+    using Microsoft.IIoT.Extensions.Serializers;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Logging;
     using Autofac;

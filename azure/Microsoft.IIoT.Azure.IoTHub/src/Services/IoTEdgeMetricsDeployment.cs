@@ -3,11 +3,11 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.Azure.IoTHub.Deploy {
+namespace Microsoft.IIoT.Azure.IoTHub.Services {
     using Microsoft.IIoT.Azure.LogAnalytics;
     using Microsoft.IIoT.Azure.IoTHub;
     using Microsoft.IIoT.Azure.IoTHub.Models;
-    using Microsoft.IIoT.Serializers;
+    using Microsoft.IIoT.Extensions.Serializers;
     using Microsoft.Extensions.Logging;
     using Microsoft.Extensions.Options;
     using System;

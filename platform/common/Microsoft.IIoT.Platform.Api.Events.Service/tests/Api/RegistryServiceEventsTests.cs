@@ -8,7 +8,7 @@ namespace Microsoft.IIoT.Platform.Api.Events.Service.Api {
     using Microsoft.IIoT.Platform.Discovery.Api.Models;
     using Microsoft.IIoT.Platform.Discovery.Events.v2.Models;
     using Microsoft.IIoT.Platform.Discovery.Models;
-    using Microsoft.IIoT.Messaging;
+    using Microsoft.IIoT.Extensions.Messaging;
     using System.Threading.Tasks;
     using Xunit;
     using System;

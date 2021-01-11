@@ -3,7 +3,7 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.AspNetCore.Authentication {
+namespace Microsoft.IIoT.Extensions.AspNetCore.Authentication {
 
     /// <summary>
     /// Common roles

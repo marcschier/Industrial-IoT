@@ -7,7 +7,7 @@ namespace Opc.Ua.Encoders {
     using Opc.Ua;
     using Newtonsoft.Json;
     using Newtonsoft.Json.Converters;
-    using Microsoft.IIoT.Serializers.NewtonSoft;
+    using Microsoft.IIoT.Extensions.Serializers.NewtonSoft;
     using System.Runtime.Serialization;
     using System.Collections.Generic;
     using System.Linq;

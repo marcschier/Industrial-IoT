@@ -10,7 +10,7 @@ namespace Microsoft.IIoT.Platform.Twin.Services {
     using Microsoft.IIoT.Platform.OpcUa;
     using Microsoft.IIoT.Platform.OpcUa.Models;
     using Microsoft.IIoT.Exceptions;
-    using Microsoft.IIoT.Serializers;
+    using Microsoft.IIoT.Extensions.Serializers;
     using Microsoft.Extensions.Logging;
     using Opc.Ua;
     using Opc.Ua.Client;

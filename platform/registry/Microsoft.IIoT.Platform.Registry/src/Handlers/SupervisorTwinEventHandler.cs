@@ -9,8 +9,8 @@ namespace Microsoft.IIoT.Platform.Registry.Handlers {
     using Microsoft.IIoT.Platform.Core.Models;
     using Microsoft.IIoT.Azure.IoTHub.Models;
     using Microsoft.IIoT.Azure.IoTHub;
-    using Microsoft.IIoT.Hosting;
-    using Microsoft.IIoT.Serializers;
+    using Microsoft.IIoT.Extensions.Hosting;
+    using Microsoft.IIoT.Extensions.Serializers;
     using Microsoft.Extensions.Logging;
     using System;
     using System.Threading.Tasks;

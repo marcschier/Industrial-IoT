@@ -1,6 +1,6 @@
 ﻿// Copyright (c) Brock Allen & Dominick Baier. All rights reserved.
 
-namespace Microsoft.IIoT.AspNetCore.Authentication {
+namespace Microsoft.IIoT.Extensions.AspNetCore.Authentication {
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.Filters;
 

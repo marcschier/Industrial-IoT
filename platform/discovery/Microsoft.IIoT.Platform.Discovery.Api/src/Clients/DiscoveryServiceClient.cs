@@ -6,9 +6,9 @@
 namespace Microsoft.IIoT.Platform.Discovery.Api.Clients {
     using Microsoft.IIoT.Platform.Discovery.Api.Models;
     using Microsoft.IIoT.Platform.Core.Api.Models;
-    using Microsoft.IIoT.Http;
-    using Microsoft.IIoT.Serializers.NewtonSoft;
-    using Microsoft.IIoT.Serializers;
+    using Microsoft.IIoT.Extensions.Http;
+    using Microsoft.IIoT.Extensions.Serializers.NewtonSoft;
+    using Microsoft.IIoT.Extensions.Serializers;
     using System;
     using System.Threading.Tasks;
     using System.Threading;

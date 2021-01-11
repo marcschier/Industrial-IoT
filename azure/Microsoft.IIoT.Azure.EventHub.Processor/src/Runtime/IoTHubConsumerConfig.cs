@@ -5,8 +5,8 @@
 
 namespace Microsoft.IIoT.Azure.EventHub.Processor.Runtime {
     using Microsoft.IIoT.Azure.EventHub.Processor;
-    using Microsoft.IIoT.Utils;
-    using Microsoft.IIoT.Configuration;
+    using Microsoft.IIoT.Extensions.Utils;
+    using Microsoft.IIoT.Extensions.Configuration;
     using Microsoft.Extensions.Configuration;
     using System;
 
@@ -67,8 +67,8 @@ namespace Microsoft.IIoT.Azure.EventHub.Processor.Runtime {
         public override void Configure(string name, EventHubConsumerOptions options) {
             options.ConsumerGroup = GetStringOrDefault("PCS_IOTHUB_EVENTHUBCONSUMERGROUP",
                 GetStringOrDefault("PCS_IOTHUBREACT_HUB_CONSUMERGROUP", "$default"));
-            options.EventHubConnString = EventHubConnString;
-            options.EventHubPath = IoTHubName;
+            options.ConnectionString = EventHubConnString;
+            options.Path = IoTHubName;
             options.UseWebsockets = GetBoolOrDefault("_WS");
         }
     }

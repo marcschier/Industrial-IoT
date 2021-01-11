@@ -4,7 +4,7 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.AspNetCore.Http {
-    using Microsoft.IIoT.Http;
+    using Microsoft.IIoT.Extensions.Http;
     using System.Globalization;
     using System.Linq;
     using System;

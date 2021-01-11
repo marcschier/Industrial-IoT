@@ -3,13 +3,13 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.Http.Tunnel.Services {
-    using Microsoft.IIoT.Http.Tunnel.Models;
-    using Microsoft.IIoT.Rpc;
-    using Microsoft.IIoT.Messaging;
-    using Microsoft.IIoT.Utils;
-    using Microsoft.IIoT.Http;
-    using Microsoft.IIoT.Serializers;
+namespace Microsoft.IIoT.Extensions.Http.Tunnel.Services {
+    using Microsoft.IIoT.Extensions.Http.Tunnel.Models;
+    using Microsoft.IIoT.Extensions.Rpc;
+    using Microsoft.IIoT.Extensions.Messaging;
+    using Microsoft.IIoT.Extensions.Utils;
+    using Microsoft.IIoT.Extensions.Http;
+    using Microsoft.IIoT.Extensions.Serializers;
     using Microsoft.Extensions.Logging;
     using System;
     using System.IO;
@@ -55,7 +55,7 @@ namespace Microsoft.IIoT.Http.Tunnel.Services {
 
         /// <inheritdoc/>
         public async Task HandleAsync(string source, byte[] payload,
-            IDictionary<string, string> properties, Func<Task> checkpoint) {
+            IEventProperties properties, Func<Task> checkpoint) {
             var completed = await HandleEventAsync(source, payload, properties).ConfigureAwait(false);
             if (completed) {
                 await Try.Async(() => checkpoint?.Invoke()).ConfigureAwait(false);
@@ -70,11 +70,10 @@ namespace Microsoft.IIoT.Http.Tunnel.Services {
         /// <param name="properties"></param>
         /// <returns></returns>
         private async Task<bool> HandleEventAsync(string source,
-            byte[] payload, IDictionary<string, string> properties) {
+            byte[] payload, IEventProperties properties) {
 
 
-            if (!properties.TryGetValue("content-type", out var type) &&
-                !properties.TryGetValue("iothub-content-type", out type)) {
+            if (!properties.TryGetValue(EventProperties.ContentType, out var type)) {
                 _logger.LogError("Missing content type in tunnel event from {source}.",
                      source);
                 return true;

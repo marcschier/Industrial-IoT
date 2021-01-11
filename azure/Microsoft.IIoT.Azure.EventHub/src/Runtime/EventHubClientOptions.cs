@@ -11,13 +11,13 @@ namespace Microsoft.IIoT.Azure.EventHub {
     public class EventHubClientOptions {
 
         /// <summary>
-        /// Event hub connection string
+        /// Event hub namespace connection string
         /// </summary>
-        public string EventHubConnString { get; set; }
+        public string ConnectionString { get; set; }
 
         /// <summary>
-        /// Event hub name
+        /// Event hub path
         /// </summary>
-        public string EventHubPath { get; set; }
+        public string Path { get; set; }
     }
 }

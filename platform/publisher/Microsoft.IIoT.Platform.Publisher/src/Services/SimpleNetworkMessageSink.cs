@@ -5,7 +5,7 @@
 
 namespace Microsoft.IIoT.Platform.Publisher.Services {
     using Microsoft.IIoT.Platform.Publisher.Models;
-    using Microsoft.IIoT.Messaging;
+    using Microsoft.IIoT.Extensions.Messaging;
     using Microsoft.Extensions.Logging;
     using Prometheus;
     using System;

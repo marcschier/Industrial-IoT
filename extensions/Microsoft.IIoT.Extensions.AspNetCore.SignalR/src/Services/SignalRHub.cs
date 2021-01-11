@@ -3,13 +3,13 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.Messaging.SignalR.Services {
-    using Microsoft.IIoT.Rpc;
+namespace Microsoft.IIoT.Extensions.SignalR.Services {
+    using Microsoft.IIoT.Extensions.Rpc;
     using Microsoft.AspNetCore.SignalR;
+    using Microsoft.Extensions.Logging;
     using System;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.Extensions.Logging;
 
     /// <summary>
     /// Signalr hub for hosting inside Asp.net core host.

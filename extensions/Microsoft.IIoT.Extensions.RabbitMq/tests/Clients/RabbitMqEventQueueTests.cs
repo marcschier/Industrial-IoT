@@ -4,8 +4,8 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.IIoT.Extensions.RabbitMq.Clients {
-    using Microsoft.IIoT.Hosting;
-    using Microsoft.IIoT.Messaging;
+    using Microsoft.IIoT.Extensions.Hosting;
+    using Microsoft.IIoT.Extensions.Messaging;
     using System;
     using System.Threading.Tasks;
     using System.Collections.Generic;

@@ -4,11 +4,11 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.IIoT.Azure.IoTHub.Testing {
-    using Microsoft.IIoT.Azure.IoTEdge.Hosting;
+    using Microsoft.IIoT.Azure.IoTEdge.Services;
     using Microsoft.IIoT.Azure.IoTEdge.Clients;
-    using Microsoft.IIoT.Tasks;
-    using Microsoft.IIoT.Tasks.Services;
-    using Microsoft.IIoT.Serializers;
+    using Microsoft.IIoT.Extensions.Tasks;
+    using Microsoft.IIoT.Extensions.Tasks.Services;
+    using Microsoft.IIoT.Extensions.Serializers;
     using Autofac;
 
     /// <summary>

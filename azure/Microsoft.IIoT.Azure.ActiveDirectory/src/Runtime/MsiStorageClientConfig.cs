@@ -4,8 +4,8 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.IIoT.Azure.ActiveDirectory.Runtime {
-    using Microsoft.IIoT.Authentication;
-    using Microsoft.IIoT.Configuration;
+    using Microsoft.IIoT.Extensions.Authentication;
+    using Microsoft.IIoT.Extensions.Configuration;
     using Microsoft.Extensions.Configuration;
 
     /// <summary>
@@ -22,7 +22,7 @@ namespace Microsoft.IIoT.Azure.ActiveDirectory.Runtime {
         /// <summary>Audience</summary>
         public string Audience => "https://storage.azure.com";
         /// <summary>Resource</summary>
-        public string Resource => Http.Resource.Storage;
+        public string Resource => Extensions.Http.Resource.Storage;
         /// <inheritdoc/>
         public bool IsValid => ClientId != null && TenantId != null;
         /// <inheritdoc/>

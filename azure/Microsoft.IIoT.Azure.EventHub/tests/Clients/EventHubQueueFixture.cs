@@ -6,11 +6,11 @@
 namespace Microsoft.IIoT.Azure.EventHub.Clients {
     using Microsoft.IIoT.Azure.EventHub.Runtime;
     using Microsoft.IIoT.Azure.EventHub.Processor;
-    using Microsoft.IIoT.Messaging.Handlers;
-    using Microsoft.IIoT.Messaging;
-    using Microsoft.IIoT.Utils;
+    using Microsoft.IIoT.Extensions.Messaging.Handlers;
+    using Microsoft.IIoT.Extensions.Messaging;
+    using Microsoft.IIoT.Extensions.Utils;
     using Microsoft.IIoT.Exceptions;
-    using Microsoft.IIoT.Hosting;
+    using Microsoft.IIoT.Extensions.Hosting;
     using Microsoft.Extensions.Configuration;
     using Autofac;
     using System;
@@ -109,7 +109,7 @@ namespace Microsoft.IIoT.Azure.EventHub.Clients {
             }
 
             var eh = new EventHubClientConfig(_config).ToOptions();
-            namespaceName = ConnectionString.Parse(eh.Value.EventHubConnString)?.Endpoint;
+            namespaceName = ConnectionString.Parse(eh.Value.ConnectionString)?.Endpoint;
             namespaceName = namespaceName?.Replace("sb://", "",
                 StringComparison.InvariantCulture).Split('.')[0];
 
@@ -158,8 +158,8 @@ namespace Microsoft.IIoT.Azure.EventHub.Clients {
                     .Build();
                 builder.AddConfiguration(config);
                 builder.Configure<EventHubConsumerOptions>(options => {
-                    options.EventHubConnString = connectionString;
-                    options.EventHubPath = null;
+                    options.ConnectionString = connectionString;
+                    options.Path = null;
                 });
                 builder.RegisterType<Pid>().SingleInstance()
                     .AsImplementedInterfaces();
@@ -231,7 +231,7 @@ namespace Microsoft.IIoT.Azure.EventHub.Clients {
             public string MessageSchema { get; }
 
             public Task HandleAsync(string source,
-                byte[] payload, IDictionary<string, string> properties,
+                byte[] payload, IEventProperties properties,
                 Func<Task> checkpoint) {
                 _outer.OnEvent?.Invoke(this, new TelemetryEventArgs(
                     MessageSchema, source, payload, properties));
@@ -253,7 +253,7 @@ namespace Microsoft.IIoT.Azure.EventHub.Clients {
             }
 
             public Task HandleAsync(byte[] eventData,
-                IDictionary<string, string> properties) {
+                IEventProperties properties) {
                 _outer.OnEvent?.Invoke(this, new TelemetryEventArgs(
                     null, null, eventData, properties));
                 return Task.CompletedTask;
@@ -269,7 +269,7 @@ namespace Microsoft.IIoT.Azure.EventHub.Clients {
     internal class TelemetryEventArgs : EventArgs {
 
         internal TelemetryEventArgs(string schema, string source,
-            byte[] data, IDictionary<string, string> properties) {
+            byte[] data, IEventProperties properties) {
             HandlerSchema = schema;
             Source = source;
             if (source != null) {
@@ -287,7 +287,7 @@ namespace Microsoft.IIoT.Azure.EventHub.Clients {
             Properties = properties
                 .Where(k => k.Key != EventProperties.Target)
                 .Where(k => !k.Key.StartsWith("x-", StringComparison.Ordinal))
-                .ToDictionary(k => k.Key, v => v.Value);
+                .ToEventProperties();
         }
 
         public string Target { get; }
@@ -297,7 +297,7 @@ namespace Microsoft.IIoT.Azure.EventHub.Clients {
         public string DeviceId { get; }
         public string ModuleId { get; }
         public IReadOnlyCollection<byte> Data { get; }
-        public IReadOnlyDictionary<string, string> Properties { get; }
+        public IEventProperties Properties { get; }
     }
 
     internal delegate void TelemetryEventHandler(object sender, TelemetryEventArgs args);

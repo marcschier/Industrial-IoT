@@ -8,7 +8,7 @@ namespace Autofac {
     using Microsoft.Extensions.Configuration.Memory;
     using Microsoft.Extensions.Configuration.EnvironmentVariables;
     using Microsoft.Extensions.Configuration;
-    using Microsoft.IIoT.Configuration;
+    using Microsoft.IIoT.Extensions.Configuration;
     using System.Collections.Generic;
     using System;
     using System.Linq;

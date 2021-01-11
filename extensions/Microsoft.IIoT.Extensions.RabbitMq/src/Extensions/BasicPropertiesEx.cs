@@ -4,6 +4,7 @@
 // ------------------------------------------------------------
 
 namespace RabbitMQ.Client {
+    using Microsoft.IIoT.Extensions.Messaging;
     using System.Collections.Generic;
     using System.Linq;
     using System.Text;
@@ -19,7 +20,7 @@ namespace RabbitMQ.Client {
         /// <param name="properties"></param>
         /// <param name="sequenceNumber"></param>
         /// <returns></returns>
-        public static Dictionary<string, string> ToDictionary(
+        public static IEventProperties ToDictionary(
             this IBasicProperties properties, ulong sequenceNumber) {
             var result = properties?.Headers?
                 .ToDictionary(k => k.Key, v => {
@@ -31,7 +32,7 @@ namespace RabbitMQ.Client {
 
             result.Add("x-sequenceNumber", sequenceNumber.ToString());
             // ...
-            return result;
+            return result.ToEventProperties();
         }
     }
 }

@@ -3,7 +3,7 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.Messaging {
+namespace Microsoft.IIoT.Extensions.Messaging {
     using System;
     using System.Collections.Generic;
     using System.Threading;
@@ -24,7 +24,7 @@ namespace Microsoft.IIoT.Messaging {
         /// <param name="ct"></param>
         /// <returns></returns>
         Task PublishAsync(string target, byte[] payload,
-            IDictionary<string, string> properties = null,
+            IEventProperties properties = null,
             string partitionKey = null, CancellationToken ct = default);
 
         /// <summary>
@@ -37,7 +37,7 @@ namespace Microsoft.IIoT.Messaging {
         /// <param name="ct"></param>
         /// <returns></returns>
         Task PublishAsync(string target, IEnumerable<byte[]> batch,
-            IDictionary<string, string> properties = null,
+            IEventProperties properties = null,
             string partitionKey = null, CancellationToken ct = default);
 
         /// <summary>
@@ -52,7 +52,7 @@ namespace Microsoft.IIoT.Messaging {
         /// <param name="partitionKey"></param>
         void Publish<T>(string target, byte[] payload,
             T token, Action<T, Exception> complete,
-            IDictionary<string, string> properties = null,
+            IEventProperties properties = null,
             string partitionKey = null);
     }
 }

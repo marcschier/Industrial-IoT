@@ -7,8 +7,8 @@ namespace Microsoft.IIoT.Azure.IoTEdge.Testing {
     using Microsoft.IIoT.Azure.IoTHub;
     using Microsoft.IIoT.Azure.IoTHub.Models;
     using Microsoft.IIoT.Extensions.Docker;
-    using Microsoft.IIoT.Utils;
-    using Microsoft.IIoT.Serializers;
+    using Microsoft.IIoT.Extensions.Utils;
+    using Microsoft.IIoT.Extensions.Serializers;
     using Microsoft.IIoT.Exceptions;
     using Microsoft.Extensions.Diagnostics.HealthChecks;
     using Microsoft.Extensions.Logging;
@@ -149,12 +149,11 @@ namespace Microsoft.IIoT.Azure.IoTEdge.Testing {
         private static async Task<ConnectionString> GetConnectionStringAsync(
             IDeviceTwinServices registry, string deviceId, ILogger logger) {
             try {
-                await registry.RegisterAsync(new DeviceRegistrationModel {
-                    Id = deviceId,
+                await registry.RegisterAsync(deviceId, null, new DeviceRegistrationModel {
                     Tags = new Dictionary<string, VariantValue> {
                         [TwinProperty.Type] = "iiotedge"
                     },
-                    Capabilities = new DeviceCapabilitiesModel {
+                    Capabilities = new CapabilitiesModel {
                         IotEdge = true
                     }
                 }, false, CancellationToken.None).ConfigureAwait(false);

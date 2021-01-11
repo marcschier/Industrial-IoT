@@ -5,7 +5,7 @@
 
 
 namespace Microsoft.IIoT.Platform.Publisher.Service.Auth {
-    using Microsoft.IIoT.AspNetCore.Authentication;
+    using Microsoft.IIoT.Extensions.AspNetCore.Authentication;
     using Microsoft.AspNetCore.Authorization;
     using System;
 

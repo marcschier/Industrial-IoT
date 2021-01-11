@@ -6,13 +6,13 @@
 namespace Microsoft.IIoT.Azure.IoTHub {
     using Microsoft.IIoT.Azure.IoTHub.Models;
     using Microsoft.IIoT.Exceptions;
-    using Microsoft.IIoT.Serializers;
+    using Microsoft.IIoT.Extensions.Serializers;
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
 
     /// <summary>
-    /// Twin services
+    /// Device registry services
     /// </summary>
     public interface IDeviceTwinServices {
 
@@ -22,19 +22,21 @@ namespace Microsoft.IIoT.Azure.IoTHub {
         string HostName { get; }
 
         /// <summary>
-        /// Create new twin or update existing one.  If there is
-        /// a conflict and force is set, ensures the twin exists
-        /// as specified in the end.
+        /// Create new device or module or update existing one.
+        /// If there is a conflict and force is set, ensures the
+        /// twin exists as specified in the end.
         /// </summary>
         /// <exception cref="ResourceConflictException"></exception>
-        /// <param name="device">device twin to create</param>
+        /// <param name="deviceId">Device id</param>
+        /// <param name="moduleId">Optional module id</param>
+        /// <param name="registration">Twin to create</param>
         /// <param name="force">skip conflicting resource and update
         /// to the passed in twin state</param>
         /// <param name="ct"></param>
         /// <returns>new device</returns>
-        Task<DeviceTwinModel> RegisterAsync(
-            DeviceRegistrationModel device, bool force = false,
-            CancellationToken ct = default);
+        Task<DeviceTwinModel> RegisterAsync(string deviceId,
+            string moduleId = null, DeviceRegistrationModel registration = null,
+            bool force = false, CancellationToken ct = default);
 
         /// <summary>
         /// Update existing twin.
@@ -44,9 +46,8 @@ namespace Microsoft.IIoT.Azure.IoTHub {
         /// <param name="force">Do not use etag</param>
         /// <param name="ct"></param>
         /// <returns>new device</returns>
-        Task<DeviceTwinModel> PatchAsync(
-            DeviceTwinModel device, bool force = false,
-            CancellationToken ct = default);
+        Task<DeviceTwinModel> PatchAsync(DeviceTwinModel device,
+            bool force = false, CancellationToken ct = default);
 
         /// <summary>
         /// Returns twin

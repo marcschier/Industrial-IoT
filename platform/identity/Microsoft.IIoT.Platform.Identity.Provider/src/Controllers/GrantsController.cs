@@ -5,7 +5,7 @@
 namespace Microsoft.IIoT.Platform.Identity.Provider.Controllers {
     using Microsoft.IIoT.Platform.Identity.Provider.Filters;
     using Microsoft.IIoT.Platform.Identity.Provider.Models;
-    using Microsoft.IIoT.AspNetCore.Authentication;
+    using Microsoft.IIoT.Extensions.AspNetCore.Authentication;
     using IdentityServer4.Events;
     using IdentityServer4.Extensions;
     using IdentityServer4.Services;

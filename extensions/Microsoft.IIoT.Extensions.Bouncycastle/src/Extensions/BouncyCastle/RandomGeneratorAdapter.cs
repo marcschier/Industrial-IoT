@@ -3,7 +3,7 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.Crypto.BouncyCastle {
+namespace Microsoft.IIoT.Extensions.Crypto.BouncyCastle {
     using Org.BouncyCastle.Crypto.Prng;
     using System;
     using System.Security.Cryptography;

@@ -19,9 +19,10 @@ namespace Microsoft.IIoT.Azure.Datalake {
         /// <param name="builder"></param>
         protected override void Load(ContainerBuilder builder) {
 
-            // Cosmos db collection as storage
             builder.RegisterType<DatalakeStorageClient>()
                 .AsImplementedInterfaces();
+
+            builder.AddOptions();
             builder.RegisterType<DatalakeConfig>()
                 .AsImplementedInterfaces();
 

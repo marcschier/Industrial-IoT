@@ -3,8 +3,8 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.Messaging.Clients {
-    using Microsoft.IIoT.Messaging;
+namespace Microsoft.IIoT.Extensions.Messaging.Clients {
+    using Microsoft.IIoT.Extensions.Messaging;
     using System;
     using System.Collections.Generic;
     using System.Threading;
@@ -51,19 +51,19 @@ namespace Microsoft.IIoT.Messaging.Clients {
         /// <param name="eventSchema"></param>
         /// <param name="contentEncoding"></param>
         /// <returns></returns>
-        private static IDictionary<string, string> CreateProperties(
+        private static IEventProperties CreateProperties(
             string contentType, string eventSchema, string contentEncoding) {
-            var props = new Dictionary<string, string>();
+            var properties = new Dictionary<string, string>();
             if (!string.IsNullOrEmpty(contentType)) {
-                props.Add(EventProperties.ContentType, contentType);
+                properties.Add(EventProperties.ContentType, contentType);
             }
             if (!string.IsNullOrEmpty(contentEncoding)) {
-                props.Add(EventProperties.ContentEncoding, contentEncoding);
+                properties.Add(EventProperties.ContentEncoding, contentEncoding);
             }
             if (!string.IsNullOrEmpty(eventSchema)) {
-                props.Add(EventProperties.EventSchema, eventSchema);
+                properties.Add(EventProperties.EventSchema, eventSchema);
             }
-            return props;
+            return properties.ToEventProperties();
         }
 
         private readonly IEventPublisherClient _client;

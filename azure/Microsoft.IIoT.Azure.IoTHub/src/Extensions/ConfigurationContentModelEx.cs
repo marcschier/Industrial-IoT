@@ -19,9 +19,9 @@ namespace Microsoft.IIoT.Azure.IoTHub.Models {
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
-        public static ConfigurationContent ToContent(this ConfigurationContentModel model) {
-            if (model is null) {
-                throw new System.ArgumentNullException(nameof(model));
+        public static ConfigurationContent ToConfigurationContent(this ConfigurationContentModel model) {
+            if (model == null) {
+                return null;
             }
             return new ConfigurationContent {
                 ModulesContent = model.ModulesContent
@@ -33,16 +33,16 @@ namespace Microsoft.IIoT.Azure.IoTHub.Models {
         /// <summary>
         /// Convert configuration content to model
         /// </summary>
-        /// <param name="content"></param>
+        /// <param name="model"></param>
         /// <returns></returns>
-        public static ConfigurationContentModel ToModel(this ConfigurationContent content) {
-            if (content is null) {
-                throw new System.ArgumentNullException(nameof(content));
+        public static ConfigurationContentModel ToConfigurationContentModel(this ConfigurationContent model) {
+            if (model == null) {
+                return null;
             }
             return new ConfigurationContentModel {
-                ModulesContent = content.ModulesContent
+                ModulesContent = model.ModulesContent
                     .ToDictionary(k => k.Key, v => (IReadOnlyDictionary<string, object>)v.Value.Clone()),
-                DeviceContent = content.DeviceContent.Clone()
+                DeviceContent = model.DeviceContent.Clone()
             };
         }
     }

@@ -3,8 +3,8 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.Configuration {
-    using Microsoft.IIoT.Utils;
+namespace Microsoft.IIoT.Extensions.Configuration {
+    using Microsoft.IIoT.Extensions.Utils;
     using Microsoft.Extensions.Configuration;
     using System;
     using System.Collections.Generic;

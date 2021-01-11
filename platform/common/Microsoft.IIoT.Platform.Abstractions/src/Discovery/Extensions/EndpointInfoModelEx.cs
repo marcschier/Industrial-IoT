@@ -5,8 +5,8 @@
 
 namespace Microsoft.IIoT.Platform.Discovery.Models {
     using Microsoft.IIoT.Platform.Core.Models;
-    using Microsoft.IIoT.Hosting;
-    using Microsoft.IIoT.Utils;
+    using Microsoft.IIoT.Extensions.Hosting;
+    using Microsoft.IIoT.Extensions.Utils;
     using System.Collections.Generic;
     using System.Linq;
     using System;

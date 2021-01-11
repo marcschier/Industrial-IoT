@@ -4,8 +4,8 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.OpenApi.Models {
-    using Microsoft.IIoT.AspNetCore.OpenApi;
-    using Microsoft.IIoT.Authentication;
+    using Microsoft.IIoT.Extensions.AspNetCore.OpenApi;
+    using Microsoft.IIoT.Extensions.Authentication;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting.Server;
     using Microsoft.AspNetCore.Hosting.Server.Features;

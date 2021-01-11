@@ -5,11 +5,11 @@
 
 namespace Microsoft.IIoT.Azure.ServiceBus.Clients {
     using Microsoft.IIoT.Azure.ServiceBus.Runtime;
-    using Microsoft.IIoT.Messaging.Services;
-    using Microsoft.IIoT.Messaging;
-    using Microsoft.IIoT.Utils;
-    using Microsoft.IIoT.Serializers;
-    using Microsoft.IIoT.Hosting;
+    using Microsoft.IIoT.Extensions.Messaging.Services;
+    using Microsoft.IIoT.Extensions.Messaging;
+    using Microsoft.IIoT.Extensions.Utils;
+    using Microsoft.IIoT.Extensions.Serializers;
+    using Microsoft.IIoT.Extensions.Hosting;
     using Microsoft.Azure.ServiceBus.Management;
     using Microsoft.Extensions.Configuration;
     using System;
@@ -62,8 +62,7 @@ namespace Microsoft.IIoT.Azure.ServiceBus.Clients {
                 builder.AddConfiguration(config);
                 builder.RegisterType<ServiceBusConfig>()
                     .AsImplementedInterfaces().SingleInstance();
-                builder.RegisterInstance(new ConfigureOptions<ServiceBusEventBusOptions>(options => options.Topic = bus))
-                    .AsImplementedInterfaces();
+                builder.Configure<ServiceBusEventBusOptions>(options => options.Topic = bus);
                 builder.RegisterType<Pid>().SingleInstance()
                     .AsImplementedInterfaces();
 
@@ -120,7 +119,7 @@ namespace Microsoft.IIoT.Azure.ServiceBus.Clients {
             }
             var config = _container.Resolve<IOptions<ServiceBusOptions>>();
             var pid = _container.Resolve<IProcessIdentity>();
-            var managementClient = new ManagementClient(config.Value.ServiceBusConnString);
+            var managementClient = new ManagementClient(config.Value.ConnectionString);
             Try.Op(() => managementClient.DeleteSubscriptionAsync(_topic, pid.ServiceId).Wait());
             managementClient.DeleteTopicAsync(_topic).Wait();
             _container.Dispose();

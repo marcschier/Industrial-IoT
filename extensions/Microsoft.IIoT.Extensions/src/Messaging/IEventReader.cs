@@ -3,7 +3,7 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.Messaging {
+namespace Microsoft.IIoT.Extensions.Messaging {
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
@@ -18,7 +18,7 @@ namespace Microsoft.IIoT.Messaging {
         /// </summary>
         /// <param name="ct"></param>
         /// <returns></returns>
-        Task<IEnumerable<(byte[], IDictionary<string, string>)>> ReadAsync(
+        Task<IEnumerable<(byte[], IEventProperties)>> ReadAsync(
             CancellationToken ct = default);
     }
 }

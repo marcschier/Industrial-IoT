@@ -10,9 +10,9 @@ namespace Microsoft.IIoT.Platform.Twin.Service.Controllers.Json {
     using Microsoft.IIoT.Platform.OpcUa.Testing.Fixtures;
     using Microsoft.IIoT.Platform.OpcUa.Testing.Tests;
     using Microsoft.IIoT.Platform.OpcUa;
-    using Microsoft.IIoT.Http.Clients;
-    using Microsoft.IIoT.Serializers;
-    using Microsoft.IIoT.Utils;
+    using Microsoft.IIoT.Extensions.Http.Clients;
+    using Microsoft.IIoT.Extensions.Serializers;
+    using Microsoft.IIoT.Extensions.Utils;
     using Opc.Ua;
     using Microsoft.Extensions.Logging;
     using System.Linq;

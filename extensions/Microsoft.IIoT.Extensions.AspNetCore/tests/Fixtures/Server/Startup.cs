@@ -3,12 +3,12 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.AspNetCore.Tests {
-    using Microsoft.IIoT.Http.Clients;
-    using Microsoft.IIoT.Serializers;
-    using Microsoft.IIoT.Utils;
-    using Microsoft.IIoT.AspNetCore.Http.Tunnel;
-    using Microsoft.IIoT.Http.Tunnel;
+namespace Microsoft.IIoT.Extensions.AspNetCore.Tests {
+    using Microsoft.IIoT.Extensions.Http.Clients;
+    using Microsoft.IIoT.Extensions.Serializers;
+    using Microsoft.IIoT.Extensions.Utils;
+    using Microsoft.IIoT.Extensions.AspNetCore.Http.Tunnel;
+    using Microsoft.IIoT.Extensions.Http.Tunnel;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.Extensions.Configuration;

@@ -5,8 +5,8 @@
 
 namespace Microsoft.IIoT.Azure.IoTEdge.Clients {
     using Microsoft.IIoT.Azure.IoTEdge;
-    using Microsoft.IIoT.Rpc;
-    using Microsoft.IIoT.Hosting;
+    using Microsoft.IIoT.Extensions.Rpc;
+    using Microsoft.IIoT.Extensions.Hosting;
     using Microsoft.IIoT.Exceptions;
     using Microsoft.Azure.Devices.Client;
     using System;
@@ -26,7 +26,7 @@ namespace Microsoft.IIoT.Azure.IoTEdge.Clients {
         /// Create method client
         /// </summary>
         /// <param name="client"></param>
-        public IoTEdgeMethodClient(IIoTEdgeClient client) {
+        public IoTEdgeMethodClient(IIoTEdgeDeviceClient client) {
             _client = client ?? throw new ArgumentNullException(nameof(client));
         }
 
@@ -50,6 +50,6 @@ namespace Microsoft.IIoT.Azure.IoTEdge.Clients {
             return response.ResultAsJson;
         }
 
-        private readonly IIoTEdgeClient _client;
+        private readonly IIoTEdgeDeviceClient _client;
     }
 }

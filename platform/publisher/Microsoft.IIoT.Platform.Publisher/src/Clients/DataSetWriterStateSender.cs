@@ -5,9 +5,9 @@
 
 namespace Microsoft.IIoT.Platform.Publisher.Clients {
     using Microsoft.IIoT.Platform.Publisher.Models;
-    using Microsoft.IIoT.Serializers;
-    using Microsoft.IIoT.Tasks;
-    using Microsoft.IIoT.Messaging;
+    using Microsoft.IIoT.Extensions.Serializers;
+    using Microsoft.IIoT.Extensions.Tasks;
+    using Microsoft.IIoT.Extensions.Messaging;
     using Microsoft.Extensions.Logging;
     using System;
     using System.Threading.Tasks;

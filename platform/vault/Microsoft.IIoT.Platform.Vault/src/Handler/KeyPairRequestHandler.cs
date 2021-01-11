@@ -5,13 +5,13 @@
 
 namespace Microsoft.IIoT.Platform.Vault.Handler {
     using Microsoft.IIoT.Platform.Vault.Models;
-    using Microsoft.IIoT.Crypto;
-    using Microsoft.IIoT.Utils;
+    using Microsoft.IIoT.Extensions.Crypto;
+    using Microsoft.IIoT.Extensions.Utils;
     using System;
     using System.Security.Cryptography.X509Certificates;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.IIoT.Crypto.Models;
+    using Microsoft.IIoT.Extensions.Crypto.Models;
 
     /// <summary>
     /// Key pair request handler

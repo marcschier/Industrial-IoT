@@ -4,9 +4,9 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Extensions.DependencyInjection {
-    using Microsoft.IIoT.Serializers;
-    using Microsoft.IIoT.Serializers.NewtonSoft;
-    using Microsoft.IIoT.AspNetCore.Serializers;
+    using Microsoft.IIoT.Extensions.Serializers;
+    using Microsoft.IIoT.Extensions.Serializers.NewtonSoft;
+    using Microsoft.IIoT.Extensions.AspNetCore.Serializers;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Options;
     using System.Collections.Generic;

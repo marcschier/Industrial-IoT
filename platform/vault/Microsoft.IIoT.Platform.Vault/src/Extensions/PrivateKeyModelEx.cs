@@ -6,7 +6,7 @@
 namespace Microsoft.IIoT.Platform.Vault.Models {
     using System;
     using System.Linq;
-    using Microsoft.IIoT.Crypto.Models;
+    using Microsoft.IIoT.Extensions.Crypto.Models;
 
     /// <summary>
     /// Key extensions

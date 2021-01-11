@@ -3,9 +3,9 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.Authentication.Clients.Default {
-    using Microsoft.IIoT.Authentication.Models;
-    using Microsoft.IIoT.Http.Clients;
+namespace Microsoft.IIoT.Extensions.Authentication.Clients {
+    using Microsoft.IIoT.Extensions.Authentication.Models;
+    using Microsoft.IIoT.Extensions.Http.Clients;
     using Microsoft.Extensions.Logging;
     using System;
     using System.Collections.Generic;

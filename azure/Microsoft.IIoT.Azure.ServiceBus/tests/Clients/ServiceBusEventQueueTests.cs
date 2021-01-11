@@ -4,8 +4,8 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.IIoT.Azure.ServiceBus.Clients {
-    using Microsoft.IIoT.Messaging;
-    using Microsoft.IIoT.Hosting;
+    using Microsoft.IIoT.Extensions.Messaging;
+    using Microsoft.IIoT.Extensions.Hosting;
     using System;
     using System.Threading.Tasks;
     using System.Collections.Generic;
@@ -15,10 +15,10 @@ namespace Microsoft.IIoT.Azure.ServiceBus.Clients {
     using Xunit.Categories;
 
     [SystemTest]
-    public class ServiceBusEventQueueTests : IClassFixture<ServiceBusEventQueueFixture> {
-        private readonly ServiceBusEventQueueFixture _fixture;
+    public class ServiceBusEventQueueTests : IClassFixture<ServiceBusEventFixture> {
+        private readonly ServiceBusEventFixture _fixture;
 
-        public ServiceBusEventQueueTests(ServiceBusEventQueueFixture fixture) {
+        public ServiceBusEventQueueTests(ServiceBusEventFixture fixture) {
             _fixture = fixture;
         }
 

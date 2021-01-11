@@ -6,9 +6,9 @@
 namespace Microsoft.IIoT.Azure.IoTHub.Clients {
     using Microsoft.IIoT.Azure.IoTHub.Models;
     using Microsoft.IIoT.Azure.IoTHub;
-    using Microsoft.IIoT.Hosting;
+    using Microsoft.IIoT.Extensions.Hosting;
     using Microsoft.IIoT.Exceptions;
-    using Microsoft.IIoT.Rpc;
+    using Microsoft.IIoT.Extensions.Rpc;
     using Microsoft.Extensions.Logging;
     using System;
     using System.Threading;

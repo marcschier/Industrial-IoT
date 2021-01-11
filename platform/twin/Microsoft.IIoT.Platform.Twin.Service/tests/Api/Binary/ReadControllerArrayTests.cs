@@ -4,14 +4,14 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.IIoT.Platform.Twin.Service.Api.Binary {
-    using Microsoft.IIoT.Http.Clients;
+    using Microsoft.IIoT.Extensions.Http.Clients;
     using Microsoft.IIoT.Platform.Core.Models;
     using Microsoft.IIoT.Platform.Twin.Api.Clients;
     using Microsoft.IIoT.Platform.OpcUa.Testing.Fixtures;
     using Microsoft.IIoT.Platform.OpcUa.Testing.Tests;
     using Microsoft.IIoT.Platform.OpcUa;
-    using Microsoft.IIoT.Serializers;
-    using Microsoft.IIoT.Utils;
+    using Microsoft.IIoT.Extensions.Serializers;
+    using Microsoft.IIoT.Extensions.Utils;
     using Opc.Ua;
     using Microsoft.Extensions.Logging;
     using System.Linq;

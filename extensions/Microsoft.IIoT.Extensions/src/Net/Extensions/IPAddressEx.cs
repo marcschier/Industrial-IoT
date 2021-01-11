@@ -4,7 +4,7 @@
 // ------------------------------------------------------------
 
 namespace System.Net {
-    using Microsoft.IIoT.Net.Models;
+    using Microsoft.IIoT.Extensions.Net.Models;
     using System.Collections.Generic;
     using System.Threading.Tasks;
 

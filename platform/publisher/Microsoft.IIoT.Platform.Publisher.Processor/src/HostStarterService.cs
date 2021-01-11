@@ -5,7 +5,7 @@
 
 namespace Microsoft.IIoT.Platform.Publisher.Processor {
     using Microsoft.IIoT.Platform.Publisher.Processor.Runtime;
-    using Microsoft.IIoT.Hosting;
+    using Microsoft.IIoT.Extensions.Hosting;
     using Microsoft.Extensions.Hosting;
     using System;
     using System.Collections.Generic;

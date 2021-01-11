@@ -4,7 +4,7 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.IIoT.Azure.CosmosDb.Runtime {
-    using Microsoft.IIoT.Configuration;
+    using Microsoft.IIoT.Extensions.Configuration;
     using Microsoft.Extensions.Configuration;
 
     /// <summary>
@@ -19,8 +19,8 @@ namespace Microsoft.IIoT.Azure.CosmosDb.Runtime {
 
         /// <inheritdoc/>
         public override void PostConfigure(string name, CosmosDbOptions options) {
-            if (string.IsNullOrEmpty(options.DbConnectionString)) {
-                options.DbConnectionString =
+            if (string.IsNullOrEmpty(options.ConnectionString)) {
+                options.ConnectionString =
                     GetStringOrDefault(PcsVariable.PCS_COSMOSDB_CONNSTRING,
                     GetStringOrDefault("PCS_STORAGEADAPTER_DOCUMENTDB_CONNSTRING",
                     GetStringOrDefault("PCS_TELEMETRY_DOCUMENTDB_CONNSTRING",

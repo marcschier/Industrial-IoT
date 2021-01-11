@@ -5,7 +5,7 @@
 
 namespace Microsoft.IIoT.Extensions.Orleans.Clients {
     using Microsoft.IIoT.Extensions.Orleans.Services;
-    using Microsoft.IIoT.Utils;
+    using Microsoft.IIoT.Extensions.Utils;
     using System;
     using System.Threading;
     using Autofac;

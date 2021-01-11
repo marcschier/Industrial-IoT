@@ -6,7 +6,7 @@
 namespace Microsoft.IIoT.Platform.Vault.Storage {
     using Microsoft.IIoT.Platform.Vault.Storage.Models;
     using Microsoft.IIoT.Platform.Vault.Models;
-    using Microsoft.IIoT.Storage;
+    using Microsoft.IIoT.Extensions.Storage;
     using System;
     using System.Linq;
     using System.Threading.Tasks;

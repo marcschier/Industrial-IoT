@@ -4,8 +4,8 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.IIoT.Azure.CosmosDb.Clients {
-    using Microsoft.IIoT.Serializers;
-    using Microsoft.IIoT.Storage;
+    using Microsoft.IIoT.Extensions.Serializers;
+    using Microsoft.IIoT.Extensions.Storage;
     using System;
 
     /// <summary>

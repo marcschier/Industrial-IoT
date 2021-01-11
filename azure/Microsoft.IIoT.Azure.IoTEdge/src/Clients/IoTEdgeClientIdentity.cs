@@ -6,7 +6,7 @@
 namespace Microsoft.IIoT.Azure.IoTEdge.Clients {
     using Microsoft.IIoT.Azure.IoTEdge;
     using Microsoft.IIoT.Exceptions;
-    using Microsoft.IIoT.Hosting;
+    using Microsoft.IIoT.Extensions.Hosting;
     using Microsoft.Azure.Devices.Client;
     using Microsoft.Extensions.Logging;
     using Microsoft.Extensions.Options;

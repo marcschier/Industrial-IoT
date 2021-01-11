@@ -3,9 +3,9 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.AspNetCore.Diagnostics.Default {
-    using Microsoft.IIoT.Diagnostics.Services;
-    using Microsoft.IIoT.Diagnostics;
+namespace Microsoft.IIoT.Extensions.AspNetCore.Diagnostics.Default {
+    using Microsoft.IIoT.Extensions.Diagnostics.Services;
+    using Microsoft.IIoT.Extensions.Diagnostics;
     using Microsoft.Extensions.Logging;
     using Microsoft.Extensions.Options;
     using Prometheus;

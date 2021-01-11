@@ -13,9 +13,9 @@ namespace Microsoft.IIoT.Platform.Twin.Services {
     using Microsoft.IIoT.Platform.Core.Models;
     using Microsoft.IIoT.Platform.Twin.Models;
     using Microsoft.IIoT.Platform.Twin;
-    using Microsoft.IIoT.Authentication;
+    using Microsoft.IIoT.Extensions.Authentication;
     using Microsoft.IIoT.Exceptions;
-    using Microsoft.IIoT.Serializers;
+    using Microsoft.IIoT.Extensions.Serializers;
     using Microsoft.Extensions.Logging;
     using Opc.Ua;
     using Opc.Ua.Configuration;

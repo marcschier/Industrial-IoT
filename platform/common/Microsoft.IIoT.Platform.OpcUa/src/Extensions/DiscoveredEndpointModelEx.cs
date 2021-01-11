@@ -7,7 +7,7 @@ namespace Microsoft.IIoT.Platform.OpcUa.Models {
     using Microsoft.IIoT.Platform.Discovery.Models;
     using Microsoft.IIoT.Platform.Core.Models;
     using System.Collections.Generic;
-    using Microsoft.IIoT.Serializers;
+    using Microsoft.IIoT.Extensions.Serializers;
 
     /// <summary>
     /// Discovered Endpoint Model extensions

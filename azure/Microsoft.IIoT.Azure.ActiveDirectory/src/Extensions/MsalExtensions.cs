@@ -4,7 +4,7 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.IIoT.Azure.ActiveDirectory {
-    using Microsoft.IIoT.Authentication.Models;
+    using Microsoft.IIoT.Extensions.Authentication.Models;
     using Microsoft.Identity.Client;
     using System;
     using System.IdentityModel.Tokens.Jwt;

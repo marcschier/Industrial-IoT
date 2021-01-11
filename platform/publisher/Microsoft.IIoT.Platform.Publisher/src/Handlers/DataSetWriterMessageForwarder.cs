@@ -5,8 +5,8 @@
 
 namespace Microsoft.IIoT.Platform.Publisher.Processors {
     using Microsoft.IIoT.Platform.Publisher.Models;
-    using Microsoft.IIoT.Messaging;
-    using Microsoft.IIoT.Serializers;
+    using Microsoft.IIoT.Extensions.Messaging;
+    using Microsoft.IIoT.Extensions.Serializers;
     using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
@@ -35,7 +35,7 @@ namespace Microsoft.IIoT.Platform.Publisher.Processors {
                     MessageSchemaTypes.DataSetWriterMessage
             };
             return _client.PublishAsync(null, _serializer.SerializeToBytes(sample).ToArray(),
-                properties, sample.DataSetWriterId);
+                properties.ToEventProperties(), sample.DataSetWriterId);
         }
 
         private readonly IEventPublisherClient _client;

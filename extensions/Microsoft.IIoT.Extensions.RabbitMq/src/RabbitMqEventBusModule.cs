@@ -6,9 +6,9 @@
 namespace Microsoft.IIoT.Extensions.RabbitMq {
     using Microsoft.IIoT.Extensions.RabbitMq.Clients;
     using Microsoft.IIoT.Extensions.RabbitMq.Runtime;
-    using Microsoft.IIoT.Messaging.Services;
-    using Microsoft.IIoT.Tasks.Services;
-    using Microsoft.IIoT.Tasks;
+    using Microsoft.IIoT.Extensions.Messaging.Services;
+    using Microsoft.IIoT.Extensions.Tasks.Services;
+    using Microsoft.IIoT.Extensions.Tasks;
     using Autofac;
 
     /// <summary>
@@ -33,6 +33,7 @@ namespace Microsoft.IIoT.Extensions.RabbitMq {
                 .AsImplementedInterfaces().SingleInstance()
                 .IfNotRegistered(typeof(ITaskProcessor));
 
+            builder.AddOptions();
             builder.RegisterType<RabbitMqConfig>()
                 .AsImplementedInterfaces();
             base.Load(builder);

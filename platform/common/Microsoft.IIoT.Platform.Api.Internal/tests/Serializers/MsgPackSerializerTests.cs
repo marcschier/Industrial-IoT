@@ -3,8 +3,8 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.IIoT.Api.MsgPack {
-    using Microsoft.IIoT.Serializers;
-    using Microsoft.IIoT.Serializers.MessagePack;
+    using Microsoft.IIoT.Extensions.Serializers;
+    using Microsoft.IIoT.Extensions.Serializers.MessagePack;
     using System;
     using AutoFixture;
     using AutoFixture.Kernel;

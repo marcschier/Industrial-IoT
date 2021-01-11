@@ -3,8 +3,8 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.Messaging.Services {
-    using Microsoft.IIoT.Messaging;
+namespace Microsoft.IIoT.Extensions.Messaging.Services {
+    using Microsoft.IIoT.Extensions.Messaging;
     using Microsoft.IIoT.Exceptions;
     using System.Collections.Generic;
     using System.Threading.Tasks;
@@ -30,7 +30,7 @@ namespace Microsoft.IIoT.Messaging.Services {
 
         /// <inheritdoc/>
         public Task PublishAsync(string target, byte[] payload,
-            IDictionary<string, string> properties, string partitionKey,
+            IEventProperties properties, string partitionKey,
             CancellationToken ct) {
             if (target == null) {
                 throw new ArgumentNullException(nameof(target));
@@ -39,12 +39,12 @@ namespace Microsoft.IIoT.Messaging.Services {
                 throw new ArgumentNullException(nameof(payload));
             }
             var partition = GetOrAddPartition(partitionKey ?? target);
-            properties = properties?.ToDictionary(k => k.Key, v => v.Value) ??
+            var p = properties?.ToDictionary(k => k.Key, v => v.Value) ??
                 new Dictionary<string, string>();
-            properties.AddOrUpdate(EventProperties.Target, target);
+            p.AddOrUpdate(EventProperties.Target, target);
             if (!partition.TryAdd(new Message {
                 Value = payload,
-                Properties = properties
+                Properties = p.ToEventProperties()
             })) {
                 throw new ExternalDependencyException("Failed to queue event");
             }
@@ -53,7 +53,7 @@ namespace Microsoft.IIoT.Messaging.Services {
 
         /// <inheritdoc/>
         public async Task PublishAsync(string target, IEnumerable<byte[]> batch,
-            IDictionary<string, string> properties, string partitionKey,
+            IEventProperties properties, string partitionKey,
             CancellationToken ct) {
             if (target == null) {
                 throw new ArgumentNullException(nameof(target));
@@ -69,7 +69,7 @@ namespace Microsoft.IIoT.Messaging.Services {
 
         /// <inheritdoc/>
         public void Publish<T>(string target, byte[] payload, T token,
-            Action<T, Exception> complete, IDictionary<string, string> properties,
+            Action<T, Exception> complete, IEventProperties properties,
             string partitionKey) {
             if (target == null) {
                 throw new ArgumentNullException(nameof(target));
@@ -137,10 +137,10 @@ namespace Microsoft.IIoT.Messaging.Services {
         }
 
         /// <inheritdoc/>
-        public Task<IEnumerable<(byte[], IDictionary<string, string>)>> ReadAsync(
+        public Task<IEnumerable<(byte[], IEventProperties)>> ReadAsync(
             CancellationToken ct) {
             return Task.Run(() => {
-                var results = new List<(byte[], IDictionary<string, string>)>();
+                var results = new List<(byte[], IEventProperties)>();
                 while (true) {
                     var queues = _targets.Values.ToArray();
                     if (-1 != BlockingCollection<Message>.TryTakeFromAny(queues,
@@ -163,7 +163,7 @@ namespace Microsoft.IIoT.Messaging.Services {
                     }
                     break;
                 }
-                return (IEnumerable<(byte[], IDictionary<string, string>)>)results;
+                return (IEnumerable<(byte[], IEventProperties)>)results;
             }, ct);
         }
 
@@ -195,19 +195,19 @@ namespace Microsoft.IIoT.Messaging.Services {
         /// <param name="eventSchema"></param>
         /// <param name="contentEncoding"></param>
         /// <returns></returns>
-        private static IDictionary<string, string> CreateProperties(
+        private static IEventProperties CreateProperties(
             string contentType, string eventSchema, string contentEncoding) {
-            var header = new Dictionary<string, string>();
+            var properties = new Dictionary<string, string>();
             if (!string.IsNullOrEmpty(contentType)) {
-                header.Add(EventProperties.ContentType, contentType);
+                properties.Add(EventProperties.ContentType, contentType);
             }
             if (!string.IsNullOrEmpty(contentEncoding)) {
-                header.Add(EventProperties.ContentEncoding, contentEncoding);
+                properties.Add(EventProperties.ContentEncoding, contentEncoding);
             }
             if (!string.IsNullOrEmpty(eventSchema)) {
-                header.Add(EventProperties.EventSchema, eventSchema);
+                properties.Add(EventProperties.EventSchema, eventSchema);
             }
-            return header;
+            return properties.ToEventProperties();
         }
 
         /// <summary>
@@ -228,7 +228,7 @@ namespace Microsoft.IIoT.Messaging.Services {
             /// <summary>
             /// Properties
             /// </summary>
-            public IDictionary<string, string> Properties { get; internal set; }
+            public IEventProperties Properties { get; internal set; }
         }
 
         private readonly BlockingCollection<Message> _control;

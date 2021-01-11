@@ -5,4 +5,4 @@
 
 using System.Runtime.CompilerServices;
 
-[assembly: InternalsVisibleTo("Microsoft.IIoT.AspNetCore.Tests")]
+[assembly: InternalsVisibleTo("Microsoft.IIoT.Extensions.AspNetCore.Tests")]

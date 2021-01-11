@@ -7,10 +7,10 @@ namespace Microsoft.IIoT.Extensions.Orleans {
     using Microsoft.IIoT.Extensions.Orleans.Clients;
     using Microsoft.IIoT.Extensions.Orleans.Runtime;
     using Microsoft.IIoT.Extensions.Orleans.Services;
-    using Microsoft.IIoT.Messaging.Services;
-    using Microsoft.IIoT.Messaging;
-    using Microsoft.IIoT.Tasks.Services;
-    using Microsoft.IIoT.Tasks;
+    using Microsoft.IIoT.Extensions.Messaging.Services;
+    using Microsoft.IIoT.Extensions.Messaging;
+    using Microsoft.IIoT.Extensions.Tasks.Services;
+    using Microsoft.IIoT.Extensions.Tasks;
     using Autofac;
 
     /// <summary>

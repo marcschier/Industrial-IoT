@@ -6,7 +6,7 @@
 namespace Microsoft.IIoT.Azure.CosmosDb {
     using Microsoft.IIoT.Azure.CosmosDb.Runtime;
     using Microsoft.IIoT.Azure.CosmosDb.Clients;
-    using Microsoft.IIoT.Storage;
+    using Microsoft.IIoT.Extensions.Storage;
     using Autofac;
 
     /// <summary>
@@ -20,9 +20,11 @@ namespace Microsoft.IIoT.Azure.CosmosDb {
         /// <param name="builder"></param>
         protected override void Load(ContainerBuilder builder) {
 
-            builder.RegisterType<CosmosDbConfig>()
-                .AsImplementedInterfaces();
             builder.RegisterType<CosmosDbServiceClient>()
+                .AsImplementedInterfaces();
+
+            builder.AddOptions();
+            builder.RegisterType<CosmosDbConfig>()
                 .AsImplementedInterfaces();
 
             base.Load(builder);

@@ -5,7 +5,7 @@
 
 namespace Microsoft.IIoT.Extensions.Orleans.Services {
     using Microsoft.IIoT.Exceptions;
-    using Microsoft.IIoT.Utils;
+    using Microsoft.IIoT.Extensions.Utils;
     using Microsoft.Extensions.Logging;
     using Microsoft.Extensions.Hosting;
     using System;

@@ -6,8 +6,8 @@
 namespace Microsoft.IIoT.Platform.Discovery.Handlers {
     using Microsoft.IIoT.Platform.Discovery;
     using Microsoft.IIoT.Platform.Discovery.Models;
-    using Microsoft.IIoT.Messaging;
-    using Microsoft.IIoT.Serializers;
+    using Microsoft.IIoT.Extensions.Messaging;
+    using Microsoft.IIoT.Extensions.Serializers;
     using Microsoft.Extensions.Logging;
     using System;
     using System.Collections.Generic;
@@ -39,7 +39,7 @@ namespace Microsoft.IIoT.Platform.Discovery.Handlers {
 
         /// <inheritdoc/>
         public async Task HandleAsync(string source,
-            byte[] payload, IDictionary<string, string> properties, Func<Task> checkpoint) {
+            byte[] payload, IEventProperties properties, Func<Task> checkpoint) {
             DiscoveryResultModel discovery;
             try {
                 discovery = _serializer.Deserialize<DiscoveryResultModel>(payload);

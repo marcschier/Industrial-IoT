@@ -9,7 +9,7 @@ namespace Microsoft.IIoT.Platform.Identity.Users {
     using Microsoft.IIoT.Platform.Identity.Users.Auth;
     using Microsoft.IIoT.Platform.Identity.Api.Models;
     using Microsoft.IIoT.Platform.Identity.Models;
-    using Microsoft.IIoT.AspNetCore.Authentication;
+    using Microsoft.IIoT.Extensions.AspNetCore.Authentication;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc;

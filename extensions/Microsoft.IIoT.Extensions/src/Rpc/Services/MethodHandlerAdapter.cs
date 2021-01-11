@@ -3,8 +3,8 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.Rpc.Services {
-    using Microsoft.IIoT.Hosting;
+namespace Microsoft.IIoT.Extensions.Rpc.Services {
+    using Microsoft.IIoT.Extensions.Hosting;
     using System;
     using System.Linq;
     using System.Threading.Tasks;

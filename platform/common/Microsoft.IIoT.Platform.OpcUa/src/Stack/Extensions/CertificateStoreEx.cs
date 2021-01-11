@@ -7,7 +7,7 @@ namespace Opc.Ua {
     using System;
     using System.Collections.Generic;
     using System.Security.Cryptography.X509Certificates;
-    using Microsoft.IIoT.Utils;
+    using Microsoft.IIoT.Extensions.Utils;
 
     /// <summary>
     /// Certificate store extensions

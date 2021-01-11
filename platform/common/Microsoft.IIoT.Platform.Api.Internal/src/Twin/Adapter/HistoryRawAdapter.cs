@@ -7,7 +7,7 @@ namespace Microsoft.IIoT.Platform.Twin.Api {
     using Microsoft.IIoT.Platform.Twin.Api.Models;
     using Microsoft.IIoT.Platform.Twin.Models;
     using Microsoft.IIoT.Platform.Twin;
-    using Microsoft.IIoT.Serializers;
+    using Microsoft.IIoT.Extensions.Serializers;
     using System;
     using System.Threading.Tasks;
     using System.Threading;

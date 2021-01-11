@@ -3,7 +3,7 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.Http {
+namespace Microsoft.IIoT.Extensions.Http {
     using System;
     using System.IO;
     using System.Net.Http;
@@ -56,7 +56,7 @@ namespace Microsoft.IIoT.Http {
             }
 
             if (!request.Headers.TryAddWithoutValidation(name, value)) {
-                if (!name.Equals("content-type", StringComparison.InvariantCultureIgnoreCase)) {
+                if (!name.Equals("Content-Type", StringComparison.InvariantCultureIgnoreCase)) {
                     throw new ArgumentOutOfRangeException(name, "Invalid header name");
                 }
             }

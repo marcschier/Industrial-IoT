@@ -4,7 +4,7 @@
 // ------------------------------------------------------------
 
 namespace Autofac {
-    using Microsoft.IIoT.Diagnostics;
+    using Microsoft.IIoT.Extensions.Diagnostics;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Logging;
     using Autofac.Extensions.DependencyInjection;

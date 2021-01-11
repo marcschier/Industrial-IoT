@@ -4,7 +4,7 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.IIoT.Azure.ActiveDirectory.Clients {
-    using Microsoft.IIoT.Authentication;
+    using Microsoft.IIoT.Extensions.Authentication;
     using Microsoft.Azure.Services.AppAuthentication;
     using Microsoft.Extensions.Logging;
     using System.Collections.Generic;
@@ -41,7 +41,7 @@ namespace Microsoft.IIoT.Azure.ActiveDirectory.Clients {
                 cs += $";TenantId={config.TenantId}";
             }
             cs += $";AppKey={config.ClientSecret}";
-            return KeyValuePair.Create(config.Resource ?? Http.Resource.Platform,
+            return KeyValuePair.Create(config.Resource ?? Extensions.Http.Resource.Platform,
                 (config, new AzureServiceTokenProvider(cs, config.GetAuthority(true))));
         }
 

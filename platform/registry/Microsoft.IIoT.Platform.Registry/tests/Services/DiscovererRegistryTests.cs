@@ -6,12 +6,12 @@
 namespace Microsoft.IIoT.Platform.Registry.Services {
     using Microsoft.IIoT.Platform.Registry.Models;
     using Microsoft.IIoT.Exceptions;
-    using Microsoft.IIoT.Hosting;
+    using Microsoft.IIoT.Extensions.Hosting;
     using Microsoft.IIoT.Azure.IoTHub;
     using Microsoft.IIoT.Azure.IoTHub.Models;
     using Microsoft.IIoT.Azure.IoTHub.Testing;
-    using Microsoft.IIoT.Serializers.NewtonSoft;
-    using Microsoft.IIoT.Serializers;
+    using Microsoft.IIoT.Extensions.Serializers.NewtonSoft;
+    using Microsoft.IIoT.Extensions.Serializers;
     using Autofac.Extras.Moq;
     using AutoFixture;
     using AutoFixture.Kernel;

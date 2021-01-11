@@ -23,6 +23,7 @@ namespace Microsoft.IIoT.Azure.SignalR {
             builder.RegisterGeneric(typeof(SignalRServiceHost<>))
                 .AsImplementedInterfaces();
 
+            builder.AddOptions();
             builder.RegisterType<SignalRServiceConfig>()
                 .AsImplementedInterfaces();
             base.Load(builder);

@@ -3,8 +3,8 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.Crypto.BouncyCastle {
-    using Microsoft.IIoT.Crypto.Models;
+namespace Microsoft.IIoT.Extensions.Crypto.BouncyCastle {
+    using Microsoft.IIoT.Extensions.Crypto.Models;
     using Org.BouncyCastle.Asn1.X9;
     using Org.BouncyCastle.Crypto.Parameters;
     using System;

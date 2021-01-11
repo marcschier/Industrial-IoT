@@ -3,8 +3,8 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.Authentication.Server.Default {
-    using Microsoft.IIoT.Authentication.Models;
+namespace Microsoft.IIoT.Extensions.Authentication.Server {
+    using Microsoft.IIoT.Extensions.Authentication.Models;
     using Microsoft.IdentityModel.Protocols;
     using Microsoft.IdentityModel.Protocols.OpenIdConnect;
     using Microsoft.IdentityModel.Tokens;

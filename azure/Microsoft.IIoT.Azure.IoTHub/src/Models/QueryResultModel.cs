@@ -4,11 +4,11 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.IIoT.Azure.IoTHub.Models {
-    using Microsoft.IIoT.Serializers;
+    using Microsoft.IIoT.Extensions.Serializers;
     using System.Collections.Generic;
 
     /// <summary>
-    /// List of device twins with continuation token
+    /// Generic query result with continuation token
     /// </summary>
     public class QueryResultModel {
 

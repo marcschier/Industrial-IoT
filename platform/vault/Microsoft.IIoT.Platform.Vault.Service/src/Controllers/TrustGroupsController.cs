@@ -8,7 +8,7 @@ namespace Microsoft.IIoT.Platform.Vault.Service.Controllers {
     using Microsoft.IIoT.Platform.Vault.Service.Models;
     using Microsoft.IIoT.Platform.Vault.Api.Models;
     using Microsoft.IIoT.Platform.Vault;
-    using Microsoft.IIoT.AspNetCore.OpenApi;
+    using Microsoft.IIoT.Extensions.AspNetCore.OpenApi;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;

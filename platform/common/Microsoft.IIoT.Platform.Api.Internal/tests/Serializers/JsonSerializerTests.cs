@@ -3,8 +3,8 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.IIoT.Api.Json {
-    using Microsoft.IIoT.Serializers;
-    using Microsoft.IIoT.Serializers.NewtonSoft;
+    using Microsoft.IIoT.Extensions.Serializers;
+    using Microsoft.IIoT.Extensions.Serializers.NewtonSoft;
     using AutoFixture;
     using AutoFixture.Kernel;
     using FluentAssertions;

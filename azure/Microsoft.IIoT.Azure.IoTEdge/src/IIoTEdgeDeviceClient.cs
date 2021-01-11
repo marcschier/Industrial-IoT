@@ -13,7 +13,7 @@ namespace Microsoft.IIoT.Azure.IoTEdge {
     /// <summary>
     /// IoT Hub device client abstraction
     /// </summary>
-    public interface IIoTEdgeClient {
+    public interface IIoTEdgeDeviceClient {
 
         /// <summary>
         /// Sends an event to device hub

@@ -3,8 +3,8 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.Serializers.NewtonSoft {
-    using Microsoft.IIoT.Serializers;
+namespace Microsoft.IIoT.Extensions.Serializers.NewtonSoft {
+    using Microsoft.IIoT.Extensions.Serializers;
     using System;
     using System.Collections.Generic;
     using System.Text;

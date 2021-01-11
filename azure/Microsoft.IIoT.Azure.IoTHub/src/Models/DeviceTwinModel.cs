@@ -4,7 +4,7 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.IIoT.Azure.IoTHub.Models {
-    using Microsoft.IIoT.Serializers;
+    using Microsoft.IIoT.Extensions.Serializers;
     using System;
     using System.Collections.Generic;
 
@@ -46,7 +46,7 @@ namespace Microsoft.IIoT.Azure.IoTHub.Models {
         /// <summary>
         /// Capabilities
         /// </summary>
-        public DeviceCapabilitiesModel Capabilities { get; set; }
+        public CapabilitiesModel Capabilities { get; set; }
 
         /// <summary>
         /// Twin's Version

@@ -6,7 +6,7 @@
 namespace Microsoft.IIoT.Platform.Twin {
     using Microsoft.IIoT.Platform.Twin.Models;
     using Microsoft.IIoT.Platform.Core.Models;
-    using Microsoft.IIoT.Serializers;
+    using Microsoft.IIoT.Extensions.Serializers;
     using Orleans;
     using System.Threading;
     using System.Threading.Tasks;

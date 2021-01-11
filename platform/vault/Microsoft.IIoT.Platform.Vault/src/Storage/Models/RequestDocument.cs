@@ -6,7 +6,7 @@
 namespace Microsoft.IIoT.Platform.Vault.Storage.Models {
     using Microsoft.IIoT.Platform.Core.Models;
     using Microsoft.IIoT.Platform.Vault.Models;
-    using Microsoft.IIoT.Serializers;
+    using Microsoft.IIoT.Extensions.Serializers;
     using System.Runtime.Serialization;
     using System.Collections.Generic;
 

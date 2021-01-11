@@ -5,7 +5,7 @@
 
 namespace Microsoft.IIoT.Platform.OpcUa.Transport.Probe {
     using Microsoft.Extensions.Logging;
-    using Microsoft.IIoT.Net;
+    using Microsoft.IIoT.Extensions.Net;
     using Opc.Ua;
     using Opc.Ua.Bindings;
     using System;

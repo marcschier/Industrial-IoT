@@ -4,7 +4,7 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.IIoT.Azure.EventHub.Processor.Runtime {
-    using Microsoft.IIoT.Configuration;
+    using Microsoft.IIoT.Extensions.Configuration;
     using Microsoft.Extensions.Configuration;
 
     /// <summary>
@@ -19,12 +19,12 @@ namespace Microsoft.IIoT.Azure.EventHub.Processor.Runtime {
 
         /// <inheritdoc/>
         public override void PostConfigure(string name, EventHubConsumerOptions options) {
-            if (string.IsNullOrEmpty(options.EventHubConnString)) {
-                options.EventHubConnString =
+            if (string.IsNullOrEmpty(options.ConnectionString)) {
+                options.ConnectionString =
                     GetStringOrDefault(PcsVariable.PCS_EVENTHUB_CONNSTRING);
             }
-            if (string.IsNullOrEmpty(options.EventHubPath)) {
-                options.EventHubPath =
+            if (string.IsNullOrEmpty(options.Path)) {
+                options.Path =
                     GetStringOrDefault(PcsVariable.PCS_EVENTHUB_NAME);
             }
             var useWebSockets = GetBoolOrDefault("PCS_EVENTHUB_USE_WEBSOCKET",

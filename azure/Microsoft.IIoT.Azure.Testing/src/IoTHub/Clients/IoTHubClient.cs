@@ -6,7 +6,7 @@
 namespace Microsoft.IIoT.Azure.IoTHub.Testing {
     using Microsoft.IIoT.Azure.IoTEdge;
     using Microsoft.IIoT.Exceptions;
-    using Microsoft.IIoT.Hosting;
+    using Microsoft.IIoT.Extensions.Hosting;
     using Microsoft.Azure.Devices.Client;
     using Microsoft.Azure.Devices.Shared;
     using Microsoft.Extensions.Options;
@@ -18,7 +18,7 @@ namespace Microsoft.IIoT.Azure.IoTHub.Testing {
     /// <summary>
     /// A mocked iot sdk client
     /// </summary>
-    public sealed class IoTHubClient : IIoTEdgeClient, IIdentity, IDisposable,
+    public sealed class IoTHubClient : IIoTEdgeDeviceClient, IIdentity, IDisposable,
         IIoTClientCallback {
 
         /// <inheritdoc />

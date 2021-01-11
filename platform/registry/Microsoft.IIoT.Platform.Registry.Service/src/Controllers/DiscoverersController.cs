@@ -9,7 +9,7 @@ namespace Microsoft.IIoT.Platform.Registry.Service.Controllers {
     using Microsoft.IIoT.Platform.Registry;
     using Microsoft.IIoT.Platform.Registry.Api.Models;
     using Microsoft.IIoT.Platform.Registry.Models;
-    using Microsoft.IIoT.AspNetCore.OpenApi;
+    using Microsoft.IIoT.Extensions.AspNetCore.OpenApi;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;

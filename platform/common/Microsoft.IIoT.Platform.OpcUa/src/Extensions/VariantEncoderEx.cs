@@ -6,7 +6,7 @@
 namespace Microsoft.IIoT.Platform.OpcUa {
     using Microsoft.IIoT.Platform.Core.Models;
     using Microsoft.IIoT.Platform.OpcUa.Models;
-    using Microsoft.IIoT.Serializers;
+    using Microsoft.IIoT.Extensions.Serializers;
     using Opc.Ua;
     using Opc.Ua.Encoders;
     using Opc.Ua.Extensions;

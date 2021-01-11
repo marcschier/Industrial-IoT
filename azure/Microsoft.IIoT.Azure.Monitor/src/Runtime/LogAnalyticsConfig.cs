@@ -5,7 +5,7 @@
 
 namespace Microsoft.IIoT.Azure.LogAnalytics.Runtime {
     using Microsoft.IIoT.Azure.LogAnalytics;
-    using Microsoft.IIoT.Configuration;
+    using Microsoft.IIoT.Extensions.Configuration;
     using Microsoft.Extensions.Configuration;
 
     /// <summary>

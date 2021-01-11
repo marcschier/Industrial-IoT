@@ -22,6 +22,8 @@ namespace Microsoft.IIoT.Extensions.Kafka {
                 .AsImplementedInterfaces().InstancePerLifetimeScope();
             builder.RegisterType<KafkaProducerClient>()
                 .AsImplementedInterfaces().InstancePerLifetimeScope();
+
+            builder.AddOptions();
             builder.RegisterType<KafkaServerConfig>()
                 .AsImplementedInterfaces();
             base.Load(builder);

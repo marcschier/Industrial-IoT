@@ -5,8 +5,8 @@
 
 namespace Microsoft.IIoT.Platform.Api.Events.Service.Runtime {
     using Microsoft.IIoT.Azure.EventHub.Processor;
-    using Microsoft.IIoT.Configuration;
-    using Microsoft.IIoT.Hosting;
+    using Microsoft.IIoT.Extensions.Configuration;
+    using Microsoft.IIoT.Extensions.Hosting;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Options;
     using System;

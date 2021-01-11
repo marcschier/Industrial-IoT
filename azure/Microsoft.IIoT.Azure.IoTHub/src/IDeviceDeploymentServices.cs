@@ -10,7 +10,7 @@ namespace Microsoft.IIoT.Azure.IoTHub {
     using System.Threading.Tasks;
 
     /// <summary>
-    /// Configuration Management services
+    /// Deployment services
     /// </summary>
     public interface IDeviceDeploymentServices {
 

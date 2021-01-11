@@ -26,23 +26,22 @@ namespace Microsoft.IIoT.Azure.IoTHub.Clients {
         /// </summary>
         /// <param name="options"></param>
         /// <param name="logger"></param>
-        public IoTHubConfigurationClient(IOptions<IoTHubOptions> options, ILogger logger) {
-            if (string.IsNullOrEmpty(options.Value.IoTHubConnString)) {
+        public IoTHubConfigurationClient(IOptions<IoTHubServiceOptions> options, ILogger logger) {
+            if (string.IsNullOrEmpty(options.Value.ConnectionString)) {
                 throw new ArgumentException("Missing connection string", nameof(options));
             }
 
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            _registry = RegistryManager.CreateFromConnectionString(options.Value.IoTHubConnString);
+            _registry = RegistryManager.CreateFromConnectionString(options.Value.ConnectionString);
             _registry.OpenAsync().Wait();
         }
-
 
         /// <inheritdoc/>
         public async Task ApplyConfigurationAsync(string deviceId,
             ConfigurationContentModel configuration, CancellationToken ct) {
             try {
                 await _registry.ApplyConfigurationContentOnDeviceAsync(deviceId,
-                    configuration.ToContent(), ct).ConfigureAwait(false);
+                    configuration.ToConfigurationContent(), ct).ConfigureAwait(false);
             }
             catch (Exception e) {
                 _logger.LogTrace(e, "Apply configuration failed ");
@@ -60,7 +59,7 @@ namespace Microsoft.IIoT.Azure.IoTHub.Clients {
                     try {
                         var added = await _registry.AddConfigurationAsync(
                             configuration.ToConfiguration(), ct).ConfigureAwait(false);
-                        return added.ToModel();
+                        return added.ToConfigurationModel();
                     }
                     catch (DeviceAlreadyExistsException) when (forceUpdate) {
                         //
@@ -71,14 +70,14 @@ namespace Microsoft.IIoT.Azure.IoTHub.Clients {
                         await _registry.RemoveConfigurationAsync(configuration.Id, ct).ConfigureAwait(false);
                         var added = await _registry.AddConfigurationAsync(
                             configuration.ToConfiguration(), ct).ConfigureAwait(false);
-                        return added.ToModel();
+                        return added.ToConfigurationModel();
                     }
                 }
 
                 // Try update existing configuration
                 var result = await _registry.UpdateConfigurationAsync(
                     configuration.ToConfiguration(), forceUpdate, ct).ConfigureAwait(false);
-                return result.ToModel();
+                return result.ToConfigurationModel();
             }
             catch (Exception e) {
                 _logger.LogTrace(e,
@@ -93,7 +92,7 @@ namespace Microsoft.IIoT.Azure.IoTHub.Clients {
             try {
                 var configuration = await _registry.GetConfigurationAsync(
                     configurationId, ct).ConfigureAwait(false);
-                return configuration.ToModel();
+                return configuration.ToConfigurationModel();
             }
             catch (Exception e) {
                 _logger.LogTrace(e, "Get configuration failed");
@@ -107,7 +106,7 @@ namespace Microsoft.IIoT.Azure.IoTHub.Clients {
             try {
                 var configurations = await _registry.GetConfigurationsAsync(
                     maxCount ?? int.MaxValue, ct).ConfigureAwait(false);
-                return configurations.Select(c => c.ToModel());
+                return configurations.Select(c => c.ToConfigurationModel());
             }
             catch (Exception e) {
                 _logger.LogTrace(e, "List configurations failed");

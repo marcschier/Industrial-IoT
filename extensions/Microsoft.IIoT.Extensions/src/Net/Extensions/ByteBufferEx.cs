@@ -3,7 +3,7 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.Net {
+namespace Microsoft.IIoT.Extensions.Net {
     using System;
     using System.IO;
     using System.Net;

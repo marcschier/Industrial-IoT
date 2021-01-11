@@ -1,17 +1,18 @@
-// ------------------------------------------------------------
+﻿// ------------------------------------------------------------
 //  Copyright (c) Microsoft Corporation.  All rights reserved.
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.Azure.IoTHub.Models {
+namespace Microsoft.IIoT.Azure.IoTHub {
+
     /// <summary>
-    /// Capabilities
+    /// Configuration for device provisioning service (DPS)
     /// </summary>
-    public class DeviceCapabilitiesModel {
+    public class ProvisioningServiceOptions {
 
         /// <summary>
-        /// iotedge device
+        /// Connection string
         /// </summary>
-        public bool? IotEdge { get; set; }
+        public string ConnectionString { get; set; }
     }
 }

@@ -4,13 +4,12 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.IIoT.Azure.ActiveDirectory.Clients {
-    using Microsoft.IIoT.Authentication;
-    using Microsoft.IIoT.Authentication.Runtime;
-    using Microsoft.IIoT.Authentication.Clients;
-    using Microsoft.IIoT.Authentication.Clients.Default;
-    using Microsoft.IIoT.Http.Clients;
-    using Microsoft.IIoT.Http.Auth;
-    using Microsoft.IIoT.Storage.Services;
+    using Microsoft.IIoT.Extensions.Authentication;
+    using Microsoft.IIoT.Extensions.Authentication.Runtime;
+    using Microsoft.IIoT.Extensions.Authentication.Clients;
+    using Microsoft.IIoT.Extensions.Http.Clients;
+    using Microsoft.IIoT.Extensions.Http.Auth;
+    using Microsoft.IIoT.Extensions.Storage.Services;
     using Autofac;
     using Microsoft.Extensions.Logging;
     using System.Collections.Generic;
@@ -56,7 +55,7 @@ namespace Microsoft.IIoT.Azure.ActiveDirectory.Clients {
             /// <inheritdoc/>
             public ServiceTokenSource(ClientCredentialClient cc, AppAuthenticationClient aa,
                 IEnumerable<ITokenClient> providers, ILogger logger)
-                    : base(providers, Http.Resource.Platform, logger, cc, aa) {
+                    : base(providers, Extensions.Http.Resource.Platform, logger, cc, aa) {
             }
         }
     }

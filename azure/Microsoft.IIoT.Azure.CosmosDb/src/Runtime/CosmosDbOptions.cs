@@ -13,7 +13,7 @@ namespace Microsoft.IIoT.Azure.CosmosDb {
         /// <summary>
         /// Connection string to use (mandatory)
         /// </summary>
-        public string DbConnectionString { get; set; }
+        public string ConnectionString { get; set; }
 
         /// <summary>
         /// Throughput units (optional)

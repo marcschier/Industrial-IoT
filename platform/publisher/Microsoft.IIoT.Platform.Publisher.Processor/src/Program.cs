@@ -13,9 +13,9 @@ namespace Microsoft.IIoT.Platform.Publisher.Processor {
     using Microsoft.IIoT.Azure.EventHub.Processor;
     using Microsoft.IIoT.Azure.IoTHub.Handlers;
     using Microsoft.IIoT.Azure.IoTHub;
-    using Microsoft.IIoT.Messaging;
-    using Microsoft.IIoT.Serializers;
-    using Microsoft.IIoT.AspNetCore.Diagnostics.Default;
+    using Microsoft.IIoT.Extensions.Messaging;
+    using Microsoft.IIoT.Extensions.Serializers;
+    using Microsoft.IIoT.Extensions.AspNetCore.Diagnostics.Default;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
@@ -128,8 +128,7 @@ namespace Microsoft.IIoT.Platform.Publisher.Processor {
             }
 
             /// <inheritdoc/>
-            public async Task HandleAsync(byte[] eventData,
-                IDictionary<string, string> properties) {
+            public async Task HandleAsync(byte[] eventData, IEventProperties properties) {
                 if (!properties.TryGetValue(SystemProperties.To, out var route)) {
                     properties.TryGetValue(EventProperties.Target, out route);
                 }

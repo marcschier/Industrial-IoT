@@ -5,8 +5,8 @@
 
 namespace Microsoft.IIoT.Azure.ActiveDirectory.Utils {
     using Microsoft.IIoT.Azure.ActiveDirectory.Clients;
-    using Microsoft.IIoT.Authentication;
-    using Microsoft.IIoT.Diagnostics;
+    using Microsoft.IIoT.Extensions.Authentication;
+    using Microsoft.IIoT.Extensions.Diagnostics;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Azure.KeyVault;
     using Autofac;
@@ -60,7 +60,7 @@ namespace Microsoft.IIoT.Azure.ActiveDirectory.Utils {
                         scope = resource + "/" + scope;
                     }
                     var token = await provider.GetTokenForAsync(
-                        Http.Resource.KeyVault, scope.YieldReturn()).ConfigureAwait(false);
+                        Extensions.Http.Resource.KeyVault, scope.YieldReturn()).ConfigureAwait(false);
                     return token?.RawToken;
                 });
             }).AsSelf().AsImplementedInterfaces();

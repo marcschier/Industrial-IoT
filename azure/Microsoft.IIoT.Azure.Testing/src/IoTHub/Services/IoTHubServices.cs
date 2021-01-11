@@ -9,9 +9,9 @@ namespace Microsoft.IIoT.Azure.IoTHub.Testing {
     using Microsoft.Azure.Devices.Client;
     using Microsoft.Azure.Devices.Shared;
     using Microsoft.IIoT.Exceptions;
-    using Microsoft.IIoT.Messaging;
-    using Microsoft.IIoT.Serializers;
-    using Microsoft.IIoT.Serializers.NewtonSoft;
+    using Microsoft.IIoT.Extensions.Messaging;
+    using Microsoft.IIoT.Extensions.Serializers;
+    using Microsoft.IIoT.Extensions.Serializers.NewtonSoft;
     using System;
     using System.Collections.Concurrent;
     using System.Collections.Generic;
@@ -111,28 +111,31 @@ namespace Microsoft.IIoT.Azure.IoTHub.Testing {
         }
 
         /// <inheritdoc/>
-        public Task<DeviceTwinModel> RegisterAsync(DeviceRegistrationModel registration,
-            bool force, CancellationToken ct) {
+        public Task<DeviceTwinModel> RegisterAsync(string deviceId, string moduleId,
+            DeviceRegistrationModel registration, bool force, CancellationToken ct) {
             if (registration is null) {
                 throw new ArgumentNullException(nameof(registration));
             }
             lock (_lock) {
-                var model = GetModel(registration.Id, registration.ModuleId);
+                var model = GetModel(deviceId, moduleId);
 
                 var twin = new DeviceTwinModel {
                     Capabilities = registration.Capabilities,
-                    ModuleId = registration.ModuleId,
+                    Id = deviceId,
+                    ModuleId = moduleId,
                     Hub = registration.Hub,
                     Tags = registration.Tags,
-                    Properties = registration.Properties,
+                    Properties = new TwinPropertiesModel {
+                        Desired = registration.Properties
+                    }
                 };
                 if (model == null) {
                     // Create
                     model = new IoTHubDeviceModel(this,
                         new DeviceModel {
-                            Id = registration.Id,
-                            ModuleId = registration.ModuleId,
-                            DeviceScope = registration.DeviceScope
+                            Id = deviceId,
+                            ModuleId = moduleId,
+                            Scope = registration.DeviceScope
                         }, twin);
                     _devices.Add(model);
                 }
@@ -309,7 +312,7 @@ namespace Microsoft.IIoT.Azure.IoTHub.Testing {
 
                 // Simulate authentication
                 if (Device.Authentication == null) {
-                    Device.Authentication = new DeviceAuthenticationModel {
+                    Device.Authentication = new AuthenticationModel {
                         PrimaryKey = Convert.ToBase64String(
                             Encoding.UTF8.GetBytes(Guid.NewGuid().ToString())),
                         SecondaryKey = Convert.ToBase64String(
@@ -416,7 +419,7 @@ namespace Microsoft.IIoT.Azure.IoTHub.Testing {
                         Twin.Properties = new TwinPropertiesModel();
                     }
                     Twin.Properties.Reported = Merge(Twin.Properties.Reported,
-                        _outer._serializer.DeserializeTwinProperties(reportedProperties));
+                        reportedProperties.ToTwinProperties(_outer._serializer));
                     Twin.LastActivityTime = DateTime.UtcNow;
                     Twin.Etag = Device.Etag = Guid.NewGuid().ToString();
                 }

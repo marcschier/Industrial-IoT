@@ -6,7 +6,7 @@
 namespace Microsoft.IIoT.Platform.Twin {
     using Microsoft.IIoT.Platform.Core.Models;
     using Microsoft.IIoT.Platform.Twin.Models;
-    using Microsoft.IIoT.Utils;
+    using Microsoft.IIoT.Extensions.Utils;
     using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;

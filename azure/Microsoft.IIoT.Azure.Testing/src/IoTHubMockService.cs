@@ -6,8 +6,8 @@
 namespace Microsoft.IIoT.Azure.IoTHub.Testing {
     using Microsoft.IIoT.Azure.IoTHub.Clients;
     using Microsoft.IIoT.Azure.IoTHub.Handlers;
-    using Microsoft.IIoT.Serializers;
-    using Microsoft.IIoT.Rpc.Services;
+    using Microsoft.IIoT.Extensions.Serializers;
+    using Microsoft.IIoT.Extensions.Rpc.Services;
     using Autofac;
 
     /// <summary>

@@ -4,10 +4,10 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.IIoT.Azure.ServiceBus.Services {
-    using Microsoft.IIoT.Messaging;
-    using Microsoft.IIoT.Hosting;
-    using Microsoft.IIoT.Serializers;
-    using Microsoft.IIoT.Utils;
+    using Microsoft.IIoT.Extensions.Messaging;
+    using Microsoft.IIoT.Extensions.Hosting;
+    using Microsoft.IIoT.Extensions.Serializers;
+    using Microsoft.IIoT.Extensions.Utils;
     using Microsoft.IIoT.Exceptions;
     using Microsoft.Azure.ServiceBus;
     using Microsoft.Extensions.Logging;

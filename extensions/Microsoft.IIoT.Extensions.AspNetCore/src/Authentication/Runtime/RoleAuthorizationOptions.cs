@@ -4,7 +4,7 @@
 // ------------------------------------------------------------
 
 
-namespace Microsoft.IIoT.AspNetCore.Authentication {
+namespace Microsoft.IIoT.Extensions.AspNetCore.Authentication {
 
     /// <summary>
     /// Role configuration

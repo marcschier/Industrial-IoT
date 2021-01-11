@@ -3,9 +3,8 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.Messaging {
+namespace Microsoft.IIoT.Extensions.Messaging {
     using System;
-    using System.Collections.Generic;
     using System.Threading.Tasks;
 
     /// <summary>
@@ -21,7 +20,7 @@ namespace Microsoft.IIoT.Messaging {
         /// <param name="handler"></param>
         /// <returns></returns>
         public static Task<IAsyncDisposable> SubscribeAsync(this IEventSubscriberClient client,
-            string target, Func<byte[], IDictionary<string, string>, Task> handler) {
+            string target, Func<byte[], IEventProperties, Task> handler) {
             if (client is null) {
                 throw new ArgumentNullException(nameof(client));
             }
@@ -36,13 +35,13 @@ namespace Microsoft.IIoT.Messaging {
         /// </summary>
         private class DelegateHandler : IEventConsumer {
 
-            internal DelegateHandler(Func<byte[], IDictionary<string, string>, Task> handler) {
+            internal DelegateHandler(Func<byte[], IEventProperties, Task> handler) {
                 _handler = handler;
             }
 
             /// <inheritdoc/>
             public Task HandleAsync(byte[] eventData,
-                IDictionary<string, string> properties, Func<Task> checkpoint) {
+                IEventProperties properties, Func<Task> checkpoint) {
                 return _handler(eventData, properties);
             }
 
@@ -50,7 +49,7 @@ namespace Microsoft.IIoT.Messaging {
                 return Task.CompletedTask;
             }
 
-            private readonly Func<byte[], IDictionary<string, string>, Task> _handler;
+            private readonly Func<byte[], IEventProperties, Task> _handler;
         }
     }
 }

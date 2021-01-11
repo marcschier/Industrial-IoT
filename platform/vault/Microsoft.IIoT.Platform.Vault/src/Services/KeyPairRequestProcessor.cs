@@ -4,10 +4,10 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.IIoT.Platform.Vault.Services {
-    using Microsoft.IIoT.Crypto;
+    using Microsoft.IIoT.Extensions.Crypto;
     using Microsoft.IIoT.Exceptions;
     using Microsoft.IIoT.Platform.Vault.Models;
-    using Microsoft.IIoT.Utils;
+    using Microsoft.IIoT.Extensions.Utils;
     using Microsoft.Extensions.Logging;
     using System;
     using System.Collections.Generic;

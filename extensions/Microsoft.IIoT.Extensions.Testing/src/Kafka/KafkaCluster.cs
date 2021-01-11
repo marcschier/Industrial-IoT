@@ -6,7 +6,7 @@
 namespace Microsoft.IIoT.Extensions.Kafka.Server {
     using Microsoft.IIoT.Extensions.Zookeeper.Server;
     using Microsoft.IIoT.Exceptions;
-    using Microsoft.IIoT.Utils;
+    using Microsoft.IIoT.Extensions.Utils;
     using Microsoft.Extensions.Diagnostics.HealthChecks;
     using Microsoft.Extensions.Logging;
     using System;

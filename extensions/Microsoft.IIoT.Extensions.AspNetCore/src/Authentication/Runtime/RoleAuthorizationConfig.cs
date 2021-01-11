@@ -4,8 +4,8 @@
 // ------------------------------------------------------------
 
 
-namespace Microsoft.IIoT.AspNetCore.Authentication {
-    using Microsoft.IIoT.Configuration;
+namespace Microsoft.IIoT.Extensions.AspNetCore.Authentication {
+    using Microsoft.IIoT.Extensions.Configuration;
     using Microsoft.Extensions.Configuration;
 
     /// <summary>

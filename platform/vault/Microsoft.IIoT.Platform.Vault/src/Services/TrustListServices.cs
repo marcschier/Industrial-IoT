@@ -10,7 +10,7 @@ namespace Microsoft.IIoT.Platform.Vault.Services {
     using System;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.IIoT.Crypto;
+    using Microsoft.IIoT.Extensions.Crypto;
     using System.Collections.Generic;
     using Microsoft.IIoT.Platform.Core.Models;
 

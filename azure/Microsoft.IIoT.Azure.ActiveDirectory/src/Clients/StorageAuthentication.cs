@@ -5,10 +5,10 @@
 
 namespace Microsoft.IIoT.Azure.ActiveDirectory.Clients {
     using Microsoft.IIoT.Azure.ActiveDirectory.Runtime;
-    using Microsoft.IIoT.Authentication;
-    using Microsoft.IIoT.Authentication.Clients;
-    using Microsoft.IIoT.Authentication.Runtime;
-    using Microsoft.IIoT.Storage.Services;
+    using Microsoft.IIoT.Extensions.Authentication;
+    using Microsoft.IIoT.Extensions.Authentication.Clients;
+    using Microsoft.IIoT.Extensions.Authentication.Runtime;
+    using Microsoft.IIoT.Extensions.Storage.Services;
     using System.Collections.Generic;
     using Autofac;
     using Microsoft.Extensions.Logging;
@@ -53,7 +53,7 @@ namespace Microsoft.IIoT.Azure.ActiveDirectory.Clients {
             /// <inheritdoc/>
             public StorageTokenSource(MsiAuthenticationClient ma, AppAuthenticationClient aa,
                 DevAuthenticationClient ld, IEnumerable<ITokenClient> providers, ILogger logger)
-                    : base(providers, Http.Resource.Storage, logger, ma, aa, ld) {
+                    : base(providers, Extensions.Http.Resource.Storage, logger, ma, aa, ld) {
             }
         }
     }

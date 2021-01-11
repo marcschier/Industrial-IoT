@@ -4,8 +4,10 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.Azure.Devices.Common.Exceptions {
+    using Microsoft.Azure.Devices.Provisioning.Service;
     using Microsoft.IIoT.Exceptions;
-    using Microsoft.IIoT.Http.Exceptions;
+    using Microsoft.IIoT.Extensions.Http;
+    using Microsoft.IIoT.Extensions.Http.Exceptions;
     using System;
     using System.Net;
 
@@ -51,6 +53,16 @@ namespace Microsoft.Azure.Devices.Common.Exceptions {
                     return new HttpTransientException(HttpStatusCode.ServiceUnavailable, sb.Message);
                 case IotHubThrottledException te:
                     return new HttpTransientException((HttpStatusCode)429, te.Message);
+                case ProvisioningServiceClientHttpException pex:
+                    try {
+                        pex.StatusCode.Validate("Provisioning service error", pex);
+                    }
+                    catch (Exception rex) {
+                        return rex;
+                    }
+                    return new CommunicationException(pex.Message, pex);
+                case ProvisioningServiceClientTransportException ptx:
+                    return new HttpTransientException(ptx.Message, ptx);
                 default:
                     return ex;
             }

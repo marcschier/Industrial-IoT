@@ -5,10 +5,10 @@
 
 namespace Microsoft.IIoT.Platform.Publisher.Service {
     using Microsoft.IIoT.Platform.OpcUa.Testing.Runtime;
-    using Microsoft.IIoT.Authentication;
-    using Microsoft.IIoT.Messaging;
-    using Microsoft.IIoT.Serializers.NewtonSoft;
-    using Microsoft.IIoT.Serializers.MessagePack;
+    using Microsoft.IIoT.Extensions.Authentication;
+    using Microsoft.IIoT.Extensions.Messaging;
+    using Microsoft.IIoT.Extensions.Serializers.NewtonSoft;
+    using Microsoft.IIoT.Extensions.Serializers.MessagePack;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Mvc.Testing;
     using Microsoft.Extensions.Hosting;

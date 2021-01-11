@@ -9,9 +9,9 @@ namespace Microsoft.IIoT.Platform.Publisher.Services {
     using Microsoft.IIoT.Platform.Discovery;
     using Microsoft.IIoT.Platform.Discovery.Models;
     using Microsoft.IIoT.Platform.Core.Models;
-    using Microsoft.IIoT.Serializers;
+    using Microsoft.IIoT.Extensions.Serializers;
     using Microsoft.IIoT.Exceptions;
-    using Microsoft.IIoT.Utils;
+    using Microsoft.IIoT.Extensions.Utils;
     using Microsoft.Extensions.Logging;
     using System.Threading.Tasks;
     using System.Threading;

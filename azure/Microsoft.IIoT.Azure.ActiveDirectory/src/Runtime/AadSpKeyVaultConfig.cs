@@ -4,8 +4,8 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.IIoT.Azure.ActiveDirectory.Runtime {
-    using Microsoft.IIoT.Authentication;
-    using Microsoft.IIoT.Configuration;
+    using Microsoft.IIoT.Extensions.Authentication;
+    using Microsoft.IIoT.Extensions.Configuration;
     using Microsoft.Extensions.Configuration;
 
     /// <summary>
@@ -24,7 +24,7 @@ namespace Microsoft.IIoT.Azure.ActiveDirectory.Runtime {
         /// <summary>Audience</summary>
         public string Audience => "https://vault.azure.net";
         /// <summary>Resource</summary>
-        public string Resource => Http.Resource.KeyVault;
+        public string Resource => Extensions.Http.Resource.KeyVault;
         /// <inheritdoc/>
         public bool IsValid =>
             ClientId != null && ClientSecret != null && TenantId != null;

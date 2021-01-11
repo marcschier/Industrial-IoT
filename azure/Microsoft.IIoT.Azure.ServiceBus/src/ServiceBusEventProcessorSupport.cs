@@ -26,6 +26,7 @@ namespace Microsoft.IIoT.Azure.ServiceBus {
             builder.RegisterType<ServiceBusProcessorHost>()
                 .AsImplementedInterfaces().SingleInstance();
 
+            builder.AddOptions();
             builder.RegisterType<ServiceBusConfig>()
                 .AsImplementedInterfaces();
             builder.RegisterType<ServiceBusProcessorConfig>()

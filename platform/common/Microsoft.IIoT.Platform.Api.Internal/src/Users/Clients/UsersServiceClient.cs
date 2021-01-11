@@ -5,8 +5,8 @@
 
 namespace Microsoft.IIoT.Platform.Identity.Api.Clients {
     using Microsoft.IIoT.Platform.Identity.Api.Models;
-    using Microsoft.IIoT.Http;
-    using Microsoft.IIoT.Serializers;
+    using Microsoft.IIoT.Extensions.Http;
+    using Microsoft.IIoT.Extensions.Serializers;
     using System;
     using System.Threading.Tasks;
     using System.Threading;

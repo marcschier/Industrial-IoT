@@ -10,11 +10,11 @@ namespace Microsoft.IIoT.Platform.Edge.Tunnel.Service {
     using Microsoft.IIoT.Azure.IoTHub.Handlers;
     using Microsoft.IIoT.Azure.IoTHub;
     using Microsoft.IIoT.Azure.AppInsights;
-    using Microsoft.IIoT.Http.Clients;
-    using Microsoft.IIoT.Http.Tunnel.Services;
-    using Microsoft.IIoT.Rpc.Services;
-    using Microsoft.IIoT.Serializers;
-    using Microsoft.IIoT.AspNetCore.Diagnostics.Default;
+    using Microsoft.IIoT.Extensions.Http.Clients;
+    using Microsoft.IIoT.Extensions.Http.Tunnel.Services;
+    using Microsoft.IIoT.Extensions.Rpc.Services;
+    using Microsoft.IIoT.Extensions.Serializers;
+    using Microsoft.IIoT.Extensions.AspNetCore.Diagnostics.Default;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;

@@ -3,11 +3,11 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.Http.Tunnel {
-    using Microsoft.IIoT.Http.Tunnel.Services;
-    using Microsoft.IIoT.Http.Clients;
-    using Microsoft.IIoT.Rpc.Services;
-    using Microsoft.IIoT.Rpc;
+namespace Microsoft.IIoT.Extensions.Http.Tunnel {
+    using Microsoft.IIoT.Extensions.Http.Tunnel.Services;
+    using Microsoft.IIoT.Extensions.Http.Clients;
+    using Microsoft.IIoT.Extensions.Rpc.Services;
+    using Microsoft.IIoT.Extensions.Rpc;
     using Autofac;
 
     /// <summary>

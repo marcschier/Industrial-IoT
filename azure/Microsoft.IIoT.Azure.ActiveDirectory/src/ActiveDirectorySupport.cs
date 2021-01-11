@@ -5,7 +5,7 @@
 
 namespace Microsoft.IIoT.Azure.ActiveDirectory {
     using Microsoft.IIoT.Azure.ActiveDirectory.Runtime;
-    using Microsoft.IIoT.Authentication.Runtime;
+    using Microsoft.IIoT.Extensions.Authentication.Runtime;
     using Autofac;
 
     /// <summary>
@@ -16,6 +16,7 @@ namespace Microsoft.IIoT.Azure.ActiveDirectory {
         /// <inheritdoc/>
         protected override void Load(ContainerBuilder builder) {
 
+            builder.AddOptions();
             builder.RegisterType<ServiceAuthAggregateConfig>()
                 .AsImplementedInterfaces();
             builder.RegisterType<ClientAuthAggregateConfig>()

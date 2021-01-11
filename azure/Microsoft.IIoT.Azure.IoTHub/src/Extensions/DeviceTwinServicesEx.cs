@@ -6,8 +6,8 @@
 namespace Microsoft.IIoT.Azure.IoTHub {
     using Microsoft.IIoT.Exceptions;
     using Microsoft.IIoT.Azure.IoTHub.Models;
-    using Microsoft.IIoT.Serializers;
-    using Microsoft.IIoT.Utils;
+    using Microsoft.IIoT.Extensions.Serializers;
+    using Microsoft.IIoT.Extensions.Utils;
     using Microsoft.Extensions.Options;
     using System.Collections.Generic;
     using System.Linq;
@@ -24,9 +24,9 @@ namespace Microsoft.IIoT.Azure.IoTHub {
         /// </summary>
         /// <param name="cs"></param>
         /// <returns></returns>
-        public static IOptions<IoTHubOptions> ToIoTHubOptions(this ConnectionString cs) {
-            return Options.Create(new IoTHubOptions {
-                IoTHubConnString = cs.ToString()
+        public static IOptions<IoTHubServiceOptions> ToIoTHubOptions(this ConnectionString cs) {
+            return Options.Create(new IoTHubServiceOptions {
+                ConnectionString = cs.ToString()
             });
         }
 

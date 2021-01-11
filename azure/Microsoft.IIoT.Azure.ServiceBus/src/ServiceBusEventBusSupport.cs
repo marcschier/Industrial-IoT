@@ -7,10 +7,10 @@ namespace Microsoft.IIoT.Azure.ServiceBus {
     using Microsoft.IIoT.Azure.ServiceBus.Clients;
     using Microsoft.IIoT.Azure.ServiceBus.Services;
     using Microsoft.IIoT.Azure.ServiceBus.Runtime;
-    using Microsoft.IIoT.Messaging.Services;
-    using Microsoft.IIoT.Messaging;
-    using Microsoft.IIoT.Tasks.Services;
-    using Microsoft.IIoT.Tasks;
+    using Microsoft.IIoT.Extensions.Messaging.Services;
+    using Microsoft.IIoT.Extensions.Messaging;
+    using Microsoft.IIoT.Extensions.Tasks.Services;
+    using Microsoft.IIoT.Extensions.Tasks;
     using Autofac;
 
     /// <summary>
@@ -38,6 +38,7 @@ namespace Microsoft.IIoT.Azure.ServiceBus {
                 .AsImplementedInterfaces().SingleInstance()
                 .IfNotRegistered(typeof(ITaskProcessor));
 
+            builder.AddOptions();
             builder.RegisterType<ServiceBusConfig>()
                 .AsImplementedInterfaces();
             builder.RegisterType<ServiceBusEventBusConfig>()

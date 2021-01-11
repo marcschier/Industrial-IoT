@@ -4,7 +4,7 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.IIoT.Azure.IoTHub.Models {
-    using Microsoft.IIoT.Serializers;
+    using Microsoft.IIoT.Extensions.Serializers;
     using System.Collections.Generic;
 
     /// <summary>
@@ -18,19 +18,9 @@ namespace Microsoft.IIoT.Azure.IoTHub.Models {
         public string Hub { get; set; }
 
         /// <summary>
-        /// Device id
-        /// </summary>
-        public string Id { get; set; }
-
-        /// <summary>
         /// Sets the scope of a device
         /// </summary>
         public string DeviceScope { get; set; }
-
-        /// <summary>
-        /// Module id if the device is a module
-        /// </summary>
-        public string ModuleId { get; set; }
 
         /// <summary>
         /// Tags
@@ -38,13 +28,13 @@ namespace Microsoft.IIoT.Azure.IoTHub.Models {
         public IReadOnlyDictionary<string, VariantValue> Tags { get; set; }
 
         /// <summary>
-        /// Settings
+        /// Desired properties
         /// </summary>
-        public TwinPropertiesModel Properties { get; set; }
+        public IReadOnlyDictionary<string, VariantValue> Properties { get; set; }
 
         /// <summary>
         /// Capabilities
         /// </summary>
-        public DeviceCapabilitiesModel Capabilities { get; set; }
+        public CapabilitiesModel Capabilities { get; set; }
     }
 }

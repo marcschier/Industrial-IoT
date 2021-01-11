@@ -4,7 +4,7 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.IIoT.Azure.IoTEdge {
-    using Microsoft.IIoT.Messaging;
+    using Microsoft.IIoT.Extensions.Messaging;
     using System;
 
     /// <summary>
@@ -13,7 +13,7 @@ namespace Microsoft.IIoT.Azure.IoTEdge {
     public class IoTEdgeClientOptions {
 
         /// <summary>
-        /// IoTEdgeHub connection string
+        /// EdgeHub connection string
         /// </summary>
         public string EdgeHubConnectionString { get; set; }
 

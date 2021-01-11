@@ -3,7 +3,7 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.Http {
+namespace Microsoft.IIoT.Extensions.Http {
 
     /// <summary>
     /// Custom header values

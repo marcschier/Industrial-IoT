@@ -5,4 +5,4 @@
 
 using System.Runtime.CompilerServices;
 
-[assembly: InternalsVisibleTo("Microsoft.IIoT.AspNetCore.SignalR.Tests")]
+[assembly: InternalsVisibleTo("Microsoft.IIoT.Extensions.AspNetCore.SignalR.Tests")]

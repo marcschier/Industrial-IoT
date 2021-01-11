@@ -5,9 +5,9 @@
 
 namespace Microsoft.IIoT.Extensions.CouchDb.Clients {
     using Microsoft.IIoT.Extensions.CouchDb.Runtime;
-    using Microsoft.IIoT.Utils;
-    using Microsoft.IIoT.Diagnostics;
-    using Microsoft.IIoT.Storage;
+    using Microsoft.IIoT.Extensions.Utils;
+    using Microsoft.IIoT.Extensions.Diagnostics;
+    using Microsoft.IIoT.Extensions.Storage;
     using System;
     using System.Threading.Tasks;
     using System.Runtime.Serialization;

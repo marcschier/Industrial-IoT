@@ -4,10 +4,10 @@
 // ------------------------------------------------------------
 
 
-namespace Microsoft.IIoT.AspNetCore.Tests {
+namespace Microsoft.IIoT.Extensions.AspNetCore.Tests {
     using Microsoft.IIoT.Exceptions;
-    using Microsoft.IIoT.Hosting;
-    using Microsoft.IIoT.Rpc;
+    using Microsoft.IIoT.Extensions.Hosting;
+    using Microsoft.IIoT.Extensions.Rpc;
     using System;
     using System.Net;
     using System.Text;

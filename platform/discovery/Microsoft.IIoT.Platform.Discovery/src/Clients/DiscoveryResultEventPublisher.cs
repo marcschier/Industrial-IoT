@@ -5,8 +5,8 @@
 
 namespace Microsoft.IIoT.Platform.Discovery.Clients {
     using Microsoft.IIoT.Platform.Discovery.Models;
-    using Microsoft.IIoT.Messaging;
-    using Microsoft.IIoT.Serializers;
+    using Microsoft.IIoT.Extensions.Messaging;
+    using Microsoft.IIoT.Extensions.Serializers;
     using System;
     using System.Collections.Generic;
     using System.Linq;

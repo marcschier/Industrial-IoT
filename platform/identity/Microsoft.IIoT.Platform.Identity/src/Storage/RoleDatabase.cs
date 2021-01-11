@@ -6,7 +6,7 @@
 namespace Microsoft.IIoT.Platform.Identity.Storage {
     using Microsoft.IIoT.Platform.Identity.Models;
     using Microsoft.IIoT.Exceptions;
-    using Microsoft.IIoT.Storage;
+    using Microsoft.IIoT.Extensions.Storage;
     using Microsoft.AspNetCore.Identity;
     using System;
     using System.Collections.Generic;

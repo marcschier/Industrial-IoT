@@ -5,10 +5,10 @@
 
 namespace Microsoft.IIoT.Extensions.Kafka.Clients {
     using Microsoft.IIoT.Extensions.Kafka.Runtime;
-    using Microsoft.IIoT.Messaging.Handlers;
-    using Microsoft.IIoT.Messaging;
-    using Microsoft.IIoT.Hosting;
-    using Microsoft.IIoT.Utils;
+    using Microsoft.IIoT.Extensions.Messaging.Handlers;
+    using Microsoft.IIoT.Extensions.Messaging;
+    using Microsoft.IIoT.Extensions.Hosting;
+    using Microsoft.IIoT.Extensions.Utils;
     using Autofac;
     using System;
     using System.Collections.Generic;
@@ -127,7 +127,7 @@ namespace Microsoft.IIoT.Extensions.Kafka.Clients {
             public string MessageSchema { get; }
 
             public Task HandleAsync(string source,
-                byte[] payload, IDictionary<string, string> properties,
+                byte[] payload, IEventProperties properties,
                 Func<Task> checkpoint) {
                 _outer.OnEvent?.Invoke(this, new TelemetryEventArgs(
                     MessageSchema, source, payload, properties));
@@ -149,7 +149,7 @@ namespace Microsoft.IIoT.Extensions.Kafka.Clients {
             }
 
             public Task HandleAsync(byte[] eventData,
-                IDictionary<string, string> properties) {
+                IEventProperties properties) {
                 _outer.OnEvent?.Invoke(this, new TelemetryEventArgs(
                     null, null, eventData, properties));
                 return Task.CompletedTask;
@@ -164,7 +164,7 @@ namespace Microsoft.IIoT.Extensions.Kafka.Clients {
     internal class TelemetryEventArgs : EventArgs {
 
         internal TelemetryEventArgs(string schema, string source,
-            byte[] data, IDictionary<string, string> properties) {
+            byte[] data, IEventProperties properties) {
             HandlerSchema = schema;
             Source = source;
             if (source != null) {
@@ -182,7 +182,7 @@ namespace Microsoft.IIoT.Extensions.Kafka.Clients {
             Properties = properties
                 .Where(k => k.Key != EventProperties.Target)
                 .Where(k => !k.Key.StartsWith("x-", StringComparison.Ordinal))
-                .ToDictionary(k => k.Key, v => v.Value);
+                .ToEventProperties();
         }
 
         public string Target { get; }
@@ -192,7 +192,7 @@ namespace Microsoft.IIoT.Extensions.Kafka.Clients {
         public string DeviceId { get; }
         public string ModuleId { get; }
         public IReadOnlyCollection<byte> Data { get; }
-        public IReadOnlyDictionary<string, string> Properties { get; }
+        public IEventProperties Properties { get; }
     }
 
     internal delegate void TelemetryEventHandler(object sender, TelemetryEventArgs args);

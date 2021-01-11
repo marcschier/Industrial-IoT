@@ -4,12 +4,12 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.IIoT.Azure.IoTHub.Handlers {
-    using Microsoft.IIoT.Messaging;
-    using Microsoft.IIoT.Hosting;
+    using Microsoft.IIoT.Extensions.Messaging;
+    using Microsoft.IIoT.Extensions.Hosting;
     using Microsoft.IIoT.Azure.IoTHub;
     using Microsoft.IIoT.Azure.IoTHub.Models;
-    using Microsoft.IIoT.Utils;
-    using Microsoft.IIoT.Serializers;
+    using Microsoft.IIoT.Extensions.Utils;
+    using Microsoft.IIoT.Extensions.Serializers;
     using Microsoft.Extensions.Logging;
     using System;
     using System.Collections.Generic;
@@ -39,7 +39,7 @@ namespace Microsoft.IIoT.Azure.IoTHub.Handlers {
 
         /// <inheritdoc/>
         public async Task HandleAsync(string source, byte[] payload,
-            IDictionary<string, string> properties, Func<Task> checkpoint) {
+            IEventProperties properties, Func<Task> checkpoint) {
 
             if (_handlers.Count == 0) {
                 return;
