@@ -19,8 +19,6 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\protocols\opcua\Microsoft.IIoT.Platform.Api.Internal\src\Microsoft.IIoT.Platform.Api.Internal.csproj" />
-    <ProjectReference Include="..\..\..\..\protocols\opcua\Microsoft.IIoT.Platform.Discovery\src\Microsoft.IIoT.Platform.Discovery.csproj" />
-    <ProjectReference Include="..\..\..\..\protocols\opcua\Microsoft.IIoT.Platform.Publisher\src\Microsoft.IIoT.Platform.Publisher.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Content Remove="container.json" />

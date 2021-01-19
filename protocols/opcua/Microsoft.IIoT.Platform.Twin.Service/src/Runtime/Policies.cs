@@ -14,22 +14,22 @@ namespace Microsoft.IIoT.Platform.Twin.Service {
     public static class Policies {
 
         /// <summary>
-        /// Allowed to read and browse
+        /// Allowed to read
         /// </summary>
-        public const string CanBrowse =
-            nameof(CanBrowse);
+        public const string CanRead =
+            nameof(CanRead);
 
         /// <summary>
-        /// Allowed to write or execute
+        /// Allowed to update or delete
         /// </summary>
-        public const string CanControl =
-            nameof(CanControl);
+        public const string CanWrite =
+            nameof(CanWrite);
 
         /// <summary>
-        /// Allowed to request uploads
+        /// Allowed to manage
         /// </summary>
-        public const string CanUpload =
-            nameof(CanUpload);
+        public const string CanManage =
+            nameof(CanManage);
 
         /// <summary>
         /// Get rights for policy
@@ -38,13 +38,13 @@ namespace Microsoft.IIoT.Platform.Twin.Service {
         /// <returns></returns>
         internal static Func<AuthorizationHandlerContext, bool> RoleMapping(string policy) {
             switch (policy) {
-                case CanControl:
+                case CanWrite:
                     return context =>
                         context.User.IsInRole(Roles.Write) ||
                         context.User.IsInRole(Roles.Admin) ||
                         context.User.IsInRole(Roles.Sign) ||
                         context.User.HasClaim(c => c.Type == Claims.Execute);
-                case CanUpload:
+                case CanManage:
                     return context =>
                         context.User.IsInRole(Roles.Admin) ||
                         context.User.IsInRole(Roles.Sign) ||

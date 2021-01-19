@@ -8,7 +8,6 @@
     <ProjectReference Include="..\..\..\..\extensions\Microsoft.IIoT.Extensions.Orleans\src\Microsoft.IIoT.Extensions.Orleans.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\common\Microsoft.IIoT.Platform.Abstractions\src\Microsoft.IIoT.Platform.Twin.Abstractions.csproj" />
     <ProjectReference Include="..\..\..\..\protocols\opcua\Microsoft.IIoT.Platform.OpcUa\src\Microsoft.IIoT.Platform.OpcUa.csproj" />
   </ItemGroup>
   <ItemGroup>

@@ -16,7 +16,4 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\protocols\opcua\Microsoft.IIoT.Platform.OpcUa.Testing\src\Microsoft.IIoT.Platform.OpcUa.Testing.csproj" />
   </ItemGroup>
-  <ItemGroup>
-      <ProjectReference Include="..\..\Microsoft.IIoT.Platform.Publisher.Service\src\Microsoft.IIoT.Platform.Publisher.Service.csproj" />
-  </ItemGroup>
 </Project>

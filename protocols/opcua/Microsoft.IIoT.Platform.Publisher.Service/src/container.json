@@ -1,5 +1,0 @@
-{
-    "name": "iot/opc-publisher-service",
-    "buildAlways": true,
-    "exposes": [ 9045 ]
-}

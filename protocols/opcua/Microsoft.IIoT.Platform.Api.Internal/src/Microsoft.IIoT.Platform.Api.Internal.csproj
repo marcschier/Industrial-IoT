@@ -5,11 +5,7 @@
     <Description>Azure Industrial IoT Internal Platform API</Description>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Microsoft.IIoT.Platform.Abstractions\src\Microsoft.IIoT.Platform.Twin.Abstractions.csproj" />
-    <ProjectReference Include="..\..\..\..\protocols\opcua\Microsoft.IIoT.Platform.Publisher.Api\src\Microsoft.IIoT.Platform.Publisher.Api.csproj" />
-    <ProjectReference Include="..\..\..\..\protocols\opcua\Microsoft.IIoT.Platform.Discovery.Api\src\Microsoft.IIoT.Platform.Discovery.Api.csproj" />
-    <ProjectReference Include="..\..\..\..\platform\cloud\Microsoft.IIoT.Platform.Registry.Api\src\Microsoft.IIoT.Platform.Registry.Api.csproj" />
-    <ProjectReference Include="..\..\..\..\protocols\opcua\Microsoft.IIoT.Platform.Twin.Api\src\Microsoft.IIoT.Platform.Twin.Api.csproj" />
-    <ProjectReference Include="..\..\..\..\platform\cloud\Microsoft.IIoT.Platform.Vault.Api\src\Microsoft.IIoT.Platform.Vault.Api.csproj" />
+    <ProjectReference Include="..\..\Microsoft.IIoT.Platform.Abstractions\src\Microsoft.IIoT.Platform.Abstractions.csproj" />
+    <ProjectReference Include="..\..\..\..\protocols\opcua\Microsoft.IIoT.Platform.Api\src\Microsoft.IIoT.Platform.Api.csproj" />
   </ItemGroup>
 </Project>

@@ -4,6 +4,9 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.IIoT.Platform.Twin.Services.Module.Cli {
+    using Microsoft.IIoT.Platform.Discovery.Services;
+    using Microsoft.IIoT.Platform.Discovery;
+    using Microsoft.IIoT.Platform.Discovery.Models;
     using Microsoft.IIoT.Platform.Twin.Models;
     using Microsoft.IIoT.Platform.Core.Models;
     using Microsoft.IIoT.Platform.Registry.Models;
@@ -35,6 +38,7 @@ namespace Microsoft.IIoT.Platform.Twin.Services.Module.Cli {
     using System.IO;
     using System.IO.Compression;
     using System.Linq;
+    using System.Net;
     using System.Threading;
     using System.Threading.Tasks;
 
@@ -52,6 +56,11 @@ namespace Microsoft.IIoT.Platform.Twin.Services.Module.Cli {
             Delete,
             List,
 
+            TestOpcUaDiscoveryService,
+            TestOpcUaServerScanner,
+            TestNetworkScanner,
+            TestPortScanner,
+			
             TestOpcUaModelBrowseEncoder,
             TestOpcUaModelBrowseFile,
             TestOpcUaModelArchiver,
@@ -88,7 +97,8 @@ namespace Microsoft.IIoT.Platform.Twin.Services.Module.Cli {
             var diagnostics = new LogAnalyticsConfig(configuration).ToOptions().Value;
             IOptions<IoTHubServiceOptions> config = null;
             var endpoint = new EndpointModel();
-            string fileName = null;
+            string addressRanges = null;
+            var stress = false;
             var host = Utils.GetHostName();
             var ports = new List<int>();
             try {
@@ -103,6 +113,45 @@ namespace Microsoft.IIoT.Platform.Twin.Services.Module.Cli {
                             }
                             throw new ArgumentException(
                                 "Missing arguments for connection string");
+                        case "--stress":
+                            stress = true;
+                            break;
+                        case "--scan-ports":
+                            if (op != Op.None) {
+                                throw new ArgumentException("Operations are mutually exclusive");
+                            }
+                            op = Op.TestPortScanner;
+                            i++;
+                            if (i < args.Length) {
+                                host = args[i];
+                            }
+                            break;
+                        case "--scan-servers":
+                            if (op != Op.None) {
+                                throw new ArgumentException("Operations are mutually exclusive");
+                            }
+                            op = Op.TestOpcUaServerScanner;
+                            i++;
+                            if (i < args.Length) {
+                                host = args[i];
+                            }
+                            break;
+                        case "--scan-net":
+                            if (op != Op.None) {
+                                throw new ArgumentException("Operations are mutually exclusive");
+                            }
+                            op = Op.TestNetworkScanner;
+                            break;
+                        case "--test-discovery":
+                            if (op != Op.None) {
+                                throw new ArgumentException("Operations are mutually exclusive");
+                            }
+                            op = Op.TestOpcUaDiscoveryService;
+                            i++;
+                            if (i < args.Length) {
+                                addressRanges = args[i];
+                            }
+                            break;
                         case "--test-browse":
                             if (op != Op.None) {
                                 throw new ArgumentException("Operations are mutually exclusive");
@@ -355,6 +404,18 @@ Options:
                         break;
                     case Op.TestBrowseServer:
                         TestBrowseServerAsync(endpoint).Wait();
+                        break;
+                    case Op.TestNetworkScanner:
+                        TestNetworkScannerAsync().Wait();
+                        break;
+                    case Op.TestPortScanner:
+                        TestPortScannerAsync(host, false).Wait();
+                        break;
+                    case Op.TestOpcUaServerScanner:
+                        TestPortScannerAsync(host, true).Wait();
+                        break;
+                    case Op.TestOpcUaDiscoveryService:
+                        TestOpcUaDiscoveryServiceAsync(addressRanges, stress).Wait();
                         break;
                     default:
                         throw new ArgumentException("Unknown.");
@@ -796,6 +857,173 @@ Options:
                     }
                 }
             }
+        }
+
+        /// <summary>
+        /// Test port scanning
+        /// </summary>
+        private static async Task TestPortScannerAsync(string host, bool opc) {
+            var logger = Log.Console();
+            var addresses = await Dns.GetHostAddressesAsync(host).ConfigureAwait(false);
+            using (var cts = new CancellationTokenSource(TimeSpan.FromMinutes(10))) {
+                var watch = Stopwatch.StartNew();
+                var scanning = new ScanServices(logger);
+                var results = await scanning.ScanAsync(
+                    PortRange.All.SelectMany(r => r.GetEndpoints(addresses.First())),
+                    opc ? new ServerProbe(logger) : null, cts.Token).ConfigureAwait(false);
+                foreach (var result in results) {
+                    Console.WriteLine($"Found {result} open.");
+                }
+                Console.WriteLine($"Scan took: {watch.Elapsed}");
+            }
+        }
+
+        /// <summary>
+        /// Test network scanning
+        /// </summary>
+        private static async Task TestNetworkScannerAsync() {
+            var logger = Log.Console();
+            using (var cts = new CancellationTokenSource(TimeSpan.FromMinutes(10))) {
+                var watch = Stopwatch.StartNew();
+                var scanning = new ScanServices(logger);
+                var results = await scanning.ScanAsync(NetworkClass.Wired, cts.Token).ConfigureAwait(false);
+                foreach (var result in results) {
+                    Console.WriteLine($"Found {result.Address}...");
+                }
+                Console.WriteLine($"Scan took: {watch.Elapsed}");
+            }
+        }
+
+        /// <summary>
+        /// Test discovery
+        /// </summary>
+        private static async Task TestOpcUaDiscoveryServiceAsync(string addressRanges,
+            bool stress) {
+            using (var logger = StackLogger.Create(Log.Console()))
+            using (var config = new TestClientServicesConfig())
+            using (var client = new ClientServices(logger.Logger, config))
+            using (var scanner = new DiscoveryServices(client,
+                new NewtonSoftJsonSerializer(), new ConsoleListener(), logger.Logger)) {
+                var rand = new Random();
+                while (true) {
+                    var configuration = new DiscoveryConfigModel {
+                        IdleTimeBetweenScans = TimeSpan.FromMilliseconds(1),
+                        AddressRangesToScan = addressRanges
+                    };
+                    await scanner.ConfigureAsync(DiscoveryMode.Scan, configuration).ConfigureAwait(false);
+                    await scanner.ScanAsync().ConfigureAwait(false);
+                    await Task.Delay(!stress ? TimeSpan.FromMinutes(10) :
+                        TimeSpan.FromMilliseconds(rand.Next(0, 120000))).ConfigureAwait(false);
+                    logger.Logger.LogInformation("Stopping discovery!");
+                    await scanner.ConfigureAsync(DiscoveryMode.Off, null).ConfigureAwait(false);
+                    await scanner.ScanAsync().ConfigureAwait(false);
+                    if (!stress) {
+                        break;
+                    }
+                }
+            }
+        }
+
+        /// <inheritdoc/>
+        private class ConsoleListener : IApplicationRegistryListener,
+            IEndpointRegistryListener, IDiscoveryResultHandler, ITwinRegistryListener {
+
+            /// <inheritdoc/>
+            public Task ReportResultsAsync(IEnumerable<DiscoveryResultModel> results,
+                CancellationToken ct) {
+                Console.WriteLine(_serializer.SerializePretty(results));
+                return Task.CompletedTask;
+            }
+
+            /// <inheritdoc/>
+            public Task OnApplicationDeletedAsync(OperationContextModel context,
+                ApplicationInfoModel application) {
+                Console.WriteLine($"Deleted {application.ApplicationId}");
+                return Task.CompletedTask;
+            }
+
+            /// <inheritdoc/>
+            public Task OnApplicationNewAsync(OperationContextModel context,
+                ApplicationInfoModel application) {
+                Console.WriteLine($"Created {application.ApplicationId}");
+                return Task.CompletedTask;
+            }
+
+            /// <inheritdoc/>
+            public Task OnApplicationLostAsync(OperationContextModel context,
+                ApplicationInfoModel application) {
+                Console.WriteLine($"Lost {application.ApplicationId}");
+                return Task.CompletedTask;
+            }
+
+            /// <inheritdoc/>
+            public Task OnApplicationFoundAsync(OperationContextModel context,
+                ApplicationInfoModel application) {
+                Console.WriteLine($"Found {application.ApplicationId}");
+                return Task.CompletedTask;
+            }
+
+            /// <inheritdoc/>
+            public Task OnApplicationUpdatedAsync(OperationContextModel context,
+                ApplicationInfoModel application) {
+                Console.WriteLine($"Updated {application.ApplicationId}");
+                return Task.CompletedTask;
+            }
+
+            /// <inheritdoc/>
+            public Task OnEndpointDeletedAsync(OperationContextModel context,
+                EndpointInfoModel endpoint) {
+                Console.WriteLine($"Deleted {endpoint.Id}");
+                return Task.CompletedTask;
+            }
+
+            /// <inheritdoc/>
+            public Task OnEndpointNewAsync(OperationContextModel context,
+                EndpointInfoModel endpoint) {
+                Console.WriteLine($"Created {endpoint.Id}");
+                return Task.CompletedTask;
+            }
+
+            /// <inheritdoc/>
+            public Task OnEndpointLostAsync(OperationContextModel context,
+                EndpointInfoModel endpoint) {
+                Console.WriteLine($"Lost {endpoint.Id}");
+                return Task.CompletedTask;
+            }
+
+            /// <inheritdoc/>
+            public Task OnEndpointFoundAsync(OperationContextModel context,
+                EndpointInfoModel endpoint) {
+                Console.WriteLine($"Found {endpoint.Id}");
+                return Task.CompletedTask;
+            }
+
+            /// <inheritdoc/>
+            public Task OnEndpointUpdatedAsync(OperationContextModel context,
+                EndpointInfoModel endpoint) {
+                Console.WriteLine($"Updated {endpoint.Id}");
+                return Task.CompletedTask;
+            }
+
+            public Task OnTwinActivatedAsync(OperationContextModel context,
+                TwinInfoModel twin) {
+                Console.WriteLine($"Activated {twin.Id}");
+                return Task.CompletedTask;
+            }
+
+            public Task OnTwinUpdatedAsync(OperationContextModel context,
+                TwinInfoModel twin) {
+                Console.WriteLine($"Updated {twin.Id}");
+                return Task.CompletedTask;
+            }
+
+            public Task OnTwinDeactivatedAsync(OperationContextModel context,
+                TwinInfoModel twin) {
+                Console.WriteLine($"Deactivated {twin.Id}");
+                return Task.CompletedTask;
+            }
+
+            private readonly IJsonSerializer _serializer = new NewtonSoftJsonSerializer();
         }
 
         /// <summary>

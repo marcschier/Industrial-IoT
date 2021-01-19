@@ -26,7 +26,6 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\protocols\opcua\Microsoft.IIoT.Platform.Api.Internal\src\Microsoft.IIoT.Platform.Api.Internal.csproj" />
     <ProjectReference Include="..\..\..\..\protocols\opcua\Microsoft.IIoT.Platform.OpcUa.Testing\src\Microsoft.IIoT.Platform.OpcUa.Testing.csproj" />
-    <ProjectReference Include="..\..\..\..\protocols\opcua\Microsoft.IIoT.Platform.Publisher\src\Microsoft.IIoT.Platform.Publisher.csproj" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\azure\Microsoft.IIoT.Azure.Testing\src\Microsoft.IIoT.Azure.Testing.csproj" />

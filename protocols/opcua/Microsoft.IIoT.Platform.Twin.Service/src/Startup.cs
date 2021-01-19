@@ -4,7 +4,8 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.IIoT.Platform.Twin.Service {
-    using Microsoft.IIoT.Platform.Discovery.Api.Clients;
+    using Microsoft.IIoT.Platform.Publisher.Service.Auth;
+    using Microsoft.IIoT.Platform.Publisher;
     using Microsoft.IIoT.Platform.OpcUa;
     using Microsoft.IIoT.Extensions.LiteDb;
     using Microsoft.IIoT.Extensions.Orleans;
@@ -58,13 +59,12 @@ namespace Microsoft.IIoT.Platform.Twin.Service {
         }
 
         /// <summary>
-        /// This is where you register dependencies, add services to the
-        /// container. This method is called by the runtime, before the
-        /// Configure method below.
+        /// Configure services
         /// </summary>
         /// <param name="services"></param>
         /// <returns></returns>
         public void ConfigureServices(IServiceCollection services) {
+            services.AddLogging(o => o.AddConsole().AddDebug());
 
             services.AddHeaderForwarding();
             services.AddCors();
@@ -77,9 +77,9 @@ namespace Microsoft.IIoT.Platform.Twin.Service {
                 .AddJwtBearerProvider(AuthProvider.AuthService);
             services.AddAuthorizationPolicies(
                 Policies.RoleMapping,
-                Policies.CanBrowse,
-                Policies.CanControl,
-                Policies.CanUpload);
+                Policies.CanRead,
+                Policies.CanWrite,
+                Policies.CanManage);
 
             // TODO: Remove http client factory and use
             // services.AddHttpClient();
@@ -91,7 +91,6 @@ namespace Microsoft.IIoT.Platform.Twin.Service {
             // Enable Application Insights telemetry collection.
             services.AddAppInsightsTelemetry();
         }
-
 
         /// <summary>
         /// This method is called by the runtime, after the ConfigureServices
@@ -158,15 +157,11 @@ namespace Microsoft.IIoT.Platform.Twin.Service {
 
             // --- Logic ---
 
-            // Register Twin services
+            // Register services
             builder.RegisterModule<TwinCluster>();
+            builder.RegisterModule<DiscoveryRegistry>();
+            builder.RegisterModule<PublisherServices>();
             builder.RegisterModule<ClientStack>();
-
-            // Discovery services are required to activate twins.
-            builder.RegisterType<DiscoveryServicesApiAdapter>()
-                .AsImplementedInterfaces();
-            builder.RegisterType<DiscoveryServiceClient>()
-                .AsImplementedInterfaces();
 
             // ... and auto start
             builder.RegisterType<HostAutoStart>()
@@ -175,13 +170,13 @@ namespace Microsoft.IIoT.Platform.Twin.Service {
 
             // --- Dependencies ---
 
-            // Add diagnostics
+            // Add service to service authentication
             builder.RegisterModule<WebApiAuthentication>();
             // Add diagnostics
             builder.AddAppInsightsLogging();
             // Register event bus for integration events
             builder.RegisterModule<OrleansEventBusModule>();
-            // Register database for publisher storage
+            // Register database for storage
             builder.RegisterModule<LiteDbModule>();
         }
     }
