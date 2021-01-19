@@ -1,0 +1,11 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <Description>Azure Industrial IoT Platform Publisher core</Description>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\protocols\opcua\Microsoft.IIoT.Platform.OpcUa\src\Microsoft.IIoT.Platform.OpcUa.csproj" />
+    <ProjectReference Include="..\..\..\common\Microsoft.IIoT.Platform.Abstractions\src\Microsoft.IIoT.Platform.Twin.Abstractions.csproj" />
+  </ItemGroup>
+</Project>

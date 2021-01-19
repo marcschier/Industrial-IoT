@@ -4,11 +4,9 @@
     <IsPackable>true</IsPackable>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <Description>Azure Industrial IoT common abstractions and primitives</Description>
+    <Description>Azure Industrial IoT Platform Twin API</Description>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Remove="Hub\**" />
-    <EmbeddedResource Remove="Hub\**" />
-    <None Remove="Hub\**" />
+    <ProjectReference Include="..\..\..\..\protocols\opcua\Microsoft.IIoT.Platform.Api\src\Microsoft.IIoT.Platform.Api.csproj" />
   </ItemGroup>
 </Project>
