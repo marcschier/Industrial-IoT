@@ -17,6 +17,6 @@
     <ProjectReference Include="..\..\..\..\azure\Microsoft.IIoT.Azure.CosmosDb\src\Microsoft.IIoT.Azure.CosmosDb.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\protocols\opcua\Microsoft.IIoT.Platform.Api.Internal\src\Microsoft.IIoT.Platform.Api.Internal.csproj" />
+    <ProjectReference Include="..\..\..\..\protocols\opcua\Microsoft.IIoT.Protocols.OpcUa.Api.Internal\src\Microsoft.IIoT.Protocols.OpcUa.Api.Internal.csproj" />
   </ItemGroup>
 </Project>

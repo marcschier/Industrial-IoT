@@ -11,7 +11,7 @@
     <ProjectReference Include="..\..\..\..\azure\Microsoft.IIoT.Azure.IoTHub\src\Microsoft.IIoT.Azure.IoTHub.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\protocols\opcua\Microsoft.IIoT.Platform.OpcUa.Testing\src\Microsoft.IIoT.Platform.OpcUa.Testing.csproj" />
+    <ProjectReference Include="..\..\..\..\protocols\opcua\Microsoft.IIoT.Protocols.OpcUa.Testing\src\Microsoft.IIoT.Protocols.OpcUa.Testing.csproj" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\src\Microsoft.IIoT.Platform.Registry.csproj" />

@@ -9,16 +9,17 @@
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="5.0.0" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\protocols\opcua\Microsoft.IIoT.Protocols.OpcUa.Api.Internal\src\Microsoft.IIoT.Protocols.OpcUa.Api.Internal.csproj" />
+    <ProjectReference Include="..\..\Microsoft.IIoT.Platform.Api.Internal\src\Microsoft.IIoT.Protocols.OpcUa.Api.Internal.csproj" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\azure\Microsoft.IIoT.Azure.AspNetCore\src\Microsoft.IIoT.Azure.AspNetCore.csproj" />
-    <ProjectReference Include="..\..\..\..\azure\Microsoft.IIoT.Azure.CosmosDb\src\Microsoft.IIoT.Azure.CosmosDb.csproj" />
-    <ProjectReference Include="..\..\..\..\azure\Microsoft.IIoT.Azure.ServiceBus\src\Microsoft.IIoT.Azure.ServiceBus.csproj" />
-    <ProjectReference Include="..\..\..\..\azure\Microsoft.IIoT.Azure.KeyVault\src\Microsoft.IIoT.Azure.KeyVault.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Microsoft.IIoT.Platform.Vault\src\Microsoft.IIoT.Platform.Vault.csproj" />
+    <ProjectReference Include="..\..\..\..\extensions\Microsoft.IIoT.Extensions.Orleans\src\Microsoft.IIoT.Extensions.Orleans.csproj" />
+    <ProjectReference Include="..\..\..\..\extensions\Microsoft.IIoT.Extensions.LiteDb\src\Microsoft.IIoT.Extensions.LiteDb.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Microsoft.IIoT.Platform.Twin\src\Microsoft.IIoT.Protocols.OpcUa.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Content Remove="container.json" />

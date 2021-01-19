@@ -7,7 +7,7 @@
     <VersionSuffix>$(PrereleaseSuffix)</VersionSuffix>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\protocols\opcua\Microsoft.IIoT.Platform.OpcUa\src\Microsoft.IIoT.Platform.OpcUa.csproj" />
+    <ProjectReference Include="..\..\..\..\protocols\opcua\Microsoft.IIoT.Protocols.OpcUa.Stack\src\Microsoft.IIoT.Protocols.OpcUa.Stack.csproj" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\extensions\Microsoft.IIoT.Extensions.Bouncycastle\src\Microsoft.IIoT.Extensions.Bouncycastle.csproj" />

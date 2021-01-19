@@ -3,6 +3,7 @@
     <TargetFramework>net5.0</TargetFramework>
    </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="5.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="5.0.1" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.8.3" />
     <PackageReference Include="Moq" Version="4.15.2" />
@@ -13,18 +14,18 @@
     </PackageReference>
     <PackageReference Include="Xunit.SkippableFact" Version="1.4.13" />
     <PackageReference Include="xunit.categories" Version="2.0.4" />
-    <PackageReference Include="coverlet.msbuild" Version="3.0.0">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
   </ItemGroup>
   <ItemGroup>
     <Service Include="{82a7f48d-3b50-4b1e-b82e-3ada8210c358}" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\protocols\opcua\Microsoft.IIoT.Protocols.OpcUa.Api.Internal\src\Microsoft.IIoT.Protocols.OpcUa.Api.Internal.csproj" />
+    <ProjectReference Include="..\..\..\..\extensions\Microsoft.IIoT.Extensions.Orleans\src\Microsoft.IIoT.Extensions.Orleans.csproj" />
+    <ProjectReference Include="..\..\..\..\extensions\Microsoft.IIoT.Extensions.SignalR\src\Microsoft.IIoT.Extensions.SignalR.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\src\Microsoft.IIoT.Platform.Vault.Service.csproj" />
+    <ProjectReference Include="..\..\Microsoft.IIoT.Platform.Api.Internal\src\Microsoft.IIoT.Protocols.OpcUa.Api.Internal.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\src\Microsoft.IIoT.Protocols.OpcUa.Api.Events.csproj" />
   </ItemGroup>
 </Project>
