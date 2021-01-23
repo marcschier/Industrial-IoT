@@ -3,10 +3,15 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.Platform.Twin.Service {
-    using Microsoft.IIoT.Platform.Publisher.Service.Auth;
-    using Microsoft.IIoT.Platform.Publisher;
-    using Microsoft.IIoT.Platform.OpcUa;
+namespace Microsoft.IIoT.Protocols.OpcUa.Service {
+    using Microsoft.IIoT.Protocols.OpcUa.Publisher;
+    using Microsoft.IIoT.Protocols.OpcUa.Publisher.Handlers;
+    using Microsoft.IIoT.Protocols.OpcUa.Publisher.Api.Clients;
+    using Microsoft.IIoT.Protocols.OpcUa.Discovery;
+    using Microsoft.IIoT.Protocols.OpcUa.Discovery.Api.Clients;
+    using Microsoft.IIoT.Protocols.OpcUa.Twin;
+    using Microsoft.IIoT.Protocols.OpcUa.Twin.Api.Clients;
+    using Microsoft.IIoT.Protocols.OpcUa;
     using Microsoft.IIoT.Extensions.LiteDb;
     using Microsoft.IIoT.Extensions.Orleans;
     using Microsoft.IIoT.Extensions.Authentication;
@@ -16,6 +21,7 @@ namespace Microsoft.IIoT.Platform.Twin.Service {
     using Microsoft.IIoT.Extensions.AspNetCore.Authentication;
     using Microsoft.IIoT.Extensions.AspNetCore.Authentication.Clients;
     using Microsoft.IIoT.Extensions.AspNetCore.Http.Tunnel;
+    using Microsoft.IIoT.Extensions.AspNetCore.SignalR;
     using Microsoft.IIoT.Azure.AppInsights;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
@@ -86,6 +92,12 @@ namespace Microsoft.IIoT.Platform.Twin.Service {
 
             // Add controllers as services so they'll be resolved.
             services.AddControllers().AddSerializers();
+
+            // Add signalr
+            services.AddSignalR()
+                .AddJsonSerializer()
+                .AddMessagePackSerializer();
+
             services.AddSwagger(ServiceInfo.Name, ServiceInfo.Description);
 
             // Enable Application Insights telemetry collection.
@@ -117,6 +129,7 @@ namespace Microsoft.IIoT.Platform.Twin.Service {
 
             app.UseEndpoints(endpoints => {
                 endpoints.MapMetrics();
+                endpoints.MapHubs();
                 endpoints.MapControllers();
                 endpoints.MapHealthChecks("/healthz");
             });
@@ -162,6 +175,57 @@ namespace Microsoft.IIoT.Platform.Twin.Service {
             builder.RegisterModule<DiscoveryRegistry>();
             builder.RegisterModule<PublisherServices>();
             builder.RegisterModule<ClientStack>();
+            // Application event hub
+            builder.RegisterType<SignalRHub<ApplicationsHub>>()
+                .AsImplementedInterfaces().SingleInstance();
+            builder.RegisterType<
+                ApplicationEventForwarder<ApplicationsHub>>()
+                .AsImplementedInterfaces().SingleInstance();
+
+            // Endpoints event hub
+            builder.RegisterType<SignalRHub<EndpointsHub>>()
+                .AsImplementedInterfaces().SingleInstance();
+            builder.RegisterType<
+                EndpointEventForwarder<EndpointsHub>>()
+                .AsImplementedInterfaces().SingleInstance();
+
+            // Twins event hub
+            builder.RegisterType<SignalRHub<TwinsHub>>()
+                .AsImplementedInterfaces().SingleInstance();
+            builder.RegisterType<
+                TwinEventForwarder<TwinsHub>>()
+                .AsImplementedInterfaces().SingleInstance();
+
+            // DataSet Writers event hub
+            builder.RegisterType<SignalRHub<WritersHub>>()
+                .AsImplementedInterfaces().SingleInstance();
+            builder.RegisterType<
+                PublishedDataSetEventForwarder<WritersHub>>()
+                .AsImplementedInterfaces().SingleInstance();
+            builder.RegisterType<
+                DataSetWriterEventForwarder<WritersHub>>()
+                .AsImplementedInterfaces().SingleInstance();
+            builder.RegisterType<
+                DataSetWriterMessageForwarder<WritersHub>>()
+                .AsImplementedInterfaces().SingleInstance();
+
+            // Writer groups event hub
+            builder.RegisterType<SignalRHub<GroupsHub>>()
+                .AsImplementedInterfaces().SingleInstance();
+            builder.RegisterType<
+                WriterGroupEventForwarder<GroupsHub>>()
+                .AsImplementedInterfaces().SingleInstance();
+
+            // Discovery event hub
+            builder.RegisterType<SignalRHub<DiscoveryHub>>()
+                .AsImplementedInterfaces().SingleInstance();
+            builder.RegisterType<
+                DiscoveryProgressForwarder<DiscoveryHub>>()
+                .AsImplementedInterfaces().SingleInstance();
+
+            // Handle opc-ua pubsub telemetry subscriptions ...
+            builder.RegisterType<DataSetWriterMessageHandler>()
+                .AsImplementedInterfaces();
 
             // ... and auto start
             builder.RegisterType<HostAutoStart>()

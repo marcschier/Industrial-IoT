@@ -4,7 +4,7 @@
 // ------------------------------------------------------------
 
 
-namespace Microsoft.IIoT.Platform.Discovery {
+namespace Microsoft.IIoT.Protocols.OpcUa.Discovery {
     using System;
 
     /// <summary>

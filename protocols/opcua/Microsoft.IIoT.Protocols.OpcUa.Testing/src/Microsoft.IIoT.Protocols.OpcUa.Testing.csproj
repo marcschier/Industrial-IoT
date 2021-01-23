@@ -52,6 +52,6 @@
     <PackageReference Include="xunit.assert" Version="2.4.1" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Microsoft.IIoT.Platform.OpcUa\src\Microsoft.IIoT.Protocols.OpcUa.Stack.csproj" />
+    <ProjectReference Include="..\..\Microsoft.IIoT.Protocols.OpcUa.Stack\src\Microsoft.IIoT.Protocols.OpcUa.Stack.csproj" />
   </ItemGroup>
 </Project>

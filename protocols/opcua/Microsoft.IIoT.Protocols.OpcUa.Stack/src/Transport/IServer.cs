@@ -3,7 +3,7 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.Platform.OpcUa.Transport {
+namespace Microsoft.IIoT.Protocols.OpcUa.Transport {
     using Opc.Ua;
     using System.Security.Cryptography.X509Certificates;
 

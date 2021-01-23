@@ -3,11 +3,11 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.Platform.Twin.Service.Filters {
+namespace Microsoft.IIoT.Protocols.OpcUa.Service.Filters {
+    using Microsoft.IIoT.Protocols.OpcUa.Exceptions;
+    using Microsoft.IIoT.Exceptions;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.Filters;
-    using Microsoft.IIoT.Exceptions;
-    using Microsoft.IIoT.Platform.Exceptions;
     using System;
     using System.Linq;
     using System.Net;
@@ -30,6 +30,7 @@ namespace Microsoft.IIoT.Platform.Twin.Service.Filters {
             if (context is null) {
                 throw new ArgumentNullException(nameof(context));
             }
+
             if (context.Exception == null) {
                 base.OnException(context);
                 return;

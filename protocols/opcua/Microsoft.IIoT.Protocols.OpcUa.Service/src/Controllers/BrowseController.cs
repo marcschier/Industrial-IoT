@@ -3,11 +3,11 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.Platform.Twin.Service.Controllers {
-    using Microsoft.IIoT.Platform.Twin.Service.Filters;
-    using Microsoft.IIoT.Platform.Twin;
-    using Microsoft.IIoT.Platform.Twin.Models;
-    using Microsoft.IIoT.Platform.Twin.Api.Models;
+namespace Microsoft.IIoT.Protocols.OpcUa.Service.Controllers {
+    using Microsoft.IIoT.Protocols.OpcUa.Service.Filters;
+    using Microsoft.IIoT.Protocols.OpcUa.Twin;
+    using Microsoft.IIoT.Protocols.OpcUa.Twin.Models;
+    using Microsoft.IIoT.Protocols.OpcUa.Twin.Api.Models;
     using Microsoft.IIoT.Extensions.AspNetCore.OpenApi;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Authorization;
@@ -22,7 +22,7 @@ namespace Microsoft.IIoT.Platform.Twin.Service.Controllers {
     [ApiVersion("3")]
     [Route("v{version:apiVersion}/browse")]
     [ExceptionsFilter]
-    [Authorize(Policy = Policies.CanBrowse)]
+    [Authorize(Policy = Policies.CanRead)]
     [ApiController]
     public class BrowseController : ControllerBase {
 
@@ -141,7 +141,7 @@ namespace Microsoft.IIoT.Platform.Twin.Service.Controllers {
         /// Browse next set of unique target nodes
         /// </summary>
         /// <remarks>
-        /// Browse the next set of unique hierarchically referenced target 
+        /// Browse the next set of unique hierarchically referenced target
         /// nodes on the twin.
         /// The twin must be activated and connected and the module client
         /// and server must trust each other.
@@ -149,7 +149,7 @@ namespace Microsoft.IIoT.Platform.Twin.Service.Controllers {
         /// the continuation token and the targetNodesOnly flag set to true.
         /// </remarks>
         /// <param name="twinId">The identifier of the activated twin.</param>
-        /// <param name="continuationToken">Continuation token from 
+        /// <param name="continuationToken">Continuation token from
         /// GetSetOfUniqueNodes operation</param>
         /// <returns>The browse response</returns>
         [HttpGet("{twinId}/next")]

@@ -3,7 +3,7 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.Platform.Discovery.Api {
+namespace Microsoft.IIoT.Protocols.OpcUa.Discovery.Api {
 
     /// <summary>
     /// Configuration for service

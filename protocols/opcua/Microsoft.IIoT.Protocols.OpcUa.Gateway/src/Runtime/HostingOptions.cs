@@ -3,12 +3,12 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.Platform.Twin.Ua.Service.Runtime {
-    using Microsoft.IIoT.Platform.OpcUa;
-    using Microsoft.IIoT.Platform.OpcUa.Runtime;
-    using Microsoft.IIoT.Platform.OpcUa.Transport;
-    using Microsoft.IIoT.Platform.Discovery.Api;
-    using Microsoft.IIoT.Platform.Discovery.Api.Runtime;
+namespace Microsoft.IIoT.Protocols.OpcUa.Gateway.Runtime {
+    using Microsoft.IIoT.Protocols.OpcUa.Runtime;
+    using Microsoft.IIoT.Protocols.OpcUa.Transport;
+    using Microsoft.IIoT.Protocols.OpcUa.Discovery.Api;
+    using Microsoft.IIoT.Protocols.OpcUa.Discovery.Api.Runtime;
+    using Microsoft.IIoT.Protocols.OpcUa;
     using Microsoft.IIoT.Extensions.Hosting;
     using Microsoft.IIoT.Extensions.Configuration;
     using Microsoft.Extensions.Configuration;
@@ -19,7 +19,8 @@ namespace Microsoft.IIoT.Platform.Twin.Ua.Service.Runtime {
     /// <summary>
     /// Common web service configuration aggregation
     /// </summary>
-    public class HostingOptions : ConfigureOptionBase<WebHostOptions>, ITcpListenerConfig, IWebListenerConfig,
+    public class HostingOptions : ConfigureOptionBase<WebHostOptions>,
+        ITcpListenerConfig, IWebListenerConfig,
         ISessionServicesConfig, IDiscoveryConfig {
 
         /// <inheritdoc/>
@@ -62,7 +63,7 @@ namespace Microsoft.IIoT.Platform.Twin.Ua.Service.Runtime {
         /// <inheritdoc/>
         public override void Configure(string name, WebHostOptions options) {
             options.ServicePathBase = GetStringOrDefault(
-                PcsVariable.PCS_GATEWAY_SERVICE_PATH_BASE);
+                PcsVariable.PCS_OPCUA_GATEWAY_SERVICE_PATH_BASE);
         }
 
         private readonly SessionServicesConfig _sessions;

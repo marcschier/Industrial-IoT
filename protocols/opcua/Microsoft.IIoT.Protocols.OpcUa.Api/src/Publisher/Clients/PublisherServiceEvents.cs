@@ -3,9 +3,9 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.Platform.Publisher.Api {
-    using Microsoft.IIoT.Platform.Publisher.Api.Models;
-    using Microsoft.IIoT.Platform.Events.Api;
+namespace Microsoft.IIoT.Protocols.OpcUa.Publisher.Api {
+    using Microsoft.IIoT.Protocols.OpcUa.Publisher.Api.Models;
+    using Microsoft.IIoT.Protocols.OpcUa.Events.Api;
     using Microsoft.IIoT.Extensions.Rpc;
     using Microsoft.IIoT.Extensions.Http;
     using Microsoft.IIoT.Extensions.Serializers.NewtonSoft;

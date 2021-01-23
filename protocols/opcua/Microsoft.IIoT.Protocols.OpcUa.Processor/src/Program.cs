@@ -3,11 +3,11 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.Platform.Publisher.Processor {
-    using Microsoft.IIoT.Platform.Publisher.Processor.Runtime;
-    using Microsoft.IIoT.Platform.Publisher.Handlers;
-    using Microsoft.IIoT.Platform.Publisher.Processors;
-    using Microsoft.IIoT.Platform.OpcUa.Services;
+namespace Microsoft.IIoT.Protocols.OpcUa.Publisher.Processor {
+    using Microsoft.IIoT.Protocols.OpcUa.Publisher.Processor.Runtime;
+    using Microsoft.IIoT.Protocols.OpcUa.Publisher.Handlers;
+    using Microsoft.IIoT.Protocols.OpcUa.Publisher.Processors;
+    using Microsoft.IIoT.Protocols.OpcUa.Services;
     using Microsoft.IIoT.Azure.AppInsights;
     using Microsoft.IIoT.Azure.EventHub;
     using Microsoft.IIoT.Azure.EventHub.Processor;

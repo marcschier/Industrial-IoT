@@ -5,7 +5,7 @@
     <Description>Azure Industrial IoT Internal Platform API</Description>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Microsoft.IIoT.Platform.Abstractions\src\Microsoft.IIoT.Protocols.OpcUa.Abstractions.csproj" />
-    <ProjectReference Include="..\..\Microsoft.IIoT.Platform.Api\src\Microsoft.IIoT.Protocols.OpcUa.Api.csproj" />
+    <ProjectReference Include="..\..\Microsoft.IIoT.Protocols.OpcUa.Abstractions\src\Microsoft.IIoT.Protocols.OpcUa.Abstractions.csproj" />
+    <ProjectReference Include="..\..\Microsoft.IIoT.Protocols.OpcUa.Api\src\Microsoft.IIoT.Protocols.OpcUa.Api.csproj" />
   </ItemGroup>
 </Project>

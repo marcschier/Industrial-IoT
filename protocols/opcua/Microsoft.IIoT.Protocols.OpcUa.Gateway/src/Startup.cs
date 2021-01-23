@@ -3,13 +3,13 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.Platform.Twin.Ua.Service {
-    using Microsoft.IIoT.Platform.Twin.Ua.Service.Runtime;
-    using Microsoft.IIoT.Platform.Twin.Services;
-    using Microsoft.IIoT.Platform.OpcUa.Services;
-    using Microsoft.IIoT.Platform.OpcUa.Transport;
-    using Microsoft.IIoT.Platform.Discovery.Api.Clients;
-    using Microsoft.IIoT.Platform.Twin.Api.Clients;
+namespace Microsoft.IIoT.Protocols.OpcUa.Gateway {
+    using Microsoft.IIoT.Protocols.OpcUa.Gateway.Runtime;
+    using Microsoft.IIoT.Protocols.OpcUa.Twin.Services;
+    using Microsoft.IIoT.Protocols.OpcUa.Services;
+    using Microsoft.IIoT.Protocols.OpcUa.Transport;
+    using Microsoft.IIoT.Protocols.OpcUa.Discovery.Api.Clients;
+    using Microsoft.IIoT.Protocols.OpcUa.Twin.Api.Clients;
     using Microsoft.IIoT.Extensions.AspNetCore.Authentication;
     using Microsoft.IIoT.Extensions.AspNetCore.Authentication.Clients;
     using Microsoft.IIoT.Extensions.Authentication;

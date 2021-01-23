@@ -5,4 +5,4 @@
 
 using System.Runtime.CompilerServices;
 
-[assembly: InternalsVisibleTo("Microsoft.IIoT.Platform.Twin.Service.Tests")]
+[assembly: InternalsVisibleTo("Microsoft.IIoT.Protocols.OpcUa.Service.Tests")]

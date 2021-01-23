@@ -2,13 +2,11 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.Api {
-    using Microsoft.IIoT.Platform.Identity.Api.Clients;
-    using Microsoft.IIoT.Platform.Core.Api.Models;
-    using Microsoft.IIoT.Platform.Twin.Api.Clients;
-    using Microsoft.IIoT.Platform.Publisher.Api.Clients;
-    using Microsoft.IIoT.Platform.Discovery.Api.Clients;
-    using Microsoft.IIoT.Platform.Vault.Api.Clients;
+namespace Microsoft.IIoT.Protocols.OpcUa.Api {
+    using Microsoft.IIoT.Protocols.OpcUa.Core.Api.Models;
+    using Microsoft.IIoT.Protocols.OpcUa.Twin.Api.Clients;
+    using Microsoft.IIoT.Protocols.OpcUa.Publisher.Api.Clients;
+    using Microsoft.IIoT.Protocols.OpcUa.Discovery.Api.Clients;
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -22,8 +20,6 @@ namespace Microsoft.IIoT.Api {
 
         public static IEnumerable<object[]> GetDataContractTypes() {
             return GetAllApiModelTypes<BrowseDirection>()
-                .Concat(GetAllApiModelTypes<UsersServiceClient>())
-                .Concat(GetAllApiModelTypes<VaultServiceClient>())
                 .Concat(GetAllApiModelTypes<TwinServiceClient>())
                 .Concat(GetAllApiModelTypes<DiscoveryServiceClient>())
                 .Concat(GetAllApiModelTypes<PublisherServiceClient>())

@@ -3,10 +3,10 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.Platform.Publisher.Services {
-    using Microsoft.IIoT.Platform.Publisher.Models;
-    using Microsoft.IIoT.Platform.OpcUa.Models;
-    using Microsoft.IIoT.Platform.OpcUa;
+namespace Microsoft.IIoT.Protocols.OpcUa.Publisher.Services {
+    using Microsoft.IIoT.Protocols.OpcUa.Publisher.Models;
+    using Microsoft.IIoT.Protocols.OpcUa.Models;
+    using Microsoft.IIoT.Protocols.OpcUa;
     using Microsoft.Extensions.Logging;
     using System;
     using System.Linq;

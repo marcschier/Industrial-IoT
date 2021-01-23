@@ -3,7 +3,7 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.Platform.Core {
+namespace Microsoft.IIoT.Protocols.OpcUa.Core {
     using System.Threading;
     using System.Threading.Tasks;
 

@@ -3,7 +3,7 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.Platform.Twin.Service {
+namespace Microsoft.IIoT.Protocols.OpcUa.Service {
     using Microsoft.IIoT.Extensions.Hosting;
 
     /// <summary>
@@ -14,7 +14,7 @@ namespace Microsoft.IIoT.Platform.Twin.Service {
         /// <summary>
         /// ID
         /// </summary>
-        public string ServiceId => "OPC_TWIN";
+        public string ServiceId => "OPC_UA";
 
         /// <summary>
         /// Process id
@@ -24,11 +24,11 @@ namespace Microsoft.IIoT.Platform.Twin.Service {
         /// <summary>
         /// Name of service
         /// </summary>
-        public string Name => "Opc-Twin-Service";
+        public string Name => "Opc-Ua-Service";
 
         /// <summary>
         /// Description of service
         /// </summary>
-        public string Description => "Azure Industrial IoT OPC UA Twin Service";
+        public string Description => "Industrial IoT OPC UA Service";
     }
 }

@@ -15,9 +15,6 @@
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="5.0.0" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Microsoft.IIoT.Platform.Api.Internal\src\Microsoft.IIoT.Protocols.OpcUa.Api.Internal.csproj" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\..\..\..\azure\Microsoft.IIoT.Azure.AspNetCore\src\Microsoft.IIoT.Azure.AspNetCore.csproj" />
     <ProjectReference Include="..\..\..\..\azure\Microsoft.IIoT.Azure.IoTHub\src\Microsoft.IIoT.Azure.IoTHub.csproj" />
   </ItemGroup>
@@ -25,7 +22,8 @@
     <ProjectReference Include="..\..\..\..\extensions\Microsoft.IIoT.Extensions.OpenId\src\Microsoft.IIoT.Extensions.OpenId.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Microsoft.IIoT.Platform.Twin\src\Microsoft.IIoT.Protocols.OpcUa.csproj" />
+    <ProjectReference Include="..\..\Microsoft.IIoT.Protocols.OpcUa.Api.Internal\src\Microsoft.IIoT.Protocols.OpcUa.Api.Internal.csproj" />
+    <ProjectReference Include="..\..\Microsoft.IIoT.Protocols.OpcUa\src\Microsoft.IIoT.Protocols.OpcUa.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Content Remove="container.json" />

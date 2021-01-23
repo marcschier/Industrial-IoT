@@ -3,7 +3,7 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.Platform.Publisher.Processor.Runtime {
+namespace Microsoft.IIoT.Protocols.OpcUa.Publisher.Processor.Runtime {
     using Microsoft.IIoT.Azure.EventHub.Processor;
     using Microsoft.IIoT.Extensions.Diagnostics;
     using Microsoft.IIoT.Extensions.Configuration;

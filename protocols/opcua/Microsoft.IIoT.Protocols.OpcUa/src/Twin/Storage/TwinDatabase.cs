@@ -3,10 +3,10 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.Platform.Twin.Storage {
-    using Microsoft.IIoT.Platform.Twin.Storage.Models;
-    using Microsoft.IIoT.Platform.Twin.Models;
-    using Microsoft.IIoT.Platform.Core.Models;
+namespace Microsoft.IIoT.Protocols.OpcUa.Twin.Storage {
+    using Microsoft.IIoT.Protocols.OpcUa.Twin.Storage.Models;
+    using Microsoft.IIoT.Protocols.OpcUa.Twin.Models;
+    using Microsoft.IIoT.Protocols.OpcUa.Core.Models;
     using Microsoft.IIoT.Exceptions;
     using Microsoft.IIoT.Extensions.Storage;
     using System;

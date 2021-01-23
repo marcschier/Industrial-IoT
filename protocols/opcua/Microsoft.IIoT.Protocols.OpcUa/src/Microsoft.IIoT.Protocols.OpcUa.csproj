@@ -8,6 +8,6 @@
     <ProjectReference Include="..\..\..\..\extensions\Microsoft.IIoT.Extensions.Orleans\src\Microsoft.IIoT.Extensions.Orleans.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Microsoft.IIoT.Platform.OpcUa\src\Microsoft.IIoT.Protocols.OpcUa.Stack.csproj" />
+    <ProjectReference Include="..\..\Microsoft.IIoT.Protocols.OpcUa.Stack\src\Microsoft.IIoT.Protocols.OpcUa.Stack.csproj" />
   </ItemGroup>
 </Project>

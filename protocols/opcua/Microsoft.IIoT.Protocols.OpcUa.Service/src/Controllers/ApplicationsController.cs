@@ -3,12 +3,11 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.Platform.Discovery.Service.Controllers {
-    using Microsoft.IIoT.Platform.Discovery.Service.Filters;
-    using Microsoft.IIoT.Platform.Discovery.Api.Models;
-    using Microsoft.IIoT.Platform.Discovery;
-    using Microsoft.IIoT.Platform.Discovery.Models;
-    using Microsoft.IIoT.Platform.Core.Models;
+namespace Microsoft.IIoT.Protocols.OpcUa.Service.Controllers {
+    using Microsoft.IIoT.Protocols.OpcUa.Service.Filters;
+    using Microsoft.IIoT.Protocols.OpcUa.Discovery.Api.Models;
+    using Microsoft.IIoT.Protocols.OpcUa.Discovery;
+    using Microsoft.IIoT.Protocols.OpcUa.Core.Models;
     using Microsoft.IIoT.Extensions.AspNetCore.OpenApi;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Http;
@@ -23,7 +22,7 @@ namespace Microsoft.IIoT.Platform.Discovery.Service.Controllers {
     [ApiVersion("3")]
     [Route("v{version:apiVersion}/applications")]
     [ExceptionsFilter]
-    [Authorize(Policy = Policies.CanQuery)]
+    [Authorize(Policy = Policies.CanRead)]
     [ApiController]
     public class ApplicationsController : ControllerBase {
 
@@ -31,76 +30,8 @@ namespace Microsoft.IIoT.Platform.Discovery.Service.Controllers {
         /// Create controller
         /// </summary>
         /// <param name="applications"></param>
-        /// <param name="discovery"></param>
-        public ApplicationsController(IApplicationRegistry applications,
-            IDiscoveryServices discovery) {
+        public ApplicationsController(IApplicationRegistry applications) {
             _applications = applications;
-            _discovery = discovery;
-        }
-
-        /// <summary>
-        /// Register new server
-        /// </summary>
-        /// <remarks>
-        /// Registers a server solely using a discovery url. Requires that
-        /// the onboarding agent service is running and the server can be
-        /// located by a supervisor in its network using the discovery url.
-        /// </remarks>
-        /// <param name="request">Server registration request</param>
-        /// <returns></returns>
-        [HttpPost]
-        [Authorize(Policy = Policies.CanManage)]
-        public async Task RegisterServerAsync(
-            [FromBody][Required] ServerRegistrationRequestApiModel request) {
-            if (request == null) {
-                throw new ArgumentNullException(nameof(request));
-            }
-            var context = (OperationContextModel)null;
-            // TODO: var context.AuthorityId = User.Identity.Name;
-            await _discovery.RegisterAsync(request.ToServiceModel(),
-                context).ConfigureAwait(false);
-        }
-
-        /// <summary>
-        /// Discover servers
-        /// </summary>
-        /// <remarks>
-        /// Registers servers by running a discovery scan in a supervisor's
-        /// network. Requires that the onboarding agent service is running.
-        /// </remarks>
-        /// <param name="request">Discovery request</param>
-        /// <returns></returns>
-        [HttpPost("discover")]
-        [Authorize(Policy = Policies.CanManage)]
-        public async Task DiscoverServerAsync(
-            [FromBody][Required] DiscoveryRequestApiModel request) {
-            if (request == null) {
-                throw new ArgumentNullException(nameof(request));
-            }
-            var context = (OperationContextModel)null;
-            // TODO: var context.AuthorityId = User.Identity.Name;
-            await _discovery.DiscoverAsync(request.ToServiceModel(),
-                context).ConfigureAwait(false);
-        }
-
-        /// <summary>
-        /// Cancel discovery
-        /// </summary>
-        /// <remarks>
-        /// Cancels a discovery request using the request identifier.
-        /// </remarks>
-        /// <param name="requestId">Discovery request</param>
-        /// <returns></returns>
-        [HttpDelete("discover/{requestId}")]
-        [Authorize(Policy = Policies.CanManage)]
-        public async Task CancelAsync(string requestId) {
-            if (string.IsNullOrEmpty(requestId)) {
-                throw new ArgumentNullException(nameof(requestId));
-            }
-            var context = (OperationContextModel)null;
-            await _discovery.CancelAsync(new DiscoveryCancelModel {
-                Id = requestId
-            }, context).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -155,7 +86,7 @@ namespace Microsoft.IIoT.Platform.Discovery.Service.Controllers {
         /// <param name="applicationId">The identifier of the application</param>
         /// <param name="request">Application update request</param>
         [HttpPatch("{applicationId}")]
-        [Authorize(Policy = Policies.CanChange)]
+        [Authorize(Policy = Policies.CanWrite)]
         public async Task UpdateApplicationAsync(string applicationId,
             [FromBody][Required] ApplicationInfoUpdateApiModel request) {
             if (string.IsNullOrEmpty(applicationId)) {
@@ -300,6 +231,5 @@ namespace Microsoft.IIoT.Platform.Discovery.Service.Controllers {
         }
 
         private readonly IApplicationRegistry _applications;
-        private readonly IDiscoveryServices _discovery;
     }
 }

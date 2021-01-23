@@ -3,10 +3,10 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.Platform.Twin.Clients {
-    using Microsoft.IIoT.Platform.Twin.Models;
-    using Microsoft.IIoT.Platform.Core.Models;
-    using Microsoft.IIoT.Platform.Discovery;
+namespace Microsoft.IIoT.Protocols.OpcUa.Twin.Clients {
+    using Microsoft.IIoT.Protocols.OpcUa.Twin.Models;
+    using Microsoft.IIoT.Protocols.OpcUa.Core.Models;
+    using Microsoft.IIoT.Protocols.OpcUa.Discovery;
     using Microsoft.IIoT.Extensions.Orleans;
     using Microsoft.IIoT.Extensions.Serializers;
     using System;

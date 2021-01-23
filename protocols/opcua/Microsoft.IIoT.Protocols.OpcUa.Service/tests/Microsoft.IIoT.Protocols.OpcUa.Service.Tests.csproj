@@ -3,9 +3,7 @@
     <TargetFramework>net5.0</TargetFramework>
    </PropertyGroup>
   <ItemGroup>
-    <None Remove="Controllers\ve-95F2.tmp" />
-  </ItemGroup>
-  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="5.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="5.0.1" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.8.3" />
     <PackageReference Include="Moq" Version="4.15.2" />
@@ -25,8 +23,8 @@
     <Service Include="{82a7f48d-3b50-4b1e-b82e-3ada8210c358}" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Microsoft.IIoT.Platform.Api.Internal\src\Microsoft.IIoT.Protocols.OpcUa.Api.Internal.csproj" />
-    <ProjectReference Include="..\..\Microsoft.IIoT.Platform.OpcUa.Testing\src\Microsoft.IIoT.Protocols.OpcUa.Testing.csproj" />
+    <ProjectReference Include="..\..\Microsoft.IIoT.Protocols.OpcUa.Api.Internal\src\Microsoft.IIoT.Protocols.OpcUa.Api.Internal.csproj" />
+    <ProjectReference Include="..\..\Microsoft.IIoT.Protocols.OpcUa.Testing\src\Microsoft.IIoT.Protocols.OpcUa.Testing.csproj" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\src\Microsoft.IIoT.Protocols.OpcUa.Service.csproj" />

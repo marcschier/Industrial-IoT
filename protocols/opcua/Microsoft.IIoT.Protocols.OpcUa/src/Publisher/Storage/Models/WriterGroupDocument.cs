@@ -3,8 +3,8 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.Platform.Publisher.Storage.Models {
-    using Microsoft.IIoT.Platform.Publisher.Models;
+namespace Microsoft.IIoT.Protocols.OpcUa.Publisher.Storage.Models {
+    using Microsoft.IIoT.Protocols.OpcUa.Publisher.Models;
     using System.Runtime.Serialization;
     using System;
     using System.Collections.Generic;

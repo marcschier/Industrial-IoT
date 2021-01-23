@@ -3,12 +3,12 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.Platform.Cli {
-    using Microsoft.IIoT.Platform.Core.Models;
-    using Microsoft.IIoT.Platform.OpcUa;
-    using Microsoft.IIoT.Platform.OpcUa.Sample;
-    using Microsoft.IIoT.Platform.OpcUa.Services;
-    using Microsoft.IIoT.Platform.OpcUa.Testing.Runtime;
+namespace Microsoft.IIoT.Protocols.OpcUa.Cli {
+    using Microsoft.IIoT.Protocols.OpcUa.Core.Models;
+    using Microsoft.IIoT.Protocols.OpcUa;
+    using Microsoft.IIoT.Protocols.OpcUa.Sample;
+    using Microsoft.IIoT.Protocols.OpcUa.Services;
+    using Microsoft.IIoT.Protocols.OpcUa.Testing.Runtime;
     using Microsoft.IIoT.Extensions.Diagnostics;
     using Opc.Ua;
     using Microsoft.Extensions.Logging;

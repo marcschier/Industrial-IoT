@@ -3,9 +3,9 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.Platform.OpcUa.Testing.Tests {
-    using Microsoft.IIoT.Platform.Twin.Models;
-    using Microsoft.IIoT.Platform.Twin;
+namespace Microsoft.IIoT.Protocols.OpcUa.Testing.Tests {
+    using Microsoft.IIoT.Protocols.OpcUa.Twin.Models;
+    using Microsoft.IIoT.Protocols.OpcUa.Twin;
     using System.Threading.Tasks;
     using Xunit;
     using System;
@@ -25,7 +25,7 @@ namespace Microsoft.IIoT.Platform.OpcUa.Testing.Tests {
         public async Task HistoryReadInt64ValuesTest1Async() {
 
             var services = _services();
-            var samples = "s=1:Microsoft.IIoT.Platform.OpcUa.Testing.Servers.HistoricalAccess.Data.Sample.Int64.txt";
+            var samples = "s=1:Microsoft.IIoT.Protocols.OpcUa.Testing.Servers.HistoricalAccess.Data.Sample.Int64.txt";
 
             var results = await services.HistoryReadValuesAsync(_twin,
                 new HistoryReadRequestModel<ReadValuesDetailsModel> {
@@ -101,7 +101,7 @@ namespace Microsoft.IIoT.Platform.OpcUa.Testing.Tests {
         public async Task HistoryReadInt64ValuesTest2Async() {
 
             var services = _services();
-            var samples = "s=1:Microsoft.IIoT.Platform.OpcUa.Testing.Servers.HistoricalAccess.Data.Sample.Int64.txt";
+            var samples = "s=1:Microsoft.IIoT.Protocols.OpcUa.Testing.Servers.HistoricalAccess.Data.Sample.Int64.txt";
 
             var results = await services.HistoryReadValuesAsync(_twin,
                 new HistoryReadRequestModel<ReadValuesDetailsModel> {
@@ -160,7 +160,7 @@ namespace Microsoft.IIoT.Platform.OpcUa.Testing.Tests {
         public async Task HistoryReadInt64ValuesTest3Async() {
 
             var services = _services();
-            var samples = "s=1:Microsoft.IIoT.Platform.OpcUa.Testing.Servers.HistoricalAccess.Data.Sample.Int64.txt";
+            var samples = "s=1:Microsoft.IIoT.Protocols.OpcUa.Testing.Servers.HistoricalAccess.Data.Sample.Int64.txt";
 
             var results = await services.HistoryReadValuesAsync(_twin,
                 new HistoryReadRequestModel<ReadValuesDetailsModel> {
@@ -227,7 +227,7 @@ namespace Microsoft.IIoT.Platform.OpcUa.Testing.Tests {
         public async Task HistoryReadInt64ValuesTest4Async() {
 
             var services = _services();
-            var samples = "s=1:Microsoft.IIoT.Platform.OpcUa.Testing.Servers.HistoricalAccess.Data.Sample.Int64.txt";
+            var samples = "s=1:Microsoft.IIoT.Protocols.OpcUa.Testing.Servers.HistoricalAccess.Data.Sample.Int64.txt";
 
             var results = await services.HistoryReadValuesAsync(_twin,
                 new HistoryReadRequestModel<ReadValuesDetailsModel> {

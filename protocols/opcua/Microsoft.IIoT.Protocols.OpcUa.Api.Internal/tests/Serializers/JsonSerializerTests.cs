@@ -3,6 +3,7 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.IIoT.Api.Json {
+    using Microsoft.IIoT.Protocols.OpcUa.Api;
     using Microsoft.IIoT.Extensions.Serializers;
     using Microsoft.IIoT.Extensions.Serializers.NewtonSoft;
     using AutoFixture;

@@ -3,7 +3,7 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.Platform.Publisher.Services {
+namespace Microsoft.IIoT.Protocols.OpcUa.Publisher.Services {
     using Microsoft.IIoT.Extensions.Hosting;
     using Microsoft.Extensions.Logging;
     using Prometheus;

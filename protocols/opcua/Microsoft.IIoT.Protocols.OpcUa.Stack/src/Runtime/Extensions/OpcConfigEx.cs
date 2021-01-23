@@ -3,7 +3,7 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.Platform.OpcUa {
+namespace Microsoft.IIoT.Protocols.OpcUa {
     using Microsoft.IIoT.Extensions.Hosting;
     using Microsoft.IIoT.Exceptions;
     using Microsoft.IIoT.Extensions.Utils;

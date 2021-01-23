@@ -3,9 +3,9 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.Platform.Discovery {
+namespace Microsoft.IIoT.Protocols.OpcUa.Discovery {
     using Microsoft.IIoT.Exceptions;
-    using Microsoft.IIoT.Platform.Discovery.Models;
+    using Microsoft.IIoT.Protocols.OpcUa.Discovery.Models;
     using Microsoft.IIoT.Extensions.Utils;
     using System.Collections.Generic;
     using System.Threading;

@@ -4,8 +4,8 @@
 // ------------------------------------------------------------
 
 namespace Opc.Ua.Extensions {
-    using Microsoft.IIoT.Platform.Core.Models;
-    using Microsoft.IIoT.Platform.OpcUa;
+    using Microsoft.IIoT.Protocols.OpcUa.Core.Models;
+    using Microsoft.IIoT.Protocols.OpcUa;
 
     /// <summary>
     /// Endpoint description extensions

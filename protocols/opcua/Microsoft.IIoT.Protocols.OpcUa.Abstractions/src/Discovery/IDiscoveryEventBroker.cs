@@ -3,7 +3,7 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.Platform.Discovery {
+namespace Microsoft.IIoT.Protocols.OpcUa.Discovery {
     using System;
     using System.Threading.Tasks;
 

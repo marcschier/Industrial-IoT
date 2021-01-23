@@ -3,10 +3,10 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.Platform.Publisher.Events.v2 {
-    using Microsoft.IIoT.Platform.Publisher.Events.v2.Models;
-    using Microsoft.IIoT.Platform.Publisher.Models;
-    using Microsoft.IIoT.Platform.Core.Models;
+namespace Microsoft.IIoT.Protocols.OpcUa.Publisher.Events.v2 {
+    using Microsoft.IIoT.Protocols.OpcUa.Publisher.Events.v2.Models;
+    using Microsoft.IIoT.Protocols.OpcUa.Publisher.Models;
+    using Microsoft.IIoT.Protocols.OpcUa.Core.Models;
     using Microsoft.IIoT.Extensions.Messaging;
     using System;
     using System.Threading.Tasks;

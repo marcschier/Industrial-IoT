@@ -3,9 +3,9 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.Platform.Discovery.Api {
-    using Microsoft.IIoT.Platform.Discovery.Api.Models;
-    using Microsoft.IIoT.Platform.Core.Api.Models;
+namespace Microsoft.IIoT.Protocols.OpcUa.Discovery.Api {
+    using Microsoft.IIoT.Protocols.OpcUa.Discovery.Api.Models;
+    using Microsoft.IIoT.Protocols.OpcUa.Core.Api.Models;
     using System;
     using System.Threading;
     using System.Threading.Tasks;
@@ -163,18 +163,6 @@ namespace Microsoft.IIoT.Platform.Discovery.Api {
         /// <returns></returns>
         Task<EndpointInfoListApiModel> QueryEndpointsAsync(
             EndpointInfoQueryApiModel query, int? pageSize = null,
-            CancellationToken ct = default);
-
-        /// <summary>
-        /// Enable or disable discovery with optional configuration
-        /// </summary>
-        /// <param name="discovererId"></param>
-        /// <param name="mode"></param>
-        /// <param name="config"></param>
-        /// <param name="ct"></param>
-        /// <returns></returns>
-        Task SetDiscoveryModeAsync(string discovererId,
-            DiscoveryMode mode, DiscoveryConfigApiModel config = null,
             CancellationToken ct = default);
     }
 }

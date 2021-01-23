@@ -246,23 +246,14 @@ namespace Microsoft.IIoT {
         public const string PCS_SERVICE_PATH_BASE =
             "PCS_SERVICE_PATH_BASE";
         /// <summary> Service URL path base for OPC twin service </summary>
-        public const string PCS_TWIN_SERVICE_PATH_BASE =
+        public const string PCS_OPCUA_SERVICE_PATH_BASE =
             "PCS_TWIN_SERVICE_PATH_BASE";
-        /// <summary> Service URL path base for OPC discovery service </summary>
-        public const string PCS_DISCOVERY_SERVICE_PATH_BASE =
-            "PCS_DISCOVERY_SERVICE_PATH_BASE";
-        /// <summary> Service URL path base for OPC registry service </summary>
+        /// <summary> Service URL path base for OPC gateway service </summary>
+        public const string PCS_OPCUA_GATEWAY_SERVICE_PATH_BASE =
+            "PCS_GATEWAY_SERVICE_PATH_BASE";
+        /// <summary> Service URL path base for platform service </summary>
         public const string PCS_REGISTRY_SERVICE_PATH_BASE =
             "PCS_REGISTRY_SERVICE_PATH_BASE";
-        /// <summary> Service URL path base for OPC vault service </summary>
-        public const string PCS_VAULT_SERVICE_PATH_BASE =
-            "PCS_VAULT_SERVICE_PATH_BASE";
-        /// <summary> Service URL path base for OPC publisher service </summary>
-        public const string PCS_PUBLISHER_SERVICE_PATH_BASE =
-            "PCS_PUBLISHER_SERVICE_PATH_BASE";
-        /// <summary> Service URL path base for gateway service </summary>
-        public const string PCS_GATEWAY_SERVICE_PATH_BASE =
-            "PCS_GATEWAY_SERVICE_PATH_BASE";
         /// <summary> Service URL path base for frontend app </summary>
         public const string PCS_FRONTEND_APP_SERVICE_PATH_BASE =
             "PCS_FRONTEND_APP_SERVICE_PATH_BASE";

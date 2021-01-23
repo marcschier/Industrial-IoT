@@ -3,11 +3,12 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.Platform.OpcUa.Parser {
+namespace Microsoft.IIoT.Protocols.OpcUa.Parser {
+    using Microsoft.IIoT.Protocols.OpcUa.Stack.Parser;
     using Antlr4.Runtime;
     using System;
     using Opc.Ua;
-    using Microsoft.IIoT.Platform.Core.Models;
+    using Microsoft.IIoT.Protocols.OpcUa.Core.Models;
     using System.Linq;
     using System.Collections.Generic;
     using Antlr4.Runtime.Tree;

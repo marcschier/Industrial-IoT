@@ -3,8 +3,8 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.Platform.Publisher.Events.v2 {
-    using Microsoft.IIoT.Platform.Publisher.Events.v2.Models;
+namespace Microsoft.IIoT.Protocols.OpcUa.Publisher.Events.v2 {
+    using Microsoft.IIoT.Protocols.OpcUa.Publisher.Events.v2.Models;
     using Microsoft.IIoT.Extensions.Messaging;
     using System.Threading.Tasks;
     using System.Collections.Generic;

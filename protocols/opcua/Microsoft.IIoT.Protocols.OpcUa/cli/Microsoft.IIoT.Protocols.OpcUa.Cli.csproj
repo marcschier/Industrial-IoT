@@ -12,11 +12,11 @@
     <PackageReference Include="Microsoft.Extensions.Configuration.CommandLine" Version="5.0.0" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Microsoft.IIoT.Platform.OpcUa.Testing\src\Microsoft.IIoT.Protocols.OpcUa.Testing.csproj" />
     <ProjectReference Include="..\..\..\..\azure\Microsoft.IIoT.Azure.IoTHub\src\Microsoft.IIoT.Azure.IoTHub.csproj" />
     <ProjectReference Include="..\..\..\..\azure\Microsoft.IIoT.Azure.ActiveDirectory\src\Microsoft.IIoT.Azure.ActiveDirectory.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Microsoft.IIoT.Platform.Twin.Service\src\Microsoft.IIoT.Protocols.OpcUa.Service.csproj" />
+    <ProjectReference Include="..\..\Microsoft.IIoT.Protocols.OpcUa.Testing\src\Microsoft.IIoT.Protocols.OpcUa.Testing.csproj" />
+    <ProjectReference Include="..\..\Microsoft.IIoT.Protocols.OpcUa.Service\src\Microsoft.IIoT.Protocols.OpcUa.Service.csproj" />
   </ItemGroup>
 </Project>

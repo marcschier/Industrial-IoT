@@ -3,11 +3,11 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.Platform.Twin.Grains {
-    using Microsoft.IIoT.Platform.Twin.Models;
-    using Microsoft.IIoT.Platform.Twin;
-    using Microsoft.IIoT.Platform.Discovery;
-    using Microsoft.IIoT.Platform.Core.Models;
+namespace Microsoft.IIoT.Protocols.OpcUa.Twin.Grains {
+    using Microsoft.IIoT.Protocols.OpcUa.Twin.Models;
+    using Microsoft.IIoT.Protocols.OpcUa.Twin;
+    using Microsoft.IIoT.Protocols.OpcUa.Discovery;
+    using Microsoft.IIoT.Protocols.OpcUa.Core.Models;
     using Microsoft.IIoT.Extensions.Serializers;
     using System;
     using System.Threading.Tasks;

@@ -3,9 +3,9 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.Platform.Discovery.Handlers {
-    using Microsoft.IIoT.Platform.Discovery;
-    using Microsoft.IIoT.Platform.Discovery.Models;
+namespace Microsoft.IIoT.Protocols.OpcUa.Discovery.Handlers {
+    using Microsoft.IIoT.Protocols.OpcUa.Discovery;
+    using Microsoft.IIoT.Protocols.OpcUa.Discovery.Models;
     using Microsoft.IIoT.Extensions.Messaging;
     using Microsoft.IIoT.Extensions.Serializers;
     using Microsoft.Extensions.Logging;

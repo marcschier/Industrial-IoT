@@ -3,8 +3,8 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.Platform.Events.Api.Runtime {
-    using Microsoft.IIoT.Platform.Events.Api;
+namespace Microsoft.IIoT.Protocols.OpcUa.Events.Api.Runtime {
+    using Microsoft.IIoT.Protocols.OpcUa.Events.Api;
     using Microsoft.IIoT.Api.Runtime;
     using Microsoft.Extensions.Configuration;
 

@@ -3,8 +3,8 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.Platform.Twin.Clients {
-    using Microsoft.IIoT.Platform.Twin.Models;
+namespace Microsoft.IIoT.Protocols.OpcUa.Twin.Clients {
+    using Microsoft.IIoT.Protocols.OpcUa.Twin.Models;
     using Microsoft.IIoT.Extensions.Orleans;
     using System;
     using System.Threading.Tasks;

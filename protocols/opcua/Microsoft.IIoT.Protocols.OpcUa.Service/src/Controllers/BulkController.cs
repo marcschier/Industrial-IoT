@@ -3,12 +3,11 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.Platform.Publisher.Service.Controllers {
-    using Microsoft.IIoT.Platform.Publisher.Service.Auth;
-    using Microsoft.IIoT.Platform.Publisher.Service.Filters;
-    using Microsoft.IIoT.Platform.Publisher.Api.Models;
-    using Microsoft.IIoT.Platform.Publisher;
-    using Microsoft.IIoT.Platform.Core.Models;
+namespace Microsoft.IIoT.Protocols.OpcUa.Service.Controllers {
+    using Microsoft.IIoT.Protocols.OpcUa.Service.Filters;
+    using Microsoft.IIoT.Protocols.OpcUa.Publisher.Api.Models;
+    using Microsoft.IIoT.Protocols.OpcUa.Publisher;
+    using Microsoft.IIoT.Protocols.OpcUa.Core.Models;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using System.Threading.Tasks;

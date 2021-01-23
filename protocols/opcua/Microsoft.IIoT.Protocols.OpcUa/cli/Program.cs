@@ -3,23 +3,22 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.Platform.Twin.Services.Module.Cli {
-    using Microsoft.IIoT.Platform.Discovery.Services;
-    using Microsoft.IIoT.Platform.Discovery;
-    using Microsoft.IIoT.Platform.Discovery.Models;
-    using Microsoft.IIoT.Platform.Twin.Models;
-    using Microsoft.IIoT.Platform.Core.Models;
-    using Microsoft.IIoT.Platform.Registry.Models;
-    using Microsoft.IIoT.Platform.OpcUa.Sample;
-    using Microsoft.IIoT.Platform.OpcUa.Services;
-    using Microsoft.IIoT.Platform.OpcUa.Testing.Runtime;
+namespace Microsoft.IIoT.Protocols.OpcUa.Services.Cli {
+    using Microsoft.IIoT.Protocols.OpcUa.Services;
+    using Microsoft.IIoT.Protocols.OpcUa.Discovery.Services;
+    using Microsoft.IIoT.Protocols.OpcUa.Discovery;
+    using Microsoft.IIoT.Protocols.OpcUa.Discovery.Models;
+    using Microsoft.IIoT.Protocols.OpcUa.Twin.Models;
+    using Microsoft.IIoT.Protocols.OpcUa.Core.Models;
+    using Microsoft.IIoT.Protocols.OpcUa.Sample;
+    using Microsoft.IIoT.Protocols.OpcUa.Testing.Runtime;
     using Microsoft.IIoT.Azure.IoTHub;
     using Microsoft.IIoT.Azure.IoTHub.Models;
     using Microsoft.IIoT.Azure.IoTHub.Clients;
     using Microsoft.IIoT.Azure.LogAnalytics;
     using Microsoft.IIoT.Azure.LogAnalytics.Runtime;
-    using Microsoft.IIoT.Extensions.Diagnostics;
     using Microsoft.IIoT.Exceptions;
+    using Microsoft.IIoT.Extensions.Diagnostics;
     using Microsoft.IIoT.Extensions.Serializers;
     using Microsoft.IIoT.Extensions.Serializers.NewtonSoft;
     using Microsoft.IIoT.Extensions.Storage.Services;
@@ -41,6 +40,12 @@ namespace Microsoft.IIoT.Platform.Twin.Services.Module.Cli {
     using System.Net;
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.IIoT.Protocols.OpcUa.Twin.Services;
+    using Microsoft.IIoT.Protocols.OpcUa.Twin;
+    using Microsoft.IIoT.Extensions.Net.Scanner;
+    using Microsoft.IIoT.Extensions.Net.Models;
+    using Microsoft.IIoT.Protocols.OpcUa.Transport.Probe;
+    using Microsoft.IIoT.Extensions.Net;
 
     /// <summary>
     /// OPC Twin module cli
@@ -60,7 +65,7 @@ namespace Microsoft.IIoT.Platform.Twin.Services.Module.Cli {
             TestOpcUaServerScanner,
             TestNetworkScanner,
             TestPortScanner,
-			
+
             TestOpcUaModelBrowseEncoder,
             TestOpcUaModelBrowseFile,
             TestOpcUaModelArchiver,
@@ -84,6 +89,7 @@ namespace Microsoft.IIoT.Platform.Twin.Services.Module.Cli {
                 (s, e) => Console.WriteLine("unhandled: " + e.ExceptionObject);
             var op = Op.None;
             string deviceId = null, moduleId = null;
+            string fileName = null;
             Console.WriteLine("Twin module command line interface.");
             var configuration = new ConfigurationBuilder()
                 .AddFromDotEnvFile()
@@ -485,7 +491,8 @@ Options:
             var logger = Log.Console(LogLevel.Error);
             var registry = new IoTHubServiceClient(
                 config, new NewtonSoftJsonSerializer(), logger);
-            await registry.DeleteAsync(deviceId, moduleId, null, CancellationToken.None).ConfigureAwait(false);
+            await registry.DeleteAsync(deviceId, moduleId, null,
+                CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -497,7 +504,7 @@ Options:
                 config, new NewtonSoftJsonSerializer(), logger);
 
             var query = "SELECT * FROM devices.modules WHERE " +
-                $"properties.reported.{TwinProperty.Type} = '{IdentityType.Supervisor}'";
+                $"properties.reported.{TwinProperty.Type} = 'supervisor'";
             var supers = await registry.QueryAllDeviceTwinsAsync(query).ConfigureAwait(false);
             foreach (var item in supers) {
                 Console.WriteLine($"{item.Id} {item.ModuleId}");
@@ -513,7 +520,7 @@ Options:
                 config, new NewtonSoftJsonSerializer(), logger);
 
             var query = "SELECT * FROM devices.modules WHERE " +
-                $"properties.reported.{TwinProperty.Type} = '{IdentityType.Supervisor}'";
+                $"properties.reported.{TwinProperty.Type} = 'supervisor'";
             var supers = await registry.QueryAllDeviceTwinsAsync(query).ConfigureAwait(false);
             foreach (var item in supers) {
                 Console.WriteLine($"Resetting {item.Id} {item.ModuleId ?? ""}");
@@ -540,7 +547,7 @@ Options:
                 return;
             }
             var query = "SELECT * FROM devices.modules WHERE " +
-             $"properties.reported.{TwinProperty.Type} = '{IdentityType.Supervisor}'";
+             $"properties.reported.{TwinProperty.Type} = 'supervisor'";
             var supers = await registry.QueryAllDeviceTwinsAsync(query).ConfigureAwait(false);
             foreach (var item in supers) {
                 Console.WriteLine($"Deleting {item.Id} {item.ModuleId ?? ""}");
@@ -597,7 +604,7 @@ Options:
             try {
                 await registry.RegisterAsync(deviceId, null, new DeviceRegistrationModel {
                     Tags = new Dictionary<string, VariantValue> {
-                        [TwinProperty.Type] = IdentityType.Gateway
+                        [TwinProperty.Type] = "iiotedge"
                     },
                     Capabilities = new CapabilitiesModel {
                         IotEdge = true

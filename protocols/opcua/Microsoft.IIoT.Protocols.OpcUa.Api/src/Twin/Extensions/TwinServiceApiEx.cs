@@ -3,9 +3,9 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.Platform.Twin.Api {
-    using Microsoft.IIoT.Platform.Twin.Api.Models;
-    using Microsoft.IIoT.Platform.Core.Api.Models;
+namespace Microsoft.IIoT.Protocols.OpcUa.Twin.Api {
+    using Microsoft.IIoT.Protocols.OpcUa.Twin.Api.Models;
+    using Microsoft.IIoT.Protocols.OpcUa.Core.Api.Models;
     using Microsoft.IIoT.Extensions.Utils;
     using System;
     using System.Collections.Generic;

@@ -4,7 +4,7 @@
 // ------------------------------------------------------------
 
 
-namespace Microsoft.IIoT.Platform.Twin {
+namespace Microsoft.IIoT.Protocols.OpcUa.Twin {
     using System;
 
     /// <summary>

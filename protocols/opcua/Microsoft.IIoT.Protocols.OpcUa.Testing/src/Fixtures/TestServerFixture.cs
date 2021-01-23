@@ -3,7 +3,7 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.Platform.OpcUa.Testing.Fixtures {
+namespace Microsoft.IIoT.Protocols.OpcUa.Testing.Fixtures {
     using Opc.Ua.Server;
     using System.Collections.Generic;
 

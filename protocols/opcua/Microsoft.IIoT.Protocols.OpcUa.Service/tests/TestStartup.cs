@@ -3,20 +3,23 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.Platform.Twin.Service {
-    using Microsoft.IIoT.Platform.OpcUa.Testing.Runtime;
+namespace Microsoft.IIoT.Protocols.OpcUa.Service {
+    using Microsoft.IIoT.Protocols.OpcUa.Discovery.Api;
+    using Microsoft.IIoT.Protocols.OpcUa.Events.Api.Runtime;
+    using Microsoft.IIoT.Protocols.OpcUa.Publisher.Api;
+    using Microsoft.IIoT.Protocols.OpcUa.Testing.Runtime;
+    using Microsoft.IIoT.Protocols.OpcUa.Twin;
+    using Microsoft.IIoT.Protocols.OpcUa.Twin.Api;
     using Microsoft.IIoT.Extensions.Authentication;
+    using Microsoft.IIoT.Extensions.Authentication.Models;
+    using Microsoft.IIoT.Extensions.Authentication.Runtime;
+    using Microsoft.IIoT.Extensions.Http.SignalR.Clients;
     using Microsoft.IIoT.Extensions.Messaging;
-    using Microsoft.IIoT.Extensions.Serializers.NewtonSoft;
-    using Microsoft.IIoT.Extensions.Serializers.MessagePack;
-    using Microsoft.AspNetCore.Hosting;
-    using Microsoft.AspNetCore.Mvc.Testing;
-    using Microsoft.Extensions.Hosting;
     using Microsoft.Extensions.Configuration;
+    using Microsoft.AspNetCore.Hosting;
     using Autofac;
-    using Autofac.Extensions.Hosting;
-    using System.Net.Http;
     using System.Collections.Generic;
+    using System.Threading.Tasks;
 
     /// <summary>
     /// Startup class for tests
@@ -31,6 +34,9 @@ namespace Microsoft.IIoT.Platform.Twin.Service {
         /// <inheritdoc/>
         public override void ConfigureContainer(ContainerBuilder builder) {
 
+            // Register test event bus
+            builder.RegisterType<DummyProcessingHost>()
+                .AsImplementedInterfaces().SingleInstance();
             builder.RegisterModule<MemoryEventBusModule>();
             builder.RegisterModule<TwinServices>();
 
@@ -41,53 +47,56 @@ namespace Microsoft.IIoT.Platform.Twin.Service {
                 .AsImplementedInterfaces().SingleInstance();
             builder.RegisterType<TestClientServicesConfig>()
                .AsImplementedInterfaces().SingleInstance();
+
+            // Register events api configuration interface
+            builder.RegisterType<EventsConfig>()
+                .AsImplementedInterfaces().SingleInstance();
+            builder.RegisterInstance(new AadApiClientConfig(null))
+                .AsImplementedInterfaces().SingleInstance();
+
+            // ... as well as signalR client (needed for api)
+            builder.RegisterType<SignalRHubClient>()
+                .AsImplementedInterfaces().InstancePerLifetimeScope();
+
+            // Register client events
+            builder.RegisterType<DiscoveryServiceEvents>()
+                .AsImplementedInterfaces().SingleInstance();
+            builder.RegisterType<TwinServiceEvents>()
+                .AsImplementedInterfaces();
+            builder.RegisterType<PublisherServiceEvents>()
+                .AsImplementedInterfaces().SingleInstance();
+
             builder.RegisterType<TestAuthConfig>()
                 .AsImplementedInterfaces();
         }
 
-        public class TestAuthConfig : IServerAuthConfig {
+        public class DummyProcessingHost : IEventProcessingHost {
+
+            public Task StartAsync() {
+                return Task.CompletedTask;
+            }
+
+            public Task StopAsync() {
+                return Task.CompletedTask;
+            }
+        }
+
+        public class TestAuthConfig : IServerAuthConfig, ITokenProvider {
             public bool AllowAnonymousAccess => true;
             public IEnumerable<IOAuthServerConfig> JwtBearerProviders { get; }
-        }
-    }
 
-    /// <inheritdoc/>
-    public class WebAppFixture : WebApplicationFactory<TestStartup>, IHttpClientFactory {
+            public Task<TokenResultModel> GetTokenForAsync(
+                string resource, IEnumerable<string> scopes = null) {
+                return Task.FromResult<TokenResultModel>(null);
+            }
 
-        public static IEnumerable<object[]> GetSerializers() {
-            yield return new object[] { new MessagePackSerializer() };
-            yield return new object[] { new NewtonSoftJsonSerializer() };
-        }
+            public Task InvalidateAsync(string resource) {
+                return Task.CompletedTask;
+            }
 
-        /// <inheritdoc/>
-        protected override IHostBuilder CreateHostBuilder() {
-            return Host.CreateDefaultBuilder();
+            public bool Supports(string resource) {
+                return true;
+            }
         }
-
-        /// <inheritdoc/>
-        protected override void ConfigureWebHost(IWebHostBuilder builder) {
-            builder.UseContentRoot(".").UseStartup<TestStartup>();
-            base.ConfigureWebHost(builder);
-        }
-
-        /// <inheritdoc/>
-        protected override IHost CreateHost(IHostBuilder builder) {
-            builder.UseAutofac();
-            return base.CreateHost(builder);
-        }
-
-        /// <inheritdoc/>
-        public HttpClient CreateClient(string name) {
-            return CreateClient();
-        }
-
-        /// <summary>
-        /// Resolve service
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <returns></returns>
-        public T Resolve<T>() {
-            return (T)Server.Services.GetService(typeof(T));
-        }
-    }
+	}
 }

@@ -3,9 +3,9 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.Platform.Discovery.Api.Clients {
-    using Microsoft.IIoT.Platform.Discovery.Api.Models;
-    using Microsoft.IIoT.Platform.Core.Api.Models;
+namespace Microsoft.IIoT.Protocols.OpcUa.Discovery.Api.Clients {
+    using Microsoft.IIoT.Protocols.OpcUa.Discovery.Api.Models;
+    using Microsoft.IIoT.Protocols.OpcUa.Core.Api.Models;
     using Microsoft.IIoT.Extensions.Http;
     using Microsoft.IIoT.Extensions.Serializers.NewtonSoft;
     using Microsoft.IIoT.Extensions.Serializers;
@@ -39,7 +39,7 @@ namespace Microsoft.IIoT.Platform.Discovery.Api.Clients {
             ISerializer serializer = null) {
             if (string.IsNullOrWhiteSpace(serviceUri)) {
                 throw new ArgumentNullException(nameof(serviceUri),
-                    "Please configure the Url of the registry micro service.");
+                    "Please configure the Url of the ua service.");
             }
             _serviceUri = serviceUri.TrimEnd('/');
             _serializer = serializer ?? new NewtonSoftJsonSerializer();
@@ -61,22 +61,6 @@ namespace Microsoft.IIoT.Platform.Discovery.Api.Clients {
         }
 
         /// <inheritdoc/>
-        public async Task SetDiscoveryModeAsync(string discovererId,
-            DiscoveryMode mode, DiscoveryConfigApiModel config, CancellationToken ct) {
-            if (string.IsNullOrEmpty(discovererId)) {
-                throw new ArgumentNullException(nameof(discovererId));
-            }
-            var uri = new UriBuilder($"{_serviceUri}/v3/discovery/{discovererId}") {
-                Query = $"mode={mode}"
-            };
-            var request = _httpClient.NewRequest(uri.Uri, Resource.Platform);
-            _serializer.SerializeToRequest(request, config);
-            var response = await _httpClient.PostAsync(request, ct).ConfigureAwait(false);
-            response.Validate();
-        }
-
-
-        /// <inheritdoc/>
         public async Task RegisterAsync(ServerRegistrationRequestApiModel content,
             CancellationToken ct) {
             if (content == null) {
@@ -85,7 +69,7 @@ namespace Microsoft.IIoT.Platform.Discovery.Api.Clients {
             if (content.DiscoveryUrl == null) {
                 throw new ArgumentException("Missing discovery url", nameof(content));
             }
-            var request = _httpClient.NewRequest($"{_serviceUri}/v3/applications",
+            var request = _httpClient.NewRequest($"{_serviceUri}/v3/discovery",
                 Resource.Platform);
             _serializer.SerializeToRequest(request, content);
             if (request.GetTimeout() == null) {
@@ -100,7 +84,7 @@ namespace Microsoft.IIoT.Platform.Discovery.Api.Clients {
             if (content == null) {
                 throw new ArgumentNullException(nameof(content));
             }
-            var request = _httpClient.NewRequest($"{_serviceUri}/v3/applications/discover",
+            var request = _httpClient.NewRequest($"{_serviceUri}/v3/discovery/requests",
                 Resource.Platform);
             _serializer.SerializeToRequest(request, content);
             if (request.GetTimeout() == null) {
@@ -116,7 +100,7 @@ namespace Microsoft.IIoT.Platform.Discovery.Api.Clients {
                 throw new ArgumentNullException(nameof(content));
             }
             var request = _httpClient.NewRequest(
-                $"{_serviceUri}/v3/applications/discover/${content.Id}", Resource.Platform);
+                $"{_serviceUri}/v3/discovery/requests/${content.Id}", Resource.Platform);
             var response = await _httpClient.DeleteAsync(request, ct).ConfigureAwait(false);
             response.Validate();
         }

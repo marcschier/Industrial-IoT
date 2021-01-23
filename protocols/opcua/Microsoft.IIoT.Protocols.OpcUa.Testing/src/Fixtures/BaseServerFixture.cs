@@ -3,11 +3,11 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.Platform.OpcUa.Testing.Fixtures {
-    using Microsoft.IIoT.Platform.OpcUa.Testing.Runtime;
-    using Microsoft.IIoT.Platform.OpcUa.Services;
-    using Microsoft.IIoT.Platform.OpcUa.Sample;
-    using Microsoft.IIoT.Platform.OpcUa;
+namespace Microsoft.IIoT.Protocols.OpcUa.Testing.Fixtures {
+    using Microsoft.IIoT.Protocols.OpcUa.Testing.Runtime;
+    using Microsoft.IIoT.Protocols.OpcUa.Services;
+    using Microsoft.IIoT.Protocols.OpcUa.Sample;
+    using Microsoft.IIoT.Protocols.OpcUa;
     using Microsoft.IIoT.Extensions.Diagnostics;
     using Microsoft.IIoT.Extensions.Utils;
     using Microsoft.Extensions.Logging;

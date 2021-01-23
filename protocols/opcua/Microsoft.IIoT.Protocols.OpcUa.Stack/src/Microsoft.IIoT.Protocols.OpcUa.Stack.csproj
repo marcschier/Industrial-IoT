@@ -50,6 +50,6 @@
     <ProjectReference Include="..\..\..\..\extensions\Microsoft.IIoT.Extensions.NewtonSoft\src\Microsoft.IIoT.Extensions.NewtonSoft.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Microsoft.IIoT.Platform.Abstractions\src\Microsoft.IIoT.Protocols.OpcUa.Abstractions.csproj" />
+    <ProjectReference Include="..\..\Microsoft.IIoT.Protocols.OpcUa.Abstractions\src\Microsoft.IIoT.Protocols.OpcUa.Abstractions.csproj" />
   </ItemGroup>
 </Project>

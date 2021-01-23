@@ -3,9 +3,9 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.Platform.Discovery.Api.Models {
-    using Microsoft.IIoT.Platform.Discovery.Events.v2.Models;
-    using Microsoft.IIoT.Platform.Discovery.Models;
+namespace Microsoft.IIoT.Protocols.OpcUa.Discovery.Api.Models {
+    using Microsoft.IIoT.Protocols.OpcUa.Discovery.Events.v2.Models;
+    using Microsoft.IIoT.Protocols.OpcUa.Discovery.Models;
     using System.Collections.Generic;
     using System.Linq;
 

@@ -3,7 +3,7 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.Platform.OpcUa.Transport.Probe {
+namespace Microsoft.IIoT.Protocols.OpcUa.Transport.Probe {
     using Microsoft.Extensions.Logging;
     using Microsoft.IIoT.Extensions.Net;
     using Opc.Ua;

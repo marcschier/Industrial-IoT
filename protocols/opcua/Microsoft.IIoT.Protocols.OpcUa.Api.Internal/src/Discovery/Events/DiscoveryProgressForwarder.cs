@@ -3,9 +3,9 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.Platform.Discovery.Api.Clients {
-    using Microsoft.IIoT.Platform.Discovery.Api.Models;
-    using Microsoft.IIoT.Platform.Discovery.Models;
+namespace Microsoft.IIoT.Protocols.OpcUa.Discovery.Api.Clients {
+    using Microsoft.IIoT.Protocols.OpcUa.Discovery.Api.Models;
+    using Microsoft.IIoT.Protocols.OpcUa.Discovery.Models;
     using Microsoft.IIoT.Extensions.Messaging;
     using Microsoft.IIoT.Extensions.Rpc;
     using System.Threading.Tasks;

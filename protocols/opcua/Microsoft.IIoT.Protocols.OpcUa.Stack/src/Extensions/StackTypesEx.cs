@@ -3,9 +3,9 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.Platform.OpcUa {
-    using Microsoft.IIoT.Platform.Publisher.Models;
-    using Microsoft.IIoT.Platform.Core.Models;
+namespace Microsoft.IIoT.Protocols.OpcUa {
+    using Microsoft.IIoT.Protocols.OpcUa.Publisher.Models;
+    using Microsoft.IIoT.Protocols.OpcUa.Core.Models;
     using UaApplicationType = Opc.Ua.ApplicationType;
     using UaSecurityMode = Opc.Ua.MessageSecurityMode;
     using UaBrowseDirection = Opc.Ua.BrowseDirection;

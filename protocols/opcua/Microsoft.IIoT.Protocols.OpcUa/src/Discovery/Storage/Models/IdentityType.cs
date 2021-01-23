@@ -3,7 +3,7 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.Platform.Discovery.Storage.Models {
+namespace Microsoft.IIoT.Protocols.OpcUa.Discovery.Storage.Models {
 
     /// <summary>
     /// Industrial IoT identity types

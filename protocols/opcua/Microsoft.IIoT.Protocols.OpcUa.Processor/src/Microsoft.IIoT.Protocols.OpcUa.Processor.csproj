@@ -17,6 +17,8 @@
     <ProjectReference Include="..\..\..\..\azure\Microsoft.IIoT.Azure.EventHub.Processor\src\Microsoft.IIoT.Azure.EventHub.Processor.csproj" />
     <ProjectReference Include="..\..\..\..\azure\Microsoft.IIoT.Azure.IoTHub\src\Microsoft.IIoT.Azure.IoTHub.csproj" />
     <ProjectReference Include="..\..\..\..\azure\Microsoft.IIoT.Azure.EventHub\src\Microsoft.IIoT.Azure.EventHub.csproj" />
-    <ProjectReference Include="..\..\..\publisher\Microsoft.IIoT.Platform.Publisher\src\Microsoft.IIoT.Platform.Publisher.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Microsoft.IIoT.Protocols.OpcUa\src\Microsoft.IIoT.Protocols.OpcUa.csproj" />
   </ItemGroup>
 </Project>

@@ -3,8 +3,8 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.Platform.Twin {
-    using Microsoft.IIoT.Platform.Twin.Default;
+namespace Microsoft.IIoT.Protocols.OpcUa.Twin {
+    using Microsoft.IIoT.Protocols.OpcUa.Twin.Default;
     using Autofac;
 
     /// <summary>

@@ -3,8 +3,8 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.Platform.Publisher {
-    using Microsoft.IIoT.Platform.Publisher.Default;
+namespace Microsoft.IIoT.Protocols.OpcUa.Publisher {
+    using Microsoft.IIoT.Protocols.OpcUa.Publisher.Default;
     using Autofac;
 
     /// <summary>

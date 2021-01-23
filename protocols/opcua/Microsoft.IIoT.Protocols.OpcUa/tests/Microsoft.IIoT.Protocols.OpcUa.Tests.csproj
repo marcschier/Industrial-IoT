@@ -24,11 +24,11 @@
     <ProjectReference Include="..\..\..\..\extensions\Microsoft.IIoT.Extensions.LiteDb\src\Microsoft.IIoT.Extensions.LiteDb.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Microsoft.IIoT.Platform.Api.Internal\src\Microsoft.IIoT.Protocols.OpcUa.Api.Internal.csproj" />
-    <ProjectReference Include="..\..\Microsoft.IIoT.Platform.OpcUa.Testing\src\Microsoft.IIoT.Protocols.OpcUa.Testing.csproj" />
+    <ProjectReference Include="..\..\..\..\azure\Microsoft.IIoT.Azure.Testing\src\Microsoft.IIoT.Azure.Testing.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\azure\Microsoft.IIoT.Azure.Testing\src\Microsoft.IIoT.Azure.Testing.csproj" />
+    <ProjectReference Include="..\..\Microsoft.IIoT.Protocols.OpcUa.Api.Internal\src\Microsoft.IIoT.Protocols.OpcUa.Api.Internal.csproj" />
+    <ProjectReference Include="..\..\Microsoft.IIoT.Protocols.OpcUa.Testing\src\Microsoft.IIoT.Protocols.OpcUa.Testing.csproj" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\src\Microsoft.IIoT.Protocols.OpcUa.csproj" />

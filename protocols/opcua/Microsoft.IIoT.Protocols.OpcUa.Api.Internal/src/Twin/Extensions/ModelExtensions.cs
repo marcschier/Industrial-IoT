@@ -3,10 +3,10 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.Platform.Twin.Api.Models {
-    using Microsoft.IIoT.Platform.Twin.Models;
-    using Microsoft.IIoT.Platform.Core.Api.Models;
-    using Microsoft.IIoT.Platform.Core.Models;
+namespace Microsoft.IIoT.Protocols.OpcUa.Twin.Api.Models {
+    using Microsoft.IIoT.Protocols.OpcUa.Twin.Models;
+    using Microsoft.IIoT.Protocols.OpcUa.Core.Api.Models;
+    using Microsoft.IIoT.Protocols.OpcUa.Core.Models;
     using Microsoft.IIoT.Extensions.Serializers;
     using System.Linq;
     using System;
@@ -1737,7 +1737,7 @@ namespace Microsoft.IIoT.Platform.Twin.Api.Models {
                 FilterOperands = model.FilterOperands?
                     .Select(f => f.ToServiceModel())
                     .ToList(),
-                FilterOperator = (Platform.Core.Models.FilterOperatorType)model.FilterOperator
+                FilterOperator = (Core.Models.FilterOperatorType)model.FilterOperator
             };
         }
 
@@ -1913,7 +1913,7 @@ namespace Microsoft.IIoT.Platform.Twin.Api.Models {
                 Alias = model.Alias,
                 Value = model.Value,
                 NodeId = model.NodeId,
-                AttributeId = (Platform.Core.Models.NodeAttribute?)model.AttributeId,
+                AttributeId = (Core.Models.NodeAttribute?)model.AttributeId,
                 BrowsePath = model.BrowsePath,
                 IndexRange = model.IndexRange
             };
@@ -2435,7 +2435,7 @@ namespace Microsoft.IIoT.Platform.Twin.Api.Models {
             }
             return new ModificationInfoModel {
                 ModificationTime = model.ModificationTime,
-                UpdateType = (Platform.Twin.Models.HistoryUpdateOperation?)model.UpdateType,
+                UpdateType = (Twin.Models.HistoryUpdateOperation?)model.UpdateType,
                 UserName = model.UserName
             };
         }
@@ -2668,7 +2668,7 @@ namespace Microsoft.IIoT.Platform.Twin.Api.Models {
             }
             return new SimpleAttributeOperandModel {
                 NodeId = model.NodeId,
-                AttributeId = (Platform.Core.Models.NodeAttribute?)model.AttributeId,
+                AttributeId = (Core.Models.NodeAttribute?)model.AttributeId,
                 BrowsePath = model.BrowsePath,
                 IndexRange = model.IndexRange
             };

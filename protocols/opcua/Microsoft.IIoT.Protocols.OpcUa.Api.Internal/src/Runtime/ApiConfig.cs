@@ -4,16 +4,14 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.IIoT.Api.Runtime {
-    using Microsoft.IIoT.Platform.Publisher.Api;
-    using Microsoft.IIoT.Platform.Publisher.Api.Runtime;
-    using Microsoft.IIoT.Platform.Twin.Api;
-    using Microsoft.IIoT.Platform.Twin.Api.Runtime;
-    using Microsoft.IIoT.Platform.Discovery.Api;
-    using Microsoft.IIoT.Platform.Discovery.Api.Runtime;
-    using Microsoft.IIoT.Platform.Vault.Api;
-    using Microsoft.IIoT.Platform.Vault.Api.Runtime;
-    using Microsoft.IIoT.Platform.Events.Api.Runtime;
-    using Microsoft.IIoT.Platform.Events.Api;
+    using Microsoft.IIoT.Protocols.OpcUa.Publisher.Api;
+    using Microsoft.IIoT.Protocols.OpcUa.Publisher.Api.Runtime;
+    using Microsoft.IIoT.Protocols.OpcUa.Twin.Api;
+    using Microsoft.IIoT.Protocols.OpcUa.Twin.Api.Runtime;
+    using Microsoft.IIoT.Protocols.OpcUa.Discovery.Api;
+    using Microsoft.IIoT.Protocols.OpcUa.Discovery.Api.Runtime;
+    using Microsoft.IIoT.Protocols.OpcUa.Events.Api.Runtime;
+    using Microsoft.IIoT.Protocols.OpcUa.Events.Api;
     using Microsoft.IIoT.Extensions.Configuration;
     using Microsoft.Extensions.Configuration;
 
@@ -21,16 +19,13 @@ namespace Microsoft.IIoT.Api.Runtime {
     /// Complete api configuration
     /// </summary>
     public class ApiConfig : ConfigureOptionBase, ITwinConfig, IDiscoveryConfig,
-        IVaultConfig, IPublisherConfig, IEventsConfig {
+        IPublisherConfig, IEventsConfig {
 
         /// <inheritdoc/>
         public string OpcUaTwinServiceUrl => _twin.OpcUaTwinServiceUrl;
 
         /// <inheritdoc/>
         public string DiscoveryServiceUrl => _registry.DiscoveryServiceUrl;
-
-        /// <inheritdoc/>
-        public string OpcUaVaultServiceUrl => _vault.OpcUaVaultServiceUrl;
 
         /// <inheritdoc/>
         public string OpcUaPublisherServiceUrl => _publisher.OpcUaPublisherServiceUrl;
@@ -43,14 +38,12 @@ namespace Microsoft.IIoT.Api.Runtime {
             base(configuration) {
             _twin = new TwinConfig(configuration);
             _registry = new DiscoveryConfig(configuration);
-            _vault = new VaultConfig(configuration);
             _publisher = new PublisherConfig(configuration);
             _events = new EventsConfig(configuration);
         }
 
         private readonly TwinConfig _twin;
         private readonly DiscoveryConfig _registry;
-        private readonly VaultConfig _vault;
         private readonly PublisherConfig _publisher;
         private readonly EventsConfig _events;
     }

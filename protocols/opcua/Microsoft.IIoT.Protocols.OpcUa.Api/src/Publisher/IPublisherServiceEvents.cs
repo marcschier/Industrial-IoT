@@ -3,8 +3,8 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.Platform.Publisher.Api {
-    using Microsoft.IIoT.Platform.Publisher.Api.Models;
+namespace Microsoft.IIoT.Protocols.OpcUa.Publisher.Api {
+    using Microsoft.IIoT.Protocols.OpcUa.Publisher.Api.Models;
     using System;
     using System.Threading.Tasks;
 

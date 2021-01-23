@@ -3,10 +3,10 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.Platform.Twin.Services {
-    using Microsoft.IIoT.Platform.OpcUa;
-    using Microsoft.IIoT.Platform.OpcUa.Models;
-    using Microsoft.IIoT.Platform.Core.Models;
+namespace Microsoft.IIoT.Protocols.OpcUa.Twin.Services {
+    using Microsoft.IIoT.Protocols.OpcUa;
+    using Microsoft.IIoT.Protocols.OpcUa.Models;
+    using Microsoft.IIoT.Protocols.OpcUa.Core.Models;
     using Microsoft.Extensions.Logging;
     using Opc.Ua;
     using Opc.Ua.Encoders;

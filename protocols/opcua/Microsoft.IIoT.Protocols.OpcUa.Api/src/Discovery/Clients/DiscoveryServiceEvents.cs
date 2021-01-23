@@ -3,9 +3,9 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.Platform.Discovery.Api {
-    using Microsoft.IIoT.Platform.Discovery.Api.Models;
-    using Microsoft.IIoT.Platform.Events.Api;
+namespace Microsoft.IIoT.Protocols.OpcUa.Discovery.Api {
+    using Microsoft.IIoT.Protocols.OpcUa.Discovery.Api.Models;
+    using Microsoft.IIoT.Protocols.OpcUa.Events.Api;
     using Microsoft.IIoT.Extensions.Serializers;
     using Microsoft.IIoT.Extensions.Serializers.NewtonSoft;
     using Microsoft.IIoT.Extensions.Rpc;

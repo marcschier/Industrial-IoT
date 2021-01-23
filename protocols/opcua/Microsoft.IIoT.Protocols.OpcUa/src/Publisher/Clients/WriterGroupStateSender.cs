@@ -3,8 +3,8 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.Platform.Publisher.Clients {
-    using Microsoft.IIoT.Platform.Publisher.Models;
+namespace Microsoft.IIoT.Protocols.OpcUa.Publisher.Clients {
+    using Microsoft.IIoT.Protocols.OpcUa.Publisher.Models;
     using Microsoft.IIoT.Extensions.Serializers;
     using Microsoft.IIoT.Extensions.Tasks;
     using Microsoft.IIoT.Extensions.Messaging;

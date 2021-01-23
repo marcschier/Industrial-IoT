@@ -3,7 +3,7 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.Platform.OpcUa.Runtime {
+namespace Microsoft.IIoT.Protocols.OpcUa.Runtime {
     using Microsoft.IIoT.Extensions.Configuration;
     using Microsoft.Extensions.Configuration;
     using System;

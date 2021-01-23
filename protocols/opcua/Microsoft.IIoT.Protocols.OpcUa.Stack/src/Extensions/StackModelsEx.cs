@@ -3,9 +3,10 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.Platform.OpcUa {
-    using Microsoft.IIoT.Platform.Core.Models;
-    using Microsoft.IIoT.Platform.Twin.Models;
+namespace Microsoft.IIoT.Protocols.OpcUa {
+    using Microsoft.IIoT.Protocols.OpcUa.Core.Models;
+    using Microsoft.IIoT.Protocols.OpcUa.Publisher.Models;
+    using Microsoft.IIoT.Protocols.OpcUa.Twin.Models;
     using Microsoft.IIoT.Extensions.Serializers;
     using Opc.Ua;
     using Opc.Ua.Extensions;
@@ -160,7 +161,7 @@ namespace Microsoft.IIoT.Platform.OpcUa {
             return new DataChangeFilterModel {
                 DeadBandValue = (int)model.DeadbandValue == 0 ? (double?)null :
                     model.DeadbandValue,
-                DeadBandType = ((DeadbandType)model.DeadbandType).ToServiceType(),
+                DeadBandType = ((Opc.Ua.DeadbandType)model.DeadbandType).ToServiceType(),
                 DataChangeTrigger = model.Trigger.ToServiceType()
             };
         }

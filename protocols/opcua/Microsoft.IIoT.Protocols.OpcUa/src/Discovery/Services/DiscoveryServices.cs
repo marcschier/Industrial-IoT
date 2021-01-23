@@ -3,14 +3,14 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.Platform.Discovery.Services {
-    using Microsoft.IIoT.Platform.Discovery.Models;
-    using Microsoft.IIoT.Platform.Discovery.Clients;
-    using Microsoft.IIoT.Platform.Discovery;
-    using Microsoft.IIoT.Platform.Core.Models;
-    using Microsoft.IIoT.Platform.OpcUa.Transport.Probe;
-    using Microsoft.IIoT.Platform.OpcUa.Models;
-    using Microsoft.IIoT.Platform.OpcUa;
+namespace Microsoft.IIoT.Protocols.OpcUa.Discovery.Services {
+    using Microsoft.IIoT.Protocols.OpcUa.Discovery.Models;
+    using Microsoft.IIoT.Protocols.OpcUa.Discovery.Clients;
+    using Microsoft.IIoT.Protocols.OpcUa.Discovery;
+    using Microsoft.IIoT.Protocols.OpcUa.Core.Models;
+    using Microsoft.IIoT.Protocols.OpcUa.Transport.Probe;
+    using Microsoft.IIoT.Protocols.OpcUa.Models;
+    using Microsoft.IIoT.Protocols.OpcUa;
     using Microsoft.IIoT.Extensions.Net.Scanner;
     using Microsoft.IIoT.Extensions.Net.Models;
     using Microsoft.IIoT.Extensions.Net;

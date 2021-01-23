@@ -3,7 +3,7 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.Platform.OpcUa.Services {
+namespace Microsoft.IIoT.Protocols.OpcUa.Services {
     using Microsoft.IIoT.Extensions.Serializers;
     using Microsoft.IIoT.Extensions.Serializers.NewtonSoft;
     using Microsoft.IIoT.Extensions.Utils;

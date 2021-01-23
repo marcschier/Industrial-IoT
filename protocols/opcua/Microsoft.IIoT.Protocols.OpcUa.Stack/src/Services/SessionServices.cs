@@ -3,8 +3,8 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.Platform.OpcUa.Services {
-    using Microsoft.IIoT.Platform.OpcUa.Models;
+namespace Microsoft.IIoT.Protocols.OpcUa.Services {
+    using Microsoft.IIoT.Protocols.OpcUa.Models;
     using Microsoft.Extensions.Logging;
     using Opc.Ua;
     using Opc.Ua.Server;

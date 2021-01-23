@@ -3,10 +3,10 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.Platform.Twin.Service.Controllers {
-    using Microsoft.IIoT.Platform.Twin.Service.Filters;
-    using Microsoft.IIoT.Platform.Twin.Api.Models;
-    using Microsoft.IIoT.Platform.Twin;
+namespace Microsoft.IIoT.Protocols.OpcUa.Service.Controllers {
+    using Microsoft.IIoT.Protocols.OpcUa.Service.Filters;
+    using Microsoft.IIoT.Protocols.OpcUa.Twin.Api.Models;
+    using Microsoft.IIoT.Protocols.OpcUa.Twin;
     using Microsoft.IIoT.Extensions.Serializers;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
@@ -20,7 +20,7 @@ namespace Microsoft.IIoT.Platform.Twin.Service.Controllers {
     [ApiVersion("3")]
     [Route("v{version:apiVersion}/history")]
     [ExceptionsFilter]
-    [Authorize(Policy = Policies.CanBrowse)]
+    [Authorize(Policy = Policies.CanRead)]
     [ApiController]
     public class HistoryController : ControllerBase {
 
@@ -88,7 +88,7 @@ namespace Microsoft.IIoT.Platform.Twin.Service.Controllers {
         /// <param name="request">The history update request</param>
         /// <returns>The history update result</returns>
         [HttpPost("update/{endpointId}")]
-        [Authorize(Policy = Policies.CanControl)]
+        [Authorize(Policy = Policies.CanWrite)]
         public async Task<HistoryUpdateResponseApiModel> HistoryUpdateRawAsync(
             string endpointId, [FromBody][Required] HistoryUpdateRequestApiModel<VariantValue> request) {
             if (request == null) {

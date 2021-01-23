@@ -3,7 +3,7 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.Platform.Discovery.Api.Models {
+namespace Microsoft.IIoT.Protocols.OpcUa.Discovery.Api.Models {
     using System.Runtime.Serialization;
     using System.Collections.Generic;
     using System;

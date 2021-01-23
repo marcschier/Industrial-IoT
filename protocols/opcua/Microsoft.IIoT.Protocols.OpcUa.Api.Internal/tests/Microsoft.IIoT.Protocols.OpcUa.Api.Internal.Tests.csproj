@@ -24,6 +24,8 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\extensions\Microsoft.IIoT.Extensions.MessagePack\src\Microsoft.IIoT.Extensions.MessagePack.csproj" />
     <ProjectReference Include="..\..\..\..\extensions\Microsoft.IIoT.Extensions.NewtonSoft\src\Microsoft.IIoT.Extensions.NewtonSoft.csproj" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\src\Microsoft.IIoT.Protocols.OpcUa.Api.Internal.csproj" />
   </ItemGroup>
   <ItemGroup>

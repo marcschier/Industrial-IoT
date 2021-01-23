@@ -3,7 +3,7 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.Platform.Twin.Ua.Service {
+namespace Microsoft.IIoT.Protocols.OpcUa.Gateway {
     using Microsoft.IIoT.Extensions.Hosting;
 
     /// <summary>

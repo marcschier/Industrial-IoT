@@ -3,13 +3,13 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.Platform.Publisher.Service.Controllers {
-    using Microsoft.IIoT.Platform.Publisher.Service.Auth;
-    using Microsoft.IIoT.Platform.Publisher.Service.Filters;
-    using Microsoft.IIoT.Platform.Publisher.Api.Models;
-    using Microsoft.IIoT.Platform.Publisher;
-    using Microsoft.IIoT.Platform.Core.Models;
+namespace Microsoft.IIoT.Protocols.OpcUa.Service.Controllers {
+    using Microsoft.IIoT.Protocols.OpcUa.Service.Filters;
+    using Microsoft.IIoT.Protocols.OpcUa.Publisher.Api.Models;
+    using Microsoft.IIoT.Protocols.OpcUa.Publisher;
+    using Microsoft.IIoT.Protocols.OpcUa.Core.Models;
     using Microsoft.IIoT.Extensions.AspNetCore.OpenApi;
+    using Microsoft.IIoT.Extensions.Rpc;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
@@ -29,9 +29,12 @@ namespace Microsoft.IIoT.Platform.Publisher.Service.Controllers {
         /// <summary>
         /// Create controller
         /// </summary>
+        /// <param name="events"></param>
         /// <param name="groups"></param>
-        public GroupsController(IWriterGroupRegistry groups) {
+        public GroupsController(IWriterGroupRegistry groups,
+            IGroupRegistrationT<GroupsHub> events) {
             _groups = groups;
+			_events = events;
         }
 
         /// <summary>
@@ -217,6 +220,39 @@ namespace Microsoft.IIoT.Platform.Publisher.Service.Controllers {
                 }).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Subscribe to receive dataset messages
+        /// </summary>
+        /// <remarks>
+        /// Register a client to receive dataset messages through SignalR.
+        /// </remarks>
+        /// <param name="dataSetWriterId">The dataset writer to subscribe to</param>
+        /// <param name="connectionId">The connection that will receive publisher
+        /// samples.</param>
+        /// <returns></returns>
+        [HttpPut("{dataSetWriterId}/messages")]
+        public async Task SubscribeAsync(string dataSetWriterId,
+            [FromBody] string connectionId) {
+            await _events.SubscribeAsync(dataSetWriterId, connectionId).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Unsubscribe from receiving dataset messages.
+        /// </summary>
+        /// <remarks>
+        /// Unregister a client and stop it from receiving messages.
+        /// </remarks>
+        /// <param name="dataSetWriterId">The dataset writer to unsubscribe from
+        /// </param>
+        /// <param name="connectionId">The connection that will not receive
+        /// any more dataset messages</param>
+        /// <returns></returns>
+        [HttpDelete("{dataSetWriterId}/messages/{connectionId}")]
+        public async Task UnsubscribeAsync(string dataSetWriterId, string connectionId) {
+            await _events.UnsubscribeAsync(dataSetWriterId, connectionId).ConfigureAwait(false);
+        }
+
+        private readonly IGroupRegistrationT<GroupsHub> _events;
         private readonly IWriterGroupRegistry _groups;
     }
 }

@@ -3,12 +3,12 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.Platform.Twin.Services {
-    using Microsoft.IIoT.Platform.Twin.Clients;
-    using Microsoft.IIoT.Platform.Core.Models;
-    using Microsoft.IIoT.Platform.OpcUa.Services;
-    using Microsoft.IIoT.Platform.OpcUa.Testing.Fixtures;
-    using Microsoft.IIoT.Platform.OpcUa.Testing.Tests;
+namespace Microsoft.IIoT.Protocols.OpcUa.Twin.Services {
+    using Microsoft.IIoT.Protocols.OpcUa.Twin.Clients;
+    using Microsoft.IIoT.Protocols.OpcUa.Core.Models;
+    using Microsoft.IIoT.Protocols.OpcUa.Services;
+    using Microsoft.IIoT.Protocols.OpcUa.Testing.Fixtures;
+    using Microsoft.IIoT.Protocols.OpcUa.Testing.Tests;
     using Microsoft.IIoT.Extensions.Utils;
     using Opc.Ua;
     using System.Threading.Tasks;

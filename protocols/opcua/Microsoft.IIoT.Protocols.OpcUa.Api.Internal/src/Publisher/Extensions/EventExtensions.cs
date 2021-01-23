@@ -3,8 +3,8 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.Platform.Publisher.Api.Models {
-    using Microsoft.IIoT.Platform.Publisher.Events.v2.Models;
+namespace Microsoft.IIoT.Protocols.OpcUa.Publisher.Api.Models {
+    using Microsoft.IIoT.Protocols.OpcUa.Publisher.Events.v2.Models;
 
     /// <summary>
     /// Event extensions

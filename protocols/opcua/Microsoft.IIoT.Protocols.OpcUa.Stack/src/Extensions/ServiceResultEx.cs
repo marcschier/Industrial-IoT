@@ -3,8 +3,8 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.Platform.OpcUa {
-    using Microsoft.IIoT.Platform.Exceptions;
+namespace Microsoft.IIoT.Protocols.OpcUa {
+    using Microsoft.IIoT.Protocols.OpcUa.Exceptions;
     using Microsoft.IIoT.Exceptions;
     using Opc.Ua;
     using System;

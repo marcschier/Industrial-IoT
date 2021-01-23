@@ -3,9 +3,9 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.Platform.Publisher.Handlers {
-    using Microsoft.IIoT.Platform.Publisher;
-    using Microsoft.IIoT.Platform.Publisher.Models;
+namespace Microsoft.IIoT.Protocols.OpcUa.Publisher.Handlers {
+    using Microsoft.IIoT.Protocols.OpcUa.Publisher;
+    using Microsoft.IIoT.Protocols.OpcUa.Publisher.Models;
     using Microsoft.IIoT.Extensions.Messaging;
     using Microsoft.IIoT.Extensions.Serializers;
     using Microsoft.Extensions.Logging;

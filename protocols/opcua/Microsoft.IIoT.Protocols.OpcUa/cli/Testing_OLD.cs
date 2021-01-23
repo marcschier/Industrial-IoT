@@ -3,7 +3,7 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.Platform.Publisher.Cli {
+namespace Microsoft.IIoT.Protocols.OpcUa.Publisher.Cli {
     /// <summary>
     /// Publisher module host process
     /// </summary>
@@ -115,7 +115,7 @@ namespace Microsoft.IIoT.Platform.Publisher.Cli {
                 Console.WriteLine(e.Message);
                 Console.WriteLine(
                     @"
-Usage:       Microsoft.IIoT.Platform.Publisher.Cli [options]
+Usage:       Microsoft.IIoT.Protocols.OpcUa.Publisher.Cli [options]
 
 Options:
 

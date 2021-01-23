@@ -3,8 +3,8 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.Platform.Twin.Api.Models {
-    using Microsoft.IIoT.Platform.Twin.Events.v2.Models;
+namespace Microsoft.IIoT.Protocols.OpcUa.Twin.Api.Models {
+    using Microsoft.IIoT.Protocols.OpcUa.Twin.Events.v2.Models;
 
     /// <summary>
     /// Event extensions

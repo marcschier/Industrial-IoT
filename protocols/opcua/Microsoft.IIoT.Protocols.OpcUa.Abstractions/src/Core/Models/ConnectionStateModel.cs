@@ -4,7 +4,7 @@
 // ------------------------------------------------------------
 
 
-namespace Microsoft.IIoT.Platform.Core.Models {
+namespace Microsoft.IIoT.Protocols.OpcUa.Core.Models {
     using System;
 
     /// <summary>

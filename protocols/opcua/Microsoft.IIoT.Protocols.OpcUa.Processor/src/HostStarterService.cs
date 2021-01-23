@@ -3,8 +3,8 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.Platform.Publisher.Processor {
-    using Microsoft.IIoT.Platform.Publisher.Processor.Runtime;
+namespace Microsoft.IIoT.Protocols.OpcUa.Publisher.Processor {
+    using Microsoft.IIoT.Protocols.OpcUa.Publisher.Processor.Runtime;
     using Microsoft.IIoT.Extensions.Hosting;
     using Microsoft.Extensions.Hosting;
     using System;

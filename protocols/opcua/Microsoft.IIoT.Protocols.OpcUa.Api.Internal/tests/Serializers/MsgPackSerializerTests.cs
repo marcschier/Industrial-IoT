@@ -3,6 +3,7 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.IIoT.Api.MsgPack {
+    using Microsoft.IIoT.Protocols.OpcUa.Api;
     using Microsoft.IIoT.Extensions.Serializers;
     using Microsoft.IIoT.Extensions.Serializers.MessagePack;
     using System;

@@ -3,10 +3,10 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.Platform.Twin.Service.Controllers {
-    using Microsoft.IIoT.Platform.Twin.Service.Filters;
-    using Microsoft.IIoT.Platform.Twin.Api.Models;
-    using Microsoft.IIoT.Platform.Twin;
+namespace Microsoft.IIoT.Protocols.OpcUa.Service.Controllers {
+    using Microsoft.IIoT.Protocols.OpcUa.Service.Filters;
+    using Microsoft.IIoT.Protocols.OpcUa.Twin.Api.Models;
+    using Microsoft.IIoT.Protocols.OpcUa.Twin;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using System;
@@ -19,7 +19,7 @@ namespace Microsoft.IIoT.Platform.Twin.Service.Controllers {
     [ApiVersion("3")]
     [Route("v{version:apiVersion}/replace")]
     [ExceptionsFilter]
-    [Authorize(Policy = Policies.CanControl)]
+    [Authorize(Policy = Policies.CanWrite)]
     [ApiController]
     public class ReplaceController : ControllerBase {
 
