@@ -5,12 +5,13 @@
 
 namespace Microsoft.IIoT.Protocols.OpcUa.Publisher.Api {
     using Microsoft.IIoT.Protocols.OpcUa.Publisher.Api.Models;
-    using Microsoft.IIoT.Protocols.OpcUa.Events.Api;
+    using Microsoft.IIoT.Protocols.OpcUa.Api;
     using Microsoft.IIoT.Extensions.Rpc;
     using Microsoft.IIoT.Extensions.Http;
     using Microsoft.IIoT.Extensions.Serializers.NewtonSoft;
     using Microsoft.IIoT.Extensions.Serializers;
     using Microsoft.IIoT.Extensions.Utils;
+    using Microsoft.Extensions.Options;
     using System;
     using System.Threading.Tasks;
     using System.Threading;
@@ -24,12 +25,12 @@ namespace Microsoft.IIoT.Protocols.OpcUa.Publisher.Api {
         /// Event client
         /// </summary>
         /// <param name="httpClient"></param>
-        /// <param name="config"></param>
+        /// <param name="options"></param>
         /// <param name="serializer"></param>
         /// <param name="client"></param>
         public PublisherServiceEvents(IHttpClient httpClient, ICallbackClient client,
-            IEventsConfig config, ISerializer serializer) :
-            this(httpClient, client, config?.OpcUaEventsServiceUrl, serializer) {
+            IOptions<OpcUaApiOptions> options, ISerializer serializer) :
+            this(httpClient, client, options.Value.OpcUaServiceUrl, serializer) {
         }
 
         /// <summary>
@@ -187,7 +188,7 @@ namespace Microsoft.IIoT.Protocols.OpcUa.Publisher.Api {
                 throw new ArgumentNullException(nameof(connectionId));
             }
             var request = _httpClient.NewRequest(
-                $"{_serviceUri}/v3/writers/{dataSetWriterId}/variables/{variableId}",
+                $"{_serviceUri}/v3/writers/{dataSetWriterId}/variables/{variableId}/changes",
                 Resource.Platform);
             _serializer.SerializeToRequest(request, connectionId);
             var response = await _httpClient.PutAsync(request, ct).ConfigureAwait(false);
@@ -204,7 +205,7 @@ namespace Microsoft.IIoT.Protocols.OpcUa.Publisher.Api {
                 throw new ArgumentNullException(nameof(connectionId));
             }
             var request = _httpClient.NewRequest(
-                $"{_serviceUri}/v3/writers/{dataSetWriterId}/variables/{variableId}/{connectionId}",
+                $"{_serviceUri}/v3/writers/{dataSetWriterId}/variables/{variableId}/changes/{connectionId}",
                 Resource.Platform);
             var response = await _httpClient.DeleteAsync(request, ct).ConfigureAwait(false);
             response.Validate();
@@ -220,7 +221,7 @@ namespace Microsoft.IIoT.Protocols.OpcUa.Publisher.Api {
                 throw new ArgumentNullException(nameof(connectionId));
             }
             var request = _httpClient.NewRequest(
-                $"{_serviceUri}/v3/writers/{dataSetWriterId}/event", Resource.Platform);
+                $"{_serviceUri}/v3/writers/{dataSetWriterId}/events", Resource.Platform);
             _serializer.SerializeToRequest(request, connectionId);
             var response = await _httpClient.PutAsync(request, ct).ConfigureAwait(false);
             response.Validate();
@@ -236,7 +237,7 @@ namespace Microsoft.IIoT.Protocols.OpcUa.Publisher.Api {
                 throw new ArgumentNullException(nameof(connectionId));
             }
             var request = _httpClient.NewRequest(
-                $"{_serviceUri}/v3/writers/{dataSetWriterId}/event/{connectionId}",
+                $"{_serviceUri}/v3/writers/{dataSetWriterId}/events/{connectionId}",
                 Resource.Platform);
             var response = await _httpClient.DeleteAsync(request, ct).ConfigureAwait(false);
             response.Validate();

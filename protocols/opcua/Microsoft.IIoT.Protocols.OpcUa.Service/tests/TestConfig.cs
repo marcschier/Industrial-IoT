@@ -4,21 +4,33 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.IIoT.Protocols.OpcUa.Service {
-    using Microsoft.IIoT.Protocols.OpcUa.Twin.Api;
+    using Microsoft.IIoT.Protocols.OpcUa.Api;
+    using Microsoft.IIoT.Extensions.Configuration;
     using System;
+    using Microsoft.Extensions.Options;
 
     /// <inheritdoc/>
-    public class TestConfig : ITwinConfig {
+    public class TestConfig : PostConfigureOptionBase<OpcUaApiOptions> {
 
-        /// <summary>
-        /// Create test configuration
-        /// </summary>
-        /// <param name="baseAddress"></param>
+        /// <inheritdoc/>
         public TestConfig(Uri baseAddress) {
-            OpcUaTwinServiceUrl = baseAddress.ToString().TrimEnd('/');
+            _url = baseAddress?.ToString().TrimEnd('/');
         }
 
         /// <inheritdoc/>
-        public string OpcUaTwinServiceUrl { get; }
+        public override void PostConfigure(string name, OpcUaApiOptions options) {
+            options.OpcUaServiceUrl = _url;
+        }
+
+        /// <summary>
+        /// Get as options
+        /// </summary>
+        /// <param name="baseAddress"></param>
+        /// <returns></returns>
+        public static IOptions<OpcUaApiOptions> ToOptions(Uri baseAddress) {
+            return new TestConfig(baseAddress).ToOptions();
+        }
+
+        private readonly string _url;
     }
 }

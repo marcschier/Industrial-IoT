@@ -31,6 +31,7 @@ namespace Microsoft.IIoT.Protocols.OpcUa.Service {
             return Host.CreateDefaultBuilder(args)
                 .UseAutofac()
                 .ConfigureHostConfiguration(builder => builder
+                    .AddFromKeyVault()
                     .AddFromDotEnvFile())
                 .ConfigureWebHostDefaults(builder => builder
                     .UseUrls("http://*:9041")

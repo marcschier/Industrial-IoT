@@ -30,11 +30,13 @@ namespace Microsoft.IIoT.Protocols.OpcUa.Service.Controllers {
         /// Create controller
         /// </summary>
         /// <param name="writers"></param>
+        /// <param name="bulk"></param>
         /// <param name="events"></param>
         public WritersController(IDataSetWriterRegistry writers,
-			IGroupRegistrationT<WritersHub> events) {
-            _writers = writers;
-			_events = events;
+            IDataSetBatchOperations bulk, IGroupRegistrationT<WritersHub> events) {
+            _writers = writers ?? throw new ArgumentNullException(nameof(writers));
+			_events = events ?? throw new ArgumentNullException(nameof(events));
+            _bulk = bulk ?? throw new ArgumentNullException(nameof(bulk));
         }
 
         /// <summary>
@@ -419,6 +421,88 @@ namespace Microsoft.IIoT.Protocols.OpcUa.Service.Controllers {
                 }).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Add variables to writer
+        /// </summary>
+        /// <remarks>
+        /// Adds variables in bulk or in other words a single operation to an
+        /// existing dataset writer.
+        /// </remarks>
+        /// <param name="dataSetWriterId">The dataset writer identifier</param>
+        /// <param name="request">Bulk add operations</param>
+        /// <returns>Operation results</returns>
+        [HttpPost("{dataSetWriterId}/bulk/add")]
+        public async Task<DataSetAddVariableBatchResponseApiModel> AddVariablesToDataSetWriterAsync(
+            string dataSetWriterId, [FromBody] DataSetAddVariableBatchRequestApiModel request) {
+            if (string.IsNullOrEmpty(dataSetWriterId)) {
+                throw new ArgumentNullException(nameof(dataSetWriterId));
+            }
+            if (request == null) {
+                throw new ArgumentNullException(nameof(request));
+            }
+            var result = await _bulk.AddVariablesToDataSetWriterAsync(dataSetWriterId,
+                request.ToServiceModel(), new OperationContextModel {
+                    Time = DateTime.UtcNow,
+                    AuthorityId = HttpContext.User.Identity.Name
+                }).ConfigureAwait(false);
+            return result.ToApiModel();
+        }
+
+        /// <summary>
+        /// Add variables to default writer for endpoint
+        /// </summary>
+        /// <remarks>
+        /// Adds variables in bulk to a default dataset writer for a particular endpoint.
+        /// The dataset writer is created if it does not yet exists.  The dataset writer
+        /// identifier is the endpoint id, which then can be used interchangeably.
+        /// </remarks>
+        /// <param name="endpointId">The endpoint identifier</param>
+        /// <param name="request">Bulk add operations</param>
+        /// <returns>Operation results</returns>
+        [HttpPost("$default/{endpointId}/bulk/add")]
+        public async Task<DataSetAddVariableBatchResponseApiModel> AddVariablesToDefaultDataSetWriterAsync(
+            string endpointId, [FromBody] DataSetAddVariableBatchRequestApiModel request) {
+            if (string.IsNullOrEmpty(endpointId)) {
+                throw new ArgumentNullException(nameof(endpointId));
+            }
+            if (request == null) {
+                throw new ArgumentNullException(nameof(request));
+            }
+            var result = await _bulk.AddVariablesToDefaultDataSetWriterAsync(endpointId,
+                request.ToServiceModel(), new OperationContextModel {
+                    Time = DateTime.UtcNow,
+                    AuthorityId = HttpContext.User.Identity.Name
+                }).ConfigureAwait(false);
+            return result.ToApiModel();
+        }
+
+        /// <summary>
+        /// Remove variables from writer
+        /// </summary>
+        /// <remarks>
+        /// Remove variables from a specified writer using bulk remove operations.
+        /// All variables are removed regardless of generation id which means it
+        /// will force delete the variable regardless of competing changes.
+        /// </remarks>
+        /// <param name="dataSetWriterId">The dataset writer identifier</param>
+        /// <param name="request">Bulk remove operations</param>
+        /// <returns>Operation results</returns>
+        [HttpPost("{dataSetWriterId}/bulk/remove")]
+        public async Task<DataSetRemoveVariableBatchResponseApiModel> RemoveVariablesFromDataSetWriterAsync(
+            string dataSetWriterId, [FromBody] DataSetRemoveVariableBatchRequestApiModel request) {
+            if (string.IsNullOrEmpty(dataSetWriterId)) {
+                throw new ArgumentNullException(nameof(dataSetWriterId));
+            }
+            if (request == null) {
+                throw new ArgumentNullException(nameof(request));
+            }
+            var result = await _bulk.RemoveVariablesFromDataSetWriterAsync(dataSetWriterId,
+                request.ToServiceModel(), new OperationContextModel {
+                    Time = DateTime.UtcNow,
+                    AuthorityId = HttpContext.User.Identity.Name
+                }).ConfigureAwait(false);
+            return result.ToApiModel();
+        }
 
         /// <summary>
         /// Subscribe to receive dataset writer item status updates
@@ -457,17 +541,17 @@ namespace Microsoft.IIoT.Protocols.OpcUa.Service.Controllers {
         }
 
         /// <summary>
-        /// Subscribe to receive samples
+        /// Subscribe to receive value changes
         /// </summary>
         /// <remarks>
-        /// Register a client to receive publisher samples through SignalR.
+        /// Register a client to receive value changes through SignalR.
         /// </remarks>
         /// <param name="dataSetWriterId">The writer to subscribe to</param>
         /// <param name="variableId">The variable to subscribe to</param>
         /// <param name="connectionId">The connection that will receive publisher
         /// samples.</param>
         /// <returns></returns>
-        [HttpPut("{dataSetWriterId}/variables/{variableId}")]
+        [HttpPut("{dataSetWriterId}/variables/{variableId}/changes")]
         public async Task SubscribeVariableAsync(string dataSetWriterId, string variableId,
             [FromBody] string connectionId) {
             if (string.IsNullOrEmpty(dataSetWriterId)) {
@@ -481,17 +565,17 @@ namespace Microsoft.IIoT.Protocols.OpcUa.Service.Controllers {
         }
 
         /// <summary>
-        /// Unsubscribe from receiving samples.
+        /// Unsubscribe from receiving value changes.
         /// </summary>
         /// <remarks>
-        /// Unregister a client and stop it from receiving samples.
+        /// Unregister a client and stop it from receiving value changes.
         /// </remarks>
         /// <param name="dataSetWriterId">The writer to unsubscribe from </param>
         /// <param name="variableId">The variable to unsubscribe from</param>
         /// <param name="connectionId">The connection that will not receive
         /// any more published samples</param>
         /// <returns></returns>
-        [HttpDelete("{dataSetWriterId}/variables/{variableId}/{connectionId}")]
+        [HttpDelete("{dataSetWriterId}/variables/{variableId}/changes/{connectionId}")]
         public async Task UnsubscribeVariableAsync(string dataSetWriterId, string variableId,
             string connectionId) {
             if (string.IsNullOrEmpty(dataSetWriterId)) {
@@ -505,16 +589,16 @@ namespace Microsoft.IIoT.Protocols.OpcUa.Service.Controllers {
         }
 
         /// <summary>
-        /// Subscribe to receive dataset event messages
+        /// Subscribe to receive dataset events
         /// </summary>
         /// <remarks>
-        /// Register a client to receive publisher samples through SignalR.
+        /// Register a client to receive events through SignalR.
         /// </remarks>
         /// <param name="dataSetWriterId">The writer to subscribe to</param>
         /// <param name="connectionId">The connection that will receive publisher
         /// samples.</param>
         /// <returns></returns>
-        [HttpPut("{dataSetWriterId}/event")]
+        [HttpPut("{dataSetWriterId}/events")]
         public async Task SubscribeEventsAsync(string dataSetWriterId,
             [FromBody] string connectionId) {
             if (string.IsNullOrEmpty(dataSetWriterId)) {
@@ -525,16 +609,16 @@ namespace Microsoft.IIoT.Protocols.OpcUa.Service.Controllers {
         }
 
         /// <summary>
-        /// Unsubscribe from receiving dataset event messages.
+        /// Unsubscribe from receiving events.
         /// </summary>
         /// <remarks>
-        /// Unregister a client and stop it from receiving samples.
+        /// Unregister a client and stop it from receiving events.
         /// </remarks>
         /// <param name="dataSetWriterId">The writer to unsubscribe from </param>
         /// <param name="connectionId">The connection that will not receive
         /// any more published samples</param>
         /// <returns></returns>
-        [HttpDelete("{dataSetWriterId}/event/{connectionId}")]
+        [HttpDelete("{dataSetWriterId}/events/{connectionId}")]
         public async Task UnsubscribeEventsAsync(string dataSetWriterId,
             string connectionId) {
             if (string.IsNullOrEmpty(dataSetWriterId)) {
@@ -546,5 +630,6 @@ namespace Microsoft.IIoT.Protocols.OpcUa.Service.Controllers {
 
         private readonly IGroupRegistrationT<WritersHub> _events;
         private readonly IDataSetWriterRegistry _writers;
+        private readonly IDataSetBatchOperations _bulk;
     }
 }

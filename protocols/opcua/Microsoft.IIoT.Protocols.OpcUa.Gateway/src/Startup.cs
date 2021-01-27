@@ -26,6 +26,7 @@ namespace Microsoft.IIoT.Protocols.OpcUa.Gateway {
     using Autofac;
     using Autofac.Extensions.DependencyInjection;
     using Prometheus;
+    using Microsoft.IIoT.Protocols.OpcUa.Api;
 
     /// <summary>
     /// Webservice startup
@@ -170,14 +171,9 @@ namespace Microsoft.IIoT.Protocols.OpcUa.Gateway {
             builder.RegisterType<VariantEncoderFactory>()
                 .AsImplementedInterfaces();
 
-            // Register registry micro service adapter
-            builder.RegisterType<DiscoveryServiceClient>()
-                .AsImplementedInterfaces();
+            // Register opc ua service api and adapters
+            builder.AddOpcUa();
             builder.RegisterType<DiscoveryServicesApiAdapter>()
-                .AsImplementedInterfaces();
-
-            // Register twin micro service adapter
-            builder.RegisterType<TwinServiceClient>()
                 .AsImplementedInterfaces();
             builder.RegisterType<TwinServicesApiAdapter>()
                 .AsImplementedInterfaces();

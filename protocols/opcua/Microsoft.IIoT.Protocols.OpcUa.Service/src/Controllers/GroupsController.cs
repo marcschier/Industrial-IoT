@@ -226,14 +226,14 @@ namespace Microsoft.IIoT.Protocols.OpcUa.Service.Controllers {
         /// <remarks>
         /// Register a client to receive dataset messages through SignalR.
         /// </remarks>
-        /// <param name="dataSetWriterId">The dataset writer to subscribe to</param>
+        /// <param name="writerGroupId">The dataset writer to subscribe to</param>
         /// <param name="connectionId">The connection that will receive publisher
         /// samples.</param>
         /// <returns></returns>
-        [HttpPut("{dataSetWriterId}/messages")]
-        public async Task SubscribeAsync(string dataSetWriterId,
+        [HttpPut("{writerGroupId}/messages")]
+        public async Task SubscribeAsync(string writerGroupId,
             [FromBody] string connectionId) {
-            await _events.SubscribeAsync(dataSetWriterId, connectionId).ConfigureAwait(false);
+            await _events.SubscribeAsync(writerGroupId, connectionId).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -242,14 +242,14 @@ namespace Microsoft.IIoT.Protocols.OpcUa.Service.Controllers {
         /// <remarks>
         /// Unregister a client and stop it from receiving messages.
         /// </remarks>
-        /// <param name="dataSetWriterId">The dataset writer to unsubscribe from
+        /// <param name="writerGroupId">The dataset writer to unsubscribe from
         /// </param>
         /// <param name="connectionId">The connection that will not receive
         /// any more dataset messages</param>
         /// <returns></returns>
-        [HttpDelete("{dataSetWriterId}/messages/{connectionId}")]
-        public async Task UnsubscribeAsync(string dataSetWriterId, string connectionId) {
-            await _events.UnsubscribeAsync(dataSetWriterId, connectionId).ConfigureAwait(false);
+        [HttpDelete("{writerGroupId}/messages/{connectionId}")]
+        public async Task UnsubscribeAsync(string writerGroupId, string connectionId) {
+            await _events.UnsubscribeAsync(writerGroupId, connectionId).ConfigureAwait(false);
         }
 
         private readonly IGroupRegistrationT<GroupsHub> _events;

@@ -1,18 +1,18 @@
-// ------------------------------------------------------------
+﻿// ------------------------------------------------------------
 //  Copyright (c) Microsoft Corporation.  All rights reserved.
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.Protocols.OpcUa.Events.Api {
+namespace Microsoft.IIoT.Protocols.OpcUa.Api {
 
     /// <summary>
-    /// Configuration for service
+    /// Opc UA service Options
     /// </summary>
-    public interface IEventsConfig {
+    public class OpcUaApiOptions {
 
         /// <summary>
-        /// Opc events service url
+        /// Endpoint url of the service
         /// </summary>
-        string OpcUaEventsServiceUrl { get; }
+        public string OpcUaServiceUrl { get; set; }
     }
 }

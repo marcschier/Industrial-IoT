@@ -10,7 +10,6 @@ namespace Microsoft.IIoT.Protocols.OpcUa.Service.Controllers {
     using Microsoft.IIoT.Protocols.OpcUa.Discovery.Api.Models;
     using Microsoft.IIoT.Protocols.OpcUa.Discovery;
     using Microsoft.IIoT.Extensions.AspNetCore.OpenApi;
-	using Microsoft.IIoT.Extensions.Rpc;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
@@ -19,7 +18,7 @@ namespace Microsoft.IIoT.Protocols.OpcUa.Service.Controllers {
     using System.ComponentModel.DataAnnotations;
 
     /// <summary>
-    /// Activate, Deactivate and Query endpoint resources
+    /// Query endpoints resources
     /// </summary>
     [ApiVersion("3")]
     [Route("v{version:apiVersion}/endpoints")]
@@ -33,13 +32,10 @@ namespace Microsoft.IIoT.Protocols.OpcUa.Service.Controllers {
         /// </summary>
         /// <param name="endpoints"></param>
         /// <param name="certificates"></param>
-        /// <param name="events"></param>
         public EndpointsController(IEndpointRegistry endpoints,
-            ICertificateServices<string> certificates, 
-			IGroupRegistrationT<EndpointsHub> events) {
+            ICertificateServices<string> certificates) {
             _endpoints = endpoints;
             _certificates = certificates;
-			_events = events;
         }
 
         /// <summary>
@@ -159,41 +155,8 @@ namespace Microsoft.IIoT.Protocols.OpcUa.Service.Controllers {
 
             return result.ToApiModel();
         }
-		
-        /// <summary>
-        /// Subscribe to receive samples
-        /// </summary>
-        /// <remarks>
-        /// Register a client to receive publisher samples through SignalR.
-        /// </remarks>
-        /// <param name="endpointId">The endpoint to subscribe to</param>
-        /// <param name="connectionId">The connection that will receive publisher
-        /// samples.</param>
-        /// <returns></returns>
-        [HttpPut("{endpointId}/samples")]
-        public async Task SubscribeAsync(string endpointId,
-            [FromBody] string connectionId) {
-            await _events.SubscribeAsync(endpointId, connectionId).ConfigureAwait(false);
-        }
-
-        /// <summary>
-        /// Unsubscribe from receiving samples.
-        /// </summary>
-        /// <remarks>
-        /// Unregister a client and stop it from receiving samples.
-        /// </remarks>
-        /// <param name="endpointId">The endpoint to unsubscribe from
-        /// </param>
-        /// <param name="connectionId">The connection that will not receive
-        /// any more published samples</param>
-        /// <returns></returns>
-        [HttpDelete("{endpointId}/samples/{connectionId}")]
-        public async Task UnsubscribeAsync(string endpointId, string connectionId) {
-            await _events.UnsubscribeAsync(endpointId, connectionId).ConfigureAwait(false);
-        }
 
         private readonly IEndpointRegistry _endpoints;
         private readonly ICertificateServices<string> _certificates;
-        private readonly IGroupRegistrationT<EndpointsHub> _events;
     }
 }

@@ -39,16 +39,16 @@ namespace Microsoft.IIoT.Protocols.OpcUa.Service.Controllers {
         /// The endpoint must be activated and connected and the module client
         /// and server must trust each other.
         /// </remarks>
-        /// <param name="endpointId">The identifier of the activated endpoint.</param>
+        /// <param name="twinId">The identifier of the activated endpoint.</param>
         /// <param name="request">The model upload request</param>
         /// <returns>The start upload response</returns>
-        [HttpPost("{endpointId}")]
+        [HttpPost("{twinId}")]
         public async Task<ModelUploadStartResponseApiModel> ModelUploadStartAsync(
-            string endpointId, [FromBody][Required] ModelUploadStartRequestApiModel request) {
+            string twinId, [FromBody][Required] ModelUploadStartRequestApiModel request) {
             if (request == null) {
                 throw new ArgumentNullException(nameof(request));
             }
-            var browseresult = await _transfer.ModelUploadStartAsync(endpointId,
+            var browseresult = await _transfer.ModelUploadStartAsync(twinId,
                 request.ToServiceModel()).ConfigureAwait(false);
             return browseresult.ToApiModel();
         }

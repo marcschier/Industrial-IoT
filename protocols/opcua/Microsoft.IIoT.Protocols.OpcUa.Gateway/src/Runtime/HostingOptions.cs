@@ -6,8 +6,8 @@
 namespace Microsoft.IIoT.Protocols.OpcUa.Gateway.Runtime {
     using Microsoft.IIoT.Protocols.OpcUa.Runtime;
     using Microsoft.IIoT.Protocols.OpcUa.Transport;
-    using Microsoft.IIoT.Protocols.OpcUa.Discovery.Api;
-    using Microsoft.IIoT.Protocols.OpcUa.Discovery.Api.Runtime;
+    using Microsoft.IIoT.Protocols.OpcUa.Api;
+    using Microsoft.IIoT.Protocols.OpcUa.Api.Runtime;
     using Microsoft.IIoT.Protocols.OpcUa;
     using Microsoft.IIoT.Extensions.Hosting;
     using Microsoft.IIoT.Extensions.Configuration;
@@ -20,8 +20,7 @@ namespace Microsoft.IIoT.Protocols.OpcUa.Gateway.Runtime {
     /// Common web service configuration aggregation
     /// </summary>
     public class HostingOptions : ConfigureOptionBase<WebHostOptions>,
-        ITcpListenerConfig, IWebListenerConfig,
-        ISessionServicesConfig, IDiscoveryConfig {
+        ITcpListenerConfig, IWebListenerConfig, ISessionServicesConfig {
 
         /// <inheritdoc/>
         public string[] ListenUrls => null;
@@ -46,9 +45,6 @@ namespace Microsoft.IIoT.Protocols.OpcUa.Gateway.Runtime {
         /// <inheritdoc/>
         public TimeSpan MinSessionTimeout => _sessions.MinSessionTimeout;
 
-        /// <inheritdoc/>
-        public string DiscoveryServiceUrl => _api.DiscoveryServiceUrl;
-
         /// <summary>
         /// Configuration constructor
         /// </summary>
@@ -57,7 +53,6 @@ namespace Microsoft.IIoT.Protocols.OpcUa.Gateway.Runtime {
             base(configuration) {
 
             _sessions = new SessionServicesConfig(configuration);
-            _api = new DiscoveryConfig(configuration);
         }
 
         /// <inheritdoc/>
@@ -67,6 +62,5 @@ namespace Microsoft.IIoT.Protocols.OpcUa.Gateway.Runtime {
         }
 
         private readonly SessionServicesConfig _sessions;
-        private readonly DiscoveryConfig _api;
     }
 }

@@ -5,9 +5,11 @@
 
 namespace Microsoft.IIoT.Protocols.OpcUa.Publisher.Api.Clients {
     using Microsoft.IIoT.Protocols.OpcUa.Publisher.Api.Models;
+    using Microsoft.IIoT.Protocols.OpcUa.Api;
     using Microsoft.IIoT.Extensions.Http;
     using Microsoft.IIoT.Extensions.Serializers.NewtonSoft;
     using Microsoft.IIoT.Extensions.Serializers;
+    using Microsoft.Extensions.Options;
     using System;
     using System.Threading.Tasks;
     using System.Threading;
@@ -21,11 +23,11 @@ namespace Microsoft.IIoT.Protocols.OpcUa.Publisher.Api.Clients {
         /// Create service client
         /// </summary>
         /// <param name="httpClient"></param>
-        /// <param name="config"></param>
+        /// <param name="options"></param>
         /// <param name="serializer"></param>
-        public PublisherServiceClient(IHttpClient httpClient, IPublisherConfig config,
+        public PublisherServiceClient(IHttpClient httpClient, IOptions<OpcUaApiOptions> options,
             ISerializer serializer) :
-            this(httpClient, config?.OpcUaPublisherServiceUrl, serializer) {
+            this(httpClient, options.Value.OpcUaServiceUrl, serializer) {
         }
 
         /// <summary>

@@ -200,7 +200,7 @@ namespace Microsoft.IIoT {
         public const string PCS_USERS_SERVICE_URL =
             "PCS_USERS_SERVICE_URL";
         /// <summary> OPC twin service endpoint url </summary>
-        public const string PCS_TWIN_SERVICE_URL =
+        public const string PCS_OPCUA_SERVICE_URL =
             "PCS_TWIN_SERVICE_URL";
         /// <summary> OPC registry service endpoint url </summary>
         public const string PCS_REGISTRY_SERVICE_URL =

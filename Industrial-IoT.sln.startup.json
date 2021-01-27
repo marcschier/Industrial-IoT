@@ -8,30 +8,8 @@
     "MultiProjectConfigurations": {
         "Local development": {
             "Projects": {
-                "Microsoft.IIoT.Platform.App": {},
-                "Microsoft.IIoT.Platform.Api.Cli": {},
-                "Microsoft.IIoT.Platform.Test.Scenarios": {},
-                "Microsoft.IIoT.Platform.Service": {},
-                "Microsoft.IIoT.Platform.Discovery.Edge.Module.Cli": {},
-                "Microsoft.IIoT.Platform.Twin.Edge.Module.Cli": {},
-                "Microsoft.IIoT.Platform.Publisher.Edge.Module.Cli": {}
-            }
-        },
-        "No services": {
-            "Projects": {
-                "Microsoft.IIoT.Platform.App": {},
-                "Microsoft.IIoT.Platform.Api.Cli": {},
-                "Microsoft.IIoT.Platform.Test.Scenarios": {},
-                "Microsoft.IIoT.Platform.Discovery.Edge.Module.Cli": {},
-                "Microsoft.IIoT.Platform.Twin.Edge.Module.Cli": {},
-                "Microsoft.IIoT.Platform.Publisher.Edge.Module.Cli": {}
-            }
-        },
-        "Engineering tool": {
-            "Projects": {
-                "Microsoft.IIoT.Platform.App": {},
-                "Microsoft.IIoT.Platform.Api.Cli": {},
-                "Microsoft.IIoT.Platform.Test.Scenarios": {}
+                "Microsoft.IIoT.Protocols.OpcUa.Api.Cli": {},
+                "Microsoft.IIoT.Protocols.OpcUa.Service": {}
             }
         }
     }

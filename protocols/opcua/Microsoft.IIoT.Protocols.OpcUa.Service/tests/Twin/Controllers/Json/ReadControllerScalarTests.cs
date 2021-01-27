@@ -42,7 +42,7 @@ namespace Microsoft.IIoT.Protocols.OpcUa.Service.Controllers.Json {
             return new ReadScalarValueTests<string>(() => // Create an adapter over the api
                 new TwinServicesApiAdapter(
                     new ControllerTestClient(new HttpClient(_fixture, log),
-                    new TestConfig(client.BaseAddress), serializer)), "fakeid",
+                    TestConfig.ToOptions(client.BaseAddress), serializer)), "fakeid",
                     (ep, n) => _server.Client.ReadValueAsync(Connection, n));
         }
 

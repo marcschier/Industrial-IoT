@@ -3,12 +3,11 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.Protocols.OpcUa.Service {
+namespace Microsoft.IIoT.Protocols.OpcUa.Service.Events {
+    using Microsoft.IIoT.Protocols.OpcUa.Service;
     using Microsoft.IIoT.Protocols.OpcUa.Discovery.Api;
-    using Microsoft.IIoT.Protocols.OpcUa.Events.Api.Runtime;
     using Microsoft.IIoT.Protocols.OpcUa.Publisher.Api;
-    using Microsoft.IIoT.Protocols.OpcUa.Testing.Runtime;
-    using Microsoft.IIoT.Protocols.OpcUa.Twin;
+    using Microsoft.IIoT.Protocols.OpcUa.Api.Runtime;
     using Microsoft.IIoT.Protocols.OpcUa.Twin.Api;
     using Microsoft.IIoT.Extensions.Authentication;
     using Microsoft.IIoT.Extensions.Authentication.Models;
@@ -20,6 +19,7 @@ namespace Microsoft.IIoT.Protocols.OpcUa.Service {
     using Autofac;
     using System.Collections.Generic;
     using System.Threading.Tasks;
+    using Microsoft.IIoT.Protocols.OpcUa.Api;
 
     /// <summary>
     /// Startup class for tests
@@ -38,19 +38,11 @@ namespace Microsoft.IIoT.Protocols.OpcUa.Service {
             builder.RegisterType<DummyProcessingHost>()
                 .AsImplementedInterfaces().SingleInstance();
             builder.RegisterModule<MemoryEventBusModule>();
-            builder.RegisterModule<TwinServices>();
 
             base.ConfigureContainer(builder);
 
-            // Add fakes
-            builder.RegisterType<TestRegistry>()
-                .AsImplementedInterfaces().SingleInstance();
-            builder.RegisterType<TestClientServicesConfig>()
-               .AsImplementedInterfaces().SingleInstance();
-
-            // Register events api configuration interface
-            builder.RegisterType<EventsConfig>()
-                .AsImplementedInterfaces().SingleInstance();
+            // Register api
+            builder.AddOpcUa();
             builder.RegisterInstance(new AadApiClientConfig(null))
                 .AsImplementedInterfaces().SingleInstance();
 

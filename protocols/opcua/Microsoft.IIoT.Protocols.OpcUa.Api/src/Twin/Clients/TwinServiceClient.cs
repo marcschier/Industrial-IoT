@@ -5,9 +5,11 @@
 
 namespace Microsoft.IIoT.Protocols.OpcUa.Twin.Api.Clients {
     using Microsoft.IIoT.Protocols.OpcUa.Twin.Api.Models;
+    using Microsoft.IIoT.Protocols.OpcUa.Api;
     using Microsoft.IIoT.Extensions.Http;
     using Microsoft.IIoT.Extensions.Serializers;
     using Microsoft.IIoT.Extensions.Serializers.NewtonSoft;
+    using Microsoft.Extensions.Options;
     using System;
     using System.Threading.Tasks;
     using System.Linq;
@@ -22,11 +24,11 @@ namespace Microsoft.IIoT.Protocols.OpcUa.Twin.Api.Clients {
         /// Create service client
         /// </summary>
         /// <param name="httpClient"></param>
-        /// <param name="config"></param>
+        /// <param name="options"></param>
         /// <param name="serializer"></param>
-        public TwinServiceClient(IHttpClient httpClient, ITwinConfig config,
+        public TwinServiceClient(IHttpClient httpClient, IOptions<OpcUaApiOptions> options,
             ISerializer serializer) :
-            this(httpClient, config?.OpcUaTwinServiceUrl, serializer) {
+            this(httpClient, options.Value.OpcUaServiceUrl, serializer) {
         }
 
         /// <summary>
@@ -159,7 +161,7 @@ namespace Microsoft.IIoT.Protocols.OpcUa.Twin.Api.Clients {
             if (string.IsNullOrEmpty(twinId)) {
                 throw new ArgumentNullException(nameof(twinId));
             }
-            var request = _httpClient.NewRequest($"{_serviceUri}/v3/browse/{twinId}",
+            var request = _httpClient.NewRequest($"{_serviceUri}/v3/nodes/{twinId}/browse",
                 Resource.Platform);
             _serializer.SerializeToRequest(request, content);
             var response = await _httpClient.PostAsync(request, ct).ConfigureAwait(false);
@@ -179,7 +181,7 @@ namespace Microsoft.IIoT.Protocols.OpcUa.Twin.Api.Clients {
             if (content.ContinuationToken == null) {
                 throw new ArgumentException("Missing continuation", nameof(content));
             }
-            var request = _httpClient.NewRequest($"{_serviceUri}/v3/browse/{twinId}/next",
+            var request = _httpClient.NewRequest($"{_serviceUri}/v3/nodes/{twinId}/browse/next",
                 Resource.Platform);
             _serializer.SerializeToRequest(request, content);
             var response = await _httpClient.PostAsync(request, ct).ConfigureAwait(false);
@@ -200,7 +202,7 @@ namespace Microsoft.IIoT.Protocols.OpcUa.Twin.Api.Clients {
                 content.BrowsePaths.Any(p => p == null || p.Count == 0)) {
                 throw new ArgumentException("Bad browse paths", nameof(content));
             }
-            var request = _httpClient.NewRequest($"{_serviceUri}/v3/browse/{twinId}/path",
+            var request = _httpClient.NewRequest($"{_serviceUri}/v3/nodes/{twinId}/browse/path",
                 Resource.Platform);
             _serializer.SerializeToRequest(request, content);
             var response = await _httpClient.PostAsync(request, ct).ConfigureAwait(false);
@@ -221,7 +223,7 @@ namespace Microsoft.IIoT.Protocols.OpcUa.Twin.Api.Clients {
                 throw new ArgumentException(nameof(content.Attributes));
             }
             var request = _httpClient.NewRequest(
-                $"{_serviceUri}/v3/read/{twinId}/attributes", Resource.Platform);
+                $"{_serviceUri}/v3/nodes/{twinId}/attributes/read", Resource.Platform);
             _serializer.SerializeToRequest(request, content);
             var response = await _httpClient.PostAsync(request, ct).ConfigureAwait(false);
             response.Validate();
@@ -241,7 +243,7 @@ namespace Microsoft.IIoT.Protocols.OpcUa.Twin.Api.Clients {
                 throw new ArgumentException(nameof(content.Attributes));
             }
             var request = _httpClient.NewRequest(
-                $"{_serviceUri}/v3/write/{twinId}/attributes", Resource.Platform);
+                $"{_serviceUri}/v3/nodes/{twinId}/attributes/write", Resource.Platform);
             _serializer.SerializeToRequest(request, content);
             var response = await _httpClient.PostAsync(request, ct).ConfigureAwait(false);
             response.Validate();
@@ -257,7 +259,7 @@ namespace Microsoft.IIoT.Protocols.OpcUa.Twin.Api.Clients {
             if (content == null) {
                 throw new ArgumentNullException(nameof(content));
             }
-            var request = _httpClient.NewRequest($"{_serviceUri}/v3/read/{twinId}",
+            var request = _httpClient.NewRequest($"{_serviceUri}/v3/nodes/{twinId}/read",
                 Resource.Platform);
             _serializer.SerializeToRequest(request, content);
             var response = await _httpClient.PostAsync(request, ct).ConfigureAwait(false);
@@ -277,7 +279,7 @@ namespace Microsoft.IIoT.Protocols.OpcUa.Twin.Api.Clients {
             if (content.Value == null) {
                 throw new ArgumentException("Missing value", nameof(content));
             }
-            var request = _httpClient.NewRequest($"{_serviceUri}/v3/write/{twinId}",
+            var request = _httpClient.NewRequest($"{_serviceUri}/v3/nodes/{twinId}",
                 Resource.Platform);
             _serializer.SerializeToRequest(request, content);
             var response = await _httpClient.PostAsync(request, ct).ConfigureAwait(false);
@@ -294,7 +296,7 @@ namespace Microsoft.IIoT.Protocols.OpcUa.Twin.Api.Clients {
             if (content == null) {
                 throw new ArgumentNullException(nameof(content));
             }
-            var request = _httpClient.NewRequest($"{_serviceUri}/v3/call/{twinId}/metadata",
+            var request = _httpClient.NewRequest($"{_serviceUri}/v3/nodes/{twinId}/call/$metadata",
                 Resource.Platform);
             _serializer.SerializeToRequest(request, content);
             var response = await _httpClient.PostAsync(request, ct).ConfigureAwait(false);
@@ -311,12 +313,72 @@ namespace Microsoft.IIoT.Protocols.OpcUa.Twin.Api.Clients {
             if (content == null) {
                 throw new ArgumentNullException(nameof(content));
             }
-            var request = _httpClient.NewRequest($"{_serviceUri}/v3/call/{twinId}",
+            var request = _httpClient.NewRequest($"{_serviceUri}/v3/nodes/{twinId}/call",
                 Resource.Platform);
             _serializer.SerializeToRequest(request, content);
             var response = await _httpClient.PostAsync(request, ct).ConfigureAwait(false);
             response.Validate();
             return _serializer.DeserializeResponse<MethodCallResponseApiModel>(response);
+        }
+
+        /// <inheritdoc/>
+        public async Task<HistoryReadResponseApiModel<VariantValue>> HistoryReadRawAsync(
+            string twinId, HistoryReadRequestApiModel<VariantValue> content, CancellationToken ct) {
+            if (string.IsNullOrEmpty(twinId)) {
+                throw new ArgumentNullException(nameof(twinId));
+            }
+            if (content == null) {
+                throw new ArgumentNullException(nameof(content));
+            }
+            if (content.Details == null) {
+                throw new ArgumentException("Missing details", nameof(content));
+            }
+            var request = _httpClient.NewRequest(
+                $"{_serviceUri}/v3/nodes/{twinId}/history/read", Resource.Platform);
+            _serializer.SerializeToRequest(request, content);
+            var response = await _httpClient.PostAsync(request, ct).ConfigureAwait(false);
+            response.Validate();
+            return _serializer.DeserializeResponse<HistoryReadResponseApiModel<VariantValue>>(response);
+        }
+
+        /// <inheritdoc/>
+        public async Task<HistoryReadNextResponseApiModel<VariantValue>> HistoryReadRawNextAsync(
+            string twinId, HistoryReadNextRequestApiModel content, CancellationToken ct) {
+            if (string.IsNullOrEmpty(twinId)) {
+                throw new ArgumentNullException(nameof(twinId));
+            }
+            if (content == null) {
+                throw new ArgumentNullException(nameof(content));
+            }
+            if (string.IsNullOrEmpty(content.ContinuationToken)) {
+                throw new ArgumentException("Missing continuation", nameof(content));
+            }
+            var request = _httpClient.NewRequest(
+                $"{_serviceUri}/v3/nodes/{twinId}/history/read/next", Resource.Platform);
+            _serializer.SerializeToRequest(request, content);
+            var response = await _httpClient.PostAsync(request, ct).ConfigureAwait(false);
+            response.Validate();
+            return _serializer.DeserializeResponse<HistoryReadNextResponseApiModel<VariantValue>>(response);
+        }
+
+        /// <inheritdoc/>
+        public async Task<HistoryUpdateResponseApiModel> HistoryUpdateRawAsync(
+            string twinId, HistoryUpdateRequestApiModel<VariantValue> content, CancellationToken ct) {
+            if (string.IsNullOrEmpty(twinId)) {
+                throw new ArgumentNullException(nameof(twinId));
+            }
+            if (content == null) {
+                throw new ArgumentNullException(nameof(content));
+            }
+            if (content.Details == null) {
+                throw new ArgumentException("Missing details", nameof(content));
+            }
+            var request = _httpClient.NewRequest(
+                $"{_serviceUri}/v3/nodes/{twinId}/history/update", Resource.Platform);
+            _serializer.SerializeToRequest(request, content);
+            var response = await _httpClient.PostAsync(request, ct).ConfigureAwait(false);
+            response.Validate();
+            return _serializer.DeserializeResponse<HistoryUpdateResponseApiModel>(response);
         }
 
         /// <inheritdoc/>
@@ -337,66 +399,6 @@ namespace Microsoft.IIoT.Protocols.OpcUa.Twin.Api.Clients {
         }
 
         /// <inheritdoc/>
-        public async Task<HistoryReadResponseApiModel<VariantValue>> HistoryReadRawAsync(
-            string twinId, HistoryReadRequestApiModel<VariantValue> content, CancellationToken ct) {
-            if (string.IsNullOrEmpty(twinId)) {
-                throw new ArgumentNullException(nameof(twinId));
-            }
-            if (content == null) {
-                throw new ArgumentNullException(nameof(content));
-            }
-            if (content.Details == null) {
-                throw new ArgumentException("Missing details", nameof(content));
-            }
-            var request = _httpClient.NewRequest(
-                $"{_serviceUri}/v3/history/read/{twinId}", Resource.Platform);
-            _serializer.SerializeToRequest(request, content);
-            var response = await _httpClient.PostAsync(request, ct).ConfigureAwait(false);
-            response.Validate();
-            return _serializer.DeserializeResponse<HistoryReadResponseApiModel<VariantValue>>(response);
-        }
-
-        /// <inheritdoc/>
-        public async Task<HistoryReadNextResponseApiModel<VariantValue>> HistoryReadRawNextAsync(
-            string twinId, HistoryReadNextRequestApiModel content, CancellationToken ct) {
-            if (string.IsNullOrEmpty(twinId)) {
-                throw new ArgumentNullException(nameof(twinId));
-            }
-            if (content == null) {
-                throw new ArgumentNullException(nameof(content));
-            }
-            if (string.IsNullOrEmpty(content.ContinuationToken)) {
-                throw new ArgumentException("Missing continuation", nameof(content));
-            }
-            var request = _httpClient.NewRequest(
-                $"{_serviceUri}/v3/history/read/{twinId}/next", Resource.Platform);
-            _serializer.SerializeToRequest(request, content);
-            var response = await _httpClient.PostAsync(request, ct).ConfigureAwait(false);
-            response.Validate();
-            return _serializer.DeserializeResponse<HistoryReadNextResponseApiModel<VariantValue>>(response);
-        }
-
-        /// <inheritdoc/>
-        public async Task<HistoryUpdateResponseApiModel> HistoryUpdateRawAsync(
-            string twinId, HistoryUpdateRequestApiModel<VariantValue> content, CancellationToken ct) {
-            if (string.IsNullOrEmpty(twinId)) {
-                throw new ArgumentNullException(nameof(twinId));
-            }
-            if (content == null) {
-                throw new ArgumentNullException(nameof(content));
-            }
-            if (content.Details == null) {
-                throw new ArgumentException("Missing details", nameof(content));
-            }
-            var request = _httpClient.NewRequest(
-                $"{_serviceUri}/v3/history/update/{twinId}", Resource.Platform);
-            _serializer.SerializeToRequest(request, content);
-            var response = await _httpClient.PostAsync(request, ct).ConfigureAwait(false);
-            response.Validate();
-            return _serializer.DeserializeResponse<HistoryUpdateResponseApiModel>(response);
-        }
-
-        /// <inheritdoc/>
         public async Task<HistoryReadResponseApiModel<HistoricValueApiModel[]>> HistoryReadValuesAsync(
             string twinId, HistoryReadRequestApiModel<ReadValuesDetailsApiModel> content,
             CancellationToken ct) {
@@ -407,7 +409,7 @@ namespace Microsoft.IIoT.Protocols.OpcUa.Twin.Api.Clients {
                 throw new ArgumentNullException(nameof(content));
             }
             var request = _httpClient.NewRequest(
-                $"{_serviceUri}/v3/read/{twinId}/values", Resource.Platform);
+                $"{_serviceUri}/v3/profiles/hda/{twinId}/values/read", Resource.Platform);
             _serializer.SerializeToRequest(request, content);
             var response = await _httpClient.PostAsync(request, ct).ConfigureAwait(false);
             response.Validate();
@@ -425,7 +427,7 @@ namespace Microsoft.IIoT.Protocols.OpcUa.Twin.Api.Clients {
                 throw new ArgumentNullException(nameof(content));
             }
             var request = _httpClient.NewRequest(
-                $"{_serviceUri}/v3/read/{twinId}/values/modified", Resource.Platform);
+                $"{_serviceUri}/v3/profiles/hda/{twinId}/values/read/modified", Resource.Platform);
             _serializer.SerializeToRequest(request, content);
             var response = await _httpClient.PostAsync(request, ct).ConfigureAwait(false);
             response.Validate();
@@ -443,7 +445,7 @@ namespace Microsoft.IIoT.Protocols.OpcUa.Twin.Api.Clients {
                 throw new ArgumentNullException(nameof(content));
             }
             var request = _httpClient.NewRequest(
-                $"{_serviceUri}/v3/read/{twinId}/values/pick", Resource.Platform);
+                $"{_serviceUri}/v3/profiles/hda/{twinId}/values/read/attimes", Resource.Platform);
             _serializer.SerializeToRequest(request, content);
             var response = await _httpClient.PostAsync(request, ct).ConfigureAwait(false);
             response.Validate();
@@ -461,7 +463,7 @@ namespace Microsoft.IIoT.Protocols.OpcUa.Twin.Api.Clients {
                 throw new ArgumentNullException(nameof(content));
             }
             var request = _httpClient.NewRequest(
-                $"{_serviceUri}/v3/read/{twinId}/values/processed", Resource.Platform);
+                $"{_serviceUri}/v3/profiles/hda/{twinId}/values/read/processed", Resource.Platform);
             _serializer.SerializeToRequest(request, content);
             var response = await _httpClient.PostAsync(request, ct).ConfigureAwait(false);
             response.Validate();
@@ -481,7 +483,7 @@ namespace Microsoft.IIoT.Protocols.OpcUa.Twin.Api.Clients {
                 throw new ArgumentException("Missing continuation", nameof(content));
             }
             var request = _httpClient.NewRequest(
-                $"{_serviceUri}/v3/read/{twinId}/values/next", Resource.Platform);
+                $"{_serviceUri}/v3/profiles/hda/{twinId}/values/read/next", Resource.Platform);
             _serializer.SerializeToRequest(request, content);
             var response = await _httpClient.PostAsync(request, ct).ConfigureAwait(false);
             response.Validate();
@@ -499,7 +501,7 @@ namespace Microsoft.IIoT.Protocols.OpcUa.Twin.Api.Clients {
                 throw new ArgumentNullException(nameof(content));
             }
             var request = _httpClient.NewRequest(
-                $"{_serviceUri}/v3/read/{twinId}/events", Resource.Platform);
+                $"{_serviceUri}/v3/profiles/hda/{twinId}/events/read", Resource.Platform);
             _serializer.SerializeToRequest(request, content);
             var response = await _httpClient.PostAsync(request, ct).ConfigureAwait(false);
             response.Validate();
@@ -519,7 +521,7 @@ namespace Microsoft.IIoT.Protocols.OpcUa.Twin.Api.Clients {
                 throw new ArgumentException("Missing continuation", nameof(content));
             }
             var request = _httpClient.NewRequest(
-                $"{_serviceUri}/v3/read/{twinId}/events/next", Resource.Platform);
+                $"{_serviceUri}/v3/profiles/hda/{twinId}/events/read/next", Resource.Platform);
             _serializer.SerializeToRequest(request, content);
             var response = await _httpClient.PostAsync(request, ct).ConfigureAwait(false);
             response.Validate();
@@ -536,7 +538,7 @@ namespace Microsoft.IIoT.Protocols.OpcUa.Twin.Api.Clients {
                 throw new ArgumentNullException(nameof(content));
             }
             var request = _httpClient.NewRequest(
-                $"{_serviceUri}/v3/replace/{twinId}/values", Resource.Platform);
+                $"{_serviceUri}/v3/profiles/hda/{twinId}/values/replace", Resource.Platform);
             _serializer.SerializeToRequest(request, content);
             var response = await _httpClient.PostAsync(request, ct).ConfigureAwait(false);
             response.Validate();
@@ -553,7 +555,7 @@ namespace Microsoft.IIoT.Protocols.OpcUa.Twin.Api.Clients {
                 throw new ArgumentNullException(nameof(content));
             }
             var request = _httpClient.NewRequest(
-                $"{_serviceUri}/v3/replace/{twinId}/events", Resource.Platform);
+                $"{_serviceUri}/v3/profiles/hda/{twinId}/events/replace", Resource.Platform);
             _serializer.SerializeToRequest(request, content);
             var response = await _httpClient.PostAsync(request, ct).ConfigureAwait(false);
             response.Validate();
@@ -570,7 +572,7 @@ namespace Microsoft.IIoT.Protocols.OpcUa.Twin.Api.Clients {
                 throw new ArgumentNullException(nameof(content));
             }
             var request = _httpClient.NewRequest(
-                $"{_serviceUri}/v3/insert/{twinId}/values", Resource.Platform);
+                $"{_serviceUri}/v3/profiles/hda/{twinId}/values/insert", Resource.Platform);
             _serializer.SerializeToRequest(request, content);
             var response = await _httpClient.PostAsync(request, ct).ConfigureAwait(false);
             response.Validate();
@@ -587,7 +589,7 @@ namespace Microsoft.IIoT.Protocols.OpcUa.Twin.Api.Clients {
                 throw new ArgumentNullException(nameof(content));
             }
             var request = _httpClient.NewRequest(
-                $"{_serviceUri}/v3/insert/{twinId}/events", Resource.Platform);
+                $"{_serviceUri}/v3/profiles/hda/{twinId}/events/insert", Resource.Platform);
             _serializer.SerializeToRequest(request, content);
             var response = await _httpClient.PostAsync(request, ct).ConfigureAwait(false);
             response.Validate();
@@ -604,7 +606,7 @@ namespace Microsoft.IIoT.Protocols.OpcUa.Twin.Api.Clients {
                 throw new ArgumentNullException(nameof(content));
             }
             var request = _httpClient.NewRequest(
-                $"{_serviceUri}/v3/delete/{twinId}/values", Resource.Platform);
+                $"{_serviceUri}/v3/profiles/hda/{twinId}/values/delete", Resource.Platform);
             _serializer.SerializeToRequest(request, content);
             var response = await _httpClient.PostAsync(request, ct).ConfigureAwait(false);
             response.Validate();
@@ -621,7 +623,7 @@ namespace Microsoft.IIoT.Protocols.OpcUa.Twin.Api.Clients {
                 throw new ArgumentNullException(nameof(content));
             }
             var request = _httpClient.NewRequest(
-                $"{_serviceUri}/v3/delete/{twinId}/values/pick", Resource.Platform);
+                $"{_serviceUri}/v3/profiles/hda/{twinId}/values/delete/attimes", Resource.Platform);
             _serializer.SerializeToRequest(request, content);
             var response = await _httpClient.PostAsync(request, ct).ConfigureAwait(false);
             response.Validate();
@@ -638,7 +640,7 @@ namespace Microsoft.IIoT.Protocols.OpcUa.Twin.Api.Clients {
                 throw new ArgumentNullException(nameof(content));
             }
             var request = _httpClient.NewRequest(
-                $"{_serviceUri}/v3/delete/{twinId}/values/modified", Resource.Platform);
+                $"{_serviceUri}/v3/profiles/hda/{twinId}/values/delete/modified", Resource.Platform);
             _serializer.SerializeToRequest(request, content);
             var response = await _httpClient.PostAsync(request, ct).ConfigureAwait(false);
             response.Validate();
@@ -655,7 +657,7 @@ namespace Microsoft.IIoT.Protocols.OpcUa.Twin.Api.Clients {
                 throw new ArgumentNullException(nameof(content));
             }
             var request = _httpClient.NewRequest(
-                $"{_serviceUri}/v3/delete/{twinId}/events", Resource.Platform);
+                $"{_serviceUri}/v3/profiles/hda/{twinId}/events/delete", Resource.Platform);
             _serializer.SerializeToRequest(request, content);
             var response = await _httpClient.PostAsync(request, ct).ConfigureAwait(false);
             response.Validate();

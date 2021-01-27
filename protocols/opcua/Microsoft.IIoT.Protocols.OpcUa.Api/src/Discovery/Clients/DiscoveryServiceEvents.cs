@@ -5,12 +5,13 @@
 
 namespace Microsoft.IIoT.Protocols.OpcUa.Discovery.Api {
     using Microsoft.IIoT.Protocols.OpcUa.Discovery.Api.Models;
-    using Microsoft.IIoT.Protocols.OpcUa.Events.Api;
+    using Microsoft.IIoT.Protocols.OpcUa.Api;
     using Microsoft.IIoT.Extensions.Serializers;
     using Microsoft.IIoT.Extensions.Serializers.NewtonSoft;
     using Microsoft.IIoT.Extensions.Rpc;
     using Microsoft.IIoT.Extensions.Http;
     using Microsoft.IIoT.Extensions.Utils;
+    using Microsoft.Extensions.Options;
     using System;
     using System.Threading.Tasks;
     using System.Threading;
@@ -24,12 +25,12 @@ namespace Microsoft.IIoT.Protocols.OpcUa.Discovery.Api {
         /// Event client
         /// </summary>
         /// <param name="httpClient"></param>
-        /// <param name="config"></param>
+        /// <param name="options"></param>
         /// <param name="serializer"></param>
         /// <param name="client"></param>
         public DiscoveryServiceEvents(IHttpClient httpClient, ICallbackClient client,
-            IEventsConfig config, ISerializer serializer) :
-            this(httpClient, client, config?.OpcUaEventsServiceUrl, serializer) {
+            IOptions<OpcUaApiOptions> options, ISerializer serializer) :
+            this(httpClient, client, options.Value.OpcUaServiceUrl, serializer) {
         }
 
         /// <summary>

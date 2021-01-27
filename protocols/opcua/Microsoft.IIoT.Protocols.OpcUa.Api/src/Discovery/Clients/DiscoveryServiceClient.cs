@@ -6,9 +6,11 @@
 namespace Microsoft.IIoT.Protocols.OpcUa.Discovery.Api.Clients {
     using Microsoft.IIoT.Protocols.OpcUa.Discovery.Api.Models;
     using Microsoft.IIoT.Protocols.OpcUa.Core.Api.Models;
+    using Microsoft.IIoT.Protocols.OpcUa.Api;
     using Microsoft.IIoT.Extensions.Http;
     using Microsoft.IIoT.Extensions.Serializers.NewtonSoft;
     using Microsoft.IIoT.Extensions.Serializers;
+    using Microsoft.Extensions.Options;
     using System;
     using System.Threading.Tasks;
     using System.Threading;
@@ -22,11 +24,11 @@ namespace Microsoft.IIoT.Protocols.OpcUa.Discovery.Api.Clients {
         /// Create service client
         /// </summary>
         /// <param name="httpClient"></param>
-        /// <param name="config"></param>
+        /// <param name="options"></param>
         /// <param name="serializer"></param>
-        public DiscoveryServiceClient(IHttpClient httpClient, IDiscoveryConfig config,
+        public DiscoveryServiceClient(IHttpClient httpClient, IOptions<OpcUaApiOptions> options,
             ISerializer serializer) :
-            this(httpClient, config?.DiscoveryServiceUrl, serializer) {
+            this(httpClient, options.Value.OpcUaServiceUrl, serializer) {
         }
 
         /// <summary>

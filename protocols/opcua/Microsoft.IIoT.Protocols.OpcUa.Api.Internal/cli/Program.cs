@@ -3,20 +3,15 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Microsoft.IIoT.Api.Cli {
-    using Microsoft.IIoT.Api.Runtime;
-    using Microsoft.IIoT.Azure.ActiveDirectory.Clients;
+namespace Microsoft.IIoT.Protocols.OpcUa.Api.Cli {
     using Microsoft.IIoT.Protocols.OpcUa.Core.Api.Models;
     using Microsoft.IIoT.Protocols.OpcUa.Publisher.Api;
-    using Microsoft.IIoT.Protocols.OpcUa.Publisher.Api.Clients;
     using Microsoft.IIoT.Protocols.OpcUa.Publisher.Api.Models;
     using Microsoft.IIoT.Protocols.OpcUa.Discovery.Api;
-    using Microsoft.IIoT.Protocols.OpcUa.Discovery.Api.Clients;
     using Microsoft.IIoT.Protocols.OpcUa.Discovery.Api.Models;
     using Microsoft.IIoT.Protocols.OpcUa.Twin.Api;
-    using Microsoft.IIoT.Protocols.OpcUa.Twin.Api.Clients;
     using Microsoft.IIoT.Protocols.OpcUa.Twin.Api.Models;
-    using Microsoft.IIoT.Extensions.Http.Clients;
+    using Microsoft.IIoT.Azure.ActiveDirectory.Clients;
     using Microsoft.IIoT.Extensions.Http.SignalR.Clients;
     using Microsoft.IIoT.Extensions.Utils;
     using Microsoft.IIoT.Extensions.Authentication.Runtime;
@@ -45,43 +40,22 @@ namespace Microsoft.IIoT.Api.Cli {
             var builder = new ContainerBuilder();
 
             builder.AddConfiguration(configuration);
-            builder.RegisterType<ApiConfig>()
-                .AsImplementedInterfaces();
             builder.RegisterType<AadApiClientConfig>()
                 .AsImplementedInterfaces();
+            // Use bearer authentication
+            builder.RegisterModule<NativeClientAuthentication>();
 
             // Register logger
             builder.AddDiagnostics(builder => builder.AddDebug());
-            builder.RegisterModule<NewtonSoftJsonModule>();
             if (useMsgPack) {
                 builder.RegisterModule<MessagePackModule>();
             }
 
-            // Register http client module ...
-            builder.RegisterModule<HttpClientModule>();
-            // ... as well as signalR client (needed for api)
+            // SignalR client (needed for api)
             builder.RegisterType<SignalRHubClient>()
                 .AsImplementedInterfaces().InstancePerLifetimeScope();
 
-            // Use bearer authentication
-            builder.RegisterModule<NativeClientAuthentication>();
-
-            // Register twin, vault, and registry services clients
-            builder.RegisterType<TwinServiceClient>()
-                .AsImplementedInterfaces();
-            builder.RegisterType<DiscoveryServiceClient>()
-                .AsImplementedInterfaces();
-            builder.RegisterType<PublisherServiceClient>()
-                .AsImplementedInterfaces();
-
-            // ... with client event callbacks
-            builder.RegisterType<DiscoveryServiceEvents>()
-                .AsImplementedInterfaces();
-            builder.RegisterType<TwinServiceEvents>()
-                .AsImplementedInterfaces();
-            builder.RegisterType<PublisherServiceEvents>()
-                .AsImplementedInterfaces();
-
+            builder.AddOpcUa();
             return builder.Build();
         }
 

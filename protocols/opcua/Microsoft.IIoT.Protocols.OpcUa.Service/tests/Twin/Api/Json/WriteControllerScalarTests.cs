@@ -41,7 +41,7 @@ namespace Microsoft.IIoT.Protocols.OpcUa.Service.Api.Json {
             return new WriteScalarValueTests<string>(() => // Create an adapter over the api
                 new TwinServicesApiAdapter(
                     new TwinServiceClient(new HttpClient(_fixture, log),
-                    new TestConfig(client.BaseAddress), serializer)),
+                    TestConfig.ToOptions(client.BaseAddress), serializer)),
                         "fakeid", (ep, n) => _server.Client.ReadValueAsync(Connection, n));
         }
 

@@ -6,8 +6,10 @@
 namespace Microsoft.IIoT.Protocols.OpcUa.Service.Controllers.Test {
     using Microsoft.IIoT.Protocols.OpcUa.Twin.Api.Models;
     using Microsoft.IIoT.Protocols.OpcUa.Twin.Api;
+    using Microsoft.IIoT.Protocols.OpcUa.Api;
     using Microsoft.IIoT.Extensions.Http;
     using Microsoft.IIoT.Extensions.Serializers;
+    using Microsoft.Extensions.Options;
     using System;
     using System.Threading.Tasks;
     using System.Threading;
@@ -22,10 +24,10 @@ namespace Microsoft.IIoT.Protocols.OpcUa.Service.Controllers.Test {
         /// </summary>
         /// <param name="httpClient"></param>
         /// <param name="config"></param>
-        public ControllerTestClient(IHttpClient httpClient, ITwinConfig config,
+        public ControllerTestClient(IHttpClient httpClient, IOptions<OpcUaApiOptions> options,
             ISerializer serializer) {
-            _serviceUri = config?.OpcUaTwinServiceUrl?.TrimEnd('/') ??
-                throw new ArgumentNullException(nameof(config));
+            _serviceUri = options.Value.OpcUaServiceUrl?.TrimEnd('/') ??
+                throw new ArgumentNullException(nameof(options));
             _httpClient = httpClient ??
                 throw new ArgumentNullException(nameof(httpClient));
             _serializer = serializer ??
@@ -38,7 +40,7 @@ namespace Microsoft.IIoT.Protocols.OpcUa.Service.Controllers.Test {
             if (string.IsNullOrEmpty(twinId)) {
                 throw new ArgumentNullException(nameof(twinId));
             }
-            var path = new UriBuilder($"{_serviceUri}/v3/browse/{twinId}");
+            var path = new UriBuilder($"{_serviceUri}/v3/nodes/{twinId}/browse");
             if (!string.IsNullOrEmpty(content.NodeId)) {
                 path.Query = $"nodeId={content.NodeId.UrlEncode()}";
             }
@@ -61,7 +63,7 @@ namespace Microsoft.IIoT.Protocols.OpcUa.Service.Controllers.Test {
             if (content.ContinuationToken == null) {
                 throw new ArgumentException("Missing continuation", nameof(content));
             }
-            var path = new UriBuilder($"{_serviceUri}/v3/browse/{twinId}/next") {
+            var path = new UriBuilder($"{_serviceUri}/v3/nodes/{twinId}/browse/next") {
                 Query = $"continuationToken={content.ContinuationToken}"
             };
             var request = _httpClient.NewRequest(path.ToString());
@@ -83,7 +85,7 @@ namespace Microsoft.IIoT.Protocols.OpcUa.Service.Controllers.Test {
             if (string.IsNullOrEmpty(content.NodeId)) {
                 throw new ArgumentException("Missing nodeid", nameof(content));
             }
-            var path = new UriBuilder($"{_serviceUri}/v3/read/{twinId}") {
+            var path = new UriBuilder($"{_serviceUri}/v3/nodes/{twinId}") {
                 Query = $"nodeId={content.NodeId.UrlEncode()}"
             };
             var request = _httpClient.NewRequest(path.ToString());

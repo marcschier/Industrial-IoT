@@ -5,10 +5,11 @@
 
 namespace Microsoft.IIoT.Protocols.OpcUa.Twin.Api {
     using Microsoft.IIoT.Protocols.OpcUa.Twin.Api.Models;
-    using Microsoft.IIoT.Protocols.OpcUa.Events.Api;
+    using Microsoft.IIoT.Protocols.OpcUa.Api;
     using Microsoft.IIoT.Extensions.Rpc;
     using Microsoft.IIoT.Extensions.Http;
     using Microsoft.IIoT.Extensions.Utils;
+    using Microsoft.Extensions.Options;
     using System;
     using System.Threading.Tasks;
 
@@ -20,10 +21,10 @@ namespace Microsoft.IIoT.Protocols.OpcUa.Twin.Api {
         /// <summary>
         /// Event client
         /// </summary>
-        /// <param name="config"></param>
+        /// <param name="options"></param>
         /// <param name="client"></param>
-        public TwinServiceEvents(ICallbackClient client, IEventsConfig config) :
-            this(client, config?.OpcUaEventsServiceUrl) {
+        public TwinServiceEvents(ICallbackClient client, IOptions<OpcUaApiOptions> options) :
+            this(client, options.Value.OpcUaServiceUrl) {
         }
 
         /// <summary>

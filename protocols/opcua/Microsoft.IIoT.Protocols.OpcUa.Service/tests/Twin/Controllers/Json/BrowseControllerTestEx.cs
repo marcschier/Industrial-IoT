@@ -41,7 +41,7 @@ namespace Microsoft.IIoT.Protocols.OpcUa.Service.Controllers.Json {
             return new BrowseServicesTests<string>(() => // Create an adapter over the api
                 new TwinServicesApiAdapter(
                     new ControllerTestClient(
-                       new HttpClient(_fixture, log), new TestConfig(client.BaseAddress),
+                       new HttpClient(_fixture, log), TestConfig.ToOptions(client.BaseAddress),
                             serializer)), "fakeid");
         }
 

@@ -4,13 +4,13 @@
 // ------------------------------------------------------------
 
 namespace Microsoft.IIoT.Extensions.Authentication.Runtime {
-    using Microsoft.IIoT.Api.Runtime;
+    using Microsoft.IIoT.Extensions.Configuration;
     using Microsoft.Extensions.Configuration;
 
     /// <summary>
     /// Auth client to service configuration
     /// </summary>
-    public class AuthServiceApiClientConfig : ApiConfigBase, IOAuthClientConfig {
+    public class AuthServiceApiClientConfig : ConfigureOptionBase, IOAuthClientConfig {
 
         /// <summary>
         /// Client configuration

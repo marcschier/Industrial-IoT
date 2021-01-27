@@ -44,7 +44,7 @@ namespace Microsoft.IIoT.Protocols.OpcUa.Service.Events {
                     .ConfigureAppConfiguration((_, builder) => {
                         builder
                             .AddInMemoryCollection(new Dictionary<string, string> {
-                                ["PCS_OPCUA_SERVICE_URL"] = BaseAddress
+                                [PcsVariable.PCS_OPCUA_SERVICE_URL] = BaseAddress
                             });
                     }
                     )

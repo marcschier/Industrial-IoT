@@ -44,7 +44,7 @@ namespace Microsoft.IIoT.Protocols.OpcUa.Service.Controllers {
                 new HistorianServicesAdapter<string>(
                     new HistoryRawAdapter(
                         new TwinServiceClient(new HttpClient(_fixture, log),
-                            new TestConfig(client.BaseAddress), serializer)),
+                            TestConfig.ToOptions(client.BaseAddress), serializer)),
                     new VariantEncoderFactory()), "fakeid");
         }
 

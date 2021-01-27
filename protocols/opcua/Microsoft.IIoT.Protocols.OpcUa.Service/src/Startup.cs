@@ -33,6 +33,7 @@ namespace Microsoft.IIoT.Protocols.OpcUa.Service {
     using Autofac;
     using Autofac.Extensions.DependencyInjection;
     using Prometheus;
+    using Microsoft.IIoT.Extensions.Messaging;
 
     /// <summary>
     /// Webservice startup
@@ -101,7 +102,7 @@ namespace Microsoft.IIoT.Protocols.OpcUa.Service {
             services.AddSwagger(ServiceInfo.Name, ServiceInfo.Description);
 
             // Enable Application Insights telemetry collection.
-            services.AddAppInsightsTelemetry();
+            // services.AddAppInsightsTelemetry();
         }
 
         /// <summary>
@@ -164,6 +165,7 @@ namespace Microsoft.IIoT.Protocols.OpcUa.Service {
             // Add serializers
             builder.RegisterModule<MessagePackModule>();
             builder.RegisterModule<NewtonSoftJsonModule>();
+
             // Http tunnel
             builder.RegisterType<HttpTunnelServer>()
                 .AsImplementedInterfaces().SingleInstance();
@@ -171,10 +173,11 @@ namespace Microsoft.IIoT.Protocols.OpcUa.Service {
             // --- Logic ---
 
             // Register services
-            builder.RegisterModule<TwinCluster>();
+           // builder.RegisterModule<TwinCluster>();
             builder.RegisterModule<DiscoveryRegistry>();
             builder.RegisterModule<PublisherServices>();
             builder.RegisterModule<ClientStack>();
+
             // Application event hub
             builder.RegisterType<SignalRHub<ApplicationsHub>>()
                 .AsImplementedInterfaces().SingleInstance();
@@ -238,8 +241,10 @@ namespace Microsoft.IIoT.Protocols.OpcUa.Service {
             builder.RegisterModule<WebApiAuthentication>();
             // Add diagnostics
             builder.AddAppInsightsLogging();
+            builder.AddDiagnostics();
             // Register event bus for integration events
-            builder.RegisterModule<OrleansEventBusModule>();
+            // builder.RegisterModule<OrleansEventBusModule>();
+            builder.RegisterModule<MemoryEventBusModule>();
             // Register database for storage
             builder.RegisterModule<LiteDbModule>();
         }

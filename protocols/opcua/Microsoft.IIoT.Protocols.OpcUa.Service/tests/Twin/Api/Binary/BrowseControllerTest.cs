@@ -41,7 +41,7 @@ namespace Microsoft.IIoT.Protocols.OpcUa.Service.Api.Binary {
             return new BrowseServicesTests<string>(() => // Create an adapter over the api
                 new TwinServicesApiAdapter(
                     new TwinServiceClient(new HttpClient(_fixture, log),
-                    new TestConfig(client.BaseAddress), serializer)), "fakeid");
+                    TestConfig.ToOptions(client.BaseAddress), serializer)), "fakeid");
         }
 
         public ConnectionModel Connection => new EndpointModel {
